@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  ahDelta, ahPctDelta, ah, av,
+  ahDelta, ahPctDelta, ah, av, saldoPromedio, variacion,
   ratioCorriente, ratioRapido, rotacionInventario, rotacionCxC, plazoCobro,
   endeudamiento, margenNeto, roa,
   dupont, capitalNetoTrabajo, capitalNetoOperativo,
@@ -24,7 +24,19 @@ describe('AH - Análisis Horizontal', () => {
   it('ah retorna delta / |t1|', () => {
     expect(ah(10, 200)).toBeCloseTo(0.05, 4);
     expect(ah(-10, 200)).toBeCloseTo(-0.05, 4);
-    expect(ah(5, 0)).toBe(0);
+    expect(ah(5, 0)).toBeNull();
+    expect(ah(5, undefined)).toBeNull();
+  });
+
+  it('saldoPromedio calcula promedio entre dos periodos', () => {
+    expect(saldoPromedio(10000, 20000)).toBe(15000);
+    expect(saldoPromedio(undefined, 20000)).toBe(20000);
+    expect(saldoPromedio(0, 0)).toBe(0);
+  });
+
+  it('variacion calcula cambio entre periodos', () => {
+    expect(variacion(20000, 10000)).toBe(10000);
+    expect(variacion(5000, 12000)).toBe(-7000);
   });
 });
 

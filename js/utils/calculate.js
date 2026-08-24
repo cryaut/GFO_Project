@@ -1,5 +1,19 @@
+export function saldoPromedio(saldoInicial, saldoFinal) {
+  if (
+    (saldoInicial === undefined || saldoInicial === null) ||
+    (saldoFinal === undefined || saldoFinal === null)
+  ) {
+    return saldoFinal ?? saldoInicial ?? 0;
+  }
+  return (saldoInicial + saldoFinal) / 2;
+}
+
+export function variacion(valorFinal, valorInicial) {
+  return valorFinal - valorInicial;
+}
+
 export function ah(delta, valorT1) {
-  if (valorT1 === 0) return 0;
+  if (valorT1 === 0 || valorT1 === undefined || valorT1 === null) return null;
   return delta / Math.abs(valorT1);
 }
 
