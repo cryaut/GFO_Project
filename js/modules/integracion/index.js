@@ -1,25 +1,44 @@
 import store from '../../store.js';
-import { formatCurrency, formatPercent, formatNumber } from '../../utils/format.js';
+import { formatCurrency, formatPercent } from '../../utils/format.js';
 import { exportJSON, exportCSV, exportHTML } from '../../utils/export.js';
 import { showToast } from '../../components/toast.js';
+import { computeFinancialTotals } from '../estados/estados-calculations.js';
+import { normalizeFinancialData } from '../estados/estados-normalize.js';
+
+function getSavedTotals(period) {
+  // Single source of truth: the same normalized engine Análisis consumes, so
+  // imported/custom account names are summed instead of the fixed-name lookup.
+  try {
+    const states = normalizeFinancialData({
+      name: store.get('estados.name') || 'Datos guardados',
+      periods: store.get('estados.periods') || [],
+      balanceGeneral: store.get('estados.balanceGeneral') || {},
+      estadoResultados: store.get('estados.estadoResultados') || {},
+      accountTypes: store.get('estados.accountTypes')
+    });
+    return states.periods.includes(period) ? computeFinancialTotals(states, period) : null;
+  } catch {
+    return null;
+  }
+}
 
 function computeDashboardKPIs() {
   const periods = store.get('estados.periods') || [];
   const lastP = periods[periods.length - 1];
   if (!lastP) return null;
 
+  const shared = getSavedTotals(lastP);
   const bg = store.get('estados.balanceGeneral')?.[lastP] || {};
   const er = store.get('estados.estadoResultados')?.[lastP] || {};
-  const activos = bg.activos || {};
-  const pasivos = bg.pasivos || {};
-  const patrimonio = bg.patrimonio || {};
+  const sum = source => Object.values(source || {}).reduce((s, v) => s + v, 0);
 
-  const totalActivos = Object.values(activos).reduce((s, v) => s + v, 0);
-  const totalPasivos = Object.values(pasivos).reduce((s, v) => s + v, 0);
-  const totalPatrimonio = Object.values(patrimonio).reduce((s, v) => s + v, 0);
-  const ventas = er['Ventas'] || 0;
-  const utilidadNeta = ventas - (er['Costo de Ventas'] || 0) - (er['Gastos de Administracion'] || 0) -
-    (er['Gastos de Ventas'] || 0) + (er['Otros Ingresos'] || 0) - (er['Otros Gastos'] || 0);
+  const totalActivos = shared ? shared.totalActivos : sum(bg.activos);
+  const totalPasivos = shared ? shared.totalPasivos : sum(bg.pasivos);
+  const totalPatrimonio = shared ? shared.totalPatrimonio : sum(bg.patrimonio);
+  const ventas = shared ? shared.ventas : (er['Ventas'] || 0);
+  const utilidadNeta = shared && Number.isFinite(shared.utilidadNeta) ? shared.utilidadNeta
+    : (er['Ventas'] || 0) - (er['Costo de Ventas'] || 0) - (er['Gastos de Administracion'] || 0) -
+      (er['Gastos de Ventas'] || 0) + (er['Otros Ingresos'] || 0) - (er['Otros Gastos'] || 0);
 
   const ingreso = store.get('presupuesto.ingresoMensual') || 0;
   const meta = store.get('presupuesto.metaAhorro') || 0;
@@ -123,37 +142,44 @@ function bindExportEvents(page) {
 
   page.querySelector('#btnExportCSV')?.addEventListener('click', () => {
     const periods = store.get('estados.periods') || [];
-    const bg = store.get('estados.balanceGeneral') || {};
     if (periods.length === 0) return showToast('No hay datos para exportar', 'warning');
+    const bg = store.get('estados.balanceGeneral') || {};
+    const er = store.get('estados.estadoResultados') || {};
+    const types = store.get('estados.accountTypes') || {};
+    const accountNames = (statement, group) => {
+      const names = new Set();
+      for (const p of periods) {
+        const scope = group ? statement[p]?.[group] : statement[p];
+        Object.keys(scope || {}).forEach(name => names.add(name));
+      }
+      return [...names];
+    };
 
-    const headers = ['Cuenta', ...periods];
-    const allAccounts = new Set();
-    for (const p of periods) {
-      const data = bg[p] || {};
-      for (const group of ['activos', 'pasivos', 'patrimonio']) {
-        Object.keys(data[group] || {}).forEach(a => allAccounts.add(a));
+    // Estado/Grupo/Cuenta/Clasificacion make the CSV round-trip through the
+    // Estados importer, instead of a period-only sheet that could not be reloaded.
+    const headers = ['Estado', 'Grupo', 'Cuenta', 'Clasificacion', ...periods];
+    const rows = [];
+    for (const group of ['activos', 'pasivos', 'patrimonio']) {
+      for (const account of accountNames(bg, group)) {
+        rows.push(['Balance', group, account, types[group]?.[account] || '',
+          ...periods.map(p => bg[p]?.[group]?.[account] ?? '')]);
       }
     }
-    const rows = Array.from(allAccounts).map(acc => [
-      acc,
-      ...periods.map(p => {
-        const data = bg[p] || {};
-        for (const group of ['activos', 'pasivos', 'patrimonio']) {
-          if (data[group]?.[acc] !== undefined) return data[group][acc];
-        }
-        return '';
-      })
-    ]);
+    for (const account of accountNames(er)) {
+      rows.push(['Resultados', '', account, types.estadoResultados?.[account] || '',
+        ...periods.map(p => er[p]?.[account] ?? '')]);
+    }
+    if (rows.length === 0) return showToast('No hay cuentas para exportar', 'warning');
     exportCSV(rows, headers, 'gfo-estados.csv');
-    showToast('CSV exportado', 'success');
+    showToast('CSV exportado (reimportable en Estados)', 'success');
   });
 
   page.querySelector('#btnExportHTML')?.addEventListener('click', () => {
     const kpis = computeDashboardKPIs();
     const periods = store.get('estados.periods') || [];
     const bg = store.get('estados.balanceGeneral') || {};
-    let html = `<h1>GFO Toolkit — Reporte</h1>`;
-    html += `<h2>Resumen</h2>`;
+    let html = '<h1>GFO Toolkit — Reporte</h1>';
+    html += '<h2>Resumen</h2>';
     if (kpis) {
       html += `<p>Total Activos: ${formatCurrency(kpis.totalActivos)} | Total Pasivos: ${formatCurrency(kpis.totalPasivos)} | Patrimonio: ${formatCurrency(kpis.totalPatrimonio)}</p>`;
       html += `<p>Ventas: ${formatCurrency(kpis.ventas)} | Utilidad Neta: ${formatCurrency(kpis.utilidadNeta)}</p>`;
@@ -168,7 +194,7 @@ function bindExportEvents(page) {
           }
         }
       }
-      html += `</tbody></table>`;
+      html += '</tbody></table>';
     }
     exportHTML(html, 'gfo-reporte.html');
     showToast('Reporte HTML generado', 'success');

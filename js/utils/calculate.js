@@ -102,6 +102,79 @@ export function efeIndirecto(utilidadNeta, ajustes) {
   return ajustes.reduce((sum, a) => sum + a, utilidadNeta);
 }
 
+// === Razones adicionales (completan RC, RR, RotInv, RotCxC, PPC, Endeudamiento, MN, ROA) ===
+// Todas devuelven null si su denominador es 0 o el dato falta: N/D, no cero.
+export function pruebaDefensiva(efectivo, pasivosCorrientes) {
+  if (pasivosCorrientes === 0) return null;
+  return efectivo / pasivosCorrientes;
+}
+
+export function rotacionActivos(ventas, activoTotalProm) {
+  if (!activoTotalProm) return null;
+  return ventas / activoTotalProm;
+}
+
+export function rotacionPasivos(costoVentas, pasivosCorrientesProm) {
+  if (!pasivosCorrientesProm) return null;
+  return costoVentas / pasivosCorrientesProm;
+}
+
+export function plazoPago(rotPasivos) {
+  if (!rotPasivos) return null;
+  return 360 / rotPasivos;
+}
+
+export function cicloConversion(plazoCobroDias, rotInv, rotPas) {
+  if (!rotInv || !rotPas) return null;
+  const ppm = 360 / rotInv;
+  return plazoCobroDias + ppm - (360 / rotPas);
+}
+
+export function coberturaIntereses(utilidadOperativa, intereses) {
+  if (!intereses) return null;
+  return utilidadOperativa / intereses;
+}
+
+export function deudaPatrimonio(pasivoTotal, patrimonio) {
+  if (!patrimonio) return null;
+  return pasivoTotal / patrimonio;
+}
+
+export function apalancamiento(activoTotalProm, patrimonioProm) {
+  if (!patrimonioProm) return null;
+  return activoTotalProm / patrimonioProm;
+}
+
+export function margenBruto(utilidadBruta, ventas) {
+  if (!ventas) return null;
+  return utilidadBruta / ventas;
+}
+
+export function margenOperativo(utilidadBruta, gastosAdmin, gastosVentas, ventas) {
+  if (!ventas) return null;
+  return (utilidadBruta - gastosAdmin - gastosVentas) / ventas;
+}
+
+export function roe(utilidadNeta, patrimonioProm) {
+  if (!patrimonioProm) return null;
+  return utilidadNeta / patrimonioProm;
+}
+
+export function rotacionActivosFijos(ventas, activosFijosNetos) {
+  if (!activosFijosNetos) return null;
+  return ventas / activosFijosNetos;
+}
+
+export function rotacionCapitalTrabajo(ventas, capitalNetoTrabajoValor) {
+  if (!capitalNetoTrabajoValor) return null;
+  return ventas / capitalNetoTrabajoValor;
+}
+
+export function solvencia(activoTotal, pasivoTotal) {
+  if (!pasivoTotal) return null;
+  return activoTotal / pasivoTotal;
+}
+
 export function depAnualLineaRecta(costoOriginal, valorResidual, vidaUtil) {
   if (vidaUtil <= 0) return 0;
   return (costoOriginal - valorResidual) / vidaUtil;

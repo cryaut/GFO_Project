@@ -4,8 +4,14 @@ import {
   ahDelta, ahPctDelta, av, ratioCorriente, ratioRapido,
   rotacionInventario, rotacionCxC, plazoCobro, endeudamiento,
   margenNeto, roa, dupont, capitalNetoTrabajo, capitalNetoOperativo,
-  eoaf, efeIndirecto, saldoPromedio
+  eoaf, efeIndirecto, saldoPromedio,
+  pruebaDefensiva, rotacionActivos, rotacionPasivos, plazoPago,
+  cicloConversion, coberturaIntereses, deudaPatrimonio, apalancamiento,
+  margenBruto, margenOperativo, roe,
+  rotacionActivosFijos, rotacionCapitalTrabajo, solvencia
 } from '../../utils/calculate.js';
+import { computeFinancialTotals } from '../estados/estados-calculations.js';
+import { normalizeFinancialData } from '../estados/estados-normalize.js';
 
 export const UMBRALES = {
   ratioCorrienteMin: 1,
@@ -15,7 +21,51 @@ export const UMBRALES = {
   roaMin: 0.05
 };
 
+function getSavedStates() {
+  const accountTypes = store.get('estados.accountTypes');
+  const data = {
+    name: store.get('estados.name') || 'Datos guardados',
+    periods: store.get('estados.periods') || [],
+    balanceGeneral: store.get('estados.balanceGeneral') || {},
+    estadoResultados: store.get('estados.estadoResultados') || {},
+    accountTypes: accountTypes && typeof accountTypes === 'object' ? accountTypes : undefined
+  };
+  // Data saved before this refactor may lack accountTypes; classify defensively.
+  return normalizeFinancialData(data);
+}
+
+let savedCache = null;
+let savedPeriods = [];
+function refreshSavedStates() {
+  try {
+    savedCache = getSavedStates();
+    savedPeriods = savedCache.periods;
+  } catch {
+    // Unsaved/legacy data without valid classification: analysis degrades to
+    // the fixed-name readers instead of crashing the whole section.
+    savedCache = null;
+    savedPeriods = store.get('estados.periods') || [];
+  }
+  return savedCache;
+}
+
+function totalsFor(period) {
+  const states = savedCache || refreshSavedStates();
+  if (!states || !states.periods.includes(period)) return null;
+  return computeFinancialTotals(states, period);
+}
+
+
 function getERData(period) {
+  const shared = totalsFor(period);
+  if (shared) {
+    return {
+      ventas: shared.ventas, costoVentas: shared.costoVentas,
+      gastosAdmin: shared.gastosAdmin, gastosVentas: shared.gastosVentas,
+      otrosIngresos: shared.otrosIngresos, otrosGastos: shared.otrosGastos,
+      utilidadNeta: shared.utilidadNeta
+    };
+  }
   const er = store.get('estados.estadoResultados')?.[period] || {};
   return {
     ventas: er['Ventas'] || 0,
@@ -31,6 +81,18 @@ function getERData(period) {
 }
 
 function getBGData(period) {
+  const shared = totalsFor(period);
+  if (shared) {
+    return {
+      efectivo: shared.efectivo, cxC: shared.cxC, inventario: shared.inventario,
+      activosCorrientesOtros: shared.activosCorrientesOtros,
+      activosCorrientes: shared.activosCorrientes,
+      cuentasPorPagar: shared.cuentasPorPagar, pasivoCortoPlazo: shared.pasivoCortoPlazo,
+      provisiones: shared.provisiones, pasivosCorrientes: shared.pasivosCorrientes,
+      totalActivos: shared.totalActivos, totalPasivos: shared.totalPasivos,
+      totalPatrimonio: shared.totalPatrimonio, activosFijos: shared.activosFijos
+    };
+  }
   const bg = store.get('estados.balanceGeneral')?.[period] || {};
   const activos = bg.activos || {};
   const pasivos = bg.pasivos || {};
@@ -60,7 +122,8 @@ function getBGData(period) {
 }
 
 function getPeriods() {
-  return store.get('estados.periods') || [];
+  if (!savedCache) refreshSavedStates();
+  return savedPeriods.length ? savedPeriods : (store.get('estados.periods') || []);
 }
 
 function getPrevPeriod(period) {
@@ -69,7 +132,7 @@ function getPrevPeriod(period) {
   return idx > 0 ? periods[idx - 1] : null;
 }
 
-function computeAVBalanceGeneral(period) {
+export function computeAVBalanceGeneral(period) {
   const bg = getBGData(period);
   const ta = bg.totalActivos;
   const raw = store.get('estados.balanceGeneral')?.[period] || {};
@@ -86,7 +149,7 @@ function computeAVBalanceGeneral(period) {
   return { rows, base: 'Total Activos', baseValor: ta };
 }
 
-function computeAVEstadoResultados(period) {
+export function computeAVEstadoResultados(period) {
   const er = getERData(period);
   const ventas = er.ventas;
   const items = [
@@ -106,7 +169,15 @@ function computeAVEstadoResultados(period) {
   return { rows, base: 'Ventas', baseValor: ventas };
 }
 
-function computeRazones(period) {
+// Public AV aggregate: the `av.js` shell re-exports this name.
+export function computeAV(period) {
+  return {
+    balanceGeneral: computeAVBalanceGeneral(period),
+    estadoResultados: computeAVEstadoResultados(period)
+  };
+}
+
+export function computeRazones(period) {
   const bg = getBGData(period);
   const er = getERData(period);
   const prev = getPrevPeriod(period);
@@ -126,9 +197,29 @@ function computeRazones(period) {
   const End = endeudamiento(bg.totalPasivos, bg.totalActivos);
   const MN = margenNeto(er.utilidadNeta, er.ventas);
   const ROA = roa(er.utilidadNeta, activoProm);
+  const rotPas = rotacionPasivos(er.costoVentas, saldoPromedio(bgPrev?.cuentasPorPagar, bg.cuentasPorPagar));
+  const utilidadOperativa = er.ventas - er.costoVentas - er.gastosAdmin - er.gastosVentas;
+  const hayVentas = er.ventas !== 0 || er.costoVentas !== 0;
+  const extra = {
+    pruebaDefensiva: pruebaDefensiva(bg.efectivo, bg.pasivosCorrientes),
+    rotacionActivos: rotacionActivos(er.ventas, activoProm),
+    rotacionPasivos: rotPas,
+    plazoPago: plazoPago(rotPas),
+    cicloConversion: cicloConversion(PPC, RotInv, rotPas),
+    coberturaIntereses: coberturaIntereses(utilidadOperativa, er.intereses ?? 0),
+    deudaPatrimonio: deudaPatrimonio(bg.totalPasivos, bg.totalPatrimonio),
+    apalancamiento: apalancamiento(activoProm, patrimonioProm),
+    margenBruto: margenBruto(hayVentas ? er.ventas - er.costoVentas : 0, er.ventas),
+    margenOperativo: margenOperativo(hayVentas ? er.ventas - er.costoVentas : 0, er.gastosAdmin, er.gastosVentas, er.ventas),
+    roe: roe(er.utilidadNeta, patrimonioProm),
+    rotacionActivosFijos: rotacionActivosFijos(er.ventas, bg.activosFijos),
+    rotacionCapitalTrabajo: rotacionCapitalTrabajo(er.ventas, bg.activosCorrientes - bg.pasivosCorrientes),
+    solvencia: solvencia(bg.totalActivos, bg.totalPasivos)
+  };
 
   return {
     RC, RR, RotInv, RotCxC, PPC, endeudamiento: End, MN, ROA,
+    ...extra,
     usaPromedios: hayDosPeriodos,
     invProm, cxcProm, activoProm, patrimonioProm,
     denominadores: {
@@ -138,12 +229,26 @@ function computeRazones(period) {
       RotCxC: cxcProm,
       End: bg.totalActivos,
       MN: er.ventas,
-      ROA: activoProm
+      ROA: activoProm,
+      pruebaDefensiva: bg.pasivosCorrientes,
+      rotacionActivos: activoProm,
+      rotacionPasivos: saldoPromedio(bgPrev?.cuentasPorPagar, bg.cuentasPorPagar),
+      plazoPago: rotPas,
+      cicloConversion: 1,
+      coberturaIntereses: er.intereses ?? 0,
+      deudaPatrimonio: bg.totalPatrimonio,
+      apalancamiento: patrimonioProm,
+      margenBruto: er.ventas,
+      margenOperativo: er.ventas,
+      roe: patrimonioProm,
+      rotacionActivosFijos: bg.activosFijos,
+      rotacionCapitalTrabajo: bg.activosCorrientes - bg.pasivosCorrientes,
+      solvencia: bg.totalPasivos
     }
   };
 }
 
-function computeDuPont(period) {
+export function computeDuPont(period) {
   const r = computeRazones(period);
   const dp = dupont(
     getERData(period).utilidadNeta,
@@ -154,7 +259,7 @@ function computeDuPont(period) {
   return { ...dp, activoProm: r.activoProm, patrimonioProm: r.patrimonioProm, usaPromedios: r.usaPromedios };
 }
 
-function computeCNTCNO(period) {
+export function computeCNTCNO(period) {
   const bg = getBGData(period);
   const CNT = capitalNetoTrabajo(bg.activosCorrientes, bg.pasivosCorrientes);
   const activosCorrientesOps = bg.cxC + bg.inventario;
@@ -167,7 +272,7 @@ function computeCNTCNO(period) {
   };
 }
 
-function computeEFE(period) {
+export function computeEFE(period) {
   const er = getERData(period);
   const prev = getPrevPeriod(period);
 
@@ -265,7 +370,7 @@ function renderAHSection(periods) {
   return html;
 }
 
-function computeAH(periods) {
+export function computeAH(periods) {
   const results = [];
   for (let i = 1; i < periods.length; i++) {
     const t1 = getBGData(periods[i - 1]);
@@ -327,8 +432,22 @@ function renderRazonesSection(period) {
     [`Rotación Inventario${r.usaPromedios ? ' (inv. promedio)' : ''}`, val(formatNumber(r.RotInv), true, d.RotInv, 'el inventario', 'la rotación de inventario'), 'badge-info'],
     [`Rotación CxC${r.usaPromedios ? ' (CxC promedio)' : ''}`, val(formatNumber(r.RotCxC), true, d.RotCxC, 'las CxC', 'la rotación de CxC'), 'badge-info'],
     ['Plazo Cobro (días)', formatNumber(r.PPC, 0), 'badge-info'],
+    [`Rotación Activos${r.usaPromedios ? ' (activo promedio)' : ''}`, r.rotacionActivos == null ? 'N/D' : formatNumber(r.rotacionActivos), 'badge-info'],
+    ['Rotación Activos Fijos (Ventas / activo fijo neto)', r.rotacionActivosFijos == null ? 'N/D' : formatNumber(r.rotacionActivosFijos), 'badge-info'],
+    [`Rotación Pasivos${r.usaPromedios ? ' (promedio)' : ''}`, r.rotacionPasivos == null ? 'N/D' : formatNumber(r.rotacionPasivos), 'badge-info'],
+    ['Plazo Pago (días)', r.plazoPago == null ? 'N/D' : formatNumber(r.plazoPago, 0), 'badge-info'],
+    ['Ciclo de Conversión (días)', r.cicloConversion == null ? 'N/D' : formatNumber(r.cicloConversion, 0), 'badge-info'],
+    ['Rotación Capital de Trabajo (Ventas / CNT)', r.rotacionCapitalTrabajo == null ? 'N/D' : formatNumber(r.rotacionCapitalTrabajo), 'badge-info'],
     ['Endeudamiento', val(formatPercent(r.endeudamiento), r.endeudamiento <= UMBRALES.endeudamientoMax, d.End, 'el activo total', 'el endeudamiento'), badge(r.endeudamiento <= UMBRALES.endeudamientoMax)],
+    ['Solvencia (Activos / Pasivos)', r.solvencia == null ? 'N/D' : formatNumber(r.solvencia), 'badge-info'],
+    ['Prueba Defensiva', r.pruebaDefensiva == null ? 'N/D' : formatNumber(r.pruebaDefensiva), 'badge-info'],
+    ['Deuda / Patrimonio', r.deudaPatrimonio == null ? 'N/D' : formatNumber(r.deudaPatrimonio), 'badge-info'],
+    [`Apalancamiento${r.usaPromedios ? ' (promedio)' : ''}`, r.apalancamiento == null ? 'N/D' : formatNumber(r.apalancamiento), 'badge-info'],
+    ['Cobertura de Intereses', r.coberturaIntereses == null ? 'N/D' : `${formatNumber(r.coberturaIntereses)}×`, 'badge-info'],
     ['Rentabilidad', '', '', ''],
+    ['Margen Bruto', r.margenBruto == null ? 'N/D' : formatPercent(r.margenBruto), 'badge-info'],
+    ['Margen Operativo', r.margenOperativo == null ? 'N/D' : formatPercent(r.margenOperativo), 'badge-info'],
+    [`ROE${r.usaPromedios ? ' (patrimonio promedio)' : ''}`, r.roe == null ? 'N/D' : formatPercent(r.roe), 'badge-info'],
     ['Margen Neto', val(formatPercent(r.MN), r.MN >= UMBRALES.margenNetoMin, d.MN, 'las ventas', 'el margen neto'), badge(r.MN >= UMBRALES.margenNetoMin)],
     [`ROA${r.usaPromedios ? ' (activo promedio)' : ''}`, val(formatPercent(r.ROA), r.ROA >= UMBRALES.roaMin, d.ROA, 'el activo total', 'el ROA'), badge(r.ROA >= UMBRALES.roaMin)]
   ];
@@ -356,7 +475,7 @@ function renderCNTCNOSection(period) {
   </p>`;
 }
 
-function computeEOAF(periods) {
+export function computeEOAF(periods) {
   if (periods.length < 2) return [];
   const t1 = getBGData(periods[0]);
   const t2 = getBGData(periods[1]);
@@ -464,6 +583,7 @@ function renderInterpretacionSection(period) {
 }
 
 export function initAnalisis() {
+  refreshSavedStates();
   const page = document.getElementById('page-analisis');
   if (!page) return;
 
