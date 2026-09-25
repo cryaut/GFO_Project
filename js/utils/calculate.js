@@ -110,3 +110,57 @@ export function ahorroMensual(metaAhorro, mesesDisponibles) {
 export function saldoSemanal(ingreso, gastos, ahorro, reserva) {
   return ingreso - gastos - ahorro - (reserva || 0);
 }
+
+export function rotacionCxP(costoVentas, cxPprom) {
+  if (cxPprom === 0) return 0;
+  return costoVentas / cxPprom;
+}
+
+export function periodoPromedioPago(rotCxP) {
+  if (rotCxP === 0) return 0;
+  return 365 / rotCxP;
+}
+
+export function rotacionActivosFijos(ventas, activosFijosProm) {
+  if (activosFijosProm === 0) return 0;
+  return ventas / activosFijosProm;
+}
+
+export function rotacionActivosTotales(ventas, activosTotalesProm) {
+  if (activosTotalesProm === 0) return 0;
+  return ventas / activosTotalesProm;
+}
+
+export function edadInventario(rotInv) {
+  if (rotInv === 0) return 0;
+  return 365 / rotInv;
+}
+
+export function cicloConversionEfectivo(edadInv, periodoCobro, periodoPago) {
+  return edadInv + periodoCobro - periodoPago;
+}
+
+export function razonDeudaPatrimonio(pasivoTotal, patrimonio) {
+  if (patrimonio === 0) return 0;
+  return pasivoTotal / patrimonio;
+}
+
+export function coberturaIntereses(UAII, gastosIntereses) {
+  if (gastosIntereses === 0) return 0;
+  return UAII / gastosIntereses;
+}
+
+export function margenBruto(utilidadBruta, ventas) {
+  if (ventas === 0) return 0;
+  return utilidadBruta / ventas;
+}
+
+export function margenOperativo(utilidadOperativa, ventas) {
+  if (ventas === 0) return 0;
+  return utilidadOperativa / ventas;
+}
+
+export function roe(utilidadNeta, patrimonio) {
+  if (patrimonio === 0) return 0;
+  return utilidadNeta / patrimonio;
+}

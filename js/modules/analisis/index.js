@@ -2,21 +2,48 @@ import store from '../../store.js';
 import { formatCurrency, formatPercent, formatNumber } from '../../utils/format.js';
 import {
   ahDelta, ahPctDelta, av, ratioCorriente, ratioRapido,
-  rotacionInventario, rotacionCxC, plazoCobro, endeudamiento,
+  rotacionInventario, rotacionCxC, endeudamiento,
   margenNeto, roa, dupont, capitalNetoTrabajo, capitalNetoOperativo,
-  eoaf, efeIndirecto
+  eoaf, efeIndirecto, rotacionCxP, periodoPromedioPago, rotacionActivosFijos,
+  rotacionActivosTotales, edadInventario, cicloConversionEfectivo,
+  razonDeudaPatrimonio, coberturaIntereses, margenBruto, margenOperativo, roe
 } from '../../utils/calculate.js';
 import { showToast } from '../../components/toast.js';
 
 function getERData(period) {
   const er = store.get('estados.estadoResultados')?.[period] || {};
+  const ventas = er['Ventas'] || 0;
+  const costoVentas = er['Costo de Ventas'] || 0;
+  const utilidadBruta = ventas - costoVentas;
+  const gastosAdmin = er['Gastos de Administracion'] || 0;
+  const gastosVentas = er['Gastos de Ventas'] || 0;
+  const utilidadOperativa = utilidadBruta - gastosAdmin - gastosVentas;
+  const otrosIngresos = er['Otros Ingresos'] || 0;
+  const otrosGastos = er['Otros Gastos'] || 0;
+  const gastosIntereses = er['Gastos por Intereses'] || 0;
+  const utilidadAntesImpuestos = utilidadOperativa + otrosIngresos - otrosGastos - gastosIntereses;
+  const impuestos = er['Impuestos'] || 0;
+  const utilidadNeta = utilidadAntesImpuestos - impuestos;
+  const UAII = utilidadOperativa;
+  
   return {
-    ventas: er['Ventas'] || 0,
-    costoVentas: er['Costo de Ventas'] || 0,
-    utilidadNeta: (er['Ventas'] || 0) - (er['Costo de Ventas'] || 0) -
-      (er['Gastos de Administracion'] || 0) - (er['Gastos de Ventas'] || 0) +
-      (er['Otros Ingresos'] || 0) - (er['Otros Gastos'] || 0)
+    ventas, costoVentas, utilidadBruta, utilidadOperativa, gastosAdmin, gastosVentas,
+    otrosIngresos, otrosGastos, gastosIntereses, utilidadAntesImpuestos, impuestos,
+    utilidadNeta, UAII
   };
+}
+
+function getAccountAverage(periods, accountType, accountName) {
+  if (periods.length === 0) return 0;
+  if (periods.length === 1) {
+    const data = store.get('estados.balanceGeneral')?.[periods[0]]?.[accountType]?.[accountName] || 0;
+    return data;
+  }
+  const lastPeriod = periods[periods.length - 1];
+  const prevPeriod = periods[periods.length - 2];
+  const lastValue = store.get('estados.balanceGeneral')?.[lastPeriod]?.[accountType]?.[accountName] || 0;
+  const prevValue = store.get('estados.balanceGeneral')?.[prevPeriod]?.[accountType]?.[accountName] || 0;
+  return (lastValue + prevValue) / 2;
 }
 
 function getBGData(period) {
@@ -31,12 +58,13 @@ function getBGData(period) {
   const cxC = activos['Cuentas por Cobrar'] || 0;
   const pasivosCorrientes = (pasivos['Cuentas por Pagar'] || 0) + (pasivos['Pasivo Corto Plazo'] || 0) +
     (pasivos['Provisiones'] || 0);
+  const cxP = pasivos['Cuentas por Pagar'] || 0;
   const totalActivos = Object.values(activos).reduce((s, v) => s + v, 0);
   const totalPasivos = Object.values(pasivos).reduce((s, v) => s + v, 0);
   const totalPatrimonio = Object.values(patrimonio).reduce((s, v) => s + v, 0);
 
   return {
-    activosCorrientes, inventario, cxC, pasivosCorrientes,
+    activosCorrientes, inventario, cxC, pasivosCorrientes, cxP,
     totalActivos, totalPasivos, totalPatrimonio,
     activosFijos: totalActivos - activosCorrientes
   };
@@ -87,18 +115,47 @@ function computeAV(period) {
 }
 
 function computeRazones(period) {
+  const periods = store.get('estados.periods') || [];
   const bg = getBGData(period);
   const er = getERData(period);
+  
   const RC = ratioCorriente(bg.activosCorrientes, bg.pasivosCorrientes);
   const RR = ratioRapido(bg.activosCorrientes, bg.inventario, bg.pasivosCorrientes);
-  const invProm = bg.inventario;
-  const RotInv = rotacionInventario(er.costoVentas, invProm);
-  const RotCxC = rotacionCxC(er.ventas, bg.cxC);
-  const PPC = plazoCobro(RotCxC);
-  const End = endeudamiento(bg.totalPasivos, bg.totalActivos);
-  const MN = margenNeto(er.utilidadNeta, er.ventas);
-  const ROA = roa(er.utilidadNeta, bg.totalActivos);
-  return { RC, RR, RotInv, RotCxC, PPC, endeudamiento: End, MN, ROA };
+  const CNT = capitalNetoTrabajo(bg.activosCorrientes, bg.pasivosCorrientes);
+  
+  const inventarioProm = getAccountAverage(periods, 'activos', 'Inventario');
+  const cxCprom = getAccountAverage(periods, 'activos', 'Cuentas por Cobrar');
+  const cxPprom = getAccountAverage(periods, 'pasivos', 'Cuentas por Pagar');
+  const activosFijosProm = bg.activosFijos;
+  const activosTotalesProm = bg.totalActivos;
+  const patrimonioProm = bg.totalPatrimonio;
+  
+  const RotInv = rotacionInventario(er.costoVentas, inventarioProm);
+  const EdadInv = edadInventario(RotInv);
+  const RotCxC = rotacionCxC(er.ventas, cxCprom);
+  const PPC = RotCxC === 0 ? 0 : 365 / RotCxC;
+  const RotCxP = rotacionCxP(er.costoVentas, cxPprom);
+  const PPP = periodoPromedioPago(RotCxP);
+  const RotAF = rotacionActivosFijos(er.ventas, activosFijosProm);
+  const RotAT = rotacionActivosTotales(er.ventas, activosTotalesProm);
+  const CCE = cicloConversionEfectivo(EdadInv, PPC, PPP);
+  
+  const endeudamientoTotal = endeudamiento(bg.totalPasivos, activosTotalesProm);
+  const deudaPatrimonio = razonDeudaPatrimonio(bg.totalPasivos, patrimonioProm);
+  const coberturaInt = coberturaIntereses(er.UAII, er.gastosIntereses);
+  
+  const margenBr = margenBruto(er.utilidadBruta, er.ventas);
+  const margenOp = margenOperativo(er.utilidadOperativa, er.ventas);
+  const margenNt = margenNeto(er.utilidadNeta, er.ventas);
+  const ROE = roe(er.utilidadNeta, patrimonioProm);
+  const ROA = roa(er.utilidadNeta, activosTotalesProm);
+  
+  return { 
+    RC, RR, CNT,
+    RotInv, EdadInv, RotCxC, PPC, RotCxP, PPP, RotAF, RotAT, CCE,
+    endeudamiento: endeudamientoTotal, deudaPatrimonio, coberturaInt,
+    margenBruto: margenBr, margenOperativo: margenOp, margenNeto: margenNt, ROE, ROA
+  };
 }
 
 function computeCNTCNO(period) {
@@ -145,16 +202,37 @@ function computeDuPont(period) {
 function interpretacion(razones) {
   const hallazgos = [];
   if (razones.RC < 1) {
-    hallazgos.push({ hallazgo: 'Ratio Corriente menor a 1', causa: 'Posible dificultad para cubrir obligaciones a corto plazo', riesgo: 'Riesgo de liquidez', accion: 'Evaluar conversión de inventarios y cobranza' });
+    hallazgos.push({ hallazgo: 'Razón Corriente menor a 1', causa: 'Posible dificultad para cubrir obligaciones a corto plazo', riesgo: 'Riesgo de liquidez', accion: 'Evaluar conversión de inventarios y cobranza' });
+  }
+  if (razones.RR < 0.5) {
+    hallazgos.push({ hallazgo: 'Prueba Ácida baja', causa: 'Dependencia significativa de inventarios para cubrir obligaciones', riesgo: 'Riesgo de liquidez inmediata', accion: 'Reducir niveles de inventario o aumentar activos líquidos' });
   }
   if (razones.endeudamiento > 0.6) {
     hallazgos.push({ hallazgo: 'Alto nivel de endeudamiento', causa: 'Dependencia significativa de financiamiento ajeno', riesgo: 'Riesgo financiero elevado', accion: 'Revisar estructura de capital y planes de reducción de deuda' });
   }
-  if (razones.MN < 0.05) {
+  if (razones.deudaPatrimonio > 1) {
+    hallazgos.push({ hallazgo: 'Deuda superior al patrimonio', causa: 'La empresa está financiada principalmente con deuda', riesgo: 'Riesgo de insolvencia', accion: 'Evaluar planes de capitalización o reducción de deuda' });
+  }
+  if (razones.coberturaInt < 2) {
+    hallazgos.push({ hallazgo: 'Cobertura de intereses baja', causa: 'La utilidad operativa no cubre holgadamente los gastos financieros', riesgo: 'Riesgo de incumplimiento de obligaciones financieras', accion: 'Aumentar utilidad operativa o renegociar condiciones de deuda' });
+  }
+  if (razones.margenBruto < 0.3) {
+    hallazgos.push({ hallazgo: 'Margen bruto bajo', causa: 'Costo de ventas elevado respecto a ventas', riesgo: 'Rentabilidad comprometida desde la producción', accion: 'Revisar costos de producción y proveedores' });
+  }
+  if (razones.margenOperativo < 0.1) {
+    hallazgos.push({ hallazgo: 'Margen operativo bajo', causa: 'Gastos operativos elevados', riesgo: 'Dificultad para cubrir gastos financieros', accion: 'Optimizar gastos de administración y ventas' });
+  }
+  if (razones.margenNeto < 0.05) {
     hallazgos.push({ hallazgo: 'Margen neto bajo', causa: 'Costos o gastos elevados respecto a ventas', riesgo: 'Rentabilidad comprometida', accion: 'Optimizar costos operativos y revisar precios de venta' });
   }
   if (razones.ROA < 0.05) {
     hallazgos.push({ hallazgo: 'ROA bajo', causa: 'Baja eficiencia en el uso de activos para generar utilidades', riesgo: 'Subutilización de recursos', accion: 'Evaluar activos improductivos y planes de inversión' });
+  }
+  if (razones.ROE < 0.1) {
+    hallazgos.push({ hallazgo: 'ROE bajo', causa: 'Baja rentabilidad sobre el patrimonio invertido', riesgo: 'Rendimiento insuficiente para accionistas', accion: 'Mejorar eficiencia operativa y estructura de capital' });
+  }
+  if (razones.CCE > 60) {
+    hallazgos.push({ hallazgo: 'Ciclo de conversión de efectivo largo', causa: 'La empresa tarda demasiado en convertir inventarios en efectivo', riesgo: 'Problemas de liquidez operativa', accion: 'Optimizar gestión de inventarios, cobranza y pagos' });
   }
   if (hallazgos.length === 0) {
     hallazgos.push({ hallazgo: 'Indicadores dentro de rangos aceptables', causa: 'Situación financiera estable', riesgo: 'Riesgo controlado', accion: 'Mantener monitoreo periódico' });
@@ -198,16 +276,29 @@ function renderAVSection(period) {
 function renderRazonesSection(period) {
   const r = computeRazones(period);
   const items = [
-    ['Liquidez', ''],
-    ['Ratio Corriente', formatNumber(r.RC), r.RC >= 1 ? 'badge-success' : 'badge-danger'],
-    ['Ratio Rápido', formatNumber(r.RR), r.RR >= 0.5 ? 'badge-success' : 'badge-warning'],
-    ['Actividad', ''],
-    ['Rotación Inventario', formatNumber(r.RotInv), 'badge-info'],
-    ['Rotación CxC', formatNumber(r.RotCxC), 'badge-info'],
-    ['Plazo Cobro (días)', formatNumber(r.PPC, 0), 'badge-info'],
-    ['Endeudamiento', formatPercent(r.endeudamiento), r.endeudamiento <= 0.6 ? 'badge-success' : 'badge-warning'],
-    ['Rentabilidad', ''],
-    ['Margen Neto', formatPercent(r.MN), r.MN >= 0.05 ? 'badge-success' : 'badge-warning'],
+    ['Razones de Liquidez', ''],
+    ['Razón Corriente', formatNumber(r.RC), r.RC >= 1 ? 'badge-success' : 'badge-danger'],
+    ['Prueba Ácida', formatNumber(r.RR), r.RR >= 0.5 ? 'badge-success' : 'badge-warning'],
+    ['Capital de Trabajo Neto', formatCurrency(r.CNT), r.CNT >= 0 ? 'badge-success' : 'badge-danger'],
+    ['Razones de Actividad', ''],
+    ['Rotación de Inventarios', formatNumber(r.RotInv), 'badge-info'],
+    ['Edad del Inventario (días)', formatNumber(r.EdadInv, 0), 'badge-info'],
+    ['Rotación de Cuentas por Cobrar', formatNumber(r.RotCxC), 'badge-info'],
+    ['Período Promedio de Cobro (días)', formatNumber(r.PPC, 0), 'badge-info'],
+    ['Rotación de Cuentas por Pagar', formatNumber(r.RotCxP), 'badge-info'],
+    ['Período Promedio de Pago (días)', formatNumber(r.PPP, 0), 'badge-info'],
+    ['Rotación de Activos Fijos', formatNumber(r.RotAF), 'badge-info'],
+    ['Rotación de Activos Totales', formatNumber(r.RotAT), 'badge-info'],
+    ['Ciclo de Conversión de Efectivo (días)', formatNumber(r.CCE, 0), r.CCE <= 30 ? 'badge-success' : r.CCE <= 60 ? 'badge-warning' : 'badge-danger'],
+    ['Razones de Endeudamiento', ''],
+    ['Razón de Deuda Total', formatPercent(r.endeudamiento), r.endeudamiento <= 0.6 ? 'badge-success' : 'badge-warning'],
+    ['Razón Deuda-Patrimonio', formatNumber(r.deudaPatrimonio), r.deudaPatrimonio <= 1 ? 'badge-success' : 'badge-warning'],
+    ['Cobertura de Intereses', formatNumber(r.coberturaInt), r.coberturaInt >= 2 ? 'badge-success' : 'badge-warning'],
+    ['Razones de Rentabilidad', ''],
+    ['Margen Bruto', formatPercent(r.margenBruto), r.margenBruto >= 0.3 ? 'badge-success' : 'badge-warning'],
+    ['Margen Operativo', formatPercent(r.margenOperativo), r.margenOperativo >= 0.1 ? 'badge-success' : 'badge-warning'],
+    ['Margen Neto', formatPercent(r.margenNeto), r.margenNeto >= 0.05 ? 'badge-success' : 'badge-warning'],
+    ['ROE', formatPercent(r.ROE), r.ROE >= 0.1 ? 'badge-success' : 'badge-warning'],
     ['ROA', formatPercent(r.ROA), r.ROA >= 0.05 ? 'badge-success' : 'badge-warning']
   ];
   return `<div class="kpi-grid">${items.map(([label, value, badge]) => {
