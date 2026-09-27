@@ -17,6 +17,13 @@ Todos los cambios notables en GFO Toolkit.
 ### Módulo 3: Análisis Financiero
 - Nuevas razones: rotación de activos fijos, rotación de capital de trabajo y solvencia (Activos ÷ Pasivos).
 - Las razones extendidas y los totales se calculan con el motor compartido, por lo que cuentas importadas con nombres propios se suman correctamente.
+- Integración de la rama de razones: rotación de cuentas por pagar (reemplaza a la "rotación de pasivos"), edad del inventario y grupo "Endeudamiento y Cobertura" en la pestaña Razones.
+- Nuevos umbrales y hallazgos de interpretación: prueba ácida, deuda/patrimonio, cobertura de intereses, margen bruto, margen operativo, ROE y ciclo de conversión. Las razones N/D no generan hallazgos ni insignias.
+- Plazos de cobro y pago, edad del inventario y ciclo de conversión con un año de 365 días (`DIAS_ANIO`); antes se usaban 360.
+- Una sola función por concepto en `calculate.js`: se eliminaron 5 funciones repetidas que impedían cargar la app y 4 equivalentes con otro nombre.
+
+### Módulo 5: Mercados e Instituciones Financieras
+- La pregunta del quiz sobre los días del PPC da como correcta 365, igual que el cálculo.
 
 ### Módulo 6: Reportes e Integración
 - El dashboard y el CSV dejan de usar nombres de cuenta fijos: consumen el mismo motor normalizado que Análisis.
@@ -26,11 +33,20 @@ Todos los cambios notables en GFO Toolkit.
 - Mercados: el quiz no persistía (`store` no estaba importado en `mercados/index.js`).
 - Análisis: los shells `ah.js`, `av.js`, `razones.js`, `dupont.js`, `cnt-cno.js`, `eoaf.js` y `efe.js` reexportaban funciones que `index.js` no exportaba; ahora exponen `computeAH`, `computeAV`, `computeRazones`, `computeDuPont`, `computeCNTCNO`, `computeEOAF` y `computeEFE`, con prueba de guardia.
 - Lint: se corrigieron 5 errores (comillas, variable no definida y escape innecesario).
+- Análisis: la cobertura de intereses siempre salía N/D porque los intereses no llegaban al cálculo.
 
 ### Pruebas
 - Nuevos archivos: `tests/unit/estados-import.test.js`, `tests/unit/estados-calculations.test.js`, `tests/unit/estados-acceptance.test.js`, `tests/unit/razones-adicionales.test.js`, `tests/unit/analisis-reexports.test.js`.
-- Suite total: 128 pruebas en verde; `npm run lint` sin errores.
+- `tests/unit/carga-modulos.test.js` importa la app y cada archivo de `js/`; falla si una función se declara dos veces o si un import apunta a un nombre inexistente.
+- `tests/unit/razones-unificadas.test.js` y `tests/unit/analisis-razones.test.js`: razones unificadas, nombres reemplazados, cobertura de intereses y plazos de 365 días.
+- Suite total: 142 pruebas en verde; `npm run lint` sin errores.
 - Muestras para probar la importación en el navegador: `scripts/sample-estados.json` y `scripts/sample-estados.csv` (dos periodos, balance equilibrado).
+
+### Documentación y trabajo en equipo
+- `AGENTS.md` con las reglas que siguen las IAs del equipo; `CLAUDE.md` y `GEMINI.md` lo importan.
+- `docs/contexto/` (arquitectura y dominio financiero) y `docs/reglas/` (flujo de trabajo, código, y pruebas y documentación).
+- Plantilla de Pull Request en `.github/` y planificación con una carpeta por feature en `docs/planificacion/`.
+- `docs/api.md` documenta las razones agregadas, `DIAS_ANIO`, `saldoPromedio`, `variacion` y `escapeHTML`.
 
 ---
 
