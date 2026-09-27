@@ -67,6 +67,17 @@ export const store = {
     this.save();
   },
 
+  // Publish a complete module only after durable storage succeeds. Unlike the
+  // legacy set(), a quota/access error propagates and leaves memory unchanged.
+  setPersisted(key, value) {
+    if (!Object.hasOwn(defaultData, key)) throw new Error('Módulo de datos inválido');
+    if (!this._data) this.load();
+    const next = { ...this._data, [key]: structuredClone(value) };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    this._data = next;
+    this._notify();
+  },
+
   getAll() {
     if (!this._data) this.load();
     return JSON.parse(JSON.stringify(this._data));

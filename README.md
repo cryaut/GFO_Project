@@ -30,12 +30,14 @@ Toda la aplicación funciona 100% en el navegador, sin necesidad de servidores, 
 - Estado de Resultados multiperiodo
 - Flujo de Efectivo (método indirecto)
 - Conexión entre estados: utilidad → patrimonio, efectivo → BG
+- Importación de estados externos: JSON, CSV/TSV, Excel (.xlsx/.xls) y pegado directo desde Excel, con plantilla CSV descargable
+- Edición manual de periodos (alta, renombrado, reordenado, baja) y de cuentas personalizadas con su clasificación
 - Carga de demo con datos de MUNO MODA S.A.
 
 ### Módulo 3: Análisis Financiero
 - Análisis Horizontal (AH): variaciones absolutas y relativas
 - Análisis Vertical (AV): porcentajes sobre total activo o ventas
-- Razones financieras: liquidez (RC, RR), actividad (rotación, PPC), endeudamiento, rentabilidad (MN, ROA)
+- Razones financieras completas: liquidez (RC, RR, prueba defensiva), actividad (rotaciones de inventario, CxC, activos, activos fijos, pasivos y capital de trabajo; PPC, PPP y ciclo de conversión), endeudamiento/solvencia (endeudamiento, solvencia, deuda/patrimonio, apalancamiento, cobertura de intereses) y rentabilidad (margen bruto, operativo y neto, ROA, ROE)
 - Capital Neto de Trabajo (CNT) y Operativo (CNO)
 - EOAF: Origen y Aplicación de Fondos con reglas automáticas
 - EFE por método indirecto
@@ -61,7 +63,7 @@ Toda la aplicación funciona 100% en el navegador, sin necesidad de servidores, 
 - Exportar datos completos a JSON
 - Exportar tablas a CSV
 - Vista previa HTML del reporte
-- Importar datos desde JSON exportado
+- Importar datos desde JSON exportado o desde CSV/Excel reimportable
 - Dashboard resumen con KPIs de todos los módulos
 - Almacenamiento local (localStorage)
 

@@ -1,3 +1,5 @@
+import store from '../../store.js';
+
 export const glosario = [
   { termino: 'Mercado', definicion: 'Lugar físico o virtual donde se encuentran compradores y vendedores para intercambiar bienes, servicios o instrumentos financieros.' },
   { termino: 'Bono', definicion: 'Instrumento de deuda mediante el cual una entidad se compromete a pagar el capital invertido más intereses en un plazo determinado.' },
@@ -176,7 +178,6 @@ function renderQuiz(page) {
       store.set('mercados.quizScore', correctas);
       return;
     }
-
     const q = quizPreguntas[quizState.actual];
     el.innerHTML = `
       <p class="text-muted mb-4">Pregunta ${quizState.actual + 1} de ${quizPreguntas.length}</p>

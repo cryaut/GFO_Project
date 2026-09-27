@@ -1,0 +1,19 @@
+Estado,Grupo,Cuenta,Clasificacion,2023,2024
+Balance,Activos,Efectivo,efectivo,"C$ 45,000.00","52,000"
+Balance,Activos,Cuentas por Cobrar,cxC,120000,135000
+Balance,Activos,Inventario,inventario,180000,195000
+Balance,Activos,Otros Activos Corrientes,activosCorrientesOtros,25000,30000
+Balance,Activos,Edificios,activosFijos,200000,200000
+Balance,Activos,Depreciacion Acumulada,depreciacionAcumulada,(98525),(116475)
+Balance,Pasivos,Cuentas por Pagar,cuentasPorPagar,85000,92000
+Balance,Pasivos,Pasivo Corto Plazo,pasivoCortoPlazo,60000,65000
+Balance,Pasivos,Provisiones,provisiones,15000,18000
+Balance,Pasivos,Pasivo Largo Plazo,pasivoLargoPlazo,80000,75000
+Balance,Patrimonio,Capital Social,patrimonio,200000,200000
+Balance,Patrimonio,Utilidades Acumuladas,patrimonio,31475,45525
+Resultados,,Ventas,ventas,850000,920000
+Resultados,,Costo de Ventas,costoVentas,510000,545000
+Resultados,,Gastos de Administracion,gastosAdmin,120000,130000
+Resultados,,Gastos de Ventas,gastosVentas,85000,90000
+Resultados,,Otros Ingresos,otrosIngresos,15000,18000
+Resultados,,Otros Gastos,otrosGastos,10000,12000

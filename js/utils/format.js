@@ -26,7 +26,7 @@ export function formatPercentRaw(value, decimals = 2) {
 export function parseNumber(str) {
   if (typeof str === 'number') return str;
   if (!str) return 0;
-  const cleaned = String(str).replace(/[^0-9.\-]/g, '');
+  const cleaned = String(str).replace(/[^-0-9.]/g, '');
   const num = parseFloat(cleaned);
   return isNaN(num) ? 0 : num;
 }

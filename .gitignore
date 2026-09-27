@@ -1,5 +1,11 @@
 node_modules/
 package-lock.json
+.env
 *.log
 .DS_Store
 Thumbs.db
+
+# Local tool state: OpenCode DB/logs/snapshots and Graphify analysis output.
+# They can contain credentials or machine-specific data and must never be published.
+.opencode-data/
+graphify-out/
