@@ -148,6 +148,8 @@ npx vercel --prod
 
 ## Estructura de Archivos
 
+> Resumen general. La estructura detallada y al día está en [`docs/contexto/arquitectura.md`](docs/contexto/arquitectura.md).
+
 ```
 gfo-toolkit/
 ├── index.html                  → Entry point + router hash-based
@@ -181,6 +183,17 @@ gfo-toolkit/
     ├── unit/                   → Tests unitarios por módulo
     └── integration/            → Tests de integración
 ```
+
+---
+
+## Colaborar
+
+El proyecto se desarrolla en equipo y con asistentes de IA. Antes de empezar, lee:
+
+- [`AGENTS.md`](AGENTS.md): reglas para las personas y para sus IAs (Kiro, Claude Code, Cursor, Copilot, Codex, Gemini y opencode).
+- [`docs/reglas/flujo-de-trabajo.md`](docs/reglas/flujo-de-trabajo.md): ramas, commits, Pull Requests y conflictos.
+- [`docs/contexto/`](docs/contexto/): arquitectura y dominio financiero.
+- [`docs/planificacion/`](docs/planificacion/): plan y estado de cada feature.
 
 ---
 
