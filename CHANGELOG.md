@@ -44,6 +44,7 @@ Todos los cambios notables en GFO Toolkit.
 
 ### Documentación y trabajo en equipo
 - `AGENTS.md` con las reglas que siguen las IAs del equipo; `CLAUDE.md` y `GEMINI.md` lo importan.
+- Una IA puede hacer el merge de un PR si se lo piden y otra persona del equipo ya lo aprobó (`docs/reglas/flujo-de-trabajo.md`).
 - `docs/contexto/` (arquitectura y dominio financiero) y `docs/reglas/` (flujo de trabajo, código, y pruebas y documentación).
 - Plantilla de Pull Request en `.github/` y planificación con una carpeta por feature en `docs/planificacion/`.
 - `docs/api.md` documenta las razones agregadas, `DIAS_ANIO`, `saldoPromedio`, `variacion` y `escapeHTML`.

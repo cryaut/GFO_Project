@@ -77,4 +77,4 @@ Lee solo lo que la tarea necesita.
 - [ ] `CHANGELOG.md` actualizado en "[Sin publicar]"; `docs/api.md` si agregaste o cambiaste funciones públicas.
 - [ ] Ficha de la feature actualizada: qué se hizo, qué falta y qué se decidió.
 - [ ] Commits con el formato `tipo: descripción` y archivos agregados por nombre (nunca `git add .`).
-- [ ] PR hacia `main` con la plantilla completa. El agente no hace merge: revisa e integra otra persona del equipo.
+- [ ] PR hacia `main` con la plantilla completa. Lo aprueba otra persona del equipo, nunca el autor ni una IA. El agente solo hace el merge si se lo piden y se cumplen las condiciones de "Integrar con una IA" en `docs/reglas/flujo-de-trabajo.md`.

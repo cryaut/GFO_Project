@@ -3,7 +3,7 @@
 - **Estado**: En revisión (PR en borrador de `core` hacia `main`)
 - **Responsable**: Carlos
 - **Rama**: `core`
-- **Última actualización**: 2026-09-26
+- **Última actualización**: 2026-09-27
 
 ## Objetivo
 
@@ -33,6 +33,7 @@ Unir en una rama de integración el trabajo de Cris (`fix/estados-import-razones
 | Insignia del ciclo de conversión | Dos niveles (OK hasta 60 días, Revisión después) en lugar de tres | Igual que el resto de las insignias |
 | Guías para IAs | Un solo `AGENTS.md`; `CLAUDE.md` y `GEMINI.md` solo lo importan | Una fuente de reglas para todas las herramientas |
 | Método de integración recomendado | "Create a merge commit" | Conserva los commits de Cris y de Henry con su autor |
+| Merge por IA | Permitido si quien usa la IA lo pide y otra persona del equipo ya aprobó el PR | Agiliza la integración sin quitar la revisión humana, que además exige la protección de `main` |
 
 ## Resultados verificados
 

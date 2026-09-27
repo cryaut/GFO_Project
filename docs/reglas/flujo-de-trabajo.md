@@ -29,9 +29,19 @@ Cómo trabajar en paralelo sin pisarnos. Aplica a las personas y a sus IAs por i
 1. Abre el PR como borrador (draft) apenas tengas algo que mostrar. Así el equipo ve qué archivos estás tocando.
 2. Completa la plantilla (`.github/pull_request_template.md`).
 3. Antes de marcarlo como listo: `git merge origin/main`, `npm test` y `npm run lint`.
-4. Lo revisa otra persona del equipo. El autor no aprueba su propio PR, y una IA no reemplaza la revisión.
-5. Se integra con **Create a merge commit**, que conserva cada commit con su autor y muestra quién hizo qué. No uses squash ni rebase si el PR tiene commits de varias personas.
+4. Lo revisa otra persona del equipo. El autor no aprueba su propio PR, y una IA no reemplaza la revisión: puede revisar como apoyo, pero la aprobación la da una persona.
+5. Se integra con **Create a merge commit**, que conserva cada commit con su autor y muestra quién hizo qué. No uses squash ni rebase si el PR tiene commits de varias personas. El merge lo hace una persona del equipo o una IA, con las condiciones de "Integrar con una IA".
 6. Después de integrar, borra la rama.
+
+## Integrar con una IA
+
+Una IA puede hacer el merge de un PR con la cuenta de la persona que la usa. Antes de integrarlo comprueba cada condición; si una no se cumple, se detiene y avisa:
+
+- La persona se lo pidió para ese PR.
+- El PR ya no es borrador y lo aprobó otra persona del equipo. No cuenta la aprobación del autor ni la de una IA.
+- GitHub no marca conflictos, y `npm test` y `npm run lint` pasan en la rama del PR.
+- Usa "Create a merge commit" (`gh pr merge <número> --merge`), como en el punto 5.
+- Nunca usa `--admin` ni cambia la protección de `main` para esquivar un bloqueo.
 
 ## Conflictos
 
