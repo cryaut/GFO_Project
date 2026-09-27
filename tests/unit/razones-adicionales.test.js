@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  pruebaDefensiva, rotacionActivos, rotacionPasivos, plazoPago,
+  pruebaDefensiva, rotacionActivos, rotacionCxP, plazoPago,
   cicloConversion, coberturaIntereses, deudaPatrimonio, apalancamiento,
   margenBruto, margenOperativo, roe,
   rotacionActivosFijos, rotacionCapitalTrabajo, solvencia
@@ -16,7 +16,7 @@ describe('razones adicionales', () => {
 
   it('rotaciones, plazos y ciclo de conversión', () => {
     expect(rotacionActivos(850000, 400000)).toBeCloseTo(2.125, 6);
-    expect(rotacionPasivos(510000, 85000)).toBe(6);
+    expect(rotacionCxP(510000, 85000)).toBe(6);
     expect(plazoPago(6)).toBe(60);
     // PPC 36 días + PPM 60 días − PPO 50 días = 46
     expect(cicloConversion(36, 6, 7.2)).toBeCloseTo(36 + 60 - 360 / 7.2, 6);
@@ -37,7 +37,7 @@ describe('razones adicionales', () => {
   it('devuelven N/D (null) cuando el denominador es 0', () => {
     expect(pruebaDefensiva(100, 0)).toBeNull();
     expect(rotacionActivos(100, 0)).toBeNull();
-    expect(rotacionPasivos(100, 0)).toBeNull();
+    expect(rotacionCxP(100, 0)).toBeNull();
     expect(plazoPago(0)).toBeNull();
     expect(cicloConversion(30, 0, 5)).toBeNull();
     expect(coberturaIntereses(500, 0)).toBeNull();

@@ -114,20 +114,27 @@ export function rotacionActivos(ventas, activoTotalProm) {
   return ventas / activoTotalProm;
 }
 
-export function rotacionPasivos(costoVentas, pasivosCorrientesProm) {
-  if (!pasivosCorrientesProm) return null;
-  return costoVentas / pasivosCorrientesProm;
+// Rotación de cuentas por pagar: costo de ventas (aproxima las compras) / CxP promedio.
+export function rotacionCxP(costoVentas, cxPprom) {
+  if (!cxPprom) return null;
+  return costoVentas / cxPprom;
 }
 
-export function plazoPago(rotPasivos) {
-  if (!rotPasivos) return null;
-  return 360 / rotPasivos;
+export function plazoPago(rotCxP) {
+  if (!rotCxP) return null;
+  return 360 / rotCxP;
 }
 
-export function cicloConversion(plazoCobroDias, rotInv, rotPas) {
-  if (!rotInv || !rotPas) return null;
-  const ppm = 360 / rotInv;
-  return plazoCobroDias + ppm - (360 / rotPas);
+// Edad del inventario (plazo promedio de inventario) en días.
+export function edadInventario(rotInv) {
+  if (!rotInv) return null;
+  return 360 / rotInv;
+}
+
+// Ciclo de conversión de efectivo = plazo de cobro + edad del inventario − plazo de pago.
+export function cicloConversion(plazoCobroDias, rotInv, rotCxP) {
+  if (!rotInv || !rotCxP) return null;
+  return plazoCobroDias + edadInventario(rotInv) - plazoPago(rotCxP);
 }
 
 export function coberturaIntereses(utilidadOperativa, intereses) {

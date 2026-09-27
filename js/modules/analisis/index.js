@@ -5,7 +5,7 @@ import {
   rotacionInventario, rotacionCxC, plazoCobro, endeudamiento,
   margenNeto, roa, dupont, capitalNetoTrabajo, capitalNetoOperativo,
   eoaf, efeIndirecto, saldoPromedio,
-  pruebaDefensiva, rotacionActivos, rotacionPasivos, plazoPago,
+  pruebaDefensiva, rotacionActivos, rotacionCxP, plazoPago, edadInventario,
   cicloConversion, coberturaIntereses, deudaPatrimonio, apalancamiento,
   margenBruto, margenOperativo, roe,
   rotacionActivosFijos, rotacionCapitalTrabajo, solvencia
@@ -18,7 +18,13 @@ export const UMBRALES = {
   ratioRapidoMin: 0.5,
   endeudamientoMax: 0.6,
   margenNetoMin: 0.05,
-  roaMin: 0.05
+  roaMin: 0.05,
+  deudaPatrimonioMax: 1,
+  coberturaInteresesMin: 2,
+  margenBrutoMin: 0.3,
+  margenOperativoMin: 0.1,
+  roeMin: 0.1,
+  cicloConversionMaxDias: 60
 };
 
 function getSavedStates() {
@@ -63,20 +69,25 @@ function getERData(period) {
       ventas: shared.ventas, costoVentas: shared.costoVentas,
       gastosAdmin: shared.gastosAdmin, gastosVentas: shared.gastosVentas,
       otrosIngresos: shared.otrosIngresos, otrosGastos: shared.otrosGastos,
+      intereses: shared.intereses, impuestos: shared.impuestos,
       utilidadNeta: shared.utilidadNeta
     };
   }
+  // Datos sin clasificación válida: lectura por nombres fijos.
   const er = store.get('estados.estadoResultados')?.[period] || {};
+  const ventas = er['Ventas'] || 0;
+  const costoVentas = er['Costo de Ventas'] || 0;
+  const gastosAdmin = er['Gastos de Administracion'] || 0;
+  const gastosVentas = er['Gastos de Ventas'] || 0;
+  const otrosIngresos = er['Otros Ingresos'] || 0;
+  const otrosGastos = er['Otros Gastos'] || 0;
+  const intereses = er['Gastos por Intereses'] || 0;
+  const impuestos = er['Impuestos'] || 0;
   return {
-    ventas: er['Ventas'] || 0,
-    costoVentas: er['Costo de Ventas'] || 0,
-    gastosAdmin: er['Gastos de Administracion'] || 0,
-    gastosVentas: er['Gastos de Ventas'] || 0,
-    otrosIngresos: er['Otros Ingresos'] || 0,
-    otrosGastos: er['Otros Gastos'] || 0,
-    utilidadNeta: (er['Ventas'] || 0) - (er['Costo de Ventas'] || 0) -
-      (er['Gastos de Administracion'] || 0) - (er['Gastos de Ventas'] || 0) +
-      (er['Otros Ingresos'] || 0) - (er['Otros Gastos'] || 0)
+    ventas, costoVentas, gastosAdmin, gastosVentas, otrosIngresos, otrosGastos,
+    intereses, impuestos,
+    utilidadNeta: ventas - costoVentas - gastosAdmin - gastosVentas +
+      otrosIngresos - otrosGastos - intereses - impuestos
   };
 }
 
@@ -197,16 +208,18 @@ export function computeRazones(period) {
   const End = endeudamiento(bg.totalPasivos, bg.totalActivos);
   const MN = margenNeto(er.utilidadNeta, er.ventas);
   const ROA = roa(er.utilidadNeta, activoProm);
-  const rotPas = rotacionPasivos(er.costoVentas, saldoPromedio(bgPrev?.cuentasPorPagar, bg.cuentasPorPagar));
+  const cxpProm = saldoPromedio(bgPrev?.cuentasPorPagar, bg.cuentasPorPagar);
+  const RotCxP = rotacionCxP(er.costoVentas, cxpProm);
   const utilidadOperativa = er.ventas - er.costoVentas - er.gastosAdmin - er.gastosVentas;
   const hayVentas = er.ventas !== 0 || er.costoVentas !== 0;
   const extra = {
     pruebaDefensiva: pruebaDefensiva(bg.efectivo, bg.pasivosCorrientes),
     rotacionActivos: rotacionActivos(er.ventas, activoProm),
-    rotacionPasivos: rotPas,
-    plazoPago: plazoPago(rotPas),
-    cicloConversion: cicloConversion(PPC, RotInv, rotPas),
-    coberturaIntereses: coberturaIntereses(utilidadOperativa, er.intereses ?? 0),
+    rotacionCxP: RotCxP,
+    plazoPago: plazoPago(RotCxP),
+    edadInventario: edadInventario(RotInv),
+    cicloConversion: cicloConversion(PPC, RotInv, RotCxP),
+    coberturaIntereses: coberturaIntereses(utilidadOperativa, er.intereses),
     deudaPatrimonio: deudaPatrimonio(bg.totalPasivos, bg.totalPatrimonio),
     apalancamiento: apalancamiento(activoProm, patrimonioProm),
     margenBruto: margenBruto(hayVentas ? er.ventas - er.costoVentas : 0, er.ventas),
@@ -232,10 +245,11 @@ export function computeRazones(period) {
       ROA: activoProm,
       pruebaDefensiva: bg.pasivosCorrientes,
       rotacionActivos: activoProm,
-      rotacionPasivos: saldoPromedio(bgPrev?.cuentasPorPagar, bg.cuentasPorPagar),
-      plazoPago: rotPas,
+      rotacionCxP: cxpProm,
+      plazoPago: RotCxP,
+      edadInventario: RotInv,
       cicloConversion: 1,
-      coberturaIntereses: er.intereses ?? 0,
+      coberturaIntereses: er.intereses,
       deudaPatrimonio: bg.totalPatrimonio,
       apalancamiento: patrimonioProm,
       margenBruto: er.ventas,
@@ -305,17 +319,40 @@ export function computeEFE(period) {
 function interpretacion(razones) {
   const hallazgos = [];
   const notaUmbral = 'Se recomienda analizar su evolución histórica y compararlo con el sector antes de concluir que existe un problema financiero.';
+  // Las razones N/D (null) no generan hallazgos: null < umbral sería true en JS.
+  const hayDato = v => typeof v === 'number' && Number.isFinite(v);
   if (razones.RC < UMBRALES.ratioCorrienteMin) {
     hallazgos.push({ hallazgo: `Ratio Corriente por debajo del umbral configurado (${UMBRALES.ratioCorrienteMin})`, causa: 'Posible dificultad para cubrir obligaciones a corto plazo', riesgo: 'Posible riesgo de liquidez', accion: notaUmbral + ' Evaluar conversión de inventarios y cobranza.' });
   }
+  if (razones.denominadores.RR !== 0 && razones.RR < UMBRALES.ratioRapidoMin) {
+    hallazgos.push({ hallazgo: `Prueba ácida por debajo del umbral configurado (${UMBRALES.ratioRapidoMin})`, causa: 'Dependencia significativa de los inventarios para cubrir obligaciones a corto plazo', riesgo: 'Posible riesgo de liquidez inmediata', accion: notaUmbral + ' Revisar niveles de inventario y activos líquidos.' });
+  }
   if (razones.endeudamiento > UMBRALES.endeudamientoMax) {
     hallazgos.push({ hallazgo: `Endeudamiento por encima del umbral configurado (${formatPercent(UMBRALES.endeudamientoMax)})`, causa: 'Dependencia significativa de financiamiento ajeno', riesgo: 'Posible riesgo financiero elevado', accion: notaUmbral + ' Revisar estructura de capital.' });
+  }
+  if (hayDato(razones.deudaPatrimonio) && razones.deudaPatrimonio > UMBRALES.deudaPatrimonioMax) {
+    hallazgos.push({ hallazgo: `Deuda / Patrimonio por encima del umbral configurado (${UMBRALES.deudaPatrimonioMax})`, causa: 'La empresa se financia principalmente con deuda', riesgo: 'Posible riesgo de insolvencia', accion: notaUmbral + ' Evaluar capitalización o reducción de deuda.' });
+  }
+  if (hayDato(razones.coberturaIntereses) && razones.coberturaIntereses < UMBRALES.coberturaInteresesMin) {
+    hallazgos.push({ hallazgo: `Cobertura de intereses por debajo del umbral configurado (${UMBRALES.coberturaInteresesMin}×)`, causa: 'La utilidad operativa no cubre con holgura los gastos financieros', riesgo: 'Posible riesgo de incumplir obligaciones financieras', accion: notaUmbral + ' Aumentar la utilidad operativa o renegociar condiciones de deuda.' });
+  }
+  if (hayDato(razones.margenBruto) && razones.margenBruto < UMBRALES.margenBrutoMin) {
+    hallazgos.push({ hallazgo: `Margen bruto por debajo del umbral configurado (${formatPercent(UMBRALES.margenBrutoMin)})`, causa: 'Costo de ventas elevado respecto a las ventas', riesgo: 'Rentabilidad comprometida desde el costo de ventas', accion: notaUmbral + ' Revisar costos de producción y proveedores.' });
+  }
+  if (hayDato(razones.margenOperativo) && razones.margenOperativo < UMBRALES.margenOperativoMin) {
+    hallazgos.push({ hallazgo: `Margen operativo por debajo del umbral configurado (${formatPercent(UMBRALES.margenOperativoMin)})`, causa: 'Gastos de administración y ventas elevados', riesgo: 'Posible dificultad para cubrir gastos financieros', accion: notaUmbral + ' Optimizar gastos de administración y ventas.' });
   }
   if (razones.MN < UMBRALES.margenNetoMin) {
     hallazgos.push({ hallazgo: `Margen neto por debajo del umbral configurado (${formatPercent(UMBRALES.margenNetoMin)})`, causa: 'Costos o gastos elevados respecto a ventas', riesgo: 'Rentabilidad posiblemente comprometida', accion: notaUmbral + ' Optimizar costos operativos y revisar precios.' });
   }
   if (razones.ROA < UMBRALES.roaMin) {
     hallazgos.push({ hallazgo: `ROA por debajo del umbral configurado (${formatPercent(UMBRALES.roaMin)})`, causa: 'Baja eficiencia en el uso de activos para generar utilidades', riesgo: 'Posible subutilización de recursos', accion: notaUmbral + ' Evaluar activos improductivos.' });
+  }
+  if (hayDato(razones.roe) && razones.roe < UMBRALES.roeMin) {
+    hallazgos.push({ hallazgo: `ROE por debajo del umbral configurado (${formatPercent(UMBRALES.roeMin)})`, causa: 'Baja rentabilidad sobre el patrimonio invertido', riesgo: 'Rendimiento posiblemente insuficiente para los accionistas', accion: notaUmbral + ' Relacionar con DuPont para ver si lo explica el margen, la rotación o el apalancamiento.' });
+  }
+  if (hayDato(razones.cicloConversion) && razones.cicloConversion > UMBRALES.cicloConversionMaxDias) {
+    hallazgos.push({ hallazgo: `Ciclo de conversión de efectivo mayor a ${UMBRALES.cicloConversionMaxDias} días`, causa: 'La empresa tarda en convertir inventarios y cuentas por cobrar en efectivo', riesgo: 'Posibles problemas de liquidez operativa', accion: notaUmbral + ' Revisar la gestión de inventarios, cobranza y pagos.' });
   }
   if (hallazgos.length === 0) {
     hallazgos.push({ hallazgo: 'Indicadores dentro de los umbrales configurados', causa: 'Situación financieramente estable según los parámetros actuales', riesgo: 'Riesgo controlado', accion: 'Los umbrales son referencias educativas: complementar con comparación sectorial y análisis histórico.' });
@@ -423,31 +460,35 @@ function renderRazonesSection(period) {
   const val = (v, ok, den, nombre, indicador) =>
     den === 0 ? msgDivisionCero(indicador, nombre) : v;
   const badge = (ok) => ok ? 'badge-success' : 'badge-warning';
+  // Las razones N/D (null) no se evalúan contra el umbral: se muestran sin insignia.
+  const badgeSiHay = (v, ok) => v == null ? 'badge-info' : badge(ok);
   const etiqueta = (b) => b === 'badge-success' ? 'OK' : 'Revisión';
   const items = [
     ['Liquidez', '', '', ''],
     ['Ratio Corriente', val(formatNumber(r.RC), r.RC >= UMBRALES.ratioCorrienteMin, d.RC, 'el pasivo corriente', 'la liquidez corriente'), badge(r.RC >= UMBRALES.ratioCorrienteMin)],
     ['Ratio Rápido', val(formatNumber(r.RR), r.RR >= UMBRALES.ratioRapidoMin, d.RR, 'el pasivo corriente', 'la prueba ácida'), badge(r.RR >= UMBRALES.ratioRapidoMin)],
+    ['Prueba Defensiva', r.pruebaDefensiva == null ? 'N/D' : formatNumber(r.pruebaDefensiva), 'badge-info'],
     ['Actividad', '', '', ''],
     [`Rotación Inventario${r.usaPromedios ? ' (inv. promedio)' : ''}`, val(formatNumber(r.RotInv), true, d.RotInv, 'el inventario', 'la rotación de inventario'), 'badge-info'],
+    ['Edad del Inventario (días)', r.edadInventario == null ? 'N/D' : formatNumber(r.edadInventario, 0), 'badge-info'],
     [`Rotación CxC${r.usaPromedios ? ' (CxC promedio)' : ''}`, val(formatNumber(r.RotCxC), true, d.RotCxC, 'las CxC', 'la rotación de CxC'), 'badge-info'],
     ['Plazo Cobro (días)', formatNumber(r.PPC, 0), 'badge-info'],
+    [`Rotación de Cuentas por Pagar${r.usaPromedios ? ' (CxP promedio)' : ''}`, r.rotacionCxP == null ? 'N/D' : formatNumber(r.rotacionCxP), 'badge-info'],
+    ['Plazo Pago (días)', r.plazoPago == null ? 'N/D' : formatNumber(r.plazoPago, 0), 'badge-info'],
+    ['Ciclo de Conversión (días)', r.cicloConversion == null ? 'N/D' : formatNumber(r.cicloConversion, 0), badgeSiHay(r.cicloConversion, r.cicloConversion <= UMBRALES.cicloConversionMaxDias)],
     [`Rotación Activos${r.usaPromedios ? ' (activo promedio)' : ''}`, r.rotacionActivos == null ? 'N/D' : formatNumber(r.rotacionActivos), 'badge-info'],
     ['Rotación Activos Fijos (Ventas / activo fijo neto)', r.rotacionActivosFijos == null ? 'N/D' : formatNumber(r.rotacionActivosFijos), 'badge-info'],
-    [`Rotación Pasivos${r.usaPromedios ? ' (promedio)' : ''}`, r.rotacionPasivos == null ? 'N/D' : formatNumber(r.rotacionPasivos), 'badge-info'],
-    ['Plazo Pago (días)', r.plazoPago == null ? 'N/D' : formatNumber(r.plazoPago, 0), 'badge-info'],
-    ['Ciclo de Conversión (días)', r.cicloConversion == null ? 'N/D' : formatNumber(r.cicloConversion, 0), 'badge-info'],
     ['Rotación Capital de Trabajo (Ventas / CNT)', r.rotacionCapitalTrabajo == null ? 'N/D' : formatNumber(r.rotacionCapitalTrabajo), 'badge-info'],
+    ['Endeudamiento y Cobertura', '', '', ''],
     ['Endeudamiento', val(formatPercent(r.endeudamiento), r.endeudamiento <= UMBRALES.endeudamientoMax, d.End, 'el activo total', 'el endeudamiento'), badge(r.endeudamiento <= UMBRALES.endeudamientoMax)],
-    ['Solvencia (Activos / Pasivos)', r.solvencia == null ? 'N/D' : formatNumber(r.solvencia), 'badge-info'],
-    ['Prueba Defensiva', r.pruebaDefensiva == null ? 'N/D' : formatNumber(r.pruebaDefensiva), 'badge-info'],
-    ['Deuda / Patrimonio', r.deudaPatrimonio == null ? 'N/D' : formatNumber(r.deudaPatrimonio), 'badge-info'],
+    ['Deuda / Patrimonio', r.deudaPatrimonio == null ? 'N/D' : formatNumber(r.deudaPatrimonio), badgeSiHay(r.deudaPatrimonio, r.deudaPatrimonio <= UMBRALES.deudaPatrimonioMax)],
     [`Apalancamiento${r.usaPromedios ? ' (promedio)' : ''}`, r.apalancamiento == null ? 'N/D' : formatNumber(r.apalancamiento), 'badge-info'],
-    ['Cobertura de Intereses', r.coberturaIntereses == null ? 'N/D' : `${formatNumber(r.coberturaIntereses)}×`, 'badge-info'],
+    ['Solvencia (Activos / Pasivos)', r.solvencia == null ? 'N/D' : formatNumber(r.solvencia), 'badge-info'],
+    ['Cobertura de Intereses', r.coberturaIntereses == null ? 'N/D' : `${formatNumber(r.coberturaIntereses)}×`, badgeSiHay(r.coberturaIntereses, r.coberturaIntereses >= UMBRALES.coberturaInteresesMin)],
     ['Rentabilidad', '', '', ''],
-    ['Margen Bruto', r.margenBruto == null ? 'N/D' : formatPercent(r.margenBruto), 'badge-info'],
-    ['Margen Operativo', r.margenOperativo == null ? 'N/D' : formatPercent(r.margenOperativo), 'badge-info'],
-    [`ROE${r.usaPromedios ? ' (patrimonio promedio)' : ''}`, r.roe == null ? 'N/D' : formatPercent(r.roe), 'badge-info'],
+    ['Margen Bruto', r.margenBruto == null ? 'N/D' : formatPercent(r.margenBruto), badgeSiHay(r.margenBruto, r.margenBruto >= UMBRALES.margenBrutoMin)],
+    ['Margen Operativo', r.margenOperativo == null ? 'N/D' : formatPercent(r.margenOperativo), badgeSiHay(r.margenOperativo, r.margenOperativo >= UMBRALES.margenOperativoMin)],
+    [`ROE${r.usaPromedios ? ' (patrimonio promedio)' : ''}`, r.roe == null ? 'N/D' : formatPercent(r.roe), badgeSiHay(r.roe, r.roe >= UMBRALES.roeMin)],
     ['Margen Neto', val(formatPercent(r.MN), r.MN >= UMBRALES.margenNetoMin, d.MN, 'las ventas', 'el margen neto'), badge(r.MN >= UMBRALES.margenNetoMin)],
     [`ROA${r.usaPromedios ? ' (activo promedio)' : ''}`, val(formatPercent(r.ROA), r.ROA >= UMBRALES.roaMin, d.ROA, 'el activo total', 'el ROA'), badge(r.ROA >= UMBRALES.roaMin)]
   ];

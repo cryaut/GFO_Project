@@ -183,7 +183,8 @@ it('Analysis shows extended ratios from imported custom accounts', async () => {
   initAnalisis();
   // Razones extendidas visibles en la pestaña Razones
   for (const etiqueta of ['Ciclo de Conversión', 'Prueba Defensiva', 'Deuda / Patrimonio',
-    'Apalancamiento', 'Cobertura de Intereses', 'Margen Bruto', 'ROE', 'Rotación Pasivos', 'Plazo Pago',
+    'Apalancamiento', 'Cobertura de Intereses', 'Margen Bruto', 'ROE', 'Rotación de Cuentas por Pagar',
+    'Plazo Pago', 'Edad del Inventario',
     'Rotación Activos Fijos', 'Rotación Capital de Trabajo', 'Solvencia']) {
     expect(page.innerHTML, etiqueta).toContain(etiqueta);
   }
