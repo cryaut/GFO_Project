@@ -8,15 +8,37 @@ Referencia completa de las funciones públicas de los módulos utilitarios.
 
 Fórmulas financieras puras. Todas las funciones reciben números y retornan números (o objetos con resultados). Ninguna depende de DOM ni de estado global.
 
+Cuando falta un dato o el denominador es 0, las funciones agregadas después de la versión 1.0 devuelven `null` (la interfaz muestra "N/D"). Las funciones originales devuelven 0 en ese caso. Los plazos en días usan `DIAS_ANIO = 365`. El catálogo resumido está en `docs/contexto/dominio-financiero.md`.
+
+### Constante y funciones base
+
+#### `DIAS_ANIO`
+Días del año para plazos, edades y ciclos: `365`. Úsala en lugar de escribir el número.
+
+#### `saldoPromedio(saldoInicial, saldoFinal)`
+Saldo promedio de un periodo, para rotaciones, ROA, ROE y DuPont.
+
+- **Parámetros**: `saldoInicial` (number) — saldo del periodo anterior; `saldoFinal` (number) — saldo del periodo actual
+- **Retorno**: `number` — si falta uno de los dos, devuelve el otro; si faltan ambos, 0
+- **Fórmula**: `(saldoInicial + saldoFinal) / 2`
+- **Ejemplo**: `saldoPromedio(10000, 20000)` → `15000`; `saldoPromedio(undefined, 20000)` → `20000`
+
+#### `variacion(valorFinal, valorInicial)`
+Variación absoluta entre dos saldos (usada en el EFE indirecto).
+
+- **Retorno**: `number`
+- **Fórmula**: `valorFinal - valorInicial`
+- **Ejemplo**: `variacion(25000, 20000)` → `5000`
+
 ### Funciones de Análisis Horizontal (AH)
 
 #### `ah(delta, valorT1)`
 Calcula el porcentaje de variación horizontal.
 
 - **Parámetros**: `delta` (number) — variación absoluta; `valorT1` (number) — valor del periodo anterior
-- **Retorno**: `number` — porcentaje de variación
+- **Retorno**: `number | null` — porcentaje de variación; `null` si `valorT1` es 0 o falta
 - **Fórmula**: `delta / |valorT1|`
-- **Ejemplo**: `ah(2000, 10000)` → `0.2` (20%)
+- **Ejemplo**: `ah(2000, 10000)` → `0.2` (20%); `ah(5, 0)` → `null`
 
 #### `ahDelta(valorT2, valorT1)`
 Calcula la variación absoluta entre dos periodos.
@@ -30,7 +52,7 @@ Calcula la variación absoluta entre dos periodos.
 Calcula la variación porcentual horizontal completa.
 
 - **Parámetros**: `valorT2` (number) — valor actual; `valorT1` (number) — valor anterior
-- **Retorno**: `number` — porcentaje decimal (ej: 0.20 = 20%)
+- **Retorno**: `number | null` — porcentaje decimal (ej: 0.20 = 20%); `null` si `valorT1` es 0
 - **Fórmula**: `(valorT2 - valorT1) / |valorT1|`
 - **Ejemplo**: `ahPctDelta(12000, 10000)` → `0.2`
 
@@ -87,8 +109,8 @@ Días promedio para cobrar.
 
 - **Parámetros**: `rotCxC` (number) — rotación de cuentas por cobrar
 - **Retorno**: `number` — días
-- **Fórmula**: `360 / RotCxC`
-- **Ejemplo**: `plazoCobro(8)` → `45` días
+- **Fórmula**: `DIAS_ANIO / RotCxC`, con `DIAS_ANIO = 365`
+- **Ejemplo**: `plazoCobro(8)` → `45.625` días
 
 #### `endeudamiento(pasivoTotal, totalActivo)`
 Nivel de endeudamiento sobre activos.
@@ -113,6 +135,117 @@ Retorno sobre activos totales.
 - **Retorno**: `number`
 - **Fórmula**: `UtilidadNeta / TotalActivo`
 - **Ejemplo**: `roa(12000, 200000)` → `0.06` (6%)
+
+---
+
+### Razones adicionales
+
+Todas devuelven `null` (N/D) si el denominador es 0 o falta.
+
+#### `pruebaDefensiva(efectivo, pasivosCorrientes)`
+Liquidez inmediata: cuánto del pasivo corriente cubre el efectivo.
+
+- **Retorno**: `number | null` — `null` si `pasivosCorrientes` es 0
+- **Fórmula**: `Efectivo / PC`
+- **Ejemplo**: `pruebaDefensiva(45000, 160000)` → `0.28125`
+
+#### `edadInventario(rotInv)`
+Días promedio que el inventario tarda en venderse.
+
+- **Parámetros**: `rotInv` (number) — rotación de inventario
+- **Retorno**: `number | null` — días
+- **Fórmula**: `DIAS_ANIO / RotInv`
+- **Ejemplo**: `edadInventario(6)` → `60.83` días
+
+#### `rotacionCxP(costoVentas, cxPprom)`
+Veces que se pagan las cuentas por pagar en el periodo. El costo de ventas aproxima las compras. Reemplaza a `rotacionPasivos`.
+
+- **Parámetros**: `costoVentas` (number); `cxPprom` (number) — cuentas por pagar promedio
+- **Retorno**: `number | null` — vueltas por periodo
+- **Fórmula**: `CostoVentas / CxPprom`
+- **Ejemplo**: `rotacionCxP(510000, 85000)` → `6`
+
+#### `plazoPago(rotCxP)`
+Días promedio para pagar a proveedores.
+
+- **Parámetros**: `rotCxP` (number) — rotación de cuentas por pagar
+- **Retorno**: `number | null` — días
+- **Fórmula**: `DIAS_ANIO / RotCxP`
+- **Ejemplo**: `plazoPago(6)` → `60.83` días
+
+#### `cicloConversion(plazoCobroDias, rotInv, rotCxP)`
+Ciclo de conversión de efectivo: días entre el pago a proveedores y el cobro a clientes.
+
+- **Parámetros**: `plazoCobroDias` (number) — plazo de cobro en días; `rotInv` (number); `rotCxP` (number)
+- **Retorno**: `number | null` — días; `null` si falta alguna rotación
+- **Fórmula**: `plazoCobroDias + edadInventario(rotInv) - plazoPago(rotCxP)`
+- **Ejemplo**: `cicloConversion(36.5, 4, 8)` → `82.125` días (36.5 + 91.25 − 45.625)
+
+#### `rotacionActivos(ventas, activoTotalProm)`
+Ventas generadas por cada unidad de activo total.
+
+- **Retorno**: `number | null`
+- **Fórmula**: `Ventas / ActivoTotalProm`
+- **Ejemplo**: `rotacionActivos(850000, 400000)` → `2.125`
+
+#### `rotacionActivosFijos(ventas, activosFijosNetos)`
+Ventas generadas por cada unidad de activo fijo neto.
+
+- **Retorno**: `number | null`
+- **Fórmula**: `Ventas / ActivoFijoNeto`
+- **Ejemplo**: `rotacionActivosFijos(850000, 400000)` → `2.125`
+
+#### `rotacionCapitalTrabajo(ventas, capitalNetoTrabajoValor)`
+Ventas generadas por cada unidad de capital neto de trabajo.
+
+- **Retorno**: `number | null`
+- **Fórmula**: `Ventas / CNT`
+- **Ejemplo**: `rotacionCapitalTrabajo(850000, 170000)` → `5`
+
+#### `deudaPatrimonio(pasivoTotal, patrimonio)`
+Deuda por cada unidad de patrimonio.
+
+- **Retorno**: `number | null`
+- **Fórmula**: `PasivoTotal / Patrimonio`
+- **Ejemplo**: `deudaPatrimonio(300000, 200000)` → `1.5`
+
+#### `apalancamiento(activoTotalProm, patrimonioProm)`
+Multiplicador de capital (el EM de DuPont). No es el GAO, el GAF ni el GAT: esos grados usarán funciones con nombre propio.
+
+- **Retorno**: `number | null`
+- **Fórmula**: `ActivoTotalProm / PatrimonioProm`
+- **Ejemplo**: `apalancamiento(400000, 200000)` → `2`
+
+#### `solvencia(activoTotal, pasivoTotal)`
+Activos por cada unidad de pasivo.
+
+- **Retorno**: `number | null`
+- **Fórmula**: `ActivoTotal / PasivoTotal`
+- **Ejemplo**: `solvencia(400000, 160000)` → `2.5`
+
+#### `coberturaIntereses(utilidadOperativa, intereses)`
+Veces que la utilidad operativa (UAII) cubre los intereses.
+
+- **Retorno**: `number | null` — `null` si no hay intereses
+- **Fórmula**: `UAII / Intereses`
+- **Ejemplo**: `coberturaIntereses(500, 100)` → `5`
+
+#### `margenBruto(utilidadBruta, ventas)`
+- **Retorno**: `number | null` — proporción decimal
+- **Fórmula**: `UtilidadBruta / Ventas`
+- **Ejemplo**: `margenBruto(200, 500)` → `0.4` (40%)
+
+#### `margenOperativo(utilidadBruta, gastosAdmin, gastosVentas, ventas)`
+- **Retorno**: `number | null` — proporción decimal
+- **Fórmula**: `(UtilidadBruta - GastosAdmin - GastosVentas) / Ventas`
+- **Ejemplo**: `margenOperativo(200, 40, 30, 500)` → `0.26` (26%)
+
+#### `roe(utilidadNeta, patrimonioProm)`
+Retorno sobre el patrimonio.
+
+- **Retorno**: `number | null`
+- **Fórmula**: `UtilidadNeta / PatrimonioProm`
+- **Ejemplo**: `roe(50000, 200000)` → `0.25` (25%)
 
 ---
 
@@ -262,6 +395,17 @@ Convierte una cadena con formato a número limpio.
 - **Parámetros**: `str` (string | number) — entrada a parsear
 - **Retorno**: `number` — valor numérico limpio, o 0 si no es válido
 - **Ejemplo**: `parseNumber("C$ 12,000.50")` → `12000.5`
+
+---
+
+## html.js
+
+#### `escapeHTML(value)`
+Escapa `&`, `<`, `>`, `"` y `'` para insertar texto de forma segura con `innerHTML`. Úsala con todo texto que venga del usuario o de un archivo importado.
+
+- **Parámetros**: `value` (any) — `null` y `undefined` se convierten en cadena vacía
+- **Retorno**: `string`
+- **Ejemplo**: `escapeHTML('<b>Caja & Bancos</b>')` → `"&lt;b&gt;Caja &amp; Bancos&lt;/b&gt;"`
 
 ---
 

@@ -30,12 +30,14 @@ Toda la aplicación funciona 100% en el navegador, sin necesidad de servidores, 
 - Estado de Resultados multiperiodo
 - Flujo de Efectivo (método indirecto)
 - Conexión entre estados: utilidad → patrimonio, efectivo → BG
+- Importación de estados externos: JSON, CSV/TSV, Excel (.xlsx/.xls) y pegado directo desde Excel, con plantilla CSV descargable
+- Edición manual de periodos (alta, renombrado, reordenado, baja) y de cuentas personalizadas con su clasificación
 - Carga de demo con datos de MUNO MODA S.A.
 
 ### Módulo 3: Análisis Financiero
 - Análisis Horizontal (AH): variaciones absolutas y relativas
 - Análisis Vertical (AV): porcentajes sobre total activo o ventas
-- Razones financieras: liquidez (RC, RR), actividad (rotación, PPC), endeudamiento, rentabilidad (MN, ROA)
+- Razones financieras completas: liquidez (RC, RR, prueba defensiva), actividad (rotaciones de inventario, CxC, CxP, activos, activos fijos y capital de trabajo; edad del inventario, PPC, PPP y ciclo de conversión, con año de 365 días), endeudamiento/solvencia (endeudamiento, solvencia, deuda/patrimonio, multiplicador de capital, cobertura de intereses) y rentabilidad (margen bruto, operativo y neto, ROA, ROE)
 - Capital Neto de Trabajo (CNT) y Operativo (CNO)
 - EOAF: Origen y Aplicación de Fondos con reglas automáticas
 - EFE por método indirecto
@@ -61,7 +63,7 @@ Toda la aplicación funciona 100% en el navegador, sin necesidad de servidores, 
 - Exportar datos completos a JSON
 - Exportar tablas a CSV
 - Vista previa HTML del reporte
-- Importar datos desde JSON exportado
+- Importar datos desde JSON exportado o desde CSV/Excel reimportable
 - Dashboard resumen con KPIs de todos los módulos
 - Almacenamiento local (localStorage)
 
@@ -146,6 +148,8 @@ npx vercel --prod
 
 ## Estructura de Archivos
 
+> Resumen general. La estructura detallada y al día está en [`docs/contexto/arquitectura.md`](docs/contexto/arquitectura.md).
+
 ```
 gfo-toolkit/
 ├── index.html                  → Entry point + router hash-based
@@ -179,6 +183,17 @@ gfo-toolkit/
     ├── unit/                   → Tests unitarios por módulo
     └── integration/            → Tests de integración
 ```
+
+---
+
+## Colaborar
+
+El proyecto se desarrolla en equipo y con asistentes de IA. Antes de empezar, lee:
+
+- [`AGENTS.md`](AGENTS.md): reglas para las personas y para sus IAs (Kiro, Claude Code, Cursor, Copilot, Codex, Gemini y opencode).
+- [`docs/reglas/flujo-de-trabajo.md`](docs/reglas/flujo-de-trabajo.md): ramas, commits, Pull Requests y conflictos.
+- [`docs/contexto/`](docs/contexto/): arquitectura y dominio financiero.
+- [`docs/planificacion/`](docs/planificacion/): plan y estado de cada feature.
 
 ---
 

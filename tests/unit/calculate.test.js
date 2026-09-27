@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
-  ahDelta, ahPctDelta, ah, av,
-  ratioCorriente, ratioRapido, rotacionInventario, rotacionCxC, plazoCobro,
+  ahDelta, ahPctDelta, ah, av, saldoPromedio, variacion,
+  ratioCorriente, ratioRapido, rotacionInventario, rotacionCxC, plazoCobro, DIAS_ANIO,
   endeudamiento, margenNeto, roa,
   dupont, capitalNetoTrabajo, capitalNetoOperativo,
   eoaf, efeIndirecto, depAnualLineaRecta, depAcumulada, valorEnLibros,
@@ -24,7 +24,19 @@ describe('AH - Análisis Horizontal', () => {
   it('ah retorna delta / |t1|', () => {
     expect(ah(10, 200)).toBeCloseTo(0.05, 4);
     expect(ah(-10, 200)).toBeCloseTo(-0.05, 4);
-    expect(ah(5, 0)).toBe(0);
+    expect(ah(5, 0)).toBeNull();
+    expect(ah(5, undefined)).toBeNull();
+  });
+
+  it('saldoPromedio calcula promedio entre dos periodos', () => {
+    expect(saldoPromedio(10000, 20000)).toBe(15000);
+    expect(saldoPromedio(undefined, 20000)).toBe(20000);
+    expect(saldoPromedio(0, 0)).toBe(0);
+  });
+
+  it('variacion calcula cambio entre periodos', () => {
+    expect(variacion(20000, 10000)).toBe(10000);
+    expect(variacion(5000, 12000)).toBe(-7000);
   });
 });
 
@@ -56,8 +68,10 @@ describe('Razones Financieras (AC-3.3)', () => {
     expect(rotacionCxC(850000, 120000)).toBeCloseTo(7.083, 2);
   });
 
-  it('PPC = 360 / RotCxC', () => {
-    expect(plazoCobro(7.083)).toBeCloseTo(50.83, 1);
+  it('PPC = DIAS_ANIO (365) / RotCxC', () => {
+    expect(DIAS_ANIO).toBe(365);
+    expect(plazoCobro(7.083)).toBeCloseTo(51.53, 2);
+    expect(plazoCobro(8)).toBeCloseTo(45.625, 6);
   });
 
   it('Endeudamiento = PasivoTotal / TotalActivo', () => {

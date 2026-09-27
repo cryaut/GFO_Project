@@ -1,0 +1,20 @@
+{
+  "name": "Empresa demo importada",
+  "periods": ["2025"],
+  "balanceGeneral": {
+    "2025": {
+      "activos": { "Caja general": 150, "Inventario tienda": 60 },
+      "pasivos": { "Proveedores locales": 50 },
+      "patrimonio": { "Aportes de socios": 160 }
+    }
+  },
+  "estadoResultados": {
+    "2025": { "Ventas de mostrador": 400, "Costo de lo vendido": 150, "Gastos de administración": 90 }
+  },
+  "accountTypes": {
+    "activos": { "Caja general": "efectivo", "Inventario tienda": "inventario" },
+    "pasivos": { "Proveedores locales": "cuentasPorPagar" },
+    "patrimonio": { "Aportes de socios": "patrimonio" },
+    "estadoResultados": { "Ventas de mostrador": "ventas", "Costo de lo vendido": "costoVentas", "Gastos de administración": "gastosAdmin" }
+  }
+}

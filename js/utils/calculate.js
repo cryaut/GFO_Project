@@ -1,5 +1,23 @@
+// Días del año para plazos, edades y ciclos (decisión del equipo: año calendario).
+// Cambiarlo aquí actualiza plazoCobro, plazoPago, edadInventario y cicloConversion.
+export const DIAS_ANIO = 365;
+
+export function saldoPromedio(saldoInicial, saldoFinal) {
+  if (
+    (saldoInicial === undefined || saldoInicial === null) ||
+    (saldoFinal === undefined || saldoFinal === null)
+  ) {
+    return saldoFinal ?? saldoInicial ?? 0;
+  }
+  return (saldoInicial + saldoFinal) / 2;
+}
+
+export function variacion(valorFinal, valorInicial) {
+  return valorFinal - valorInicial;
+}
+
 export function ah(delta, valorT1) {
-  if (valorT1 === 0) return 0;
+  if (valorT1 === 0 || valorT1 === undefined || valorT1 === null) return null;
   return delta / Math.abs(valorT1);
 }
 
@@ -39,7 +57,7 @@ export function rotacionCxC(ventas, cxCprom) {
 
 export function plazoCobro(rotCxC) {
   if (rotCxC === 0) return 0;
-  return 360 / rotCxC;
+  return DIAS_ANIO / rotCxC;
 }
 
 export function endeudamiento(pasivoTotal, totalActivo) {
@@ -86,6 +104,86 @@ export function eoaf(cuenta, cambio, tipo) {
 
 export function efeIndirecto(utilidadNeta, ajustes) {
   return ajustes.reduce((sum, a) => sum + a, utilidadNeta);
+}
+
+// === Razones adicionales (completan RC, RR, RotInv, RotCxC, PPC, Endeudamiento, MN, ROA) ===
+// Todas devuelven null si su denominador es 0 o el dato falta: N/D, no cero.
+export function pruebaDefensiva(efectivo, pasivosCorrientes) {
+  if (pasivosCorrientes === 0) return null;
+  return efectivo / pasivosCorrientes;
+}
+
+export function rotacionActivos(ventas, activoTotalProm) {
+  if (!activoTotalProm) return null;
+  return ventas / activoTotalProm;
+}
+
+// Rotación de cuentas por pagar: costo de ventas (aproxima las compras) / CxP promedio.
+export function rotacionCxP(costoVentas, cxPprom) {
+  if (!cxPprom) return null;
+  return costoVentas / cxPprom;
+}
+
+export function plazoPago(rotCxP) {
+  if (!rotCxP) return null;
+  return DIAS_ANIO / rotCxP;
+}
+
+// Edad del inventario (plazo promedio de inventario) en días.
+export function edadInventario(rotInv) {
+  if (!rotInv) return null;
+  return DIAS_ANIO / rotInv;
+}
+
+// Ciclo de conversión de efectivo = plazo de cobro + edad del inventario − plazo de pago.
+export function cicloConversion(plazoCobroDias, rotInv, rotCxP) {
+  if (!rotInv || !rotCxP) return null;
+  return plazoCobroDias + edadInventario(rotInv) - plazoPago(rotCxP);
+}
+
+export function coberturaIntereses(utilidadOperativa, intereses) {
+  if (!intereses) return null;
+  return utilidadOperativa / intereses;
+}
+
+export function deudaPatrimonio(pasivoTotal, patrimonio) {
+  if (!patrimonio) return null;
+  return pasivoTotal / patrimonio;
+}
+
+export function apalancamiento(activoTotalProm, patrimonioProm) {
+  if (!patrimonioProm) return null;
+  return activoTotalProm / patrimonioProm;
+}
+
+export function margenBruto(utilidadBruta, ventas) {
+  if (!ventas) return null;
+  return utilidadBruta / ventas;
+}
+
+export function margenOperativo(utilidadBruta, gastosAdmin, gastosVentas, ventas) {
+  if (!ventas) return null;
+  return (utilidadBruta - gastosAdmin - gastosVentas) / ventas;
+}
+
+export function roe(utilidadNeta, patrimonioProm) {
+  if (!patrimonioProm) return null;
+  return utilidadNeta / patrimonioProm;
+}
+
+export function rotacionActivosFijos(ventas, activosFijosNetos) {
+  if (!activosFijosNetos) return null;
+  return ventas / activosFijosNetos;
+}
+
+export function rotacionCapitalTrabajo(ventas, capitalNetoTrabajoValor) {
+  if (!capitalNetoTrabajoValor) return null;
+  return ventas / capitalNetoTrabajoValor;
+}
+
+export function solvencia(activoTotal, pasivoTotal) {
+  if (!pasivoTotal) return null;
+  return activoTotal / pasivoTotal;
 }
 
 export function depAnualLineaRecta(costoOriginal, valorResidual, vidaUtil) {

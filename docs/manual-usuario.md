@@ -97,13 +97,48 @@ Si los precios suben un 5%, actualiza el porcentaje de ajuste y la herramienta r
 
 ## 3. Módulo 2: Estados Financieros
 
-### 3.1 Cargar la demo MUNO MODA
+### 3.1 Cargar datos: importar, editar o usar la demo
 
-1. Navega a `#/estados`.
-2. Haz clic en **"Cargar Demo MUNO MODA"**.
-3. Se cargan los datos de la empresa MUNO MODA S.A. para dos periodos.
+La sección Estados Financieros (`#/estados`) es la puerta de entrada de la información. El flujo es siempre el mismo:
 
-### 3.2 Balance General — Verificar A = P + O
+1. **Cargar o editar** el borrador (importar archivo, pegar desde Excel, escribir a mano o cargar el ejemplo).
+2. **Revisar el equilibrio** en el panel de validación.
+3. **Guardar** para publicar los datos.
+4. **Analizar** los datos guardados en `#/analisis`.
+
+El botón **"Cargar ejemplo"** inserta la empresa de demostración MUNO MODA S.A. con dos periodos, útil para explorar la herramienta sin datos propios.
+
+> Importante: la importación **reemplaza** el borrador completo; no combina periodos ni cuentas. Sus datos guardados no cambian hasta pulsar **Guardar estados**.
+
+### 3.2 Importar estados financieros externos (JSON, CSV, Excel)
+
+**Importar archivo.** Acepta `.json`, `.csv`, `.tsv`, `.txt`, `.xlsx` y `.xls`. Los periodos se ordenan automáticamente del más antiguo al más reciente.
+
+**JSON.** Un objeto con `name`, `periods`, `balanceGeneral`, `estadoResultados` y, opcionalmente, `accountTypes`. También se admite el envoltorio `{ "estados": { … } }` que exporta el módulo Reportes.
+
+**Tabla ancha (CSV/TSV/Excel).** Una fila por cuenta y una columna por periodo:
+
+| Estado | Grupo | Cuenta | Clasificacion | 2023 | 2024 |
+|--------|-------|--------|---------------|------|------|
+| Balance | Activos | Efectivo | efectivo | 45000 | 52000 |
+| Balance | Pasivos | Cuentas por Pagar | cuentasPorPagar | 85000 | 92000 |
+| Balance | Patrimonio | Capital Social | patrimonio | 300000 | 300000 |
+| Resultados | | Ventas | ventas | 850000 | 920000 |
+
+- La cabecera **`Cuenta`** es obligatoria; `Estado`, `Grupo` y `Clasificacion` son opcionales.
+- `Estado` acepta `Balance` o `Resultados`. `Grupo` acepta `activos`, `pasivos` o `patrimonio`.
+- Si omite `Grupo`, la cuenta se ubica a partir de su `Clasificacion`.
+- El botón **"Descargar plantilla CSV"** genera este formato listo para editar.
+
+**Tabla larga (una fila por periodo).** Columnas `Periodo`, `Estado`, `Grupo`, `Cuenta` e `Importe`.
+
+**Pegar desde Excel.** Abra "Importar pegando celdas desde Excel", copie el rango (incluidos los encabezados), péguelo y pulse **"Importar tabla pegada"**. Los tabuladores se detectan solos.
+
+**Excel con varias hojas.** Si el libro tiene hojas separadas por estado (`Activos`, `Pasivos`, `Patrimonio`, `Resultados`), cada hoja puede contener solo una columna `Cuenta` y una columna por periodo; el nombre de la hoja aporta el estado y el grupo.
+
+**Importes admitidos.** `45000`, `45.000`, `45,000`, `C$ 12.500,50`, `(500)` y `500-` se interpretan correctamente. Una celda en blanco **omite** la cuenta en ese periodo (no la convierte en cero). Las cuentas cuyo nombre no se reconoce exigen indicar `Clasificacion`; el error indica el número de fila.
+
+### 3.3 Balance General — Verificar A = P + O
 
 La demo carga el siguiente Balance General:
 
@@ -136,7 +171,7 @@ Pasivos + Patrimonio = C$ 50,000 + C$ 48,500 = C$ 98,500
 
 La ecuación contable **A = P + O** se cumple.
 
-### 3.3 Estado de Resultados
+### 3.4 Estado de Resultados
 
 | Concepto | Monto |
 |----------|-------|
@@ -150,7 +185,7 @@ La ecuación contable **A = P + O** se cumple.
 | Impuestos (30%) | C$ 4,500 |
 | **Utilidad Neta** | **C$ 10,500** |
 
-### 3.4 Conexión entre estados
+### 3.5 Conexión entre estados
 
 La herramienta muestra cómo se conectan:
 
@@ -236,10 +271,38 @@ Rotación = C$ 72,000 ÷ C$ 18,000 = 4.0 veces
 
 ```
 RotCxC = C$ 120,000 ÷ C$ 12,000 = 10.0
-Plazo = 360 ÷ 10 = 36 días
+Plazo = 365 ÷ 10 = 36.5 días
 ```
 
-> En promedio, se cobra 36 días después de la venta.
+> En promedio, se cobra 36.5 días después de la venta. La herramienta usa un año de 365 días para todos los plazos (cobro, pago, edad del inventario y ciclo de conversión).
+
+**Rotación de Activos Fijos:**
+
+```
+Rotación = Ventas ÷ Activo fijo neto
+```
+
+> Cuántos colones de ventas genera cada colón invertido en activos fijos. La herramienta informa `N/D` si no hay activos fijos netos.
+
+**Rotación de Capital de Trabajo:**
+
+```
+**Solvencia (Activos ÷ Pasivos):**
+
+```
+Solvencia = Activo Total ÷ Pasivo Total
+```
+
+> Respaldo de los activos frente a las deudas. Un valor de 2.0 indica que los activos duplican a los pasivos.
+
+**Deuda / Patrimonio**, **Apalancamiento** y **Cobertura de Intereses** aparecen en la pestaña Razones para completar el diagnóstico de endeudamiento.
+
+
+Rotación = Ventas ÷ CNT
+```
+
+> Mide la eficiencia del capital de trabajo. Debe usarse con CNT positivo: un CNT cercano a cero produce valores artificialmente altos.
+
 
 #### Endeudamiento
 
@@ -382,7 +445,7 @@ Navega al glosario para consultar más de 20 términos financieros definidos: me
 
 1. Selecciona la tabla que deseas exportar.
 2. Haz clic en **"Exportar CSV"**.
-3. Se descarga un archivo `.csv` compatible con Excel y Google Sheets.
+3. Se descarga un `.csv` compatible con Excel y Google Sheets. Incluye las columnas `Estado`, `Grupo`, `Cuenta` y `Clasificacion`, de modo que el archivo puede volver a importarse en `#/estados` sin edición manual.
 
 ### 7.3 Exportar a HTML
 
@@ -393,15 +456,15 @@ Navega al glosario para consultar más de 20 términos financieros definidos: me
 ### 7.4 Importar datos
 
 1. Haz clic en **"Importar JSON"**.
-2. Selecciona un archivo `.json` exportado previamente.
-3. Los datos se cargan y reemplazan el contenido actual.
+2. Selecciona un archivo `.json`, `.csv`, `.tsv` o `.xlsx`. La exportación JSON de Reportes genera el envoltorio `{ estados: … }` que el importador reconoce.
+3. Los datos se cargan como borrador y reemplazan el contenido anterior. Revise el equilibrio y pulse **Guardar estados** para publicarlos.
 
 ### 7.5 Dashboard resumen
 
 El dashboard muestra los KPIs principales de todos los módulos:
 
 - **Presupuesto:** Ahorro mensual, saldo disponible
-- **Estados:** Total activos, utilidad neta
+- **Estados:** Total activos, pasivos, patrimonio, ventas y utilidad neta, calculados con el mismo motor que Análisis (incluye cuentas importadas con nombres propios)
 - **Análisis:** RC, ROA, margen neto
 - **Activos:** Total en libros, depreciación acumulada
 - **Mercados:** Último puntaje del quiz

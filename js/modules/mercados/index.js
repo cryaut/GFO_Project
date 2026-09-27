@@ -1,3 +1,5 @@
+import store from '../../store.js';
+
 export const glosario = [
   { termino: 'Mercado', definicion: 'Lugar físico o virtual donde se encuentran compradores y vendedores para intercambiar bienes, servicios o instrumentos financieros.' },
   { termino: 'Bono', definicion: 'Instrumento de deuda mediante el cual una entidad se compromete a pagar el capital invertido más intereses en un plazo determinado.' },
@@ -63,7 +65,7 @@ export const quizPreguntas = [
   { pregunta: '¿Qué es el EOAF?', opciones: ['Estado de Flujo de Efectivo', 'Estado de Origen y Aplicación de Fondos', 'Estado de Evaluación', 'Estado de Operaciones'], respuesta: 1 },
   { pregunta: '¿Qué modelo descompone el ROE en PM × AT × EM?', opciones: ['Modelo de Markowitz', 'Modelo DuPont', 'Modelo CAPM', 'Modelo Black-Scholes'], respuesta: 1 },
   { pregunta: '¿Qué es el Capital Neto de Trabajo?', opciones: ['PC - AC', 'AC - PC', 'AC + PC', 'TA - TP'], respuesta: 1 },
-  { pregunta: '¿Cuántos días tiene un año para el cálculo de PPC?', opciones: ['365', '300', '360', '350'], respuesta: 2 },
+  { pregunta: '¿Cuántos días tiene un año para el cálculo de PPC?', opciones: ['365', '300', '360', '350'], respuesta: 0 },
   { pregunta: '¿Qué tipo de retorno ofrece un bono?', opciones: ['Dividendos', 'Intereses fijos', 'Ganancia de capital', 'Utilidades'], respuesta: 1 }
 ];
 
@@ -176,7 +178,6 @@ function renderQuiz(page) {
       store.set('mercados.quizScore', correctas);
       return;
     }
-
     const q = quizPreguntas[quizState.actual];
     el.innerHTML = `
       <p class="text-muted mb-4">Pregunta ${quizState.actual + 1} de ${quizPreguntas.length}</p>
