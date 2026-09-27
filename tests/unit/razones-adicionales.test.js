@@ -17,9 +17,9 @@ describe('razones adicionales', () => {
   it('rotaciones, plazos y ciclo de conversión', () => {
     expect(rotacionActivos(850000, 400000)).toBeCloseTo(2.125, 6);
     expect(rotacionCxP(510000, 85000)).toBe(6);
-    expect(plazoPago(6)).toBe(60);
-    // PPC 36 días + PPM 60 días − PPO 50 días = 46
-    expect(cicloConversion(36, 6, 7.2)).toBeCloseTo(36 + 60 - 360 / 7.2, 6);
+    expect(plazoPago(6)).toBeCloseTo(365 / 6, 6); // 60.83 días
+    // Plazo de cobro 36 días + edad del inventario 60.83 − plazo de pago 50.69 = 46.14 días
+    expect(cicloConversion(36, 6, 7.2)).toBeCloseTo(36 + 365 / 6 - 365 / 7.2, 6);
   });
 
   it('prueba defensiva, deuda/patrimonio y apalancamiento', () => {

@@ -1,3 +1,7 @@
+// Días del año para plazos, edades y ciclos (decisión del equipo: año calendario).
+// Cambiarlo aquí actualiza plazoCobro, plazoPago, edadInventario y cicloConversion.
+export const DIAS_ANIO = 365;
+
 export function saldoPromedio(saldoInicial, saldoFinal) {
   if (
     (saldoInicial === undefined || saldoInicial === null) ||
@@ -53,7 +57,7 @@ export function rotacionCxC(ventas, cxCprom) {
 
 export function plazoCobro(rotCxC) {
   if (rotCxC === 0) return 0;
-  return 360 / rotCxC;
+  return DIAS_ANIO / rotCxC;
 }
 
 export function endeudamiento(pasivoTotal, totalActivo) {
@@ -122,13 +126,13 @@ export function rotacionCxP(costoVentas, cxPprom) {
 
 export function plazoPago(rotCxP) {
   if (!rotCxP) return null;
-  return 360 / rotCxP;
+  return DIAS_ANIO / rotCxP;
 }
 
 // Edad del inventario (plazo promedio de inventario) en días.
 export function edadInventario(rotInv) {
   if (!rotInv) return null;
-  return 360 / rotInv;
+  return DIAS_ANIO / rotInv;
 }
 
 // Ciclo de conversión de efectivo = plazo de cobro + edad del inventario − plazo de pago.

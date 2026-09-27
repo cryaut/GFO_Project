@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   ahDelta, ahPctDelta, ah, av, saldoPromedio, variacion,
-  ratioCorriente, ratioRapido, rotacionInventario, rotacionCxC, plazoCobro,
+  ratioCorriente, ratioRapido, rotacionInventario, rotacionCxC, plazoCobro, DIAS_ANIO,
   endeudamiento, margenNeto, roa,
   dupont, capitalNetoTrabajo, capitalNetoOperativo,
   eoaf, efeIndirecto, depAnualLineaRecta, depAcumulada, valorEnLibros,
@@ -68,8 +68,10 @@ describe('Razones Financieras (AC-3.3)', () => {
     expect(rotacionCxC(850000, 120000)).toBeCloseTo(7.083, 2);
   });
 
-  it('PPC = 360 / RotCxC', () => {
-    expect(plazoCobro(7.083)).toBeCloseTo(50.83, 1);
+  it('PPC = DIAS_ANIO (365) / RotCxC', () => {
+    expect(DIAS_ANIO).toBe(365);
+    expect(plazoCobro(7.083)).toBeCloseTo(51.53, 2);
+    expect(plazoCobro(8)).toBeCloseTo(45.625, 6);
   });
 
   it('Endeudamiento = PasivoTotal / TotalActivo', () => {

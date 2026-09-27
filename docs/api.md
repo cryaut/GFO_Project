@@ -87,8 +87,8 @@ Días promedio para cobrar.
 
 - **Parámetros**: `rotCxC` (number) — rotación de cuentas por cobrar
 - **Retorno**: `number` — días
-- **Fórmula**: `360 / RotCxC`
-- **Ejemplo**: `plazoCobro(8)` → `45` días
+- **Fórmula**: `DIAS_ANIO / RotCxC`, con `DIAS_ANIO = 365`
+- **Ejemplo**: `plazoCobro(8)` → `45.625` días
 
 #### `endeudamiento(pasivoTotal, totalActivo)`
 Nivel de endeudamiento sobre activos.

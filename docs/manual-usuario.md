@@ -271,10 +271,10 @@ Rotación = C$ 72,000 ÷ C$ 18,000 = 4.0 veces
 
 ```
 RotCxC = C$ 120,000 ÷ C$ 12,000 = 10.0
-Plazo = 360 ÷ 10 = 36 días
+Plazo = 365 ÷ 10 = 36.5 días
 ```
 
-> En promedio, se cobra 36 días después de la venta.
+> En promedio, se cobra 36.5 días después de la venta. La herramienta usa un año de 365 días para todos los plazos (cobro, pago, edad del inventario y ciclo de conversión).
 
 **Rotación de Activos Fijos:**
 
