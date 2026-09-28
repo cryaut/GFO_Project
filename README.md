@@ -194,6 +194,7 @@ El proyecto se desarrolla en equipo y con asistentes de IA. Antes de empezar, le
 - [`docs/reglas/flujo-de-trabajo.md`](docs/reglas/flujo-de-trabajo.md): ramas, commits, Pull Requests y conflictos.
 - [`docs/contexto/`](docs/contexto/): arquitectura y dominio financiero.
 - [`docs/planificacion/`](docs/planificacion/): plan y estado de cada feature.
+- [`docs/decisiones.md`](docs/decisiones.md): decisiones discutibles, con su motivo y cómo revertirlas.
 
 ---
 

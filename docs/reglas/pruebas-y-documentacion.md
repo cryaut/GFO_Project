@@ -38,6 +38,7 @@ En PowerShell usa `npm.cmd` y `npx.cmd` si la política de ejecución bloquea `n
 | Estructura, rutas o datos del `store` | `docs/contexto/arquitectura.md` |
 | Notación o convenciones de cálculo | `docs/contexto/dominio-financiero.md` |
 | El avance de tu feature | `docs/planificacion/<feature>/README.md` |
+| Una decisión discutible (ver criterios en el archivo) | `docs/decisiones.md`, con su plantilla |
 | Reglas de trabajo | `AGENTS.md` o `docs/reglas/`, con acuerdo del equipo en el PR |
 
 ### Entrada en `docs/api.md`

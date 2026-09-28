@@ -26,6 +26,7 @@
 - [ ] Todo texto del usuario o de archivos pasa por `escapeHTML`
 - [ ] `CHANGELOG.md`, `docs/api.md` y el catálogo de funciones actualizados si corresponde
 - [ ] Ficha de la feature actualizada
+- [ ] Decisiones discutibles registradas en `docs/decisiones.md`
 
 ## Pendiente o riesgos
 
