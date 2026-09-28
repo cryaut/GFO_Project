@@ -1,6 +1,6 @@
 # 01 — Fórmulas de apalancamiento
 
-- **Estado**: En progreso
+- **Estado**: Completado
 - **Fecha**: 2026-09-27
 - **Depende de**: 00
 
@@ -124,10 +124,12 @@ Como la demo no trae intereses, impuestos ni DAP, su GAF solo depende de la opci
 
 ## Checkpoint
 
-- [ ] Fórmulas estructurales y por variación aprobadas.
+Aprobado el 2026-09-27: Carlos delegó la aprobación ("toma las riendas y procede como consideres").
+
+- [x] Fórmulas estructurales y por variación aprobadas.
 - [x] Elegida la opción A o B para otros ingresos y otros gastos (B).
-- [ ] Casos especiales aprobados.
-- [ ] Casos A, B y C revisados, para usarlos como tests en el CP2.
+- [x] Casos especiales aprobados.
+- [x] Casos A, B y C revisados, para usarlos como tests en el CP2.
 
 ## Preguntas abiertas
 

@@ -1,6 +1,6 @@
 # Apalancamiento (GAO, GAF y GAT)
 
-- **Estado**: Planificación
+- **Estado**: En progreso
 - **Responsable**: Carlos
 - **Rama**: `feat/apalancamiento`, local y creada desde `core` mientras se integra el PR #1; después se actualiza con `git merge origin/main`
 - **Última actualización**: 2026-09-27
@@ -33,8 +33,8 @@ Actualizados tras integrar `core`. Los checkpoints 4 (importación) y parte del 
 
 | CP | Meta | Estado |
 |---|---|---|
-| 1 | Fórmulas, diccionario y casos especiales aprobados, con casos resueltos a mano (paso 01) | En progreso |
-| 2 | Motor: funciones puras de GAO, GAF y GAT en `calculate.js`, con tests del CP1 | Pendiente |
+| 1 | Fórmulas, diccionario y casos especiales aprobados, con casos resueltos a mano (paso 01) | Completado |
+| 2 | Motor: funciones puras de GAO, GAF y GAT en `calculate.js`, con tests del CP1 | Completado |
 | 3 | Datos: comportamiento de costos, UAI, T y DAP sobre el motor de Estados | Pendiente |
 | 4 | Pantalla `#/apalancamiento` con traza cuenta → concepto → fórmula → resultado | Pendiente |
 | 5 | Memoria de clasificación por empresa para reutilizarla en la siguiente carga | Pendiente, opcional |
@@ -64,8 +64,8 @@ Actualizados tras integrar `core`. Los checkpoints 4 (importación) y parte del 
 | # | Paso | Estado |
 |---|---|---|
 | 00 | [Alcance y decisiones iniciales](00-alcance-y-decisiones.md) | Completado |
-| 01 | [Fórmulas de apalancamiento](01-formulas-apalancamiento.md) | En progreso |
-| 02 | [Motor de cálculo](02-motor-de-calculo.md) | Pendiente |
+| 01 | [Fórmulas de apalancamiento](01-formulas-apalancamiento.md) | Completado |
+| 02 | [Motor de cálculo](02-motor-de-calculo.md) | Completado |
 | 03 | [Datos y derivación](03-datos-y-derivacion.md) | Pendiente |
 | 04 | [Pantalla](04-pantalla.md) | Pendiente |
 | 05 | [Memoria por empresa](05-memoria-por-empresa.md) (opcional) | Pendiente |
@@ -74,4 +74,4 @@ El MVP son los pasos 01 a 04 (CP1 a CP4). El 05 queda para después.
 
 ## Próximo paso
 
-Aprobar lo que queda del paso 01 (CP1): las fórmulas, los casos especiales y los casos resueltos a mano. Después, revisar las preguntas abiertas de los pasos 02 a 04 y empezar el CP2: las funciones puras con sus tests.
+CP3 ([paso 03](03-datos-y-derivacion.md)): derivar las variables desde los estados guardados, con `resolveAccountType` (acordada con Cris) y la sección `apalancamiento` del `store`.

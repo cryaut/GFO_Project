@@ -208,3 +208,97 @@ export function ahorroMensual(metaAhorro, mesesDisponibles) {
 export function saldoSemanal(ingreso, gastos, ahorro, reserva) {
   return ingreso - gastos - ahorro - (reserva || 0);
 }
+
+// === Apalancamiento: GAO, GAF y GAT ===
+// Fórmulas y casos especiales en docs/planificacion/apalancamiento/01-formulas-apalancamiento.md.
+// Devuelven null (N/D) si falta un dato o el denominador es ≈ 0. Los valores negativos se
+// devuelven tal cual: la interfaz advierte que la empresa está bajo su punto de equilibrio.
+
+// Alícuota general del IR en Nicaragua; se usa si la tasa efectiva no tiene sentido.
+export const TASA_IR_DEFECTO = 0.30;
+
+// Montos en córdobas: menos de medio centavo cuenta como 0.
+const TOLERANCIA_CERO = 0.005;
+
+function esNumero(valor) {
+  return typeof valor === 'number' && Number.isFinite(valor);
+}
+
+function esCasiCero(valor) {
+  return Math.abs(valor) < TOLERANCIA_CERO;
+}
+
+function esTasaValida(tasa) {
+  return esNumero(tasa) && tasa >= 0 && tasa < 1;
+}
+
+// T efectiva = IR / UAI, solo si la UAI es positiva y el resultado está en [0, 1).
+export function tasaEfectiva(ir, uai) {
+  if (!esNumero(ir) || !esNumero(uai) || uai <= 0) return null;
+  const tasa = ir / uai;
+  return esTasaValida(tasa) ? tasa : null;
+}
+
+// T para el GAF: la efectiva si existe; si no, la tasa por defecto (si es válida).
+export function tasaImpuesto(ir, uai, tasaDefecto = TASA_IR_DEFECTO) {
+  const efectiva = tasaEfectiva(ir, uai);
+  if (efectiva !== null) return efectiva;
+  return esTasaValida(tasaDefecto) ? tasaDefecto : null;
+}
+
+// Denominador del GAF y del GAT: UAI − DAP / (1 − T). Con DAP = 0 es la UAI y T no se valida.
+export function denominadorGaf(uai, dap = 0, t = null) {
+  if (!esNumero(uai) || !esNumero(dap) || dap < 0) return null;
+  if (dap === 0) return uai;
+  if (!esTasaValida(t)) return null;
+  return uai - dap / (1 - t);
+}
+
+// GAO = MC / UAII
+export function gao(mc, uaii) {
+  if (!esNumero(mc) || !esNumero(uaii) || esCasiCero(uaii)) return null;
+  return mc / uaii;
+}
+
+// GAF = UAII / (UAI − DAP / (1 − T)). Usa la UAI, con otros ingresos y otros gastos (D-007).
+export function gaf(uaii, uai, dap = 0, t = null) {
+  const denominador = denominadorGaf(uai, dap, t);
+  if (!esNumero(uaii) || denominador === null || esCasiCero(denominador)) return null;
+  return uaii / denominador;
+}
+
+// GAT = MC / (UAI − DAP / (1 − T)) = GAO × GAF
+export function gat(mc, uai, dap = 0, t = null) {
+  const denominador = denominadorGaf(uai, dap, t);
+  if (!esNumero(mc) || denominador === null || esCasiCero(denominador)) return null;
+  return mc / denominador;
+}
+
+// %Δ entre un periodo base y el actual; null si la base no es positiva.
+function variacionRelativa(base, actual) {
+  if (!esNumero(base) || !esNumero(actual) || base < TOLERANCIA_CERO) return null;
+  return ahPctDelta(actual, base);
+}
+
+// %Δ numerador / %Δ denominador; null si el denominador no cambió.
+function cocienteVariaciones(numBase, num, denBase, den) {
+  const pctNum = variacionRelativa(numBase, num);
+  const pctDen = variacionRelativa(denBase, den);
+  if (pctNum === null || pctDen === null || esCasiCero(den - denBase)) return null;
+  return pctNum / pctDen;
+}
+
+// GAO por variación = %ΔUAII / %ΔVentas. Primero el periodo base y después el actual.
+export function gaoVariacion(ventasBase, ventas, uaiiBase, uaii) {
+  return cocienteVariaciones(uaiiBase, uaii, ventasBase, ventas);
+}
+
+// GAF por variación = %ΔUDAC / %ΔUAII, con UDAC = UN − DAP.
+export function gafVariacion(uaiiBase, uaii, udacBase, udac) {
+  return cocienteVariaciones(udacBase, udac, uaiiBase, uaii);
+}
+
+// GAT por variación = %ΔUDAC / %ΔVentas.
+export function gatVariacion(ventasBase, ventas, udacBase, udac) {
+  return cocienteVariaciones(udacBase, udac, ventasBase, ventas);
+}

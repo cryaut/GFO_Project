@@ -210,7 +210,7 @@ Deuda por cada unidad de patrimonio.
 - **Ejemplo**: `deudaPatrimonio(300000, 200000)` → `1.5`
 
 #### `apalancamiento(activoTotalProm, patrimonioProm)`
-Multiplicador de capital (el EM de DuPont). No es el GAO, el GAF ni el GAT: esos grados usarán funciones con nombre propio.
+Multiplicador de capital (el EM de DuPont). No es el GAO, el GAF ni el GAT: esos grados son `gao`, `gaf` y `gat` (sección Apalancamiento).
 
 - **Retorno**: `number | null`
 - **Fórmula**: `ActivoTotalProm / PatrimonioProm`
@@ -246,6 +246,82 @@ Retorno sobre el patrimonio.
 - **Retorno**: `number | null`
 - **Fórmula**: `UtilidadNeta / PatrimonioProm`
 - **Ejemplo**: `roe(50000, 200000)` → `0.25` (25%)
+
+---
+
+### Apalancamiento (GAO, GAF y GAT)
+
+Fórmulas y casos especiales en `docs/planificacion/apalancamiento/01-formulas-apalancamiento.md`. Devuelven `null` si falta un dato (`null`, `undefined`, `NaN` o un valor que no es número) o si el denominador es ≈ 0 (menos de medio centavo). Los grados negativos se devuelven tal cual: significan que la empresa está bajo su punto de equilibrio y la interfaz lo advierte.
+
+#### `TASA_IR_DEFECTO`
+Tasa de impuesto por defecto: `0.30`, la alícuota general del IR. Se usa cuando la tasa efectiva no tiene sentido.
+
+#### `tasaEfectiva(ir, uai)`
+Tasa efectiva de impuesto.
+
+- **Parámetros**: `ir` (number | null) — impuesto sobre la renta del periodo; `uai` (number) — utilidad antes de impuestos
+- **Retorno**: `number | null` — `null` si falta un dato, la UAI es ≤ 0 o el resultado queda fuera de [0, 1)
+- **Fórmula**: `IR / UAI`
+- **Ejemplo**: `tasaEfectiva(30000, 100000)` → `0.3`; `tasaEfectiva(30000, 0)` → `null`
+
+#### `tasaImpuesto(ir, uai, tasaDefecto = TASA_IR_DEFECTO)`
+Tasa T para el GAF: la efectiva si existe; si no, la tasa por defecto.
+
+- **Parámetros**: `ir` (number | null) — `null` si el periodo no trae cuenta de impuestos; `0` es un IR informado; `uai` (number); `tasaDefecto` (number)
+- **Retorno**: `number | null` — `null` si no hay tasa efectiva y `tasaDefecto` está fuera de [0, 1)
+- **Ejemplo**: `tasaImpuesto(30000, 100000)` → `0.3`; `tasaImpuesto(null, 100000)` → `0.3`; `tasaImpuesto(0, 100000)` → `0`
+
+#### `denominadorGaf(uai, dap = 0, t = null)`
+Denominador del GAF y del GAT. Con DAP = 0 es la UAI y `t` no se valida.
+
+- **Parámetros**: `uai` (number); `dap` (number) — dividendos de acciones preferentes, ≥ 0; `t` (number) — tasa en [0, 1), necesaria si DAP > 0
+- **Retorno**: `number | null` — `null` si falta la UAI, DAP < 0 o DAP > 0 con T inválida
+- **Fórmula**: `UAI - DAP / (1 - T)`
+- **Ejemplo**: `denominadorGaf(100000, 7000, 0.3)` → `90000`; `denominadorGaf(100000)` → `100000`
+
+#### `gao(mc, uaii)`
+Grado de apalancamiento operativo estructural.
+
+- **Parámetros**: `mc` (number) — margen de contribución (Ventas − CV); `uaii` (number)
+- **Retorno**: `number | null` — `null` si falta un dato o la UAII es ≈ 0
+- **Fórmula**: `MC / UAII`
+- **Ejemplo**: `gao(400000, 150000)` → `2.6667`; `gao(160000, -40000)` → `-4`
+
+#### `gaf(uaii, uai, dap = 0, t = null)`
+Grado de apalancamiento financiero estructural. Usa la UAI, que incluye otros ingresos y otros gastos (D-007 en `docs/decisiones.md`).
+
+- **Parámetros**: `uaii` (number); `uai` (number); `dap` (number); `t` (number)
+- **Retorno**: `number | null` — `null` si falta un dato o `denominadorGaf` es `null` o ≈ 0
+- **Fórmula**: `UAII / (UAI - DAP / (1 - T))`
+- **Ejemplo**: `gaf(150000, 100000, 7000, 0.3)` → `1.6667`; `gaf(135000, 140000)` → `0.9643`
+
+#### `gat(mc, uai, dap = 0, t = null)`
+Grado de apalancamiento total estructural.
+
+- **Retorno**: `number | null` — mismos casos N/D que `gaf`
+- **Fórmula**: `MC / (UAI - DAP / (1 - T))` = GAO × GAF
+- **Ejemplo**: `gat(400000, 100000, 7000, 0.3)` → `4.4444`
+
+#### `gaoVariacion(ventasBase, ventas, uaiiBase, uaii)`
+GAO por variación entre un periodo base y el siguiente. Primero va el periodo base.
+
+- **Retorno**: `number | null` — `null` si falta un dato, una base es ≤ 0 o las ventas no cambiaron
+- **Fórmula**: `%ΔUAII / %ΔVentas`, con `%ΔX = (X − Xbase) / Xbase`
+- **Ejemplo**: `gaoVariacion(1000000, 1100000, 150000, 190000)` → `2.6667`
+
+#### `gafVariacion(uaiiBase, uaii, udacBase, udac)`
+GAF por variación. UDAC es la utilidad disponible para accionistas comunes (UN − DAP); su variación equivale a la de la UPA si el número de acciones no cambia.
+
+- **Retorno**: `number | null` — `null` si falta un dato, una base es ≤ 0 o la UAII no cambió
+- **Fórmula**: `%ΔUDAC / %ΔUAII`
+- **Ejemplo**: `gafVariacion(150000, 190000, 63000, 91000)` → `1.6667`
+
+#### `gatVariacion(ventasBase, ventas, udacBase, udac)`
+GAT por variación.
+
+- **Retorno**: `number | null` — `null` si falta un dato, una base es ≤ 0 o las ventas no cambiaron
+- **Fórmula**: `%ΔUDAC / %ΔVentas`
+- **Ejemplo**: `gatVariacion(1000000, 1100000, 63000, 91000)` → `4.4444`
 
 ---
 

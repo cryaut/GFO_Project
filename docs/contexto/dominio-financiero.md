@@ -12,14 +12,15 @@ Notación, convenciones de cálculo, tipos de cuenta y catálogo de funciones ex
 | GA, GV | Gastos de administración y gastos de ventas | `gastosAdmin`, `gastosVentas` |
 | UAII | Utilidad antes de intereses e impuestos (utilidad operativa) | `utilidadOperativa` en `computeRazones` |
 | I | Intereses (gasto financiero) | `intereses` |
-| UAI | Utilidad antes de impuestos | No existe todavía |
+| UAI | Utilidad antes de impuestos = UAII + otros ingresos − otros gastos − I | Se deriva en apalancamiento (paso 03) |
 | IR | Impuesto sobre la renta (monto) | `impuestos` |
-| T | Tasa de impuesto sobre la renta | No existe todavía |
+| T | Tasa de impuesto sobre la renta | `tasaImpuesto(ir, uai)`; por defecto `TASA_IR_DEFECTO` (30 %) |
 | UN | Utilidad neta | `utilidadNeta` |
-| DAP | Dividendos de acciones preferentes | No existe todavía (planificado en apalancamiento) |
-| CV, CF | Costos variables y costos fijos | No existen todavía (planificado en apalancamiento) |
-| MC | Margen de contribución = Ventas − CV | No existe todavía |
-| GAO, GAF, GAT | Grados de apalancamiento operativo, financiero y total | No existen todavía (ver `docs/planificacion/apalancamiento/`) |
+| DAP | Dividendos de acciones preferentes | Campo del módulo de apalancamiento (paso 03) |
+| UDAC | Utilidad disponible para accionistas comunes = UN − DAP | Se usa en el GAF y el GAT por variación |
+| CV, CF | Costos variables y costos fijos | Se derivan en apalancamiento con la clasificación de cada cuenta (paso 03) |
+| MC | Margen de contribución = Ventas − CV | Primer parámetro de `gao` y `gat` |
+| GAO, GAF, GAT | Grados de apalancamiento operativo, financiero y total | `gao`, `gaf`, `gat` y sus versiones `...Variacion` |
 | AC, PC | Activo corriente y pasivo corriente | `activosCorrientes`, `pasivosCorrientes` |
 | CxC, CxP | Cuentas por cobrar y cuentas por pagar | `cxC`, `cuentasPorPagar` |
 | CNT, CNO | Capital neto de trabajo y capital neto operativo | `capitalNetoTrabajo`, `capitalNetoOperativo` |
@@ -132,7 +133,7 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 |---|---|
 | `endeudamiento(pasivo, activo)` | Pasivo / activo (legado) |
 | `deudaPatrimonio(pasivo, patrimonio)` | Pasivo / patrimonio |
-| `apalancamiento(activoProm, patrimonioProm)` | Multiplicador de capital de DuPont. No es GAO, GAF ni GAT: esos necesitan nombres propios |
+| `apalancamiento(activoProm, patrimonioProm)` | Multiplicador de capital de DuPont. No es GAO, GAF ni GAT: esos son `gao`, `gaf` y `gat` |
 | `solvencia(activo, pasivo)` | Activo / pasivo |
 | `coberturaIntereses(UAII, intereses)` | UAII / I |
 
@@ -146,6 +147,21 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 | `roa(UN, activoProm)` | UN / activo promedio (legado) |
 | `roe(UN, patrimonioProm)` | UN / patrimonio promedio |
 | `dupont(UN, ventas, activoProm, patrimonioProm)` | `{ PM, AT, EM, ROE }` con ROE = PM × AT × EM (legado) |
+
+**Apalancamiento.** Devuelven `null` si falta un dato o el denominador es ≈ 0; los grados negativos se devuelven tal cual.
+
+| Función | Qué calcula |
+|---|---|
+| `TASA_IR_DEFECTO` | Constante: 0.30 |
+| `tasaEfectiva(IR, UAI)` | IR / UAI; `null` si UAI ≤ 0 o el resultado no está en [0, 1) |
+| `tasaImpuesto(IR, UAI, tasaDefecto)` | La tasa efectiva o, si no existe, `tasaDefecto` |
+| `denominadorGaf(UAI, DAP, T)` | UAI − DAP / (1 − T); la UAI si DAP = 0 |
+| `gao(MC, UAII)` | MC / UAII |
+| `gaf(UAII, UAI, DAP, T)` | UAII / (UAI − DAP / (1 − T)) |
+| `gat(MC, UAI, DAP, T)` | MC / (UAI − DAP / (1 − T)) = GAO × GAF |
+| `gaoVariacion(ventasBase, ventas, UAIIbase, UAII)` | %ΔUAII / %ΔVentas |
+| `gafVariacion(UAIIbase, UAII, UDACbase, UDAC)` | %ΔUDAC / %ΔUAII |
+| `gatVariacion(ventasBase, ventas, UDACbase, UDAC)` | %ΔUDAC / %ΔVentas |
 
 **Flujos, activos y presupuesto**
 
