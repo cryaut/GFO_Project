@@ -2,8 +2,8 @@
 
 - **Estado**: Planificación
 - **Responsable**: Carlos
-- **Rama**: `feat/apalancamiento`, que se crea desde `main` cuando se integre `core`
-- **Última actualización**: 2026-09-26
+- **Rama**: `feat/apalancamiento`, local y creada desde `core` mientras se integra el PR #1; después se actualiza con `git merge origin/main`
+- **Última actualización**: 2026-09-27
 
 ## Objetivo
 
@@ -22,10 +22,10 @@ Por eso esta feature ya no necesita importador ni catálogo propios: extiende el
 
 | Dato | Situación actual | Qué hace falta |
 |---|---|---|
-| Costos variables y fijos (GAO) | Las cuentas tienen tipo, pero no comportamiento | Marcar cada cuenta de costo o gasto como variable, fija o mixta (con % variable) |
+| Costos variables y fijos (GAO) | Las cuentas tienen tipo, pero no comportamiento | El usuario marca cada cuenta operativa como variable, fija o mixta (con % variable) en el módulo, con una sugerencia según el tipo ([paso 00](00-alcance-y-decisiones.md)) |
 | UAI | No existe como valor | Derivarla: UAII + otros ingresos − otros gastos − intereses |
-| T | No existe | Tasa efectiva (impuestos / UAI) o una tasa configurable si la efectiva no tiene sentido |
-| DAP (GAF) | No existe | Decidir dónde se registra: no es un gasto del estado de resultados, sino una distribución posterior a la utilidad neta |
+| T | No existe | Tasa efectiva (IR / UAI) o, si no tiene sentido, una tasa configurable con 30 % por defecto (paso 00) |
+| DAP (GAF) | No existe | Campo opcional por periodo en el módulo, 0 por defecto. No es un gasto del estado de resultados, sino una distribución posterior a la utilidad neta (paso 00) |
 
 ## Checkpoints
 
@@ -33,7 +33,7 @@ Actualizados tras integrar `core`. Los checkpoints 4 (importación) y parte del 
 
 | CP | Meta | Estado |
 |---|---|---|
-| 1 | Fórmulas, diccionario y casos especiales aprobados, con casos resueltos a mano (paso 01) | Pendiente |
+| 1 | Fórmulas, diccionario y casos especiales aprobados, con casos resueltos a mano (paso 01) | En progreso |
 | 2 | Motor: funciones puras de GAO, GAF y GAT en `calculate.js`, con tests del CP1 | Pendiente |
 | 3 | Datos: comportamiento de costos, UAI, T y DAP sobre el motor de Estados | Pendiente |
 | 4 | Pantalla `#/apalancamiento` con traza cuenta → concepto → fórmula → resultado | Pendiente |
@@ -45,23 +45,26 @@ Actualizados tras integrar `core`. Los checkpoints 4 (importación) y parte del 
 - Entrada: los archivos que ya acepta Estados (Excel y CSV).
 - Las funciones devuelven `null` (N/D), nunca 0, como exige `AGENTS.md`.
 - Los grados necesitan nombres propios. La función `apalancamiento` ya existe y es el multiplicador de capital de DuPont: no la reutilices ni la renombres.
-- Otros ingresos y otros gastos quedan fuera de la UAII, como ya hace el código. Falta confirmarlo (pregunta 5 del paso 00).
+- Otros ingresos y otros gastos quedan fuera de la UAII, como ya hace el código, pero entran en el GAF a través de la UAI (opción B del [paso 01](01-formulas-apalancamiento.md), [D-007](../../decisiones.md)).
+- Costos fijos y variables: los archivos no los separan. El usuario los marca en el módulo, con una sugerencia según el tipo, y se guardan aparte de `estados` ([paso 00](00-alcance-y-decisiones.md)).
+- T: tasa efectiva cuando tiene sentido; si no, configurable con 30 % por defecto. DAP: campo opcional, 0 por defecto (paso 00).
+- Fórmulas: las estructurales son el resultado principal y las de variación entre periodos, el complemento (paso 00).
 
 ## Archivos que tocará
 
 - Nuevos: `js/modules/apalancamiento/` (`index.js` y `apalancamiento-calculations.js`) y sus tests en `tests/unit/`.
 - Compartidos:
   - `js/utils/calculate.js`, para las fórmulas;
-  - `js/modules/estados/estados-calculations.js` y `estados-import.js`, para el comportamiento de costos y el DAP. Hay que coordinarlo con Cris, responsable de Estados;
+  - `js/store.js`, probablemente, para guardar el comportamiento de costos y el DAP; se confirma en el CP3. Ya no hace falta tocar `estados-import.js` ni `estados-calculations.js` (paso 00);
   - `js/app.js` e `index.html`, para la ruta.
 
 ## Pasos
 
 | # | Paso | Estado |
 |---|---|---|
-| 00 | [Alcance y decisiones iniciales](00-alcance-y-decisiones.md) | En progreso |
-| 01 | Fórmulas de apalancamiento | Pendiente |
+| 00 | [Alcance y decisiones iniciales](00-alcance-y-decisiones.md) | Completado |
+| 01 | [Fórmulas de apalancamiento](01-formulas-apalancamiento.md) | En progreso |
 
 ## Próximo paso
 
-Integrar `core` en `main`. Después, responder las preguntas abiertas del paso 00 y abrir `01-formulas-apalancamiento.md`.
+Aprobar lo que queda del paso 01 (CP1): las fórmulas, los casos especiales y los casos resueltos a mano. Después, CP2: las funciones puras con sus tests.

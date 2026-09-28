@@ -1,7 +1,7 @@
 # 00 — Alcance y decisiones iniciales
 
-- **Estado**: En progreso
-- **Fecha**: 2026-09-26 (punto de partida actualizado tras integrar `core`)
+- **Estado**: Completado
+- **Fecha**: 2026-09-26 (punto de partida actualizado tras integrar `core`); preguntas clave cerradas el 2026-09-27
 - **Depende de**: ninguno
 
 ---
@@ -25,6 +25,10 @@ Que GFO Toolkit calcule automáticamente el apalancamiento de una empresa (GAO, 
 | Notación | UAII, UAI, I, T, DAP, etc. (ver abajo) |
 | Benchmarking | Fuera de alcance por ahora (comparación entre empresas, por series de tiempo y combinada) |
 | Forma de trabajo | Por checkpoints: cada etapa debe funcionar y verificarse antes de construir la siguiente |
+| Costos fijos y variables (2026-09-27) | Los archivos no los separan. El usuario marca cada cuenta operativa como variable, fija o mixta (con % variable) en el módulo de apalancamiento, con una sugerencia según el tipo: costo de ventas → variable, gastos de administración → fija. Se guarda aparte de `estados`, así que el importador no cambia |
+| Tasa T (2026-09-27) | Tasa efectiva IR / UAI cuando la UAI es positiva, hay IR y el resultado está entre 0 y 1. Si no, tasa configurable con 30 % por defecto, la alícuota general del IR según la DGI (con ingresos de hasta C$ 12 millones rige la tabla progresiva del art. 52 de la LCT) |
+| DAP (2026-09-27) | Dividendos de acciones preferentes. Campo opcional por periodo en el módulo, 0 por defecto y visible en la traza |
+| Enfoque de las fórmulas (2026-09-27) | Ambos: estructural (un periodo) como resultado principal y por variación entre dos periodos como complemento, o como único resultado si los costos no están clasificados |
 
 ---
 
@@ -38,7 +42,7 @@ La notación general del proyecto está en `docs/contexto/dominio-financiero.md`
 | UAI | Utilidad antes de impuestos |
 | I | Intereses (gasto financiero) |
 | T | Tasa de impuesto sobre la renta |
-| DAP | Dividendos de acciones preferentes (por confirmar) |
+| DAP | Dividendos de acciones preferentes |
 | CV, CF | Costos variables y costos fijos |
 | MC | Margen de contribución = Ventas − CV |
 
@@ -81,17 +85,27 @@ Versión original. La ficha de la feature (`README.md`) tiene la versión ajusta
 
 ## Preguntas abiertas
 
+Revisadas el 2026-09-27. Se conserva el texto original de cada pregunta.
+
 1. **Costos fijos y variables**: ¿vienen separados en los archivos o el sistema debe ayudar a clasificarlos? No siempre se pueden inferir por el nombre de la cuenta.
+   **Resuelta**: no vienen separados. La plantilla, `scripts/sample-estados.*` y MUNO MODA clasifican por función, y una columna `Comportamiento` hoy se lee como periodo (la importación falla con `Importe inválido: Variable`). El usuario los marca en el módulo (ver Decisiones).
 2. **Datos para GAF**: ¿los archivos traen intereses, impuestos (o la tasa T), DAP y, si se usa UPA, el número de acciones?
+   **Resuelta**: intereses e IR se importan como montos (tipos `intereses` e `impuestos`), aunque ningún archivo de ejemplo los trae. T y DAP no vienen (ver Decisiones). El número de acciones no se pide: el paso 01 usa la variación de UN − DAP, que equivale a la de la UPA si las acciones no cambian.
 3. **Cuentas no reconocidas**: hoy la importación se detiene. ¿Se mantiene así o debe continuar marcando las cuentas dudosas para revisión? Cambiarlo afecta al importador de Estados y hay que acordarlo con Cris.
+   **Pospuesta** al CP3, para acordarla con Cris. No afecta a las fórmulas.
 4. **Otros ingresos y otros gastos**: el código ya los trata como no operativos (fuera de la UAII). ¿Se confirma para el apalancamiento?
+   **Pasa al paso 01**, porque cambia la fórmula del GAF.
 5. **Enfoque de las fórmulas**: ¿se calculan con la estructura de costos de un período, con la variación entre dos períodos (por ejemplo, GAO = %ΔUAII / %ΔVentas), o con ambos?
+   **Resuelta**: con ambos (ver Decisiones).
 6. **Casos especiales**: ¿qué muestra el sistema con UAII ≤ 0, denominador 0, pérdidas, T fuera de rango o datos faltantes?
+   **Pasa al paso 01**, que propone una regla para cada caso.
 7. **Frecuencia e histórico**: ¿anual, trimestral o mensual, y cuántos períodos?
+   **Pospuesta** al CP4 (pantalla). Las fórmulas no dependen de la frecuencia.
 8. **DAP**: confirmar que significa dividendos de acciones preferentes, y dónde se registra en los archivos.
+   **Resuelta**: significa dividendos de acciones preferentes y no viene en los archivos; se registra en el módulo (ver Decisiones).
 
 ---
 
 ## Próximo paso
 
-Integrar `core` en `main`. Después, responder las preguntas abiertas y validar los checkpoints de la ficha. Con eso se cierra este paso y se abre `01-formulas-apalancamiento.md` (CP1).
+Paso cerrado. Sigue [01 — Fórmulas de apalancamiento](01-formulas-apalancamiento.md) (CP1).
