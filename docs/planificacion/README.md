@@ -7,7 +7,7 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 | Feature | Responsable | Estado | Ficha |
 |---|---|---|---|
 | Integración de ramas y guías (`core`) | Carlos | Completada (PR #1) | [integracion-core](integracion-core/README.md) |
-| Apalancamiento (GAO, GAF y GAT) | Carlos | En progreso | [apalancamiento](apalancamiento/README.md) |
+| Apalancamiento (GAO, GAF y GAT) | Carlos | En revisión | [apalancamiento](apalancamiento/README.md) |
 
 Agrega una fila cuando empieces una feature y actualiza el estado cuando cambie.
 

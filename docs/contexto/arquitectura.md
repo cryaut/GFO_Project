@@ -43,7 +43,7 @@ docs/                      Documentación: contexto, reglas, planificación, API
 | `estados/` | `index.js` (demo, lectura del `store`, `initEstados`), `estados-ui.js` (interfaz), `estados-import.js` (archivos), `estados-normalize.js` (validación), `estados-calculations.js` (tipos y totales) | Único módulo que ya sigue el patrón completo |
 | `analisis/` | Todo en `index.js` (unas 690 líneas: cálculo e interfaz) | `ah.js`, `av.js`, `razones.js`, `dupont.js`, `cnt-cno.js`, `eoaf.js` y `efe.js` solo reexportan funciones de `index.js` |
 | `presupuesto/`, `activos/`, `mercados/`, `integracion/` | Casi todo en `index.js` | `glosario-data.js`, `comparador.js` y `quiz.js` reexportan datos de `mercados/index.js` |
-| `apalancamiento/` | `apalancamiento-calculations.js` (derivación pura, sin DOM ni `store`) | Lee los estados con `computeFinancialTotals` y `resolveAccountType`; las fórmulas están en `calculate.js` |
+| `apalancamiento/` | `index.js` (lee el `store` e `initApalancamiento`), `apalancamiento-ui.js` (interfaz), `apalancamiento-calculations.js` (derivación pura, sin DOM ni `store`) | Lee los estados con `computeFinancialTotals` y `resolveAccountType`; las fórmulas están en `calculate.js` |
 
 Estos archivos están vacíos (devuelven `{}`) y ningún módulo los usa: `activos/activos-ui.js`, `analisis/analisis-ui.js`, `integracion/dashboard.js`, `integracion/export.js`, `mercados/mercados-ui.js`, `presupuesto/presupuesto-ui.js` y `presupuesto/presupuesto-calculations.js`. `activos/depreciacion.js` solo envuelve una función de `calculate.js`. No agregues lógica en ellos sin acordarlo: hoy nadie los importa.
 
@@ -59,6 +59,7 @@ Estos archivos están vacíos (devuelven `{}`) y ningún módulo los usa: `activ
 | `#/mercados` | `page-mercados` | `initMercados` | `js/modules/mercados/index.js` |
 | `#/reportes` | `page-reportes` | `initReportes` | `js/modules/integracion/index.js` |
 | `#/glosario` | `page-glosario` | `initGlosario` | `js/app.js` |
+| `#/apalancamiento` | `page-apalancamiento` | `initApalancamiento` | `js/modules/apalancamiento/index.js` |
 
 Cada vez que se entra a una ruta, su `init` vuelve a dibujar la página completa.
 
