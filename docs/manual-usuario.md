@@ -13,6 +13,7 @@ Guía paso a paso con ejemplos numéricos concretos por módulo.
 5. [Módulo 4: Activos y Depreciación](#5-módulo-4-activos-y-depreciación)
 6. [Módulo 5: Mercados Financieros](#6-módulo-5-mercados-financieros)
 7. [Módulo 6: Reportes e Integración](#7-módulo-6-reportes-e-integración)
+8. [Apalancamiento (GAO, GAF y GAT)](#8-apalancamiento-gao-gaf-y-gat)
 
 ---
 
@@ -468,3 +469,43 @@ El dashboard muestra los KPIs principales de todos los módulos:
 - **Análisis:** RC, ROA, margen neto
 - **Activos:** Total en libros, depreciación acumulada
 - **Mercados:** Último puntaje del quiz
+
+---
+
+## 8. Apalancamiento (GAO, GAF y GAT)
+
+Calcula cuánto se amplifica un cambio en las ventas sobre la utilidad operativa (GAO), un cambio en la UAII sobre la utilidad para accionistas comunes (GAF) y el efecto combinado (GAT). Usa los estados guardados en `#/estados`: no hay que digitar la UAII ni otros subtotales.
+
+### 8.1 Clasificar los costos
+
+1. Guarda tus estados en `#/estados` (o carga el ejemplo MUNO MODA) y navega a `#/apalancamiento`.
+2. En **Clasificación de costos**, elige para cada cuenta de costo de ventas, gastos de administración y gastos de ventas si es **Variable** (cambia con las ventas), **Fijo** o **Mixto** (indica qué % es variable).
+3. El costo de ventas llega propuesto como variable y los gastos de administración como fijos, con la etiqueta *sugerido*. Revísalos.
+4. Pulsa **Guardar y recalcular**. La clasificación se guarda aparte de los estados: reimportar los estados no la borra.
+
+Mientras falte clasificar alguna cuenta, el GAO y el GAT por periodo salen N/D; el GAF y los grados por variación sí se calculan.
+
+### 8.2 Parámetros
+
+- **Tasa de impuesto por defecto:** se usa solo si la tasa efectiva (IR / UAI) no tiene sentido, por ejemplo si no hay cuenta de impuestos o la UAI es negativa. Vacío = 30 %.
+- **DAP (dividendos de acciones preferentes):** uno por periodo; vacío = 0. Solo con DAP interviene la tasa T.
+
+### 8.3 Leer los resultados
+
+- **Grados por periodo:** GAO = MC / UAII, GAF = UAII / (UAI − DAP / (1 − T)) y GAT = GAO × GAF. La UAI incluye otros ingresos y otros gastos.
+- **Grados por variación:** comparan dos periodos seguidos (%ΔUAII / %ΔVentas, etc.). Si difieren más de 10 % del GAO estructural del periodo base, aparece un aviso: cambió la estructura de costos o hay cuentas mal clasificadas.
+- **Traza:** despliega cada periodo para ver cuenta → concepto → fórmula → resultado.
+- **Valores negativos:** la empresa está bajo su punto de equilibrio; no se leen como sensibilidad.
+
+**Ejemplo con MUNO MODA 2023** (gastos de ventas clasificados como fijos):
+
+| Concepto | Cálculo | Resultado |
+|---|---|---:|
+| MC | 850,000 − 510,000 | 340,000 |
+| UAII | 850,000 − 510,000 − 120,000 − 85,000 | 135,000 |
+| UAI | 135,000 + 15,000 − 10,000 | 140,000 |
+| GAO | 340,000 / 135,000 | 2.52 |
+| GAF | 135,000 / 140,000 | 0.96 |
+| GAT | 2.52 × 0.96 | 2.43 |
+
+Un GAO de 2.52 significa que, si las ventas suben 1 %, la UAII sube 2.52 %.

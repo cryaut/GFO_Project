@@ -1,6 +1,6 @@
 # 02 — Motor de cálculo
 
-- **Estado**: Pendiente
+- **Estado**: Completado
 - **Fecha**: 2026-09-27
 - **Depende de**: 01
 
@@ -15,7 +15,9 @@ Todas devuelven `number` o `null` (N/D). Ninguna lee el DOM, `window` ni `store`
 | Función | Fórmula | N/D cuando |
 |---|---|---|
 | `TASA_IR_DEFECTO` | Constante: 0.30 | — |
-| `tasaImpuesto(ir, uai, tasaDefecto = TASA_IR_DEFECTO)` | IR / UAI si UAI > 0, `ir` es un número y el resultado está en [0, 1); si no, `tasaDefecto` | `tasaDefecto` fuera de [0, 1) y no se puede usar la efectiva |
+| `tasaEfectiva(ir, uai)` | IR / UAI | Falta un dato, UAI ≤ 0 o el resultado fuera de [0, 1) |
+| `tasaImpuesto(ir, uai, tasaDefecto = TASA_IR_DEFECTO)` | `tasaEfectiva` si no es `null`; si no, `tasaDefecto` | `tasaDefecto` fuera de [0, 1) y no se puede usar la efectiva |
+| `denominadorGaf(uai, dap = 0, t = null)` | UAI − DAP / (1 − T); la UAI si DAP = 0 | Falta la UAI, DAP < 0 o DAP > 0 con T fuera de [0, 1) |
 | `gao(mc, uaii)` | MC / UAII | Falta un dato o UAII ≈ 0 |
 | `gaf(uaii, uai, dap = 0, t = null)` | UAII / (UAI − DAP / (1 − T)) | Falta un dato, DAP < 0, DAP > 0 con T fuera de [0, 1) o denominador ≈ 0 |
 | `gat(mc, uai, dap = 0, t = null)` | MC / (UAI − DAP / (1 − T)) | Igual que `gaf` |
@@ -33,6 +35,8 @@ Reglas comunes:
 - **`ir = null` y `ir = 0` no son lo mismo.** `null` significa que el periodo no trae una cuenta de impuestos, y se usa la tasa por defecto. `0` es un IR informado, y da T = 0. Como `computeFinancialTotals` devuelve 0 cuando no hay cuenta de impuestos, el CP3 debe pasar `null` en ese caso.
 
 `apalancamiento` (multiplicador de DuPont) no se toca.
+
+Agregadas al implementar (2026-09-27): `tasaEfectiva` y `denominadorGaf`. El CP3 las necesita para anotar si T fue efectiva o por defecto y para la advertencia `bajo-equilibrio-financiero`, sin repetir las fórmulas. `dap` y `t` tienen valor por defecto: `undefined` lo activa, pero `null` explícito cuenta como dato faltante. Con montos, "≈ 0" es menos de medio centavo; en las variaciones se compara la diferencia de montos (ventas o UAII que no cambiaron), no el porcentaje.
 
 ## Tests
 
@@ -62,10 +66,12 @@ Cada test lleva en un comentario el cálculo a mano, como pide `docs/reglas/prue
 
 ## Checkpoint
 
-- [ ] Las funciones de la tabla existen en `calculate.js`, con los nombres y parámetros de este paso.
-- [ ] `apalancamiento.test.js` cubre todos los grupos de la tabla de tests, y pasa.
-- [ ] `npm test` y `npm run lint` sin errores; `carga-modulos` confirma que no hay nombres duplicados.
-- [ ] Documentación de la sección anterior actualizada.
+Cumplido el 2026-09-27: 32 tests nuevos en `apalancamiento.test.js`; `npm test` con 174 tests en verde y `npm run lint` sin errores.
+
+- [x] Las funciones de la tabla existen en `calculate.js`, con los nombres y parámetros de este paso.
+- [x] `apalancamiento.test.js` cubre todos los grupos de la tabla de tests, y pasa.
+- [x] `npm test` y `npm run lint` sin errores; `carga-modulos` confirma que no hay nombres duplicados.
+- [x] Documentación de la sección anterior actualizada.
 
 ## Preguntas abiertas
 

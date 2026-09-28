@@ -1,6 +1,6 @@
 # 04 — Pantalla
 
-- **Estado**: Pendiente
+- **Estado**: Completado
 - **Fecha**: 2026-09-27
 - **Depende de**: 03
 
@@ -62,10 +62,19 @@ Además, prueba manual en el navegador con la demo y con `scripts/sample-estados
 
 ## Checkpoint
 
-- [ ] La ruta funciona desde la barra lateral y la tarjeta de inicio.
-- [ ] Con la demo, clasificar, guardar y ver los tres grados por periodo y por variación, con traza.
-- [ ] Tests de la tabla en verde; `npm test` y `npm run lint` sin errores.
-- [ ] Prueba en el navegador anotada en el PR.
+Cumplido el 2026-09-27: 17 tests en `apalancamiento-ui.test.js`; `npm test` con 212 tests en verde y `npm run lint` sin errores. Prueba en Chrome (headless, con `node scripts/dev-server.cjs`): 19 de 19 comprobaciones y sin errores en la consola, con la demo y con `scripts/sample-estados.csv`.
+
+- [x] La ruta funciona desde la barra lateral y la tarjeta de inicio.
+- [x] Con la demo, clasificar, guardar y ver los tres grados por periodo y por variación, con traza.
+- [x] Tests de la tabla en verde; `npm test` y `npm run lint` sin errores.
+- [x] Prueba en el navegador anotada en el PR.
+
+Ajustes al implementar:
+
+- Los errores de guardado se muestran en un mensaje de la página (`#apalancamientoMensaje`), como en Estados, en lugar de `showToast`: `toast.js` busca su contenedor al cargarse y no se puede probar con el documento simulado.
+- DAP y tasa se escriben como texto con '.' decimal y ',' de miles (7,000). Un número mal escrito (por ejemplo 1.2.3) se rechaza; no se reutilizó `parseAmountCell`, que lo lee como 123.
+- La columna T dice "No interviene (DAP = 0)" cuando no hay DAP.
+- Los resultados se recalculan al guardar, no al cambiar un campo; el mensaje avisa de los cambios sin guardar.
 
 ## Preguntas abiertas
 

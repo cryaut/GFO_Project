@@ -1,6 +1,6 @@
 # 03 — Datos y derivación
 
-- **Estado**: Pendiente
+- **Estado**: En revisión (falta la revisión de Cris de `resolveAccountType`)
 - **Fecha**: 2026-09-27
 - **Depende de**: 02
 
@@ -20,7 +20,7 @@ apalancamiento: {
     'Gastos de Ventas': { tipo: 'mixto', pctVariable: 0.4 }
   },
   dap: { '2024': 7000 },            // por periodo; si falta, 0
-  tasaDefecto: 0.30                 // TASA_IR_DEFECTO si no se cambió
+  tasaDefecto: null                 // null = TASA_IR_DEFECTO (30 %); así la constante vive solo en calculate.js
 }
 ```
 
@@ -55,7 +55,7 @@ Los estados se leen como en Análisis: `store.get('estados')` y `normalizeFinanc
 
 - **Totales por tipo** con `computeFinancialTotals`, nunca por nombre de cuenta (regla 6 de `AGENTS.md`). Si `utilidadNeta` sale `null` porque hay cuentas del estado de resultados sin tipo, todo el periodo es N/D y la cuenta sin tipo va a `faltantes`.
 - **UAII** = ventas − costoVentas − gastosAdmin − gastosVentas, la misma fórmula que `computeRazones`. No se importa `analisis/index.js`, porque mezcla cálculo e interfaz.
-- **CV y CF** se suman cuenta por cuenta. Una mixta aporta `importe × pctVariable` a CV y el resto a CF. Si una cuenta operativa no tiene comportamiento (ni guardado ni sugerido), CV y CF son `null` y los grados estructurales dan N/D.
+- **CV y CF** se suman cuenta por cuenta. Una mixta aporta `importe × pctVariable` a CV y el resto a CF. Si una cuenta operativa no tiene comportamiento (ni guardado ni sugerido), CV y CF son `null`, y el GAO y el GAT estructurales dan N/D. El GAF no depende del MC y se sigue calculando.
 - **Control**: CV + CF debe ser igual a costoVentas + gastosAdmin + gastosVentas (con la tolerancia del paso 01). Si no, error de programación: el test lo detecta.
 - **IR**: `null` si el periodo no tiene ninguna cuenta de tipo `impuestos`, aunque `computeFinancialTotals` devuelva 0 ([paso 02](02-motor-de-calculo.md)). T sale de `tasaImpuesto(ir, uai, config.tasaDefecto)` y se anota si fue efectiva o por defecto.
 - **DAP** = `config.dap[periodo]` o 0. **UDAC** = UN − DAP.
@@ -79,7 +79,8 @@ Cada variable lleva de dónde sale, para que la pantalla la muestre sin recalcul
 | `bajo-equilibrio-operativo` | UAII < 0 |
 | `bajo-equilibrio-financiero` | UAI − DAP / (1 − T) < 0 |
 | `clasificacion-sugerida` | Algún comportamiento viene de la sugerencia y no se guardó |
-| `tasa-por-defecto` | T no es la efectiva |
+| `sin-comportamiento` | Alguna cuenta operativa no tiene comportamiento: GAO y GAT dan N/D (agregada al implementar) |
+| `tasa-por-defecto` | T no es la efectiva y hay DAP; sin DAP, T no interviene y el aviso sería ruido |
 | `estructura-cambio` | Hay dos periodos y el GAO por variación difiere del estructural del periodo base en más de 10 % |
 
 ## Tests
@@ -89,7 +90,7 @@ En `tests/unit/apalancamiento-calculations.test.js`, con estados de nombres prop
 | Caso | Datos | Esperado |
 |---|---|---|
 | Caso A del paso 01 como estados | Ventas 1,000,000 y 1,100,000; costo de ventas 600,000 y 660,000 (variable); gastos de administración 150,000 y gastos de ventas 100,000 (fijos); intereses 50,000; IR 30,000 y 42,000; DAP 7,000 | Mismos valores que el caso A; T efectiva 0.30 |
-| MUNO MODA | Demo, sin guardar clasificación | Gastos de ventas sin comportamiento: estructurales N/D; variación GAO 1.798942 |
+| MUNO MODA | Demo, sin guardar clasificación | Gastos de ventas sin comportamiento: GAO y GAT estructurales N/D (el GAF no depende del MC); variación GAO 1.798942 |
 | MUNO MODA con gastos de ventas fijos | `comportamiento` con gastos de ventas `'fijo'` | GAO 2023 2.518519; advertencia `clasificacion-sugerida` |
 | Mixta | Gastos de ventas 100,000 con `pctVariable` 0.4 | Aporta 40,000 a CV y 60,000 a CF |
 | Sin cuenta de impuestos | Caso A sin IR, con DAP | IR `null`; T por defecto; advertencia `tasa-por-defecto` |
@@ -99,11 +100,15 @@ En `tests/unit/apalancamiento-calculations.test.js`, con estados de nombres prop
 
 ## Checkpoint
 
-- [ ] `apalancamiento-calculations.js` con las funciones de la tabla y sin DOM, `window` ni `store`.
-- [ ] Sección `apalancamiento` en `defaultData`.
-- [ ] `resolveAccountType` exportada desde `estados-calculations.js`, con su test, y revisada por Cris.
-- [ ] Todos los casos de la tabla de tests en verde; `npm test` y `npm run lint` sin errores.
-- [ ] `docs/contexto/arquitectura.md` (sección del `store` y módulo nuevo) y `docs/api.md` actualizados.
+Cumplido el 2026-09-27, salvo la revisión de Cris, que se pide en el PR: 21 tests en `apalancamiento-calculations.test.js`; `npm test` con 195 tests en verde y `npm run lint` sin errores.
+
+- [x] `apalancamiento-calculations.js` con las funciones de la tabla y sin DOM, `window` ni `store`.
+- [x] Sección `apalancamiento` en `defaultData`.
+- [ ] `resolveAccountType` exportada desde `estados-calculations.js`, con su test, y revisada por Cris. (Exportada y probada; falta la revisión.)
+- [x] Todos los casos de la tabla de tests en verde; `npm test` y `npm run lint` sin errores.
+- [x] `docs/contexto/arquitectura.md` (sección del `store` y módulo nuevo) y `docs/api.md` actualizados.
+
+Ajustes al implementar: `normalizarComportamiento` (valida lo guardado; un comportamiento inválido cuenta como no guardado), la advertencia `sin-comportamiento`, `tasa-por-defecto` solo con DAP > 0 y `tasaDefecto: null` en el `store`.
 
 ## Preguntas abiertas
 

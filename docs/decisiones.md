@@ -141,7 +141,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 
 **Decisión.** Opción 1. Sugerencia: costo de ventas → variable; gastos de administración → fija; el resto lo elige el usuario.
 
-**Consecuencias.** Sin clasificar, los grados estructurales dan N/D.
+**Consecuencias.** Sin clasificar, el GAO y el GAT estructurales dan N/D; el GAF no depende del MC y se sigue calculando.
 
 **Para revertirla.** Agregar la columna a `META_HEADERS` y al parseo de `estados-import.js` (con Cris) y leerla desde el módulo.
 
@@ -182,7 +182,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 2. Solo estructural — exige clasificar costos.
 3. Solo por variación — no exige clasificar / mezcla el apalancamiento con los cambios de estructura.
 
-**Decisión.** Opción 1. Si los costos no están clasificados, solo se muestra la variación.
+**Decisión.** Opción 1. Si los costos no están clasificados, el GAO y el GAT solo se muestran por variación.
 
 **Consecuencias.** Con estructura constante, las dos cifras coinciden; si difieren, cambió la estructura o hay costos mal clasificados.
 

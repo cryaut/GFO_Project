@@ -22,6 +22,12 @@ Todos los cambios notables en GFO Toolkit.
 - Plazos de cobro y pago, edad del inventario y ciclo de conversión con un año de 365 días (`DIAS_ANIO`); antes se usaban 360.
 - Una sola función por concepto en `calculate.js`: se eliminaron 5 funciones repetidas que impedían cargar la app y 4 equivalentes con otro nombre.
 
+### Apalancamiento (GAO, GAF y GAT)
+- Fórmulas en `calculate.js`: `gao`, `gaf` y `gat` (estructurales), `gaoVariacion`, `gafVariacion` y `gatVariacion` (entre dos periodos), `tasaEfectiva`, `tasaImpuesto`, `denominadorGaf` y la constante `TASA_IR_DEFECTO` (30 %). Devuelven N/D si falta un dato o el denominador es 0.
+- Derivación desde los estados guardados (`js/modules/apalancamiento/apalancamiento-calculations.js`): CV y CF según la clasificación de cada cuenta (variable, fija o mixta), UAI, T, DAP y UDAC, con traza por concepto y advertencias.
+- `store`: nueva sección `apalancamiento` (clasificación de costos, DAP por periodo y tasa por defecto). Estados exporta `resolveAccountType`.
+- Nueva pantalla `#/apalancamiento` (barra lateral y tarjeta de Inicio): clasificación de costos, DAP y tasa por defecto, grados por periodo y por variación, advertencias, interpretación y traza por periodo.
+
 ### Módulo 5: Mercados e Instituciones Financieras
 - La pregunta del quiz sobre los días del PPC da como correcta 365, igual que el cálculo.
 

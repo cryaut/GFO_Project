@@ -5,6 +5,7 @@ import { initAnalisis } from './modules/analisis/index.js';
 import { initActivos } from './modules/activos/index.js';
 import { initMercados } from './modules/mercados/index.js';
 import { initReportes } from './modules/integracion/index.js';
+import { initApalancamiento } from './modules/apalancamiento/index.js';
 
 const routes = {
   'home': { init: initHome, label: 'Inicio' },
@@ -14,7 +15,8 @@ const routes = {
   'activos': { init: initActivos, label: 'Activos' },
   'mercados': { init: initMercados, label: 'Mercados' },
   'reportes': { init: initReportes, label: 'Reportes' },
-  'glosario': { init: initGlosario, label: 'Glosario' }
+  'glosario': { init: initGlosario, label: 'Glosario' },
+  'apalancamiento': { init: initApalancamiento, label: 'Apalancamiento' }
 };
 
 function getRoute() {
@@ -73,6 +75,11 @@ function initHome() {
         <div class="module-card-icon reports">#</div>
         <h3>Reportes e Integración</h3>
         <p>Exportar JSON/CSV/HTML, dashboard con KPIs y resumen global de módulos.</p>
+      </a>
+      <a href="#/apalancamiento" class="module-card">
+        <div class="module-card-icon analysis">×</div>
+        <h3>Apalancamiento</h3>
+        <p>GAO, GAF y GAT por periodo a partir de los estados guardados, con la traza de cada cálculo.</p>
       </a>
     </div>`;
 }

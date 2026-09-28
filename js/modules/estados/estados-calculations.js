@@ -47,6 +47,14 @@ export function inferAccountType(group, name) {
   return rules[group]?.find(([, pattern]) => pattern.test(key))?.[0] || '';
 }
 
+// Tipo de una cuenta: el explícito de accountTypes o, si no hay, el inferido por el nombre.
+// Misma regla que usa computeFinancialTotals; devuelve '' si no se reconoce.
+export function resolveAccountType(data, group, name) {
+  const explicit = data?.accountTypes?.[group];
+  return explicit && Object.hasOwn(explicit, name)
+    ? explicit[name] : inferAccountType(group, name);
+}
+
 export function computeFinancialTotals(data, period) {
   const bg = data.balanceGeneral?.[period] || {};
   const er = data.estadoResultados?.[period] || {};
