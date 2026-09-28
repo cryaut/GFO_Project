@@ -189,7 +189,8 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 
 | Archivo | Funciones |
 |---|---|
-| `js/modules/estados/estados-calculations.js` | `ACCOUNT_TYPES`, `inferAccountType(grupo, nombre)`, `computeFinancialTotals(datos, periodo)`, `validateFinancialData(datos)` (cuadre A = P + O por periodo) |
+| `js/modules/estados/estados-calculations.js` | `ACCOUNT_TYPES`, `inferAccountType(grupo, nombre)`, `resolveAccountType(datos, grupo, nombre)` (tipo explícito o inferido), `computeFinancialTotals(datos, periodo)`, `validateFinancialData(datos)` (cuadre A = P + O por periodo) |
+| `js/modules/apalancamiento/apalancamiento-calculations.js` | `cuentasOperativas`, `sugerirComportamiento`, `normalizarComportamiento`, `resolverComportamiento`, `derivarPeriodo`, `calcularApalancamiento` |
 | `js/modules/estados/estados-normalize.js` | `normalizeFinancialData(entrada)`, `parseFinancialJSON(texto)` |
 | `js/modules/estados/estados-import.js` | `importStatementFile(archivo)`, `tableTextToFinancialData(texto)`, `sheetsToFinancialData(hojas)`, `parseAmountCell(valor)`, `tabularTemplateCSV()` |
 | `js/modules/analisis/index.js` | `computeRazones(periodo)`, `computeAH`, `computeAV`, `computeDuPont`, `computeCNTCNO`, `computeEOAF`, `computeEFE`, `UMBRALES` |

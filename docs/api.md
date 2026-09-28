@@ -517,3 +517,50 @@ Importa y parsea un archivo JSON seleccionado por el usuario.
 - **Retorno**: `Promise<object>` — datos parseados
 - **Ejemplo**: `const data = await importJSON(fileInput.files[0])`
 - **Errores**: Rechaza con `Error('Archivo JSON inválido')` o `Error('Error al leer archivo')`
+
+---
+
+## estados-calculations.js (selección)
+
+#### `resolveAccountType(data, group, name)`
+Tipo de una cuenta: el de `data.accountTypes[group][name]` si existe (solo propiedades propias); si no, `inferAccountType(group, name)`. Es la misma regla que aplica `computeFinancialTotals`.
+
+- **Retorno**: `string` — un tipo de `ACCOUNT_TYPES`, o `''` si no se reconoce
+- **Ejemplo**: `resolveAccountType({}, 'estadoResultados', 'Costo de ventas')` → `'costoVentas'`
+
+---
+
+## apalancamiento-calculations.js
+
+`js/modules/apalancamiento/`. Lógica pura: recibe los estados normalizados y la sección `apalancamiento` del `store` (`config`). Plan en `docs/planificacion/apalancamiento/03-datos-y-derivacion.md`.
+
+#### `cuentasOperativas(estados)`
+Cuentas del estado de resultados de tipo `costoVentas`, `gastosAdmin` o `gastosVentas` en cualquier periodo, sin repetir.
+
+- **Retorno**: `Array<{ nombre, tipo }>`
+
+#### `sugerirComportamiento(tipo)`
+- **Retorno**: `'variable'` para `costoVentas`, `'fijo'` para `gastosAdmin`, `null` para el resto
+
+#### `normalizarComportamiento(valor)`
+- **Retorno**: `{ tipo, pctVariable }` con `pctVariable` 1 (variable), 0 (fijo) o en [0, 1] (mixto); `null` si es inválido
+
+#### `resolverComportamiento(cuentas, guardado = {})`
+Para cada cuenta, el comportamiento guardado si es válido; si no, la sugerencia.
+
+- **Retorno**: `Array<{ nombre, tipo, comportamiento, origen }>`, con `origen` `'guardado'`, `'sugerido'` o `null` (sin comportamiento)
+
+#### `derivarPeriodo(estados, periodo, config = {}, cuentasResueltas = null)`
+Variables del paso 01 para un periodo, con sus grados, traza y faltantes.
+
+- **Retorno**: `{ periodo, variables, grados, traza, faltantes }`
+  - `variables`: `ventas`, `cv`, `cf`, `mc`, `uaii`, `oi`, `og`, `i`, `uai`, `ir` (`null` sin cuenta de impuestos), `t`, `origenT` (`'efectiva'`, `'defecto'` o `null`), `un`, `dap`, `udac`, `denominadorGaf`
+  - `grados`: `{ gao, gaf, gat }`
+  - `traza`: `Array<{ concepto, valor, formula, cuentas }>`
+  - `faltantes`: `{ tipo: 'sinClasificacion' | 'sinComportamiento', cuenta }` o `{ tipo: 'dapInvalido', periodo }`
+- **N/D**: con una cuenta del estado de resultados sin tipo, todo el periodo; sin comportamiento, `cv`, `cf`, `mc`, GAO y GAT; con DAP inválido, `dap`, `udac`, GAF y GAT
+
+#### `calcularApalancamiento(estados, config = {})`
+- **Retorno**: `{ periodos, variaciones, cuentas, advertencias }`
+  - `variaciones`: por cada par de periodos consecutivos, `{ desde, hasta, gao, gaf, gat, estructuralBase }`
+  - `advertencias`: `{ codigo, ... }` con `codigo` `clasificacion-sugerida`, `sin-comportamiento`, `bajo-equilibrio-operativo`, `bajo-equilibrio-financiero`, `tasa-por-defecto` o `estructura-cambio`

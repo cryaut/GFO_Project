@@ -24,6 +24,8 @@ Todos los cambios notables en GFO Toolkit.
 
 ### Apalancamiento (GAO, GAF y GAT)
 - Fórmulas en `calculate.js`: `gao`, `gaf` y `gat` (estructurales), `gaoVariacion`, `gafVariacion` y `gatVariacion` (entre dos periodos), `tasaEfectiva`, `tasaImpuesto`, `denominadorGaf` y la constante `TASA_IR_DEFECTO` (30 %). Devuelven N/D si falta un dato o el denominador es 0.
+- Derivación desde los estados guardados (`js/modules/apalancamiento/apalancamiento-calculations.js`): CV y CF según la clasificación de cada cuenta (variable, fija o mixta), UAI, T, DAP y UDAC, con traza por concepto y advertencias.
+- `store`: nueva sección `apalancamiento` (clasificación de costos, DAP por periodo y tasa por defecto). Estados exporta `resolveAccountType`.
 
 ### Módulo 5: Mercados e Instituciones Financieras
 - La pregunta del quiz sobre los días del PPC da como correcta 365, igual que el cálculo.
