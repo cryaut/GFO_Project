@@ -93,6 +93,7 @@ Revisadas el 2026-09-27. Se conserva el texto original de cada pregunta.
    **Resuelta**: intereses e IR se importan como montos (tipos `intereses` e `impuestos`), aunque ningún archivo de ejemplo los trae. T y DAP no vienen (ver Decisiones). El número de acciones no se pide: el paso 01 usa la variación de UN − DAP, que equivale a la de la UPA si las acciones no cambian.
 3. **Cuentas no reconocidas**: hoy la importación se detiene. ¿Se mantiene así o debe continuar marcando las cuentas dudosas para revisión? Cambiarlo afecta al importador de Estados y hay que acordarlo con Cris.
    **Pospuesta** al CP3, para acordarla con Cris. No afecta a las fórmulas.
+   **Propuesta de Cris (2026-09-27)**: si el usuario tiene una API key, un asistente de IA sugiere el tipo de las cuentas no reconocidas. Por decidir: es una dependencia externa (regla 11), sería el primer envío de datos fuera del navegador (hoy `arquitectura.md` dice que no hay ninguno) y exige que el importador deje de detenerse ante cuentas dudosas. Sería una feature propia de Estados, fuera del MVP de apalancamiento.
 4. **Otros ingresos y otros gastos**: el código ya los trata como no operativos (fuera de la UAII). ¿Se confirma para el apalancamiento?
    **Pasa al paso 01**, porque cambia la fórmula del GAF.
 5. **Enfoque de las fórmulas**: ¿se calculan con la estructura de costos de un período, con la variación entre dos períodos (por ejemplo, GAO = %ΔUAII / %ΔVentas), o con ambos?

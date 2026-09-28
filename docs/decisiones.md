@@ -58,6 +58,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-006 | Grados de apalancamiento estructurales y por variación | Vigente |
 | D-007 | El GAF usa la UAI, con otros ingresos y otros gastos | Vigente |
 | D-008 | UAII negativa: se muestra el valor con advertencia | Vigente |
+| D-009 | Se calcula con las sugerencias de comportamiento antes de confirmarlas | Vigente |
 
 ## Decisiones
 
@@ -230,3 +231,24 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 **Para revertirla.** Devolver `null` con UAII ≤ 0 y cambiar el caso B del paso 01.
 
 **Referencias.** [Paso 01](planificacion/apalancamiento/01-formulas-apalancamiento.md).
+
+### D-009 — Se calcula con las sugerencias de comportamiento antes de confirmarlas
+
+- **Fecha**: 2026-09-27
+- **Estado**: Vigente
+- **Decidió**: Carlos
+- **Área**: apalancamiento (pasos 03 y 04)
+
+**Contexto.** Al cargar una empresa, el costo de ventas y los gastos de administración reciben un comportamiento sugerido (D-004). Hay que decidir si los grados se calculan con esa sugerencia o esperan a que el usuario la confirme.
+
+**Opciones.**
+1. Calcular con la sugerencia y avisar hasta que se guarde — la pantalla muestra resultados desde la primera carga / el usuario puede leer cifras con una clasificación que no revisó.
+2. N/D hasta confirmar — nadie lee cifras sin revisar / la pantalla empieza vacía.
+
+**Decisión.** Opción 1, con la advertencia `clasificacion-sugerida`. Las cuentas sin sugerencia (gastos de ventas) siguen dando N/D hasta que se elijan.
+
+**Consecuencias.** Los resultados pueden cambiar cuando el usuario corrige una sugerencia.
+
+**Para revertirla.** En `resolverComportamiento`, no usar la sugerencia como valor para calcular, y cambiar los tests del paso 03 que la usan.
+
+**Referencias.** [Paso 03](planificacion/apalancamiento/03-datos-y-derivacion.md).

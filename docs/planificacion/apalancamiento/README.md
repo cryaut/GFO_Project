@@ -55,7 +55,8 @@ Actualizados tras integrar `core`. Los checkpoints 4 (importación) y parte del 
 - Nuevos: `js/modules/apalancamiento/` (`index.js` y `apalancamiento-calculations.js`) y sus tests en `tests/unit/`.
 - Compartidos:
   - `js/utils/calculate.js`, para las fórmulas;
-  - `js/store.js`, probablemente, para guardar el comportamiento de costos y el DAP; se confirma en el CP3. Ya no hace falta tocar `estados-import.js` ni `estados-calculations.js` (paso 00);
+  - `js/store.js`, para guardar el comportamiento de costos y el DAP (paso 03). El importador no cambia;
+  - `js/modules/estados/estados-calculations.js`, solo para exportar `resolveAccountType`, acordado con Cris, que lo revisa (paso 03);
   - `js/app.js` e `index.html`, para la ruta.
 
 ## Pasos
@@ -64,7 +65,13 @@ Actualizados tras integrar `core`. Los checkpoints 4 (importación) y parte del 
 |---|---|---|
 | 00 | [Alcance y decisiones iniciales](00-alcance-y-decisiones.md) | Completado |
 | 01 | [Fórmulas de apalancamiento](01-formulas-apalancamiento.md) | En progreso |
+| 02 | [Motor de cálculo](02-motor-de-calculo.md) | Pendiente |
+| 03 | [Datos y derivación](03-datos-y-derivacion.md) | Pendiente |
+| 04 | [Pantalla](04-pantalla.md) | Pendiente |
+| 05 | [Memoria por empresa](05-memoria-por-empresa.md) (opcional) | Pendiente |
+
+El MVP son los pasos 01 a 04 (CP1 a CP4). El 05 queda para después.
 
 ## Próximo paso
 
-Aprobar lo que queda del paso 01 (CP1): las fórmulas, los casos especiales y los casos resueltos a mano. Después, CP2: las funciones puras con sus tests.
+Aprobar lo que queda del paso 01 (CP1): las fórmulas, los casos especiales y los casos resueltos a mano. Después, revisar las preguntas abiertas de los pasos 02 a 04 y empezar el CP2: las funciones puras con sus tests.
