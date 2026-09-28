@@ -42,6 +42,7 @@ En Windows PowerShell, si `npm` o `npx` fallan por la política de ejecución, u
 10. **No toques lo que no es de tu tarea.** Sin refactors, renombres, reformateos ni cambios de fin de línea en código ajeno. Si ves un problema fuera de tu alcance, anótalo en el PR.
 11. **Sin dependencias nuevas sin acuerdo del equipo.** Si se aprueba una, con versión exacta.
 12. **Si una regla te impide terminar, detente y pregunta.** No la saltes ni la "arregles" por tu cuenta.
+13. **Registra las decisiones discutibles** en `docs/decisiones.md`, con su plantilla, en el mismo PR que las aplica. Son las que tenían alternativas razonables, se apartan de un libro o del código existente, o cambian cifras que ve el usuario. Una decisión no se borra: se reemplaza con una entrada nueva.
 
 ## Archivos compartidos
 
@@ -68,6 +69,7 @@ Lee solo lo que la tarea necesita.
 | `docs/reglas/codigo.md` | Estructura, estilo, interfaz, seguridad y dependencias |
 | `docs/reglas/pruebas-y-documentacion.md` | Qué probar, cómo probarlo y qué documentar |
 | `docs/planificacion/` | Plan, decisiones y estado de cada feature |
+| `docs/decisiones.md` | Antes de cambiar algo que ya se decidió, y al tomar una decisión discutible |
 | `docs/api.md` | Referencia detallada de las funciones públicas |
 
 ## Al terminar una tarea
@@ -76,5 +78,6 @@ Lee solo lo que la tarea necesita.
 - [ ] Tests nuevos para el código nuevo y para cada bug corregido.
 - [ ] `CHANGELOG.md` actualizado en "[Sin publicar]"; `docs/api.md` si agregaste o cambiaste funciones públicas.
 - [ ] Ficha de la feature actualizada: qué se hizo, qué falta y qué se decidió.
+- [ ] Decisiones discutibles registradas en `docs/decisiones.md`.
 - [ ] Commits con el formato `tipo: descripción` y archivos agregados por nombre (nunca `git add .`).
 - [ ] PR hacia `main` con la plantilla completa. Lo aprueba otra persona del equipo, nunca el autor ni una IA. El agente solo hace el merge si se lo piden y se cumplen las condiciones de "Integrar con una IA" en `docs/reglas/flujo-de-trabajo.md`.
