@@ -52,39 +52,52 @@ describe('Razones Financieras (AC-3.3)', () => {
   it('RC = AC / PC', () => {
     expect(ratioCorriente(900000, 280000)).toBeCloseTo(3.214, 2);
     expect(ratioCorriente(200, 100)).toBe(2);
-    expect(ratioCorriente(100, 0)).toBe(0);
+    // Pasivo corriente 0: la razón no existe (N/D), no un 0 interpretable.
+    expect(ratioCorriente(100, 0)).toBeNull();
   });
 
   it('RR = (AC - Inventario) / PC', () => {
     expect(ratioRapido(900000, 180000, 280000)).toBeCloseTo(2.571, 2);
     expect(ratioRapido(500, 200, 100)).toBe(3);
+    expect(ratioRapido(500, 200, 0)).toBeNull();
   });
 
   it('RotInv = CostoVentas / InventarioProm', () => {
     expect(rotacionInventario(510000, 180000)).toBeCloseTo(2.833, 2);
+    expect(rotacionInventario(510000, 0)).toBeNull();
+    expect(rotacionInventario(510000, null)).toBeNull();
   });
 
-  it('RotCxC = Ventas / CxCprom', () => {
+  it('RotCxC = Ventas / CxCprom; sin ventas o sin CxC es N/D', () => {
     expect(rotacionCxC(850000, 120000)).toBeCloseTo(7.083, 2);
+    expect(rotacionCxC(null, 120000)).toBeNull();
+    expect(rotacionCxC(850000, 0)).toBeNull();
   });
 
   it('PPC = DIAS_ANIO (365) / RotCxC', () => {
     expect(DIAS_ANIO).toBe(365);
     expect(plazoCobro(7.083)).toBeCloseTo(51.53, 2);
     expect(plazoCobro(8)).toBeCloseTo(45.625, 6);
+    expect(plazoCobro(0)).toBeNull();
+    expect(plazoCobro(null)).toBeNull();
   });
 
   it('Endeudamiento = PasivoTotal / TotalActivo', () => {
     expect(endeudamiento(280000, 400000)).toBe(0.7);
     expect(endeudamiento(0, 500)).toBe(0);
+    expect(endeudamiento(100, 0)).toBeNull();
   });
 
   it('MN = UN / Ventas', () => {
     expect(margenNeto(50000, 850000)).toBeCloseTo(0.0588, 3);
+    expect(margenNeto(50000, 0)).toBeNull();
+    expect(margenNeto(null, 850000)).toBeNull();
   });
 
   it('ROA = UN / TotalActivo', () => {
     expect(roa(50000, 400000)).toBeCloseTo(0.125, 3);
+    expect(roa(50000, 0)).toBeNull();
+    expect(roa(null, 400000)).toBeNull();
   });
 });
 
@@ -107,9 +120,25 @@ describe('DuPont (AC-3.7)', () => {
     expect(result.ROE).toBeCloseTo(result.PM * result.AT * result.EM, 6);
   });
 
-  it('ROE es 0 cuando ventas es 0', () => {
+  it('ROE es N/D cuando ventas es 0 (nunca un 0 financiero falso)', () => {
     const result = dupont(0, 0, 100000, 50000);
-    expect(result.ROE).toBe(0);
+    expect(result.PM).toBeNull();
+    expect(result.ROE).toBeNull();
+  });
+
+  it('sin activo promedio no produce Infinity ni NaN', () => {
+    const result = dupont(50000, 850000, 0, 50000);
+    expect(result.AT).toBeNull();
+    expect(result.EM).toBe(0);
+    expect(result.ROE).toBeNull();
+    expect(Number.isFinite(result.AT)).toBe(false);
+  });
+
+  it('activo promedio N/D no se lee como un multiplicador 0', () => {
+    const result = dupont(50000, 850000, null, 500000);
+    expect(result.AT).toBeNull();
+    expect(result.EM).toBeNull();
+    expect(result.ROE).toBeNull();
   });
 });
 

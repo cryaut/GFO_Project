@@ -35,51 +35,62 @@ export function av(cuenta, base) {
   return cuenta / base;
 }
 
+// Denominador 0 o dato ausente => null (N/D), nunca 0: un 0 aquí sería un
+// resultado financiero falso (AGENTS.md regla 4).
 export function ratioCorriente(activosCorrientes, pasivosCorrientes) {
-  if (pasivosCorrientes === 0) return 0;
+  if (!pasivosCorrientes) return null;
   return activosCorrientes / pasivosCorrientes;
 }
 
 export function ratioRapido(activosCorrientes, inventario, pasivosCorrientes) {
-  if (pasivosCorrientes === 0) return 0;
+  if (!pasivosCorrientes) return null;
   return (activosCorrientes - inventario) / pasivosCorrientes;
 }
 
 export function rotacionInventario(costoVentas, inventarioPromedio) {
-  if (inventarioPromedio === 0) return 0;
+  if (!inventarioPromedio) return null;
   return costoVentas / inventarioPromedio;
 }
 
-export function rotacionCxC(ventas, cxCprom) {
-  if (cxCprom === 0) return 0;
-  return ventas / cxCprom;
+// Idealmente con ventas a crédito. El modelo de datos no las separa, así que Análisis pasa
+// las ventas totales (como Gitman en el plazo de cobro). Sin ventas o sin CxC => N/D.
+export function rotacionCxC(ventasACredito, cxCprom) {
+  if (ventasACredito === null || ventasACredito === undefined) return null;
+  if (!cxCprom) return null;
+  return ventasACredito / cxCprom;
 }
 
 export function plazoCobro(rotCxC) {
-  if (rotCxC === 0) return 0;
+  if (!rotCxC) return null;
   return DIAS_ANIO / rotCxC;
 }
 
 export function endeudamiento(pasivoTotal, totalActivo) {
-  if (totalActivo === 0) return 0;
+  if (!totalActivo) return null;
   return pasivoTotal / totalActivo;
 }
 
 export function margenNeto(utilidadNeta, ventas) {
-  if (ventas === 0) return 0;
+  if (!ventas) return null;
+  if (utilidadNeta === null || utilidadNeta === undefined) return null;
   return utilidadNeta / ventas;
 }
 
 export function roa(utilidadNeta, totalActivo) {
-  if (totalActivo === 0) return 0;
+  if (!totalActivo) return null;
+  if (utilidadNeta === null || utilidadNeta === undefined) return null;
   return utilidadNeta / totalActivo;
 }
 
 export function dupont(UN, ventas, activoTotalProm, patrimonio) {
   const PM = margenNeto(UN, ventas);
-  const AT = ventas === 0 ? 0 : ventas / activoTotalProm;
-  const EM = patrimonio === 0 ? 0 : activoTotalProm / patrimonio;
-  const ROE = PM * AT * EM;
+  const AT = !activoTotalProm ? null : ventas / activoTotalProm;
+  // El guard explícito de null evita que null / patrimonio se lea como 0.
+  const EM = (activoTotalProm === null || activoTotalProm === undefined || !patrimonio)
+    ? null : activoTotalProm / patrimonio;
+  // Un solo componente N/D anula el producto: nunca Infinity ni NaN.
+  const ROE = (PM === null || PM === undefined || AT === null || EM === null)
+    ? null : PM * AT * EM;
   return { PM, AT, EM, ROE };
 }
 
@@ -107,7 +118,8 @@ export function efeIndirecto(utilidadNeta, ajustes) {
 }
 
 // === Razones adicionales (completan RC, RR, RotInv, RotCxC, PPC, Endeudamiento, MN, ROA) ===
-// Todas devuelven null si su denominador es 0 o el dato falta: N/D, no cero.
+// Todas las razones de este archivo devuelven null si su denominador es 0 o el
+// dato falta: N/D, no cero.
 export function pruebaDefensiva(efectivo, pasivosCorrientes) {
   if (pasivosCorrientes === 0) return null;
   return efectivo / pasivosCorrientes;
@@ -118,10 +130,13 @@ export function rotacionActivos(ventas, activoTotalProm) {
   return ventas / activoTotalProm;
 }
 
-// Rotación de cuentas por pagar: costo de ventas (aproxima las compras) / CxP promedio.
-export function rotacionCxP(costoVentas, cxPprom) {
+// Rotación de cuentas por pagar = Compras / CxP promedio. El llamador calcula
+// Compras = Costo de Ventas + Inventario Final − Inventario Inicial y, si no hay
+// inventario comparable, pasa el costo de ventas (aproximación documentada).
+export function rotacionCxP(compras, cxPprom) {
   if (!cxPprom) return null;
-  return costoVentas / cxPprom;
+  if (compras === null || compras === undefined) return null;
+  return compras / cxPprom;
 }
 
 export function plazoPago(rotCxP) {
@@ -137,8 +152,12 @@ export function edadInventario(rotInv) {
 
 // Ciclo de conversión de efectivo = plazo de cobro + edad del inventario − plazo de pago.
 export function cicloConversion(plazoCobroDias, rotInv, rotCxP) {
+  if (plazoCobroDias === null || plazoCobroDias === undefined) return null;
   if (!rotInv || !rotCxP) return null;
-  return plazoCobroDias + edadInventario(rotInv) - plazoPago(rotCxP);
+  const edad = edadInventario(rotInv);
+  const pago = plazoPago(rotCxP);
+  if (edad === null || pago === null) return null;
+  return plazoCobroDias + edad - pago;
 }
 
 export function coberturaIntereses(utilidadOperativa, intereses) {
@@ -301,4 +320,169 @@ export function gafVariacion(uaiiBase, uaii, udacBase, udac) {
 // GAT por variación = %ΔUDAC / %ΔVentas.
 export function gatVariacion(ventasBase, ventas, udacBase, udac) {
   return cocienteVariaciones(udacBase, udac, ventasBase, ventas);
+}
+
+// === Punto de equilibrio y C-V-U ===
+// Casos resueltos a mano en docs/planificacion/modulos-guia/01-modulos-obligatorios.md.
+// Devuelven null (N/D) si falta un dato o si el margen de contribución no es positivo: con
+// MCu ≤ 0 cada unidad vendida aumenta la pérdida y no existe punto de equilibrio.
+
+// MCu = P − CVu
+export function margenContribucionUnitario(precio, costoVariableUnitario) {
+  if (!esNumero(precio) || !esNumero(costoVariableUnitario)) return null;
+  return precio - costoVariableUnitario;
+}
+
+// RMC = MCu / P
+export function razonMargenContribucion(mcUnitario, precio) {
+  if (!esNumero(mcUnitario) || !esNumero(precio) || precio <= 0) return null;
+  return mcUnitario / precio;
+}
+
+// PE en unidades = CF / MCu
+export function puntoEquilibrioUnidades(costosFijos, mcUnitario) {
+  if (!esNumero(costosFijos) || costosFijos < 0 || !esNumero(mcUnitario) || mcUnitario <= 0) return null;
+  return costosFijos / mcUnitario;
+}
+
+// PE en C$ = CF / RMC
+export function puntoEquilibrioVentas(costosFijos, razonMC) {
+  if (!esNumero(costosFijos) || costosFijos < 0 || !esNumero(razonMC) || razonMC <= 0) return null;
+  return costosFijos / razonMC;
+}
+
+// Unidades para lograr una utilidad objetivo = (CF + UO) / MCu
+export function unidadesUtilidadObjetivo(costosFijos, utilidadObjetivo, mcUnitario) {
+  if (![costosFijos, utilidadObjetivo, mcUnitario].every(esNumero) || mcUnitario <= 0) return null;
+  const numerador = costosFijos + utilidadObjetivo;
+  return numerador < 0 ? null : numerador / mcUnitario;
+}
+
+// Margen de seguridad = (ventas − ventas de equilibrio) / ventas, en unidades o en C$.
+// Negativo: la empresa vende menos que su punto de equilibrio.
+export function margenSeguridad(ventas, ventasEquilibrio) {
+  if (!esNumero(ventas) || !esNumero(ventasEquilibrio) || ventas <= 0) return null;
+  return (ventas - ventasEquilibrio) / ventas;
+}
+
+// === Inventario básico ===
+
+// Existencia final = existencia inicial + entradas − salidas
+export function existenciaFinal(existenciaInicial, entradas, salidas) {
+  if (![existenciaInicial, entradas, salidas].every(esNumero)) return null;
+  return existenciaInicial + entradas - salidas;
+}
+
+// Valor del inventario = existencia final × costo unitario
+export function valorInventario(existencia, costoUnitario) {
+  if (!esNumero(existencia) || !esNumero(costoUnitario)) return null;
+  return existencia * costoUnitario;
+}
+
+// Alerta de reposición: la existencia llegó al stock mínimo o quedó por debajo.
+export function necesitaReposicion(existencia, stockMinimo) {
+  if (!esNumero(existencia) || !esNumero(stockMinimo)) return null;
+  return existencia <= stockMinimo;
+}
+
+// === Flujo de efectivo ===
+
+// Flujo neto de una actividad = entradas − salidas
+export function flujoNeto(entradas, salidas) {
+  if (!esNumero(entradas) || !esNumero(salidas)) return null;
+  return entradas - salidas;
+}
+
+// Variación neta del efectivo = operación + inversión + financiamiento
+export function variacionNetaEfectivo(operacion, inversion, financiamiento) {
+  if (![operacion, inversion, financiamiento].every(esNumero)) return null;
+  return operacion + inversion + financiamiento;
+}
+
+// Saldo final de efectivo = saldo inicial + variación neta
+export function saldoFinalEfectivo(saldoInicial, variacionNeta) {
+  if (!esNumero(saldoInicial) || !esNumero(variacionNeta)) return null;
+  return saldoInicial + variacionNeta;
+}
+
+// === Presupuesto maestro ===
+
+// Compras en unidades = ventas + inventario final deseado − inventario inicial.
+// Puede salir negativo si el inventario inicial sobra; el módulo decide cómo tratarlo.
+export function comprasPresupuestadas(ventasUnidades, inventarioFinalDeseado, inventarioInicial) {
+  if (![ventasUnidades, inventarioFinalDeseado, inventarioInicial].every(esNumero)) return null;
+  return ventasUnidades + inventarioFinalDeseado - inventarioInicial;
+}
+
+// CBV = inventario inicial + compras − inventario final (en C$)
+export function costoBienesVendidos(inventarioInicial, compras, inventarioFinal) {
+  if (![inventarioInicial, compras, inventarioFinal].every(esNumero)) return null;
+  return inventarioInicial + compras - inventarioFinal;
+}
+
+// Financiamiento requerido = saldo mínimo − saldo final, si el saldo final queda por debajo
+// del mínimo (presupuesto de caja de Gitman); 0 si hay excedente.
+export function financiamientoRequerido(saldoFinal, saldoMinimo) {
+  if (!esNumero(saldoFinal) || !esNumero(saldoMinimo)) return null;
+  return Math.max(0, saldoMinimo - saldoFinal);
+}
+
+// === Presupuesto personal ===
+
+// Capacidad de ahorro = ingresos − gastos (antes del ahorro planificado)
+export function capacidadAhorro(ingresos, gastos) {
+  if (!esNumero(ingresos) || !esNumero(gastos)) return null;
+  return ingresos - gastos;
+}
+
+// Tasa de ahorro = capacidad de ahorro / ingresos
+export function tasaAhorro(capacidad, ingresos) {
+  if (!esNumero(capacidad) || !esNumero(ingresos) || ingresos <= 0) return null;
+  return capacidad / ingresos;
+}
+
+// === Razones de mercado ===
+// UDAC = utilidad disponible para accionistas comunes (UN − DAP). null (N/D) si falta un dato o
+// el denominador no es positivo: con UPA ≤ 0 la relación precio/utilidad no tiene lectura.
+
+// UPA = UDAC / acciones comunes en circulación (C$ por acción)
+export function utilidadPorAccion(udac, accionesComunes) {
+  if (!esNumero(udac) || !esNumero(accionesComunes) || accionesComunes <= 0) return null;
+  return udac / accionesComunes;
+}
+
+// P/U = precio de mercado por acción / UPA (veces)
+export function precioUtilidad(precioAccion, upa) {
+  if (!esNumero(precioAccion) || precioAccion <= 0 || !esNumero(upa) || upa <= 0) return null;
+  return precioAccion / upa;
+}
+
+// Valor en libros por acción = patrimonio común / acciones comunes (C$ por acción)
+export function valorLibrosPorAccion(patrimonioComun, accionesComunes) {
+  if (!esNumero(patrimonioComun) || !esNumero(accionesComunes) || accionesComunes <= 0) return null;
+  return patrimonioComun / accionesComunes;
+}
+
+// P/VL = precio de mercado por acción / valor en libros por acción (veces)
+export function precioValorLibros(precioAccion, valorLibrosAccion) {
+  if (!esNumero(precioAccion) || precioAccion <= 0 || !esNumero(valorLibrosAccion) || valorLibrosAccion <= 0) return null;
+  return precioAccion / valorLibrosAccion;
+}
+
+// DPA = dividendos comunes pagados / acciones comunes (C$ por acción)
+export function dividendoPorAccion(dividendosComunes, accionesComunes) {
+  if (!esNumero(dividendosComunes) || dividendosComunes < 0 || !esNumero(accionesComunes) || accionesComunes <= 0) return null;
+  return dividendosComunes / accionesComunes;
+}
+
+// Razón de pago de dividendos = DPA / UPA
+export function razonPagoDividendos(dpa, upa) {
+  if (!esNumero(dpa) || !esNumero(upa) || upa <= 0) return null;
+  return dpa / upa;
+}
+
+// Rendimiento del dividendo = DPA / precio de mercado por acción
+export function rendimientoDividendo(dpa, precioAccion) {
+  if (!esNumero(dpa) || !esNumero(precioAccion) || precioAccion <= 0) return null;
+  return dpa / precioAccion;
 }

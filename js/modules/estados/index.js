@@ -28,7 +28,7 @@ export const DEMO_MUNOMODA = {
       patrimonio: {
         'Capital Social': 300000,
         'Reservas': 80000,
-        'Utilidades Acumuladas': 207815
+        'Utilidades Acumuladas': 137615
       }
     },
     '2024': {
@@ -47,13 +47,14 @@ export const DEMO_MUNOMODA = {
         'Cuentas por Pagar': 92000,
         'Pasivo Corto Plazo': 65000,
         'Provisiones': 18000,
-        'Pasivo Largo Plazo': 75000,
-        'Otros Pasivos': 33860
+        'Pasivo Largo Plazo': 45000,
+        'Otros Pasivos': 23085
       },
       patrimonio: {
         'Capital Social': 300000,
         'Reservas': 80000,
-        'Utilidades Acumuladas': 207815
+        // 137,615 + utilidad neta 104,825 − dividendos 40,000
+        'Utilidades Acumuladas': 202440
       }
     }
   },
@@ -64,7 +65,10 @@ export const DEMO_MUNOMODA = {
       'Gastos de Administracion': 120000,
       'Gastos de Ventas': 85000,
       'Otros Ingresos': 15000,
-      'Otros Gastos': 10000
+      'Otros Gastos': 10000,
+      // 9 % sobre la deuda financiera de 140,000; IR = 30 % de la UAI (127,400)
+      'Gastos por Intereses': 12600,
+      'Impuesto sobre la Renta': 38220
     },
     '2024': {
       'Ventas': 920000,
@@ -72,7 +76,10 @@ export const DEMO_MUNOMODA = {
       'Gastos de Administracion': 130000,
       'Gastos de Ventas': 90000,
       'Otros Ingresos': 18000,
-      'Otros Gastos': 12000
+      'Otros Gastos': 12000,
+      // 9 % sobre la deuda financiera promedio de 125,000; IR = 30 % de la UAI (149,750)
+      'Gastos por Intereses': 11250,
+      'Impuesto sobre la Renta': 44925
     }
   }
 };

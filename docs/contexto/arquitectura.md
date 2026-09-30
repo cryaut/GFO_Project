@@ -22,6 +22,8 @@ js/
 │   ├── calculate.js       Fórmulas financieras puras (catálogo en dominio-financiero.md)
 │   ├── format.js          formatCurrency, formatNumber, formatPercent, formatPercentRaw, parseNumber
 │   ├── html.js            escapeHTML
+│   ├── form.js            leerNumero, nuevoId, fechaHoy (formularios de los módulos nuevos)
+│   ├── estados-guardados.js  estadosGuardados, totalesPeriodo (estados guardados para otros módulos)
 │   └── export.js          exportJSON, exportCSV, exportHTML, importJSON
 └── modules/
     ├── presupuesto/       Módulo 1: presupuesto personal
@@ -30,7 +32,12 @@ js/
     ├── activos/           Módulo 4: activos y depreciación
     ├── mercados/          Módulo 5: glosario, comparador de bonos y acciones, quiz
     ├── integracion/       Módulo 6: dashboard y exportación (ruta #/reportes)
-    └── apalancamiento/    GAO, GAF y GAT desde los estados guardados
+    ├── apalancamiento/    GAO, GAF y GAT desde los estados guardados
+    ├── inventario/        Control básico de inventario: existencias, valor, kardex y reposición
+    ├── equilibrio/        Punto de equilibrio y C-V-U con escenarios y gráfica
+    ├── flujo/             Flujo de efectivo por actividades (método directo)
+    ├── planeacion/        Presupuesto maestro: ventas, compras, CBV, gastos, caja y resultados
+    └── proforma/          Proforma y reporte integrado con alertas
 scripts/                   dev-server.cjs y datos de ejemplo (sample-estados.csv y .json)
 tests/unit/                Tests de Vitest
 docs/                      Documentación: contexto, reglas, planificación, API y manual
@@ -44,6 +51,7 @@ docs/                      Documentación: contexto, reglas, planificación, API
 | `analisis/` | Todo en `index.js` (unas 690 líneas: cálculo e interfaz) | `ah.js`, `av.js`, `razones.js`, `dupont.js`, `cnt-cno.js`, `eoaf.js` y `efe.js` solo reexportan funciones de `index.js` |
 | `presupuesto/`, `activos/`, `mercados/`, `integracion/` | Casi todo en `index.js` | `glosario-data.js`, `comparador.js` y `quiz.js` reexportan datos de `mercados/index.js` |
 | `apalancamiento/` | `index.js` (lee el `store` e `initApalancamiento`), `apalancamiento-ui.js` (interfaz), `apalancamiento-calculations.js` (derivación pura, sin DOM ni `store`) | Lee los estados con `computeFinancialTotals` y `resolveAccountType`; las fórmulas están en `calculate.js` |
+| `inventario/`, `equilibrio/`, `flujo/`, `planeacion/`, `proforma/` | Mismo patrón que `apalancamiento/`: `<modulo>-calculations.js` puro, `<modulo>-ui.js` que recibe `page` y `{ datos, guardar, graficar? }`, e `index.js` que lee el `store` | Plan en `docs/planificacion/modulos-guia/`. `proforma/` no guarda datos: reúne los resultados de los demás con sus mismas funciones |
 
 Estos archivos están vacíos (devuelven `{}`) y ningún módulo los usa: `activos/activos-ui.js`, `analisis/analisis-ui.js`, `integracion/dashboard.js`, `integracion/export.js`, `mercados/mercados-ui.js`, `presupuesto/presupuesto-ui.js` y `presupuesto/presupuesto-calculations.js`. `activos/depreciacion.js` solo envuelve una función de `calculate.js`. No agregues lógica en ellos sin acordarlo: hoy nadie los importa.
 
@@ -60,6 +68,11 @@ Estos archivos están vacíos (devuelven `{}`) y ningún módulo los usa: `activ
 | `#/reportes` | `page-reportes` | `initReportes` | `js/modules/integracion/index.js` |
 | `#/glosario` | `page-glosario` | `initGlosario` | `js/app.js` |
 | `#/apalancamiento` | `page-apalancamiento` | `initApalancamiento` | `js/modules/apalancamiento/index.js` |
+| `#/inventario` | `page-inventario` | `initInventario` | `js/modules/inventario/index.js` |
+| `#/equilibrio` | `page-equilibrio` | `initEquilibrio` | `js/modules/equilibrio/index.js` |
+| `#/flujo` | `page-flujo` | `initFlujo` | `js/modules/flujo/index.js` |
+| `#/planeacion` | `page-planeacion` | `initPlaneacion` | `js/modules/planeacion/index.js` |
+| `#/proforma` | `page-proforma` | `initProforma` | `js/modules/proforma/index.js` |
 
 Cada vez que se entra a una ruta, su `init` vuelve a dibujar la página completa.
 
@@ -96,12 +109,17 @@ Secciones de `defaultData` en `js/store.js`:
 
 | Clave | Contenido |
 |---|---|
-| `presupuesto` | `ingresoMensual`, `metaAhorro`, `mesesDisponibles`, `gastos[]`, `semanas[]` |
+| `presupuesto` | `ingresoMensual` (total de `ingresos`), `metaAhorro`, `mesesDisponibles`, `gastos[]`, `semanas[]`, `ingresos[]` (`{ concepto, monto, tipo: 'regular' \| 'ocasional' }`) |
 | `estados` | Estados financieros (forma abajo) |
 | `analisis` | `resultados` (sin uso actual) |
 | `activos` | `inventario[]` |
 | `mercados` | `quizScore`, `quizHistory[]` (sin uso actual) |
 | `apalancamiento` | `comportamiento` (por cuenta: `{ tipo: 'variable' \| 'fijo' \| 'mixto', pctVariable }`), `dap` (por periodo) y `tasaDefecto` (`null` = 30 %) |
+| `inventario` | `productos[]` (`{ id, nombre, unidad, existenciaInicial, costoUnitario, stockMinimo }`) y `movimientos[]` (`{ id, productoId, fecha, tipo: 'entrada' \| 'salida', cantidad, concepto }`) |
+| `equilibrio` | `precio`, `costoVariableUnitario`, `costosFijos`, `unidades`, `utilidadObjetivo` (`null` = sin dato) y `escenario` (cambios en fracción: `{ precio, costoVariable, costosFijos, volumen }`) |
+| `flujo` | `saldoInicial`, `periodoBase` (periodo del balance del que salió el saldo, o `''`) y `movimientos[]` (`{ id, concepto, actividad: 'operacion' \| 'inversion' \| 'financiamiento', tipo, monto }`) |
+| `planeacion` | `supuestos`: `null` hasta configurarlos; claves en `SUPUESTOS` (`planeacion-calculations.js`) más `tipoPeriodo`, `periodos`, `ventasUnidades[]`, `otrosDesembolsos[]`, `productoInventario` y `stockMinimo` |
+| `razonesMercado` | `periodos`: por periodo `{ acciones, precio, dividendos }` (`null` = sin dato), para las razones de mercado de Análisis |
 | `theme` | `'light'` o `'dark'` |
 
 Forma de `estados`:
@@ -166,8 +184,10 @@ Un módulo nuevo que guarde datos necesita su sección en `defaultData`, porque 
 No la corrijas dentro de otra tarea: abre una rama propia y avísalo al equipo.
 
 - `store.load()` y `store.reset()` copian `defaultData` de forma superficial, así que `reset()` puede no limpiar datos anidados.
-- La demo MUNO MODA no cuadra (el activo queda por debajo de pasivo + patrimonio por C$ 70,200 en 2023 y C$ 46,150 en 2024), y sus utilidades acumuladas no cambian entre periodos.
+- La demo MUNO MODA ya cuadra y trae intereses e IR (antes el activo quedaba por debajo de pasivo + patrimonio por C$ 70,200 y C$ 46,150). Las pruebas que copian sus cifras antiguas (`estados-calculations`, `apalancamiento-*`) siguen usando su propia copia.
 - Las funciones originales de `calculate.js` devuelven 0 cuando el denominador es 0. La pestaña Análisis lo detecta con `computeRazones(...).denominadores`.
 - `package-lock.json` está en `.gitignore`, así que cada persona puede instalar versiones distintas de Vitest y ESLint.
 - `analisis/index.js` mezcla cálculo e interfaz en un solo archivo.
 - `npm run lint` reporta 11 advertencias por variables sin uso.
+- Conviven dos flujos de efectivo: el EFE de Análisis (indirecto, solo operación, sin depreciación) y el módulo Flujo de Efectivo (directo, tres actividades). Conviene unificarlos (D-012).
+- `apalancamiento-ui.js` tiene su propio lector de números; `js/utils/form.js` (`leerNumero`) hace lo mismo para los módulos nuevos.

@@ -30,3 +30,21 @@ export function parseNumber(str) {
   const num = parseFloat(cleaned);
   return isNaN(num) ? 0 : num;
 }
+
+// Variantes que muestran "N/D" si el valor no es un número finito (convención null = N/D).
+// Las funciones de arriba convierten null en 0; estas no.
+function esFinito(value) {
+  return typeof value === 'number' && Number.isFinite(value);
+}
+
+export function formatCurrencyND(value, currency = 'C$') {
+  return esFinito(value) ? formatCurrency(value, currency) : 'N/D';
+}
+
+export function formatNumberND(value, decimals = 2) {
+  return esFinito(value) ? formatNumber(value, decimals) : 'N/D';
+}
+
+export function formatPercentND(value, decimals = 2) {
+  return esFinito(value) ? formatPercent(value, decimals) : 'N/D';
+}

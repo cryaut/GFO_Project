@@ -14,6 +14,11 @@ Guía paso a paso con ejemplos numéricos concretos por módulo.
 6. [Módulo 5: Mercados Financieros](#6-módulo-5-mercados-financieros)
 7. [Módulo 6: Reportes e Integración](#7-módulo-6-reportes-e-integración)
 8. [Apalancamiento (GAO, GAF y GAT)](#8-apalancamiento-gao-gaf-y-gat)
+9. [Control de Inventario](#9-control-de-inventario)
+10. [Punto de Equilibrio y C-V-U](#10-punto-de-equilibrio-y-c-v-u)
+11. [Flujo de Efectivo](#11-flujo-de-efectivo)
+12. [Presupuesto Maestro](#12-presupuesto-maestro)
+13. [Proforma y Reporte Integrado](#13-proforma-y-reporte-integrado)
 
 ---
 
@@ -30,11 +35,11 @@ Guía paso a paso con ejemplos numéricos concretos por módulo.
 
 ### 2.1 Definir ingreso y meta de ahorro
 
-**Paso 1:** Ingresa tu ingreso mensual.
+**Paso 1:** En la pestaña **Ingresos**, registra cada ingreso del mes con su concepto y tipo (regular u ocasional). El total aparece en **Configuración**. Los datos guardados antes con un solo "ingreso mensual" se muestran como un ingreso regular.
 
-| Concepto | Valor |
-|----------|-------|
-| Ingreso mensual | C$ 12,000 |
+| Concepto | Tipo | Valor |
+|----------|------|-------|
+| Salario | Regular | C$ 12,000 |
 
 **Paso 2:** Define tu meta de ahorro y el plazo.
 
@@ -94,6 +99,17 @@ Cada semana, registra tus gastos reales. El sistema calcula el saldo acumulado:
 
 Si los precios suben un 5%, actualiza el porcentaje de ajuste y la herramienta recalcula automáticamente todos los montos proyectados.
 
+### 2.6 Capacidad de ahorro y saldo disponible
+
+La pestaña **Resumen** muestra:
+
+```
+Capacidad de ahorro = Total de ingresos − Total de gastos
+Saldo disponible    = Capacidad de ahorro − Ahorro planificado al mes
+```
+
+Con **Cargar ejemplo ficticio** (datos inventados, para no exponer información personal en la defensa): ingresos C$ 22,500 (salario 18,000 + trabajos independientes 4,500) y gastos C$ 17,200 → capacidad de ahorro **C$ 5,300** (23.56 % de los ingresos). Con una meta de C$ 36,000 en 12 meses (C$ 3,000 al mes) quedan **C$ 2,300** disponibles. La interpretación indica además la categoría con más gasto y, si la meta no alcanza, cuántos meses tomaría con la capacidad actual. Este presupuesto es independiente del presupuesto maestro de la empresa.
+
 ---
 
 ## 3. Módulo 2: Estados Financieros
@@ -141,50 +157,56 @@ El botón **"Cargar ejemplo"** inserta la empresa de demostración MUNO MODA S.A
 
 ### 3.3 Balance General — Verificar A = P + O
 
-La demo carga el siguiente Balance General:
+La demo carga el siguiente Balance General de MUNO MODA S.A.:
 
 **Periodo 2024:**
 
 | Cuenta | Monto |
 |--------|-------|
 | **Activos** | |
-| Efectivo | C$ 8,500 |
-| Cuentas por Cobrar | C$ 12,000 |
-| Inventario | C$ 18,000 |
-| Activo Fijo Neto | C$ 60,000 |
-| **Total Activos** | **C$ 98,500** |
+| Efectivo | C$ 52,000 |
+| Cuentas por Cobrar | C$ 135,000 |
+| Inventario | C$ 195,000 |
+| Activos Corrientes Otros | C$ 30,000 |
+| Terrenos, Edificios, Equipos y Vehículos | C$ 530,000 |
+| Depreciación Acumulada | C$ (116,475) |
+| **Total Activos** | **C$ 825,525** |
 | **Pasivos** | |
-| Cuentas por Pagar | C$ 10,000 |
-| Préstamo Corto Plazo | C$ 15,000 |
-| Préstamo Largo Plazo | C$ 25,000 |
-| **Total Pasivos** | **C$ 50,000** |
+| Cuentas por Pagar | C$ 92,000 |
+| Pasivo Corto Plazo | C$ 65,000 |
+| Provisiones | C$ 18,000 |
+| Pasivo Largo Plazo | C$ 45,000 |
+| Otros Pasivos | C$ 23,085 |
+| **Total Pasivos** | **C$ 243,085** |
 | **Patrimonio** | |
-| Capital Social | C$ 30,000 |
-| Utilidades Retenidas | C$ 18,500 |
-| **Total Patrimonio** | **C$ 48,500** |
+| Capital Social | C$ 300,000 |
+| Reservas | C$ 80,000 |
+| Utilidades Acumuladas | C$ 202,440 |
+| **Total Patrimonio** | **C$ 582,440** |
 
 **Verificación:**
 
 ```
-Activos  = C$ 98,500
-Pasivos + Patrimonio = C$ 50,000 + C$ 48,500 = C$ 98,500
+Activos  = C$ 825,525
+Pasivos + Patrimonio = C$ 243,085 + C$ 582,440 = C$ 825,525
 ```
 
-La ecuación contable **A = P + O** se cumple.
+La ecuación contable **A = P + O** se cumple en 2023 (C$ 801,475) y en 2024. Las utilidades acumuladas pasan de C$ 137,615 a C$ 202,440: suben por la utilidad neta de 2024 (C$ 104,825) menos los dividendos pagados (C$ 40,000).
 
 ### 3.4 Estado de Resultados
 
-| Concepto | Monto |
-|----------|-------|
-| Ventas | C$ 120,000 |
-| Costo de Ventas | C$ 72,000 |
-| **Utilidad Bruta** | **C$ 48,000** |
-| Gastos Operativos | C$ 28,000 |
-| **Utilidad Operativa** | **C$ 20,000** |
-| Gastos Financieros | C$ 5,000 |
-| **Utilidad Antes de Impuestos** | **C$ 15,000** |
-| Impuestos (30%) | C$ 4,500 |
-| **Utilidad Neta** | **C$ 10,500** |
+| Concepto | 2023 | 2024 |
+|----------|-----:|-----:|
+| Ventas | C$ 850,000 | C$ 920,000 |
+| Costo de Ventas | C$ 510,000 | C$ 545,000 |
+| **Utilidad Bruta** | **C$ 340,000** | **C$ 375,000** |
+| Gastos de Administración y de Ventas | C$ 205,000 | C$ 220,000 |
+| **UAII (utilidad operativa)** | **C$ 135,000** | **C$ 155,000** |
+| Otros Ingresos − Otros Gastos | C$ 5,000 | C$ 6,000 |
+| Gastos por Intereses | C$ 12,600 | C$ 11,250 |
+| **UAI** | **C$ 127,400** | **C$ 149,750** |
+| Impuesto sobre la Renta (30 %) | C$ 38,220 | C$ 44,925 |
+| **Utilidad Neta** | **C$ 89,180** | **C$ 104,825** |
 
 ### 3.5 Conexión entre estados
 
@@ -199,7 +221,7 @@ Efectivo (BG) ──→ Se muestra en el EFE
 
 ## 4. Módulo 3: Análisis Financiero
 
-Usando los datos de la demo MUNO MODA (Periodo 2023 → 2024):
+Los ejemplos de esta sección usan cifras pequeñas para ilustrar cada fórmula; no son los datos de la demo MUNO MODA.
 
 ### 4.1 Análisis Horizontal (AH)
 
@@ -346,6 +368,24 @@ CNT = AC - PC = C$ 38,500 - C$ 25,000 = C$ 13,500
 ```
 
 > Un CNT positivo indica buena capacidad de cubrir obligaciones a corto plazo.
+
+### 4.6 Razones de mercado
+
+En la pestaña **Mercado** de `#/analisis`, ingresa por periodo las acciones comunes en circulación, el precio de mercado por acción y los dividendos pagados, o pulsa **Cargar ejemplo de la demo**. La utilidad neta y el patrimonio salen de los estados guardados, y el DAP, de Apalancamiento.
+
+**Ejemplo con la demo MUNO MODA 2024** (30,000 acciones, precio C$ 52, dividendos C$ 40,000):
+
+| Razón | Cálculo | Resultado |
+|---|---|---:|
+| UPA | (104,825 − 0) / 30,000 | C$ 3.49 por acción |
+| P/U | 52 / 3.49 | 14.88 veces |
+| Valor en libros por acción | 582,440 / 30,000 | C$ 19.41 |
+| P/VL | 52 / 19.41 | 2.68 veces |
+| DPA | 40,000 / 30,000 | C$ 1.33 |
+| Pago de dividendos | 1.33 / 3.49 | 38.16 % |
+| Rendimiento del dividendo | 1.33 / 52 | 2.56 % |
+
+El mercado paga 14.88 veces la utilidad por acción y valora la acción a 2.68 veces su valor en libros. La pestaña también muestra los dividendos que explican el cambio del patrimonio (UN − ΔPatrimonio = C$ 40,000) para comprobar el dato.
 
 ---
 
@@ -503,9 +543,82 @@ Mientras falte clasificar alguna cuenta, el GAO y el GAT por periodo salen N/D; 
 |---|---|---:|
 | MC | 850,000 − 510,000 | 340,000 |
 | UAII | 850,000 − 510,000 − 120,000 − 85,000 | 135,000 |
-| UAI | 135,000 + 15,000 − 10,000 | 140,000 |
+| UAI | 135,000 + 15,000 − 10,000 − 12,600 | 127,400 |
 | GAO | 340,000 / 135,000 | 2.52 |
-| GAF | 135,000 / 140,000 | 0.96 |
-| GAT | 2.52 × 0.96 | 2.43 |
+| GAF | 135,000 / 127,400 | 1.06 |
+| GAT | 340,000 / 127,400 | 2.67 |
 
 Un GAO de 2.52 significa que, si las ventas suben 1 %, la UAII sube 2.52 %.
+
+---
+
+## 9. Control de Inventario
+
+Controla existencias por producto, su valor y cuándo reponer. En `#/inventario`:
+
+1. Pulsa **Cargar ejemplo** (4 prendas de MUNO MODA, datos ficticios) o agrega un producto con su existencia inicial, costo unitario y stock mínimo.
+2. En **Registrar movimiento** anota entradas (compras, devoluciones) y salidas (ventas, consumo) con fecha y concepto. Una salida que deje la existencia negativa se rechaza.
+3. Pulsa **Kardex** en un producto para ver cada movimiento con su saldo, y editar o eliminar el producto.
+
+| Concepto | Fórmula | Camisa casual |
+|---|---|---:|
+| Existencia final | inicial + entradas − salidas | 120 + 60 − 145 = 35 |
+| Valor del inventario | existencia final × costo unitario | 35 × 350 = C$ 12,250 |
+| Alerta de reposición | existencia final ≤ stock mínimo | 35 ≤ 40 → reponer 5 |
+
+El valor total del ejemplo es C$ 78,790 y hay 2 productos por reponer. El presupuesto maestro puede tomar la existencia y el costo de un producto como inventario inicial.
+
+---
+
+## 10. Punto de Equilibrio y C-V-U
+
+En `#/equilibrio` ingresa precio (P), costo variable unitario (CVu), costos fijos (CF), unidades (Q) y, si quieres, una utilidad objetivo. También puedes **Tomar de los estados**: con las unidades vendidas de un periodo, P = Ventas / Q, CVu = CV / Q y CF salen de la clasificación de `#/apalancamiento`.
+
+**Ejemplo (una prenda en un trimestre):** P 800, CVu 520, CF 42,000, Q 250.
+
+| Concepto | Cálculo | Resultado |
+|---|---|---:|
+| MCu | 800 − 520 | C$ 280 |
+| RMC | 280 / 800 | 35 % |
+| PE en unidades | 42,000 / 280 | 150 u |
+| PE en C$ | 42,000 / 0.35 | C$ 120,000 |
+| UAII | 250 × 280 − 42,000 | C$ 28,000 |
+| Margen de seguridad | (250 − 150) / 250 | 40 % |
+| GAO | 70,000 / 28,000 | 2.5 |
+
+La tabla de **escenarios** cambia ±10 % el precio, el CVu, los CF o el volumen (y uno personalizado). Con volumen +10 % la UAII sube 25 %, es decir, GAO × 10 %. La gráfica muestra dónde los ingresos cortan a los costos totales.
+
+---
+
+## 11. Flujo de Efectivo
+
+En `#/flujo` indica el saldo inicial (o tómalo del efectivo de un periodo del balance) y registra cada entrada o salida de efectivo en su actividad:
+
+- **Operación:** cobros a clientes, pagos a proveedores, sueldos, intereses e impuestos.
+- **Inversión:** compra o venta de activos fijos.
+- **Financiamiento:** préstamos y sus abonos, aportes y dividendos.
+
+Flujo de una actividad = entradas − salidas; variación neta = operación + inversión + financiamiento; saldo final = saldo inicial + variación neta. En el ejemplo: operación +98,000, inversión −30,000 y financiamiento −45,000 → variación +23,000; con saldo inicial 52,000 el saldo final es C$ 75,000.
+
+---
+
+## 12. Presupuesto Maestro
+
+En `#/planeacion` se presupuesta una empresa comercial (un producto o línea) de 1 a 12 meses o trimestres. Pulsa **Cargar ejemplo** o completa los supuestos; con **Tomar efectivo, CxC y CxP del balance** y **Tomar inventario inicial y costo del producto** se reutilizan los datos de otros módulos. Pulsa **Calcular y guardar**.
+
+La pantalla arma, en orden: ventas y cobros, compras (unidades = ventas + inventario final deseado − inventario inicial) y pagos, costo de bienes vendidos, gastos de operación, caja y estado de resultados presupuestado.
+
+**Ejemplo MUNO MODA 2025:** ventas de 250, 300, 300 y 400 prendas a C$ 800 (C$ 1,000,000), UAII C$ 182,000 y utilidad neta C$ 119,000. La compra de un vehículo de C$ 120,000 en el trimestre 2 deja la caja en C$ 19,200, bajo el mínimo de C$ 40,000: se requieren **C$ 20,800 de financiamiento**. La caja cierra en C$ 122,360. La UAII del trimestre 1 (28,000) coincide con la del punto de equilibrio.
+
+---
+
+## 13. Proforma y Reporte Integrado
+
+`#/proforma` no pide datos: reúne lo que ya calcularon los demás módulos.
+
+1. **Estado de resultados proforma:** el total del presupuesto contra el último periodo real de los estados, con variación y márgenes.
+2. **Efectivo proyectado:** saldo inicial, flujo neto, saldo final y financiamiento máximo.
+3. **Indicadores integrados:** liquidez, endeudamiento, ROE (DuPont), GAO, GAF y GAT, punto de equilibrio, flujo de efectivo, presupuesto e inventario, cada uno con su lectura y un enlace al módulo de origen.
+4. **Alertas y decisiones sugeridas:** por ejemplo, gestionar el financiamiento del trimestre 2 o reponer los productos bajo su stock mínimo.
+
+Si falta algún módulo, el reporte indica qué cargar. **Imprimir o guardar como PDF** sirve como evidencia para el informe.

@@ -82,14 +82,36 @@ describe('cobertura de intereses', () => {
 });
 
 describe('plazos en días (año de 365)', () => {
-  it('edad del inventario, plazos y ciclo de conversión', async () => {
+  it('edad del inventario, plazos y ciclo de conversión (CxC con ventas totales)', async () => {
     const { razones, html } = await cargarAnalisis(estados(60));
     expect(razones.RotInv).toBe(4); // 400 / 100
     expect(razones.edadInventario).toBeCloseTo(91.25, 6);
-    expect(razones.PPC).toBeCloseTo(36.5, 6); // 365 / (1000 / 100)
+    // El modelo no separa ventas a crédito: la rotación de CxC usa las ventas totales.
+    expect(razones.RotCxC).toBe(10); // 1000 / 100
+    expect(razones.PPC).toBeCloseTo(36.5, 6); // 365 / 10
+    // Compras = 400 + inventario (no hay periodo previo): se aproxima con costo de ventas.
     expect(razones.rotacionCxP).toBe(8); // 400 / 50
     expect(razones.plazoPago).toBeCloseTo(45.625, 6);
-    expect(razones.cicloConversion).toBeCloseTo(82.125, 6);
+    expect(razones.cicloConversion).toBeCloseTo(82.125, 6); // 36.5 + 91.25 − 45.625
+    expect(html).toContain('Rotación CxC (ventas totales)');
+    expect(html).toContain('con ventas totales');
     expect(html).toContain('Ciclo de conversión de efectivo mayor a 60 días');
+    expect(html).not.toContain('NaN');
+  });
+
+  it('con dos periodos la rotación de CxP usa compras reales', async () => {
+    const base = estados(60);
+    const dosPeriodos = structuredClone(base);
+    dosPeriodos.periods = ['2024', '2025'];
+    dosPeriodos.balanceGeneral['2024'] = structuredClone(base.balanceGeneral['2025']);
+    dosPeriodos.balanceGeneral['2024'].activos['Mercadería'] = 60; // inventario inicial
+    dosPeriodos.balanceGeneral['2024'].pasivos['Proveedores'] = 40;
+    dosPeriodos.estadoResultados['2024'] = structuredClone(base.estadoResultados['2025']);
+    const { razones } = await cargarAnalisis(dosPeriodos);
+    // Compras = 400 (CV) + 100 (inv final) − 60 (inv inicial) = 440; CxP prom = (40+50)/2 = 45
+    expect(razones.rotacionCxP).toBeCloseTo(440 / 45, 6);
+    expect(razones.usaComprasReales).toBe(true);
+    // Promedio de inventario con ambos periodos presentes: (60 + 100) / 2 = 80
+    expect(razones.RotInv).toBeCloseTo(400 / 80, 6);
   });
 });

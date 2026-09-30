@@ -25,6 +25,11 @@ Notación, convenciones de cálculo, tipos de cuenta y catálogo de funciones ex
 | CxC, CxP | Cuentas por cobrar y cuentas por pagar | `cxC`, `cuentasPorPagar` |
 | CNT, CNO | Capital neto de trabajo y capital neto operativo | `capitalNetoTrabajo`, `capitalNetoOperativo` |
 | PPC | Plazo promedio de cobro | `plazoCobro`, `PPC` en `computeRazones` |
+| P, CVu, Q | Precio, costo variable unitario y unidades (C-V-U) | `precio`, `costoVariableUnitario`, `unidades` en `equilibrio` |
+| MCu, RMC | Margen de contribución unitario (P − CVu) y razón de margen (MCu / P) | `margenContribucionUnitario`, `razonMargenContribucion` |
+| PE | Punto de equilibrio, en unidades (CF / MCu) o en C$ (CF / RMC) | `puntoEquilibrioUnidades`, `puntoEquilibrioVentas` |
+| MS | Margen de seguridad = (ventas − PE) / ventas | `margenSeguridad` |
+| CBV | Costo de bienes vendidos = inventario inicial + compras − inventario final | `costoBienesVendidos` |
 
 ### Cascada del estado de resultados
 
@@ -174,6 +179,45 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 | `valorEnLibros(costo, depAcumulada)` | costo − depreciación acumulada |
 | `ahorroMensual(meta, meses)` | meta / meses |
 | `saldoSemanal(ingreso, gastos, ahorro, reserva)` | ingreso − gastos − ahorro − reserva |
+| `capacidadAhorro(ingresos, gastos)` | ingresos − gastos (presupuesto personal) |
+| `tasaAhorro(capacidad, ingresos)` | capacidad / ingresos; `null` si los ingresos no son positivos |
+
+**Punto de equilibrio y C-V-U.** `null` si falta un dato o el margen de contribución no es positivo.
+
+| Función | Qué calcula |
+|---|---|
+| `margenContribucionUnitario(P, CVu)` | P − CVu |
+| `razonMargenContribucion(MCu, P)` | MCu / P |
+| `puntoEquilibrioUnidades(CF, MCu)` | CF / MCu |
+| `puntoEquilibrioVentas(CF, RMC)` | CF / RMC |
+| `unidadesUtilidadObjetivo(CF, UO, MCu)` | (CF + UO) / MCu |
+| `margenSeguridad(ventas, ventasEquilibrio)` | (ventas − PE) / ventas, en unidades o en C$ |
+
+**Inventario, flujo de efectivo y presupuesto maestro.** `null` si falta un dato.
+
+| Función | Qué calcula |
+|---|---|
+| `existenciaFinal(inicial, entradas, salidas)` | inicial + entradas − salidas |
+| `valorInventario(existencia, costoUnitario)` | existencia × costo unitario |
+| `necesitaReposicion(existencia, stockMinimo)` | `true` si existencia ≤ stock mínimo |
+| `flujoNeto(entradas, salidas)` | entradas − salidas de una actividad |
+| `variacionNetaEfectivo(operacion, inversion, financiamiento)` | suma de los tres flujos |
+| `saldoFinalEfectivo(saldoInicial, variacionNeta)` | saldo inicial + variación neta |
+| `comprasPresupuestadas(ventas, invFinalDeseado, invInicial)` | unidades a comprar; puede ser negativo |
+| `costoBienesVendidos(invInicial, compras, invFinal)` | CBV en C$ |
+| `financiamientoRequerido(saldoFinal, saldoMinimo)` | máx(0, saldo mínimo − saldo final) |
+
+**Razones de mercado.** `null` si falta un dato o el denominador no es positivo (P/U con UPA ≤ 0 es N/D). Uso por periodo en `js/modules/analisis/mercado-calculations.js`.
+
+| Función | Qué calcula |
+|---|---|
+| `utilidadPorAccion(UDAC, acciones)` | UPA = (UN − DAP) / acciones comunes |
+| `precioUtilidad(precio, UPA)` | P/U |
+| `valorLibrosPorAccion(patrimonio, acciones)` | Patrimonio común / acciones |
+| `precioValorLibros(precio, VLPA)` | P/VL |
+| `dividendoPorAccion(dividendos, acciones)` | DPA |
+| `razonPagoDividendos(DPA, UPA)` | DPA / UPA |
+| `rendimientoDividendo(DPA, precio)` | DPA / precio |
 
 **Nombres reemplazados.** No los vuelvas a crear; el test `razones-unificadas` falla si reaparecen.
 
@@ -191,8 +235,15 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 |---|---|
 | `js/modules/estados/estados-calculations.js` | `ACCOUNT_TYPES`, `inferAccountType(grupo, nombre)`, `resolveAccountType(datos, grupo, nombre)` (tipo explícito o inferido), `computeFinancialTotals(datos, periodo)`, `validateFinancialData(datos)` (cuadre A = P + O por periodo) |
 | `js/modules/apalancamiento/apalancamiento-calculations.js` | `cuentasOperativas`, `sugerirComportamiento`, `normalizarComportamiento`, `resolverComportamiento`, `derivarPeriodo`, `calcularApalancamiento` |
-| `js/modules/estados/estados-normalize.js` | `normalizeFinancialData(entrada)`, `parseFinancialJSON(texto)` |
+| `js/modules/estados/estados-normalize.js` | `normalizeFinancialData(entrada)`, `parseFinancialJSON(texto)`, `sortPeriods(periodos)` (siempre ordena; lo usa el importador), `ordenarPeriodos(periodos)` (ordena solo si todos empiezan con un año) |
 | `js/modules/estados/estados-import.js` | `importStatementFile(archivo)`, `tableTextToFinancialData(texto)`, `sheetsToFinancialData(hojas)`, `parseAmountCell(valor)`, `tabularTemplateCSV()` |
-| `js/modules/analisis/index.js` | `computeRazones(periodo)`, `computeAH`, `computeAV`, `computeDuPont`, `computeCNTCNO`, `computeEOAF`, `computeEFE`, `UMBRALES` |
+| `js/modules/analisis/index.js` | `computeRazones(periodo)`, `computeAH`, `computeAV`, `computeDuPont`, `computeCNTCNO`, `computeEOAF`, `computeEFE`, `UMBRALES`, `refreshSavedStates()` (relee los estados guardados antes de reutilizar `computeRazones` fuera de Análisis) |
 | `js/utils/format.js` | `formatCurrency`, `formatNumber`, `formatPercent`, `formatPercentRaw`, `parseNumber`. Convierten `null` en 0: verifica `null` antes de formatear |
 | `js/utils/html.js` | `escapeHTML(valor)` |
+| `js/modules/inventario/inventario-calculations.js` | `calcularInventario`, `kardex`, `resumenProducto`, `validarMovimiento` y el resto en `docs/api.md` |
+| `js/modules/equilibrio/equilibrio-calculations.js` | `calcularCVU`, `calcularEscenarios`, `puntosGrafica`, `baseDesdeEstados` (P, CVu y CF desde Estados y Apalancamiento) |
+| `js/modules/flujo/flujo-calculations.js` | `calcularFlujo`, `conciliarConBalance` |
+| `js/modules/planeacion/planeacion-calculations.js` | `calcularPresupuestoMaestro`, `validarSupuestos`, `SUPUESTOS` |
+| `js/modules/proforma/proforma-calculations.js` | `construirReporte`, `resultadosReales`, `resultadosProforma`, `alertasIntegradas` |
+| `js/utils/form.js`, `js/utils/estados-guardados.js` | `leerNumero`, `nuevoId`, `fechaHoy`; `estadosGuardados`, `totalesPeriodo` |
+| `js/utils/format.js` (N/D) | `formatCurrencyND`, `formatNumberND`, `formatPercentND`: muestran "N/D" en lugar de 0 |

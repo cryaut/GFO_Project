@@ -72,11 +72,13 @@ Calcula el porcentaje que representa una cuenta sobre una base.
 
 ### Funciones de Razones Financieras
 
+Todas devuelven `null` (N/D) si falta el dato o el denominador es 0; la interfaz muestra "N/D" y no genera hallazgos.
+
 #### `ratioCorriente(activosCorrientes, pasivosCorrientes)`
 Ratio de liquidez corriente.
 
 - **Parámetros**: `activosCorrientes` (number); `pasivosCorrientes` (number)
-- **Retorno**: `number` — veces que los activos cubren los pasivos
+- **Retorno**: `number | null` — `null` si `pasivosCorrientes` es 0
 - **Fórmula**: `AC / PC`
 - **Ejemplo**: `ratioCorriente(30000, 15000)` → `2` (el activo cubre 2× el pasivo)
 
@@ -84,7 +86,7 @@ Ratio de liquidez corriente.
 Ratio de liquidez rápida (prueba ácida).
 
 - **Parámetros**: `activosCorrientes` (number); `inventario` (number); `pasivosCorrientes` (number)
-- **Retorno**: `number`
+- **Retorno**: `number | null` — `null` si `pasivosCorrientes` es 0
 - **Fórmula**: `(AC - Inventario) / PC`
 - **Ejemplo**: `ratioRapido(30000, 8000, 15000)` → `1.47`
 
@@ -92,23 +94,23 @@ Ratio de liquidez rápida (prueba ácida).
 Mide cuántas veces se renueva el inventario.
 
 - **Parámetros**: `costoVentas` (number); `inventarioPromedio` (number)
-- **Retorno**: `number` — vueltas por periodo
+- **Retorno**: `number | null` — vueltas por periodo; `null` si falta el inventario promedio
 - **Fórmula**: `CostoVentas / InventarioPromedio`
 - **Ejemplo**: `rotacionInventario(60000, 10000)` → `6`
 
-#### `rotacionCxC(ventas, cxCprom)`
-Mide la eficiencia en la cobranza.
+#### `rotacionCxC(ventasACredito, cxCprom)`
+Mide la eficiencia en la cobranza. Idealmente usa ventas a crédito; como el modelo de datos no las separa, Análisis pasa las ventas totales, igual que el plazo de cobro de Gitman (CxC / ventas diarias).
 
-- **Parámetros**: `ventas` (number); `cxCprom` (number) — cuentas por cobrar promedio
-- **Retorno**: `number` — vueltas por periodo
-- **Fórmula**: `Ventas / CxCprom`
+- **Parámetros**: `ventasACredito` (number | null) — ventas a crédito o, si no se conocen, las ventas totales; `cxCprom` (number) — cuentas por cobrar promedio
+- **Retorno**: `number | null` — vueltas por periodo; `null` si faltan las ventas o el promedio es 0
+- **Fórmula**: `VentasACredito / CxCprom`
 - **Ejemplo**: `rotacionCxC(120000, 15000)` → `8`
 
 #### `plazoCobro(rotCxC)`
 Días promedio para cobrar.
 
 - **Parámetros**: `rotCxC` (number) — rotación de cuentas por cobrar
-- **Retorno**: `number` — días
+- **Retorno**: `number | null` — días; `null` si `rotCxC` es 0 o falta
 - **Fórmula**: `DIAS_ANIO / RotCxC`, con `DIAS_ANIO = 365`
 - **Ejemplo**: `plazoCobro(8)` → `45.625` días
 
@@ -116,23 +118,23 @@ Días promedio para cobrar.
 Nivel de endeudamiento sobre activos.
 
 - **Parámetros**: `pasivoTotal` (number); `totalActivo` (number)
-- **Retorno**: `number` — proporción decimal
+- **Retorno**: `number | null` — proporción decimal; `null` si `totalActivo` es 0
 - **Fórmula**: `PasivoTotal / TotalActivo`
 - **Ejemplo**: `endeudamiento(80000, 200000)` → `0.4` (40%)
 
 #### `margenNeto(utilidadNeta, ventas)`
 Porcentaje de utilidad neta sobre ventas.
 
-- **Parámetros**: `utilidadNeta` (number); `ventas` (number)
-- **Retorno**: `number` — proporción decimal
+- **Parámetros**: `utilidadNeta` (number | null); `ventas` (number)
+- **Retorno**: `number | null` — proporción decimal; `null` si `ventas` es 0 o falta la utilidad neta
 - **Fórmula**: `UtilidadNeta / Ventas`
 - **Ejemplo**: `margenNeto(12000, 100000)` → `0.12` (12%)
 
 #### `roa(utilidadNeta, totalActivo)`
 Retorno sobre activos totales.
 
-- **Parámetros**: `utilidadNeta` (number); `totalActivo` (number)
-- **Retorno**: `number`
+- **Parámetros**: `utilidadNeta` (number | null); `totalActivo` (number)
+- **Retorno**: `number | null`; `null` si `totalActivo` es 0 o falta la utilidad neta
 - **Fórmula**: `UtilidadNeta / TotalActivo`
 - **Ejemplo**: `roa(12000, 200000)` → `0.06` (6%)
 
@@ -157,12 +159,12 @@ Días promedio que el inventario tarda en venderse.
 - **Fórmula**: `DIAS_ANIO / RotInv`
 - **Ejemplo**: `edadInventario(6)` → `60.83` días
 
-#### `rotacionCxP(costoVentas, cxPprom)`
-Veces que se pagan las cuentas por pagar en el periodo. El costo de ventas aproxima las compras. Reemplaza a `rotacionPasivos`.
+#### `rotacionCxP(compras, cxPprom)`
+Veces que se pagan las cuentas por pagar en el periodo. Reemplaza a `rotacionPasivos`. El llamador calcula `Compras = Costo de Ventas + Inventario Final − Inventario Inicial`; sin inventario comparable se aproxima con el costo de ventas (Análisis lo etiqueta "aprox.").
 
-- **Parámetros**: `costoVentas` (number); `cxPprom` (number) — cuentas por pagar promedio
-- **Retorno**: `number | null` — vueltas por periodo
-- **Fórmula**: `CostoVentas / CxPprom`
+- **Parámetros**: `compras` (number | null); `cxPprom` (number) — cuentas por pagar promedio
+- **Retorno**: `number | null` — vueltas por periodo; `null` si falta `compras` o el promedio es 0
+- **Fórmula**: `Compras / CxPprom`
 - **Ejemplo**: `rotacionCxP(510000, 85000)` → `6`
 
 #### `plazoPago(rotCxP)`
@@ -177,7 +179,7 @@ Días promedio para pagar a proveedores.
 Ciclo de conversión de efectivo: días entre el pago a proveedores y el cobro a clientes.
 
 - **Parámetros**: `plazoCobroDias` (number) — plazo de cobro en días; `rotInv` (number); `rotCxP` (number)
-- **Retorno**: `number | null` — días; `null` si falta alguna rotación
+- **Retorno**: `number | null` — días; `null` si falta el plazo de cobro o alguna rotación
 - **Fórmula**: `plazoCobroDias + edadInventario(rotInv) - plazoPago(rotCxP)`
 - **Ejemplo**: `cicloConversion(36.5, 4, 8)` → `82.125` días (36.5 + 91.25 − 45.625)
 
@@ -331,7 +333,7 @@ GAT por variación.
 Modelo DuPont de 3 pasos.
 
 - **Parámetros**: `UN` (number) — utilidad neta; `ventas` (number); `activoTotalProm` (number) — activo total promedio; `patrimonio` (number)
-- **Retorno**: `object` con `{ PM, AT, EM, ROE }`
+- **Retorno**: `object` con `{ PM, AT, EM, ROE }` — cada componente `number | null`; si algún componente es N/D, `ROE` es `null` (nunca `Infinity` ni `NaN`)
   - `PM` — Margen Neto = UN / Ventas
   - `AT` — Rotación de Activos = Ventas / ActivoTotalProm
   - `EM` — Apalancamiento = ActivoTotalProm / Patrimonio
@@ -431,6 +433,125 @@ Calcula el saldo disponible al final de la semana.
 - **Fórmula**: `Ingreso - Gastos - Ahorro - Reserva`
 - **Ejemplo**: `saldoSemanal(3000, 2200, 250, 100)` → `450`
 
+#### `capacidadAhorro(ingresos, gastos)`
+Lo que queda del ingreso después de los gastos, antes del ahorro planificado.
+
+- **Retorno**: `number | null` — C$; negativo si los gastos superan los ingresos
+- **Fórmula**: `Ingresos − Gastos`
+- **Ejemplo**: `capacidadAhorro(22500, 17200)` → `5300`
+
+#### `tasaAhorro(capacidad, ingresos)`
+- **Retorno**: `number | null` — proporción; `null` si los ingresos no son positivos
+- **Fórmula**: `Capacidad de ahorro / Ingresos`
+- **Ejemplo**: `tasaAhorro(5300, 22500)` → `0.2356`
+
+---
+
+### Punto de equilibrio y C-V-U
+
+Devuelven `null` (N/D) si falta un dato o si el margen de contribución no es positivo: con MCu ≤ 0 no existe punto de equilibrio. Casos en `docs/planificacion/modulos-guia/01-modulos-obligatorios.md`.
+
+#### `margenContribucionUnitario(precio, costoVariableUnitario)`
+- **Retorno**: `number | null` — C$ por unidad
+- **Fórmula**: `P − CVu`
+- **Ejemplo**: `margenContribucionUnitario(800, 520)` → `280`
+
+#### `razonMargenContribucion(mcUnitario, precio)`
+- **Retorno**: `number | null` — proporción; `null` si el precio no es positivo
+- **Fórmula**: `MCu / P`
+- **Ejemplo**: `razonMargenContribucion(280, 800)` → `0.35`
+
+#### `puntoEquilibrioUnidades(costosFijos, mcUnitario)`
+- **Retorno**: `number | null` — unidades; `null` si MCu ≤ 0 o CF < 0
+- **Fórmula**: `CF / MCu`
+- **Ejemplo**: `puntoEquilibrioUnidades(42000, 280)` → `150`
+
+#### `puntoEquilibrioVentas(costosFijos, razonMC)`
+- **Retorno**: `number | null` — C$; `null` si RMC ≤ 0
+- **Fórmula**: `CF / RMC`
+- **Ejemplo**: `puntoEquilibrioVentas(42000, 0.35)` → `120000`
+
+#### `unidadesUtilidadObjetivo(costosFijos, utilidadObjetivo, mcUnitario)`
+- **Retorno**: `number | null` — unidades; `null` si MCu ≤ 0 o CF + UO < 0
+- **Fórmula**: `(CF + UO) / MCu`
+- **Ejemplo**: `unidadesUtilidadObjetivo(42000, 42000, 280)` → `300`
+
+#### `margenSeguridad(ventas, ventasEquilibrio)`
+- **Retorno**: `number | null` — proporción, negativa bajo el punto de equilibrio; `null` si las ventas no son positivas
+- **Fórmula**: `(Ventas − PE) / Ventas`, en unidades o en C$
+- **Ejemplo**: `margenSeguridad(250, 150)` → `0.4`
+
+---
+
+### Inventario básico
+
+#### `existenciaFinal(existenciaInicial, entradas, salidas)`
+- **Retorno**: `number | null`
+- **Fórmula**: `Existencia inicial + Entradas − Salidas`
+- **Ejemplo**: `existenciaFinal(120, 60, 145)` → `35`
+
+#### `valorInventario(existencia, costoUnitario)`
+- **Retorno**: `number | null` — C$
+- **Fórmula**: `Existencia final × Costo unitario`
+- **Ejemplo**: `valorInventario(35, 350)` → `12250`
+
+#### `necesitaReposicion(existencia, stockMinimo)`
+- **Retorno**: `boolean | null` — `true` si la existencia es menor o igual al stock mínimo
+- **Ejemplo**: `necesitaReposicion(35, 40)` → `true`
+
+---
+
+### Flujo de efectivo por actividades
+
+#### `flujoNeto(entradas, salidas)`
+- **Fórmula**: `Entradas − Salidas` de una actividad
+- **Ejemplo**: `flujoNeto(905000, 807000)` → `98000`
+
+#### `variacionNetaEfectivo(operacion, inversion, financiamiento)`
+- **Fórmula**: `Operación + Inversión + Financiamiento`
+- **Ejemplo**: `variacionNetaEfectivo(98000, -30000, -45000)` → `23000`
+
+#### `saldoFinalEfectivo(saldoInicial, variacionNeta)`
+- **Fórmula**: `Saldo inicial + Variación neta`
+- **Ejemplo**: `saldoFinalEfectivo(52000, 23000)` → `75000`
+
+---
+
+### Presupuesto maestro
+
+#### `comprasPresupuestadas(ventasUnidades, inventarioFinalDeseado, inventarioInicial)`
+- **Retorno**: `number | null` — unidades; puede ser negativo si sobra inventario (el módulo lo trata como 0 y avisa)
+- **Fórmula**: `Ventas + Inventario final deseado − Inventario inicial`
+- **Ejemplo**: `comprasPresupuestadas(250, 60, 50)` → `260`
+
+#### `costoBienesVendidos(inventarioInicial, compras, inventarioFinal)`
+- **Retorno**: `number | null` — C$
+- **Fórmula**: `Inventario inicial + Compras − Inventario final`
+- **Ejemplo**: `costoBienesVendidos(24000, 124800, 28800)` → `120000`
+
+#### `financiamientoRequerido(saldoFinal, saldoMinimo)`
+Financiamiento del presupuesto de caja (Gitman): no se suma a la caja.
+
+- **Retorno**: `number | null` — C$; 0 si hay excedente
+- **Fórmula**: `máx(0, Saldo mínimo − Saldo final)`
+- **Ejemplo**: `financiamientoRequerido(19200, 40000)` → `20800`
+
+---
+
+### Razones de mercado
+
+Devuelven `number | null`; `null` si falta un dato o el denominador no es positivo. Ejemplos con la demo MUNO MODA 2024 (UN 104,825, patrimonio 582,440, 30,000 acciones, precio 52, dividendos 40,000):
+
+| Función | Fórmula | Ejemplo |
+|---|---|---|
+| `utilidadPorAccion(udac, acciones)` | `(UN − DAP) / acciones` | `utilidadPorAccion(104825, 30000)` → `3.4942` |
+| `precioUtilidad(precio, upa)` | `precio / UPA`; `null` si UPA ≤ 0 | `precioUtilidad(52, 3.4942)` → `14.88` |
+| `valorLibrosPorAccion(patrimonio, acciones)` | `patrimonio / acciones` | `valorLibrosPorAccion(582440, 30000)` → `19.41` |
+| `precioValorLibros(precio, vlpa)` | `precio / VLPA` | `precioValorLibros(52, 19.4147)` → `2.68` |
+| `dividendoPorAccion(dividendos, acciones)` | `dividendos / acciones` | `dividendoPorAccion(40000, 30000)` → `1.3333` |
+| `razonPagoDividendos(dpa, upa)` | `DPA / UPA` | → `0.3816` |
+| `rendimientoDividendo(dpa, precio)` | `DPA / precio` | → `0.0256` |
+
 ---
 
 ## format.js
@@ -457,6 +578,11 @@ Formatea un decimal como porcentaje (multiplica por 100).
 - **Parámetros**: `value` (number) — proporción decimal; `decimals` (number) — decimales
 - **Retorno**: `string` — terminado en `%`
 - **Ejemplo**: `formatPercent(0.1234)` → `"12.34%"`
+
+#### `formatCurrencyND(value)`, `formatNumberND(value, decimals)`, `formatPercentND(value, decimals)`
+Igual que las anteriores, pero devuelven `"N/D"` si el valor no es un número finito (las de arriba muestran 0).
+
+- **Ejemplo**: `formatCurrencyND(null)` → `"N/D"`; `formatPercentND(0.35)` → `"35.00%"`
 
 #### `formatPercentRaw(value, decimals = 2)`
 Formatea un valor ya en porcentaje (no multiplica por 100).
@@ -564,3 +690,21 @@ Variables del paso 01 para un periodo, con sus grados, traza y faltantes.
 - **Retorno**: `{ periodos, variaciones, cuentas, advertencias }`
   - `variaciones`: por cada par de periodos consecutivos, `{ desde, hasta, gao, gaf, gat, estructuralBase }`
   - `advertencias`: `{ codigo, ... }` con `codigo` `clasificacion-sugerida`, `sin-comportamiento`, `bajo-equilibrio-operativo`, `bajo-equilibrio-financiero`, `tasa-por-defecto` o `estructura-cambio`
+
+---
+
+## Módulos de la guía: inventario, equilibrio, flujo, planeación y proforma
+
+Lógica pura en `js/modules/<modulo>/<modulo>-calculations.js` (sin DOM ni `store`). Cada pantalla (`<modulo>-ui.js`) recibe `page` y `{ datos, guardar, graficar? }`; su `index.js` lee el `store` y guarda con `setPersisted`.
+
+| Archivo | Funciones públicas |
+|---|---|
+| `inventario/inventario-calculations.js` | `normalizarInventario(datos)`, `movimientosDeProducto(datos, productoId)`, `kardex(producto, movimientos)` → `{ filas, entradas, salidas, saldoFinal, primerNegativo }`, `resumenProducto(producto, movimientos)`, `calcularInventario(datos)` → `{ productos, valorTotal, unidadesTotales, porReponer, costoReposicionTotal }`, `validarProducto(datos, producto, idEditado)`, `validarMovimiento(datos, movimiento)`, `validarBorradoMovimiento(datos, id)`, `ejemploInventario()` |
+| `equilibrio/equilibrio-calculations.js` | `normalizarEquilibrio(datos)`, `validarEquilibrio(datos)`, `calcularCVU(datos)` → `{ mcu, rmc, peUnidades, peVentas, unidadesMinimas, ventas, mcTotal, uaii, msUnidades, msVentas, msPorcentaje, gao, unidadesObjetivo, … }`, `aplicarCambios(datos, cambios)`, `calcularEscenarios(datos)`, `puntosGrafica(resultado)`, `baseDesdeEstados(estados, configApalancamiento, periodo, unidades)`, `ejemploEquilibrio()` |
+| `flujo/flujo-calculations.js` | `normalizarFlujo(datos)`, `validarMovimientoFlujo(movimiento)`, `calcularFlujo(datos)` → `{ actividades, neto, totalEntradas, totalSalidas, variacionNeta, saldoFinal }`, `conciliarConBalance(resultado, estados, periodoBase)`, `ejemploFlujo()` |
+| `planeacion/planeacion-calculations.js` | `SUPUESTOS`, `normalizarSupuestos(datos)`, `validarSupuestos(s)`, `ajustarLista(lista, n)`, `calcularPresupuestoMaestro(s)` → `{ ventas, compras, cbv, gastos, caja, resultados, equilibrio, cierre, totales, financiamientoMaximo, periodoFinanciamiento, avisos }`, `ejemploPlaneacion()` |
+| `proforma/proforma-calculations.js` | `resultadosReales(estados)`, `resultadosProforma(presupuesto)`, `compararResultados(real, proforma)`, `indicadoresIntegrados(entradas, periodo)`, `alertasIntegradas(entradas)`, `construirReporte(entradas)` → `{ real, proforma, comparacion, efectivo, indicadores, alertas, faltantes }` |
+
+Códigos de `avisos` del presupuesto maestro: `financiamiento`, `sin-compras`, `bajo-stock-minimo`, `perdida`, `bajo-equilibrio` y `sin-margen`.
+
+Utilidades: `js/utils/form.js` (`leerNumero(texto)` → `{ vacio, valor }`, `nuevoId(prefijo)`, `fechaHoy()`), `js/utils/estados-guardados.js` (`estadosGuardados(estados)`, `totalesPeriodo(estados, periodo)`). `js/modules/analisis/index.js` exporta ahora `refreshSavedStates()` para que el reporte integrado no use estados en caché.
