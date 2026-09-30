@@ -10,9 +10,16 @@
   --color-danger-light: #fee2e2;
   --color-info: #0891b2;
   --color-info-light: #cffafe;
+  --color-violet: #7c3aed;
+  --color-violet-light: #ede9fe;
+  --color-pink: #db2777;
+  --color-pink-light: #fce7f3;
+  /* Acento de Finanzas personales (Presupuesto personal y Activos del hogar). */
+  --color-personal: #0d9488;
+  --color-personal-light: #ccfbf1;
 
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Mono', Consolas, 'SF Mono', Menlo, monospace;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
@@ -62,9 +69,59 @@
   --border-color-strong: #cbd5e1;
   --table-stripe: #f8fafc;
   --table-header-bg: #f1f5f9;
+
+  /* Texto sobre los fondos *-light (insignias, iconos): más oscuro que el color base para
+     que el contraste llegue a 4.5:1. */
+  --ink-primary: #1d4ed8;
+  --ink-success: #15803d;
+  --ink-warning: #b45309;
+  --ink-danger: #b91c1c;
+  --ink-info: #0e7490;
+  --ink-violet: #6d28d9;
+  --ink-pink: #be185d;
+  --ink-personal: #0f766e;
+
+  /* Gradientes suaves: fondo de la app, barra lateral y encabezado de Inicio. */
+  --bg-app: #f5f7fb;
+  --gradient-app:
+    radial-gradient(1100px 520px at 100% -8%, rgba(37, 99, 235, 0.07), transparent 65%),
+    radial-gradient(900px 480px at -5% 105%, rgba(8, 145, 178, 0.05), transparent 60%);
+  --gradient-sidebar: linear-gradient(180deg, #1e293b 0%, #172033 100%);
+  --gradient-nav-active: linear-gradient(90deg, rgba(59, 130, 246, 0.24) 0%, rgba(59, 130, 246, 0.04) 100%);
+  --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.35);
+  --gradient-hero: linear-gradient(135deg, rgba(37, 99, 235, 0.10) 0%, rgba(124, 58, 237, 0.06) 50%, rgba(8, 145, 178, 0.08) 100%);
+  --gradient-card: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
 }
 
 [data-theme="dark"] {
+  /* Los fondos *-light de :root son pastel para el tema claro; en oscuro se vuelven tintes
+     translúcidos. Sin esto, insignias, iconos de Inicio y el hover de las tablas quedaban
+     como manchas claras con texto claro encima. */
+  --color-primary-light: rgba(59, 130, 246, 0.18);
+  --color-success-light: rgba(34, 197, 94, 0.16);
+  --color-warning-light: rgba(245, 158, 11, 0.16);
+  --color-danger-light: rgba(239, 68, 68, 0.16);
+  --color-info-light: rgba(6, 182, 212, 0.16);
+  --color-violet-light: rgba(139, 92, 246, 0.18);
+  --color-pink-light: rgba(236, 72, 153, 0.16);
+  --ink-primary: #93c5fd;
+  --ink-success: #86efac;
+  --ink-warning: #fcd34d;
+  --ink-danger: #fca5a5;
+  --ink-info: #67e8f9;
+  --ink-violet: #c4b5fd;
+  --ink-pink: #f9a8d4;
+  --color-personal-light: rgba(20, 184, 166, 0.16);
+  --ink-personal: #5eead4;
+  --gradient-hero: linear-gradient(135deg, rgba(59, 130, 246, 0.16) 0%, rgba(139, 92, 246, 0.10) 50%, rgba(6, 182, 212, 0.10) 100%);
+  --gradient-card: linear-gradient(180deg, #111c33 0%, #0f172a 100%);
+  --bg-app: #0b1120;
+  --gradient-app:
+    radial-gradient(1100px 520px at 100% -8%, rgba(59, 130, 246, 0.10), transparent 65%),
+    radial-gradient(900px 480px at -5% 105%, rgba(6, 182, 212, 0.06), transparent 60%);
+  --gradient-sidebar: linear-gradient(180deg, #0c1222 0%, #080d1a 100%);
+  --focus-ring: 0 0 0 3px rgba(147, 197, 253, 0.45);
+
   --bg-primary: #0f172a;
   --bg-secondary: #1e293b;
   --bg-tertiary: #334155;
@@ -76,6 +133,7 @@
   --text-sidebar-active: #ffffff;
   --border-color: #334155;
   --border-color-strong: #475569;
-  --table-stripe: #1e293b;
-  --table-header-bg: #334155;
+  /* Rayado y encabezado más suaves: con #1e293b/#334155 las tablas largas se veían pesadas. */
+  --table-stripe: rgba(148, 163, 184, 0.05);
+  --table-header-bg: #1a2436;
 }

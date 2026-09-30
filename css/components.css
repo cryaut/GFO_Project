@@ -197,27 +197,27 @@ tbody tr:hover {
 
 .badge-primary {
   background: var(--color-primary-light);
-  color: var(--color-primary);
+  color: var(--ink-primary);
 }
 
 .badge-success {
   background: var(--color-success-light);
-  color: var(--color-success);
+  color: var(--ink-success);
 }
 
 .badge-warning {
   background: var(--color-warning-light);
-  color: var(--color-warning);
+  color: var(--ink-warning);
 }
 
 .badge-danger {
   background: var(--color-danger-light);
-  color: var(--color-danger);
+  color: var(--ink-danger);
 }
 
 .badge-info {
   background: var(--color-info-light);
-  color: var(--color-info);
+  color: var(--ink-info);
 }
 
 .tabs {
@@ -248,7 +248,7 @@ tbody tr:hover {
 }
 
 .tab-btn.active {
-  color: var(--color-primary);
+  color: var(--ink-primary);
   border-bottom-color: var(--color-primary);
 }
 
@@ -347,7 +347,7 @@ tbody tr:hover {
 .kpi-value {
   font-size: var(--font-size-2xl);
   font-weight: 700;
-  color: var(--color-primary);
+  color: var(--ink-primary);
   margin-bottom: var(--space-1);
 }
 
@@ -361,8 +361,8 @@ tbody tr:hover {
   margin-top: var(--space-1);
 }
 
-.kpi-change.positive { color: var(--color-success); }
-.kpi-change.negative { color: var(--color-danger); }
+.kpi-change.positive { color: var(--ink-success); }
+.kpi-change.negative { color: var(--ink-danger); }
 
 .empty-state {
   text-align: center;
@@ -407,9 +407,9 @@ tbody tr:hover {
 .mt-6 { margin-top: var(--space-6); }
 .gap-4 { gap: var(--space-4); }
 
-.text-success { color: var(--color-success); }
-.text-danger { color: var(--color-danger); }
-.text-warning { color: var(--color-warning); }
+.text-success { color: var(--ink-success); }
+.text-danger { color: var(--ink-danger); }
+.text-warning { color: var(--ink-warning); }
 .text-muted { color: var(--text-tertiary); }
 .font-mono { font-family: var(--font-mono); }
 .font-bold { font-weight: 700; }
