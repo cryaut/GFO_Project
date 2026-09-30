@@ -59,6 +59,13 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-007 | El GAF usa la UAI, con otros ingresos y otros gastos | Vigente |
 | D-008 | UAII negativa: se muestra el valor con advertencia | Vigente |
 | D-009 | Se calcula con las sugerencias de comportamiento antes de confirmarlas | Vigente |
+| D-010 | Presupuesto de caja: el financiamiento requerido no se suma a la caja | Vigente |
+| D-011 | Inventario: costo unitario vigente, sin existencia negativa y reposición hasta el mínimo | Vigente |
+| D-012 | Flujo de efectivo por método directo, separado del EFE de Análisis | Vigente |
+| D-013 | C-V-U: costos desde Apalancamiento y punto de equilibrio N/D sin margen positivo | Vigente |
+| D-014 | Presupuesto maestro de una línea con desfase de un periodo e IR sin pagar en el horizonte | Vigente |
+| D-015 | Presupuesto personal: capacidad de ahorro antes del ahorro planificado | Vigente |
+| D-016 | El reporte integrado reutiliza `computeRazones` de Análisis | Vigente |
 
 ## Decisiones
 
@@ -252,3 +259,150 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 **Para revertirla.** En `resolverComportamiento`, no usar la sugerencia como valor para calcular, y cambiar los tests del paso 03 que la usan.
 
 **Referencias.** [Paso 03](planificacion/apalancamiento/03-datos-y-derivacion.md).
+
+### D-010 — Presupuesto de caja: el financiamiento requerido no se suma a la caja
+
+- **Fecha**: 2026-09-29
+- **Estado**: Vigente
+- **Decidió**: Carlos
+- **Área**: `planeacion/`, `financiamientoRequerido` en `calculate.js`
+
+**Contexto.** Cuando el saldo final de un periodo queda bajo el saldo mínimo, hay que decidir si el presupuesto simula un préstamo o solo informa cuánto falta.
+
+**Opciones.**
+1. Informar el financiamiento requerido (saldo mínimo − saldo final) sin sumarlo a la caja, como el presupuesto de caja de Gitman — fácil de comprobar a mano / el saldo mostrado sigue bajo el mínimo.
+2. Simular un préstamo que se suma a la caja y se paga con excedentes — más realista / exige tasa, plazos y reglas de pago que la guía no pide.
+
+**Decisión.** Opción 1. El total del horizonte es el máximo requerido, que es el tamaño de la línea de crédito a gestionar.
+
+**Consecuencias.** En el ejemplo, el trimestre 2 cierra en C$ 19,200 y muestra C$ 20,800 de financiamiento; el trimestre 3 ya tiene excedente.
+
+**Para revertirla.** Cambiar el bloque de caja de `calcularPresupuestoMaestro` y los casos de `planeacion.test.js`.
+
+**Referencias.** [modulos-guia/01](planificacion/modulos-guia/01-modulos-obligatorios.md).
+
+### D-011 — Inventario: costo unitario vigente, sin existencia negativa y reposición hasta el mínimo
+
+- **Fecha**: 2026-09-29
+- **Estado**: Vigente
+- **Decidió**: Carlos
+- **Área**: `inventario/`
+
+**Contexto.** La guía pide existencia final, valor = existencia × costo unitario, stock mínimo y alerta. Faltaba definir cómo valorar, qué hacer con una salida mayor que la existencia y cuánto sugerir comprar.
+
+**Opciones.**
+1. Un costo unitario vigente por producto; se rechaza la salida que deje la existencia negativa en su fecha o después; alerta con existencia ≤ stock mínimo y sugerencia de comprar lo que falta para volver al mínimo — es la fórmula de la guía y se comprueba a mano.
+2. Costo promedio ponderado o PEPS por entrada — valoración más precisa / fuera del alcance básico y más difícil de defender.
+
+**Decisión.** Opción 1. La cantidad sugerida es el mínimo a comprar; la persona decide cuánto más.
+
+**Consecuencias.** Si el costo de compra cambia, se edita el costo del producto y se revalúa toda la existencia.
+
+**Para revertirla.** Cambiar `resumenProducto` y `kardex` en `inventario-calculations.js` y sus tests.
+
+**Referencias.** [modulos-guia/01](planificacion/modulos-guia/01-modulos-obligatorios.md).
+
+### D-012 — Flujo de efectivo por método directo, separado del EFE de Análisis
+
+- **Fecha**: 2026-09-29
+- **Estado**: Vigente
+- **Decidió**: Carlos
+- **Área**: `flujo/`; `computeEFE` de Análisis no cambia
+
+**Contexto.** La guía pide clasificar entradas y salidas de efectivo en operación, inversión y financiamiento, con variación neta y saldo final. Análisis ya tenía un EFE indirecto que solo calcula la operación.
+
+**Opciones.**
+1. Módulo nuevo con movimientos clasificados (método directo) y saldo inicial tomado del balance — coincide con las entradas que pide la guía y no toca el código de Henry / conviven dos flujos de operación.
+2. Derivar las tres actividades desde dos balances y reemplazar `computeEFE` — más integrado / cambia cifras de Análisis y necesita la demo cuadrada.
+
+**Decisión.** Opción 1 ahora; la derivación desde los estados queda como mejora coordinada con Henry.
+
+**Consecuencias.** El flujo de operación de Análisis (sin depreciación) puede diferir del de este módulo. Si el saldo inicial se tomó de un periodo que tiene uno siguiente, la pantalla compara el saldo final con su efectivo.
+
+**Para revertirla.** Quitar `js/modules/flujo/`, su ruta y la clave `flujo` del `store`.
+
+**Referencias.** [modulos-guia/00](planificacion/modulos-guia/00-brechas-y-prioridades.md).
+
+### D-013 — C-V-U: costos desde Apalancamiento y punto de equilibrio N/D sin margen positivo
+
+- **Fecha**: 2026-09-29
+- **Estado**: Vigente
+- **Decidió**: Carlos
+- **Área**: `equilibrio/`, fórmulas C-V-U de `calculate.js`
+
+**Contexto.** El C-V-U necesita precio, costo variable unitario y costos fijos; los estados no traen unidades ni separan costos fijos y variables.
+
+**Opciones.**
+1. Datos propios del módulo, con la opción de tomarlos de un periodo: P = Ventas / Q y CVu = CV / Q con las unidades que indique la persona, y CF según la clasificación de Apalancamiento (D-004) — una sola clasificación de costos en la app.
+2. Pedir siempre los datos a mano — más simple / no reutiliza lo ya registrado.
+
+**Decisión.** Opción 1. Con MCu ≤ 0 el punto de equilibrio es N/D con un aviso; las unidades mínimas se redondean hacia arriba y el valor exacto se muestra con decimales.
+
+**Consecuencias.** Tomado de los estados, la UAII del C-V-U es la misma que la de los estados y Apalancamiento (MUNO 2024: C$ 155,000).
+
+**Para revertirla.** Quitar `baseDesdeEstados` y su botón; cambiar `puntoEquilibrioUnidades` si se quiere otro trato de MCu ≤ 0.
+
+**Referencias.** [modulos-guia/01](planificacion/modulos-guia/01-modulos-obligatorios.md).
+
+### D-014 — Presupuesto maestro de una línea con desfase de un periodo e IR sin pagar en el horizonte
+
+- **Fecha**: 2026-09-29
+- **Estado**: Vigente
+- **Decidió**: Carlos
+- **Área**: `planeacion/`, `proforma/`
+
+**Contexto.** Un presupuesto maestro puede modelar varios productos, cobranza en varios periodos y pagos de impuestos; había que fijar un alcance académico comprobable a mano.
+
+**Opciones.**
+1. Empresa comercial con un producto o línea agregada; lo vendido o comprado a crédito se cobra o se paga el periodo siguiente; intereses pagados en el mismo periodo; IR (tasa configurable, 30 % en el ejemplo) solo sobre la UAI positiva de cada periodo, sin pagarse dentro del horizonte — cubre los presupuestos que pide la guía con supuestos simples.
+2. Varios productos y cobranza por antigüedad — más realista / multiplica los supuestos y los casos de prueba.
+
+**Decisión.** Opción 1. El IR queda como "IR por pagar" en los saldos al cierre.
+
+**Consecuencias.** La proforma compara el total del horizonte con el último periodo real; si el horizonte no es un año, lo advierte. No incluye otros ingresos ni otros gastos.
+
+**Para revertirla.** Ampliar `SUPUESTOS` y `calcularPresupuestoMaestro`, y sus tests.
+
+**Referencias.** [modulos-guia/01](planificacion/modulos-guia/01-modulos-obligatorios.md).
+
+### D-015 — Presupuesto personal: capacidad de ahorro antes del ahorro planificado
+
+- **Fecha**: 2026-09-29
+- **Estado**: Vigente
+- **Decidió**: Carlos
+- **Área**: `presupuesto/`, `capacidadAhorro` y `tasaAhorro` en `calculate.js`
+
+**Contexto.** La guía pide total de ingresos, total de gastos, saldo disponible y capacidad de ahorro. El módulo tenía un solo ingreso y restaba la meta de ahorro como si fuera un gasto.
+
+**Opciones.**
+1. Capacidad de ahorro = ingresos − gastos; saldo disponible = capacidad − ahorro planificado; ingresos por concepto — separa lo que se puede ahorrar de lo que se decidió ahorrar.
+2. Capacidad = ingresos − gastos − ahorro — mezcla la decisión de ahorrar con la capacidad.
+
+**Decisión.** Opción 1. Los datos guardados con solo `ingresoMensual` se leen como un ingreso regular, e `ingresoMensual` sigue siendo el total para Semanas y Reportes.
+
+**Consecuencias.** El resumen muestra ambas cifras y cuántos meses tomaría la meta si la capacidad no alcanza.
+
+**Para revertirla.** Cambiar `renderPresupuestoData` y `renderResumen` en `presupuesto/index.js`.
+
+**Referencias.** [modulos-guia/01](planificacion/modulos-guia/01-modulos-obligatorios.md).
+
+### D-016 — El reporte integrado reutiliza `computeRazones` de Análisis
+
+- **Fecha**: 2026-09-29
+- **Estado**: Vigente
+- **Decidió**: Carlos (a confirmar con Henry)
+- **Área**: `proforma/index.js`, `js/modules/analisis/index.js`
+
+**Contexto.** El reporte integrado muestra liquidez, endeudamiento, ROA y ROE. Recalcularlos aparte podría dar cifras distintas de las de Análisis, que usa saldos promedio.
+
+**Opciones.**
+1. Importar `computeRazones` y `computeDuPont`, y exportar `refreshSavedStates` para no leer estados en caché — mismas cifras que Análisis / toca una línea del archivo de Henry.
+2. Recalcular con las fórmulas de `calculate.js` — no toca Análisis / duplica la orquestación.
+
+**Decisión.** Opción 1, con el mismo texto que ya trae `razones-financieras-v3` para esa línea, así el merge no choca.
+
+**Consecuencias.** Las razones con denominador 0 de las funciones legado se muestran N/D en el reporte, aunque en `main` Análisis todavía devuelva 0.
+
+**Para revertirla.** Quitar el `export` de `refreshSavedStates` y calcular las razones dentro de `proforma-calculations.js`.
+
+**Referencias.** [modulos-guia/00](planificacion/modulos-guia/00-brechas-y-prioridades.md).

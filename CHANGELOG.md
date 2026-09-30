@@ -28,6 +28,24 @@ Todos los cambios notables en GFO Toolkit.
 - `store`: nueva sección `apalancamiento` (clasificación de costos, DAP por periodo y tasa por defecto). Estados exporta `resolveAccountType`.
 - Nueva pantalla `#/apalancamiento` (barra lateral y tarjeta de Inicio): clasificación de costos, DAP y tasa por defecto, grados por periodo y por variación, advertencias, interpretación y traza por periodo.
 
+### Módulos de la guía del proyecto final
+- Nueva pantalla `#/inventario`: productos con existencia inicial, costo unitario y stock mínimo; entradas y salidas con fecha; kardex con saldo; existencia final, valor del inventario y alertas de reposición con la compra mínima sugerida. Rechaza salidas que dejen la existencia negativa.
+- Nueva pantalla `#/equilibrio`: margen de contribución, punto de equilibrio en unidades y en C$, margen de seguridad, GAO, unidades para una utilidad objetivo, escenarios de ±10 % en precio, costo variable, costos fijos y volumen (más uno personalizado), gráfica C-V-U y cálculo paso a paso. Puede tomar precio y costos de un periodo de los estados con la clasificación de Apalancamiento.
+- Nueva pantalla `#/flujo`: entradas y salidas de efectivo por actividades de operación, inversión y financiamiento; variación neta y saldo final; saldo inicial tomado del balance y comparación con el efectivo del periodo siguiente.
+- Nueva pantalla `#/planeacion`: presupuesto maestro de una empresa comercial (1 a 12 meses o trimestres) con presupuestos de ventas y cobros, compras y pagos, costo de bienes vendidos, gastos de operación, caja con financiamiento requerido y estado de resultados presupuestado. Toma saldos iniciales del balance y el inventario inicial de un producto de Inventario.
+- Nueva pantalla `#/proforma`: estado de resultados proforma contra el último periodo real, efectivo proyectado, indicadores de todos los módulos (reutiliza `computeRazones` y `computeDuPont`), alertas con acción sugerida e impresión a PDF.
+- Fórmulas nuevas en `calculate.js`, con N/D: `margenContribucionUnitario`, `razonMargenContribucion`, `puntoEquilibrioUnidades`, `puntoEquilibrioVentas`, `unidadesUtilidadObjetivo`, `margenSeguridad`, `existenciaFinal`, `valorInventario`, `necesitaReposicion`, `flujoNeto`, `variacionNetaEfectivo`, `saldoFinalEfectivo`, `comprasPresupuestadas`, `costoBienesVendidos`, `financiamientoRequerido`, `capacidadAhorro` y `tasaAhorro`.
+- `store`: secciones `inventario`, `equilibrio`, `flujo` y `planeacion`, y `presupuesto.ingresos`. Utilidades `js/utils/form.js`, `js/utils/estados-guardados.js` y `formatCurrencyND`, `formatNumberND` y `formatPercentND` en `format.js`. Análisis exporta `refreshSavedStates`.
+- Cada módulo trae un ejemplo ficticio coherente de MUNO MODA 2025: la UAII del primer trimestre del presupuesto (C$ 28,000) es la del punto de equilibrio.
+- Razones de mercado en la pestaña **Mercado** de Análisis: UPA, P/U, valor en libros por acción, P/VL, DPA, pago y rendimiento del dividendo, con datos de acciones por periodo (`store.razonesMercado`) y el DAP de Apalancamiento. También aparecen en el reporte integrado.
+- La demo MUNO MODA ahora cuadra (A = P + O en 2023 y 2024), trae gastos por intereses e IR del 30 %, y sus utilidades acumuladas cambian por la utilidad neta menos C$ 40,000 de dividendos. Cambian las cifras de rentabilidad y del GAF de la demo, y la cobertura de intereses deja de ser N/D.
+- Pruebas: `inventario`, `equilibrio`, `flujo`, `planeacion`, `proforma`, `presupuesto-personal` y `razones-mercado` (casos resueltos a mano, identidades de CxC, CxP, inventario y caja, y cuadre de la demo), con el doble de DOM compartido `tests/unit/helpers/dom-falso.js`. Suite total: 304 pruebas en verde.
+
+### Módulo 1: Presupuesto Personal
+- Ingresos por concepto (regular u ocasional) en una pestaña nueva; `ingresoMensual` queda como su total y los datos anteriores se leen como un ingreso regular.
+- Total de ingresos, total de gastos, capacidad de ahorro (C$ y % de los ingresos), ahorro planificado y saldo disponible, con interpretación y ejemplo ficticio.
+- Corrección de seguridad: los conceptos de ingresos y gastos se escapan con `escapeHTML` (antes se insertaban sin escapar).
+
 ### Módulo 5: Mercados e Instituciones Financieras
 - La pregunta del quiz sobre los días del PPC da como correcta 365, igual que el cálculo.
 
