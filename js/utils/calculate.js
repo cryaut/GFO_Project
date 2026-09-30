@@ -302,3 +302,168 @@ export function gafVariacion(uaiiBase, uaii, udacBase, udac) {
 export function gatVariacion(ventasBase, ventas, udacBase, udac) {
   return cocienteVariaciones(udacBase, udac, ventasBase, ventas);
 }
+
+// === Punto de equilibrio y C-V-U ===
+// Casos resueltos a mano en docs/planificacion/modulos-guia/01-modulos-obligatorios.md.
+// Devuelven null (N/D) si falta un dato o si el margen de contribución no es positivo: con
+// MCu ≤ 0 cada unidad vendida aumenta la pérdida y no existe punto de equilibrio.
+
+// MCu = P − CVu
+export function margenContribucionUnitario(precio, costoVariableUnitario) {
+  if (!esNumero(precio) || !esNumero(costoVariableUnitario)) return null;
+  return precio - costoVariableUnitario;
+}
+
+// RMC = MCu / P
+export function razonMargenContribucion(mcUnitario, precio) {
+  if (!esNumero(mcUnitario) || !esNumero(precio) || precio <= 0) return null;
+  return mcUnitario / precio;
+}
+
+// PE en unidades = CF / MCu
+export function puntoEquilibrioUnidades(costosFijos, mcUnitario) {
+  if (!esNumero(costosFijos) || costosFijos < 0 || !esNumero(mcUnitario) || mcUnitario <= 0) return null;
+  return costosFijos / mcUnitario;
+}
+
+// PE en C$ = CF / RMC
+export function puntoEquilibrioVentas(costosFijos, razonMC) {
+  if (!esNumero(costosFijos) || costosFijos < 0 || !esNumero(razonMC) || razonMC <= 0) return null;
+  return costosFijos / razonMC;
+}
+
+// Unidades para lograr una utilidad objetivo = (CF + UO) / MCu
+export function unidadesUtilidadObjetivo(costosFijos, utilidadObjetivo, mcUnitario) {
+  if (![costosFijos, utilidadObjetivo, mcUnitario].every(esNumero) || mcUnitario <= 0) return null;
+  const numerador = costosFijos + utilidadObjetivo;
+  return numerador < 0 ? null : numerador / mcUnitario;
+}
+
+// Margen de seguridad = (ventas − ventas de equilibrio) / ventas, en unidades o en C$.
+// Negativo: la empresa vende menos que su punto de equilibrio.
+export function margenSeguridad(ventas, ventasEquilibrio) {
+  if (!esNumero(ventas) || !esNumero(ventasEquilibrio) || ventas <= 0) return null;
+  return (ventas - ventasEquilibrio) / ventas;
+}
+
+// === Inventario básico ===
+
+// Existencia final = existencia inicial + entradas − salidas
+export function existenciaFinal(existenciaInicial, entradas, salidas) {
+  if (![existenciaInicial, entradas, salidas].every(esNumero)) return null;
+  return existenciaInicial + entradas - salidas;
+}
+
+// Valor del inventario = existencia final × costo unitario
+export function valorInventario(existencia, costoUnitario) {
+  if (!esNumero(existencia) || !esNumero(costoUnitario)) return null;
+  return existencia * costoUnitario;
+}
+
+// Alerta de reposición: la existencia llegó al stock mínimo o quedó por debajo.
+export function necesitaReposicion(existencia, stockMinimo) {
+  if (!esNumero(existencia) || !esNumero(stockMinimo)) return null;
+  return existencia <= stockMinimo;
+}
+
+// === Flujo de efectivo ===
+
+// Flujo neto de una actividad = entradas − salidas
+export function flujoNeto(entradas, salidas) {
+  if (!esNumero(entradas) || !esNumero(salidas)) return null;
+  return entradas - salidas;
+}
+
+// Variación neta del efectivo = operación + inversión + financiamiento
+export function variacionNetaEfectivo(operacion, inversion, financiamiento) {
+  if (![operacion, inversion, financiamiento].every(esNumero)) return null;
+  return operacion + inversion + financiamiento;
+}
+
+// Saldo final de efectivo = saldo inicial + variación neta
+export function saldoFinalEfectivo(saldoInicial, variacionNeta) {
+  if (!esNumero(saldoInicial) || !esNumero(variacionNeta)) return null;
+  return saldoInicial + variacionNeta;
+}
+
+// === Presupuesto maestro ===
+
+// Compras en unidades = ventas + inventario final deseado − inventario inicial.
+// Puede salir negativo si el inventario inicial sobra; el módulo decide cómo tratarlo.
+export function comprasPresupuestadas(ventasUnidades, inventarioFinalDeseado, inventarioInicial) {
+  if (![ventasUnidades, inventarioFinalDeseado, inventarioInicial].every(esNumero)) return null;
+  return ventasUnidades + inventarioFinalDeseado - inventarioInicial;
+}
+
+// CBV = inventario inicial + compras − inventario final (en C$)
+export function costoBienesVendidos(inventarioInicial, compras, inventarioFinal) {
+  if (![inventarioInicial, compras, inventarioFinal].every(esNumero)) return null;
+  return inventarioInicial + compras - inventarioFinal;
+}
+
+// Financiamiento requerido = saldo mínimo − saldo final, si el saldo final queda por debajo
+// del mínimo (presupuesto de caja de Gitman); 0 si hay excedente.
+export function financiamientoRequerido(saldoFinal, saldoMinimo) {
+  if (!esNumero(saldoFinal) || !esNumero(saldoMinimo)) return null;
+  return Math.max(0, saldoMinimo - saldoFinal);
+}
+
+// === Presupuesto personal ===
+
+// Capacidad de ahorro = ingresos − gastos (antes del ahorro planificado)
+export function capacidadAhorro(ingresos, gastos) {
+  if (!esNumero(ingresos) || !esNumero(gastos)) return null;
+  return ingresos - gastos;
+}
+
+// Tasa de ahorro = capacidad de ahorro / ingresos
+export function tasaAhorro(capacidad, ingresos) {
+  if (!esNumero(capacidad) || !esNumero(ingresos) || ingresos <= 0) return null;
+  return capacidad / ingresos;
+}
+
+// === Razones de mercado ===
+// UDAC = utilidad disponible para accionistas comunes (UN − DAP). null (N/D) si falta un dato o
+// el denominador no es positivo: con UPA ≤ 0 la relación precio/utilidad no tiene lectura.
+
+// UPA = UDAC / acciones comunes en circulación (C$ por acción)
+export function utilidadPorAccion(udac, accionesComunes) {
+  if (!esNumero(udac) || !esNumero(accionesComunes) || accionesComunes <= 0) return null;
+  return udac / accionesComunes;
+}
+
+// P/U = precio de mercado por acción / UPA (veces)
+export function precioUtilidad(precioAccion, upa) {
+  if (!esNumero(precioAccion) || precioAccion <= 0 || !esNumero(upa) || upa <= 0) return null;
+  return precioAccion / upa;
+}
+
+// Valor en libros por acción = patrimonio común / acciones comunes (C$ por acción)
+export function valorLibrosPorAccion(patrimonioComun, accionesComunes) {
+  if (!esNumero(patrimonioComun) || !esNumero(accionesComunes) || accionesComunes <= 0) return null;
+  return patrimonioComun / accionesComunes;
+}
+
+// P/VL = precio de mercado por acción / valor en libros por acción (veces)
+export function precioValorLibros(precioAccion, valorLibrosAccion) {
+  if (!esNumero(precioAccion) || precioAccion <= 0 || !esNumero(valorLibrosAccion) || valorLibrosAccion <= 0) return null;
+  return precioAccion / valorLibrosAccion;
+}
+
+// DPA = dividendos comunes pagados / acciones comunes (C$ por acción)
+export function dividendoPorAccion(dividendosComunes, accionesComunes) {
+  if (!esNumero(dividendosComunes) || dividendosComunes < 0 || !esNumero(accionesComunes) || accionesComunes <= 0) return null;
+  return dividendosComunes / accionesComunes;
+}
+
+// Razón de pago de dividendos = DPA / UPA
+export function razonPagoDividendos(dpa, upa) {
+  if (!esNumero(dpa) || !esNumero(upa) || upa <= 0) return null;
+  return dpa / upa;
+}
+
+// Rendimiento del dividendo = DPA / precio de mercado por acción
+export function rendimientoDividendo(dpa, precioAccion) {
+  if (!esNumero(dpa) || !esNumero(precioAccion) || precioAccion <= 0) return null;
+  return dpa / precioAccion;
+}

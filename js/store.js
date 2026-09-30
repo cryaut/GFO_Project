@@ -6,7 +6,9 @@ const defaultData = {
     metaAhorro: 0,
     mesesDisponibles: 12,
     gastos: [],
-    semanas: []
+    semanas: [],
+    // Ingresos por concepto; ingresoMensual queda como su total para el dashboard.
+    ingresos: []
   },
   estados: {
     balanceGeneral: {},
@@ -29,6 +31,31 @@ const defaultData = {
     comportamiento: {},
     dap: {},
     tasaDefecto: null
+  },
+  // Módulos de la guía del proyecto final. Formas en docs/contexto/arquitectura.md.
+  inventario: {
+    productos: [],
+    movimientos: []
+  },
+  equilibrio: {
+    precio: null,
+    costoVariableUnitario: null,
+    costosFijos: null,
+    unidades: null,
+    utilidadObjetivo: null,
+    escenario: { precio: 0, costoVariable: 0, costosFijos: 0, volumen: 0 }
+  },
+  flujo: {
+    saldoInicial: null,
+    periodoBase: '',
+    movimientos: []
+  },
+  planeacion: {
+    supuestos: null
+  },
+  // Razones de mercado: por periodo, { acciones, precio, dividendos } (null = sin dato).
+  razonesMercado: {
+    periodos: {}
   },
   theme: 'light'
 };
