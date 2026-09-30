@@ -165,6 +165,8 @@ code, pre {
 .main-content {
   margin-left: var(--sidebar-width);
   flex: 1;
+  /* Sin esto, una tabla ancha estira toda la página en vez de desplazarse dentro de .table-wrapper. */
+  min-width: 0;
   min-height: 100vh;
   padding: var(--space-8);
   transition: margin-left var(--transition-base);
