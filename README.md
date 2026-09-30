@@ -8,7 +8,7 @@ Proyecto Final | Semestre 4 | Ingeniería de Sistemas | UNI RUSB
 
 ## Descripción
 
-GFO Toolkit es una aplicación web completa de gestión financiera operativa diseñada para estudiantes y profesionales que necesitan analizar, planificar y tomar decisiones financieras informadas. La herramienta integra seis módulos funcionales en una sola plataforma: presupuesto personal, estados financieros, análisis financiero, activos y depreciación, mercados financieros, e integración con exportación de reportes.
+GFO Toolkit es una aplicación web completa de gestión financiera operativa diseñada para estudiantes y profesionales que necesitan analizar, planificar y tomar decisiones financieras informadas. La pantalla de **Inicio** es un panorama general de la empresa (salud general, indicadores, alertas e interpretación por área). El menú separa los módulos de la **empresa** (estados financieros, análisis, apalancamiento, punto de equilibrio, flujo de efectivo, presupuesto maestro, inventario y proforma) de las **finanzas personales** (presupuesto personal y activos del hogar), el material para **aprender** (mercados financieros y glosario) y los **datos** (exportación e importación de reportes).
 
 Toda la aplicación funciona 100% en el navegador, sin necesidad de servidores, sin cuentas de usuario, y con almacenamiento local para preservar la privacidad.
 
@@ -16,7 +16,14 @@ Toda la aplicación funciona 100% en el navegador, sin necesidad de servidores, 
 
 ## Features por Módulo
 
-### Módulo 1: Presupuesto Personal / Estudiantil
+### Inicio: panorama general
+- Salud general de la empresa (Sólida / Estable / Requiere atención) y KPIs con variación contra el periodo anterior
+- Gráfica de ventas y utilidad, alertas prioritarias y puntos clave con interpretación por área
+- Bloque aparte "Mis finanzas personales" que no afecta la salud de la empresa
+- Botones para cargar el ejemplo de empresa (MUNO MODA) y el ejemplo personal en los módulos vacíos
+- Tema claro y oscuro con gradientes suaves; las gráficas se recolorean al cambiar de tema
+
+### Módulo 1: Presupuesto Personal / Estudiantil (Finanzas personales)
 - Captura de ingresos regulares y ocasionales
 - Clasificación de gastos: necesidad, deseo, imprevisto, meta
 - Separación de ahorro (pagarse primero) con cálculo automático
@@ -44,8 +51,8 @@ Toda la aplicación funciona 100% en el navegador, sin necesidad de servidores, 
 - Modelo DuPont de 3 pasos (ROE = PM × AT × EM)
 - Interpretación heurística automatizada
 
-### Módulo 4: Activos y Depreciación
-- Inventario de activos por categoría
+### Módulo 4: Activos del Hogar (Finanzas personales)
+- Inventario de bienes del hogar por categoría
 - Depreciación anual por línea recta
 - Depreciación acumulada con tope
 - Valor en libros
@@ -169,9 +176,10 @@ gfo-toolkit/
 │   │   ├── presupuesto/        → Módulo 1: Presupuesto personal
 │   │   ├── estados/            → Módulo 2: Estados financieros básicos
 │   │   ├── analisis/           → Módulo 3: AH, AV, Razones, EOAF, EFE, DuPont
-│   │   ├── activos/            → Módulo 4: Activos y depreciación
+│   │   ├── activos/            → Módulo 4: Activos del hogar y depreciación
 │   │   ├── mercados/           → Módulo 5: Mercados e instituciones
-│   │   └── integracion/        → Módulo 6: Exportación, reportes, dashboard
+│   │   ├── integracion/        → Módulo 6: Exportación, reportes, dashboard
+│   │   └── inicio/             → Inicio: panorama general y finanzas personales
 │   └── components/             → Componentes reutilizables
 ├── assets/
 │   ├── icons/                  → Iconos SVG inline

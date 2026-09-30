@@ -29,7 +29,7 @@ js/
     ├── presupuesto/       Módulo 1: presupuesto personal
     ├── estados/           Módulo 2: importación, edición y validación de estados financieros
     ├── analisis/          Módulo 3: AH, AV, razones, CNT/CNO, EOAF, EFE, DuPont e interpretación
-    ├── activos/           Módulo 4: activos y depreciación
+    ├── activos/           Módulo 4: activos del hogar y depreciación
     ├── mercados/          Módulo 5: glosario, comparador de bonos y acciones, quiz
     ├── integracion/       Módulo 6: dashboard y exportación (ruta #/reportes)
     ├── apalancamiento/    GAO, GAF y GAT desde los estados guardados
@@ -37,7 +37,8 @@ js/
     ├── equilibrio/        Punto de equilibrio y C-V-U con escenarios y gráfica
     ├── flujo/             Flujo de efectivo por actividades (método directo)
     ├── planeacion/        Presupuesto maestro: ventas, compras, CBV, gastos, caja y resultados
-    └── proforma/          Proforma y reporte integrado con alertas
+    ├── proforma/          Proforma y reporte integrado con alertas
+    └── inicio/            Ruta #/home: panorama general de la empresa y bloque de finanzas personales
 scripts/                   dev-server.cjs y datos de ejemplo (sample-estados.csv y .json)
 tests/unit/                Tests de Vitest
 docs/                      Documentación: contexto, reglas, planificación, API y manual

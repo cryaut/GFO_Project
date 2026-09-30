@@ -66,6 +66,8 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-014 | Presupuesto maestro de una línea con desfase de un periodo e IR sin pagar en el horizonte | Vigente |
 | D-015 | Presupuesto personal: capacidad de ahorro antes del ahorro planificado | Vigente |
 | D-016 | El reporte integrado reutiliza `computeRazones` de Análisis | Vigente |
+| D-017 | Inicio: salud general como proporción de áreas en orden | Vigente |
+| D-018 | Presupuesto personal y Activos del hogar se separan de la empresa | Vigente |
 
 ## Decisiones
 
@@ -406,3 +408,47 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 **Para revertirla.** Quitar el `export` de `refreshSavedStates` y calcular las razones dentro de `proforma-calculations.js`.
 
 **Referencias.** [modulos-guia/00](planificacion/modulos-guia/00-brechas-y-prioridades.md).
+
+### D-017 — Inicio: salud general como proporción de áreas en orden
+
+- **Fecha**: 2026-09-30
+- **Estado**: Vigente
+- **Decidió**: Carlos
+- **Área**: `js/modules/inicio/inicio-calculations.js` (`saludGeneral`, `areasClave`), `proforma/index.js` (`reunirEntradas`)
+
+**Contexto.** El panorama de Inicio necesita un resumen de una línea sobre cómo está la empresa. No existe una calificación estándar que combine liquidez, rentabilidad, deuda, caja, inventario y activos.
+
+**Opciones.**
+1. Proporción de áreas evaluadas "en orden" (según los umbrales de Análisis y las reglas de la proforma), bajando un nivel con una alerta alta y a "Requiere atención" con dos — simple y explicable / no pondera áreas.
+2. Puntaje ponderado por área — más fino / pesos arbitrarios difíciles de justificar.
+3. Un índice externo (p. ej. Z de Altman) — reconocido / pide datos que el modelo no tiene (capital de trabajo de mercado, utilidades retenidas separadas).
+
+**Decisión.** Opción 1: sólida ≥ 80 % sin alertas altas; estable ≥ 50 % o una alerta alta; requiere atención < 50 % o dos o más alertas altas. Las áreas "Referencia" (p. ej. apalancamiento) no cuentan. Para no duplicar la recolección, Inicio usa `reunirEntradas()` de la proforma.
+
+**Consecuencias.** Es una lectura educativa, no una calificación crediticia; la pantalla muestra cuántas áreas están en orden. El margen de seguridad usa el mismo 20 % que la proforma.
+
+**Para revertirla.** Cambiar `saludGeneral` y sus pruebas en `tests/unit/inicio.test.js`.
+
+**Referencias.** CHANGELOG, "Inicio y apariencia".
+
+### D-018 — Presupuesto personal y Activos del hogar se separan de la empresa
+
+- **Fecha**: 2026-09-30
+- **Estado**: Vigente
+- **Decidió**: Carlos
+- **Área**: `index.html` (barra lateral), `js/modules/inicio/`, `js/modules/integracion/index.js`, encabezados de `presupuesto/` y `activos/`
+
+**Contexto.** La guía pide mantener el presupuesto personal separado del presupuesto maestro. El módulo de Activos registra bienes del hogar (categorías Tecnología, Electrodomésticos, Mobiliario…) y no se conecta con los estados financieros, pero aparecía mezclado con los módulos de la empresa y contaba en la salud general de Inicio.
+
+**Opciones.**
+1. Secciones en la barra lateral (Empresa, Finanzas personales, Aprender, Datos), nombres "Presupuesto personal" y "Activos del hogar", acento de color propio y bloque aparte en Inicio — todo visible de un vistazo / la barra lateral es algo más larga.
+2. Selector "Empresa / Personal" que oculte la mitad del menú — menú corto / más estado que mantener y el evaluador no ve todos los módulos a la vez.
+3. Convertir Activos en "Activos fijos" de la empresa y conectarlo con el balance — integración real / cambia el propósito del módulo.
+
+**Decisión.** Opción 1. Las rutas (`#/presupuesto`, `#/activos`) y los datos guardados no cambian; solo la navegación, los textos y Inicio.
+
+**Consecuencias.** La salud general de Inicio deja de contar los activos del hogar (en la demo con bienes deteriorados puede subir). El bloque "Mis finanzas personales" no afecta la salud ni el reporte integrado.
+
+**Para revertirla.** Restaurar la barra lateral plana en `index.html`, volver a incluir `areaActivos` en `areasClave` y quitar `finanzasPersonales` de `panoramaGeneral`, con sus pruebas en `tests/unit/inicio.test.js`.
+
+**Referencias.** [requisitos del proyecto](contexto/requisitos-proyecto-final-gfo.md), CHANGELOG "Inicio y apariencia".

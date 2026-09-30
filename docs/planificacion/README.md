@@ -10,6 +10,7 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 | Apalancamiento (GAO, GAF y GAT) | Carlos | Completada (PR #4) | [apalancamiento](apalancamiento/README.md) |
 | Módulos obligatorios de la guía (inventario, C-V-U, flujo, presupuesto maestro, proforma y presupuesto personal) | Carlos | En revisión | [modulos-guia](modulos-guia/README.md) |
 | Corrección de razones financieras (auditoría) | Henry | En revisión (se integra con `feat/modulos-guia`) | [razones-financieras-v3](razones-financieras-v3/README.md) |
+| Mejoras de apariencia, Inicio como panorama y finanzas personales separadas | Carlos | En revisión | [mejoras-apariencia](mejoras-apariencia/README.md) |
 
 Agrega una fila cuando empieces una feature y actualiza el estado cuando cambie.
 

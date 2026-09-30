@@ -10,7 +10,7 @@ Guía paso a paso con ejemplos numéricos concretos por módulo.
 2. [Módulo 1: Presupuesto Personal](#2-módulo-1-presupuesto-personal)
 3. [Módulo 2: Estados Financieros](#3-módulo-2-estados-financieros)
 4. [Módulo 3: Análisis Financiero](#4-módulo-3-análisis-financiero)
-5. [Módulo 4: Activos y Depreciación](#5-módulo-4-activos-y-depreciación)
+5. [Módulo 4: Activos del Hogar](#5-módulo-4-activos-del-hogar)
 6. [Módulo 5: Mercados Financieros](#6-módulo-5-mercados-financieros)
 7. [Módulo 6: Reportes e Integración](#7-módulo-6-reportes-e-integración)
 8. [Apalancamiento (GAO, GAF y GAT)](#8-apalancamiento-gao-gaf-y-gat)
@@ -24,10 +24,16 @@ Guía paso a paso con ejemplos numéricos concretos por módulo.
 
 ## 1. Inicio Rápido
 
-1. Abre `index.html` en tu navegador (o sirve con `python3 -m http.server 8000`).
-2. Usa el menú lateral para navegar entre módulos.
-3. Activa el modo oscuro con el botón en la parte inferior del sidebar.
-4. Todos los datos se guardan automáticamente en localStorage.
+1. Sirve la carpeta con `node scripts/dev-server.cjs` y abre http://127.0.0.1:8080 (los ES modules no cargan desde `file://`).
+2. La primera pantalla es **Inicio**, un panorama general de la empresa:
+   - **Salud general** (Sólida, Estable o Requiere atención): proporción de áreas dentro de los umbrales, penalizada por alertas altas. Es una lectura educativa, no una calificación crediticia.
+   - **Indicadores principales** con la variación contra el periodo anterior, gráfica de ventas y utilidad, y **alertas prioritarias**.
+   - **Puntos clave de la empresa**: cada área (liquidez, rentabilidad, endeudamiento, apalancamiento, equilibrio, flujo, presupuesto maestro, inventario) con sus cifras, una interpretación y un enlace al módulo.
+   - **Mis finanzas personales**: capacidad de ahorro, meta y estado de los activos del hogar. Es independiente: no afecta la salud de la empresa ni el reporte integrado.
+3. Sin datos, Inicio muestra **Cómo empezar** y dos botones: **Cargar ejemplo de empresa** (caso ficticio de MUNO MODA en todos los módulos de la empresa vacíos) y **Cargar ejemplo personal** (presupuesto personal y bienes del hogar). Ninguno reemplaza datos existentes.
+4. El menú lateral está agrupado en **Empresa**, **Finanzas personales**, **Aprender** y **Datos**. Los módulos personales llevan un acento verde azulado.
+5. Cambia entre tema claro y oscuro con el botón **Tema** al pie del menú; las gráficas abiertas se recolorean sin perder lo que estés editando.
+6. Todos los datos se guardan automáticamente en localStorage.
 
 ---
 
@@ -389,7 +395,9 @@ El mercado paga 14.88 veces la utilidad por acción y valora la acción a 2.68 v
 
 ---
 
-## 5. Módulo 4: Activos y Depreciación
+## 5. Módulo 4: Activos del Hogar
+
+Registra los bienes del hogar (tecnología, electrodomésticos, mobiliario, transporte, herramientas), su depreciación y su condición. Está en la sección **Finanzas personales** del menú y no se mezcla con los activos fijos del balance de la empresa.
 
 ### 5.1 Ejemplo: Laptop
 
@@ -502,13 +510,14 @@ Navega al glosario para consultar más de 20 términos financieros definidos: me
 
 ### 7.5 Dashboard resumen
 
-El dashboard muestra los KPIs principales de todos los módulos:
+El dashboard muestra los KPIs de la empresa y un resumen por módulo separado en Empresa, Finanzas personales y Aprender:
 
-- **Presupuesto:** Ahorro mensual, saldo disponible
 - **Estados:** Total activos, pasivos, patrimonio, ventas y utilidad neta, calculados con el mismo motor que Análisis (incluye cuentas importadas con nombres propios)
-- **Análisis:** RC, ROA, margen neto
-- **Activos:** Total en libros, depreciación acumulada
+- **Análisis:** endeudamiento y ROA
+- **Finanzas personales:** ingreso del presupuesto personal y cantidad de bienes del hogar registrados
 - **Mercados:** Último puntaje del quiz
+
+Para un panorama con interpretaciones, usa **Inicio** (sección 1).
 
 ---
 
