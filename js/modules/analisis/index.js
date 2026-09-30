@@ -1,4 +1,6 @@
 import store from '../../store.js';
+import { mercadoUI } from './mercado-ui.js';
+import { estadosGuardados } from '../../utils/estados-guardados.js';
 import { formatCurrency, formatPercent, formatNumber } from '../../utils/format.js';
 import {
   ahDelta, ahPctDelta, av, ratioCorriente, ratioRapido,
@@ -42,7 +44,9 @@ function getSavedStates() {
 
 let savedCache = null;
 let savedPeriods = [];
-function refreshSavedStates() {
+// Exportada: Reportes refresca la caché antes de reutilizar computeRazones para
+// que el dashboard no lea estados guardados de una navegación anterior.
+export function refreshSavedStates() {
   try {
     savedCache = getSavedStates();
     savedPeriods = savedCache.periods;
@@ -633,7 +637,7 @@ export function initAnalisis() {
   page.innerHTML = `
     <div class="page-header">
       <h1 class="page-title">Análisis Financiero</h1>
-      <p class="page-subtitle">AH, AV, Razones, CNT/CNO, EOAF, EFE, DuPont, Interpretación</p>
+      <p class="page-subtitle">AH, AV, Razones, CNT/CNO, EOAF, EFE, DuPont, Interpretación y razones de mercado</p>
     </div>
     <div class="tabs">
       <button class="tab-btn active" data-tab="ah">AH</button>
@@ -644,6 +648,7 @@ export function initAnalisis() {
       <button class="tab-btn" data-tab="efe">EFE</button>
       <button class="tab-btn" data-tab="dupont">DuPont</button>
       <button class="tab-btn" data-tab="interpretacion">Interpretación</button>
+      <button class="tab-btn" data-tab="mercado">Mercado</button>
     </div>
     <div class="tab-content active" id="tab-ah">
       <h3 class="mb-4">Análisis Horizontal</h3>
@@ -676,7 +681,22 @@ export function initAnalisis() {
     <div class="tab-content" id="tab-interpretacion">
       <h3 class="mb-4">Interpretación Heurística</h3>
       ${periods.length > 0 ? renderInterpretacionSection(periods[periods.length - 1]) : '<p class="text-muted">Sin datos.</p>'}
+    </div>
+    <div class="tab-content" id="tab-mercado">
+      <h3 class="mb-4">Razones de Mercado</h3>
+      <div id="mercadoContenido"></div>
     </div>`;
+
+  // Razones de mercado: datos de acciones propios; UN y patrimonio de los estados; DAP de Apalancamiento.
+  const mercado = page.querySelector?.('#mercadoContenido');
+  if (mercado) {
+    mercadoUI(mercado, {
+      estados: estadosGuardados(store.get('estados')),
+      datos: store.get('razonesMercado'),
+      dap: store.get('apalancamiento')?.dap || {},
+      guardar: datos => store.setPersisted('razonesMercado', datos)
+    });
+  }
 
   page.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
