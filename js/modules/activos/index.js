@@ -14,7 +14,8 @@ const ESTADOS_POSIBLES = [
   'Deficiente', 'Obsoleto', 'Para Reparar'
 ];
 
-function calcularEstado(asset) {
+// Exportada: el panorama de Inicio cuenta los activos que requieren atención.
+export function calcularEstado(asset) {
   const score = asset.condicion?.score || 0;
   if (score >= 90) return 'Excelente';
   if (score >= 75) return 'Bueno';
@@ -30,6 +31,21 @@ function estadoColor(estado) {
   return map[estado] || 'info';
 }
 
+// Ejemplo ficticio de bienes del hogar para la demostración. La condición guarda los 8
+// puntajes (0–10) y su promedio × 10, igual que el formulario.
+export function ejemploActivos() {
+  const bien = (nombre, categoria, costoOriginal, vidaUtil, valorResidual, aniosConsumidos, costoReposicion, scores) => ({
+    nombre, categoria, costoOriginal, vidaUtil, valorResidual, aniosConsumidos, costoReposicion,
+    condicion: { scores, score: scores.reduce((a, b) => a + b, 0) / scores.length * 10 }
+  });
+  return [
+    bien('Laptop', 'Tecnología', 28000, 4, 3000, 2, 32000, [8, 8, 7, 7, 8, 7, 8, 7]),
+    bien('Refrigeradora', 'Electrodomésticos', 22000, 10, 2000, 6, 26000, [7, 8, 7, 6, 6, 8, 7, 7]),
+    bien('Motocicleta', 'Transporte', 65000, 8, 15000, 7, 72000, [4, 5, 4, 4, 3, 5, 4, 4]),
+    bien('Juego de sala', 'Mobiliario', 18000, 8, 1000, 3, 21000, [8, 9, 9, 8, 7, 9, 8, 8])
+  ];
+}
+
 export function initActivos() {
   const page = document.getElementById('page-activos');
   if (!page) return;
@@ -37,8 +53,9 @@ export function initActivos() {
   page.innerHTML = `
     <div class="page-header flex-between">
       <div>
-        <h1 class="page-title">Activos y Depreciación</h1>
-        <p class="page-subtitle">Inventario, depreciación línea recta, condición y recomendación</p>
+        <p class="page-eyebrow">Finanzas personales</p>
+        <h1 class="page-title">Activos del Hogar</h1>
+        <p class="page-subtitle">Bienes del hogar: depreciación en línea recta, condición y recomendación de reparación o reposición</p>
       </div>
       <button class="btn btn-primary" id="btnAddAsset">+ Nuevo Activo</button>
     </div>

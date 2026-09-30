@@ -10,7 +10,8 @@ const num = valor => formatNumberND(valor, esNumero(valor) && Number.isInteger(v
 const NIVELES = { alta: 0, media: 1, baja: 2 };
 
 // Razón de Análisis con N/D cuando su denominador es 0 (las funciones legado devuelven 0).
-function razon(razones, clave, denominador = clave) {
+// Exportada para el panorama de Inicio.
+export function razon(razones, clave, denominador = clave) {
   if (!razones || !esNumero(razones[clave])) return null;
   return razones.denominadores?.[denominador] === 0 ? null : razones[clave];
 }

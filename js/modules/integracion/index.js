@@ -131,16 +131,18 @@ function renderDashboard(page) {
       <div class="kpi-card"><div class="kpi-value ${kpis.utilidadNeta >= 0 ? '' : 'text-danger'}">${formatCurrency(kpis.utilidadNeta)}</div><div class="kpi-label">Utilidad Neta</div></div>
       <div class="kpi-card"><div class="kpi-value">${kpis.endeudamiento == null ? 'N/D' : formatPercent(kpis.endeudamiento)}</div><div class="kpi-label">Endeudamiento</div></div>
       <div class="kpi-card"><div class="kpi-value">${kpis.roa == null ? 'N/D' : formatPercent(kpis.roa)}</div><div class="kpi-label">ROA</div></div>
-      <div class="kpi-card"><div class="kpi-value">${kpis.activosCount}</div><div class="kpi-label">Activos Registrados</div></div>
     </div>
     <div class="card">
       <h3 class="mb-4">Resumen por Módulo</h3>
       <div class="table-wrapper"><table>
         <thead><tr><th>Módulo</th><th>Estado</th><th>Detalle</th></tr></thead>
         <tbody>
+          <tr><th scope="rowgroup" colspan="3">Empresa</th></tr>
           <tr><td>Estados Financieros</td><td><span class="badge badge-success">Activo</span></td><td>${kpis.totalActivos > 0 ? 'Datos cargados' : 'Sin datos'}</td></tr>
-          <tr><td>Presupuesto</td><td><span class="badge ${kpis.presupuestoIngreso > 0 ? 'badge-success' : 'badge-warning'}">${kpis.presupuestoIngreso > 0 ? 'Configurado' : 'Sin configurar'}</span></td><td>Ingreso: ${formatCurrency(kpis.presupuestoIngreso)}</td></tr>
-          <tr><td>Activos</td><td><span class="badge ${kpis.activosCount > 0 ? 'badge-success' : 'badge-warning'}">${kpis.activosCount > 0 ? 'Con inventario' : 'Sin inventario'}</span></td><td>${kpis.activosCount} activos</td></tr>
+          <tr><th scope="rowgroup" colspan="3">Finanzas personales (independientes de la empresa)</th></tr>
+          <tr><td>Presupuesto personal</td><td><span class="badge ${kpis.presupuestoIngreso > 0 ? 'badge-success' : 'badge-warning'}">${kpis.presupuestoIngreso > 0 ? 'Configurado' : 'Sin configurar'}</span></td><td>Ingreso: ${formatCurrency(kpis.presupuestoIngreso)}</td></tr>
+          <tr><td>Activos del hogar</td><td><span class="badge ${kpis.activosCount > 0 ? 'badge-success' : 'badge-warning'}">${kpis.activosCount > 0 ? 'Con bienes' : 'Sin bienes'}</span></td><td>${kpis.activosCount} bienes registrados</td></tr>
+          <tr><th scope="rowgroup" colspan="3">Aprender</th></tr>
           <tr><td>Mercados - Quiz</td><td><span class="badge badge-info">Quiz</span></td><td>Último puntaje: ${kpis.quizScore}/12</td></tr>
         </tbody>
       </table></div>
