@@ -90,6 +90,7 @@ export function initPresupuesto() {
 
   page.innerHTML = `
     <div class="page-header">
+      <p class="page-eyebrow">Finanzas personales</p>
       <h1 class="page-title">Presupuesto Personal</h1>
       <p class="page-subtitle">Ingresos, gastos por categoría, capacidad de ahorro y saldo disponible. Es independiente del presupuesto maestro de la empresa.</p>
     </div>

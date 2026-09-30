@@ -61,6 +61,25 @@ Todos los cambios notables en GFO Toolkit.
 - ROA y endeudamiento del dashboard reutilizan `computeRazones` (con `refreshSavedStates`): mismos promedios y semántica N/D que la pestaña Análisis, no un cálculo paralelo con saldo de cierre.
 - El CSV exportado incluye `Estado`, `Grupo`, `Cuenta` y `Clasificacion`, y puede reimportarse en Estados sin edición manual.
 
+### Inicio y apariencia
+- `#/home` es ahora un **panorama general** de la empresa (`js/modules/inicio/`): salud general, KPIs con variación contra el periodo anterior, gráfica de ventas y utilidad, alertas prioritarias, puntos clave con interpretación por área (liquidez, rentabilidad, endeudamiento, apalancamiento, equilibrio, flujo, presupuesto maestro, inventario y activos) y accesos a los módulos. Sin datos muestra "Cómo empezar".
+- Las cifras salen de las mismas funciones que cada módulo: la proforma exporta `reunirEntradas()` y `razon()`, y Activos exporta `calcularEstado()`. `initHome` sale de `app.js`.
+- Tema oscuro: los fondos `--color-*-light` pasan a tintes translúcidos. Corrige los iconos de Inicio, las insignias y el hover de las tablas, que quedaban como manchas claras con texto claro.
+- Iconos de Inicio en SVG (los mismos de la barra lateral) con tono por módulo, en lugar de caracteres sueltos (`$`, `%`, `*`…).
+- Insignias y enlaces usan `--ink-*`, un tono más contrastado (≥ 4.5:1) en ambos temas. Gradiente suave solo en el encabezado de Inicio.
+- Al cambiar de tema, las gráficas abiertas se recolorean (`refreshChartsTheme` en `js/components/chart.js`) sin reiniciar la pantalla, así no se pierden formularios ni borradores. Los colores de ejes y leyenda salen de las variables CSS del tema.
+- Botón **Cargar ejemplo de empresa** en Inicio cuando no hay datos: llena con MUNO MODA solo los módulos de la empresa vacíos (estados, razones de mercado, presupuesto maestro, equilibrio, flujo e inventario); nunca reemplaza datos existentes. **Cargar ejemplo personal** hace lo mismo con el presupuesto personal y los activos del hogar (`ejemploActivos()` en Activos).
+- **Finanzas personales separadas de la empresa** (D-018):
+  - Barra lateral en secciones: Empresa (en el orden del flujo de datos), Finanzas personales, Aprender y Datos. Las rutas no cambian.
+  - "Presupuesto" pasa a "Presupuesto personal" y "Activos" a "Activos del hogar"; sus páginas llevan la etiqueta "Finanzas personales" y un acento verde azulado (`--color-personal`).
+  - Inicio: los activos del hogar salen de los puntos clave y de la salud de la empresa; nuevo bloque "Mis finanzas personales" con capacidad y tasa de ahorro, ahorro necesario para la meta y estado de los bienes. La cuadrícula de módulos se agrupa igual que la barra lateral.
+  - Reportes: el resumen por módulo separa Empresa, Finanzas personales y Aprender, y el conteo de activos sale de los KPIs de la empresa.
+- Fondo de la app con gradiente radial muy suave sobre `--bg-app`, barra lateral con gradiente vertical y enlace activo con degradado. Las tarjetas se separan del fondo.
+- Contraste: textos de estado (`.text-success`, `.text-danger`, KPIs, pestaña activa, glosario, quiz, cifras positivas y negativas) usan `--ink-*`; en oscuro las tablas tienen rayado y encabezado más suaves.
+- Accesibilidad: foco visible con teclado en enlaces, botones y tarjetas; con `prefers-reduced-motion` se desactivan la entrada de páginas y las transiciones.
+- Tipografía monoespaciada con respaldo `Cascadia Mono`/`Consolas`/`SF Mono`/`Menlo` para las cifras.
+- Pruebas: `inicio.test.js` (12 casos) e `inicio-navegador.test.js` (carga del ejemplo sin sobrescribir y recoloreado de gráficas).
+
 ### Correcciones
 - Mercados: el quiz no persistía (`store` no estaba importado en `mercados/index.js`).
 - Análisis: los shells `ah.js`, `av.js`, `razones.js`, `dupont.js`, `cnt-cno.js`, `eoaf.js` y `efe.js` reexportaban funciones que `index.js` no exportaba; ahora exponen `computeAH`, `computeAV`, `computeRazones`, `computeDuPont`, `computeCNTCNO`, `computeEOAF` y `computeEFE`, con prueba de guardia.

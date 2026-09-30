@@ -1,5 +1,15 @@
 let chartInstances = {};
 
+// Colores de ejes y leyenda tomados de las variables del tema activo (css/variables.css).
+function themeColors() {
+  const fallback = document.documentElement.getAttribute('data-theme') === 'dark'
+    ? { text: '#94a3b8', grid: '#334155' }
+    : { text: '#475569', grid: '#e2e8f0' };
+  const styles = typeof getComputedStyle === 'function' ? getComputedStyle(document.documentElement) : null;
+  const leer = (name, def) => styles?.getPropertyValue(name).trim() || def;
+  return { text: leer('--text-secondary', fallback.text), grid: leer('--border-color', fallback.grid) };
+}
+
 export function destroyChart(id) {
   if (chartInstances[id]) {
     chartInstances[id].destroy();
@@ -12,9 +22,7 @@ export function renderChart(canvasId, config) {
   const canvas = document.getElementById(canvasId);
   if (!canvas) return null;
 
-  const theme = document.documentElement.getAttribute('data-theme');
-  const textColor = theme === 'dark' ? '#94a3b8' : '#475569';
-  const gridColor = theme === 'dark' ? '#334155' : '#e2e8f0';
+  const { text: textColor, grid: gridColor } = themeColors();
 
   if (config.options) {
     config.options.responsive = true;
@@ -37,8 +45,33 @@ export function renderChart(canvasId, config) {
     return null;
   }
 
+  Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+  // Texto por defecto (gráficas sin ejes configurados, p. ej. dona o pastel).
+  Chart.defaults.color = textColor;
   chartInstances[canvasId] = new Chart(canvas, config);
+  chartInstances[canvasId].$temaColores = { text: textColor, grid: gridColor };
   return chartInstances[canvasId];
+}
+
+// Al cambiar de tema: recolorea ejes y leyendas de las gráficas abiertas sin volver a
+// iniciar su pantalla (se conservan formularios y borradores). Solo cambia los colores
+// que puso renderChart; los que definió el módulo se respetan.
+export function refreshChartsTheme() {
+  const { text, grid } = themeColors();
+  if (window.Chart) window.Chart.defaults.color = text;
+  for (const chart of Object.values(chartInstances)) {
+    const previos = chart.$temaColores;
+    if (!previos) continue;
+    const opts = chart.options || {};
+    const legend = opts.plugins?.legend?.labels;
+    if (legend && legend.color === previos.text) legend.color = text;
+    for (const scale of Object.values(opts.scales || {})) {
+      if (scale.ticks && scale.ticks.color === previos.text) scale.ticks.color = text;
+      if (scale.grid && scale.grid.color === previos.grid) scale.grid.color = grid;
+    }
+    chart.$temaColores = { text, grid };
+    chart.update('none');
+  }
 }
 
 export function destroyAllCharts() {

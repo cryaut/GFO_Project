@@ -19,10 +19,9 @@ function intentar(calculo) {
   }
 }
 
-// Ruta #/proforma: reúne los resultados de cada módulo con sus mismas funciones de cálculo.
-export function initProforma() {
-  const page = document.getElementById('page-proforma');
-  if (!page) return;
+// Resultados de cada módulo calculados con sus mismas funciones. Exportada: Inicio
+// (panorama general) reutiliza estas entradas en vez de repetir la recolección.
+export function reunirEntradas() {
   const estados = estadosGuardados(store.get('estados'));
   const ultimo = estados ? estados.periods[estados.periods.length - 1] : null;
   if (estados) refreshSavedStates();
@@ -30,7 +29,7 @@ export function initProforma() {
   const equilibrio = normalizarEquilibrio(store.get('equilibrio'));
   const flujo = calcularFlujo(store.get('flujo'));
   const inventario = calcularInventario(store.get('inventario'));
-  const reporte = construirReporte({
+  return {
     estados,
     razones: estados ? intentar(() => computeRazones(ultimo)) : null,
     dupont: estados ? intentar(() => computeDuPont(ultimo)) : null,
@@ -43,6 +42,13 @@ export function initProforma() {
     flujo: flujo.cantidadMovimientos ? flujo : null,
     inventario: inventario.productos.length ? inventario : null,
     umbrales: UMBRALES
-  });
+  };
+}
+
+// Ruta #/proforma: reúne los resultados de cada módulo con sus mismas funciones de cálculo.
+export function initProforma() {
+  const page = document.getElementById('page-proforma');
+  if (!page) return;
+  const reporte = construirReporte(reunirEntradas());
   proformaUI(page, { reporte, imprimir: () => window.print() });
 }
