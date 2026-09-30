@@ -13,7 +13,7 @@ import {
   rotacionActivosFijos, rotacionCapitalTrabajo, solvencia
 } from '../../utils/calculate.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
-import { normalizeFinancialData } from '../estados/estados-normalize.js';
+import { normalizeFinancialData, sortPeriods } from '../estados/estados-normalize.js';
 
 export const UMBRALES = {
   ratioCorrienteMin: 1,
@@ -54,7 +54,8 @@ export function refreshSavedStates() {
     // Unsaved/legacy data without valid classification: analysis degrades to
     // the fixed-name readers instead of crashing the whole section.
     savedCache = null;
-    savedPeriods = store.get('estados.periods') || [];
+    const raw = store.get('estados.periods');
+    savedPeriods = Array.isArray(raw) ? sortPeriods(raw) : [];
   }
   return savedCache;
 }
@@ -138,13 +139,34 @@ function getBGData(period) {
 
 function getPeriods() {
   if (!savedCache) refreshSavedStates();
-  return savedPeriods.length ? savedPeriods : (store.get('estados.periods') || []);
+  if (savedPeriods.length) return savedPeriods;
+  const raw = store.get('estados.periods');
+  return Array.isArray(raw) ? sortPeriods(raw) : [];
 }
 
 function getPrevPeriod(period) {
   const periods = getPeriods();
   const idx = periods.indexOf(period);
   return idx > 0 ? periods[idx - 1] : null;
+}
+
+// Presencia de una cuenta por tipo en un periodo: distingue "cuenta ausente"
+// (dato faltante) de "cuenta con importe 0". Sin estados normalizados no se
+// puede saber → se asume presente (modo degradado, sin cambiar su comportamiento).
+function cuentaPresente(period, group, tipo) {
+  const states = savedCache || refreshSavedStates();
+  if (!states) return true;
+  const cuentas = states.balanceGeneral?.[period]?.[group];
+  if (!cuentas) return false;
+  const tipos = states.accountTypes?.[group] || {};
+  return Object.keys(cuentas).some(nombre => tipos[nombre] === tipo);
+}
+
+function grupoPresente(period, group) {
+  const states = savedCache || refreshSavedStates();
+  if (!states) return true;
+  const cuentas = states.balanceGeneral?.[period]?.[group];
+  return !!cuentas && Object.keys(cuentas).length > 0;
 }
 
 export function computeAVBalanceGeneral(period) {
@@ -199,21 +221,56 @@ export function computeRazones(period) {
   const bgPrev = prev ? getBGData(prev) : null;
   const hayDosPeriodos = !!bgPrev;
 
-  const invProm = saldoPromedio(bgPrev?.inventario, bg.inventario);
-  const cxcProm = saldoPromedio(bgPrev?.cxC, bg.cxC);
-  const activoProm = saldoPromedio(bgPrev?.totalActivos, bg.totalActivos);
-  const patrimonioProm = saldoPromedio(bgPrev?.totalPatrimonio, bg.totalPatrimonio);
+  // Resuelve el valor de una cuenta/tipo en un periodo: null si la cuenta no
+  // existe (dato faltante, no un saldo de 0).
+  const resolve = (p, data, campo, group, tipo) => {
+    const presente = tipo ? cuentaPresente(p, group, tipo) : grupoPresente(p, group);
+    return presente ? data[campo] : null;
+  };
+  // Promedio de dos periodos. Reglas: dato ausente en cualquier lado → null;
+  // un solo periodo → saldo final (metodología documentada del proyecto).
+  const promedio = (inicial, final) => {
+    if (final === null) return null;
+    if (!hayDosPeriodos) return saldoPromedio(undefined, final);
+    if (inicial === null) return null;
+    return saldoPromedio(inicial, final);
+  };
+  const prom = (campo, group, tipo) => promedio(
+    hayDosPeriodos ? resolve(prev, bgPrev, campo, group, tipo) : undefined,
+    resolve(period, bg, campo, group, tipo)
+  );
+
+  const invActual = resolve(period, bg, 'inventario', 'activos', 'inventario');
+  const invPrevio = hayDosPeriodos
+    ? resolve(prev, bgPrev, 'inventario', 'activos', 'inventario')
+    : undefined;
+  const invProm = promedio(invPrevio, invActual);
+  const cxcProm = prom('cxC', 'activos', 'cxC');
+  const activoProm = prom('totalActivos', 'activos');
+  const patrimonioProm = prom('totalPatrimonio', 'patrimonio');
+  const cxpProm = prom('cuentasPorPagar', 'pasivos', 'cuentasPorPagar');
 
   const RC = ratioCorriente(bg.activosCorrientes, bg.pasivosCorrientes);
   const RR = ratioRapido(bg.activosCorrientes, bg.inventario, bg.pasivosCorrientes);
   const RotInv = rotacionInventario(er.costoVentas, invProm);
-  const RotCxC = rotacionCxC(er.ventas, cxcProm);
+  // El modelo de datos no distingue ventas a crédito (no existe esa fuente):
+  // la rotación de CxC queda N/D explícito en vez de asumir ventas totales.
+  const RotCxC = rotacionCxC(null, cxcProm);
   const PPC = plazoCobro(RotCxC);
   const End = endeudamiento(bg.totalPasivos, bg.totalActivos);
   const MN = margenNeto(er.utilidadNeta, er.ventas);
   const ROA = roa(er.utilidadNeta, activoProm);
-  const cxpProm = saldoPromedio(bgPrev?.cuentasPorPagar, bg.cuentasPorPagar);
-  const RotCxP = rotacionCxP(er.costoVentas, cxpProm);
+  // Compras = Costo de Ventas + Inventario Final − Inventario Inicial (periodo
+  // previo). Sin inventario comparable se aproxima con el costo de ventas, como
+  // documenta la metodología del proyecto; compras negativas son datos rotos.
+  let compras = er.costoVentas;
+  if (hayDosPeriodos && invActual !== null && invPrevio !== null) {
+    compras = er.costoVentas + invActual - invPrevio;
+  }
+  const comprasValidas = compras >= 0 ? compras : null;
+  const RotCxP = rotacionCxP(comprasValidas, cxpProm);
+  const usaComprasReales = hayDosPeriodos && invActual !== null && invPrevio !== null
+    && compras >= 0;
   const utilidadOperativa = er.ventas - er.costoVentas - er.gastosAdmin - er.gastosVentas;
   const hayVentas = er.ventas !== 0 || er.costoVentas !== 0;
   const extra = {
@@ -238,6 +295,7 @@ export function computeRazones(period) {
     RC, RR, RotInv, RotCxC, PPC, endeudamiento: End, MN, ROA,
     ...extra,
     usaPromedios: hayDosPeriodos,
+    usaComprasReales,
     invProm, cxcProm, activoProm, patrimonioProm,
     denominadores: {
       RC: bg.pasivosCorrientes,
@@ -325,13 +383,13 @@ function interpretacion(razones) {
   const notaUmbral = 'Se recomienda analizar su evolución histórica y compararlo con el sector antes de concluir que existe un problema financiero.';
   // Las razones N/D (null) no generan hallazgos: null < umbral sería true en JS.
   const hayDato = v => typeof v === 'number' && Number.isFinite(v);
-  if (razones.RC < UMBRALES.ratioCorrienteMin) {
+  if (hayDato(razones.RC) && razones.RC < UMBRALES.ratioCorrienteMin) {
     hallazgos.push({ hallazgo: `Ratio Corriente por debajo del umbral configurado (${UMBRALES.ratioCorrienteMin})`, causa: 'Posible dificultad para cubrir obligaciones a corto plazo', riesgo: 'Posible riesgo de liquidez', accion: notaUmbral + ' Evaluar conversión de inventarios y cobranza.' });
   }
-  if (razones.denominadores.RR !== 0 && razones.RR < UMBRALES.ratioRapidoMin) {
+  if (hayDato(razones.RR) && razones.denominadores.RR !== 0 && razones.RR < UMBRALES.ratioRapidoMin) {
     hallazgos.push({ hallazgo: `Prueba ácida por debajo del umbral configurado (${UMBRALES.ratioRapidoMin})`, causa: 'Dependencia significativa de los inventarios para cubrir obligaciones a corto plazo', riesgo: 'Posible riesgo de liquidez inmediata', accion: notaUmbral + ' Revisar niveles de inventario y activos líquidos.' });
   }
-  if (razones.endeudamiento > UMBRALES.endeudamientoMax) {
+  if (hayDato(razones.endeudamiento) && razones.endeudamiento > UMBRALES.endeudamientoMax) {
     hallazgos.push({ hallazgo: `Endeudamiento por encima del umbral configurado (${formatPercent(UMBRALES.endeudamientoMax)})`, causa: 'Dependencia significativa de financiamiento ajeno', riesgo: 'Posible riesgo financiero elevado', accion: notaUmbral + ' Revisar estructura de capital.' });
   }
   if (hayDato(razones.deudaPatrimonio) && razones.deudaPatrimonio > UMBRALES.deudaPatrimonioMax) {
@@ -346,10 +404,10 @@ function interpretacion(razones) {
   if (hayDato(razones.margenOperativo) && razones.margenOperativo < UMBRALES.margenOperativoMin) {
     hallazgos.push({ hallazgo: `Margen operativo por debajo del umbral configurado (${formatPercent(UMBRALES.margenOperativoMin)})`, causa: 'Gastos de administración y ventas elevados', riesgo: 'Posible dificultad para cubrir gastos financieros', accion: notaUmbral + ' Optimizar gastos de administración y ventas.' });
   }
-  if (razones.MN < UMBRALES.margenNetoMin) {
+  if (hayDato(razones.MN) && razones.MN < UMBRALES.margenNetoMin) {
     hallazgos.push({ hallazgo: `Margen neto por debajo del umbral configurado (${formatPercent(UMBRALES.margenNetoMin)})`, causa: 'Costos o gastos elevados respecto a ventas', riesgo: 'Rentabilidad posiblemente comprometida', accion: notaUmbral + ' Optimizar costos operativos y revisar precios.' });
   }
-  if (razones.ROA < UMBRALES.roaMin) {
+  if (hayDato(razones.ROA) && razones.ROA < UMBRALES.roaMin) {
     hallazgos.push({ hallazgo: `ROA por debajo del umbral configurado (${formatPercent(UMBRALES.roaMin)})`, causa: 'Baja eficiencia en el uso de activos para generar utilidades', riesgo: 'Posible subutilización de recursos', accion: notaUmbral + ' Evaluar activos improductivos.' });
   }
   if (hayDato(razones.roe) && razones.roe < UMBRALES.roeMin) {
@@ -359,7 +417,16 @@ function interpretacion(razones) {
     hallazgos.push({ hallazgo: `Ciclo de conversión de efectivo mayor a ${UMBRALES.cicloConversionMaxDias} días`, causa: 'La empresa tarda en convertir inventarios y cuentas por cobrar en efectivo', riesgo: 'Posibles problemas de liquidez operativa', accion: notaUmbral + ' Revisar la gestión de inventarios, cobranza y pagos.' });
   }
   if (hallazgos.length === 0) {
-    hallazgos.push({ hallazgo: 'Indicadores dentro de los umbrales configurados', causa: 'Situación financieramente estable según los parámetros actuales', riesgo: 'Riesgo controlado', accion: 'Los umbrales son referencias educativas: complementar con comparación sectorial y análisis histórico.' });
+    const evaluables = [razones.RC, razones.RR, razones.endeudamiento, razones.deudaPatrimonio,
+      razones.coberturaIntereses, razones.margenBruto, razones.margenOperativo, razones.MN,
+      razones.ROA, razones.roe, razones.cicloConversion];
+    if (evaluables.some(hayDato)) {
+      hallazgos.push({ hallazgo: 'Indicadores dentro de los umbrales configurados', causa: 'Situación financieramente estable según los parámetros actuales', riesgo: 'Riesgo controlado', accion: 'Los umbrales son referencias educativas: complementar con comparación sectorial y análisis histórico.' });
+    } else {
+      // Nada calculable: afirmar que están "dentro de los umbrales" sería un
+      // hallazgo falso sobre razones N/D.
+      hallazgos.push({ hallazgo: 'No hay indicadores calculables (N/D)', causa: 'Faltan datos en los estados financieros para evaluar las razones', riesgo: 'Sin evaluación posible', accion: 'Complete los estados financieros con los datos requeridos y vuelva a analizar.' });
+    }
   }
   return hallazgos;
 }
@@ -367,6 +434,7 @@ function interpretacion(razones) {
 function computeEvolucion(periods) {
   if (periods.length < 2) return [];
   const evoluciones = [];
+  const esCalculable = v => typeof v === 'number' && Number.isFinite(v);
   const nombres = [
     ['Liquidez Corriente', r => r.RC, formatNumber],
     ['Rotación Inventario', r => r.RotInv, formatNumber],
@@ -379,6 +447,11 @@ function computeEvolucion(periods) {
     for (const [nombre, getter, fmt] of nombres) {
       const v1 = getter(r1);
       const v2 = getter(r2);
+      if (!esCalculable(v1) || !esCalculable(v2)) {
+        // Razón N/D en uno de los periodos: no hay variación calculable.
+        evoluciones.push({ periodo: `${periods[i - 1]} → ${periods[i]}`, indicador: nombre, t1: v1, t2: v2, lectura: 'N/D: la razón no pudo calcularse en uno de los periodos.' });
+        continue;
+      }
       const delta = v2 - v1;
       const pct = v1 !== 0 ? delta / Math.abs(v1) : null;
       let lectura;
@@ -461,30 +534,37 @@ function msgDivisionCero(indicador, denominador) {
 function renderRazonesSection(period) {
   const r = computeRazones(period);
   const d = r.denominadores;
-  const val = (v, ok, den, nombre, indicador) =>
-    den === 0 ? msgDivisionCero(indicador, nombre) : v;
+  // Denominador 0 → mensaje de división; valor no calculable (null) → N/D.
+  const val = (valor, fmt, den, nombre, indicador) => {
+    if (den === 0) return msgDivisionCero(indicador, nombre);
+    if (valor == null) return 'N/D';
+    return fmt(valor);
+  };
   const badge = (ok) => ok ? 'badge-success' : 'badge-warning';
   // Las razones N/D (null) no se evalúan contra el umbral: se muestran sin insignia.
   const badgeSiHay = (v, ok) => v == null ? 'badge-info' : badge(ok);
   const etiqueta = (b) => b === 'badge-success' ? 'OK' : 'Revisión';
+  const fuenteCxP = r.usaComprasReales
+    ? `compras${r.usaPromedios ? ' / CxP promedio' : ''}`
+    : `costo de ventas (aprox.)${r.usaPromedios ? ' / CxP promedio' : ''}`;
   const items = [
     ['Liquidez', '', '', ''],
-    ['Ratio Corriente', val(formatNumber(r.RC), r.RC >= UMBRALES.ratioCorrienteMin, d.RC, 'el pasivo corriente', 'la liquidez corriente'), badge(r.RC >= UMBRALES.ratioCorrienteMin)],
-    ['Ratio Rápido', val(formatNumber(r.RR), r.RR >= UMBRALES.ratioRapidoMin, d.RR, 'el pasivo corriente', 'la prueba ácida'), badge(r.RR >= UMBRALES.ratioRapidoMin)],
+    ['Ratio Corriente', val(r.RC, formatNumber, d.RC, 'el pasivo corriente', 'la liquidez corriente'), badgeSiHay(r.RC, r.RC >= UMBRALES.ratioCorrienteMin)],
+    ['Ratio Rápido', val(r.RR, formatNumber, d.RR, 'el pasivo corriente', 'la prueba ácida'), badgeSiHay(r.RR, r.RR >= UMBRALES.ratioRapidoMin)],
     ['Prueba Defensiva', r.pruebaDefensiva == null ? 'N/D' : formatNumber(r.pruebaDefensiva), 'badge-info'],
     ['Actividad', '', '', ''],
-    [`Rotación Inventario${r.usaPromedios ? ' (inv. promedio)' : ''}`, val(formatNumber(r.RotInv), true, d.RotInv, 'el inventario', 'la rotación de inventario'), 'badge-info'],
+    [`Rotación Inventario${r.usaPromedios ? ' (inv. promedio)' : ''}`, val(r.RotInv, formatNumber, d.RotInv, 'el inventario', 'la rotación de inventario'), 'badge-info'],
     ['Edad del Inventario (días)', r.edadInventario == null ? 'N/D' : formatNumber(r.edadInventario, 0), 'badge-info'],
-    [`Rotación CxC${r.usaPromedios ? ' (CxC promedio)' : ''}`, val(formatNumber(r.RotCxC), true, d.RotCxC, 'las CxC', 'la rotación de CxC'), 'badge-info'],
-    ['Plazo Cobro (días)', formatNumber(r.PPC, 0), 'badge-info'],
-    [`Rotación de Cuentas por Pagar${r.usaPromedios ? ' (CxP promedio)' : ''}`, r.rotacionCxP == null ? 'N/D' : formatNumber(r.rotacionCxP), 'badge-info'],
+    [`Rotación CxC${r.usaPromedios ? ' (CxC promedio)' : ''}`, r.RotCxC == null ? 'N/D — requiere ventas a crédito' : val(r.RotCxC, formatNumber, d.RotCxC, 'las CxC', 'la rotación de CxC'), 'badge-info'],
+    ['Plazo Cobro (días)', r.PPC == null ? 'N/D' : formatNumber(r.PPC, 0), 'badge-info'],
+    [`Rotación de Cuentas por Pagar (${fuenteCxP})`, r.rotacionCxP == null ? 'N/D' : formatNumber(r.rotacionCxP), 'badge-info'],
     ['Plazo Pago (días)', r.plazoPago == null ? 'N/D' : formatNumber(r.plazoPago, 0), 'badge-info'],
     ['Ciclo de Conversión (días)', r.cicloConversion == null ? 'N/D' : formatNumber(r.cicloConversion, 0), badgeSiHay(r.cicloConversion, r.cicloConversion <= UMBRALES.cicloConversionMaxDias)],
     [`Rotación Activos${r.usaPromedios ? ' (activo promedio)' : ''}`, r.rotacionActivos == null ? 'N/D' : formatNumber(r.rotacionActivos), 'badge-info'],
     ['Rotación Activos Fijos (Ventas / activo fijo neto)', r.rotacionActivosFijos == null ? 'N/D' : formatNumber(r.rotacionActivosFijos), 'badge-info'],
     ['Rotación Capital de Trabajo (Ventas / CNT)', r.rotacionCapitalTrabajo == null ? 'N/D' : formatNumber(r.rotacionCapitalTrabajo), 'badge-info'],
     ['Endeudamiento y Cobertura', '', '', ''],
-    ['Endeudamiento', val(formatPercent(r.endeudamiento), r.endeudamiento <= UMBRALES.endeudamientoMax, d.End, 'el activo total', 'el endeudamiento'), badge(r.endeudamiento <= UMBRALES.endeudamientoMax)],
+    ['Endeudamiento', val(r.endeudamiento, formatPercent, d.End, 'el activo total', 'el endeudamiento'), badgeSiHay(r.endeudamiento, r.endeudamiento <= UMBRALES.endeudamientoMax)],
     ['Deuda / Patrimonio', r.deudaPatrimonio == null ? 'N/D' : formatNumber(r.deudaPatrimonio), badgeSiHay(r.deudaPatrimonio, r.deudaPatrimonio <= UMBRALES.deudaPatrimonioMax)],
     [`Apalancamiento${r.usaPromedios ? ' (promedio)' : ''}`, r.apalancamiento == null ? 'N/D' : formatNumber(r.apalancamiento), 'badge-info'],
     ['Solvencia (Activos / Pasivos)', r.solvencia == null ? 'N/D' : formatNumber(r.solvencia), 'badge-info'],
@@ -493,13 +573,17 @@ function renderRazonesSection(period) {
     ['Margen Bruto', r.margenBruto == null ? 'N/D' : formatPercent(r.margenBruto), badgeSiHay(r.margenBruto, r.margenBruto >= UMBRALES.margenBrutoMin)],
     ['Margen Operativo', r.margenOperativo == null ? 'N/D' : formatPercent(r.margenOperativo), badgeSiHay(r.margenOperativo, r.margenOperativo >= UMBRALES.margenOperativoMin)],
     [`ROE${r.usaPromedios ? ' (patrimonio promedio)' : ''}`, r.roe == null ? 'N/D' : formatPercent(r.roe), badgeSiHay(r.roe, r.roe >= UMBRALES.roeMin)],
-    ['Margen Neto', val(formatPercent(r.MN), r.MN >= UMBRALES.margenNetoMin, d.MN, 'las ventas', 'el margen neto'), badge(r.MN >= UMBRALES.margenNetoMin)],
-    [`ROA${r.usaPromedios ? ' (activo promedio)' : ''}`, val(formatPercent(r.ROA), r.ROA >= UMBRALES.roaMin, d.ROA, 'el activo total', 'el ROA'), badge(r.ROA >= UMBRALES.roaMin)]
+    ['Margen Neto', val(r.MN, formatPercent, d.MN, 'las ventas', 'el margen neto'), badgeSiHay(r.MN, r.MN >= UMBRALES.margenNetoMin)],
+    [`ROA${r.usaPromedios ? ' (activo promedio)' : ''}`, val(r.ROA, formatPercent, d.ROA, 'el activo total', 'el ROA'), badgeSiHay(r.ROA, r.ROA >= UMBRALES.roaMin)]
   ];
   const notaPromedios = r.usaPromedios
     ? 'Rotaciones, ROA y DuPont usan saldos promedio ((inicial + final) / 2).'
     : 'Con un solo periodo se usan saldos finales. Ingrese dos periodos para usar promedios.';
+  const notaCreditos = r.RotCxC == null
+    ? 'Rotación CxC, Plazo de Cobro y Ciclo de Conversión: N/D. La rotación de CxC exige ventas a crédito y el modelo de datos no distingue ese dato de las ventas totales (no se aproxima).'
+    : '';
   return `<p class="text-muted mb-4" style="font-size:var(--font-size-sm)">${notaPromedios}</p>
+  ${notaCreditos ? `<p class="text-muted mb-4" style="font-size:var(--font-size-sm)">${notaCreditos}</p>` : ''}
   <div class="kpi-grid">${items.map(([label, value, badgeClass]) => {
     if (!value) return `<div class="kpi-card" style="grid-column:1/-1"><div class="kpi-label font-bold">${label}</div></div>`;
     const esError = value.startsWith('No se puede calcular');
@@ -573,14 +657,15 @@ function renderEFESection(period) {
 
 function renderDuPontSection(period) {
   const dp = computeDuPont(period);
+  const fmtProm = v => v == null ? 'N/D' : formatCurrency(v);
   const notaPromedios = dp.usaPromedios
-    ? `Activo promedio = ${formatCurrency(dp.activoProm)} · Patrimonio promedio = ${formatCurrency(dp.patrimonioProm)} ((inicial + final) / 2)`
-    : `Un solo periodo disponible: se usan saldos finales (Activo = ${formatCurrency(dp.activoProm)}, Patrimonio = ${formatCurrency(dp.patrimonioProm)}). Ingrese dos periodos para promediar.`;
+    ? `Activo promedio = ${fmtProm(dp.activoProm)} · Patrimonio promedio = ${fmtProm(dp.patrimonioProm)} ((inicial + final) / 2)`
+    : `Un solo periodo disponible: se usan saldos finales (Activo = ${fmtProm(dp.activoProm)}, Patrimonio = ${fmtProm(dp.patrimonioProm)}). Ingrese dos periodos para promediar.`;
   return `<div class="kpi-grid">
-    <div class="kpi-card"><div class="kpi-value">${formatPercent(dp.PM)}</div><div class="kpi-label">Margen Neto (PM)</div></div>
-    <div class="kpi-card"><div class="kpi-value">${formatNumber(dp.AT)}</div><div class="kpi-label">Rotación Activos (AT)</div></div>
-    <div class="kpi-card"><div class="kpi-value">${formatNumber(dp.EM)}</div><div class="kpi-label">Multiplicador (EM)</div></div>
-    <div class="kpi-card" style="border-color:var(--color-primary)"><div class="kpi-value" style="color:var(--color-primary)">${formatPercent(dp.ROE)}</div><div class="kpi-label font-bold">ROE = PM × AT × EM</div></div>
+    <div class="kpi-card"><div class="kpi-value">${dp.PM == null ? 'N/D' : formatPercent(dp.PM)}</div><div class="kpi-label">Margen Neto (PM)</div></div>
+    <div class="kpi-card"><div class="kpi-value">${dp.AT == null ? 'N/D' : formatNumber(dp.AT)}</div><div class="kpi-label">Rotación Activos (AT)</div></div>
+    <div class="kpi-card"><div class="kpi-value">${dp.EM == null ? 'N/D' : formatNumber(dp.EM)}</div><div class="kpi-label">Multiplicador (EM)</div></div>
+    <div class="kpi-card" style="border-color:var(--color-primary)"><div class="kpi-value" style="color:var(--color-primary)">${dp.ROE == null ? 'N/D' : formatPercent(dp.ROE)}</div><div class="kpi-label font-bold">ROE = PM × AT × EM</div></div>
   </div>
   <p class="text-muted mt-4" style="font-size:var(--font-size-sm)">${notaPromedios}</p>
   <div class="card" style="border-left:4px solid var(--color-primary)">
@@ -600,9 +685,9 @@ function renderInterpretacionSection(period) {
     <div class="table-wrapper mb-6"><table>
       <thead><tr><th>Indicador</th><th class="text-right">Resultado</th><th>Significado</th><th>Análisis</th></tr></thead>
       <tbody>
-        <tr><td>Liquidez Corriente</td><td class="text-right font-mono">${razones.denominadores.RC === 0 ? 'N/D' : formatNumber(razones.RC)}</td><td>Por cada unidad monetaria de pasivo corriente existen ${razones.denominadores.RC === 0 ? '—' : formatNumber(razones.RC)} unidades de activo corriente.</td><td>Complementar con la prueba ácida, la composición del activo corriente y la evolución histórica antes de concluir.</td></tr>
-        <tr><td>Margen Neto</td><td class="text-right font-mono">${razones.denominadores.MN === 0 ? 'N/D' : formatPercent(razones.MN)}</td><td>Queda ${razones.denominadores.MN === 0 ? '—' : formatPercent(razones.MN)} de utilidad por cada unidad vendida.</td><td>Comparar con el sector y con periodos anteriores; revisar estructura de costos y gastos.</td></tr>
-        <tr><td>ROA</td><td class="text-right font-mono">${razones.denominadores.ROA === 0 ? 'N/D' : formatPercent(razones.ROA)}</td><td>La operación genera ${razones.denominadores.ROA === 0 ? '—' : formatPercent(razones.ROA)} de utilidad sobre los activos empleados.</td><td>Relacionar con DuPont: margen × rotación. Un margen bajo con rotación alta puede ser normal según el modelo de negocio.</td></tr>
+        <tr><td>Liquidez Corriente</td><td class="text-right font-mono">${razones.RC == null ? 'N/D' : formatNumber(razones.RC)}</td><td>${razones.RC == null ? '—' : `Por cada unidad monetaria de pasivo corriente existen ${formatNumber(razones.RC)} unidades de activo corriente.`}</td><td>Complementar con la prueba ácida, la composición del activo corriente y la evolución histórica antes de concluir.</td></tr>
+        <tr><td>Margen Neto</td><td class="text-right font-mono">${razones.MN == null ? 'N/D' : formatPercent(razones.MN)}</td><td>${razones.MN == null ? '—' : `Queda ${formatPercent(razones.MN)} de utilidad por cada unidad vendida.`}</td><td>Comparar con el sector y con periodos anteriores; revisar estructura de costos y gastos.</td></tr>
+        <tr><td>ROA</td><td class="text-right font-mono">${razones.ROA == null ? 'N/D' : formatPercent(razones.ROA)}</td><td>${razones.ROA == null ? '—' : `La operación genera ${formatPercent(razones.ROA)} de utilidad sobre los activos empleados.`}</td><td>Relacionar con DuPont: margen × rotación. Un margen bajo con rotación alta puede ser normal según el modelo de negocio.</td></tr>
       </tbody>
     </table></div>`;
   const evolucionData = computeEvolucion(getPeriods());
@@ -610,13 +695,17 @@ function renderInterpretacionSection(period) {
     <h4 class="mb-2">Evolución entre periodos</h4>
     <div class="table-wrapper mb-6"><table>
       <thead><tr><th>Periodo</th><th>Indicador</th><th class="text-right">Anterior</th><th class="text-right">Actual</th><th>Evolución</th></tr></thead>
-      <tbody>${evolucionData.map(e => `<tr>
+      <tbody>${evolucionData.map(e => {
+        const celda = v => (typeof v === 'number' && Number.isFinite(v)
+          ? (e.indicador.includes('%') ? formatPercent(v) : formatNumber(v)) : 'N/D');
+        return `<tr>
         <td>${e.periodo}</td>
         <td>${e.indicador}</td>
-        <td class="text-right font-mono">${e.indicador.includes('%') ? formatPercent(e.t1) : formatNumber(e.t1)}</td>
-        <td class="text-right font-mono">${e.indicador.includes('%') ? formatPercent(e.t2) : formatNumber(e.t2)}</td>
+        <td class="text-right font-mono">${celda(e.t1)}</td>
+        <td class="text-right font-mono">${celda(e.t2)}</td>
         <td style="font-size:var(--font-size-sm)">${e.lectura}</td>
-      </tr>`).join('')}</tbody>
+      </tr>`;
+      }).join('')}</tbody>
     </table></div>`;
   return niveles + evolucionHtml + hallazgos.map(h => `
     <div class="card mb-4" style="border-left:4px solid var(--color-warning)">

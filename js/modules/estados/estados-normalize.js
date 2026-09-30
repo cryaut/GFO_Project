@@ -35,6 +35,13 @@ function toAmount(value, label) {
   return number;
 }
 
+// Orden cronológico único para todas las vías de entrada (importación, JSON,
+// alta manual y datos existentes): sin él, getPrevPeriod y el "último periodo"
+// dependen del orden de llegada. No muta la entrada.
+export function sortPeriods(periods) {
+  return [...periods].sort((a, b) => a.localeCompare(b, 'es', { numeric: true }));
+}
+
 // Accepts the store shape { balanceGeneral, estadoResultados, periods, ... }
 // or a wrapper { estados: { ... } } such as a full-toolkit export.
 export function normalizeFinancialData(input) {
@@ -105,7 +112,7 @@ export function normalizeFinancialData(input) {
 
   return {
     name: typeof raw.name === 'string' && raw.name.trim() ? raw.name.trim() : 'Datos importados',
-    periods: [...periods],
+    periods: sortPeriods(periods),
     balanceGeneral,
     estadoResultados,
     accountTypes

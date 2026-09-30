@@ -1,5 +1,5 @@
 import { ACCOUNT_TYPES, inferAccountType } from './estados-calculations.js';
-import { normalizeFinancialData } from './estados-normalize.js';
+import { normalizeFinancialData, sortPeriods } from './estados-normalize.js';
 
 // Tabular import for external financial statements.
 //
@@ -233,10 +233,6 @@ function ensurePeriod(builder, period) {
   if (!builder.seen.has(period)) { builder.seen.add(period); builder.periods.push(period); }
   if (!builder.balanceGeneral[period]) builder.balanceGeneral[period] = { activos: {}, pasivos: {}, patrimonio: {} };
   if (!builder.estadoResultados[period]) builder.estadoResultados[period] = {};
-}
-
-function sortPeriods(periods) {
-  return [...periods].sort((a, b) => a.localeCompare(b, 'es', { numeric: true }));
 }
 
 function ingestTable(builder, rows, defaults = {}) {

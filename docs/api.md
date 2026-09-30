@@ -72,11 +72,13 @@ Calcula el porcentaje que representa una cuenta sobre una base.
 
 ### Funciones de Razones Financieras
 
+Todas devuelven `null` (N/D) si falta el dato o el denominador es 0; la interfaz muestra "N/D" y no genera hallazgos.
+
 #### `ratioCorriente(activosCorrientes, pasivosCorrientes)`
 Ratio de liquidez corriente.
 
 - **Parámetros**: `activosCorrientes` (number); `pasivosCorrientes` (number)
-- **Retorno**: `number` — veces que los activos cubren los pasivos
+- **Retorno**: `number | null` — `null` si `pasivosCorrientes` es 0
 - **Fórmula**: `AC / PC`
 - **Ejemplo**: `ratioCorriente(30000, 15000)` → `2` (el activo cubre 2× el pasivo)
 
@@ -84,7 +86,7 @@ Ratio de liquidez corriente.
 Ratio de liquidez rápida (prueba ácida).
 
 - **Parámetros**: `activosCorrientes` (number); `inventario` (number); `pasivosCorrientes` (number)
-- **Retorno**: `number`
+- **Retorno**: `number | null` — `null` si `pasivosCorrientes` es 0
 - **Fórmula**: `(AC - Inventario) / PC`
 - **Ejemplo**: `ratioRapido(30000, 8000, 15000)` → `1.47`
 
@@ -92,23 +94,23 @@ Ratio de liquidez rápida (prueba ácida).
 Mide cuántas veces se renueva el inventario.
 
 - **Parámetros**: `costoVentas` (number); `inventarioPromedio` (number)
-- **Retorno**: `number` — vueltas por periodo
+- **Retorno**: `number | null` — vueltas por periodo; `null` si falta el inventario promedio
 - **Fórmula**: `CostoVentas / InventarioPromedio`
 - **Ejemplo**: `rotacionInventario(60000, 10000)` → `6`
 
-#### `rotacionCxC(ventas, cxCprom)`
-Mide la eficiencia en la cobranza.
+#### `rotacionCxC(ventasACredito, cxCprom)`
+Mide la eficiencia en la cobranza. Exige ventas a crédito reales: el modelo de datos no distingue ese dato de las ventas totales, así que Análisis pasa `null` y la razón queda N/D (junto con plazo de cobro y ciclo de conversión) en vez de aproximarla.
 
-- **Parámetros**: `ventas` (number); `cxCprom` (number) — cuentas por cobrar promedio
-- **Retorno**: `number` — vueltas por periodo
-- **Fórmula**: `Ventas / CxCprom`
+- **Parámetros**: `ventasACredito` (number | null) — ventas a crédito; `cxCprom` (number) — cuentas por cobrar promedio
+- **Retorno**: `number | null` — vueltas por periodo; `null` si faltan ventas a crédito o el promedio es 0
+- **Fórmula**: `VentasACredito / CxCprom`
 - **Ejemplo**: `rotacionCxC(120000, 15000)` → `8`
 
 #### `plazoCobro(rotCxC)`
 Días promedio para cobrar.
 
 - **Parámetros**: `rotCxC` (number) — rotación de cuentas por cobrar
-- **Retorno**: `number` — días
+- **Retorno**: `number | null` — días; `null` si `rotCxC` es 0 o falta
 - **Fórmula**: `DIAS_ANIO / RotCxC`, con `DIAS_ANIO = 365`
 - **Ejemplo**: `plazoCobro(8)` → `45.625` días
 
@@ -116,23 +118,23 @@ Días promedio para cobrar.
 Nivel de endeudamiento sobre activos.
 
 - **Parámetros**: `pasivoTotal` (number); `totalActivo` (number)
-- **Retorno**: `number` — proporción decimal
+- **Retorno**: `number | null` — proporción decimal; `null` si `totalActivo` es 0
 - **Fórmula**: `PasivoTotal / TotalActivo`
 - **Ejemplo**: `endeudamiento(80000, 200000)` → `0.4` (40%)
 
 #### `margenNeto(utilidadNeta, ventas)`
 Porcentaje de utilidad neta sobre ventas.
 
-- **Parámetros**: `utilidadNeta` (number); `ventas` (number)
-- **Retorno**: `number` — proporción decimal
+- **Parámetros**: `utilidadNeta` (number | null); `ventas` (number)
+- **Retorno**: `number | null` — proporción decimal; `null` si `ventas` es 0 o falta la utilidad neta
 - **Fórmula**: `UtilidadNeta / Ventas`
 - **Ejemplo**: `margenNeto(12000, 100000)` → `0.12` (12%)
 
 #### `roa(utilidadNeta, totalActivo)`
 Retorno sobre activos totales.
 
-- **Parámetros**: `utilidadNeta` (number); `totalActivo` (number)
-- **Retorno**: `number`
+- **Parámetros**: `utilidadNeta` (number | null); `totalActivo` (number)
+- **Retorno**: `number | null`; `null` si `totalActivo` es 0 o falta la utilidad neta
 - **Fórmula**: `UtilidadNeta / TotalActivo`
 - **Ejemplo**: `roa(12000, 200000)` → `0.06` (6%)
 
@@ -157,12 +159,12 @@ Días promedio que el inventario tarda en venderse.
 - **Fórmula**: `DIAS_ANIO / RotInv`
 - **Ejemplo**: `edadInventario(6)` → `60.83` días
 
-#### `rotacionCxP(costoVentas, cxPprom)`
-Veces que se pagan las cuentas por pagar en el periodo. El costo de ventas aproxima las compras. Reemplaza a `rotacionPasivos`.
+#### `rotacionCxP(compras, cxPprom)`
+Veces que se pagan las cuentas por pagar en el periodo. Reemplaza a `rotacionPasivos`. El llamador calcula `Compras = Costo de Ventas + Inventario Final − Inventario Inicial`; sin inventario comparable se aproxima con el costo de ventas (Análisis lo etiqueta "aprox.").
 
-- **Parámetros**: `costoVentas` (number); `cxPprom` (number) — cuentas por pagar promedio
-- **Retorno**: `number | null` — vueltas por periodo
-- **Fórmula**: `CostoVentas / CxPprom`
+- **Parámetros**: `compras` (number | null); `cxPprom` (number) — cuentas por pagar promedio
+- **Retorno**: `number | null` — vueltas por periodo; `null` si falta `compras` o el promedio es 0
+- **Fórmula**: `Compras / CxPprom`
 - **Ejemplo**: `rotacionCxP(510000, 85000)` → `6`
 
 #### `plazoPago(rotCxP)`
@@ -177,7 +179,7 @@ Días promedio para pagar a proveedores.
 Ciclo de conversión de efectivo: días entre el pago a proveedores y el cobro a clientes.
 
 - **Parámetros**: `plazoCobroDias` (number) — plazo de cobro en días; `rotInv` (number); `rotCxP` (number)
-- **Retorno**: `number | null` — días; `null` si falta alguna rotación
+- **Retorno**: `number | null` — días; `null` si falta el plazo de cobro o alguna rotación
 - **Fórmula**: `plazoCobroDias + edadInventario(rotInv) - plazoPago(rotCxP)`
 - **Ejemplo**: `cicloConversion(36.5, 4, 8)` → `82.125` días (36.5 + 91.25 − 45.625)
 
@@ -331,7 +333,7 @@ GAT por variación.
 Modelo DuPont de 3 pasos.
 
 - **Parámetros**: `UN` (number) — utilidad neta; `ventas` (number); `activoTotalProm` (number) — activo total promedio; `patrimonio` (number)
-- **Retorno**: `object` con `{ PM, AT, EM, ROE }`
+- **Retorno**: `object` con `{ PM, AT, EM, ROE }` — cada componente `number | null`; si algún componente es N/D, `ROE` es `null` (nunca `Infinity` ni `NaN`)
   - `PM` — Margen Neto = UN / Ventas
   - `AT` — Rotación de Activos = Ventas / ActivoTotalProm
   - `EM` — Apalancamiento = ActivoTotalProm / Patrimonio
