@@ -13,6 +13,7 @@ Todos los cambios notables en GFO Toolkit.
 - Errores de importación con número de fila y sugerencia; periodos ordenados del más antiguo al más reciente.
 - Botón **Descargar plantilla CSV** y panel de ayuda con los formatos admitidos.
 - Edición manual ya disponible: alta, renombrado, reordenado y baja de periodos; alta/baja de cuentas con clasificación compartida entre periodos; validación de equilibrio A = P + O.
+- Orden cronológico único de periodos en `normalizeFinancialData` (`sortPeriods`, reutilizado por el importador): el "último periodo" y el periodo previo ya no dependen del orden de llegada.
 
 ### Módulo 3: Análisis Financiero
 - Nuevas razones: rotación de activos fijos, rotación de capital de trabajo y solvencia (Activos ÷ Pasivos).
@@ -20,6 +21,12 @@ Todos los cambios notables en GFO Toolkit.
 - Integración de la rama de razones: rotación de cuentas por pagar (reemplaza a la "rotación de pasivos"), edad del inventario y grupo "Endeudamiento y Cobertura" en la pestaña Razones.
 - Nuevos umbrales y hallazgos de interpretación: prueba ácida, deuda/patrimonio, cobertura de intereses, margen bruto, margen operativo, ROE y ciclo de conversión. Las razones N/D no generan hallazgos ni insignias.
 - Plazos de cobro y pago, edad del inventario y ciclo de conversión con un año de 365 días (`DIAS_ANIO`); antes se usaban 360.
+- Semántica N/D en `calculate.js`: RC, RR, rotación de inventario, rotación de CxC, plazo de cobro, endeudamiento, margen neto y ROA devuelven `null` si falta el dato o el denominador es 0 (antes devolvían un 0 interpretable como valor financiero).
+- Los promedios (inventario, CxC, CxP, activo y patrimonio) distinguen "cuenta ausente en el periodo" (→ N/D) de "cuenta con importe 0"; con un solo periodo se conserva el saldo final documentado.
+- La rotación de CxC exige ventas a crédito (el modelo no distingue ese dato): RotCxC, plazo de cobro y ciclo de conversión quedan N/D con nota explicativa, en vez de aproximar con ventas totales.
+- La rotación de CxP usa compras reales (`Costo de Ventas + Inventario Final − Inventario Inicial`); sin inventario comparable usa el costo de ventas y la tarjeta lo etiqueta "aprox.".
+- Interpretación sin conclusiones falsas: las razones N/D no generan hallazgos ni insignias; si nada es calculable muestra "No hay indicadores calculables (N/D)".
+- DuPont sin `Infinity` ni `NaN`: un componente N/D anula el ROE y las tarjetas muestran N/D; la evolución entre periodos marca N/D cuando una razón no se calcula.
 - Una sola función por concepto en `calculate.js`: se eliminaron 5 funciones repetidas que impedían cargar la app y 4 equivalentes con otro nombre.
 
 ### Módulo 5: Mercados e Instituciones Financieras
@@ -27,6 +34,7 @@ Todos los cambios notables en GFO Toolkit.
 
 ### Módulo 6: Reportes e Integración
 - El dashboard y el CSV dejan de usar nombres de cuenta fijos: consumen el mismo motor normalizado que Análisis.
+- ROA y endeudamiento del dashboard reutilizan `computeRazones` (con `refreshSavedStates`): mismos promedios y semántica N/D que la pestaña Análisis, no un cálculo paralelo con saldo de cierre.
 - El CSV exportado incluye `Estado`, `Grupo`, `Cuenta` y `Clasificacion`, y puede reimportarse en Estados sin edición manual.
 
 ### Correcciones
@@ -34,11 +42,13 @@ Todos los cambios notables en GFO Toolkit.
 - Análisis: los shells `ah.js`, `av.js`, `razones.js`, `dupont.js`, `cnt-cno.js`, `eoaf.js` y `efe.js` reexportaban funciones que `index.js` no exportaba; ahora exponen `computeAH`, `computeAV`, `computeRazones`, `computeDuPont`, `computeCNTCNO`, `computeEOAF` y `computeEFE`, con prueba de guardia.
 - Lint: se corrigieron 5 errores (comillas, variable no definida y escape innecesario).
 - Análisis: la cobertura de intereses siempre salía N/D porque los intereses no llegaban al cálculo.
+- Análisis: una cuenta ausente en un periodo anterior se promediaba como 0 (RotInv/ROA/DuPont inflados); ahora es N/D. El dashboard calculaba ROA y endeudamiento con criterio distinto a Análisis; ahora comparte `computeRazones`. El orden de periodos "2025, 2024" invertía el periodo previo en promedios y EFE.
 
 ### Pruebas
 - Nuevos archivos: `tests/unit/estados-import.test.js`, `tests/unit/estados-calculations.test.js`, `tests/unit/estados-acceptance.test.js`, `tests/unit/razones-adicionales.test.js`, `tests/unit/analisis-reexports.test.js`.
 - `tests/unit/carga-modulos.test.js` importa la app y cada archivo de `js/`; falla si una función se declara dos veces o si un import apunta a un nombre inexistente.
 - `tests/unit/razones-unificadas.test.js` y `tests/unit/analisis-razones.test.js`: razones unificadas, nombres reemplazados, cobertura de intereses y plazos de 365 días.
+- `calculate.test.js` y `analisis-razones.test.js` ajustados a la semántica N/D, con casos nuevos por bug corregido: cuenta ausente en promedios, compras reales en RotCxP y DuPont sin `Infinity`/`NaN`.
 - Suite total: 142 pruebas en verde; `npm run lint` sin errores.
 - Muestras para probar la importación en el navegador: `scripts/sample-estados.json` y `scripts/sample-estados.csv` (dos periodos, balance equilibrado).
 

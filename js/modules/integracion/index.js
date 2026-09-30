@@ -4,26 +4,36 @@ import { exportJSON, exportCSV, exportHTML } from '../../utils/export.js';
 import { showToast } from '../../components/toast.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
 import { normalizeFinancialData } from '../estados/estados-normalize.js';
+import { computeRazones, refreshSavedStates } from '../analisis/index.js';
 
-function getSavedTotals(period) {
+function getNormalizedStates() {
   // Single source of truth: the same normalized engine Análisis consumes, so
   // imported/custom account names are summed instead of the fixed-name lookup.
   try {
-    const states = normalizeFinancialData({
+    return normalizeFinancialData({
       name: store.get('estados.name') || 'Datos guardados',
       periods: store.get('estados.periods') || [],
       balanceGeneral: store.get('estados.balanceGeneral') || {},
       estadoResultados: store.get('estados.estadoResultados') || {},
       accountTypes: store.get('estados.accountTypes')
     });
-    return states.periods.includes(period) ? computeFinancialTotals(states, period) : null;
   } catch {
     return null;
   }
 }
 
+function getSavedTotals(period) {
+  const states = getNormalizedStates();
+  return states && states.periods.includes(period) ? computeFinancialTotals(states, period) : null;
+}
+
 function computeDashboardKPIs() {
-  const periods = store.get('estados.periods') || [];
+  // Periodos normalizados (orden cronológico) y caché de Análisis refrescada:
+  // el ROA/endeudamiento del dashboard salen de computeRazones, la misma lógica
+  // que la pestaña Análisis (no un cálculo paralelo con activo de cierre).
+  const states = getNormalizedStates();
+  const rawPeriods = store.get('estados.periods') || [];
+  const periods = states ? states.periods : rawPeriods;
   const lastP = periods[periods.length - 1];
   if (!lastP) return null;
 
@@ -40,6 +50,9 @@ function computeDashboardKPIs() {
     : (er['Ventas'] || 0) - (er['Costo de Ventas'] || 0) - (er['Gastos de Administracion'] || 0) -
       (er['Gastos de Ventas'] || 0) + (er['Otros Ingresos'] || 0) - (er['Otros Gastos'] || 0);
 
+  refreshSavedStates();
+  const razones = computeRazones(lastP);
+
   const ingreso = store.get('presupuesto.ingresoMensual') || 0;
   const meta = store.get('presupuesto.metaAhorro') || 0;
   const activosCount = (store.get('activos.inventario') || []).length;
@@ -50,8 +63,9 @@ function computeDashboardKPIs() {
     ventas, utilidadNeta,
     presupuestoIngreso: ingreso, presupuestoMeta: meta,
     activosCount, quizScore,
-    endeudamiento: totalActivos > 0 ? totalPasivos / totalActivos : 0,
-    roa: totalActivos > 0 ? utilidadNeta / totalActivos : 0
+    // null (N/D) cuando el denominador no permite calcularla, como en Análisis.
+    endeudamiento: razones.endeudamiento,
+    roa: razones.ROA
   };
 }
 
@@ -115,8 +129,8 @@ function renderDashboard(page) {
       <div class="kpi-card"><div class="kpi-value" style="color:var(--color-success)">${formatCurrency(kpis.totalPatrimonio)}</div><div class="kpi-label">Patrimonio</div></div>
       <div class="kpi-card"><div class="kpi-value">${formatCurrency(kpis.ventas)}</div><div class="kpi-label">Ventas</div></div>
       <div class="kpi-card"><div class="kpi-value ${kpis.utilidadNeta >= 0 ? '' : 'text-danger'}">${formatCurrency(kpis.utilidadNeta)}</div><div class="kpi-label">Utilidad Neta</div></div>
-      <div class="kpi-card"><div class="kpi-value">${formatPercent(kpis.endeudamiento)}</div><div class="kpi-label">Endeudamiento</div></div>
-      <div class="kpi-card"><div class="kpi-value">${formatPercent(kpis.roa)}</div><div class="kpi-label">ROA</div></div>
+      <div class="kpi-card"><div class="kpi-value">${kpis.endeudamiento == null ? 'N/D' : formatPercent(kpis.endeudamiento)}</div><div class="kpi-label">Endeudamiento</div></div>
+      <div class="kpi-card"><div class="kpi-value">${kpis.roa == null ? 'N/D' : formatPercent(kpis.roa)}</div><div class="kpi-label">ROA</div></div>
       <div class="kpi-card"><div class="kpi-value">${kpis.activosCount}</div><div class="kpi-label">Activos Registrados</div></div>
     </div>
     <div class="card">

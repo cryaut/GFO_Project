@@ -35,51 +35,62 @@ export function av(cuenta, base) {
   return cuenta / base;
 }
 
+// Denominador 0 o dato ausente => null (N/D), nunca 0: un 0 aquí sería un
+// resultado financiero falso (AGENTS.md regla 4).
 export function ratioCorriente(activosCorrientes, pasivosCorrientes) {
-  if (pasivosCorrientes === 0) return 0;
+  if (!pasivosCorrientes) return null;
   return activosCorrientes / pasivosCorrientes;
 }
 
 export function ratioRapido(activosCorrientes, inventario, pasivosCorrientes) {
-  if (pasivosCorrientes === 0) return 0;
+  if (!pasivosCorrientes) return null;
   return (activosCorrientes - inventario) / pasivosCorrientes;
 }
 
 export function rotacionInventario(costoVentas, inventarioPromedio) {
-  if (inventarioPromedio === 0) return 0;
+  if (!inventarioPromedio) return null;
   return costoVentas / inventarioPromedio;
 }
 
-export function rotacionCxC(ventas, cxCprom) {
-  if (cxCprom === 0) return 0;
-  return ventas / cxCprom;
+// Requiere ventas a crédito reales: el modelo de datos no las distingue, así que
+// los llamadores pasan null y la razón queda N/D en vez de usar ventas totales.
+export function rotacionCxC(ventasACredito, cxCprom) {
+  if (ventasACredito === null || ventasACredito === undefined) return null;
+  if (!cxCprom) return null;
+  return ventasACredito / cxCprom;
 }
 
 export function plazoCobro(rotCxC) {
-  if (rotCxC === 0) return 0;
+  if (!rotCxC) return null;
   return DIAS_ANIO / rotCxC;
 }
 
 export function endeudamiento(pasivoTotal, totalActivo) {
-  if (totalActivo === 0) return 0;
+  if (!totalActivo) return null;
   return pasivoTotal / totalActivo;
 }
 
 export function margenNeto(utilidadNeta, ventas) {
-  if (ventas === 0) return 0;
+  if (!ventas) return null;
+  if (utilidadNeta === null || utilidadNeta === undefined) return null;
   return utilidadNeta / ventas;
 }
 
 export function roa(utilidadNeta, totalActivo) {
-  if (totalActivo === 0) return 0;
+  if (!totalActivo) return null;
+  if (utilidadNeta === null || utilidadNeta === undefined) return null;
   return utilidadNeta / totalActivo;
 }
 
 export function dupont(UN, ventas, activoTotalProm, patrimonio) {
   const PM = margenNeto(UN, ventas);
-  const AT = ventas === 0 ? 0 : ventas / activoTotalProm;
-  const EM = patrimonio === 0 ? 0 : activoTotalProm / patrimonio;
-  const ROE = PM * AT * EM;
+  const AT = !activoTotalProm ? null : ventas / activoTotalProm;
+  // El guard explícito de null evita que null / patrimonio se lea como 0.
+  const EM = (activoTotalProm === null || activoTotalProm === undefined || !patrimonio)
+    ? null : activoTotalProm / patrimonio;
+  // Un solo componente N/D anula el producto: nunca Infinity ni NaN.
+  const ROE = (PM === null || PM === undefined || AT === null || EM === null)
+    ? null : PM * AT * EM;
   return { PM, AT, EM, ROE };
 }
 
@@ -107,7 +118,8 @@ export function efeIndirecto(utilidadNeta, ajustes) {
 }
 
 // === Razones adicionales (completan RC, RR, RotInv, RotCxC, PPC, Endeudamiento, MN, ROA) ===
-// Todas devuelven null si su denominador es 0 o el dato falta: N/D, no cero.
+// Todas las razones de este archivo devuelven null si su denominador es 0 o el
+// dato falta: N/D, no cero.
 export function pruebaDefensiva(efectivo, pasivosCorrientes) {
   if (pasivosCorrientes === 0) return null;
   return efectivo / pasivosCorrientes;
@@ -118,10 +130,13 @@ export function rotacionActivos(ventas, activoTotalProm) {
   return ventas / activoTotalProm;
 }
 
-// Rotación de cuentas por pagar: costo de ventas (aproxima las compras) / CxP promedio.
-export function rotacionCxP(costoVentas, cxPprom) {
+// Rotación de cuentas por pagar = Compras / CxP promedio. El llamador calcula
+// Compras = Costo de Ventas + Inventario Final − Inventario Inicial y, si no hay
+// inventario comparable, pasa el costo de ventas (aproximación documentada).
+export function rotacionCxP(compras, cxPprom) {
   if (!cxPprom) return null;
-  return costoVentas / cxPprom;
+  if (compras === null || compras === undefined) return null;
+  return compras / cxPprom;
 }
 
 export function plazoPago(rotCxP) {
@@ -137,8 +152,12 @@ export function edadInventario(rotInv) {
 
 // Ciclo de conversión de efectivo = plazo de cobro + edad del inventario − plazo de pago.
 export function cicloConversion(plazoCobroDias, rotInv, rotCxP) {
+  if (plazoCobroDias === null || plazoCobroDias === undefined) return null;
   if (!rotInv || !rotCxP) return null;
-  return plazoCobroDias + edadInventario(rotInv) - plazoPago(rotCxP);
+  const edad = edadInventario(rotInv);
+  const pago = plazoPago(rotCxP);
+  if (edad === null || pago === null) return null;
+  return plazoCobroDias + edad - pago;
 }
 
 export function coberturaIntereses(utilidadOperativa, intereses) {

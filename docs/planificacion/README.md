@@ -8,6 +8,7 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 |---|---|---|---|
 | Integración de ramas y guías (`core`) | Carlos | En revisión | [integracion-core](integracion-core/README.md) |
 | Apalancamiento (GAO, GAF y GAT) | Carlos | Planificación | [apalancamiento](apalancamiento/README.md) |
+| Corrección de razones financieras (auditoría) | Equipo GFO | En revisión | [razones-financieras-v3](razones-financieras-v3/README.md) |
 
 Agrega una fila cuando empieces una feature y actualiza el estado cuando cambie.
 
