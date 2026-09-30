@@ -42,6 +42,16 @@ export function sortPeriods(periods) {
   return [...periods].sort((a, b) => a.localeCompare(b, 'es', { numeric: true }));
 }
 
+// Orden de los periodos guardados: si todos empiezan con un año (2023, 2024-T1…) se ordenan
+// solos, para que el "último periodo" y el anterior no dependan del orden de llegada. Con
+// nombres como "Marzo" o "Proyección" se respeta el orden que dejó el usuario en Estados:
+// ordenarlos alfabéticamente pondría "Abril" antes que "Marzo".
+const EMPIEZA_CON_ANIO = /^\d{4}(?!\d)/;
+export function ordenarPeriodos(periods) {
+  const lista = [...periods];
+  return lista.every(periodo => EMPIEZA_CON_ANIO.test(periodo)) ? sortPeriods(lista) : lista;
+}
+
 // Accepts the store shape { balanceGeneral, estadoResultados, periods, ... }
 // or a wrapper { estados: { ... } } such as a full-toolkit export.
 export function normalizeFinancialData(input) {
@@ -112,7 +122,7 @@ export function normalizeFinancialData(input) {
 
   return {
     name: typeof raw.name === 'string' && raw.name.trim() ? raw.name.trim() : 'Datos importados',
-    periods: sortPeriods(periods),
+    periods: ordenarPeriodos(periods),
     balanceGeneral,
     estadoResultados,
     accountTypes

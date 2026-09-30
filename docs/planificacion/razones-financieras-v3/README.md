@@ -20,7 +20,7 @@ Aplicar las correcciones de la auditoría del módulo de Razones Financieras: si
 - Promedios: cuenta ausente en un periodo → `null` (N/D); un solo periodo → saldo final (metodología documentada, inalterada).
 - RotCxP usa compras reales; sin inventario comparable usa costo de ventas y la tarjeta lo etiqueta "aprox.".
 - `computeDashboardKPIs` reutiliza `computeRazones` de Análisis (mismo criterio y N/D).
-- Orden cronológico único en `normalizeFinancialData` (`sortPeriods`); las vías degradadas (datos sin clasificación válida) conservan el comportamiento anterior.
+- Orden cronológico único en `normalizeFinancialData` (`sortPeriods`); las vías degradadas (datos sin clasificación válida) conservan el comportamiento anterior. Ajustado al integrar con `feat/modulos-guia`: solo se ordenan solos los periodos que empiezan con un año (`ordenarPeriodos`), porque el orden alfabético ponía "Abril" antes que "Marzo" y anulaba el reordenado manual de Estados.
 
 ## Archivos que toca
 `js/utils/calculate.js`, `js/modules/analisis/index.js`, `js/modules/estados/estados-normalize.js`, `js/modules/estados/estados-import.js`, `js/modules/integracion/index.js`, `tests/unit/calculate.test.js`, `tests/unit/analisis-razones.test.js`, `docs/api.md`, `CHANGELOG.md` (compartidos según `AGENTS.md`).

@@ -13,7 +13,7 @@ Todos los cambios notables en GFO Toolkit.
 - Errores de importación con número de fila y sugerencia; periodos ordenados del más antiguo al más reciente.
 - Botón **Descargar plantilla CSV** y panel de ayuda con los formatos admitidos.
 - Edición manual ya disponible: alta, renombrado, reordenado y baja de periodos; alta/baja de cuentas con clasificación compartida entre periodos; validación de equilibrio A = P + O.
-- Orden cronológico único de periodos en `normalizeFinancialData` (`sortPeriods`, reutilizado por el importador): el "último periodo" y el periodo previo ya no dependen del orden de llegada.
+- Orden cronológico de periodos en `normalizeFinancialData` cuando todos empiezan con un año (`ordenarPeriodos`; el importador sigue usando `sortPeriods`): el "último periodo" y el periodo previo ya no dependen del orden de llegada. Con nombres como "Marzo" se respeta el orden que el usuario deja en Estados.
 
 ### Módulo 3: Análisis Financiero
 - Nuevas razones: rotación de activos fijos, rotación de capital de trabajo y solvencia (Activos ÷ Pasivos).
