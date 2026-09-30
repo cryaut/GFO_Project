@@ -18,8 +18,8 @@ Cubrir todos los módulos que pide la guía (`docs/contexto/requisitos-proyecto-
 | 5 | Presupuesto maestro (`#/planeacion`) | Completado |
 | 6 | Proforma y reporte integrado (`#/proforma`) | Completado |
 | 7 | Presupuesto personal completo (ingresos, capacidad de ahorro, `escapeHTML`) | Completado |
-| 8 | Pendientes de otras áreas: razones de mercado (hecho), demo coherente (hecho), v3 corregida (pendiente: merge con autoría de Henry + 2 correcciones) | En progreso |
-| 9 | `npm test` (304 en verde), `npm run lint` (0 errores) y prueba en navegador de todas las rutas | Completado |
+| 8 | Pendientes de otras áreas: razones de mercado, demo coherente y `razones-financieras-v3` integrada con sus dos correcciones | Completado |
+| 9 | `npm test` (310 en verde), `npm run lint` (0 errores) y prueba en navegador de todas las rutas | Completado |
 
 ## Decisiones clave
 - Los módulos nuevos siguen el patrón de apalancamiento: `<modulo>-calculations.js` puro, `<modulo>-ui.js` y un `index.js` que lee el `store`.
@@ -40,4 +40,4 @@ De otras áreas: `js/modules/presupuesto/index.js` (sin responsable asignado) y 
 | 02 | [Valor agregado](02-valor-agregado.md) | Pendiente |
 
 ## Próximo paso
-Revisión del PR por otra persona del equipo. En paralelo: acordar con Henry y Cris el checkpoint 8 y elegir las mejoras del paso 02.
+Revisión del PR por otra persona del equipo. Después, elegir las mejoras del paso 02.

@@ -8,11 +8,7 @@
 Proponer mejoras que suban la nota sin arriesgar lo obligatorio. El criterio es lo que la guía evalúa: integración entre módulos, interpretación, un caso completo comprobable y una defensa donde cualquiera cambia un dato y explica el efecto.
 
 ## Antes del valor agregado: pendientes obligatorios de otras áreas
-| Pendiente | Responsable | Por qué es obligatorio |
-|---|---|---|
-| Razones de mercado (UPA, P/U, valor en libros por acción, DPA) con datos de acciones, precio y dividendos | Henry | La guía las pide "cuando los datos lo permitan" |
-| Demo MUNO MODA que cuadre (A = P + O), con intereses, IR, depreciación y dividendos | Cris | La guía exige un caso completo y coherente |
-| Versión corregida de `razones-financieras-v3` sobre `main` | Henry | Evita un 0 que parece resultado y deja un solo criterio de razones |
+Resueltos en `feat/modulos-guia`: razones de mercado (pestaña Mercado de Análisis), demo de MUNO MODA que cuadra con intereses, IR y dividendos, e integración de `razones-financieras-v3` con sus dos correcciones.
 
 ## Propuestas priorizadas
 | # | Mejora | Valor para la evaluación | Esfuerzo | Toca áreas de otros |
@@ -36,4 +32,4 @@ Hacer 1, 2 y 4 primero: son bajos en riesgo, no dependen de otras personas y ref
 - [ ] Cada mejora elegida tiene su paso en esta carpeta antes de empezar.
 
 ## Próximo paso
-Cerrar el checkpoint 8 de la ficha y, en paralelo, empezar por la mejora 1.
+Elegir en equipo las mejoras y empezar por la 1.

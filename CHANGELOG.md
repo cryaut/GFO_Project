@@ -46,7 +46,7 @@ Todos los cambios notables en GFO Toolkit.
 - Cada módulo trae un ejemplo ficticio coherente de MUNO MODA 2025: la UAII del primer trimestre del presupuesto (C$ 28,000) es la del punto de equilibrio.
 - Razones de mercado en la pestaña **Mercado** de Análisis: UPA, P/U, valor en libros por acción, P/VL, DPA, pago y rendimiento del dividendo, con datos de acciones por periodo (`store.razonesMercado`) y el DAP de Apalancamiento. También aparecen en el reporte integrado.
 - La demo MUNO MODA ahora cuadra (A = P + O en 2023 y 2024), trae gastos por intereses e IR del 30 %, y sus utilidades acumuladas cambian por la utilidad neta menos C$ 40,000 de dividendos. Cambian las cifras de rentabilidad y del GAF de la demo, y la cobertura de intereses deja de ser N/D.
-- Pruebas: `inventario`, `equilibrio`, `flujo`, `planeacion`, `proforma`, `presupuesto-personal` y `razones-mercado` (casos resueltos a mano, identidades de CxC, CxP, inventario y caja, y cuadre de la demo), con el doble de DOM compartido `tests/unit/helpers/dom-falso.js`. Suite total: 304 pruebas en verde.
+- Pruebas: `inventario`, `equilibrio`, `flujo`, `planeacion`, `proforma`, `presupuesto-personal` y `razones-mercado` (casos resueltos a mano, identidades de CxC, CxP, inventario y caja, y cuadre de la demo), con el doble de DOM compartido `tests/unit/helpers/dom-falso.js`. Suite total: 310 pruebas en verde.
 
 ### Módulo 1: Presupuesto Personal
 - Ingresos por concepto (regular u ocasional) en una pestaña nueva; `ingresoMensual` queda como su total y los datos anteriores se leen como un ingreso regular.

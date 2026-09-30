@@ -20,7 +20,7 @@ Lo que conviene conservar:
 - Rotación de CxP con compras reales (Costo de ventas + Inv. final − Inv. inicial). MUNO 2024: 6.16 → 6.33 veces; plazo de pago 59.3 → 57.7 días.
 - Dashboard con `computeRazones`, igual que Análisis.
 
-Lo que hay que corregir antes:
+Lo que hay que corregir antes (**resuelto**: la rama se integró con merge, conservando el commit de Henry, y las correcciones están en los commits `c89e974` y `2a821cb`):
 1. `rotacionCxC(null, …)` deja **siempre** en N/D la rotación de CxC, el plazo de cobro y el ciclo de conversión (MUNO 2024 pasa de 7.22 veces, 50.6 días y 116.9 días a N/D), mientras la CxP sí se aproxima. Propuesta: usar ventas totales como aproximación documentada, igual que el costo de ventas en CxP, y etiquetarla "aprox.".
 2. `sortPeriods` dentro de `normalizeFinancialData` anula los botones de reordenar periodos de Estados y ordena mal los nombres de mes (`Marzo, Abril` → `Abril, Marzo`). Propuesta: ordenar solo al importar, como antes.
 3. Faltan las entradas en `decisiones.md` (cambian cifras visibles) y actualizar el catálogo de `dominio-financiero.md` (sigue diciendo "legado").
