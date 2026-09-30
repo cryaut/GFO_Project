@@ -6,6 +6,11 @@ import { initActivos } from './modules/activos/index.js';
 import { initMercados } from './modules/mercados/index.js';
 import { initReportes } from './modules/integracion/index.js';
 import { initApalancamiento } from './modules/apalancamiento/index.js';
+import { initInventario } from './modules/inventario/index.js';
+import { initEquilibrio } from './modules/equilibrio/index.js';
+import { initFlujo } from './modules/flujo/index.js';
+import { initPlaneacion } from './modules/planeacion/index.js';
+import { initProforma } from './modules/proforma/index.js';
 
 const routes = {
   'home': { init: initHome, label: 'Inicio' },
@@ -16,7 +21,12 @@ const routes = {
   'mercados': { init: initMercados, label: 'Mercados' },
   'reportes': { init: initReportes, label: 'Reportes' },
   'glosario': { init: initGlosario, label: 'Glosario' },
-  'apalancamiento': { init: initApalancamiento, label: 'Apalancamiento' }
+  'apalancamiento': { init: initApalancamiento, label: 'Apalancamiento' },
+  'inventario': { init: initInventario, label: 'Inventario' },
+  'equilibrio': { init: initEquilibrio, label: 'Punto de Equilibrio' },
+  'flujo': { init: initFlujo, label: 'Flujo de Efectivo' },
+  'planeacion': { init: initPlaneacion, label: 'Presupuesto Maestro' },
+  'proforma': { init: initProforma, label: 'Proforma y Reporte' }
 };
 
 function getRoute() {
@@ -80,6 +90,31 @@ function initHome() {
         <div class="module-card-icon analysis">×</div>
         <h3>Apalancamiento</h3>
         <p>GAO, GAF y GAT por periodo a partir de los estados guardados, con la traza de cada cálculo.</p>
+      </a>
+      <a href="#/equilibrio" class="module-card">
+        <div class="module-card-icon analysis">=</div>
+        <h3>Punto de Equilibrio y C-V-U</h3>
+        <p>Margen de contribución, punto de equilibrio en unidades y en C$, margen de seguridad, escenarios y gráfica.</p>
+      </a>
+      <a href="#/flujo" class="module-card">
+        <div class="module-card-icon states">⇅</div>
+        <h3>Flujo de Efectivo</h3>
+        <p>Entradas y salidas por actividades de operación, inversión y financiamiento; variación neta y saldo final.</p>
+      </a>
+      <a href="#/planeacion" class="module-card">
+        <div class="module-card-icon budget">▦</div>
+        <h3>Presupuesto Maestro</h3>
+        <p>Presupuestos de ventas, compras, costo de bienes vendidos, gastos de operación y caja, con saldo proyectado.</p>
+      </a>
+      <a href="#/proforma" class="module-card">
+        <div class="module-card-icon reports">∑</div>
+        <h3>Proforma y Reporte Integrado</h3>
+        <p>Estado de resultados proforma, efectivo proyectado, indicadores de todos los módulos y alertas para decidir.</p>
+      </a>
+      <a href="#/inventario" class="module-card">
+        <div class="module-card-icon assets">▣</div>
+        <h3>Control de Inventario</h3>
+        <p>Existencia final, valor del inventario, kardex por producto y alertas de reposición con stock mínimo.</p>
       </a>
     </div>`;
 }
