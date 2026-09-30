@@ -68,7 +68,7 @@ describe('Razones Financieras (AC-3.3)', () => {
     expect(rotacionInventario(510000, null)).toBeNull();
   });
 
-  it('RotCxC exige ventas a crédito: sin ese dato es N/D', () => {
+  it('RotCxC = Ventas / CxCprom; sin ventas o sin CxC es N/D', () => {
     expect(rotacionCxC(850000, 120000)).toBeCloseTo(7.083, 2);
     expect(rotacionCxC(null, 120000)).toBeNull();
     expect(rotacionCxC(850000, 0)).toBeNull();

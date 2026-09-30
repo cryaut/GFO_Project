@@ -16,7 +16,7 @@ Aplicar las correcciones de la auditoría del módulo de Razones Financieras: si
 | 3 | PR aprobado e integrado a `main` | Pendiente |
 
 ## Decisiones clave
-- `rotacionCxC` exige ventas a crédito; el modelo no las distingue → RotCxC/PPC/CCC quedan N/D con nota, sin aproximar con ventas totales.
+- ~~`rotacionCxC` exige ventas a crédito; el modelo no las distingue → RotCxC/PPC/CCC quedan N/D con nota, sin aproximar con ventas totales.~~ Cambiado al integrar con `feat/modulos-guia`: Análisis usa las ventas totales (como Gitman), porque el N/D dejaba sin plazo de cobro ni ciclo de conversión a cualquier empresa.
 - Promedios: cuenta ausente en un periodo → `null` (N/D); un solo periodo → saldo final (metodología documentada, inalterada).
 - RotCxP usa compras reales; sin inventario comparable usa costo de ventas y la tarjeta lo etiqueta "aprox.".
 - `computeDashboardKPIs` reutiliza `computeRazones` de Análisis (mismo criterio y N/D).

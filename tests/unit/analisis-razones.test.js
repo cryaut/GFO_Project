@@ -82,21 +82,20 @@ describe('cobertura de intereses', () => {
 });
 
 describe('plazos en días (año de 365)', () => {
-  it('edad del inventario y plazo de pago; cobro y ciclo N/D sin ventas a crédito', async () => {
+  it('edad del inventario, plazos y ciclo de conversión (CxC con ventas totales)', async () => {
     const { razones, html } = await cargarAnalisis(estados(60));
     expect(razones.RotInv).toBe(4); // 400 / 100
     expect(razones.edadInventario).toBeCloseTo(91.25, 6);
-    // El modelo no distingue ventas a crédito: rotación de CxC, plazo de cobro y
-    // ciclo de conversión quedan N/D en vez de usar ventas totales.
-    expect(razones.RotCxC).toBeNull();
-    expect(razones.PPC).toBeNull();
-    expect(razones.cicloConversion).toBeNull();
+    // El modelo no separa ventas a crédito: la rotación de CxC usa las ventas totales.
+    expect(razones.RotCxC).toBe(10); // 1000 / 100
+    expect(razones.PPC).toBeCloseTo(36.5, 6); // 365 / 10
     // Compras = 400 + inventario (no hay periodo previo): se aproxima con costo de ventas.
     expect(razones.rotacionCxP).toBe(8); // 400 / 50
     expect(razones.plazoPago).toBeCloseTo(45.625, 6);
-    expect(html).toContain('N/D — requiere ventas a crédito');
-    expect(html).toContain('Rotación CxC, Plazo de Cobro y Ciclo de Conversión: N/D');
-    expect(html).not.toContain('Ciclo de conversión de efectivo mayor a 60 días');
+    expect(razones.cicloConversion).toBeCloseTo(82.125, 6); // 36.5 + 91.25 − 45.625
+    expect(html).toContain('Rotación CxC (ventas totales)');
+    expect(html).toContain('con ventas totales');
+    expect(html).toContain('Ciclo de conversión de efectivo mayor a 60 días');
     expect(html).not.toContain('NaN');
   });
 

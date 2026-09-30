@@ -99,10 +99,10 @@ Mide cuántas veces se renueva el inventario.
 - **Ejemplo**: `rotacionInventario(60000, 10000)` → `6`
 
 #### `rotacionCxC(ventasACredito, cxCprom)`
-Mide la eficiencia en la cobranza. Exige ventas a crédito reales: el modelo de datos no distingue ese dato de las ventas totales, así que Análisis pasa `null` y la razón queda N/D (junto con plazo de cobro y ciclo de conversión) en vez de aproximarla.
+Mide la eficiencia en la cobranza. Idealmente usa ventas a crédito; como el modelo de datos no las separa, Análisis pasa las ventas totales, igual que el plazo de cobro de Gitman (CxC / ventas diarias).
 
-- **Parámetros**: `ventasACredito` (number | null) — ventas a crédito; `cxCprom` (number) — cuentas por cobrar promedio
-- **Retorno**: `number | null` — vueltas por periodo; `null` si faltan ventas a crédito o el promedio es 0
+- **Parámetros**: `ventasACredito` (number | null) — ventas a crédito o, si no se conocen, las ventas totales; `cxCprom` (number) — cuentas por cobrar promedio
+- **Retorno**: `number | null` — vueltas por periodo; `null` si faltan las ventas o el promedio es 0
 - **Fórmula**: `VentasACredito / CxCprom`
 - **Ejemplo**: `rotacionCxC(120000, 15000)` → `8`
 

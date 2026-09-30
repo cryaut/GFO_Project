@@ -23,7 +23,7 @@ Todos los cambios notables en GFO Toolkit.
 - Plazos de cobro y pago, edad del inventario y ciclo de conversión con un año de 365 días (`DIAS_ANIO`); antes se usaban 360.
 - Semántica N/D en `calculate.js`: RC, RR, rotación de inventario, rotación de CxC, plazo de cobro, endeudamiento, margen neto y ROA devuelven `null` si falta el dato o el denominador es 0 (antes devolvían un 0 interpretable como valor financiero).
 - Los promedios (inventario, CxC, CxP, activo y patrimonio) distinguen "cuenta ausente en el periodo" (→ N/D) de "cuenta con importe 0"; con un solo periodo se conserva el saldo final documentado.
-- La rotación de CxC exige ventas a crédito (el modelo no distingue ese dato): RotCxC, plazo de cobro y ciclo de conversión quedan N/D con nota explicativa, en vez de aproximar con ventas totales.
+- La rotación de CxC usa las ventas totales, como el plazo de cobro de Gitman, porque el modelo no separa las ventas a crédito; la tarjeta lo indica. (La versión de `razones-financieras-v3` la dejaba siempre en N/D, junto con el plazo de cobro y el ciclo de conversión.)
 - La rotación de CxP usa compras reales (`Costo de Ventas + Inventario Final − Inventario Inicial`); sin inventario comparable usa el costo de ventas y la tarjeta lo etiqueta "aprox.".
 - Interpretación sin conclusiones falsas: las razones N/D no generan hallazgos ni insignias; si nada es calculable muestra "No hay indicadores calculables (N/D)".
 - DuPont sin `Infinity` ni `NaN`: un componente N/D anula el ROE y las tarjetas muestran N/D; la evolución entre periodos marca N/D cuando una razón no se calcula.

@@ -52,8 +52,8 @@ export function rotacionInventario(costoVentas, inventarioPromedio) {
   return costoVentas / inventarioPromedio;
 }
 
-// Requiere ventas a crédito reales: el modelo de datos no las distingue, así que
-// los llamadores pasan null y la razón queda N/D en vez de usar ventas totales.
+// Idealmente con ventas a crédito. El modelo de datos no las separa, así que Análisis pasa
+// las ventas totales (como Gitman en el plazo de cobro). Sin ventas o sin CxC => N/D.
 export function rotacionCxC(ventasACredito, cxCprom) {
   if (ventasACredito === null || ventasACredito === undefined) return null;
   if (!cxCprom) return null;

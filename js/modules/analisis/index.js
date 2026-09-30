@@ -253,9 +253,9 @@ export function computeRazones(period) {
   const RC = ratioCorriente(bg.activosCorrientes, bg.pasivosCorrientes);
   const RR = ratioRapido(bg.activosCorrientes, bg.inventario, bg.pasivosCorrientes);
   const RotInv = rotacionInventario(er.costoVentas, invProm);
-  // El modelo de datos no distingue ventas a crédito (no existe esa fuente):
-  // la rotación de CxC queda N/D explícito en vez de asumir ventas totales.
-  const RotCxC = rotacionCxC(null, cxcProm);
+  // El modelo de datos no separa las ventas a crédito: se usan las ventas totales, como el
+  // plazo de cobro de Gitman (CxC / ventas diarias). Con ventas a crédito sería más preciso.
+  const RotCxC = rotacionCxC(er.ventas, cxcProm);
   const PPC = plazoCobro(RotCxC);
   const End = endeudamiento(bg.totalPasivos, bg.totalActivos);
   const MN = margenNeto(er.utilidadNeta, er.ventas);
@@ -555,7 +555,7 @@ function renderRazonesSection(period) {
     ['Actividad', '', '', ''],
     [`Rotación Inventario${r.usaPromedios ? ' (inv. promedio)' : ''}`, val(r.RotInv, formatNumber, d.RotInv, 'el inventario', 'la rotación de inventario'), 'badge-info'],
     ['Edad del Inventario (días)', r.edadInventario == null ? 'N/D' : formatNumber(r.edadInventario, 0), 'badge-info'],
-    [`Rotación CxC${r.usaPromedios ? ' (CxC promedio)' : ''}`, r.RotCxC == null ? 'N/D — requiere ventas a crédito' : val(r.RotCxC, formatNumber, d.RotCxC, 'las CxC', 'la rotación de CxC'), 'badge-info'],
+    [`Rotación CxC (ventas totales${r.usaPromedios ? ' / CxC promedio' : ''})`, val(r.RotCxC, formatNumber, d.RotCxC, 'las CxC', 'la rotación de CxC'), 'badge-info'],
     ['Plazo Cobro (días)', r.PPC == null ? 'N/D' : formatNumber(r.PPC, 0), 'badge-info'],
     [`Rotación de Cuentas por Pagar (${fuenteCxP})`, r.rotacionCxP == null ? 'N/D' : formatNumber(r.rotacionCxP), 'badge-info'],
     ['Plazo Pago (días)', r.plazoPago == null ? 'N/D' : formatNumber(r.plazoPago, 0), 'badge-info'],
@@ -580,8 +580,8 @@ function renderRazonesSection(period) {
     ? 'Rotaciones, ROA y DuPont usan saldos promedio ((inicial + final) / 2).'
     : 'Con un solo periodo se usan saldos finales. Ingrese dos periodos para usar promedios.';
   const notaCreditos = r.RotCxC == null
-    ? 'Rotación CxC, Plazo de Cobro y Ciclo de Conversión: N/D. La rotación de CxC exige ventas a crédito y el modelo de datos no distingue ese dato de las ventas totales (no se aproxima).'
-    : '';
+    ? ''
+    : 'Rotación CxC y plazo de cobro con ventas totales: el modelo de datos no separa las ventas a crédito; con ellas el resultado sería más preciso.';
   return `<p class="text-muted mb-4" style="font-size:var(--font-size-sm)">${notaPromedios}</p>
   ${notaCreditos ? `<p class="text-muted mb-4" style="font-size:var(--font-size-sm)">${notaCreditos}</p>` : ''}
   <div class="kpi-grid">${items.map(([label, value, badgeClass]) => {
