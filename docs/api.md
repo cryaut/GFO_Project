@@ -646,6 +646,46 @@ Importa y parsea un archivo JSON seleccionado por el usuario.
 
 ---
 
+## estados-import.js (selección)
+
+#### `parseAmountCell(valor, { decimal = 'auto', onAmbiguous } = {})`
+Convierte una celda de importe (número o texto contable: `C$ 1,234.50`, `(500)`, `500-`) en número.
+
+- **Parámetros**: `valor` — celda; `decimal` — `'auto'` (deduce por celda), `'.'` o `','` (separador decimal; el otro agrupa miles y lo que no encaje se rechaza); `onAmbiguous({ texto, valor })` — se llama en modo `auto` con un punto seguido de tres dígitos (`45.000`, leído como 45)
+- **Retorno**: `number | null` — `null` para celdas en blanco o marcas como `n/a`
+- **Errores**: `Error('Importe inválido: …')` para texto no numérico o agrupaciones imposibles (`1.2.3`)
+- **Ejemplo**: `parseAmountCell('45.000', { decimal: ',' })` → `45000`; `parseAmountCell('0,500')` → `0.5`
+
+#### `inferDecimalStyle(valores)`
+Deduce el separador decimal de un conjunto de celdas.
+
+- **Retorno**: `'.'`, `','` o `null` (sin evidencia o contradictoria). `45.000` por sí solo no es evidencia; `1.234.567` o `12,50` sí.
+- **Ejemplo**: `inferDecimalStyle(['45.000', '1.234.567'])` → `','`
+
+`importStatementFile`, `tableTextToFinancialData`, `sheetsToFinancialData` y `rowsToFinancialData` reciben `{ decimal, avisos }`: `decimal` igual que arriba (`'auto'` por defecto; en `auto` se infiere de cada tabla) y `avisos`, un arreglo donde se agregan textos como `Fila 5: "45.000" se leyó como 45…`. Un `decimal` distinto de `'auto'`, `'.'` o `','` lanza `Error('Formato de importes no válido: …')`.
+
+---
+
+## integracion-respaldo.js e integracion-reporte.js
+
+Lógica pura de Reportes (sin DOM ni `store`); el `index.js` del módulo lee el `store` y guarda con `setPersisted`.
+
+#### `validarRespaldo(contenido, actuales)`
+Valida un respaldo JSON ya parseado antes de tocar el `store`.
+
+- **Parámetros**: `contenido` — objeto del archivo; `actuales` — resultado de `store.getAll()` (define las claves y tipos admitidos)
+- **Retorno**: `{ modulos, omitidos }` — `modulos`: módulos validados y copiados (los campos ausentes se completan con los actuales; `estados` sale de `normalizeFinancialData`); `omitidos`: claves o campos desconocidos. `theme` se ignora.
+- **Errores**: `Error` en español si no es un objeto, hay claves peligrosas, es demasiado profundo (más de 12 niveles o 200 000 nodos), un campo tiene el tipo equivocado o no hay ningún módulo reconocible
+- **Ejemplo**: `validarRespaldo({ presupuesto: { ingresoMensual: 900 } }, store.getAll())`
+
+#### `construirReporteHTML({ kpis, estados })`
+Cuerpo HTML del reporte (resumen, Balance General, Estado de Resultados y Totales por periodo), con una columna por periodo y todo texto del usuario escapado.
+
+- **Parámetros**: `kpis` — resultado de `computeDashboardKPIs` o `null`; `estados` — datos normalizados o `null`
+- **Retorno**: `string` — HTML sin `<h1>` ni documento; `exportHTML` lo envuelve. Valores `null` se muestran N/D y cuentas ausentes en un periodo, "—".
+
+---
+
 ## estados-calculations.js (selección)
 
 #### `resolveAccountType(data, group, name)`
