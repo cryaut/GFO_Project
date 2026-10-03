@@ -7,15 +7,27 @@ Todos los cambios notables en GFO Toolkit.
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
 ### Módulo 2: Estados Financieros
+- El borrador sin guardar se conserva al volver desde otra ruta; aviso al recargar/cerrar. `loadDemo()` publica el conjunto completo en una sola escritura, sin compartir referencias con la demo.
+- Barra de acciones compacta, selector de archivo accesible y campos de edición legibles en móvil; vista multiperiodo con importes alineados y sin partir la moneda.
+- **Importes ambiguos (importación):** `parseAmountCell(valor, { decimal, onAmbiguous })` admite un formato explícito (`'.'` o `','` decimal) además de `'auto'`. En automático, el separador se deduce de toda la tabla (`inferDecimalStyle`): un `1.234.567` o un `12,50` aclaran cómo leer `45.000`. Sin evidencia se conserva la convención (punto decimal) y se **avisa** con el número de fila en lugar de leer 45 en silencio.
+- `0,500` ahora es 0.5 (antes 500) y `1.2.3` / `1,2,3` se rechazan (antes `1.2.3` se leía como 123). Los errores de importe indican fila, cuenta y periodo.
+- Selector **Formato de importes** en Estados (Automático, Punto decimal, Coma decimal) para archivos CSV, Excel y tabla pegada; tras importar se muestra cuántos importes eran ambiguos.
 - **Nuevo importador robusto** (`js/modules/estados/estados-import.js`): JSON, CSV, TSV, Excel (.xlsx/.xls vía SheetJS bajo demanda) y pegado directo desde Excel.
 - Tabla ancha (`Estado`, `Grupo`, `Cuenta`, `Clasificacion`, periodos) y tabla larga (`Periodo`, `Cuenta`, `Importe`); hojas de Excel separadas por estado/grupo.
-- Parseo de importes contables: `45.000`, `45,000`, `C$ 12.500,50`, `(500)`, `500-`; celdas en blanco omiten la cuenta en ese periodo (no la convierten en cero).
+- Parseo de importes contables: `45,000`, `C$ 12.500,50`, `(500)`, `500-`; celdas en blanco omiten la cuenta en ese periodo (no la convierten en cero).
 - Errores de importación con número de fila y sugerencia; periodos ordenados del más antiguo al más reciente.
 - Botón **Descargar plantilla CSV** y panel de ayuda con los formatos admitidos.
 - Edición manual ya disponible: alta, renombrado, reordenado y baja de periodos; alta/baja de cuentas con clasificación compartida entre periodos; validación de equilibrio A = P + O.
 - Orden cronológico de periodos en `normalizeFinancialData` cuando todos empiezan con un año (`ordenarPeriodos`; el importador sigue usando `sortPeriods`): el "último periodo" y el periodo previo ya no dependen del orden de llegada. Con nombres como "Marzo" se respeta el orden que el usuario deja en Estados.
 
+### Módulo 6: Reportes e Integración
+- **Importar JSON validado** (`integracion-respaldo.js`): solo se aceptan módulos que el `store` conoce, con el tipo correcto; `estados` pasa por `normalizeFinancialData`; se rechazan `__proto__`/`constructor`/`prototype`, estructuras muy profundas y archivos de más de 5 MB. Antes se escribía cualquier clave con `store.set` sin validar.
+- La importación pide confirmación, guarda con `setPersisted` y, si el almacenamiento falla a mitad, restaura los módulos ya guardados. Un JSON de Estados (sin módulos reconocibles) se rechaza con la indicación de importarlo desde Estados Financieros.
+- **Reporte HTML corregido** (`integracion-reporte.js`): una columna por periodo (antes las filas tenían 2 celdas bajo N encabezados), agrega Estado de Resultados y Totales por periodo, muestra N/D y "—" en lugar de 0, y **escapa** cuentas, periodos y empresa (antes un nombre de cuenta importado se insertaba como HTML).
+- Botón **Vista previa del reporte** (muestra el reporte en la página) y **Descargar reporte HTML**; antes el botón "Vista Previa HTML" descargaba el archivo.
+
 ### Módulo 3: Análisis Financiero
+- Las cuentas y etiquetas de periodo se escapan con `escapeHTML` también en AV, AH y evolución; los nombres importados se muestran como texto.
 - Nuevas razones: rotación de activos fijos, rotación de capital de trabajo y solvencia (Activos ÷ Pasivos).
 - Las razones extendidas y los totales se calculan con el motor compartido, por lo que cuentas importadas con nombres propios se suman correctamente.
 - Integración de la rama de razones: rotación de cuentas por pagar (reemplaza a la "rotación de pasivos"), edad del inventario y grupo "Endeudamiento y Cobertura" en la pestaña Razones.
@@ -49,9 +61,22 @@ Todos los cambios notables en GFO Toolkit.
 - Pruebas: `inventario`, `equilibrio`, `flujo`, `planeacion`, `proforma`, `presupuesto-personal` y `razones-mercado` (casos resueltos a mano, identidades de CxC, CxP, inventario y caja, y cuadre de la demo), con el doble de DOM compartido `tests/unit/helpers/dom-falso.js`. Suite total: 310 pruebas en verde.
 
 ### Módulo 1: Presupuesto Personal
+- Configuración, gastos, semanas e inflación usan guardados completos con `setPersisted`; un fallo conserva datos y entradas, sin mostrar éxito. La inflación se guarda en una sola escritura.
+- Mostrar semanas ya no ordena el array del `store`; eliminar el último gasto limpia la gráfica. Ingresos y gastos solo limpian sus campos después de guardar.
 - Ingresos por concepto (regular u ocasional) en una pestaña nueva; `ingresoMensual` queda como su total y los datos anteriores se leen como un ingreso regular.
 - Total de ingresos, total de gastos, capacidad de ahorro (C$ y % de los ingresos), ahorro planificado y saldo disponible, con interpretación y ejemplo ficticio.
 - Corrección de seguridad: los conceptos de ingresos y gastos se escapan con `escapeHTML` (antes se insertaban sin escapar).
+
+### Módulo 4: Activos del Hogar
+- Cancelar vuelve a funcionar. Diálogo con nombre accesible, Escape, foco inicial, ciclo de Tab y retorno al botón que lo abrió; todos los campos tienen etiqueta.
+- Edición que conserva los puntajes cero, validación de importes/vida útil/condición y confirmación al eliminar. Altas, ediciones y bajas conservan el inventario anterior cuando falla el guardado.
+- Nombres, categorías y atributos se escapan; la gráfica se limpia al borrar el último bien.
+
+### Persistencia e interfaz compartida
+- Valores iniciales independientes en cada carga y reset con copia profunda; reset fallido conserva la memoria y propaga el error.
+- Exportación CSV que protege etiquetas con apariencia de fórmula, sin cambiar importes numéricos negativos; JSON sigue conservando los nombres exactos.
+- Mayor contraste del texto auxiliar en ambos temas, importes de Presupuesto con los tonos de texto del tema, tablas con cifras en una sola línea, pestañas sin barra vertical y separación del menú móvil respecto al título.
+- Las rutas desconocidas vuelven a Inicio en vez de mostrar una pantalla vacía.
 
 ### Módulo 5: Mercados e Instituciones Financieras
 - La pregunta del quiz sobre los días del PPC da como correcta 365, igual que el cálculo.

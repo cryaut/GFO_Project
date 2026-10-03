@@ -22,7 +22,9 @@ export function element() {
     },
     async dispatchEvent(event) {
       const dispatched = { ...event, target: this, preventDefault() {} };
-      for (const handler of listeners.get(event.type) ?? []) await handler.call(this, dispatched);
+      for (const handler of [this[`on${event.type}`], ...(listeners.get(event.type) ?? [])]) {
+        if (handler) await handler.call(this, dispatched);
+      }
     }
   };
 }

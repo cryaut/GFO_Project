@@ -625,6 +625,8 @@ Exporta un objeto como archivo JSON descargable.
 #### `exportCSV(rows, headers, filename = 'gfo-export.csv')`
 Exporta filas de datos como archivo CSV descargable.
 
+Las cadenas que comienzan con `=`, `+`, `-`, `@` (también tras espacios) o controles iniciales de tabulación/salto de línea reciben un apóstrofo para que se abran como texto. Los valores de tipo `number`, incluso negativos, no cambian. Comas, comillas y ambos saltos de línea se entrecomillan. Para conservar nombres exactamente al restaurar datos, use JSON; el CSV conserva el prefijo protector al reimportarse.
+
 - **Parámetros**: `rows` (Array<Array>) — filas de datos; `headers` (Array<string>) — encabezados de columna; `filename` (string) — nombre del archivo
 - **Retorno**: `void` — descarga el archivo con encoding UTF-8 BOM
 - **Ejemplo**: `exportCSV([["Laptop", "18000"], ["Mouse", "500"]], ["Artículo", "Precio"], "inventario.csv")`
@@ -643,6 +645,46 @@ Importa y parsea un archivo JSON seleccionado por el usuario.
 - **Retorno**: `Promise<object>` — datos parseados
 - **Ejemplo**: `const data = await importJSON(fileInput.files[0])`
 - **Errores**: Rechaza con `Error('Archivo JSON inválido')` o `Error('Error al leer archivo')`
+
+---
+
+## estados-import.js (selección)
+
+#### `parseAmountCell(valor, { decimal = 'auto', onAmbiguous } = {})`
+Convierte una celda de importe (número o texto contable: `C$ 1,234.50`, `(500)`, `500-`) en número.
+
+- **Parámetros**: `valor` — celda; `decimal` — `'auto'` (deduce por celda), `'.'` o `','` (separador decimal; el otro agrupa miles y lo que no encaje se rechaza); `onAmbiguous({ texto, valor })` — se llama en modo `auto` con un punto seguido de tres dígitos (`45.000`, leído como 45)
+- **Retorno**: `number | null` — `null` para celdas en blanco o marcas como `n/a`
+- **Errores**: `Error('Importe inválido: …')` para texto no numérico o agrupaciones imposibles (`1.2.3`)
+- **Ejemplo**: `parseAmountCell('45.000', { decimal: ',' })` → `45000`; `parseAmountCell('0,500')` → `0.5`
+
+#### `inferDecimalStyle(valores)`
+Deduce el separador decimal de un conjunto de celdas.
+
+- **Retorno**: `'.'`, `','` o `null` (sin evidencia o contradictoria). `45.000` por sí solo no es evidencia; `1.234.567` o `12,50` sí.
+- **Ejemplo**: `inferDecimalStyle(['45.000', '1.234.567'])` → `','`
+
+`importStatementFile`, `tableTextToFinancialData`, `sheetsToFinancialData` y `rowsToFinancialData` reciben `{ decimal, avisos }`: `decimal` igual que arriba (`'auto'` por defecto; en `auto` se infiere de cada tabla) y `avisos`, un arreglo donde se agregan textos como `Fila 5: "45.000" se leyó como 45…`. Un `decimal` distinto de `'auto'`, `'.'` o `','` lanza `Error('Formato de importes no válido: …')`.
+
+---
+
+## integracion-respaldo.js e integracion-reporte.js
+
+Lógica pura de Reportes (sin DOM ni `store`); el `index.js` del módulo lee el `store` y guarda con `setPersisted`.
+
+#### `validarRespaldo(contenido, actuales)`
+Valida un respaldo JSON ya parseado antes de tocar el `store`.
+
+- **Parámetros**: `contenido` — objeto del archivo; `actuales` — resultado de `store.getAll()` (define las claves y tipos admitidos)
+- **Retorno**: `{ modulos, omitidos }` — `modulos`: módulos validados y copiados (los campos ausentes se completan con los actuales; `estados` sale de `normalizeFinancialData`); `omitidos`: claves o campos desconocidos. `theme` se ignora.
+- **Errores**: `Error` en español si no es un objeto, hay claves peligrosas, es demasiado profundo (más de 12 niveles o 200 000 nodos), un campo tiene el tipo equivocado o no hay ningún módulo reconocible
+- **Ejemplo**: `validarRespaldo({ presupuesto: { ingresoMensual: 900 } }, store.getAll())`
+
+#### `construirReporteHTML({ kpis, estados })`
+Cuerpo HTML del reporte (resumen, Balance General, Estado de Resultados y Totales por periodo), con una columna por periodo y todo texto del usuario escapado.
+
+- **Parámetros**: `kpis` — resultado de `computeDashboardKPIs` o `null`; `estados` — datos normalizados o `null`
+- **Retorno**: `string` — HTML sin `<h1>` ni documento; `exportHTML` lo envuelve. Valores `null` se muestran N/D y cuentas ausentes en un periodo, "—".
 
 ---
 
@@ -711,3 +753,31 @@ Inicio reutiliza la recolección de la proforma: `proforma/index.js` exporta `re
 Códigos de `avisos` del presupuesto maestro: `financiamiento`, `sin-compras`, `bajo-stock-minimo`, `perdida`, `bajo-equilibrio` y `sin-margen`.
 
 Utilidades: `js/utils/form.js` (`leerNumero(texto)` → `{ vacio, valor }`, `nuevoId(prefijo)`, `fechaHoy()`), `js/utils/estados-guardados.js` (`estadosGuardados(estados)`, `totalesPeriodo(estados, periodo)`). `js/modules/analisis/index.js` exporta ahora `refreshSavedStates()` para que el reporte integrado no use estados en caché.
+
+---
+
+## Fiabilidad de guardados y pantallas
+
+#### `store.reset()` (`js/store.js`)
+Guarda una copia profunda nueva de los valores iniciales antes de publicarla en memoria.
+
+- **Retorno**: `void`.
+- **Errores**: propaga errores de cuota/acceso de `localStorage`; conserva la memoria anterior y no notifica a los suscriptores si falla.
+- `load()` también clona los valores iniciales, sin cambiar el formato de datos guardados. `setPersisted` sigue siendo la API para cambios de módulos completos; `set`/`save` son APIs heredadas que ignoran errores.
+
+#### `validarActivo(activo)` (`activos/activos-calculations.js`)
+Valida la captura del registro del hogar, sin DOM ni fórmulas nuevas.
+
+- **Parámetros**: registro con nombre, categoría, costo original, vida útil, residual, años consumidos, reposición y `condicion.scores`.
+- **Retorno**: `string[]`; vacío si es válido. Importes finitos no negativos, residual hasta el costo, vida útil entera positiva, años enteros no negativos y ocho puntajes enteros de 0 a 10. Se admite superar la vida útil; la depreciación existente se limita a ella.
+- **Ejemplo**: un activo con costo/residual/reposición 0, vida útil 1, años 0 y ocho puntajes 0 es válido.
+
+#### `hasUnsavedStates()` (`estados/index.js`)
+- **Retorno**: `boolean`; consulta el editor actual sin guardar ni releer los estados publicados.
+- `estadosUI(page, opciones)` devuelve `{ hasUnsavedChanges: () => boolean }`. `initEstados()` conserva el DOM del editor sucio al volver a la misma página; con el editor limpio relee el conjunto guardado.
+- `loadDemo()` reemplaza el módulo completo con la demo normalizada en una escritura. Propaga errores y aísla los datos guardados de la constante de demostración.
+
+#### `showModal(title, bodyHTML, footerHTML)` / `hideModal()` (`components/modal.js`)
+- Título escapado, `role=dialog`, nombre accesible, todos los controles `[data-close-modal]`, cierre por Escape/fondo, ciclo de Tab y devolución del foco.
+- `bodyHTML` y `footerHTML` son plantillas de confianza: el llamador debe escapar sus datos de usuario.
+- Limpia los manejadores de teclado/fondo al cerrar o reemplazar el diálogo; no los acumula.

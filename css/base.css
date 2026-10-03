@@ -55,6 +55,7 @@ code, pre {
 }
 
 .sidebar {
+  color-scheme: dark;
   width: var(--sidebar-width);
   background: var(--gradient-sidebar, var(--bg-sidebar));
   color: var(--text-sidebar);
@@ -86,7 +87,7 @@ code, pre {
 
 .tagline {
   font-size: var(--font-size-xs);
-  color: var(--text-tertiary);
+  color: #94a3b8;
   margin-top: var(--space-1);
   font-style: italic;
 }
@@ -291,6 +292,6 @@ button:focus-visible,
   .main-content {
     margin-left: 0;
     padding: var(--space-4);
-    padding-top: var(--space-12);
+    padding-top: calc(var(--space-12) + var(--space-6));
   }
 }

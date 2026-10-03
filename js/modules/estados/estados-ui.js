@@ -27,6 +27,11 @@ export function estadosUI(page, { initial, demo, save }) {
   catch (error) { draft = emptyData(); initialError = `No se pudieron editar los datos guardados: ${error.message}. No se han borrado.`; }
   let selected = draft.periods[0] || '';
   let dirty = false;
+  let numberFormat = 'auto';
+  // Opciones de lectura de importes: formato elegido y lista donde se acumulan los avisos.
+  const importOptions = () => ({ decimal: numberFormat, avisos: [] });
+  const avisoText = avisos => (avisos.length
+    ? ` Atención: ${avisos.length} importe(s) ambiguo(s). ${avisos[0]}` : '');
   const markDirty = () => { dirty = true; message('Borrador sin guardar.'); };
   const message = (text, error = false) => {
     const el = page.querySelector('#estadoMessage');
@@ -47,16 +52,24 @@ export function estadosUI(page, { initial, demo, save }) {
 
   function render() {
     page.innerHTML = `<div class="page-header"><h1 class="page-title">Estados Financieros</h1>
-      <p>1. Cargar o editar → 2. Revisar equilibrio → 3. Guardar → <a href="#/analisis">Analizar datos guardados</a></p></div>
-      <div class="card mb-4"><div class="flex-gap flex-wrap">
+      <p class="page-subtitle">1. Cargar o editar → 2. Revisar equilibrio → 3. Guardar → <a href="#/analisis">Analizar datos guardados</a></p></div>
+      <div class="card mb-4"><div class="states-toolbar">
         <button type="button" class="btn btn-secondary" id="newStates">Nuevo conjunto</button>
-        <label class="btn btn-secondary">Importar archivo (.json, .csv, .xlsx) <input id="statesFile" type="file" accept=".json,.csv,.tsv,.txt,.xlsx,.xls,application/json,text/csv"></label>
+        <label class="btn btn-secondary file-button">Importar archivo <input class="sr-only" id="statesFile" type="file" accept=".json,.csv,.tsv,.txt,.xlsx,.xls,application/json,text/csv"></label>
         <button type="button" class="btn btn-secondary" id="templateStates">Descargar plantilla CSV</button>
         <button type="button" class="btn btn-secondary" id="demoStates">Cargar ejemplo</button>
         <button type="button" class="btn btn-secondary" id="downloadStates">Descargar borrador JSON</button>
         <button type="button" class="btn btn-primary" id="saveStates">Guardar estados</button>
-      </div><p id="estadoMessage" role="status" aria-live="polite">${dirty ? 'Borrador sin guardar.' : 'Datos guardados. Edite o importe sus estados.'}</p>
-      <label class="form-label" for="companyName">Empresa</label><input class="form-input" id="companyName" maxlength="120" value="${esc(draft.name)}">
+      </div><div class="states-status"><p id="estadoMessage" role="status" aria-live="polite">${dirty ? 'Borrador sin guardar.' : 'Datos guardados. Edite o importe sus estados.'}</p></div>
+      <div class="form-group">
+      <label class="form-label" for="numberFormat">Formato de importes al importar CSV/Excel</label>
+      <select class="form-select" id="numberFormat">
+        <option value="auto" ${numberFormat === 'auto' ? 'selected' : ''}>Automático (recomendado)</option>
+        <option value="." ${numberFormat === '.' ? 'selected' : ''}>Punto decimal: 1,234.50</option>
+        <option value="," ${numberFormat === ',' ? 'selected' : ''}>Coma decimal: 1.234,50</option>
+      </select>
+      <p class="form-hint">Automático deduce el formato de todo el archivo y avisa de importes ambiguos como 45.000. Si su archivo usa el punto para miles, elija "Coma decimal".</p></div>
+      <div class="form-group"><label class="form-label" for="companyName">Empresa</label><input class="form-input" id="companyName" maxlength="120" value="${esc(draft.name)}"></div>
       <details class="mt-4"><summary>Formatos de importación admitidos y criterios</summary>
       <p><strong>Archivos:</strong> JSON (objeto con name, periods, balanceGeneral, estadoResultados y accountTypes, o {estados: …} exportado por Reportes), CSV/TSV delimitado y Excel .xlsx/.xls. La importación reemplaza el borrador, no combina periodos.</p>
       <p><strong>Tabla CSV/Excel (ancha):</strong> una fila por cuenta y una columna por periodo. Cabecera obligatoria <code>Cuenta</code>; opcionales <code>Estado</code> (Balance|Resultados), <code>Grupo</code> (activos|pasivos|patrimonio) y <code>Clasificacion</code>. Descargue la plantilla para verlo.</p>
@@ -73,8 +86,8 @@ export function estadosUI(page, { initial, demo, save }) {
         <button class="btn btn-secondary">Añadir periodo vacío</button></form>
         ${draft.periods.length ? `<label class="form-label" for="currentPeriod">Editar periodo</label>
         <select class="form-select" id="currentPeriod">${draft.periods.map((p, i) => `<option value="${i}" ${p === selected ? 'selected' : ''}>${esc(p)}</option>`).join('')}</select>
-        <form id="renamePeriod" class="flex-gap mt-4"><input class="form-input" name="period" aria-label="Nuevo nombre del periodo" required maxlength="40" value="${esc(selected)}"><button class="btn btn-secondary">Renombrar</button></form>
-        <div class="flex-gap mt-4"><button class="btn btn-secondary" id="earlierPeriod">Mover antes</button><button class="btn btn-secondary" id="laterPeriod">Mover después</button><button class="btn btn-danger" id="deletePeriod">Eliminar periodo</button></div>` : '<p>No hay periodos. Añada uno para empezar, sin necesidad de cargar el ejemplo.</p>'}</div>
+        <form id="renamePeriod" class="flex-gap flex-wrap mt-4"><input class="form-input" name="period" aria-label="Nuevo nombre del periodo" required maxlength="40" value="${esc(selected)}"><button class="btn btn-secondary">Renombrar</button></form>
+        <div class="flex-gap flex-wrap mt-4"><button class="btn btn-secondary" id="earlierPeriod">Mover antes</button><button class="btn btn-secondary" id="laterPeriod">Mover después</button><button class="btn btn-danger" id="deletePeriod">Eliminar periodo</button></div>` : '<p>No hay periodos. Añada uno para empezar, sin necesidad de cargar el ejemplo.</p>'}</div>
       <div id="accountEditor"></div><div id="balanceCheck" aria-live="polite"></div>
       <h2 class="mt-4">Vista multiperiodo del borrador</h2><div id="statementPreview"></div>`;
     renderAccounts();
@@ -199,6 +212,8 @@ export function estadosUI(page, { initial, demo, save }) {
       render();
     });
     page.querySelector('#newStates').onclick = () => replaceDraft(emptyData(), 'Borrador nuevo.');
+    const formatSelect = page.querySelector('#numberFormat');
+    if (formatSelect) formatSelect.onchange = event => { numberFormat = event.target.value || 'auto'; };
     page.querySelector('#demoStates').onclick = () => replaceDraft(normalizeFinancialData(demo), 'Ejemplo cargado como borrador. Recuerde revisar el equilibrio antes de guardar.');
     page.querySelector('#downloadStates').onclick = () => {
       try { exportJSON(normalizeFinancialData(draft), 'gfo-estados-borrador.json'); }
@@ -210,8 +225,9 @@ export function estadosUI(page, { initial, demo, save }) {
       if (!file) return;
       message('Leyendo archivo…');
       try {
-        const imported = await importStatementFile(file);
-        replaceDraft(imported, `${file.name} importado al borrador. Revise el equilibrio y pulse Guardar.`);
+        const options = importOptions();
+        const imported = await importStatementFile(file, options);
+        replaceDraft(imported, `${file.name} importado al borrador. Revise el equilibrio y pulse Guardar.${avisoText(options.avisos)}`);
       } catch (error) {
         message(error.message, true);
       }
@@ -229,9 +245,10 @@ export function estadosUI(page, { initial, demo, save }) {
       const textarea = page.querySelector('#pasteStates');
       if (!textarea.value.trim()) { message('Pegue primero la tabla de Excel.', true); return; }
       try {
-        const imported = tableTextToFinancialData(textarea.value, { name: 'Datos pegados' });
+        const options = { ...importOptions(), name: 'Datos pegados' };
+        const imported = tableTextToFinancialData(textarea.value, options);
         textarea.value = '';
-        replaceDraft(imported, 'Tabla pegada importada al borrador. Revise el equilibrio y pulse Guardar.');
+        replaceDraft(imported, `Tabla pegada importada al borrador. Revise el equilibrio y pulse Guardar.${avisoText(options.avisos)}`);
       } catch (error) {
         message(error.message, true);
       }
@@ -258,7 +275,7 @@ export function estadosUI(page, { initial, demo, save }) {
     const normalized = normalizeFinancialData(draft);
     const validation = validateFinancialData(normalized);
     if (validation.length) check.innerHTML = validation.map(row => `<p class="${row.balanced ? 'text-success' : 'text-danger'}">${esc(row.period)}: ${row.balanced ? 'Balance equilibrado' : 'Balance descuadrado'} — Activos ${formatCurrency(row.totalActivos)}; Pasivos + Patrimonio ${formatCurrency(row.totalPasivos + row.totalPatrimonio)}; diferencia ${formatCurrency(row.difference)}</p>`).join('');
-    const table = (label, rows) => `<h3>${label}</h3><div class="table-wrapper mb-4"><table><thead><tr><th>Cuenta</th>${draft.periods.map(p => `<th>${esc(p)}</th>`).join('')}</tr></thead><tbody>${rows.map(([name, values]) => `<tr><td>${esc(name)}</td>${values.map(v => `<td>${formatCurrency(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    const table = (label, rows) => `<h3>${label}</h3><div class="table-wrapper mb-4"><table><thead><tr><th>Cuenta</th>${draft.periods.map(p => `<th class="text-right">${esc(p)}</th>`).join('')}</tr></thead><tbody>${rows.map(([name, values]) => `<tr><td>${esc(name)}</td>${values.map(v => `<td class="text-right font-mono">${formatCurrency(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
     preview.innerHTML = Object.entries(GROUPS).map(([group, label]) => {
       const names = [...new Set(draft.periods.flatMap(p => Object.keys(accountsFor(normalized, p, group))))];
       return table(label, names.map(name => [name, draft.periods.map(p => accountsFor(normalized, p, group)[name] || 0)]));
@@ -269,5 +286,6 @@ export function estadosUI(page, { initial, demo, save }) {
   }
 
   render();
+  return { hasUnsavedChanges: () => dirty };
 }
 

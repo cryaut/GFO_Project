@@ -67,9 +67,9 @@ export const store = {
   load() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      this._data = raw ? { ...defaultData, ...JSON.parse(raw) } : { ...defaultData };
+      this._data = { ...structuredClone(defaultData), ...(raw ? JSON.parse(raw) : {}) };
     } catch {
-      this._data = { ...defaultData };
+      this._data = structuredClone(defaultData);
     }
     return this._data;
   },
@@ -118,8 +118,10 @@ export const store = {
   },
 
   reset() {
-    this._data = { ...defaultData };
-    this.save();
+    const next = structuredClone(defaultData);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    this._data = next;
+    this._notify();
   },
 
   subscribe(fn) {

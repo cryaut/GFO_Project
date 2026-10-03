@@ -68,6 +68,8 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-016 | El reporte integrado reutiliza `computeRazones` de Análisis | Vigente |
 | D-017 | Inicio: salud general como proporción de áreas en orden | Vigente |
 | D-018 | Presupuesto personal y Activos del hogar se separan de la empresa | Vigente |
+| D-019 | Importes con punto: formato elegible, deducción por archivo y aviso de ambigüedad | Vigente |
+| D-020 | El importador JSON de Reportes solo acepta respaldos validados | Vigente |
 
 ## Decisiones
 
@@ -452,3 +454,104 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 **Para revertirla.** Restaurar la barra lateral plana en `index.html`, volver a incluir `areaActivos` en `areasClave` y quitar `finanzasPersonales` de `panoramaGeneral`, con sus pruebas en `tests/unit/inicio.test.js`.
 
 **Referencias.** [requisitos del proyecto](contexto/requisitos-proyecto-final-gfo.md), CHANGELOG "Inicio y apariencia".
+
+### D-019 — Importes con punto: formato elegible, deducción por archivo y aviso de ambigüedad
+
+- **Fecha**: 2026-10-02
+- **Estado**: Vigente
+- **Decidió**: Carlos (sesión con IA; pendiente de revisión del equipo)
+- **Área**: `js/modules/estados/estados-import.js`, `estados-ui.js`, Reportes (`js/modules/integracion/`)
+
+**Contexto.** `parseAmountCell` leía `45.000` como 45 porque el punto es decimal por convención del proyecto, mientras que el manual decía que se "interpreta correctamente". Un archivo con punto de miles (habitual en hojas de cálculo en español de otros países) se importaba con cifras 1000 veces menores, sin ningún aviso. También leía `0,500` como 500 y `1.2.3` como 123.
+
+**Opciones.**
+1. Selector de formato (Automático, Punto decimal, Coma decimal); en Automático se deduce el separador de toda la tabla y, si no hay evidencia, se conserva el punto decimal pero se avisa de cada importe ambiguo — no cambia los archivos que hoy funcionan / una elección más en la pantalla.
+2. Cambiar la convención a "el punto agrupa miles" — coincide con el uso de otros países / rompe los archivos actuales, que usan punto decimal (`12.5`), y la plantilla del proyecto.
+3. Rechazar todo importe ambiguo — nunca se lee mal / obliga a corregir el archivo aunque sea correcto.
+
+**Decisión.** Opción 1. La convención por defecto no cambia (`45.000` sin más contexto sigue siendo 45), pero deja de ser silenciosa. Se corrigen además `0,500` (0.5) y `1.2.3` (error), que no admitían una lectura razonable como miles. `45,000` sigue siendo 45 000.
+
+**Consecuencias.** Un archivo que mezcla evidencias contradictorias (`12,50` y `1.5`) vuelve al modo por celda con avisos. Los mensajes de error de importe ahora empiezan por `Fila N, cuenta "…", periodo …`. Cambia una cifra visible solo en los casos `0,500` (antes 500) y `1.2.3` (antes 123, ahora error).
+
+**Para revertirla.** Quitar `decimal`/`avisos` de `createBuilder` y de las funciones públicas de `estados-import.js`, el selector `#numberFormat` de `estados-ui.js` y los tests de `estados-import-formatos.test.js` y `estados-formato-ui.test.js`.
+
+**Referencias.** [ficha importación/exportación](planificacion/importacion-exportacion/README.md), CHANGELOG "Módulo 2" y "Módulo 6".
+
+### D-020 — El importador JSON de Reportes solo acepta respaldos validados
+
+- **Fecha**: 2026-10-02
+- **Estado**: Vigente
+- **Decidió**: Carlos (sesión con IA; pendiente de revisión del equipo)
+- **Área**: `js/modules/integracion/` (`index.js`, `integracion-respaldo.js`)
+
+**Contexto.** "Importar JSON" copiaba cada clave del archivo al `store` con `store.set`, sin validar: un archivo malformado dejaba módulos inconsistentes, una clave `__proto__` o con puntos alteraba el árbol del `store`, un JSON de Estados creaba claves sueltas (`name`, `periods`…) y un error de `localStorage` se ignoraba mientras se mostraba "importados correctamente".
+
+**Opciones.**
+1. Validar en un módulo puro (claves conocidas, tipos del módulo, `normalizeFinancialData` para `estados`, claves peligrosas, tamaño), confirmar, guardar con `setPersisted` y restaurar si falla — importar es seguro y atómico / un respaldo de una versión con otros campos pierde esos campos (se listan como omitidos).
+2. Solo quitar las claves peligrosas — cambio mínimo / sigue aceptando datos con forma incorrecta.
+3. Envoltorio versionado `{ app, schemaVersion, data }` — permite migraciones / exige cambiar también la exportación y los respaldos ya descargados dejarían de importarse.
+
+**Decisión.** Opción 1. La opción 3 queda como mejora posible; la validación actual no la impide (el envoltorio solo añadiría un nivel antes de `validarRespaldo`).
+
+**Consecuencias.** Importar pide confirmación y muestra los módulos que se reemplazan. `theme` sigue sin importarse. Los campos que el archivo no trae se conservan del módulo actual. No se cambió la forma de los datos guardados ni `js/store.js`.
+
+**Para revertirla.** Volver al bucle `store.set` de `bindExportEvents` y eliminar `integracion-respaldo.js` con sus tests.
+
+**Referencias.** [ficha importación/exportación](planificacion/importacion-exportacion/README.md).
+
+### D-021 — El borrador de Estados se conserva dentro de la sesión
+
+- **Fecha**: 2026-10-03
+- **Estado**: Vigente
+- **Decidió**: Carlos (sesión con IA; pendiente de revisión del equipo)
+- **Área**: `estados/index.js`, `estados-ui.js`, `app.js`
+
+**Contexto.** Volver desde Análisis reiniciaba Estados y descartaba el borrador sin avisar. Publicar cada tecla alteraría los datos que usan los cálculos.
+
+**Opciones.** Conservar el editor en memoria; guardar borradores separados en `localStorage`; o bloquear cada cambio de ruta con confirmación.
+
+**Decisión.** Conservar el DOM y sus eventos mientras el editor tiene cambios. Análisis sigue leyendo el conjunto publicado. `beforeunload` solicita el aviso nativo antes de cerrar o recargar; descargar JSON permite conservar el borrador entre sesiones.
+
+**Consecuencias.** No cambia el esquema guardado ni se crean escrituras automáticas. El borrador se pierde si se confirma salir; el aviso depende de la política del navegador. No resuelve aún todos los formularios pendientes de los otros módulos ni los campos de alta de cuentas sin enviar.
+
+**Para revertirla.** Quitar el editor conservado y el manejador `beforeunload`, con sus pruebas en `estados-borrador` y `app-borrador`.
+
+**Referencias.** [Ficha de fiabilidad](planificacion/fiabilidad-interfaz/README.md).
+
+### D-022 — Captura estricta de activos y conservación de puntajes cero
+
+- **Fecha**: 2026-10-03
+- **Estado**: Vigente
+- **Decidió**: Carlos (sesión con IA; pendiente de revisión del equipo)
+- **Área**: `activos/index.js`, `activos-calculations.js`
+
+**Contexto.** `parseInt(...) || 5` convertía una vida útil cero o vacía en cinco años, y `scores[i] || 5` cambiaba una condición cero por cinco al editar. El formulario guardaba valores negativos y residual mayor al costo.
+
+**Opciones.** Rechazar la captura inválida con explicación; corregir silenciosamente a valores por defecto; o admitirla y mostrar cálculos N/D.
+
+**Decisión.** Validación previa y sin truncar: vida útil entera positiva, años enteros no negativos, importes finitos no negativos, residual hasta el costo y ocho puntajes enteros entre 0 y 10. Cero se conserva. Años consumidos mayores que la vida útil siguen permitidos; la fórmula existente limita la depreciación. Reposición vacía sigue siendo cero.
+
+**Consecuencias.** Cambia la condición visible al editar un cero, que antes se elevaba a cinco. Los datos ya guardados no se migran; el siguiente guardado exige corregir registros inválidos. Las fórmulas y la previsión mensual permanecen iguales.
+
+**Para revertirla.** Restaurar los valores con `||` y quitar `validarActivo` del guardado (reintroduce el error de cero).
+
+**Referencias.** [Ficha de fiabilidad](planificacion/fiabilidad-interfaz/README.md), pruebas `activos-fiabilidad`.
+
+### D-023 — Etiquetas CSV protegidas como texto
+
+- **Fecha**: 2026-10-03
+- **Estado**: Vigente
+- **Decidió**: Carlos (sesión con IA; pendiente de revisión del equipo)
+- **Área**: `utils/export.js`
+
+**Contexto.** Escapar comas/comillas no impedía que un nombre de cuenta iniciado con `=` o `@` se abriera como fórmula en una hoja de cálculo.
+
+**Opciones.** Prefijar texto peligroso con apóstrofo; eliminar caracteres; o advertir sin modificar el archivo.
+
+**Decisión.** Prefijar cadenas iniciadas con `=`, `+`, `-` o `@` (también tras espacios), o controles iniciales de tabulación/salto de línea. Los valores de tipo `number` no cambian, incluido un importe negativo.
+
+**Consecuencias.** El CSV puede incorporar un apóstrofo a nombres y a números enviados como cadenas negativas. Al reimportarse se conserva ese prefijo; JSON es el respaldo para recuperar los nombres exactamente. La exportación de Reportes envía los importes como números.
+
+**Para revertirla.** Quitar el prefijo en `exportCSV` y su prueba `export-csv`.
+
+**Referencias.** API `exportCSV` y [ficha de fiabilidad](planificacion/fiabilidad-interfaz/README.md).

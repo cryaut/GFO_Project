@@ -51,6 +51,7 @@ docs/                      Documentación: contexto, reglas, planificación, API
 | `estados/` | `index.js` (demo, lectura del `store`, `initEstados`), `estados-ui.js` (interfaz), `estados-import.js` (archivos), `estados-normalize.js` (validación), `estados-calculations.js` (tipos y totales) | Único módulo que ya sigue el patrón completo |
 | `analisis/` | Todo en `index.js` (unas 690 líneas: cálculo e interfaz) | `ah.js`, `av.js`, `razones.js`, `dupont.js`, `cnt-cno.js`, `eoaf.js` y `efe.js` solo reexportan funciones de `index.js` |
 | `presupuesto/`, `activos/`, `mercados/`, `integracion/` | Casi todo en `index.js` | `glosario-data.js`, `comparador.js` y `quiz.js` reexportan datos de `mercados/index.js` |
+| `activos/activos-calculations.js` | Validación pura de captura (`validarActivo`) | La interfaz continúa en `activos/index.js`; depreciación reutiliza `utils/calculate.js` |
 | `apalancamiento/` | `index.js` (lee el `store` e `initApalancamiento`), `apalancamiento-ui.js` (interfaz), `apalancamiento-calculations.js` (derivación pura, sin DOM ni `store`) | Lee los estados con `computeFinancialTotals` y `resolveAccountType`; las fórmulas están en `calculate.js` |
 | `inventario/`, `equilibrio/`, `flujo/`, `planeacion/`, `proforma/` | Mismo patrón que `apalancamiento/`: `<modulo>-calculations.js` puro, `<modulo>-ui.js` que recibe `page` y `{ datos, guardar, graficar? }`, e `index.js` que lee el `store` | Plan en `docs/planificacion/modulos-guia/`. `proforma/` no guarda datos: reúne los resultados de los demás con sus mismas funciones |
 
@@ -75,7 +76,7 @@ Estos archivos están vacíos (devuelven `{}`) y ningún módulo los usa: `activ
 | `#/planeacion` | `page-planeacion` | `initPlaneacion` | `js/modules/planeacion/index.js` |
 | `#/proforma` | `page-proforma` | `initProforma` | `js/modules/proforma/index.js` |
 
-Cada vez que se entra a una ruta, su `init` vuelve a dibujar la página completa.
+Cada vez que se entra a una ruta, su `init` vuelve a dibujar la página completa, excepto Estados cuando tiene un borrador sin guardar: conserva la página y sus eventos en memoria. `hasUnsavedStates()` permite al router avisar antes de recargar o cerrar. Las rutas desconocidas muestran Inicio.
 
 Para agregar una ruta:
 
@@ -99,7 +100,7 @@ flowchart LR
 
 - Importación: tabla ancha (`Estado`, `Grupo`, `Cuenta`, `Clasificacion` y una columna por periodo) o larga (`Periodo`, `Estado`, `Grupo`, `Cuenta`, `Clasificacion`, `Importe`). La columna `Cuenta` es obligatoria. En Excel, cada hoja puede ser un estado o un grupo.
 - Clasificación: si una fila no trae `Clasificacion`, el tipo se infiere por el nombre (`inferAccountType`). Si no se reconoce, la importación se detiene con un error que indica la fila. Los tipos válidos están en `dominio-financiero.md`.
-- Importes: acepta separadores de miles, `C$`, paréntesis y signo al final como negativo. Una celda vacía omite la cuenta en ese periodo; no la convierte en 0.
+- Importes: acepta separadores de miles, `C$`, paréntesis y signo al final como negativo. Una celda vacía omite la cuenta en ese periodo; no la convierte en 0. El separador decimal se elige (`auto`, `.` o `,`); en `auto` se deduce de toda la tabla con `inferDecimalStyle` y, si no hay evidencia, se usa el punto decimal y se avisa de los importes ambiguos (`45.000`). D-019.
 - Límites: 5,000 filas, 120 columnas y 20,000 importes por archivo; 100 periodos y 200 cuentas por grupo en cualquier formato.
 - Plantilla: botón "Descargar plantilla CSV" en Estados (`tabularTemplateCSV`). Ejemplos en `scripts/sample-estados.csv` y `scripts/sample-estados.json`.
 - Nada se guarda hasta que el usuario presiona Guardar. Si el guardado falla, los datos anteriores quedan intactos.
@@ -156,7 +157,7 @@ API del `store`:
 | `set('presupuesto.gastos', valor)` | Escribe y guarda; ignora los errores de `localStorage` |
 | `setPersisted('estados', valor)` | Reemplaza una sección de primer nivel. Si `localStorage` falla, lanza un error y no cambia nada en memoria |
 | `getAll()` | Copia profunda de todo el estado |
-| `reset()` | Vuelve a los valores iniciales |
+| `reset()` | Guarda una copia profunda nueva de los valores iniciales; si falla, lanza un error y conserva el estado anterior |
 | `subscribe(fn)` | Avisa cada cambio; devuelve la función para desuscribirse |
 
 Un módulo nuevo que guarde datos necesita su sección en `defaultData`, porque `setPersisted` rechaza claves que no existan ahí. Es un cambio en un archivo compartido: avísalo en el PR.
@@ -170,7 +171,7 @@ Un módulo nuevo que guarde datos necesita su sección en `defaultData`, porque 
 | `components/chart.js` | `renderChart(idCanvas, configChartJs)`, `destroyChart(id)` |
 | `components/tabla.js` | `createTable(encabezados, filas, opciones = {})` |
 
-`toast.js` y `modal.js` buscan sus contenedores en el DOM al cargarse. Por eso la lógica que se prueba en Node no debe importarlos: mantenla en archivos sin DOM.
+`toast.js` busca su contenedor al cargarse; `modal.js` lo busca al abrir/cerrar. La lógica pura sigue sin importarlos. Activos usa `showModal`/`hideModal`: controles de cierre, Escape, ciclo de foco con Tab y retorno del foco al botón de apertura.
 
 ## Dependencias externas
 
@@ -184,11 +185,11 @@ Un módulo nuevo que guarde datos necesita su sección en `defaultData`, porque 
 
 No la corrijas dentro de otra tarea: abre una rama propia y avísalo al equipo.
 
-- `store.load()` y `store.reset()` copian `defaultData` de forma superficial, así que `reset()` puede no limpiar datos anidados.
+- `store.load()` y `store.reset()` ya clonan los valores iniciales. Quedan pendientes la recuperación explícita de almacenamiento corrupto y las migraciones versionadas; `load()` aún vuelve a los valores iniciales si no puede leer el JSON.
 - La demo MUNO MODA ya cuadra y trae intereses e IR (antes el activo quedaba por debajo de pasivo + patrimonio por C$ 70,200 y C$ 46,150). Las pruebas que copian sus cifras antiguas (`estados-calculations`, `apalancamiento-*`) siguen usando su propia copia.
 - Las funciones originales de `calculate.js` devuelven 0 cuando el denominador es 0. La pestaña Análisis lo detecta con `computeRazones(...).denominadores`.
 - `package-lock.json` está en `.gitignore`, así que cada persona puede instalar versiones distintas de Vitest y ESLint.
 - `analisis/index.js` mezcla cálculo e interfaz en un solo archivo.
-- `npm run lint` reporta 11 advertencias por variables sin uso.
+- `npm run lint` reporta 7 advertencias por variables sin uso (verificación de fiabilidad-interfaz).
 - Conviven dos flujos de efectivo: el EFE de Análisis (indirecto, solo operación, sin depreciación) y el módulo Flujo de Efectivo (directo, tres actividades). Conviene unificarlos (D-012).
 - `apalancamiento-ui.js` tiene su propio lector de números; `js/utils/form.js` (`leerNumero`) hace lo mismo para los módulos nuevos.

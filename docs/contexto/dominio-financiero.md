@@ -236,10 +236,14 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 | `js/modules/estados/estados-calculations.js` | `ACCOUNT_TYPES`, `inferAccountType(grupo, nombre)`, `resolveAccountType(datos, grupo, nombre)` (tipo explícito o inferido), `computeFinancialTotals(datos, periodo)`, `validateFinancialData(datos)` (cuadre A = P + O por periodo) |
 | `js/modules/apalancamiento/apalancamiento-calculations.js` | `cuentasOperativas`, `sugerirComportamiento`, `normalizarComportamiento`, `resolverComportamiento`, `derivarPeriodo`, `calcularApalancamiento` |
 | `js/modules/estados/estados-normalize.js` | `normalizeFinancialData(entrada)`, `parseFinancialJSON(texto)`, `sortPeriods(periodos)` (siempre ordena; lo usa el importador), `ordenarPeriodos(periodos)` (ordena solo si todos empiezan con un año) |
-| `js/modules/estados/estados-import.js` | `importStatementFile(archivo)`, `tableTextToFinancialData(texto)`, `sheetsToFinancialData(hojas)`, `parseAmountCell(valor)`, `tabularTemplateCSV()` |
+| `js/modules/estados/estados-import.js` | `importStatementFile(archivo, { decimal, avisos })`, `tableTextToFinancialData(texto, { decimal, avisos })`, `sheetsToFinancialData(hojas, { decimal, avisos })`, `parseAmountCell(valor, { decimal, onAmbiguous })`, `inferDecimalStyle(valores)`, `FORMATOS_IMPORTE`, `tabularTemplateCSV()` |
+| `js/modules/integracion/integracion-respaldo.js` | `validarRespaldo(contenido, actuales)` → `{ modulos, omitidos }`, `MAX_RESPALDO_BYTES` |
+| `js/modules/integracion/integracion-reporte.js` | `construirReporteHTML({ kpis, estados })` |
 | `js/modules/analisis/index.js` | `computeRazones(periodo)`, `computeAH`, `computeAV`, `computeDuPont`, `computeCNTCNO`, `computeEOAF`, `computeEFE`, `UMBRALES`, `refreshSavedStates()` (relee los estados guardados antes de reutilizar `computeRazones` fuera de Análisis) |
 | `js/utils/format.js` | `formatCurrency`, `formatNumber`, `formatPercent`, `formatPercentRaw`, `parseNumber`. Convierten `null` en 0: verifica `null` antes de formatear |
 | `js/utils/html.js` | `escapeHTML(valor)` |
+| `js/modules/activos/activos-calculations.js` | `validarActivo(activo)` → lista de errores de captura; no cambia las fórmulas de depreciación |
+| `js/modules/estados/index.js` | `hasUnsavedStates()` → booleano; `loadDemo()` publica la demo completa en una escritura |
 | `js/modules/inventario/inventario-calculations.js` | `calcularInventario`, `kardex`, `resumenProducto`, `validarMovimiento` y el resto en `docs/api.md` |
 | `js/modules/equilibrio/equilibrio-calculations.js` | `calcularCVU`, `calcularEscenarios`, `puntosGrafica`, `baseDesdeEstados` (P, CVu y CF desde Estados y Apalancamiento) |
 | `js/modules/flujo/flujo-calculations.js` | `calcularFlujo`, `conciliarConBalance` |

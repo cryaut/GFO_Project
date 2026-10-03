@@ -1,10 +1,12 @@
 import store from '../../store.js';
 import { formatCurrency, formatPercent } from '../../utils/format.js';
-import { exportJSON, exportCSV, exportHTML } from '../../utils/export.js';
+import { exportJSON, exportCSV, exportHTML, importJSON } from '../../utils/export.js';
 import { showToast } from '../../components/toast.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
 import { normalizeFinancialData } from '../estados/estados-normalize.js';
 import { computeRazones, refreshSavedStates } from '../analisis/index.js';
+import { validarRespaldo, MAX_RESPALDO_BYTES } from './integracion-respaldo.js';
+import { construirReporteHTML } from './integracion-reporte.js';
 
 function getNormalizedStates() {
   // Single source of truth: the same normalized engine Análisis consumes, so
@@ -91,7 +93,8 @@ export function initReportes() {
         <div class="flex-gap flex-wrap">
           <button class="btn btn-primary" id="btnExportJSON">Exportar JSON</button>
           <button class="btn btn-secondary" id="btnExportCSV">Exportar CSV</button>
-          <button class="btn btn-secondary" id="btnExportHTML">Vista Previa HTML</button>
+          <button class="btn btn-secondary" id="btnPreviewHTML">Vista previa del reporte</button>
+          <button class="btn btn-secondary" id="btnExportHTML">Descargar reporte HTML</button>
           <button class="btn btn-success" id="btnImportJSON">Importar JSON</button>
           <input type="file" id="importFileInput" accept=".json" style="display:none">
         </div>
@@ -190,29 +193,15 @@ function bindExportEvents(page) {
     showToast('CSV exportado (reimportable en Estados)', 'success');
   });
 
+  const cuerpoReporte = () => construirReporteHTML({ kpis: computeDashboardKPIs(), estados: getNormalizedStates() });
+
+  page.querySelector('#btnPreviewHTML')?.addEventListener('click', () => {
+    const preview = page.querySelector('#exportPreview');
+    if (preview) preview.innerHTML = `<div class="card">${cuerpoReporte()}</div>`;
+  });
+
   page.querySelector('#btnExportHTML')?.addEventListener('click', () => {
-    const kpis = computeDashboardKPIs();
-    const periods = store.get('estados.periods') || [];
-    const bg = store.get('estados.balanceGeneral') || {};
-    let html = '<h1>GFO Toolkit — Reporte</h1>';
-    html += '<h2>Resumen</h2>';
-    if (kpis) {
-      html += `<p>Total Activos: ${formatCurrency(kpis.totalActivos)} | Total Pasivos: ${formatCurrency(kpis.totalPasivos)} | Patrimonio: ${formatCurrency(kpis.totalPatrimonio)}</p>`;
-      html += `<p>Ventas: ${formatCurrency(kpis.ventas)} | Utilidad Neta: ${formatCurrency(kpis.utilidadNeta)}</p>`;
-    }
-    if (periods.length > 0) {
-      html += `<h2>Balance General</h2><table><thead><tr><th>Cuenta</th>${periods.map(p => `<th>${p}</th>`).join('')}</tr></thead><tbody>`;
-      for (const p of periods) {
-        const data = bg[p] || {};
-        for (const [group, label] of [['activos', 'Activos'], ['pasivos', 'Pasivos'], ['patrimonio', 'Patrimonio']]) {
-          for (const [k, v] of Object.entries(data[group] || {})) {
-            html += `<tr><td>${k}</td><td>${formatCurrency(v)}</td></tr>`;
-          }
-        }
-      }
-      html += '</tbody></table>';
-    }
-    exportHTML(html, 'gfo-reporte.html');
+    exportHTML(`<h1>GFO Toolkit — Reporte</h1>${cuerpoReporte()}`, 'gfo-reporte.html');
     showToast('Reporte HTML generado', 'success');
   });
 
@@ -222,16 +211,40 @@ function bindExportEvents(page) {
     const file = e.target.files[0];
     if (!file) return;
     try {
-      const { importJSON } = await import('../../utils/export.js');
-      const data = await importJSON(file);
-      Object.keys(data).forEach(key => {
-        if (key !== 'theme') store.set(key, data[key]);
-      });
-      showToast('Datos importados correctamente', 'success');
+      if (file.size > MAX_RESPALDO_BYTES) throw new Error('El archivo supera el máximo de 5 MB.');
+      const { modulos, omitidos } = validarRespaldo(await importJSON(file), store.getAll());
+      const nombres = Object.keys(modulos);
+      if (!window.confirm(`Se reemplazarán los datos de: ${nombres.join(', ')}. ¿Continuar?`)) {
+        showToast('Importación cancelada', 'warning');
+        return;
+      }
+      aplicarRespaldo(modulos);
+      const nota = omitidos.length ? ` (se omitieron ${omitidos.length} elementos desconocidos)` : '';
+      showToast(`Datos importados correctamente${nota}`, 'success');
       renderDashboard(page);
     } catch (err) {
       showToast('Error al importar: ' + err.message, 'error');
+    } finally {
+      importInput.value = '';
     }
-    importInput.value = '';
   });
+}
+
+// Guarda cada módulo con setPersisted (falla si localStorage falla). Si uno falla, restaura
+// los ya guardados para no dejar un respaldo a medias.
+function aplicarRespaldo(modulos) {
+  const previo = store.getAll();
+  const aplicados = [];
+  try {
+    for (const [clave, valor] of Object.entries(modulos)) {
+      store.setPersisted(clave, valor);
+      aplicados.push(clave);
+    }
+  } catch (error) {
+    let restaurado = true;
+    for (const clave of aplicados) {
+      try { store.setPersisted(clave, previo[clave]); } catch { restaurado = false; }
+    }
+    throw new Error(`No se pudo guardar (${error.message}). ${restaurado ? 'Se conservaron los datos anteriores.' : 'Revise los datos: la restauración falló.'}`);
+  }
 }
