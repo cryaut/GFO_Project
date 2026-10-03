@@ -3,6 +3,7 @@
 - **Estado**: En revisión
 - **Responsable**: Carlos
 - **Rama**: `fix/fiabilidad-interfaz`
+- **PR**: [#8 (borrador)](https://github.com/cryaut/GFO_Project/pull/8), depende de [#7](https://github.com/cryaut/GFO_Project/pull/7)
 - **Última actualización**: 2026-10-03
 
 ## Objetivo
@@ -16,7 +17,7 @@ La base es `fix/importacion-exportacion` (1178073, PR #7), por indicación del u
 | 1 | Presupuesto y Activos conservan datos y formularios cuando falla el guardado; reset sin referencias compartidas | Completado |
 | 2 | Estados conserva el borrador entre rutas y avisa antes de cerrar; textos importados y CSV se muestran como texto | Completado |
 | 3 | Formularios y tablas legibles en móvil y en ambos temas; diálogo accesible | Completado |
-| 4 | Pruebas y documentación; PR de revisión | En progreso |
+| 4 | Pruebas, documentación y PR de revisión | Completado |
 
 ## Decisiones clave
 - Conservar las correcciones de importación/exportación del PR #7 y presentar esta tanda en una rama independiente.
