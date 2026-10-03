@@ -120,6 +120,8 @@ Con **Cargar ejemplo ficticio** (datos inventados, para no exponer información 
 
 ## 3. Módulo 2: Estados Financieros
 
+El borrador editado o importado se conserva al ir a otra sección y volver, junto con el periodo seleccionado. Análisis sigue leyendo los estados guardados. Antes de recargar o cerrar, el navegador avisa si hay cambios pendientes (según su política de interacción). Para conservarlos entre sesiones, pulse **Guardar estados** o **Descargar borrador JSON**; el borrador en memoria no sobrevive a cerrar la pestaña.
+
 ### 3.1 Cargar datos: importar, editar o usar la demo
 
 La sección Estados Financieros (`#/estados`) es la puerta de entrada de la información. El flujo es siempre el mismo:
@@ -403,6 +405,10 @@ El mercado paga 14.88 veces la utilidad por acción y valora la acción a 2.68 v
 ---
 
 ## 5. Módulo 4: Activos del Hogar
+
+El formulario exige costo y vida útil válidos: importes no negativos, valor residual hasta el costo original, vida útil entera mayor que cero y años consumidos enteros no negativos. Complete los ocho puntajes entre 0 y 10; cero es una condición válida y se conserva al editar. El costo de reposición vacío se toma como cero. **Cancelar**, el botón de cierre y Escape cierran el diálogo; al eliminar un bien se solicita confirmación.
+
+Si falla el almacenamiento en Activos o Presupuesto personal, se muestra **No se pudo guardar** y se conservan los datos anteriores y los campos para reintentar. El ajuste por inflación publica ingresos y gastos juntos. No cierre la pantalla hasta guardar o copiar sus entradas.
 
 Registra los bienes del hogar (tecnología, electrodomésticos, mobiliario, transporte, herramientas), su depreciación y su condición. Está en la sección **Finanzas personales** del menú y no se mezcla con los activos fijos del balance de la empresa.
 

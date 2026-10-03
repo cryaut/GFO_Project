@@ -498,3 +498,60 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 **Para revertirla.** Volver al bucle `store.set` de `bindExportEvents` y eliminar `integracion-respaldo.js` con sus tests.
 
 **Referencias.** [ficha importación/exportación](planificacion/importacion-exportacion/README.md).
+
+### D-021 — El borrador de Estados se conserva dentro de la sesión
+
+- **Fecha**: 2026-10-03
+- **Estado**: Vigente
+- **Decidió**: Carlos (sesión con IA; pendiente de revisión del equipo)
+- **Área**: `estados/index.js`, `estados-ui.js`, `app.js`
+
+**Contexto.** Volver desde Análisis reiniciaba Estados y descartaba el borrador sin avisar. Publicar cada tecla alteraría los datos que usan los cálculos.
+
+**Opciones.** Conservar el editor en memoria; guardar borradores separados en `localStorage`; o bloquear cada cambio de ruta con confirmación.
+
+**Decisión.** Conservar el DOM y sus eventos mientras el editor tiene cambios. Análisis sigue leyendo el conjunto publicado. `beforeunload` solicita el aviso nativo antes de cerrar o recargar; descargar JSON permite conservar el borrador entre sesiones.
+
+**Consecuencias.** No cambia el esquema guardado ni se crean escrituras automáticas. El borrador se pierde si se confirma salir; el aviso depende de la política del navegador. No resuelve aún todos los formularios pendientes de los otros módulos ni los campos de alta de cuentas sin enviar.
+
+**Para revertirla.** Quitar el editor conservado y el manejador `beforeunload`, con sus pruebas en `estados-borrador` y `app-borrador`.
+
+**Referencias.** [Ficha de fiabilidad](planificacion/fiabilidad-interfaz/README.md).
+
+### D-022 — Captura estricta de activos y conservación de puntajes cero
+
+- **Fecha**: 2026-10-03
+- **Estado**: Vigente
+- **Decidió**: Carlos (sesión con IA; pendiente de revisión del equipo)
+- **Área**: `activos/index.js`, `activos-calculations.js`
+
+**Contexto.** `parseInt(...) || 5` convertía una vida útil cero o vacía en cinco años, y `scores[i] || 5` cambiaba una condición cero por cinco al editar. El formulario guardaba valores negativos y residual mayor al costo.
+
+**Opciones.** Rechazar la captura inválida con explicación; corregir silenciosamente a valores por defecto; o admitirla y mostrar cálculos N/D.
+
+**Decisión.** Validación previa y sin truncar: vida útil entera positiva, años enteros no negativos, importes finitos no negativos, residual hasta el costo y ocho puntajes enteros entre 0 y 10. Cero se conserva. Años consumidos mayores que la vida útil siguen permitidos; la fórmula existente limita la depreciación. Reposición vacía sigue siendo cero.
+
+**Consecuencias.** Cambia la condición visible al editar un cero, que antes se elevaba a cinco. Los datos ya guardados no se migran; el siguiente guardado exige corregir registros inválidos. Las fórmulas y la previsión mensual permanecen iguales.
+
+**Para revertirla.** Restaurar los valores con `||` y quitar `validarActivo` del guardado (reintroduce el error de cero).
+
+**Referencias.** [Ficha de fiabilidad](planificacion/fiabilidad-interfaz/README.md), pruebas `activos-fiabilidad`.
+
+### D-023 — Etiquetas CSV protegidas como texto
+
+- **Fecha**: 2026-10-03
+- **Estado**: Vigente
+- **Decidió**: Carlos (sesión con IA; pendiente de revisión del equipo)
+- **Área**: `utils/export.js`
+
+**Contexto.** Escapar comas/comillas no impedía que un nombre de cuenta iniciado con `=` o `@` se abriera como fórmula en una hoja de cálculo.
+
+**Opciones.** Prefijar texto peligroso con apóstrofo; eliminar caracteres; o advertir sin modificar el archivo.
+
+**Decisión.** Prefijar cadenas iniciadas con `=`, `+`, `-` o `@` (también tras espacios), o controles iniciales de tabulación/salto de línea. Los valores de tipo `number` no cambian, incluido un importe negativo.
+
+**Consecuencias.** El CSV puede incorporar un apóstrofo a nombres y a números enviados como cadenas negativas. Al reimportarse se conserva ese prefijo; JSON es el respaldo para recuperar los nombres exactamente. La exportación de Reportes envía los importes como números.
+
+**Para revertirla.** Quitar el prefijo en `exportCSV` y su prueba `export-csv`.
+
+**Referencias.** API `exportCSV` y [ficha de fiabilidad](planificacion/fiabilidad-interfaz/README.md).

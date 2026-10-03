@@ -2,6 +2,7 @@ import store from '../../store.js';
 import { mercadoUI } from './mercado-ui.js';
 import { estadosGuardados } from '../../utils/estados-guardados.js';
 import { formatCurrency, formatPercent, formatNumber } from '../../utils/format.js';
+import { escapeHTML } from '../../utils/html.js';
 import {
   ahDelta, ahPctDelta, av, ratioCorriente, ratioRapido,
   rotacionInventario, rotacionCxC, plazoCobro, endeudamiento,
@@ -469,11 +470,11 @@ function renderAHSection(periods) {
   if (ahData.length === 0) return '<p class="text-muted">Se necesitan al menos 2 periodos.</p>';
   let html = '<p class="text-muted" style="font-size:var(--font-size-sm)">Variación % = Δ / |valor T1|. Si el periodo base es 0, la variación porcentual no está definida y se muestra N/D.</p>';
   for (const ah of ahData) {
-    html += `<h4 class="mb-2">${ah.periodo}</h4>
+    html += `<h4 class="mb-2">${escapeHTML(ah.periodo)}</h4>
       <div class="table-wrapper mb-6"><table>
         <thead><tr><th>Cuenta</th><th class="text-right">Periodo T1</th><th class="text-right">Periodo T2</th><th class="text-right">Δ</th><th class="text-right">%Δ</th></tr></thead>
         <tbody>${ah.rows.map(r => `<tr>
-          <td>${r.cuenta}</td>
+          <td>${escapeHTML(r.cuenta)}</td>
           <td class="text-right font-mono">${formatCurrency(r.t1)}</td>
           <td class="text-right font-mono">${formatCurrency(r.t2)}</td>
           <td class="text-right font-mono ${r.delta < 0 ? 'text-danger' : 'text-success'}">${formatCurrency(r.delta)}</td>
@@ -513,7 +514,7 @@ function renderAVTable(avData, titulo) {
     <div class="table-wrapper mb-6"><table>
       <thead><tr><th>Cuenta</th><th class="text-right">Valor</th><th class="text-right">% Base</th></tr></thead>
       <tbody>${avData.rows.map(r => `<tr>
-        <td>${r.cuenta}</td>
+        <td>${escapeHTML(r.cuenta)}</td>
         <td class="text-right font-mono">${formatCurrency(r.valor)}</td>
         <td class="text-right font-mono">${r.pctBase === null ? 'N/D (base = 0)' : formatPercent(r.pctBase)}</td>
       </tr>`).join('')}</tbody>
@@ -587,7 +588,7 @@ function renderRazonesSection(period) {
   <div class="kpi-grid">${items.map(([label, value, badgeClass]) => {
     if (!value) return `<div class="kpi-card" style="grid-column:1/-1"><div class="kpi-label font-bold">${label}</div></div>`;
     const esError = value.startsWith('No se puede calcular');
-    return `<div class="kpi-card"><div class="kpi-value" style="${esError ? 'font-size:var(--font-size-sm);color:var(--color-danger)' : ''}">${value}</div><div class="kpi-label">${label}</div>${!esError && badgeClass && badgeClass !== 'badge-info' ? `<span class="badge ${badgeClass}" style="margin-top:var(--space-2)">${etiqueta(badgeClass)}</span>` : ''}</div>`;
+    return `<div class="kpi-card"><div class="kpi-value" style="${esError ? 'font-size:var(--font-size-sm);color:var(--ink-danger)' : ''}">${value}</div><div class="kpi-label">${label}</div>${!esError && badgeClass && badgeClass !== 'badge-info' ? `<span class="badge ${badgeClass}" style="margin-top:var(--space-2)">${etiqueta(badgeClass)}</span>` : ''}</div>`;
   }).join('')}</div>`;
 }
 
@@ -625,7 +626,7 @@ function renderEOAFSection(periods) {
   return `<div class="table-wrapper"><table>
     <thead><tr><th>Cuenta</th><th class="text-right">Cambio</th><th>Clasificación</th><th class="text-right">Monto</th></tr></thead>
     <tbody>${items.map(r => `<tr>
-      <td>${r.cuenta}</td>
+      <td>${escapeHTML(r.cuenta)}</td>
       <td class="text-right font-mono ${r.cambio < 0 ? 'text-danger' : 'text-success'}">${formatCurrency(r.cambio)}</td>
       <td><span class="badge ${r.clasificacion === 'Origen' ? 'badge-success' : 'badge-primary'}">${r.clasificacion}</span></td>
       <td class="text-right font-mono">${formatCurrency(r.monto)}</td>
@@ -665,7 +666,7 @@ function renderDuPontSection(period) {
     <div class="kpi-card"><div class="kpi-value">${dp.PM == null ? 'N/D' : formatPercent(dp.PM)}</div><div class="kpi-label">Margen Neto (PM)</div></div>
     <div class="kpi-card"><div class="kpi-value">${dp.AT == null ? 'N/D' : formatNumber(dp.AT)}</div><div class="kpi-label">Rotación Activos (AT)</div></div>
     <div class="kpi-card"><div class="kpi-value">${dp.EM == null ? 'N/D' : formatNumber(dp.EM)}</div><div class="kpi-label">Multiplicador (EM)</div></div>
-    <div class="kpi-card" style="border-color:var(--color-primary)"><div class="kpi-value" style="color:var(--color-primary)">${dp.ROE == null ? 'N/D' : formatPercent(dp.ROE)}</div><div class="kpi-label font-bold">ROE = PM × AT × EM</div></div>
+    <div class="kpi-card" style="border-color:var(--ink-primary)"><div class="kpi-value" style="color:var(--ink-primary)">${dp.ROE == null ? 'N/D' : formatPercent(dp.ROE)}</div><div class="kpi-label font-bold">ROE = PM × AT × EM</div></div>
   </div>
   <p class="text-muted mt-4" style="font-size:var(--font-size-sm)">${notaPromedios}</p>
   <div class="card" style="border-left:4px solid var(--color-primary)">
@@ -699,7 +700,7 @@ function renderInterpretacionSection(period) {
         const celda = v => (typeof v === 'number' && Number.isFinite(v)
           ? (e.indicador.includes('%') ? formatPercent(v) : formatNumber(v)) : 'N/D');
         return `<tr>
-        <td>${e.periodo}</td>
+        <td>${escapeHTML(e.periodo)}</td>
         <td>${e.indicador}</td>
         <td class="text-right font-mono">${celda(e.t1)}</td>
         <td class="text-right font-mono">${celda(e.t2)}</td>
@@ -712,7 +713,7 @@ function renderInterpretacionSection(period) {
       <div class="flex-gap mb-2"><span class="badge badge-warning">Hallazgo</span><strong>${h.hallazgo}</strong></div>
       <p style="font-size:var(--font-size-sm);color:var(--text-secondary);margin:var(--space-2) 0"><strong>Causa:</strong> ${h.causa}</p>
       <p style="font-size:var(--font-size-sm);color:var(--text-secondary);margin:var(--space-2) 0"><strong>Riesgo:</strong> ${h.riesgo}</p>
-      <p style="font-size:var(--font-size-sm);color:var(--color-primary);margin:var(--space-2) 0"><strong>Acción:</strong> ${h.accion}</p>
+      <p style="font-size:var(--font-size-sm);color:var(--ink-primary);margin:var(--space-2) 0"><strong>Acción:</strong> ${h.accion}</p>
     </div>`).join('');
 }
 

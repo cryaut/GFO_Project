@@ -2,6 +2,9 @@ import store from '../../store.js';
 import { normalizeFinancialData } from './estados-normalize.js';
 import { estadosUI } from './estados-ui.js';
 
+let editor;
+let editorPage;
+
 export const DEMO_MUNOMODA = {
   name: 'MUNO MODA S.A.',
   periods: ['2023', '2024'],
@@ -89,10 +92,12 @@ export function getDemoData() {
 }
 
 export function loadDemo() {
-  store.set('estados.balanceGeneral', DEMO_MUNOMODA.balanceGeneral);
-  store.set('estados.estadoResultados', DEMO_MUNOMODA.estadoResultados);
-  store.set('estados.periods', DEMO_MUNOMODA.periods);
+  store.setPersisted('estados', normalizeFinancialData(DEMO_MUNOMODA));
   return DEMO_MUNOMODA;
+}
+
+export function hasUnsavedStates() {
+  return editor?.hasUnsavedChanges() ?? false;
 }
 
 export function getSavedStates() {
@@ -108,7 +113,10 @@ export function getSavedStates() {
 export function initEstados() {
   const page = document.getElementById('page-estados');
   if (!page) return;
-  estadosUI(page, {
+  // El router oculta la página: conservar también sus campos, selección y eventos.
+  if (editorPage === page && hasUnsavedStates()) return;
+  editorPage = page;
+  editor = estadosUI(page, {
     initial: getSavedStates(),
     demo: DEMO_MUNOMODA,
     save: data => store.setPersisted('estados', normalizeFinancialData(data))
