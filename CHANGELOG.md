@@ -7,13 +7,22 @@ Todos los cambios notables en GFO Toolkit.
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
 ### Módulo 2: Estados Financieros
+- **Importes ambiguos (importación):** `parseAmountCell(valor, { decimal, onAmbiguous })` admite un formato explícito (`'.'` o `','` decimal) además de `'auto'`. En automático, el separador se deduce de toda la tabla (`inferDecimalStyle`): un `1.234.567` o un `12,50` aclaran cómo leer `45.000`. Sin evidencia se conserva la convención (punto decimal) y se **avisa** con el número de fila en lugar de leer 45 en silencio.
+- `0,500` ahora es 0.5 (antes 500) y `1.2.3` / `1,2,3` se rechazan (antes `1.2.3` se leía como 123). Los errores de importe indican fila, cuenta y periodo.
+- Selector **Formato de importes** en Estados (Automático, Punto decimal, Coma decimal) para archivos CSV, Excel y tabla pegada; tras importar se muestra cuántos importes eran ambiguos.
 - **Nuevo importador robusto** (`js/modules/estados/estados-import.js`): JSON, CSV, TSV, Excel (.xlsx/.xls vía SheetJS bajo demanda) y pegado directo desde Excel.
 - Tabla ancha (`Estado`, `Grupo`, `Cuenta`, `Clasificacion`, periodos) y tabla larga (`Periodo`, `Cuenta`, `Importe`); hojas de Excel separadas por estado/grupo.
-- Parseo de importes contables: `45.000`, `45,000`, `C$ 12.500,50`, `(500)`, `500-`; celdas en blanco omiten la cuenta en ese periodo (no la convierten en cero).
+- Parseo de importes contables: `45,000`, `C$ 12.500,50`, `(500)`, `500-`; celdas en blanco omiten la cuenta en ese periodo (no la convierten en cero).
 - Errores de importación con número de fila y sugerencia; periodos ordenados del más antiguo al más reciente.
 - Botón **Descargar plantilla CSV** y panel de ayuda con los formatos admitidos.
 - Edición manual ya disponible: alta, renombrado, reordenado y baja de periodos; alta/baja de cuentas con clasificación compartida entre periodos; validación de equilibrio A = P + O.
 - Orden cronológico de periodos en `normalizeFinancialData` cuando todos empiezan con un año (`ordenarPeriodos`; el importador sigue usando `sortPeriods`): el "último periodo" y el periodo previo ya no dependen del orden de llegada. Con nombres como "Marzo" se respeta el orden que el usuario deja en Estados.
+
+### Módulo 6: Reportes e Integración
+- **Importar JSON validado** (`integracion-respaldo.js`): solo se aceptan módulos que el `store` conoce, con el tipo correcto; `estados` pasa por `normalizeFinancialData`; se rechazan `__proto__`/`constructor`/`prototype`, estructuras muy profundas y archivos de más de 5 MB. Antes se escribía cualquier clave con `store.set` sin validar.
+- La importación pide confirmación, guarda con `setPersisted` y, si el almacenamiento falla a mitad, restaura los módulos ya guardados. Un JSON de Estados (sin módulos reconocibles) se rechaza con la indicación de importarlo desde Estados Financieros.
+- **Reporte HTML corregido** (`integracion-reporte.js`): una columna por periodo (antes las filas tenían 2 celdas bajo N encabezados), agrega Estado de Resultados y Totales por periodo, muestra N/D y "—" en lugar de 0, y **escapa** cuentas, periodos y empresa (antes un nombre de cuenta importado se insertaba como HTML).
+- Botón **Vista previa del reporte** (muestra el reporte en la página) y **Descargar reporte HTML**; antes el botón "Vista Previa HTML" descargaba el archivo.
 
 ### Módulo 3: Análisis Financiero
 - Nuevas razones: rotación de activos fijos, rotación de capital de trabajo y solvencia (Activos ÷ Pasivos).

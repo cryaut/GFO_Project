@@ -159,7 +159,14 @@ El botón **"Cargar ejemplo"** inserta la empresa de demostración MUNO MODA S.A
 
 **Excel con varias hojas.** Si el libro tiene hojas separadas por estado (`Activos`, `Pasivos`, `Patrimonio`, `Resultados`), cada hoja puede contener solo una columna `Cuenta` y una columna por periodo; el nombre de la hoja aporta el estado y el grupo.
 
-**Importes admitidos.** `45000`, `45.000`, `45,000`, `C$ 12.500,50`, `(500)` y `500-` se interpretan correctamente. Una celda en blanco **omite** la cuenta en ese periodo (no la convierte en cero). Las cuentas cuyo nombre no se reconoce exigen indicar `Clasificacion`; el error indica el número de fila.
+**Importes admitidos.** `45000`, `45,000`, `C$ 12.500,50`, `(500)` y `500-` se interpretan correctamente. Una celda en blanco **omite** la cuenta en ese periodo (no la convierte en cero). Las cuentas cuyo nombre no se reconoce exigen indicar `Clasificacion`; el error indica el número de fila.
+
+**Formato de importes (punto o coma).** Elija en **"Formato de importes al importar CSV/Excel"** cómo escribe sus números:
+
+- **Automático (recomendado):** mira todos los importes del archivo. Si alguno demuestra el formato (`1.234.567` o `12,50` indican coma decimal; `1,234.50`, punto decimal), lo aplica a todo el archivo.
+- **Punto decimal** (`1,234.50`) o **Coma decimal** (`1.234,50`): fuerza el formato y rechaza lo que no encaje, con la fila del error.
+
+Un importe como `45.000` es ambiguo (¿45 o cuarenta y cinco mil?). Si el archivo no permite deducirlo, se lee como 45 y, tras importar, el mensaje indica cuántos importes eran ambiguos y en qué fila. Si su archivo usa el punto para miles, elija **Coma decimal** y vuelva a importar.
 
 ### 3.3 Balance General — Verificar A = P + O
 
@@ -498,15 +505,17 @@ Navega al glosario para consultar más de 20 términos financieros definidos: me
 
 ### 7.3 Exportar a HTML
 
-1. Haz clic en **"Vista Previa HTML"**.
-2. Se genera un reporte con estilos profesionales.
-3. Puedes imprimirlo directamente con Ctrl+P.
+1. Haz clic en **"Vista previa del reporte"** para verlo en la página.
+2. Haz clic en **"Descargar reporte HTML"** para guardarlo como `gfo-reporte.html`.
+3. El reporte incluye el resumen, el Balance General y el Estado de Resultados con una columna por periodo, y los totales por periodo (N/D cuando faltan cuentas por clasificar). Puedes imprimirlo con Ctrl+P.
 
-### 7.4 Importar datos
+### 7.4 Importar un respaldo JSON
 
-1. Haz clic en **"Importar JSON"**.
-2. Selecciona un archivo `.json`, `.csv`, `.tsv` o `.xlsx`. La exportación JSON de Reportes genera el envoltorio `{ estados: … }` que el importador reconoce.
-3. Los datos se cargan como borrador y reemplazan el contenido anterior. Revise el equilibrio y pulse **Guardar estados** para publicarlos.
+1. Haz clic en **"Importar JSON"** y selecciona un archivo `.json` generado con **"Exportar JSON"** (máximo 5 MB).
+2. La aplicación valida el archivo y muestra qué módulos se van a **reemplazar**; confirma para continuar. Si algo no es válido, no se cambia nada y el mensaje explica el motivo.
+3. Si el almacenamiento del navegador se llena a mitad de la importación, se conservan los datos anteriores.
+
+Para cargar un archivo de estados financieros (JSON, CSV o Excel) usa **Importar archivo** en `#/estados`; un JSON de Estados no es un respaldo y Reportes lo rechaza.
 
 ### 7.5 Dashboard resumen
 
