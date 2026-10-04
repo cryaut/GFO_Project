@@ -27,6 +27,11 @@ export function estadosUI(page, { initial, demo, save }) {
   catch (error) { draft = emptyData(); initialError = `No se pudieron editar los datos guardados: ${error.message}. No se han borrado.`; }
   let selected = draft.periods[0] || '';
   let dirty = false;
+  let numberFormat = 'auto';
+  // Opciones de lectura de importes: formato elegido y lista donde se acumulan los avisos.
+  const importOptions = () => ({ decimal: numberFormat, avisos: [] });
+  const avisoText = avisos => (avisos.length
+    ? ` Atención: ${avisos.length} importe(s) ambiguo(s). ${avisos[0]}` : '');
   const markDirty = () => { dirty = true; message('Borrador sin guardar.'); };
   const message = (text, error = false) => {
     const el = page.querySelector('#estadoMessage');
@@ -56,6 +61,13 @@ export function estadosUI(page, { initial, demo, save }) {
         <button type="button" class="btn btn-secondary" id="downloadStates">Descargar borrador JSON</button>
         <button type="button" class="btn btn-primary" id="saveStates">Guardar estados</button>
       </div><p id="estadoMessage" role="status" aria-live="polite">${dirty ? 'Borrador sin guardar.' : 'Datos guardados. Edite o importe sus estados.'}</p>
+      <label class="form-label" for="numberFormat">Formato de importes al importar CSV/Excel</label>
+      <select class="form-select" id="numberFormat">
+        <option value="auto" ${numberFormat === 'auto' ? 'selected' : ''}>Automático (recomendado)</option>
+        <option value="." ${numberFormat === '.' ? 'selected' : ''}>Punto decimal: 1,234.50</option>
+        <option value="," ${numberFormat === ',' ? 'selected' : ''}>Coma decimal: 1.234,50</option>
+      </select>
+      <p class="text-muted">Automático deduce el formato de todo el archivo y avisa de importes ambiguos como 45.000. Si su archivo usa el punto para miles, elija "Coma decimal".</p>
       <label class="form-label" for="companyName">Empresa</label><input class="form-input" id="companyName" maxlength="120" value="${esc(draft.name)}">
       <details class="mt-4"><summary>Formatos de importación admitidos y criterios</summary>
       <p><strong>Archivos:</strong> JSON (objeto con name, periods, balanceGeneral, estadoResultados y accountTypes, o {estados: …} exportado por Reportes), CSV/TSV delimitado y Excel .xlsx/.xls. La importación reemplaza el borrador, no combina periodos.</p>
@@ -199,6 +211,8 @@ export function estadosUI(page, { initial, demo, save }) {
       render();
     });
     page.querySelector('#newStates').onclick = () => replaceDraft(emptyData(), 'Borrador nuevo.');
+    const formatSelect = page.querySelector('#numberFormat');
+    if (formatSelect) formatSelect.onchange = event => { numberFormat = event.target.value || 'auto'; };
     page.querySelector('#demoStates').onclick = () => replaceDraft(normalizeFinancialData(demo), 'Ejemplo cargado como borrador. Recuerde revisar el equilibrio antes de guardar.');
     page.querySelector('#downloadStates').onclick = () => {
       try { exportJSON(normalizeFinancialData(draft), 'gfo-estados-borrador.json'); }
@@ -210,8 +224,9 @@ export function estadosUI(page, { initial, demo, save }) {
       if (!file) return;
       message('Leyendo archivo…');
       try {
-        const imported = await importStatementFile(file);
-        replaceDraft(imported, `${file.name} importado al borrador. Revise el equilibrio y pulse Guardar.`);
+        const options = importOptions();
+        const imported = await importStatementFile(file, options);
+        replaceDraft(imported, `${file.name} importado al borrador. Revise el equilibrio y pulse Guardar.${avisoText(options.avisos)}`);
       } catch (error) {
         message(error.message, true);
       }
@@ -229,9 +244,10 @@ export function estadosUI(page, { initial, demo, save }) {
       const textarea = page.querySelector('#pasteStates');
       if (!textarea.value.trim()) { message('Pegue primero la tabla de Excel.', true); return; }
       try {
-        const imported = tableTextToFinancialData(textarea.value, { name: 'Datos pegados' });
+        const options = { ...importOptions(), name: 'Datos pegados' };
+        const imported = tableTextToFinancialData(textarea.value, options);
         textarea.value = '';
-        replaceDraft(imported, 'Tabla pegada importada al borrador. Revise el equilibrio y pulse Guardar.');
+        replaceDraft(imported, `Tabla pegada importada al borrador. Revise el equilibrio y pulse Guardar.${avisoText(options.avisos)}`);
       } catch (error) {
         message(error.message, true);
       }

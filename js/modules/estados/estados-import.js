@@ -120,13 +120,26 @@ export function parseDelimited(text, delimiter) {
   rows.push(row);
   return rows.filter(cells => cells.some(cell => String(cell).trim() !== ''));
 }
-// Currency printouts often mix signs, parentheses and thousands separators.
-// Returns null for blank cells so missing periods are omitted, not zeroed.
-export function parseAmountCell(value) {
+// Formatos numéricos: 'auto' deduce el separador de cada celda; '.' y ',' fijan cuál es el
+// decimal (el otro se toma como separador de miles) y rechazan lo que no encaje.
+export const FORMATOS_IMPORTE = ['auto', '.', ','];
+const GRUPO_MILES = /^[1-9]\d{0,2}$/;
+
+function contar(text, char) {
+  return text.split(char).length - 1;
+}
+
+function esAgrupacionMiles(groups) {
+  return GRUPO_MILES.test(groups[0]) && groups.slice(1).every(group => group.length === 3);
+}
+
+// Limpia signos contables y símbolos. null = celda en blanco; { numero } = ya era numérica;
+// { text, negative } = texto con solo dígitos, '.' y ','.
+function limpiarImporte(value) {
   if (value === null || value === undefined) return null;
   if (typeof value === 'number') {
     if (!Number.isFinite(value)) throw new Error(`Importe inválido: ${value}`);
-    return value;
+    return { numero: value };
   }
   if (typeof value === 'boolean') return null;
   let text = stripAccents(value).trim();
@@ -144,25 +157,94 @@ export function parseAmountCell(value) {
     if (/^[-—–_\s]*$/.test(original) || /^(n\/?a|na|nc|s\/?d|sin dato|no aplica|no aplicable)$/i.test(original)) return null;
     throw new Error(`Importe inválido: ${value}`);
   }
+  return { text, negative };
+}
 
-  const dots = (text.match(/\./g) || []).length;
-  const commas = (text.match(/,/g) || []).length;
-  let normalized = text;
-  if (dots && commas) {
-    normalized = text.lastIndexOf('.') > text.lastIndexOf(',')
-      ? text.replace(/,/g, '')
-      : text.replace(/\./g, '').replace(/,/g, '.');
-  } else if (commas) {
-    const groups = text.split(',');
-    normalized = groups.slice(1).every(group => group.length === 3)
-      ? text.replace(/,/g, '') : text.replace(',', '.');
-  } else if (dots > 1) {
-    normalized = text.replace(/\./g, '');
+// Deduce de toda una tabla cuál es el separador decimal. '.' o ',' solo si hay evidencia
+// en un sentido y ninguna en el contrario; null si no hay evidencia o se contradice.
+// "45.000" por sí solo no es evidencia (puede ser 45 o 45 000); "1.234.567" o "12,50" sí.
+export function inferDecimalStyle(values) {
+  let punto = false;
+  let coma = false;
+  for (const value of values) {
+    let limpio;
+    try { limpio = limpiarImporte(value); } catch { continue; }
+    if (!limpio?.text) continue;
+    const { text } = limpio;
+    const dots = contar(text, '.');
+    const commas = contar(text, ',');
+    if (dots && commas) {
+      if (text.lastIndexOf('.') > text.lastIndexOf(',')) punto = true; else coma = true;
+    } else if (commas > 1) {
+      punto = true;
+    } else if (dots > 1) {
+      coma = true;
+    } else if (commas === 1 || dots === 1) {
+      const separator = commas ? ',' : '.';
+      const [entero, fraccion] = text.split(separator);
+      // Tres decimales tras un entero válido de miles ("45,000") no prueba nada.
+      if (fraccion.length !== 3 || !GRUPO_MILES.test(entero)) {
+        if (commas) coma = true; else punto = true;
+      }
+    }
   }
-  if (!/^\d+(\.\d+)?$/.test(normalized)) throw new Error(`Importe inválido: ${value}`);
+  if (punto && !coma) return '.';
+  if (coma && !punto) return ',';
+  return null;
+}
+
+function normalizarAuto(text) {
+  const dots = contar(text, '.');
+  const commas = contar(text, ',');
+  if (dots && commas) {
+    const decimalEsPunto = text.lastIndexOf('.') > text.lastIndexOf(',');
+    return { normalized: decimalEsPunto ? text.replace(/,/g, '') : text.replace(/\./g, '').replace(/,/g, '.') };
+  }
+  if (commas) {
+    // "1,234" son miles; "0,500" o "1234,5" no pueden serlo y se leen como decimales.
+    if (esAgrupacionMiles(text.split(','))) return { normalized: text.replace(/,/g, '') };
+    return { normalized: commas === 1 ? text.replace(',', '.') : text };
+  }
+  if (dots > 1) {
+    // "1.2.3" no es un importe: antes se leía como 123 sin avisar.
+    return { normalized: esAgrupacionMiles(text.split('.')) ? text.replace(/\./g, '') : text };
+  }
+  if (dots === 1) {
+    const [entero, fraccion] = text.split('.');
+    // El punto es decimal por convención, pero "45.000" suele venir de quien lo usa para miles.
+    return { normalized: text, ambiguous: fraccion.length === 3 && GRUPO_MILES.test(entero) };
+  }
+  return { normalized: text };
+}
+
+function normalizarExplicito(text, decimal) {
+  const miles = decimal === '.' ? ',' : '.';
+  const partes = text.split(decimal);
+  if (partes.length > 2) return { normalized: text };
+  const grupos = partes[0].split(miles);
+  if (grupos.length > 1 && !esAgrupacionMiles(grupos)) return { normalized: text };
+  return { normalized: grupos.join('') + (partes.length === 2 ? `.${partes[1]}` : '') };
+}
+
+// Currency printouts often mix signs, parentheses and thousands separators.
+// Returns null for blank cells so missing periods are omitted, not zeroed.
+// options.decimal: 'auto' (por defecto), '.' o ','. options.onAmbiguous({ texto, valor })
+// se llama cuando un importe en modo 'auto' admite otra lectura razonable.
+export function parseAmountCell(value, { decimal = 'auto', onAmbiguous } = {}) {
+  const limpio = limpiarImporte(value);
+  if (limpio === null) return null;
+  if (limpio.numero !== undefined) return limpio.numero;
+  const explicito = decimal === '.' || decimal === ',';
+  const { normalized, ambiguous } = explicito
+    ? normalizarExplicito(limpio.text, decimal) : normalizarAuto(limpio.text);
+  if (!/^\d+(\.\d+)?$/.test(normalized)) {
+    throw new Error(`Importe inválido: ${value}${explicito ? ` (formato con "${decimal}" decimal)` : ''}`);
+  }
   const number = Number(normalized);
   if (!Number.isFinite(number)) throw new Error(`Importe inválido: ${value}`);
-  return negative ? -number : number;
+  const result = limpio.negative ? -number : number;
+  if (ambiguous && onAmbiguous) onAmbiguous({ texto: String(value).trim(), valor: result });
+  return result;
 }
 
 function matchGroup(raw) {
@@ -220,8 +302,14 @@ function resolveClassification(group, typeRaw, name, rowNumber) {
 }
 
 
-function createBuilder() {
+const MAX_AVISOS = 100;
+
+// options.decimal: formato de importes ('auto', '.' o ','). options.avisos: arreglo donde se
+// acumulan las advertencias (importes ambiguos) sin detener la importación.
+function createBuilder({ decimal = 'auto', avisos = [] } = {}) {
+  if (!FORMATOS_IMPORTE.includes(decimal)) throw new Error(`Formato de importes no válido: ${decimal}`);
   return {
+    decimal, avisos,
     periods: [], seen: new Set(), values: 0,
     balanceGeneral: {},
     estadoResultados: {},
@@ -254,6 +342,12 @@ function ingestTable(builder, rows, defaults = {}) {
   }
 
   const cell = (row, index) => (index === -1 || index >= row.length ? '' : row[index]);
+  // En modo 'auto' el separador se deduce de toda la tabla: un "1.234.567" o un "12,50"
+  // aclaran cómo leer también "45.000". Sin evidencia, cada celda se lee por su cuenta.
+  const importeColumns = long ? [at('importe')] : periodColumns.map(({ index }) => index);
+  const inferido = builder.decimal === 'auto'
+    ? inferDecimalStyle(rows.slice(1).flatMap(row => importeColumns.map(index => cell(row, index)))) : null;
+  const decimal = inferido || builder.decimal;
   for (let r = 1; r < rows.length; r++) {
     const row = rows[r];
     const rowNumber = r + 1;
@@ -268,7 +362,18 @@ function ingestTable(builder, rows, defaults = {}) {
 
     const assign = (period, raw) => {
       if (!period) throw new Error(`Fila ${rowNumber}: falta el periodo.`);
-      const amount = parseAmountCell(raw);
+      let amount;
+      try {
+        amount = parseAmountCell(raw, {
+          decimal,
+          onAmbiguous: ({ texto, valor }) => {
+            if (builder.avisos.length >= MAX_AVISOS) return;
+            builder.avisos.push(`Fila ${rowNumber}: "${texto}" se leyó como ${valor}. Si el punto es su separador de miles, elija "Coma decimal" en Formato de importes.`);
+          }
+        });
+      } catch (error) {
+        throw new Error(`Fila ${rowNumber}, cuenta "${name}", periodo ${period}: ${error.message}`);
+      }
       if (amount === null) return;
       ensurePeriod(builder, period);
       const target = group === 'estadoResultados'
@@ -287,12 +392,12 @@ function ingestTable(builder, rows, defaults = {}) {
   }
 }
 
-export function rowsToFinancialData(rows, { name = 'Datos importados' } = {}) {
+export function rowsToFinancialData(rows, { name = 'Datos importados', decimal, avisos } = {}) {
   if (!Array.isArray(rows) || rows.length === 0) throw new Error('La tabla está vacía.');
   if (rows.length > MAX_ROWS) throw new Error('La tabla excede el límite de filas.');
   if (!Array.isArray(rows[0])) throw new Error('Formato de tabla inválido.');
   if (rows[0].length > MAX_COLUMNS) throw new Error('La tabla tiene demasiadas columnas.');
-  const builder = createBuilder();
+  const builder = createBuilder({ decimal, avisos });
   ingestTable(builder, rows);
   if (!builder.periods.length) throw new Error('La tabla no contiene importes numéricos.');
   return {
@@ -304,10 +409,10 @@ export function rowsToFinancialData(rows, { name = 'Datos importados' } = {}) {
   };
 }
 
-export function tableTextToFinancialData(text, { name = 'Datos importados' } = {}) {
+export function tableTextToFinancialData(text, { name = 'Datos importados', decimal, avisos } = {}) {
   if (typeof text !== 'string' || !text.trim()) throw new Error('El archivo está vacío.');
   const rows = parseDelimited(text, detectDelimiter(text));
-  return normalizeFinancialData(rowsToFinancialData(rows, { name }));
+  return normalizeFinancialData(rowsToFinancialData(rows, { name, decimal, avisos }));
 }
 
 function defaultsFromSheetName(sheetName) {
@@ -319,8 +424,8 @@ function defaultsFromSheetName(sheetName) {
   return {};
 }
 
-export function sheetsToFinancialData(sheets, { name = 'Datos importados' } = {}) {
-  const builder = createBuilder();
+export function sheetsToFinancialData(sheets, { name = 'Datos importados', decimal, avisos } = {}) {
+  const builder = createBuilder({ decimal, avisos });
   let used = 0;
   for (const sheet of sheets) {
     const rows = (sheet.rows || []).filter(row => row.some(value => String(value).trim() !== ''));
@@ -372,14 +477,14 @@ export function loadSheetJS() {
   return sheetjsPromise;
 }
 
-export async function workbookToFinancialData(buffer, { name = 'Datos importados' } = {}) {
+export async function workbookToFinancialData(buffer, { name = 'Datos importados', decimal, avisos } = {}) {
   const XLSX = await loadSheetJS();
   const workbook = XLSX.read(buffer, { type: 'array' });
   const sheets = workbook.SheetNames.map(sheetName => ({
     name: sheetName,
     rows: XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1, raw: true, defval: '' })
   }));
-  return sheetsToFinancialData(sheets, { name });
+  return sheetsToFinancialData(sheets, { name, decimal, avisos });
 }
 
 export function baseName(filename) {
@@ -391,7 +496,8 @@ export function extensionOf(filename) {
 }
 
 // Single entry point used by the Estados UI for any supported file.
-export async function importStatementFile(file) {
+// options.decimal y options.avisos se explican en parseAmountCell y createBuilder.
+export async function importStatementFile(file, { decimal, avisos } = {}) {
   if (!file) throw new Error('No se seleccionó ningún archivo.');
   const extension = extensionOf(file.name);
   if (extension === 'json') {
@@ -401,10 +507,10 @@ export async function importStatementFile(file) {
     return normalizeFinancialData(parsed);
   }
   if (['csv', 'tsv', 'txt'].includes(extension)) {
-    return tableTextToFinancialData(await readFile(file, 'text'), { name: baseName(file.name) });
+    return tableTextToFinancialData(await readFile(file, 'text'), { name: baseName(file.name), decimal, avisos });
   }
   if (['xlsx', 'xls'].includes(extension)) {
-    return workbookToFinancialData(await readFile(file, 'buffer'), { name: baseName(file.name) });
+    return workbookToFinancialData(await readFile(file, 'buffer'), { name: baseName(file.name), decimal, avisos });
   }
   throw new Error(`Formato no soportado (.${extension || '?'}). Use .json, .csv, .tsv, .xlsx o .xls.`);
 }
