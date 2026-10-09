@@ -182,6 +182,8 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 | `capacidadAhorro(ingresos, gastos)` | ingresos − gastos (presupuesto personal) |
 | `tasaAhorro(capacidad, ingresos)` | capacidad / ingresos; `null` si los ingresos no son positivos |
 
+**Estado de Origen y Aplicación de Fondos (EOAF).** Se arma en `js/modules/analisis/eoaf-calculations.js` con el balance comparado de dos periodos (los dos más recientes, como el resto de Análisis). Cada variación se clasifica con el grupo y el tipo de `ACCOUNT_TYPES`: activo que aumenta = aplicación, activo que disminuye = origen; pasivo o patrimonio que aumenta = origen y que disminuye = aplicación; sin variación no genera movimiento. La depreciación acumulada se clasifica por la variación de su magnitud (magnitud creciente = origen) porque el modelo no guarda el gasto del periodo por separado. Los subtotales y totales solo suman saldos y no generan movimientos; la comprobación es `Σ orígenes − Σ aplicaciones` con tolerancia de C$ 0.01, sin redistribuir diferencias.
+
 **Punto de equilibrio y C-V-U.** `null` si falta un dato o el margen de contribución no es positivo.
 
 | Función | Qué calcula |
@@ -239,7 +241,8 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 | `js/modules/estados/estados-import.js` | `importStatementFile(archivo, { decimal, avisos })`, `tableTextToFinancialData(texto, { decimal, avisos })`, `sheetsToFinancialData(hojas, { decimal, avisos })`, `parseAmountCell(valor, { decimal, onAmbiguous })`, `inferDecimalStyle(valores)`, `FORMATOS_IMPORTE`, `tabularTemplateCSV()` |
 | `js/modules/integracion/integracion-respaldo.js` | `validarRespaldo(contenido, actuales)` → `{ modulos, omitidos }`, `MAX_RESPALDO_BYTES` |
 | `js/modules/integracion/integracion-reporte.js` | `construirReporteHTML({ kpis, estados })` |
-| `js/modules/analisis/index.js` | `computeRazones(periodo)`, `computeAH`, `computeAV`, `computeDuPont`, `computeCNTCNO`, `computeEOAF`, `computeEFE`, `UMBRALES`, `refreshSavedStates()` (relee los estados guardados antes de reutilizar `computeRazones` fuera de Análisis) |
+| `js/modules/analisis/index.js` | `computeRazones(periodo)`, `computeAH`, `computeAV`, `computeDuPont`, `computeCNTCNO`, `computeEOAF(periods)` (EOAF completo: compara el par de periodos más recientes), `computeEFE`, `UMBRALES`, `refreshSavedStates()` (relee los estados guardados antes de reutilizar `computeRazones` fuera de Análisis) |
+| `js/modules/analisis/eoaf-calculations.js` | `TOLERANCIA_EOAF`, `seleccionarPeriodoPar(periodos)`, `clasificarMovimientoEOAF(grupo, tipo, saldoInicial, saldoFinal)`, `etiquetaFalta(motivo)`, `construirEOAF(datos, periodoInicial, periodoFinal)` → `{ periodos, incompleto?, secciones, resumen, advertencias, interpretacion }`, `interpretarEOAF(resultado)` |
 | `js/utils/format.js` | `formatCurrency`, `formatNumber`, `formatPercent`, `formatPercentRaw`, `parseNumber`. Convierten `null` en 0: verifica `null` antes de formatear |
 | `js/utils/html.js` | `escapeHTML(valor)` |
 | `js/modules/inventario/inventario-calculations.js` | `calcularInventario`, `kardex`, `resumenProducto`, `validarMovimiento` y el resto en `docs/api.md` |

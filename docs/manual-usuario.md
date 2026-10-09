@@ -400,6 +400,25 @@ En la pestaña **Mercado** de `#/analisis`, ingresa por periodo las acciones com
 
 El mercado paga 14.88 veces la utilidad por acción y valora la acción a 2.68 veces su valor en libros. La pestaña también muestra los dividendos que explican el cambio del patrimonio (UN − ΔPatrimonio = C$ 40,000) para comprobar el dato.
 
+### 4.7 Origen y Aplicación de Fondos (EOAF)
+
+En la pestaña **EOAF** de `#/analisis` se compara el balance de los dos periodos más recientes y cada variación de cuenta se clasifica como **Origen** (la empresa obtiene fondos) o **Aplicación** (la empresa los pone en marcha).
+
+| Regla | Ejemplo |
+|---|---|
+| Activo que aumenta | Compra de inventario → Aplicación |
+| Activo que disminuye | Cobro de una cuenta por cobrar → Origen |
+| Pasivo que aumenta | Préstamo nuevo → Origen |
+| Pasivo o patrimonio que disminuye | Dividendos pagados → Aplicación |
+
+La depreciación acumulada creciente se presenta como origen (gasto no efectivo del periodo); una nota lo explica, porque el modelo no guarda ese gasto por separado y por eso no se distingue de un retiro de activos. Los subtotales de la tabla solo suman saldos: nunca generan movimientos.
+
+Al pie está la comprobación: **Total de orígenes** contra **Total de aplicaciones**. Si la diferencia es de un centavo o menos, el estado muestra **Cuadra**; si es mayor, muestra **No cuadra** con la cifra exacta. Si falta el saldo de una cuenta en un periodo o una cuenta no tiene clasificación, la comprobación queda **Comprobación incompleta** y la lista de motivos dice qué corregir.
+
+**Ejemplo con la demo MUNO MODA (2023 → 2024):** orígenes y aplicaciones coinciden en C$ 97,775. La mayor fuente son las Utilidades Acumuladas (C$ 64,825) y la mayor aplicación el Pasivo Largo Plazo (C$ 35,000).
+
+> El estado no inventa cifras: una cuenta sin saldo en un periodo se marca "Dato faltante" y una sin clasificar "Sin clasificar". Corríjalas en Estados Financieros y vuelva a abrir Análisis.
+
 ---
 
 ## 5. Módulo 4: Activos del Hogar

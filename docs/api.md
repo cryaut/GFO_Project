@@ -733,6 +733,50 @@ Variables del paso 01 para un periodo, con sus grados, traza y faltantes.
 
 ---
 
+## eoaf-calculations.js
+
+`js/modules/analisis/eoaf-calculations.js`. Lógica pura del Estado de Origen y Aplicación de Fondos (EOAF), sin DOM ni `store`. Recibe los estados normalizados (o en bruto) y arma el balance comparado de dos periodos. La interfaz está en `index.js` (`computeEOAF`, que devuelve el resultado completo, y `renderEOAFSection`).
+
+#### `TOLERANCIA_EOAF`
+Constante `0.01`: un centavo, más el epsilon de coma flotante escalado a los totales. No se redistribuyen diferencias.
+
+#### `seleccionarPeriodoPar(periodos)`
+El par de periodos a comparar: los dos más recientes en orden cronológico (`ordenarPeriodos`); con nombres sin año ("Marzo") se respeta el orden que dejó el usuario.
+
+- **Retorno**: `{ periodoInicial, periodoFinal, periodos }` o `{ incompleto }` si hay menos de dos periodos distintos
+- **Ejemplo**: `seleccionarPeriodoPar(['2025', '2023', '2024'])` → `{ periodoInicial: '2024', periodoFinal: '2025', periodos: ['2023', '2024', '2025'] }`
+
+#### `clasificarMovimientoEOAF(grupo, tipo, saldoInicial, saldoFinal)`
+Clasifica la variación de una cuenta del balance con el grupo (`'activos'`, `'pasivos'`, `'patrimonio'`) y el tipo de `ACCOUNT_TYPES`.
+
+- **Retorno**: `{ clasificacion, monto, motivo }`
+  - `clasificacion`: `'Origen'`, `'Aplicacion'`, `'Sin movimiento'` o `null` (incompleto)
+  - `monto`: valor absoluto de la variación, o `null`
+  - `motivo`: `'falta-saldo'` (un saldo no existe), `'sin-clasificar'` (cuenta sin tipo), `'signo-cambiado'` (depreciación que cambia de signo con la misma magnitud) o `null`
+- **Reglas**: activo que aumenta → `'Aplicacion'`; activo que disminuye → `'Origen'`; pasivo/patrimonio que aumenta → `'Origen'`; que disminuye → `'Aplicacion'`. En `depreciacionAcumulada` manda la magnitud (creciente → `'Origen'`).
+- **Ejemplo**: `clasificarMovimientoEOAF('activos', 'efectivo', 100, 130)` → `{ clasificacion: 'Aplicacion', monto: 30, motivo: null }`
+
+#### `etiquetaFalta(motivo)`
+Etiqueta corta para la interfaz: `'Dato faltante'`, `'Sin clasificar'`, `'Revisar'` o `null`.
+
+#### `construirEOAF(datos, periodoInicial, periodoFinal)`
+Estado completo: secciones con filas y subtotales, resumen de la comprobación, advertencias e interpretación.
+
+- **Retorno**: `{ periodos, incompleto?, secciones, resumen, advertencias, interpretacion }`
+  - `secciones`: por grupo, `{ id, titulo, filas, subtotal }`; cada fila tiene `cuenta`, `tipo`, `saldoInicial`, `saldoFinal`, `variacion`, `clasificacion`, `origen`, `aplicacion`, `falta`, `etiqueta` y `mensaje`
+  - `subtotal`: `{ saldoInicial, saldoFinal, variacion, completo }`; es `null` si falta algún saldo
+  - `resumen`: `{ totalOrigenes, totalAplicaciones, diferencia, estado, tolerancia, motivos }` con `estado` `'cuadra'`, `'no-cuadra'` o `'incompleta'` (hay motivos)
+  - `incompleto`: con menos de dos periodos o sin balance de uno de ellos; entonces `secciones: []` y `resumen: null`
+- **N/D**: los saldos faltantes se reportan como filas con `falta: 'falta-saldo'`, no como 0; los subtotales de esa sección quedan en `null`
+- **Ejemplo**: `construirEOAF(estados, '2023', '2024')` con la demo MUNO MODA → `{ resumen: { totalOrigenes: 97775, totalAplicaciones: 97775, diferencia: 0, estado: 'cuadra' } }`
+
+#### `interpretarEOAF(resultado)`
+Lectura breve del estado en una o dos frases (mayor fuente, mayor aplicación, o la diferencia exacta si no cuadra).
+
+- **Retorno**: `string`; los nombres de cuenta que aparecen pueden venir de un archivo importado: el llamador debe escaparlos (`escapeHTML`) antes de insertarlos en HTML
+
+---
+
 ## Módulos de la guía: inventario, equilibrio, flujo, planeación y proforma
 
 Lógica pura en `js/modules/<modulo>/<modulo>-calculations.js` (sin DOM ni `store`). Cada pantalla (`<modulo>-ui.js`) recibe `page` y `{ datos, guardar, graficar? }`; su `index.js` lee el `store` y guarda con `setPersisted`.
