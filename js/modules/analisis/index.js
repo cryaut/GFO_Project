@@ -6,7 +6,7 @@ import {
   ahDelta, ahPctDelta, av, ratioCorriente, ratioRapido,
   rotacionInventario, rotacionCxC, plazoCobro, endeudamiento,
   margenNeto, roa, dupont, capitalNetoTrabajo, capitalNetoOperativo,
-  eoaf, efeIndirecto, saldoPromedio,
+  efeIndirecto, saldoPromedio,
   pruebaDefensiva, rotacionActivos, rotacionCxP, plazoPago, edadInventario,
   cicloConversion, coberturaIntereses, deudaPatrimonio, apalancamiento,
   margenBruto, margenOperativo, roe,
@@ -14,6 +14,8 @@ import {
 } from '../../utils/calculate.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
 import { normalizeFinancialData, sortPeriods } from '../estados/estados-normalize.js';
+import { escapeHTML } from '../../utils/html.js';
+import { construirEOAF, seleccionarPeriodoPar } from './eoaf-calculations.js';
 
 export const UMBRALES = {
   ratioCorrienteMin: 1,
@@ -605,32 +607,128 @@ function renderCNTCNOSection(period) {
 }
 
 export function computeEOAF(periods) {
-  if (periods.length < 2) return [];
-  const t1 = getBGData(periods[0]);
-  const t2 = getBGData(periods[1]);
-  const items = [
-    { cuenta: 'Activos Corrientes', cambio: t2.activosCorrientes - t1.activosCorrientes, tipo: 'activo' },
-    { cuenta: 'Inventario', cambio: t2.inventario - t1.inventario, tipo: 'activo' },
-    { cuenta: 'Total Activos', cambio: t2.totalActivos - t1.totalActivos, tipo: 'activo' },
-    { cuenta: 'Pasivos Corrientes', cambio: t2.pasivosCorrientes - t1.pasivosCorrientes, tipo: 'pasivo' },
-    { cuenta: 'Total Pasivos', cambio: t2.totalPasivos - t1.totalPasivos, tipo: 'pasivo' },
-    { cuenta: 'Patrimonio', cambio: t2.totalPatrimonio - t1.totalPatrimonio, tipo: 'pasivo' }
-  ];
-  return items.map(i => eoaf(i.cuenta, i.cambio, i.tipo)).filter(Boolean);
+  const par = seleccionarPeriodoPar(periods);
+  if (par.incompleto) {
+    return { periodos: null, incompleto: par.incompleto, secciones: [], resumen: null, advertencias: [], interpretacion: '' };
+  }
+  // Estados normalizados si la caché es válida; si no, los guardados en bruto:
+  // las cuentas sin clasificar se reportan en la comprobación, no se ignoran.
+  const estados = savedCache || refreshSavedStates();
+  const datos = estados || {
+    balanceGeneral: store.get('estados.balanceGeneral') || {},
+    estadoResultados: store.get('estados.estadoResultados') || {},
+    accountTypes: store.get('estados.accountTypes')
+  };
+  return construirEOAF(datos, par.periodoInicial, par.periodoFinal);
 }
 
 function renderEOAFSection(periods) {
-  const items = computeEOAF(periods);
-  if (items.length === 0) return '<p class="text-muted">Se necesitan al menos 2 periodos.</p>';
-  return `<div class="table-wrapper"><table>
-    <thead><tr><th>Cuenta</th><th class="text-right">Cambio</th><th>Clasificación</th><th class="text-right">Monto</th></tr></thead>
-    <tbody>${items.map(r => `<tr>
-      <td>${r.cuenta}</td>
-      <td class="text-right font-mono ${r.cambio < 0 ? 'text-danger' : 'text-success'}">${formatCurrency(r.cambio)}</td>
-      <td><span class="badge ${r.clasificacion === 'Origen' ? 'badge-success' : 'badge-primary'}">${r.clasificacion}</span></td>
-      <td class="text-right font-mono">${formatCurrency(r.monto)}</td>
-    </tr>`).join('')}</tbody>
-  </table></div>`;
+  const estado = computeEOAF(periods);
+  if (estado.incompleto) {
+    return `<p class="text-muted">${escapeHTML(estado.incompleto)}</p>`;
+  }
+  const { periodos, secciones, resumen, advertencias, interpretacion } = estado;
+  // Los subtotales y totales solo muestran saldos: nunca suman movimientos.
+  const fmtSaldo = valor => valor == null ? 'N/D' : formatCurrency(valor);
+  const fmtMovimiento = valor => valor == null ? '—' : formatCurrency(valor);
+  const insignia = fila => {
+    if (fila.clasificacion === 'Origen') return '<span class="badge badge-success">Origen</span>';
+    if (fila.clasificacion === 'Aplicacion') return '<span class="badge badge-primary">Aplicación</span>';
+    if (fila.clasificacion === 'Sin movimiento') return '<span class="badge badge-info">Sin movimiento</span>';
+    return `<span class="badge badge-warning">${escapeHTML(fila.etiqueta || 'Dato faltante')}</span>`;
+  };
+  const celdaMovimiento = (valor, clase) =>
+    `<td class="text-right font-mono ${valor == null ? 'text-muted' : clase}">${fmtMovimiento(valor)}</td>`;
+
+  const filas = secciones.map(seccion => `
+    <tr>
+      <td colspan="7" class="font-bold" style="background:var(--bg-tertiary)">${escapeHTML(seccion.titulo)}</td>
+    </tr>
+    ${seccion.filas.map(fila => `<tr>
+      <td>${escapeHTML(fila.cuenta)}</td>
+      <td class="text-right font-mono">${fmtSaldo(fila.saldoInicial)}</td>
+      <td class="text-right font-mono">${fmtSaldo(fila.saldoFinal)}</td>
+      ${celdaMovimiento(fila.variacion, fila.variacion < 0 ? 'text-danger' : 'text-success')}
+      <td>${insignia(fila)}</td>
+      ${celdaMovimiento(fila.origen, '')}
+      ${celdaMovimiento(fila.aplicacion, '')}
+    </tr>`).join('')}
+    <tr class="font-bold" style="border-top:2px solid var(--border-color-strong)">
+      <td>Subtotal ${escapeHTML(seccion.titulo)}</td>
+      <td class="text-right font-mono">${fmtSaldo(seccion.subtotal.saldoInicial)}</td>
+      <td class="text-right font-mono">${fmtSaldo(seccion.subtotal.saldoFinal)}</td>
+      <td class="text-right font-mono">${fmtSaldo(seccion.subtotal.variacion)}</td>
+      <td class="text-muted">—</td>
+      <td class="text-right text-muted">—</td>
+      <td class="text-right text-muted">—</td>
+    </tr>`).join('');
+
+  const pasivos = secciones.find(seccion => seccion.id === 'pasivos');
+  const patrimonio = secciones.find(seccion => seccion.id === 'patrimonio');
+  const totalPasivosPatrimonio = pasivos.subtotal.completo && patrimonio.subtotal.completo
+    ? {
+      saldoInicial: pasivos.subtotal.saldoInicial + patrimonio.subtotal.saldoInicial,
+      saldoFinal: pasivos.subtotal.saldoFinal + patrimonio.subtotal.saldoFinal,
+      variacion: pasivos.subtotal.variacion + patrimonio.subtotal.variacion
+    }
+    : { saldoInicial: null, saldoFinal: null, variacion: null };
+
+  const insigniaEstado = {
+    cuadra: '<span class="badge badge-success">Cuadra</span>',
+    'no-cuadra': '<span class="badge badge-danger">No cuadra</span>',
+    incompleta: '<span class="badge badge-warning">Comprobación incompleta</span>'
+  }[resumen.estado];
+
+  return `<p class="text-muted mb-4" style="font-size:var(--font-size-sm)">
+    Comparación de saldos: <strong>${escapeHTML(periodos.inicial)}</strong> (periodo inicial) → <strong>${escapeHTML(periodos.final)}</strong> (periodo final).
+    Reglas: aumento de activo = aplicación, disminución de activo = origen; aumento de pasivo o patrimonio = origen, disminución = aplicación;
+    sin variación = sin movimiento. Los subtotales y los totales solo muestran saldos y no generan movimientos.
+  </p>
+  <div class="table-wrapper mb-6"><table>
+    <thead><tr>
+      <th>Cuenta</th>
+      <th class="text-right">Saldo ${escapeHTML(periodos.inicial)}</th>
+      <th class="text-right">Saldo ${escapeHTML(periodos.final)}</th>
+      <th class="text-right">Variación</th>
+      <th>Clasificación</th>
+      <th class="text-right">Origen</th>
+      <th class="text-right">Aplicación</th>
+    </tr></thead>
+    <tbody>${filas}
+      <tr class="font-bold" style="border-top:2px solid var(--border-color-strong)">
+        <td>Total Pasivos y Patrimonio</td>
+        <td class="text-right font-mono">${fmtSaldo(totalPasivosPatrimonio.saldoInicial)}</td>
+        <td class="text-right font-mono">${fmtSaldo(totalPasivosPatrimonio.saldoFinal)}</td>
+        <td class="text-right font-mono">${fmtSaldo(totalPasivosPatrimonio.variacion)}</td>
+        <td class="text-muted">—</td>
+        <td class="text-right text-muted">—</td>
+        <td class="text-right text-muted">—</td>
+      </tr>
+    </tbody>
+  </table></div>
+  <div class="kpi-grid mb-4">
+    <div class="kpi-card"><div class="kpi-value">${formatCurrency(resumen.totalOrigenes)}</div><div class="kpi-label">Total de orígenes</div></div>
+    <div class="kpi-card"><div class="kpi-value">${formatCurrency(resumen.totalAplicaciones)}</div><div class="kpi-label">Total de aplicaciones</div></div>
+    <div class="kpi-card"><div class="kpi-value ${resumen.estado === 'no-cuadra' ? 'text-danger' : ''}">${formatCurrency(resumen.diferencia)}</div><div class="kpi-label">Diferencia (orígenes − aplicaciones)</div></div>
+    <div class="kpi-card">${insigniaEstado}<div class="kpi-label font-bold" style="margin-top:var(--space-2)">Estado de la comprobación</div></div>
+  </div>
+  ${resumen.motivos.length ? `<div class="card mb-4" style="border-left:4px solid var(--color-warning)">
+    <p class="font-bold mb-2">Comprobación incompleta</p>
+    <ul style="margin:0;padding-left:1.2em;font-size:var(--font-size-sm)">
+      ${resumen.motivos.map(motivo => `<li>${escapeHTML(motivo)}</li>`).join('')}
+    </ul>
+  </div>` : ''}
+  ${advertencias.length ? `<div class="card mb-4" style="border-left:4px solid var(--color-info)">
+    <p class="font-bold mb-2">Notas de la comprobación</p>
+    <ul style="margin:0;padding-left:1.2em;font-size:var(--font-size-sm)">
+      ${advertencias.map(advertencia => `<li>${escapeHTML(advertencia)}</li>`).join('')}
+    </ul>
+  </div>` : ''}
+  <div class="card mb-4" style="border-left:4px solid var(--color-primary)">
+    <p class="font-bold mb-2">Interpretación</p>
+    <p style="margin:0;font-size:var(--font-size-sm);color:var(--text-secondary)">${escapeHTML(interpretacion)}</p>
+  </div>
+  <p class="text-muted" style="font-size:var(--font-size-sm)">Tolerancia de la comprobación: C$ 0.01 (un centavo), más el redondeo de coma flotante de los totales.</p>`;
 }
 
 function renderEFESection(period) {
