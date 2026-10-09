@@ -378,12 +378,41 @@ Clasifica automáticamente un movimiento como Origen o Aplicación de Fondos.
 ### Flujo de Efectivo
 
 #### `efeIndirecto(utilidadNeta, ajustes)`
-Calcula el efectivo de operaciones por método indirecto.
+Calcula el efectivo de operaciones por método indirecto. Análisis ya no la consume en la pestaña EFE (usa `construirEFE`); sigue exportada para sus pruebas.
 
 - **Parámetros**: `utilidadNeta` (number); `ajustes` (number[]) — array de ajustes no efectivos
 - **Retorno**: `number` — efectivo neto de operaciones
 - **Fórmula**: `UtilidadNeta + Σ(ajustes)`
 - **Ejemplo**: `efeIndirecto(12000, [3000, -1000, 2000])` → `16000`
+
+#### EFE de Análisis (`js/modules/analisis/efe-calculations.js`)
+
+Lógica pura del Estado de Flujo de Efectivo por método indirecto (D-024). Recibe los estados normalizados (o crudos con `accountTypes`) y dos periodos; no toca DOM ni `store`.
+
+#### `TOLERANCIA_EFE`
+Constante: `0.01` (un centavo), la misma tolerancia del EOAF y de `validateFinancialData`. La comprobación suma además `Number.EPSILON` escalado a las magnitudes.
+
+#### `seleccionarPeriodoEFE(periodos)`
+Par de periodos a comparar: los dos más recientes con `ordenarPeriodos`; con nombres sin año ("Marzo") se respeta el orden del usuario.
+
+- **Retorno**: `{ periodoInicial, periodoFinal, periodos }` o `{ incompleto }` (menos de 2 periodos, o periodos no distintos)
+- **Ejemplo**: `seleccionarPeriodoEFE(['2025', '2023', '2024'])` → `{ periodoInicial: '2024', periodoFinal: '2025', periodos: [...] }`
+
+#### `esResultadoAcumulado(nombre)`
+`true` si el nombre corresponde a una cuenta de resultados acumuladas (utilidades/resultados acumuladas, utilidades retenidas, resultados del ejercicio…). Inferencia local por nombre: `ACCOUNT_TYPES` no tiene subtipos de patrimonio.
+
+#### `construirEFE(datos, periodoInicial, periodoFinal)`
+Arma el estado completo: operación (UN + depreciación + capital de trabajo), inversión (activos fijos), financiamiento (deuda, aportaciones y dividendos) y la comprobación.
+
+- **Retorno**: `{ periodos, incompleto?, utilidadNeta, operacion, inversion, financiamiento, totalFlujos, efectivoInicial, efectivoFinal, variacionEfectivo, diferencia, tolerancia, estado, motivos, advertencias, interpretacion }`
+  - Cada actividad: `{ items: [{ concepto, monto, falta }], total }`; `monto` es `null` (N/D) si falta un dato
+  - `estado`: `'cuadra'` (|diferencia| ≤ tolerancia), `'no-cuadra'` o `'incompleta'` (motivos: cuenta sin saldo o sin clasificar, sin ER del periodo final, sin efectivo)
+  - Sin balance de un periodo: `incompleto` y el resto en `null`
+- **Identidad**: CFO + CFI + CFF = efectivo final − efectivo inicial (D-024, D-025, D-026)
+- **Nota**: los nombres de cuenta de `motivos` y `advertencias` vienen del archivo: el llamador debe escaparlos con `escapeHTML`
+
+#### `interpretarEFE(resultado)`
+Lectura breve en una frase del estado (cuadra, no cuadra o incompleto). La calcula `construirEFE`; se expone para pruebas.
 
 ---
 

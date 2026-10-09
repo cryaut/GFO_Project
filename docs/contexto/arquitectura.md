@@ -49,7 +49,7 @@ docs/                      Documentación: contexto, reglas, planificación, API
 | Módulo | Dónde está la lógica | Notas |
 |---|---|---|
 | `estados/` | `index.js` (demo, lectura del `store`, `initEstados`), `estados-ui.js` (interfaz), `estados-import.js` (archivos), `estados-normalize.js` (validación), `estados-calculations.js` (tipos y totales) | Único módulo que ya sigue el patrón completo |
-| `analisis/` | Todo en `index.js` (unas 690 líneas: cálculo e interfaz) | `ah.js`, `av.js`, `razones.js`, `dupont.js`, `cnt-cno.js`, `eoaf.js` y `efe.js` solo reexportan funciones de `index.js` |
+| `analisis/` | `index.js` (cálculo e interfaz de las pestañas) y `mercado-calculations.js` / `mercado-ui.js` (pestaña Mercado) | `ah.js`, `av.js`, `razones.js`, `dupont.js`, `cnt-cno.js`, `eoaf.js` y `efe.js` solo reexportan funciones de `index.js`; `efe-calculations.js` es la lógica pura del EFE (D-024) |
 | `presupuesto/`, `activos/`, `mercados/`, `integracion/` | Casi todo en `index.js` | `glosario-data.js`, `comparador.js` y `quiz.js` reexportan datos de `mercados/index.js` |
 | `apalancamiento/` | `index.js` (lee el `store` e `initApalancamiento`), `apalancamiento-ui.js` (interfaz), `apalancamiento-calculations.js` (derivación pura, sin DOM ni `store`) | Lee los estados con `computeFinancialTotals` y `resolveAccountType`; las fórmulas están en `calculate.js` |
 | `inventario/`, `equilibrio/`, `flujo/`, `planeacion/`, `proforma/` | Mismo patrón que `apalancamiento/`: `<modulo>-calculations.js` puro, `<modulo>-ui.js` que recibe `page` y `{ datos, guardar, graficar? }`, e `index.js` que lee el `store` | Plan en `docs/planificacion/modulos-guia/`. `proforma/` no guarda datos: reúne los resultados de los demás con sus mismas funciones |
@@ -190,5 +190,5 @@ No la corrijas dentro de otra tarea: abre una rama propia y avísalo al equipo.
 - `package-lock.json` está en `.gitignore`, así que cada persona puede instalar versiones distintas de Vitest y ESLint.
 - `analisis/index.js` mezcla cálculo e interfaz en un solo archivo.
 - `npm run lint` reporta 11 advertencias por variables sin uso.
-- Conviven dos flujos de efectivo: el EFE de Análisis (indirecto, solo operación, sin depreciación) y el módulo Flujo de Efectivo (directo, tres actividades). Conviene unificarlos (D-012).
+- Conviven dos flujos de efectivo: el EFE de Análisis (indirecto, tres actividades derivadas de dos balances con comprobación; D-024) y el módulo Flujo de Efectivo (directo, movimientos capturados a mano). Sus cifras pueden diferir porque no comparten captura.
 - `apalancamiento-ui.js` tiene su propio lector de números; `js/utils/form.js` (`leerNumero`) hace lo mismo para los módulos nuevos.

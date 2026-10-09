@@ -25,6 +25,11 @@ Todos los cambios notables en GFO Toolkit.
 - Botón **Vista previa del reporte** (muestra el reporte en la página) y **Descargar reporte HTML**; antes el botón "Vista Previa HTML" descargaba el archivo.
 
 ### Módulo 3: Análisis Financiero
+- **EFE de tres actividades** (`efe-calculations.js`): el Estado de Flujo de Efectivo de la pestaña EFE se arma por método indirecto desde dos balances — Operación (utilidad neta + depreciación + capital de trabajo), Inversión (activos fijos) y Financiamiento (deuda, aportaciones y dividendos) — con la comprobación CFO + CFI + CFF = variación de efectivo (tolerancia C$ 0.01 + epsilon escalado). Antes `computeEFE` solo calculaba el CFO con tres ajustes y sin comprobación. (D-024)
+- Los dividendos se separan de las aportaciones con las cuentas de utilidades acumuladas (dividendos = UN − ΔRE); sin esas cuentas se usa la variación total del patrimonio con advertencia. (D-025)
+- La depreciación del periodo se estima con la variación de la depreciación acumulada, con advertencia si la cuenta está en signo positivo o si disminuye (posible baja de activos, cuyo reembolso entra en Inversión). (D-026)
+- Estados de la comprobación: `cuadra`, `no-cuadra` (con la diferencia exacta) e `incompleta` (cuenta sin saldo o sin clasificar, sin estado de resultados, sin efectivo); nunca se ajustan cifras ni se inventan datos. Intereses e impuestos quedan dentro de la utilidad neta.
+- Pruebas del EFE (`tests/unit/efe.test.js`): demo MUNO MODA 2023→2024 cuadra (CFO C$ 97,775; CFI C$ 0; CFF C$ −90,775; Δ efectivo C$ 7,000), caso sintético con capex, préstamo y dividendos, no-cuadra con diferencia exacta, depreciación en signo positivo, baja de activos fijos, fallback sin utilidades acumuladas, datos faltantes y escape HTML.
 - Nuevas razones: rotación de activos fijos, rotación de capital de trabajo y solvencia (Activos ÷ Pasivos).
 - Las razones extendidas y los totales se calculan con el motor compartido, por lo que cuentas importadas con nombres propios se suman correctamente.
 - Integración de la rama de razones: rotación de cuentas por pagar (reemplaza a la "rotación de pasivos"), edad del inventario y grupo "Endeudamiento y Cobertura" en la pestaña Razones.

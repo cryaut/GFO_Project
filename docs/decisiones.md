@@ -70,6 +70,9 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-018 | Presupuesto personal y Activos del hogar se separan de la empresa | Vigente |
 | D-019 | Importes con punto: formato elegible, deducción por archivo y aviso de ambigüedad | Vigente |
 | D-020 | El importador JSON de Reportes solo acepta respaldos validados | Vigente |
+| D-024 | El EFE de Análisis deriva las tres actividades desde dos balances | Vigente |
+| D-025 | Dividendos desde las utilidades acumuladas, con respaldo en la variación de patrimonio | Vigente |
+| D-026 | Depreciación del periodo por variación de la depreciación acumulada, con advertencias | Vigente |
 
 ## Decisiones
 
@@ -498,3 +501,69 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 **Para revertirla.** Volver al bucle `store.set` de `bindExportEvents` y eliminar `integracion-respaldo.js` con sus tests.
 
 **Referencias.** [ficha importación/exportación](planificacion/importacion-exportacion/README.md).
+
+### D-024 — El EFE de Análisis deriva las tres actividades desde dos balances
+
+- **Fecha**: 2026-10-09
+- **Estado**: Vigente
+- **Decidió**: Henry (propuesta 3 de `modulos-guia/02-valor-agregado.md`); sesión con IA
+- **Área**: `js/modules/analisis/` (`efe-calculations.js`, `index.js`), `tests/unit/efe.test.js`
+
+**Contexto.** `computeEFE` solo calculaba el flujo operativo con tres ajustes de capital de trabajo, sin depreciación, sin inversión ni financiamiento y sin comprobación. La guía pide flujos por actividad y D-012 dejó la derivación desde los estados "como mejora coordinada con Henry"; la propuesta 3 del plan de valor agregado la aprobó.
+
+**Opciones.**
+1. Reemplazar `computeEFE` por un EFE indirecto completo (tres actividades + comprobación CFO+CFI+CFF = Δ efectivo) — una sola cifra de operación y el tablero cumple la guía / cambia cifras que hoy ve el usuario.
+2. Agregar una pestaña nueva junto al EFE viejo — no cambia cifras existentes / conviven dos EFE con CFO distinto y el usuario no sabe cuál creer.
+3. Derivar el EFE con el método directo desde `#/flujo` — mismo enfoque que ese módulo / `#/flujo` es de captura manual, no deriva de los estados, y D-012 lo dejó separado.
+
+**Decisión.** Opción 1, en la rama `flujo-de-efectivo` y con la aprobación de Henry. El módulo `#/flujo` (D-012) no cambia.
+
+**Consecuencias.** La pestaña EFE muestra las tres actividades, KPIs CFO/CFI/CFF, la variación de efectivo y la comprobación con estados `cuadra`, `no-cuadra` o `incompleta` (tolerancia C$ 0.01, más epsilon escalado; nunca se ajustan cifras). Cambian las cifras de la demo: CFO C$ 97,775, CFF C$ −90,775 y Δ efectivo C$ 7,000 que sí cuadra. `efeIndirecto` de `calculate.js` sigue exportado (lo usan sus tests) pero Análisis ya no lo consume. Conflicto de merge esperado con `origen-y-aplicacion` en `analisis/index.js`.
+
+**Para revertirla.** Restaurar el `computeEFE` anterior en `index.js`, retirar `efe-calculations.js` y `tests/unit/efe.test.js`.
+
+**Referencias.** [02-valor-agregado propuesta 3](planificacion/modulos-guia/02-valor-agregado.md), [ficha flujo-de-efectivo](planificacion/flujo-de-efectivo/README.md), D-012.
+
+### D-025 — Dividendos desde las utilidades acumuladas, con respaldo en la variación de patrimonio
+
+- **Fecha**: 2026-10-09
+- **Estado**: Vigente
+- **Decidió**: Henry (sesión con IA; pendiente de revisión del equipo)
+- **Área**: `js/modules/analisis/efe-calculations.js`
+
+**Contexto.** El modelo no guarda una cuenta de dividendos: en Financiamiento hay que separar aportaciones de capital de dividendos usando solo los estados.
+
+**Opciones.**
+1. Si el patrimonio trae cuentas de resultados acumuladas: dividendos = UN − ΔRE y aportaciones = ΔPatrimonio − ΔRE; si no, ΔPatrimonio total con la UN descontada y advertencia — las dos formas reconcilian exactamente / depende del nombre de la cuenta RE.
+2. Siempre ΔPatrimonio − UN como "dividendos" — simple / mezcla aportaciones con dividendos y da dividendos negativos cuando hay aportaciones.
+3. No mostrar dividendos; solo ΔPatrimonio — sin inferencias / menos informativo y no coincide con la demo.
+
+**Decisión.** Opción 1. La detección de RE es un `esResultadoAcumulado` local por nombre, porque partir `ACCOUNT_TYPES` en subtipos de patrimonio cambiaría el patrimonio que consumen las razones.
+
+**Consecuencias.** Con la demo (Utilidades Acumuladas) los dividendos salen C$ −40,000 y las aportaciones 0; sin RE se muestra la variación de patrimonio con la UN en negativo y una advertencia. Ninguna variación inventa datos: si falta el saldo o la UN, el renglón queda N/D y la comprobación pasa a `incompleta`.
+
+**Para revertirla.** Quitar `esResultadoAcumulado` y el bloque condicional de Financiamiento en `construirEFE`.
+
+**Referencias.** [ficha flujo-de-efectivo](planificacion/flujo-de-efectivo/README.md).
+
+### D-026 — Depreciación del periodo por variación de la depreciación acumulada, con advertencias
+
+- **Fecha**: 2026-10-09
+- **Estado**: Vigente
+- **Decidió**: Henry (sesión con IA; pendiente de revisión del equipo)
+- **Área**: `js/modules/analisis/efe-calculations.js`
+
+**Contexto.** El modelo no guarda el gasto de depreciación del periodo; el balance solo trae la depreciación acumulada. Sin ese ajuste el CFO queda subestimado cuando los activos fijos cambian.
+
+**Opciones.**
+1. Depreciación = Δ de la magnitud de la depreciación acumulada (|final| − |inicial|), con advertencia si la cuenta está en signo positivo o si disminuye (posible baja de activos) — usa el dato disponible y avisa del límite / es una estimación, no el gasto del libro.
+2. No incluir depreciación — hereda el error del EFE anterior / la comprobación no cuadra cuando hay activos fijos.
+3. Pedir el gasto al usuario en una pantalla nueva — dato exacto / otra captura manual que mantener.
+
+**Decisión.** Opción 1. La tolerancia de la comprobación es `TOLERANCIA_EFE` = 0.01 (misma que el EOAF y `validateFinancialData`) más `Number.EPSILON` escalado a las magnitudes.
+
+**Consecuencias.** El CFO incluye la depreciación no efectiva. Una depreciación en signo positivo (captura equivocada) se advierte y la comprobación puede no cuadrar hasta corregir el signo; una depreciación que baja se advierte como posible baja de activos, cuyo reembolso va a Inversión. Intereses e impuestos quedan dentro de la UN, como en el método indirecto clásico.
+
+**Para revertirla.** Quitar `deltaDepreciacion` y sus advertencias de `construirEFE`.
+
+**Referencias.** [ficha flujo-de-efectivo](planificacion/flujo-de-efectivo/README.md).

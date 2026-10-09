@@ -400,6 +400,30 @@ En la pestaña **Mercado** de `#/analisis`, ingresa por periodo las acciones com
 
 El mercado paga 14.88 veces la utilidad por acción y valora la acción a 2.68 veces su valor en libros. La pestaña también muestra los dividendos que explican el cambio del patrimonio (UN − ΔPatrimonio = C$ 40,000) para comprobar el dato.
 
+### 4.7 Estado de Flujo de Efectivo (EFE)
+
+En la pestaña **EFE** de `#/analisis` se arma el estado de flujo de efectivo por método indirecto a partir de dos balances guardados (el periodo anterior y el último). Con un solo periodo la pestaña explica qué falta.
+
+**Las tres actividades:**
+
+- **Operación:** utilidad neta del periodo final + depreciación y amortización del periodo − aumentos de inventario, cuentas por cobrar y otros activos corrientes + aumentos de cuentas por pagar y provisiones.
+- **Inversión:** compra (−) o baja (+) de activos fijos.
+- **Financiamiento:** variación de la deuda a largo y corto plazo, aportaciones de capital y dividendos.
+
+**Comprobación:** CFO + CFI + CFF debe ser igual a la variación de efectivo (efectivo final − efectivo inicial). La pestaña lo comprueba con una tolerancia de C$ 0.01 y muestra la insignia **Cuadra**, **No cuadra** (con la diferencia exacta) o **Comprobación incompleta** (con los motivos: cuenta sin saldo, sin clasificar, sin estado de resultados o sin efectivo). El estado no ajusta cifras ni distribuye diferencias: si no cuadra, hay que revisar los datos en Estados Financieros.
+
+**Ejemplo con la demo MUNO MODA (2023 → 2024):**
+
+| Actividad | Cálculo | Resultado |
+|---|---|---:|
+| Operación (CFO) | 104,825 + 17,950 − 15,000 − 15,000 − 5,000 + 7,000 + 3,000 | C$ 97,775 |
+| Inversión (CFI) | activos fijos sin cambio | C$ 0 |
+| Financiamiento (CFF) | −55,775 (deuda LP) + 5,000 (deuda CP) − 40,000 (dividendos) | C$ −90,775 |
+| **Total de flujos** | 97,775 + 0 − 90,775 | **C$ 7,000** |
+| Variación de efectivo | 52,000 − 45,000 | C$ 7,000 |
+
+La comprobación cuadra. Los dividendos (C$ 40,000) se derivan de la utilidad neta menos el aumento de las utilidades acumuladas. Los gastos por intereses y los impuestos ya están dentro de la utilidad neta.
+
 ---
 
 ## 5. Módulo 4: Activos del Hogar

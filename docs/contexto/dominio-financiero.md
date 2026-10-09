@@ -173,7 +173,8 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 | Función | Qué calcula |
 |---|---|
 | `eoaf(cuenta, cambio, tipo)` | Clasifica un cambio como `'Origen'` o `'Aplicacion'`; `null` si el cambio es 0 |
-| `efeIndirecto(UN, ajustes)` | UN + suma de ajustes |
+| `efeIndirecto(UN, ajustes)` | UN + suma de ajustes (pruebas; la pestaña EFE usa `construirEFE`) |
+| `construirEFE(datos, inicial, final)` | EFE indirecto: operación (UN + depreciación + capital de trabajo), inversión, financiamiento y comprobación CFO+CFI+CFF = Δ efectivo (tolerancia 0.01). Dividendos = UN − ΔRE si hay utilidades acumuladas; depreciación = Δ de la magnitud de la depreciación acumulada |
 | `depAnualLineaRecta(costo, residual, vidaUtil)` | (costo − residual) / vida útil; 0 si la vida útil es ≤ 0 |
 | `depAcumulada(depAnual, anios, vidaUtil)` | depAnual × mín(años, vida útil) |
 | `valorEnLibros(costo, depAcumulada)` | costo − depreciación acumulada |
@@ -240,6 +241,7 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 | `js/modules/integracion/integracion-respaldo.js` | `validarRespaldo(contenido, actuales)` → `{ modulos, omitidos }`, `MAX_RESPALDO_BYTES` |
 | `js/modules/integracion/integracion-reporte.js` | `construirReporteHTML({ kpis, estados })` |
 | `js/modules/analisis/index.js` | `computeRazones(periodo)`, `computeAH`, `computeAV`, `computeDuPont`, `computeCNTCNO`, `computeEOAF`, `computeEFE`, `UMBRALES`, `refreshSavedStates()` (relee los estados guardados antes de reutilizar `computeRazones` fuera de Análisis) |
+| `js/modules/analisis/efe-calculations.js` | `TOLERANCIA_EFE`, `seleccionarPeriodoEFE`, `esResultadoAcumulado`, `construirEFE`, `interpretarEFE` (EFE por método indirecto, sin DOM ni store) |
 | `js/utils/format.js` | `formatCurrency`, `formatNumber`, `formatPercent`, `formatPercentRaw`, `parseNumber`. Convierten `null` en 0: verifica `null` antes de formatear |
 | `js/utils/html.js` | `escapeHTML(valor)` |
 | `js/modules/inventario/inventario-calculations.js` | `calcularInventario`, `kardex`, `resumenProducto`, `validarMovimiento` y el resto en `docs/api.md` |

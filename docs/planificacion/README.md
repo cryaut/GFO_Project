@@ -12,6 +12,7 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 | Corrección de razones financieras (auditoría) | Henry | En revisión (se integra con `feat/modulos-guia`) | [razones-financieras-v3](razones-financieras-v3/README.md) |
 | Mejoras de apariencia, Inicio como panorama y finanzas personales separadas | Carlos | En revisión | [mejoras-apariencia](mejoras-apariencia/README.md) |
 | Importación y exportación: importes, respaldo JSON y reporte HTML | Carlos | En revisión | [importacion-exportacion](importacion-exportacion/README.md) |
+| Flujo de efectivo desde los estados (EFE de Análisis) | Henry | En revisión | [flujo-de-efectivo](flujo-de-efectivo/README.md) |
 
 Agrega una fila cuando empieces una feature y actualiza el estado cuando cambie.
 
