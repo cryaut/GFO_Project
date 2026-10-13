@@ -27,5 +27,9 @@ Que importar y exportar no pierda ni corrompa datos sin avisar: leer bien los im
 ## Pendientes detectados (fuera de este alcance)
 Codificación de CSV (Windows-1252), `MAX_ROWS`/`MAX_COLUMNS` no aplican a Excel, errores de importación de uno en uno, importar reemplaza el borrador sin modo "combinar", columnas no numéricas tratadas como periodos, comillas sin cerrar en CSV, hojas de Excel ignoradas sin aviso, SheetJS 0.18.5 por CDN sin SRI, `downloadBlob` revoca la URL de inmediato, CSV sin inyección de fórmulas neutralizada, exportación limitada a Estados, y `store.load()` con copia superficial de `defaultData`.
 
+## Avance posterior: 2026-10-12
+
+La [feature de revisión de importaciones](../estados-importacion-review/README.md) añade Windows-1252, límites en Excel, revisión de errores por filas y lector SheetJS local actualizado. El modo combinar y la exportación a Excel/PDF permanecen pendientes. La ficha anterior conserva el alcance de su rama original.
+
 ## Próximo paso
 Revisión de Cris (área Estados/Reportes) y PR hacia `main`.

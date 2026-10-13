@@ -91,18 +91,20 @@ Para agregar una ruta:
 
 ```mermaid
 flowchart LR
-    A["Archivo JSON, CSV, TSV o Excel"] --> B["importStatementFile<br/>estados-import.js"]
-    B --> C["normalizeFinancialData<br/>estados-normalize.js"]
+    A["Archivo JSON, CSV, TSV o Excel"] --> B["readStatementSource<br/>estados-import.js"]
+    B --> R["prepareStatementImport<br/>revisión y correcciones en memoria"]
+    R -->|Aplicar| C["finalizeImportReview<br/>normalizeFinancialData"]
     C --> D["Borrador en estadosUI<br/>vista previa, edición y A = P + O"]
     D -->|Guardar| E[("store.setPersisted('estados')")]
     E --> F["Análisis y Reportes:<br/>normalizeFinancialData + computeFinancialTotals"]
 ```
 
 - Importación: tabla ancha (`Estado`, `Grupo`, `Cuenta`, `Clasificacion` y una columna por periodo) o larga (`Periodo`, `Estado`, `Grupo`, `Cuenta`, `Clasificacion`, `Importe`). La columna `Cuenta` es obligatoria. En Excel, cada hoja puede ser un estado o un grupo.
-- Clasificación: si una fila no trae `Clasificacion`, el tipo se infiere por el nombre (`inferAccountType`). Si no se reconoce, la importación se detiene con un error que indica la fila. Los tipos válidos están en `dominio-financiero.md`.
+- Clasificación: el catálogo de `estados-catalogo.js` proporciona nombres, alias y tipos compatibles. `estados-import-review.js` conserva cuentas pendientes y errores por fila fuera del borrador; el usuario corrige o excluye antes de aplicar. Las APIs estrictas existentes siguen rechazando cuentas no clasificadas. Los tipos válidos están en `dominio-financiero.md`.
 - Importes: acepta separadores de miles, `C$`, paréntesis y signo al final como negativo. Una celda vacía omite la cuenta en ese periodo; no la convierte en 0. El separador decimal se elige (`auto`, `.` o `,`); en `auto` se deduce de toda la tabla con `inferDecimalStyle` y, si no hay evidencia, se usa el punto decimal y se avisa de los importes ambiguos (`45.000`). D-019.
-- Límites: 5,000 filas, 120 columnas y 20,000 importes por archivo; 100 periodos y 200 cuentas por grupo en cualquier formato.
-- Plantilla: botón "Descargar plantilla CSV" en Estados (`tabularTemplateCSV`). Ejemplos en `scripts/sample-estados.csv` y `scripts/sample-estados.json`.
+- Límites: 10 MB, 50 hojas, 5,000 filas, 120 columnas y 20,000 celdas de importes por archivo; 100 periodos y 200 cuentas por grupo y periodo. Excel se verifica antes de convertir sus hojas y conserva los números físicos de fila.
+- Plantillas: CSV (`tabularTemplateCSV`) y `scripts/gfo-plantilla-estados.xlsx`, con hojas de situación financiera y resultados. Lector local SheetJS CE 0.20.3 con licencia en `assets/vendor/`.
+- IA: `estados-import-ia.js` define un contrato para cuentas pendientes y una implementación deshabilitada que rechaza la ejecución. No hay solicitudes, proveedor ni almacenamiento de claves.
 - Nada se guarda hasta que el usuario presiona Guardar. Si el guardado falla, los datos anteriores quedan intactos.
 
 ## Datos guardados (`store`)

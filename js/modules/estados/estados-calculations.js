@@ -1,3 +1,5 @@
+import { matchCatalogAccount } from './estados-catalogo.js';
+
 export const ACCOUNT_TYPES = {
   activos: ['efectivo', 'cxC', 'inventario', 'activosCorrientesOtros', 'activosFijos', 'depreciacionAcumulada'],
   pasivos: ['cuentasPorPagar', 'pasivoCortoPlazo', 'provisiones', 'pasivoLargoPlazo'],
@@ -13,6 +15,8 @@ function normalizeName(name) {
 // Explicit mappings take precedence. Unrecognized names are never silently
 // treated as current assets, debt or expenses: callers must request a mapping.
 export function inferAccountType(group, name) {
+  const catalog = matchCatalogAccount(name, group);
+  if (catalog) return catalog.tipo;
   const key = normalizeName(name);
   if (!key) return '';
   const rules = {

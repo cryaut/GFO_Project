@@ -89,9 +89,18 @@ Definidos en `js/modules/estados/estados-calculations.js`. Cada cuenta de los es
 - Activo corriente = efectivo + cxC + inventario + activosCorrientesOtros.
 - Pasivo corriente = cuentasPorPagar + pasivoCortoPlazo + provisiones.
 
-Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCOUNT_TYPES`, las reglas de `inferAccountType`, `TYPE_ALIASES` en `estados-import.js` y `computeFinancialTotals`, además de sus tests. Es un cambio compartido: coordínalo con el responsable de Estados.
+Agregar un tipo (por ejemplo, dividendos preferentes) afecta a `ACCOUNT_TYPES`, el catálogo de `estados-catalogo.js`, las reglas de `inferAccountType`, `TYPE_ALIASES` en `estados-import.js` y `computeFinancialTotals`, además de sus tests. Es un cambio compartido: coordínalo con el responsable de Estados. Los alias actuales reutilizan los tipos existentes; [catálogo, fuentes y límites](../catalogo-cuentas.md).
 
 ## Catálogo de funciones
+
+**Importación con revisión (sin nuevas fórmulas):**
+
+| Archivo | Funciones y constantes |
+|---|---|
+| `estados-catalogo.js` | `ACCOUNT_CATALOG`, `ACCOUNT_LABELS`, `GROUP_LABELS`, `CATALOGO_VERSION`, `normalizeAccountName`, `matchCatalogAccount`, `isStatementSubtotal` |
+| `estados-import.js` | `readStatementSource`, `workbookToSheets`, `resolveGroup`, `resolveClassification`, `MAX_STATEMENT_BYTES` (lectura y clasificación compartidas) |
+| `estados-import-review.js` | `prepareStatementImport`, `sheetsToImportReview`, `textToImportReview`, `evaluateImportReview`, `updateImportClassification`, `updateImportAmount`, `updateImportName`, `finalizeImportReview` |
+| `estados-import-ia.js` | `IMPORT_AI_STATUS`, `buildImportAIRequest`, `suggestImportAccounts` (deshabilitada) |
 
 ### `js/utils/calculate.js`
 
