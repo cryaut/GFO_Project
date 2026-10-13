@@ -3,6 +3,7 @@
 - **Estado**: En revisión
 - **Responsable**: Carlos
 - **Rama**: `feat/estados-importacion-review`
+- **PR**: [#9 — Estados organizados e importación con revisión](https://github.com/cryaut/GFO_Project/pull/9) (borrador, base `fix/fiabilidad-interfaz`; depende del [PR #8](https://github.com/cryaut/GFO_Project/pull/8))
 - **Última actualización**: 2026-10-12
 
 ## Objetivo
@@ -33,10 +34,12 @@ Estados: catálogo, lector, revisión, contrato de IA y editor. Compartidos: `es
 
 ## Validación
 
+- Suite completa: **432 pruebas en 40 archivos aprobadas**; lint sin errores, con 7 advertencias preexistentes. Rama actualizada con `origin/main` (`cb5620c`) sin conflictos.
 - Pruebas de reconocimiento, clasificación manual, importes, duplicados, subtotales, claves reservadas, límites, codificación, cancelación y lecturas que terminan fuera de orden.
 - Navegador Edge con conexiones externas bloqueadas: plantilla Excel → revisión → guardado → Análisis; corrección de cuenta e importe; rechazo de JSON; temas claro/oscuro y ancho de 390 píxeles sin desbordar la página.
 - Plantilla renderizada y revisada en ambas hojas. Datos de ejemplo: activos 425000 y 477000; pasivos 225000 y 217000; patrimonio 200000 y 260000; utilidad neta 112000 y 132300.
+- Revisión final: nombre de empresa conservado en respaldos JSON y clasificación manual conservada al corregir nombres. Navegación de Reportes y descarga de plantilla verificadas en Edge; `.gitattributes` mantiene la huella oficial del lector entre sistemas.
 
 ## Próximo paso
 
-Revisión del equipo con los Excel reales de las soluciones. Permanecen fuera del avance: combinar conjuntos, interpretar formatos arbitrarios, exportar Excel/PDF e implementar un proveedor de IA. Los cambios están preparados localmente; no se publicaron ni se integraron a main.
+Revisión del equipo con los Excel reales de las soluciones. Integrar primero el PR #8; luego actualizar la base del PR #9 a `main` y verificar la integración antes de marcarlo listo. Se usa una base dependiente para evitar revisar dos veces el avance anterior, según la excepción de flujo autorizada por el usuario. Permanecen fuera del avance: combinar conjuntos, interpretar formatos arbitrarios, exportar Excel/PDF e implementar un proveedor de IA. Los cambios están enviados en su rama y PR borrador; no se integraron a main.
