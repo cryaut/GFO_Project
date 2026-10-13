@@ -93,7 +93,7 @@ describe('plazos en días (año de 365)', () => {
     expect(razones.rotacionCxP).toBe(8); // 400 / 50
     expect(razones.plazoPago).toBeCloseTo(45.625, 6);
     expect(razones.cicloConversion).toBeCloseTo(82.125, 6); // 36.5 + 91.25 − 45.625
-    expect(html).toContain('Rotación CxC (ventas totales)');
+    expect(html).toContain('Rotación de cuentas por cobrar (ventas totales)');
     expect(html).toContain('con ventas totales');
     expect(html).toContain('Ciclo de conversión de efectivo mayor a 60 días');
     expect(html).not.toContain('NaN');

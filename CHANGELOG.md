@@ -7,6 +7,11 @@ Todos los cambios notables en GFO Toolkit.
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
 ### Módulo 2: Estados Financieros
+- La importación JSON conserva el nombre de la empresa dentro de un respaldo completo; corregir el nombre de una cuenta en la revisión conserva la clasificación manual elegida.
+- Estado de situación financiera y estado de resultados en secciones diferenciadas; acciones Importar, Exportar y Guardar con flujo visible. Comparación entre periodos distingue datos ausentes (N/D) de cero.
+- Catálogo inicial de 35 cuentas con nombres alternativos y descarga JSON. Revisión de importaciones con clasificación manual, corrección de nombres/importes, detección de duplicados, subtotales excluidos y hojas ignoradas; búsqueda y páginas de 30 filas.
+- Plantilla Excel con dos hojas y datos de ejemplo equilibrados; lector SheetJS 0.20.3 local con licencia, límites aplicados a Excel y lectura de UTF-8, UTF-16 y Windows-1252. Se rechazan CSV con comillas abiertas y texto numérico inválido.
+- Aplicar al borrador exige revisión explícita; cancelar, rechazar un archivo o recibir una lectura antigua conserva la publicación anterior. Contrato de asistencia con IA preparado y deshabilitado, sin claves ni peticiones.
 - El borrador sin guardar se conserva al volver desde otra ruta; aviso al recargar/cerrar. `loadDemo()` publica el conjunto completo en una sola escritura, sin compartir referencias con la demo.
 - Barra de acciones compacta, selector de archivo accesible y campos de edición legibles en móvil; vista multiperiodo con importes alineados y sin partir la moneda.
 - **Importes ambiguos (importación):** `parseAmountCell(valor, { decimal, onAmbiguous })` admite un formato explícito (`'.'` o `','` decimal) además de `'auto'`. En automático, el separador se deduce de toda la tabla (`inferDecimalStyle`): un `1.234.567` o un `12,50` aclaran cómo leer `45.000`. Sin evidencia se conserva la convención (punto decimal) y se **avisa** con el número de fila en lugar de leer 45 en silencio.
@@ -21,12 +26,14 @@ Todos los cambios notables en GFO Toolkit.
 - Orden cronológico de periodos en `normalizeFinancialData` cuando todos empiezan con un año (`ordenarPeriodos`; el importador sigue usando `sortPeriods`): el "último periodo" y el periodo previo ya no dependen del orden de llegada. Con nombres como "Marzo" se respeta el orden que el usuario deja en Estados.
 
 ### Módulo 6: Reportes e Integración
+- Acciones separadas y ordenadas en Importar, Exportar y Resumen financiero; importación de estados y restauración de respaldos con instrucciones diferenciadas.
 - **Importar JSON validado** (`integracion-respaldo.js`): solo se aceptan módulos que el `store` conoce, con el tipo correcto; `estados` pasa por `normalizeFinancialData`; se rechazan `__proto__`/`constructor`/`prototype`, estructuras muy profundas y archivos de más de 5 MB. Antes se escribía cualquier clave con `store.set` sin validar.
 - La importación pide confirmación, guarda con `setPersisted` y, si el almacenamiento falla a mitad, restaura los módulos ya guardados. Un JSON de Estados (sin módulos reconocibles) se rechaza con la indicación de importarlo desde Estados Financieros.
 - **Reporte HTML corregido** (`integracion-reporte.js`): una columna por periodo (antes las filas tenían 2 celdas bajo N encabezados), agrega Estado de Resultados y Totales por periodo, muestra N/D y "—" en lugar de 0, y **escapa** cuentas, periodos y empresa (antes un nombre de cuenta importado se insertaba como HTML).
 - Botón **Vista previa del reporte** (muestra el reporte en la página) y **Descargar reporte HTML**; antes el botón "Vista Previa HTML" descargaba el archivo.
 
 ### Módulo 3: Análisis Financiero
+- Pestañas y conceptos de análisis con nombres completos; Estado de situación financiera, cuentas por cobrar/pagar y componentes DuPont identificados sin depender de abreviaturas.
 - Las cuentas y etiquetas de periodo se escapan con `escapeHTML` también en AV, AH y evolución; los nombres importados se muestran como texto.
 - Nuevas razones: rotación de activos fijos, rotación de capital de trabajo y solvencia (Activos ÷ Pasivos).
 - Las razones extendidas y los totales se calculan con el motor compartido, por lo que cuentas importadas con nombres propios se suman correctamente.

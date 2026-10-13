@@ -13,6 +13,7 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 | Mejoras de apariencia, Inicio como panorama y finanzas personales separadas | Carlos | En revisión | [mejoras-apariencia](mejoras-apariencia/README.md) |
 | Importación y exportación: importes, respaldo JSON y reporte HTML | Carlos | En revisión | [importacion-exportacion](importacion-exportacion/README.md) |
 | Fiabilidad de guardados, borradores e interfaz | Carlos | En revisión | [fiabilidad-interfaz](fiabilidad-interfaz/README.md) |
+| Estados organizados e importación con revisión, catálogo y preparación de IA | Carlos | En revisión | [estados-importacion-review](estados-importacion-review/README.md) |
 
 Agrega una fila cuando empieces una feature y actualiza el estado cuando cambie.
 

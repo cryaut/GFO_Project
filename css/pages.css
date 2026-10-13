@@ -347,6 +347,73 @@
 }
 
 /* Estados */
+/* Estados financieros: flujo, revisión de importaciones y documentos. */
+.states-workflow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+  list-style-position: inside;
+  margin: var(--space-5) 0 0;
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+.states-workflow li:first-child { color: var(--ink-primary, var(--text-primary)); font-weight: 600; }
+.states-import-card h2, .states-review-card h2 { margin-bottom: var(--space-2); }
+.states-import-card > p { margin-bottom: var(--space-5); }
+.states-secondary-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-color);
+}
+.states-secondary-actions > span { color: var(--text-secondary); font-size: var(--font-size-sm); }
+.states-section-heading { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); margin: var(--space-6) 0 var(--space-4); }
+.states-statement-switch { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-5); }
+.states-statement-title { margin: var(--space-5) 0; }
+.states-balance-check { margin-top: var(--space-5); }
+.states-balance-check h2 { margin-bottom: var(--space-3); }
+.states-statement-preview { margin-top: var(--space-5); }
+.states-statement-preview > h2 { border-bottom: 2px solid var(--color-primary); padding-bottom: var(--space-4); margin-bottom: var(--space-5); }
+.states-statement-preview h3 { margin: var(--space-4) 0 var(--space-3); }
+.states-review-card { border: 1px solid var(--color-primary); margin-bottom: var(--space-6); }
+.states-review-counts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-3); margin: var(--space-5) 0; }
+.states-review-counts > div { display: flex; flex-direction: column; padding: var(--space-4); border-radius: var(--radius-md); background: var(--bg-tertiary); }
+.states-review-counts strong { font-size: var(--font-size-2xl); }
+.states-review-counts span { color: var(--text-secondary); font-size: var(--font-size-sm); }
+.states-review-tools { display: grid; grid-template-columns: minmax(160px, 1fr) minmax(180px, 2fr); gap: var(--space-4); margin-bottom: var(--space-4); }
+.states-review-tools label { display: grid; gap: var(--space-2); }
+.states-review-table { min-width: 840px; }
+.states-review-table td { vertical-align: top; min-width: 190px; white-space: normal; }
+.states-review-table td:first-child { min-width: 210px; }
+.states-review-table small { display: block; color: var(--text-secondary); margin: var(--space-2) 0; }
+.states-review-table ul { padding-left: var(--space-4); margin: var(--space-2) 0; font-size: var(--font-size-sm); }
+.states-review-amount { display: grid; grid-template-columns: 80px minmax(100px, 1fr); align-items: center; gap: var(--space-2); margin-bottom: var(--space-2); font-size: var(--font-size-sm); }
+.states-review-amount input { text-align: right; }
+.states-review-status { font-size: var(--font-size-sm); font-weight: 600; }
+.states-review-skip { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-3); font-size: var(--font-size-sm); }
+.states-row-ignored { background: var(--bg-tertiary); }
+.states-review-pagination, .states-review-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); margin: var(--space-4) 0; }
+.states-review-pagination { justify-content: space-between; font-size: var(--font-size-sm); }
+.states-review-notes { margin: var(--space-4) 0; padding: var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-md); }
+.states-review-notes ul { padding-left: var(--space-5); margin-top: var(--space-3); }
+.states-review-balances { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.states-review-balance { padding: var(--space-2) var(--space-3); background: var(--bg-tertiary); border-radius: var(--radius-md); font-size: var(--font-size-sm); }
+#page-analisis .tabs { flex-wrap: wrap; overflow: visible; }
+#page-analisis .tab-btn { white-space: normal; text-align: left; }
+@media (max-width: 640px) {
+  .states-review-counts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .states-review-tools { grid-template-columns: 1fr; }
+  .states-section-heading { align-items: stretch; flex-direction: column; }
+  .states-statement-switch .btn { flex: 1 1 100%; white-space: normal; }
+}
+
 .statement-table td.negative {
   color: var(--ink-danger);
 }

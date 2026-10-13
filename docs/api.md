@@ -666,6 +666,42 @@ Deduce el separador decimal de un conjunto de celdas.
 
 `importStatementFile`, `tableTextToFinancialData`, `sheetsToFinancialData` y `rowsToFinancialData` reciben `{ decimal, avisos }`: `decimal` igual que arriba (`'auto'` por defecto; en `auto` se infiere de cada tabla) y `avisos`, un arreglo donde se agregan textos como `Fila 5: "45.000" se leyó como 45…`. Un `decimal` distinto de `'auto'`, `'.'` o `','` lanza `Error('Formato de importes no válido: …')`.
 
+### Lectura común y revisión de importación
+
+#### `readStatementSource(file)` / `workbookToSheets(buffer)`
+
+`readStatementSource` valida tamaño y extensión y devuelve una promesa de `{ kind: 'json', data }` (JSON normalizado) o `{ kind: 'tables', sheets, warnings? }`. Cada hoja tiene `{ name, rows }`; Excel conserva las filas físicas desde la fila 1, aunque el rango usado comience más abajo. `workbookToSheets` utiliza SheetJS local y limita hojas, filas y columnas antes de convertirlas.
+
+`MAX_STATEMENT_BYTES` = 10 MB. Los formatos tabulares admiten UTF-8, UTF-16 con BOM y Windows-1252 con aviso. Las APIs estrictas siguen devolviendo datos financieros y rechazando cuentas desconocidas. `resolveGroup({ estado, grupo, clasif, name, rowNumber })` y `resolveClassification(group, typeRaw, name, rowNumber)` exponen la misma resolución estricta para reutilizarla en la revisión.
+
+#### `prepareStatementImport(file, { decimal = 'auto' })`
+
+Lee el archivo y devuelve una promesa de sesión de revisión; no modifica el store ni el borrador. `sheetsToImportReview(sheets, { name, decimal })` y `textToImportReview(text, { name, decimal })` ofrecen el mismo contrato para hojas ya leídas o una tabla pegada.
+
+- **Sesión tabular**: `{ name, decimal, rows, warnings, notes, ignoredSheets }`. Cada fila conserva `id`, `sheet`, `line`, `account`, `group`, `type`, `match`, `ignored`, `subtotal`, `sourceErrors` y `amounts` (`period`, `raw`, `value`, `error`, `warning`).
+- **Sesión JSON**: `{ name, data, rows: [], warnings: [], ignoredSheets: [] }`; `data` ya cumple el contrato financiero.
+- **Errores**: formato, estructura y límites impiden leer el archivo. Cuentas desconocidas e importes inválidos permanecen en las filas para corregirlos.
+
+#### `evaluateImportReview(session)`
+
+Devuelve `{ ready, recognized, pending, errors, ignored, rows }`, con `issues` por fila. Comprueba clasificación, claves reservadas, periodos, importes, signo de depreciación, duplicados normalizados, consistencia entre periodos y límites del conjunto. `ready` exige al menos un importe y ausencia de problemas en las filas incluidas. No modifica el store.
+
+#### `updateImportClassification(session, id, group, type)` / `updateImportAmount(session, id, index, raw)` / `updateImportName(session, id, name)`
+
+Corrigen una fila de la sesión en memoria. Clasificación valida grupo y tipo contra `ACCOUNT_TYPES`; importe usa el parser común y actualiza las advertencias; nombre intenta reconocer de nuevo la cuenta, conservando una clasificación manual ya elegida. La exclusión explícita se controla con `row.ignored`. Volver a evaluar comprueba duplicados y consistencia después de cada corrección.
+
+#### `finalizeImportReview(session)`
+
+Construye y normaliza un conjunto financiero a partir de las filas incluidas y sus importes no vacíos. No guarda ni aplica por sí misma. Lanza un error mientras existan problemas o no haya importes. Una sesión JSON devuelve una nueva normalización de su conjunto validado.
+
+#### Catálogo de cuentas
+
+`ACCOUNT_CATALOG` contiene nombres, alias, grupo y tipo; `ACCOUNT_LABELS`, `GROUP_LABELS` y `CATALOGO_VERSION` proporcionan etiquetas y versión. `normalizeAccountName(name)` elimina diferencias de acentos, puntuación, mayúsculas y espacios. `matchCatalogAccount(name, group = '')` devuelve una coincidencia exacta con clasificación única o `null`. `isStatementSubtotal(name, group = '')` identifica los subtotales excluibles; conserva resultados como cuentas reales del patrimonio.
+
+#### `buildImportAIRequest(session)` / `suggestImportAccounts(request)`
+
+La petición preparada contiene `{ version: 1, accounts, responseFields, requiresHumanReview: true }`: solo identificadores, nombres y contexto de cuentas pendientes incluidas; no importes ni documento completo. `IMPORT_AI_STATUS.enabled` es `false`. `suggestImportAccounts` rechaza con un error de asistencia deshabilitada; no existe proveedor, clave ni petición de red.
+
 ---
 
 ## integracion-respaldo.js e integracion-reporte.js

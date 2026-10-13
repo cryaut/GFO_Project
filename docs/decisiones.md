@@ -555,3 +555,41 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 **Para revertirla.** Quitar el prefijo en `exportCSV` y su prueba `export-csv`.
 
 **Referencias.** API `exportCSV` y [ficha de fiabilidad](planificacion/fiabilidad-interfaz/README.md).
+
+### D-024 — Revisión de importaciones fuera del borrador y catálogo compartido
+
+- **Fecha**: 2026-10-12
+- **Estado**: Vigente
+- **Decidió**: Carlos (sesión con IA; pendiente de revisión del equipo)
+- **Área**: Estados, reconocimiento de cuentas e interfaz
+
+**Contexto.** Una sola cuenta desconocida detenía la importación y obligaba a editar el archivo. Las coincidencias por palabras no bastan para conocer el plazo de un préstamo o la función de un gasto.
+
+**Opciones.** Mantener el rechazo completo; aplicar parcialmente cuentas reconocidas; o mantener una sesión de revisión independiente hasta resolver los problemas.
+
+**Decisión.** Sesión en memoria con todas las filas y errores. El usuario corrige o excluye filas y aplica explícitamente al borrador antes de guardar. Un catálogo versionado en JavaScript sirve tanto al importador como al motor; su JSON descargable se genera desde la misma fuente. Las coincidencias exactas y reglas existentes se identifican en la revisión; no se introduce similitud aproximada automática. Deudas y gastos ambiguos exigen clasificación manual.
+
+**Consecuencias.** Se agrega una aprobación de importación distinta del guardado. Cancelar y errores conservan los datos anteriores; la sesión pendiente se conserva al cambiar de ruta, pero no al cerrar la pestaña. Se excluyen subtotales reconocidos de forma visible para evitar duplicar montos; el resultado del ejercicio dentro del patrimonio se conserva. Se distinguen datos ausentes de cero en la comparación. Los tipos y fórmulas se mantienen; el catálogo no cubre cualquier plan de cuentas.
+
+**Para revertirla.** Volver a la entrada estricta en Estados y retirar la pantalla/sesión de revisión; conservar la validación y el guardado persistente.
+
+**Referencias.** [Catálogo y formato](catalogo-cuentas.md), [ficha](planificacion/estados-importacion-review/README.md).
+
+### D-025 — Lector Excel actualizado y distribuido localmente
+
+- **Fecha**: 2026-10-12
+- **Estado**: Vigente
+- **Decidió**: Carlos (sesión con IA; pendiente de revisión del equipo)
+- **Área**: lector Excel y archivos estáticos
+
+**Contexto.** Importar un Excel dependía de descargar SheetJS 0.18.5 desde un CDN. Una falta de conexión impedía probar las soluciones locales.
+
+**Opciones.** Conservar el CDN; exigir CSV; o distribuir una versión fija del lector junto con GFO.
+
+**Decisión.** Copia oficial de SheetJS CE 0.20.3 en `assets/vendor/`, licencia Apache 2.0 y huella SHA-256 documentadas. Se carga bajo demanda con timeout y posibilidad de reintento. Se aplican límites al libro antes de convertir las hojas. Autorizado por el usuario para implementar eficientemente el avance, sin nuevas dependencias de npm.
+
+**Consecuencias.** La importación Excel funciona sin conexión y se añade aproximadamente 1 MB de código distribuido. La versión debe actualizarse explícitamente. Las hojas de la plantilla se verificaron con ese lector y en un navegador real con conexiones externas bloqueadas.
+
+**Para revertirla.** Cambiar la URL del lector y retirar el archivo/licencia locales; se pierde la independencia del CDN.
+
+**Referencias.** [Instalación oficial de SheetJS](https://docs.sheetjs.com/docs/getting-started/installation/standalone/), [ficha](planificacion/estados-importacion-review/README.md).

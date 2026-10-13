@@ -53,8 +53,9 @@ it('avisa de importes ambiguos y el formato "coma decimal" los lee como miles', 
 
   await importarCSV(page);
   const mensaje = () => page.querySelector('#estadoMessage').textContent;
-  expect(mensaje()).toContain('Atención: 1 importe(s) ambiguo(s)');
+  expect(mensaje()).toContain('Atención: 1 aviso(s) de importación');
   expect(mensaje()).toContain('"45.000" se leyó como 45');
+  await page.querySelector('#importReview').querySelector('#applyImport').dispatchEvent({ type: 'click' });
   expect(page.querySelector('#accountEditor').innerHTML).toContain('value="45"');
 
   // La persona elige "Coma decimal" y vuelve a importar: 45.000 = 45 mil, sin avisos.
@@ -62,6 +63,7 @@ it('avisa de importes ambiguos y el formato "coma decimal" los lee como miles', 
   formato.value = ',';
   await formato.dispatchEvent({ type: 'change' });
   await importarCSV(page);
+  await page.querySelector('#importReview').querySelector('#applyImport').dispatchEvent({ type: 'click' });
   expect(mensaje()).not.toContain('Atención');
   expect(page.querySelector('#accountEditor').innerHTML).toContain('value="45000"');
   expect(page.innerHTML).toMatch(/<option value="," selected>/);

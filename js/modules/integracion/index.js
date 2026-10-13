@@ -78,13 +78,18 @@ export function initReportes() {
   page.innerHTML = `
     <div class="page-header">
       <h1 class="page-title">Reportes e Integración</h1>
-      <p class="page-subtitle">Exportar datos, dashboard KPIs y reportes</p>
+      <p class="page-subtitle">Importe sus datos, descargue respaldos y consulte el resumen financiero.</p>
     </div>
     <div class="tabs">
-      <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+      <button class="tab-btn active" data-tab="import">Importar</button>
       <button class="tab-btn" data-tab="export">Exportar</button>
+      <button class="tab-btn" data-tab="dashboard">Resumen financiero</button>
     </div>
-    <div class="tab-content active" id="tab-dashboard">
+    <div class="tab-content active" id="tab-import">
+      <section class="card"><h2>Importar estados financieros</h2><p class="mb-4">Cargue Excel, CSV o JSON en Estados financieros para revisar las cuentas antes de guardarlas.</p><a class="btn btn-primary" href="#/estados">Importar y revisar estados</a></section>
+      <section class="card mt-4"><h2>Restaurar un respaldo completo</h2><p class="mb-4">Use un JSON exportado por GFO para recuperar los módulos incluidos. Revise la confirmación antes de reemplazar datos.</p><button class="btn btn-secondary" id="btnImportJSON">Importar respaldo JSON</button><input type="file" id="importFileInput" accept=".json" style="display:none"></section>
+    </div>
+    <div class="tab-content" id="tab-dashboard">
       <div id="dashboardContent"></div>
     </div>
     <div class="tab-content" id="tab-export">
@@ -95,8 +100,6 @@ export function initReportes() {
           <button class="btn btn-secondary" id="btnExportCSV">Exportar CSV</button>
           <button class="btn btn-secondary" id="btnPreviewHTML">Vista previa del reporte</button>
           <button class="btn btn-secondary" id="btnExportHTML">Descargar reporte HTML</button>
-          <button class="btn btn-success" id="btnImportJSON">Importar JSON</button>
-          <input type="file" id="importFileInput" accept=".json" style="display:none">
         </div>
         <div id="exportPreview" class="mt-6"></div>
       </div>

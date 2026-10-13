@@ -16,6 +16,7 @@ import { normalizeFinancialData, sortPeriods } from './estados-normalize.js';
 const MAX_ROWS = 5000;
 const MAX_COLUMNS = 120;
 const MAX_VALUES = 20000;
+export const MAX_STATEMENT_BYTES = 10 * 1024 * 1024;
 
 const META_HEADERS = new Set(['estado', 'grupo', 'cuenta', 'clasificacion', 'tipo', 'periodo', 'importe', 'moneda', 'nota']);
 
@@ -53,10 +54,18 @@ export const TABULAR_TEMPLATE_ROWS = [
   ['Balance', 'Activos', 'Efectivo', 'efectivo', '45000', '52000'],
   ['Balance', 'Activos', 'Cuentas por Cobrar', 'cxC', '120000', '135000'],
   ['Balance', 'Activos', 'Inventario', 'inventario', '180000', '195000'],
+  ['Balance', 'Activos', 'Equipo de oficina', 'activosFijos', '100000', '120000'],
+  ['Balance', 'Activos', 'Depreciación acumulada', 'depreciacionAcumulada', '-20000', '-25000'],
   ['Balance', 'Pasivos', 'Cuentas por Pagar', 'cuentasPorPagar', '85000', '92000'],
-  ['Balance', 'Patrimonio', 'Capital Social', 'patrimonio', '300000', '300000'],
+  ['Balance', 'Pasivos', 'Préstamos a corto plazo', 'pasivoCortoPlazo', '40000', '35000'],
+  ['Balance', 'Pasivos', 'Préstamos a largo plazo', 'pasivoLargoPlazo', '100000', '90000'],
+  ['Balance', 'Patrimonio', 'Capital Social', 'patrimonio', '200000', '260000'],
   ['Resultados', '', 'Ventas', 'ventas', '850000', '920000'],
-  ['Resultados', '', 'Costo de Ventas', 'costoVentas', '510000', '545000']
+  ['Resultados', '', 'Costo de Ventas', 'costoVentas', '510000', '545000'],
+  ['Resultados', '', 'Gastos administrativos', 'gastosAdmin', '120000', '125000'],
+  ['Resultados', '', 'Gastos de ventas', 'gastosVentas', '50000', '52000'],
+  ['Resultados', '', 'Gastos financieros', 'intereses', '10000', '9000'],
+  ['Resultados', '', 'Impuesto sobre la renta', 'impuestos', '48000', '56700']
 ];
 
 export function tabularTemplateCSV() {
@@ -111,13 +120,22 @@ export function parseDelimited(text, delimiter) {
       continue;
     }
     if (char === '"') { quoted = true; continue; }
-    if (char === delimiter) { row.push(field); field = ''; continue; }
-    if (char === '\n') { row.push(field); rows.push(row); row = []; field = ''; continue; }
+    if (char === delimiter) {
+      row.push(field); field = '';
+      if (row.length >= MAX_COLUMNS) throw new Error('La tabla tiene demasiadas columnas.');
+      continue;
+    }
+    if (char === '\n') {
+      row.push(field); rows.push(row); row = []; field = '';
+      if (rows.length > MAX_ROWS) throw new Error('La tabla excede el límite de filas.');
+      continue;
+    }
     if (char === '\r') continue;
     field += char;
   }
   row.push(field);
   rows.push(row);
+  if (quoted) throw new Error('CSV inválido: hay comillas sin cerrar.');
   return rows.filter(cells => cells.some(cell => String(cell).trim() !== ''));
 }
 // Formatos numéricos: 'auto' deduce el separador de cada celda; '.' y ',' fijan cuál es el
@@ -141,15 +159,9 @@ function limpiarImporte(value) {
     if (!Number.isFinite(value)) throw new Error(`Importe inválido: ${value}`);
     return { numero: value };
   }
-  if (typeof value === 'boolean') return null;
+  if (typeof value === 'boolean') throw new Error(`Importe inválido: ${value}`);
   let text = stripAccents(value).trim();
   if (!text) return null;
-  let negative = false;
-  if (/^\(.*\)$/.test(text)) { negative = true; text = text.slice(1, -1); }
-  text = text.replace(/[^0-9.,-]/g, '');
-  if (text.endsWith('-')) { negative = true; text = text.slice(0, -1); }
-  if (text.startsWith('-')) { negative = true; text = text.slice(1); }
-  text = text.replace(/-/g, '');
   if (!/\d/.test(text)) {
     // Blank marks and "not available" placeholders are legitimately empty;
     // any other non-numeric text is a data error the user must fix.
@@ -157,6 +169,18 @@ function limpiarImporte(value) {
     if (/^[-—–_\s]*$/.test(original) || /^(n\/?a|na|nc|s\/?d|sin dato|no aplica|no aplicable)$/i.test(original)) return null;
     throw new Error(`Importe inválido: ${value}`);
   }
+  const stripCurrency = text => text.replace(/^(?:C\$|US\$|NIO|USD|EUR|[$€£])\s*/i, '')
+    .replace(/\s*(?:C\$|US\$|NIO|USD|EUR|[$€£])$/i, '').trim();
+  text = stripCurrency(text);
+  let negative = false;
+  if (/^\(.*\)$/.test(text)) { negative = true; text = stripCurrency(text.slice(1, -1)); }
+  const leading = /^[+-]/.test(text);
+  const trailing = text.endsWith('-');
+  if (leading && trailing) throw new Error(`Importe inválido: ${value}`);
+  if (trailing) { negative = true; text = text.slice(0, -1).trim(); }
+  if (leading) { negative ||= text.startsWith('-'); text = stripCurrency(text.slice(1).trim()); }
+  if (!/^\d[\d.,\s]*$/.test(text)) throw new Error(`Importe inválido: ${value}`);
+  text = text.replace(/\s/g, '');
   return { text, negative };
 }
 
@@ -278,7 +302,7 @@ function resolveType(group, raw) {
   return '';
 }
 
-function resolveGroup({ estado, grupo, clasif, name, rowNumber }) {
+export function resolveGroup({ estado, grupo, clasif, name, rowNumber }) {
   const explicit = matchGroup(grupo);
   if (explicit && explicit !== 'balance') return explicit;
   if (matchGroup(estado) === 'estadoResultados') return 'estadoResultados';
@@ -290,7 +314,7 @@ function resolveGroup({ estado, grupo, clasif, name, rowNumber }) {
   throw new Error(`Fila ${rowNumber}: no se pudo ubicar "${name}". Indique Grupo = activos, pasivos o patrimonio.`);
 }
 
-function resolveClassification(group, typeRaw, name, rowNumber) {
+export function resolveClassification(group, typeRaw, name, rowNumber) {
   const explicit = resolveType(group, typeRaw);
   if (explicit) return explicit;
   if (String(typeRaw || '').trim()) {
@@ -427,10 +451,15 @@ function defaultsFromSheetName(sheetName) {
 export function sheetsToFinancialData(sheets, { name = 'Datos importados', decimal, avisos } = {}) {
   const builder = createBuilder({ decimal, avisos });
   let used = 0;
+  let totalRows = 0;
   for (const sheet of sheets) {
+    totalRows += (sheet.rows || []).length;
+    if (totalRows > MAX_ROWS) throw new Error('El libro excede el límite de filas.');
+    if ((sheet.rows || []).some(row => row.length > MAX_COLUMNS)) throw new Error('La hoja tiene demasiadas columnas.');
     const rows = (sheet.rows || []).filter(row => row.some(value => String(value).trim() !== ''));
-    if (rows.length < 2 || !rows[0].map(normalizeHeader).includes('cuenta')) continue;
-    ingestTable(builder, rows, defaultsFromSheetName(sheet.name));
+    const header = rows.slice(0, 25).findIndex(row => row.map(normalizeHeader).includes('cuenta'));
+    if (rows.length < 2 || header < 0) continue;
+    ingestTable(builder, rows.slice(header), defaultsFromSheetName(sheet.name));
     used += 1;
   }
   if (!used) throw new Error("Ninguna hoja contiene una tabla con una columna 'Cuenta'.");
@@ -454,10 +483,10 @@ function readFile(file, as) {
   });
 }
 
-const SHEETJS_URL = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+const SHEETJS_URL = new URL('../../../assets/vendor/xlsx-0.20.3.full.min.js', import.meta.url).href;
 let sheetjsPromise = null;
 
-// SheetJS is loaded on demand from the same CDN pattern already used for Chart.js.
+// Copia local con versión fija: la lectura de archivos no requiere un CDN.
 export function loadSheetJS() {
   if (typeof window === 'undefined') return Promise.reject(new Error('La lectura de Excel solo está disponible en el navegador.'));
   if (window.XLSX) return Promise.resolve(window.XLSX);
@@ -465,26 +494,45 @@ export function loadSheetJS() {
     sheetjsPromise = new Promise((resolve, reject) => {
       const script = document.createElement('script');
       script.src = SHEETJS_URL;
-      script.onload = () => (window.XLSX
-        ? resolve(window.XLSX) : reject(new Error('No se pudo inicializar el lector de Excel.')));
-      script.onerror = () => {
+      const fail = message => {
+        clearTimeout(timeout);
+        script.remove?.();
         sheetjsPromise = null;
-        reject(new Error('No se pudo cargar el lector de Excel. Verifique su conexión o exporte a CSV.'));
+        reject(new Error(message));
       };
+      const timeout = setTimeout(() => fail('El lector de Excel no respondió. Intente de nuevo o use CSV.'), 15000);
+      script.onload = () => {
+        clearTimeout(timeout);
+        if (window.XLSX) resolve(window.XLSX);
+        else fail('No se pudo inicializar el lector de Excel.');
+      };
+      script.onerror = () => fail('No se pudo cargar el lector local de Excel. Intente de nuevo o use CSV.');
       document.head.appendChild(script);
     });
   }
   return sheetjsPromise;
 }
 
-export async function workbookToFinancialData(buffer, { name = 'Datos importados', decimal, avisos } = {}) {
+export async function workbookToSheets(buffer) {
   const XLSX = await loadSheetJS();
-  const workbook = XLSX.read(buffer, { type: 'array' });
-  const sheets = workbook.SheetNames.map(sheetName => ({
-    name: sheetName,
-    rows: XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1, raw: true, defval: '' })
-  }));
-  return sheetsToFinancialData(sheets, { name, decimal, avisos });
+  const workbook = XLSX.read(buffer, { type: 'array', sheetRows: MAX_ROWS + 2 });
+  if (workbook.SheetNames.length > 50) throw new Error('El libro tiene demasiadas hojas (máximo 50).');
+  let totalRows = 0;
+  return workbook.SheetNames.map(sheetName => {
+    const sheet = workbook.Sheets[sheetName];
+    const ref = sheet['!fullref'] || sheet['!ref'];
+    if (ref) {
+      const range = XLSX.utils.decode_range(ref);
+      totalRows += range.e.r + 1;
+      if (range.e.r + 1 > MAX_ROWS || totalRows > MAX_ROWS) throw new Error('El libro excede el límite de 5000 filas.');
+      if (range.e.c + 1 > MAX_COLUMNS) throw new Error('La hoja tiene demasiadas columnas (máximo 120).');
+    }
+    return { name: sheetName, rows: XLSX.utils.sheet_to_json(sheet, { header: 1, raw: true, defval: '', blankrows: true, range: 0 }) };
+  });
+}
+
+export async function workbookToFinancialData(buffer, options = {}) {
+  return sheetsToFinancialData(await workbookToSheets(buffer), options);
 }
 
 export function baseName(filename) {
@@ -497,21 +545,42 @@ export function extensionOf(filename) {
 
 // Single entry point used by the Estados UI for any supported file.
 // options.decimal y options.avisos se explican en parseAmountCell y createBuilder.
-export async function importStatementFile(file, { decimal, avisos } = {}) {
+export async function readStatementSource(file) {
   if (!file) throw new Error('No se seleccionó ningún archivo.');
+  if (file.size > MAX_STATEMENT_BYTES) throw new Error('El archivo excede el límite de 10 MB.');
   const extension = extensionOf(file.name);
   if (extension === 'json') {
     const text = await readFile(file, 'text');
     let parsed;
     try { parsed = JSON.parse(text); } catch { throw new Error('Archivo JSON inválido.'); }
-    return normalizeFinancialData(parsed);
+    return { kind: 'json', data: normalizeFinancialData(parsed) };
   }
   if (['csv', 'tsv', 'txt'].includes(extension)) {
-    return tableTextToFinancialData(await readFile(file, 'text'), { name: baseName(file.name), decimal, avisos });
+    let text; const warnings = [];
+    if (typeof file.arrayBuffer === 'function') {
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      if (bytes[0] === 255 && bytes[1] === 254) text = new TextDecoder('utf-16le', { fatal: true }).decode(bytes);
+      else if (bytes[0] === 254 && bytes[1] === 255) text = new TextDecoder('utf-16be', { fatal: true }).decode(bytes);
+      else {
+        try { text = new TextDecoder('utf-8', { fatal: true }).decode(bytes); }
+        catch {
+          text = new TextDecoder('windows-1252').decode(bytes);
+          warnings.push('Archivo leído como Windows-1252. Revise los acentos y nombres de las cuentas.');
+        }
+      }
+    } else text = await readFile(file, 'text');
+    return { kind: 'tables', warnings, sheets: [{ name: file.name, rows: parseDelimited(text, detectDelimiter(text)) }] };
   }
   if (['xlsx', 'xls'].includes(extension)) {
-    return workbookToFinancialData(await readFile(file, 'buffer'), { name: baseName(file.name), decimal, avisos });
+    return { kind: 'tables', sheets: await workbookToSheets(await readFile(file, 'buffer')) };
   }
   throw new Error(`Formato no soportado (.${extension || '?'}). Use .json, .csv, .tsv, .xlsx o .xls.`);
+}
+
+export async function importStatementFile(file, options = {}) {
+  const source = await readStatementSource(file);
+  if (source.kind === 'json') return source.data;
+  options.avisos?.push(...(source.warnings || []));
+  return sheetsToFinancialData(source.sheets, { name: baseName(file.name), ...options });
 }
 

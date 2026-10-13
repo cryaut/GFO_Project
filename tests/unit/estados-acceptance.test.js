@@ -76,6 +76,8 @@ it('imports external JSON through Estados, previews, saves once and reloads', as
   };
   input.files = [{ name: 'consultora.json', contents: JSON.stringify(external) }];
   await input.dispatchEvent({ type: 'change' });
+  expect(store.get('estados.periods')).toEqual([]);
+  await page.querySelector('#importReview').querySelector('#applyImport').dispatchEvent({ type: 'click' });
   expect(page.querySelector('#statementPreview').innerHTML).toContain('Servicios profesionales');
   expect(page.querySelector('#accountEditor').innerHTML).toContain('Cuenta bancaria principal');
   expect(page.querySelector('#balanceCheck').innerHTML).toContain('Balance equilibrado');
@@ -251,6 +253,7 @@ it('imports an external CSV through the Estados file input and publishes it', as
   input.files = [{ name: 'externa.csv', contents: csv }];
   await input.dispatchEvent({ type: 'change' });
 
+  await page.querySelector('#importReview').querySelector('#applyImport').dispatchEvent({ type: 'click' });
   expect(page.querySelector('#statementPreview').innerHTML).toContain('Servicios profesionales');
   expect(page.querySelector('#accountEditor').innerHTML).toContain('Banco regional');
   expect(page.querySelector('#balanceCheck').innerHTML).toContain('Balance equilibrado');
