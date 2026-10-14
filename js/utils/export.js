@@ -6,8 +6,11 @@ export function exportJSON(data, filename = 'gfo-export.json') {
 
 export function exportCSV(rows, headers, filename = 'gfo-export.csv') {
   const escape = (v) => {
-    const s = String(v ?? '');
-    if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+    let s = String(v ?? '');
+    // Las etiquetas son texto aunque comiencen como una fórmula de una hoja de cálculo.
+    // Los importes numéricos (incluidos negativos) conservan su tipo y valor.
+    if (typeof v === 'string' && (/^[\s]*[=+\-@]/.test(s) || /^[\t\r\n]/.test(s))) s = "'" + s;
+    if (s.includes(',') || s.includes('"') || s.includes('\n') || s.includes('\r')) {
       return '"' + s.replace(/"/g, '""') + '"';
     }
     return s;

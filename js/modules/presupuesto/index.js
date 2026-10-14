@@ -78,10 +78,11 @@ function guardarPresupuesto(page, cambios, texto) {
     store.setPersisted('presupuesto', siguiente);
   } catch (error) {
     showToast(`No se pudo guardar: ${error.message}`, 'error');
-    return;
+    return false;
   }
   renderPresupuestoData(page);
   if (texto) showToast(texto, 'success');
+  return true;
 }
 
 export function initPresupuesto() {
@@ -222,9 +223,12 @@ function bindPresupuestoEvents(page) {
   });
 
   const saveConfig = () => {
-    store.set('presupuesto.metaAhorro', parseFloat(page.querySelector('#metaAhorro').value) || 0);
-    store.set('presupuesto.mesesDisponibles', parseInt(page.querySelector('#mesesDisponibles').value) || 12);
-    renderPresupuestoData(page);
+    const metaAhorro = Number(page.querySelector('#metaAhorro').value);
+    const mesesDisponibles = Number(page.querySelector('#mesesDisponibles').value);
+    if (!Number.isFinite(metaAhorro) || metaAhorro < 0 || !Number.isInteger(mesesDisponibles) || mesesDisponibles < 1 || mesesDisponibles > 24) {
+      return showToast('Ingrese una meta válida y entre 1 y 24 meses enteros', 'warning');
+    }
+    guardarPresupuesto(page, { metaAhorro, mesesDisponibles });
   };
 
   page.querySelector('#metaAhorro')?.addEventListener('change', saveConfig);
@@ -240,59 +244,48 @@ function bindPresupuestoEvents(page) {
     const concepto = page.querySelector('#ingresoConcepto').value.trim();
     const monto = parseFloat(page.querySelector('#ingresoMonto').value) || 0;
     const tipo = page.querySelector('#ingresoTipo').value === 'ocasional' ? 'ocasional' : 'regular';
-    if (!concepto || monto <= 0) return showToast('Complete concepto y monto', 'warning');
+    if (!concepto || !Number.isFinite(monto) || monto <= 0) return showToast('Complete concepto y monto', 'warning');
     const ingresos = presupuestoCalculations.ingresosDe(store.get('presupuesto.ingresos'), store.get('presupuesto.ingresoMensual') || 0);
-    page.querySelector('#ingresoConcepto').value = '';
-    page.querySelector('#ingresoMonto').value = '';
-    guardarPresupuesto(page, { ingresos: [...ingresos, { concepto, monto, tipo }] }, 'Ingreso agregado');
+    if (guardarPresupuesto(page, { ingresos: [...ingresos, { concepto, monto, tipo }] }, 'Ingreso agregado')) {
+      page.querySelector('#ingresoConcepto').value = '';
+      page.querySelector('#ingresoMonto').value = '';
+    }
   });
 
   page.querySelector('#btnAddGasto')?.addEventListener('click', () => {
     const concepto = page.querySelector('#gastoConcepto').value.trim();
     const monto = parseFloat(page.querySelector('#gastoMonto').value) || 0;
     const categoria = page.querySelector('#gastoCategoria').value;
-    if (!concepto || monto <= 0) return showToast('Complete concepto y monto', 'warning');
+    if (!concepto || !Number.isFinite(monto) || monto <= 0) return showToast('Complete concepto y monto', 'warning');
     const gastos = store.get('presupuesto.gastos') || [];
-    gastos.push({ concepto, monto, categoria });
-    store.set('presupuesto.gastos', gastos);
-    page.querySelector('#gastoConcepto').value = '';
-    page.querySelector('#gastoMonto').value = '';
-    renderPresupuestoData(page);
-    showToast('Gasto agregado', 'success');
+    if (guardarPresupuesto(page, { gastos: [...gastos, { concepto, monto, categoria }] }, 'Gasto agregado')) {
+      page.querySelector('#gastoConcepto').value = '';
+      page.querySelector('#gastoMonto').value = '';
+    }
   });
 
   page.querySelector('#btnAddSemana')?.addEventListener('click', () => {
-    const num = parseInt(page.querySelector('#semanaNum').value) || 1;
+    const num = Number(page.querySelector('#semanaNum').value);
     const gasto = parseFloat(page.querySelector('#semanaGasto').value) || 0;
-    if (gasto <= 0) return showToast('Ingrese un monto válido', 'warning');
+    if (!Number.isInteger(num) || num < 1 || !Number.isFinite(gasto) || gasto <= 0) return showToast('Ingrese una semana entera y un monto válido', 'warning');
     const semanas = store.get('presupuesto.semanas') || [];
-    const existente = semanas.find(s => s.numero === num);
-    if (existente) {
-      existente.gasto = gasto;
-    } else {
-      semanas.push({ numero: num, gasto });
+    const siguientes = semanas.some(s => s.numero === num)
+      ? semanas.map(s => s.numero === num ? { ...s, gasto } : s)
+      : [...semanas, { numero: num, gasto }];
+    if (guardarPresupuesto(page, { semanas: siguientes }, `Semana ${num} registrada`)) {
+      page.querySelector('#semanaGasto').value = '';
     }
-    store.set('presupuesto.semanas', semanas);
-    page.querySelector('#semanaGasto').value = '';
-    renderPresupuestoData(page);
-    showToast(`Semana ${num} registrada`, 'success');
   });
 
   page.querySelector('#btnAjustar')?.addEventListener('click', () => {
     const tasa = (parseFloat(page.querySelector('#inflacion').value) || 0) / 100;
-    if (tasa === 0) return showToast('Ingrese una tasa de inflación', 'warning');
+    if (!Number.isFinite(tasa) || tasa <= 0 || tasa > 1) return showToast('Ingrese una tasa de inflación mayor que 0 y hasta 100%', 'warning');
     const gastos = store.get('presupuesto.gastos') || [];
-    gastos.forEach(g => {
-      g.monto = presupuestoCalculations.ajusteInflacion(g.monto, tasa);
-    });
-    store.set('presupuesto.gastos', gastos);
+    const gastosAjustados = gastos.map(g => ({ ...g, monto: presupuestoCalculations.ajusteInflacion(g.monto, tasa) }));
     const ingresos = presupuestoCalculations
       .ingresosDe(store.get('presupuesto.ingresos'), store.get('presupuesto.ingresoMensual') || 0)
       .map(i => ({ ...i, monto: presupuestoCalculations.ajusteInflacion(i.monto, tasa) }));
-    store.set('presupuesto.ingresos', ingresos);
-    store.set('presupuesto.ingresoMensual', presupuestoCalculations.totalIngresos(ingresos));
-    renderPresupuestoData(page);
-    showToast('Ajuste por inflación aplicado', 'info');
+    guardarPresupuesto(page, { gastos: gastosAjustados, ingresos }, 'Ajuste por inflación aplicado');
   });
 }
 
@@ -317,10 +310,10 @@ function renderPresupuestoData(page) {
 
   page.querySelector('#budgetSummary').innerHTML = `
     <div class="kpi-card"><div class="kpi-value">${formatCurrency(ingreso)}</div><div class="kpi-label">Total de ingresos</div></div>
-    <div class="kpi-card"><div class="kpi-value" style="color:var(--color-danger)">${formatCurrency(totalGastos)}</div><div class="kpi-label">Total de gastos</div></div>
-    <div class="kpi-card"><div class="kpi-value" style="color:${capacidad >= 0 ? 'var(--color-success)' : 'var(--color-danger)'}">${formatCurrency(capacidad)}</div><div class="kpi-label">Capacidad de ahorro</div></div>
+    <div class="kpi-card"><div class="kpi-value" style="color:var(--ink-danger)">${formatCurrency(totalGastos)}</div><div class="kpi-label">Total de gastos</div></div>
+    <div class="kpi-card"><div class="kpi-value" style="color:${capacidad >= 0 ? 'var(--ink-success)' : 'var(--ink-danger)'}">${formatCurrency(capacidad)}</div><div class="kpi-label">Capacidad de ahorro</div></div>
     <div class="kpi-card"><div class="kpi-value">${formatCurrency(ahorroM)}</div><div class="kpi-label">Ahorro planificado al mes</div></div>
-    <div class="kpi-card"><div class="kpi-value" style="color:${disponibles >= 0 ? 'var(--color-success)' : 'var(--color-danger)'}">${formatCurrency(disponibles)}</div><div class="kpi-label">Saldo disponible</div></div>`;
+    <div class="kpi-card"><div class="kpi-value" style="color:${disponibles >= 0 ? 'var(--ink-success)' : 'var(--ink-danger)'}">${formatCurrency(disponibles)}</div><div class="kpi-label">Saldo disponible</div></div>`;
 
   renderIngresosList(page, ingresos);
   renderGastosList(page, gastos);
@@ -368,16 +361,14 @@ function renderGastosList(page, gastos) {
       <span>${escapeHTML(g.concepto)} <span class="badge badge-info">${escapeHTML(cats[g.categoria] || g.categoria)}</span></span>
       <span class="flex-gap">
         <span class="font-mono">${formatCurrency(g.monto)}</span>
-        <button class="btn btn-sm btn-danger" data-del-gasto="${i}">&times;</button>
+        <button class="btn btn-sm btn-danger" data-del-gasto="${i}" aria-label="Eliminar ${escapeHTML(g.concepto)}">&times;</button>
       </span>
     </div>`).join('');
 
   el.querySelectorAll('[data-del-gasto]').forEach(btn => {
     btn.addEventListener('click', () => {
       const idx = parseInt(btn.dataset.delGasto);
-      gastos.splice(idx, 1);
-      store.set('presupuesto.gastos', gastos);
-      renderPresupuestoData(page);
+      guardarPresupuesto(page, { gastos: gastos.filter((_, i) => i !== idx) });
     });
   });
 }
@@ -388,7 +379,10 @@ function renderGastosChart(gastos) {
   const data = [dist.necesidad, dist.deseo, dist.imprevisto, dist.meta];
   const colors = ['#2563eb', '#d97706', '#dc2626', '#16a34a'];
 
-  if (data.every(v => v === 0)) return;
+  if (data.every(v => v === 0)) {
+    destroyChart('gastosPieChart');
+    return;
+  }
 
   renderChart('gastosPieChart', {
     type: 'pie',
@@ -411,7 +405,7 @@ function renderSemanas(page, semanas, ahorroM) {
   const semanal = ingreso / 4;
   let saldoAcum = 0;
 
-  const rows = semanas
+  const rows = [...semanas]
     .sort((a, b) => a.numero - b.numero)
     .map(s => {
       saldoAcum += semanal - s.gasto - (ahorroM / 4);
@@ -447,10 +441,10 @@ function renderResumen(page, ingreso, gastos, ahorroM, meta = 0) {
 
   kpis.innerHTML = `
     <div class="kpi-card"><div class="kpi-value">${formatCurrency(ingreso)}</div><div class="kpi-label">Total de ingresos</div></div>
-    <div class="kpi-card"><div class="kpi-value" style="color:var(--color-danger)">${formatCurrency(totalGastos)}</div><div class="kpi-label">Total de gastos</div></div>
-    <div class="kpi-card"><div class="kpi-value" style="color:${capacidad >= 0 ? 'var(--color-success)' : 'var(--color-danger)'}">${formatCurrency(capacidad)}</div><div class="kpi-label">Capacidad de ahorro (${tasa === null ? 'N/D' : formatPercent(tasa)} de los ingresos)</div></div>
+    <div class="kpi-card"><div class="kpi-value" style="color:var(--ink-danger)">${formatCurrency(totalGastos)}</div><div class="kpi-label">Total de gastos</div></div>
+    <div class="kpi-card"><div class="kpi-value" style="color:${capacidad >= 0 ? 'var(--ink-success)' : 'var(--ink-danger)'}">${formatCurrency(capacidad)}</div><div class="kpi-label">Capacidad de ahorro (${tasa === null ? 'N/D' : formatPercent(tasa)} de los ingresos)</div></div>
     <div class="kpi-card"><div class="kpi-value">${formatCurrency(ahorroM)}</div><div class="kpi-label">Ahorro planificado al mes</div></div>
-    <div class="kpi-card"><div class="kpi-value" style="color:${disponible >= 0 ? 'var(--color-success)' : 'var(--color-danger)'}">${formatCurrency(disponible)}</div><div class="kpi-label">Saldo disponible</div></div>
+    <div class="kpi-card"><div class="kpi-value" style="color:${disponible >= 0 ? 'var(--ink-success)' : 'var(--ink-danger)'}">${formatCurrency(disponible)}</div><div class="kpi-label">Saldo disponible</div></div>
     <div class="kpi-card"><div class="kpi-value">${ingreso > 0 ? formatPercent(presupuestoCalculations.pctAsignado(totalGastos, ingreso)) : 'N/D'}</div><div class="kpi-label">% de ingresos en gastos</div></div>`;
 
   if (validacion) {

@@ -625,6 +625,8 @@ Exporta un objeto como archivo JSON descargable.
 #### `exportCSV(rows, headers, filename = 'gfo-export.csv')`
 Exporta filas de datos como archivo CSV descargable.
 
+Las cadenas que comienzan con `=`, `+`, `-`, `@` (también tras espacios) o controles iniciales de tabulación/salto de línea reciben un apóstrofo para que se abran como texto. Los valores de tipo `number`, incluso negativos, no cambian. Comas, comillas y ambos saltos de línea se entrecomillan. Para conservar nombres exactamente al restaurar datos, use JSON; el CSV conserva el prefijo protector al reimportarse.
+
 - **Parámetros**: `rows` (Array<Array>) — filas de datos; `headers` (Array<string>) — encabezados de columna; `filename` (string) — nombre del archivo
 - **Retorno**: `void` — descarga el archivo con encoding UTF-8 BOM
 - **Ejemplo**: `exportCSV([["Laptop", "18000"], ["Mouse", "500"]], ["Artículo", "Precio"], "inventario.csv")`
@@ -663,6 +665,42 @@ Deduce el separador decimal de un conjunto de celdas.
 - **Ejemplo**: `inferDecimalStyle(['45.000', '1.234.567'])` → `','`
 
 `importStatementFile`, `tableTextToFinancialData`, `sheetsToFinancialData` y `rowsToFinancialData` reciben `{ decimal, avisos }`: `decimal` igual que arriba (`'auto'` por defecto; en `auto` se infiere de cada tabla) y `avisos`, un arreglo donde se agregan textos como `Fila 5: "45.000" se leyó como 45…`. Un `decimal` distinto de `'auto'`, `'.'` o `','` lanza `Error('Formato de importes no válido: …')`.
+
+### Lectura común y revisión de importación
+
+#### `readStatementSource(file)` / `workbookToSheets(buffer)`
+
+`readStatementSource` valida tamaño y extensión y devuelve una promesa de `{ kind: 'json', data }` (JSON normalizado) o `{ kind: 'tables', sheets, warnings? }`. Cada hoja tiene `{ name, rows }`; Excel conserva las filas físicas desde la fila 1, aunque el rango usado comience más abajo. `workbookToSheets` utiliza SheetJS local y limita hojas, filas y columnas antes de convertirlas.
+
+`MAX_STATEMENT_BYTES` = 10 MB. Los formatos tabulares admiten UTF-8, UTF-16 con BOM y Windows-1252 con aviso. Las APIs estrictas siguen devolviendo datos financieros y rechazando cuentas desconocidas. `resolveGroup({ estado, grupo, clasif, name, rowNumber })` y `resolveClassification(group, typeRaw, name, rowNumber)` exponen la misma resolución estricta para reutilizarla en la revisión.
+
+#### `prepareStatementImport(file, { decimal = 'auto' })`
+
+Lee el archivo y devuelve una promesa de sesión de revisión; no modifica el store ni el borrador. `sheetsToImportReview(sheets, { name, decimal })` y `textToImportReview(text, { name, decimal })` ofrecen el mismo contrato para hojas ya leídas o una tabla pegada.
+
+- **Sesión tabular**: `{ name, decimal, rows, warnings, notes, ignoredSheets }`. Cada fila conserva `id`, `sheet`, `line`, `account`, `group`, `type`, `match`, `ignored`, `subtotal`, `sourceErrors` y `amounts` (`period`, `raw`, `value`, `error`, `warning`).
+- **Sesión JSON**: `{ name, data, rows: [], warnings: [], ignoredSheets: [] }`; `data` ya cumple el contrato financiero.
+- **Errores**: formato, estructura y límites impiden leer el archivo. Cuentas desconocidas e importes inválidos permanecen en las filas para corregirlos.
+
+#### `evaluateImportReview(session)`
+
+Devuelve `{ ready, recognized, pending, errors, ignored, rows }`, con `issues` por fila. Comprueba clasificación, claves reservadas, periodos, importes, signo de depreciación, duplicados normalizados, consistencia entre periodos y límites del conjunto. `ready` exige al menos un importe y ausencia de problemas en las filas incluidas. No modifica el store.
+
+#### `updateImportClassification(session, id, group, type)` / `updateImportAmount(session, id, index, raw)` / `updateImportName(session, id, name)`
+
+Corrigen una fila de la sesión en memoria. Clasificación valida grupo y tipo contra `ACCOUNT_TYPES`; importe usa el parser común y actualiza las advertencias; nombre intenta reconocer de nuevo la cuenta, conservando una clasificación manual ya elegida. La exclusión explícita se controla con `row.ignored`. Volver a evaluar comprueba duplicados y consistencia después de cada corrección.
+
+#### `finalizeImportReview(session)`
+
+Construye y normaliza un conjunto financiero a partir de las filas incluidas y sus importes no vacíos. No guarda ni aplica por sí misma. Lanza un error mientras existan problemas o no haya importes. Una sesión JSON devuelve una nueva normalización de su conjunto validado.
+
+#### Catálogo de cuentas
+
+`ACCOUNT_CATALOG` contiene nombres, alias, grupo y tipo; `ACCOUNT_LABELS`, `GROUP_LABELS` y `CATALOGO_VERSION` proporcionan etiquetas y versión. `normalizeAccountName(name)` elimina diferencias de acentos, puntuación, mayúsculas y espacios. `matchCatalogAccount(name, group = '')` devuelve una coincidencia exacta con clasificación única o `null`. `isStatementSubtotal(name, group = '')` identifica los subtotales excluibles; conserva resultados como cuentas reales del patrimonio.
+
+#### `buildImportAIRequest(session)` / `suggestImportAccounts(request)`
+
+La petición preparada contiene `{ version: 1, accounts, responseFields, requiresHumanReview: true }`: solo identificadores, nombres y contexto de cuentas pendientes incluidas; no importes ni documento completo. `IMPORT_AI_STATUS.enabled` es `false`. `suggestImportAccounts` rechaza con un error de asistencia deshabilitada; no existe proveedor, clave ni petición de red.
 
 ---
 
@@ -751,3 +789,31 @@ Inicio reutiliza la recolección de la proforma: `proforma/index.js` exporta `re
 Códigos de `avisos` del presupuesto maestro: `financiamiento`, `sin-compras`, `bajo-stock-minimo`, `perdida`, `bajo-equilibrio` y `sin-margen`.
 
 Utilidades: `js/utils/form.js` (`leerNumero(texto)` → `{ vacio, valor }`, `nuevoId(prefijo)`, `fechaHoy()`), `js/utils/estados-guardados.js` (`estadosGuardados(estados)`, `totalesPeriodo(estados, periodo)`). `js/modules/analisis/index.js` exporta ahora `refreshSavedStates()` para que el reporte integrado no use estados en caché.
+
+---
+
+## Fiabilidad de guardados y pantallas
+
+#### `store.reset()` (`js/store.js`)
+Guarda una copia profunda nueva de los valores iniciales antes de publicarla en memoria.
+
+- **Retorno**: `void`.
+- **Errores**: propaga errores de cuota/acceso de `localStorage`; conserva la memoria anterior y no notifica a los suscriptores si falla.
+- `load()` también clona los valores iniciales, sin cambiar el formato de datos guardados. `setPersisted` sigue siendo la API para cambios de módulos completos; `set`/`save` son APIs heredadas que ignoran errores.
+
+#### `validarActivo(activo)` (`activos/activos-calculations.js`)
+Valida la captura del registro del hogar, sin DOM ni fórmulas nuevas.
+
+- **Parámetros**: registro con nombre, categoría, costo original, vida útil, residual, años consumidos, reposición y `condicion.scores`.
+- **Retorno**: `string[]`; vacío si es válido. Importes finitos no negativos, residual hasta el costo, vida útil entera positiva, años enteros no negativos y ocho puntajes enteros de 0 a 10. Se admite superar la vida útil; la depreciación existente se limita a ella.
+- **Ejemplo**: un activo con costo/residual/reposición 0, vida útil 1, años 0 y ocho puntajes 0 es válido.
+
+#### `hasUnsavedStates()` (`estados/index.js`)
+- **Retorno**: `boolean`; consulta el editor actual sin guardar ni releer los estados publicados.
+- `estadosUI(page, opciones)` devuelve `{ hasUnsavedChanges: () => boolean }`. `initEstados()` conserva el DOM del editor sucio al volver a la misma página; con el editor limpio relee el conjunto guardado.
+- `loadDemo()` reemplaza el módulo completo con la demo normalizada en una escritura. Propaga errores y aísla los datos guardados de la constante de demostración.
+
+#### `showModal(title, bodyHTML, footerHTML)` / `hideModal()` (`components/modal.js`)
+- Título escapado, `role=dialog`, nombre accesible, todos los controles `[data-close-modal]`, cierre por Escape/fondo, ciclo de Tab y devolución del foco.
+- `bodyHTML` y `footerHTML` son plantillas de confianza: el llamador debe escapar sus datos de usuario.
+- Limpia los manejadores de teclado/fondo al cerrar o reemplazar el diálogo; no los acumula.

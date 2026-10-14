@@ -120,8 +120,9 @@ export function normalizeFinancialData(input) {
     estadoResultados[period] = cleanEr;
   }
 
+  const name = typeof raw.name === 'string' && raw.name.trim() ? raw.name : source.name;
   return {
-    name: typeof raw.name === 'string' && raw.name.trim() ? raw.name.trim() : 'Datos importados',
+    name: typeof name === 'string' && name.trim() ? name.trim() : 'Datos importados',
     periods: ordenarPeriodos(periods),
     balanceGeneral,
     estadoResultados,

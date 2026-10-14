@@ -1,6 +1,6 @@
 import store from './store.js';
 import { initPresupuesto } from './modules/presupuesto/index.js';
-import { initEstados } from './modules/estados/index.js';
+import { initEstados, hasUnsavedStates } from './modules/estados/index.js';
 import { initAnalisis } from './modules/analisis/index.js';
 import { initActivos } from './modules/activos/index.js';
 import { initMercados } from './modules/mercados/index.js';
@@ -37,6 +37,7 @@ function getRoute() {
 }
 
 function navigate(route) {
+  if (!Object.hasOwn(routes, route)) route = 'home';
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
 
@@ -97,6 +98,11 @@ function init() {
   initMobileMenu();
   navigate(getRoute());
   window.addEventListener('hashchange', () => navigate(getRoute()));
+  window.addEventListener('beforeunload', event => {
+    if (!hasUnsavedStates()) return;
+    event.preventDefault();
+    event.returnValue = '';
+  });
 }
 
 document.addEventListener('DOMContentLoaded', init);

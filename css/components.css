@@ -144,8 +144,23 @@
 
 .table-wrapper {
   overflow-x: auto;
+  max-width: 100%;
+  scrollbar-width: thin;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
+}
+
+.table-wrapper::-webkit-scrollbar, .tabs::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb, .tabs::-webkit-scrollbar-thumb {
+  background: var(--border-color-strong);
+  border-radius: var(--radius-full);
+}
+
+.table-wrapper::-webkit-scrollbar-track, .tabs::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 table {
@@ -179,6 +194,53 @@ tbody tr:hover {
 
 .text-right {
   text-align: right;
+}
+
+td.text-right, th.text-right {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.file-button {
+  position: relative;
+}
+
+.file-button:focus-within {
+  box-shadow: var(--focus-ring);
+}
+
+.states-toolbar {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.states-toolbar .btn {
+  white-space: normal;
+  text-align: center;
+  justify-content: center;
+  min-height: 44px;
+}
+
+.states-status {
+  margin: var(--space-4) 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+#accountEditor td:first-child {
+  min-width: 12rem;
+  overflow-wrap: anywhere;
+}
+
+#accountEditor .form-input {
+  min-width: 9rem;
+}
+
+#accountEditor .form-select {
+  min-width: 15rem;
 }
 
 .text-center {
@@ -226,6 +288,8 @@ tbody tr:hover {
   border-bottom: 2px solid var(--border-color);
   margin-bottom: var(--space-6);
   overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
 }
 
 .tab-btn {
@@ -236,7 +300,7 @@ tbody tr:hover {
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
-  margin-bottom: -2px;
+  margin-bottom: 0;
   cursor: pointer;
   white-space: nowrap;
   transition: all var(--transition-fast);
@@ -427,6 +491,22 @@ tbody tr:hover {
   .tab-btn {
     padding: var(--space-2) var(--space-3);
     font-size: var(--font-size-xs);
+  }
+  .page-header.flex-between, .asset-card-header {
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+  .flex-gap > .form-input, .flex-gap > label {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .states-toolbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+  }
+  .states-toolbar .btn {
+    padding: var(--space-2);
+    font-size: var(--font-size-sm);
   }
 }
 

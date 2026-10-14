@@ -2,6 +2,7 @@ import store from '../../store.js';
 import { mercadoUI } from './mercado-ui.js';
 import { estadosGuardados } from '../../utils/estados-guardados.js';
 import { formatCurrency, formatPercent, formatNumber } from '../../utils/format.js';
+import { escapeHTML } from '../../utils/html.js';
 import {
   ahDelta, ahPctDelta, av, ratioCorriente, ratioRapido,
   rotacionInventario, rotacionCxC, plazoCobro, endeudamiento,
@@ -371,7 +372,7 @@ export function computeEFE(period) {
   const ajustes = [
     { concepto: '(-) Aumento de Inventario', monto: -dInv },
     { concepto: '(-) Aumento de Cuentas por Cobrar', monto: -dCxC },
-    { concepto: '(+) Aumento de Pasivos Operativos (CxP + Provisiones)', monto: dPasOp }
+    { concepto: '(+) Aumento de pasivos operativos (cuentas por pagar y provisiones)', monto: dPasOp }
   ];
 
   const CFO = efeIndirecto(er.utilidadNeta, ajustes.map(a => a.monto));
@@ -469,11 +470,11 @@ function renderAHSection(periods) {
   if (ahData.length === 0) return '<p class="text-muted">Se necesitan al menos 2 periodos.</p>';
   let html = '<p class="text-muted" style="font-size:var(--font-size-sm)">Variación % = Δ / |valor T1|. Si el periodo base es 0, la variación porcentual no está definida y se muestra N/D.</p>';
   for (const ah of ahData) {
-    html += `<h4 class="mb-2">${ah.periodo}</h4>
+    html += `<h4 class="mb-2">${escapeHTML(ah.periodo)}</h4>
       <div class="table-wrapper mb-6"><table>
         <thead><tr><th>Cuenta</th><th class="text-right">Periodo T1</th><th class="text-right">Periodo T2</th><th class="text-right">Δ</th><th class="text-right">%Δ</th></tr></thead>
         <tbody>${ah.rows.map(r => `<tr>
-          <td>${r.cuenta}</td>
+          <td>${escapeHTML(r.cuenta)}</td>
           <td class="text-right font-mono">${formatCurrency(r.t1)}</td>
           <td class="text-right font-mono">${formatCurrency(r.t2)}</td>
           <td class="text-right font-mono ${r.delta < 0 ? 'text-danger' : 'text-success'}">${formatCurrency(r.delta)}</td>
@@ -492,7 +493,7 @@ export function computeAH(periods) {
     const cuentas = [
       { nombre: 'Activos Corrientes', v1: t1.activosCorrientes, v2: t2.activosCorrientes },
       { nombre: 'Inventario', v1: t1.inventario, v2: t2.inventario },
-      { nombre: 'CxC', v1: t1.cxC, v2: t2.cxC },
+      { nombre: 'Cuentas por cobrar', v1: t1.cxC, v2: t2.cxC },
       { nombre: 'Total Activos', v1: t1.totalActivos, v2: t2.totalActivos },
       { nombre: 'Pasivos Corrientes', v1: t1.pasivosCorrientes, v2: t2.pasivosCorrientes },
       { nombre: 'Total Pasivos', v1: t1.totalPasivos, v2: t2.totalPasivos },
@@ -513,7 +514,7 @@ function renderAVTable(avData, titulo) {
     <div class="table-wrapper mb-6"><table>
       <thead><tr><th>Cuenta</th><th class="text-right">Valor</th><th class="text-right">% Base</th></tr></thead>
       <tbody>${avData.rows.map(r => `<tr>
-        <td>${r.cuenta}</td>
+        <td>${escapeHTML(r.cuenta)}</td>
         <td class="text-right font-mono">${formatCurrency(r.valor)}</td>
         <td class="text-right font-mono">${r.pctBase === null ? 'N/D (base = 0)' : formatPercent(r.pctBase)}</td>
       </tr>`).join('')}</tbody>
@@ -523,7 +524,7 @@ function renderAVTable(avData, titulo) {
 function renderAVSection(period) {
   const bgAv = computeAVBalanceGeneral(period);
   const erAv = computeAVEstadoResultados(period);
-  return renderAVTable(bgAv, 'Análisis Vertical — Balance General') +
+  return renderAVTable(bgAv, 'Análisis vertical — Estado de situación financiera') +
     renderAVTable(erAv, 'Análisis Vertical — Estado de Resultados');
 }
 
@@ -545,8 +546,8 @@ function renderRazonesSection(period) {
   const badgeSiHay = (v, ok) => v == null ? 'badge-info' : badge(ok);
   const etiqueta = (b) => b === 'badge-success' ? 'OK' : 'Revisión';
   const fuenteCxP = r.usaComprasReales
-    ? `compras${r.usaPromedios ? ' / CxP promedio' : ''}`
-    : `costo de ventas (aprox.)${r.usaPromedios ? ' / CxP promedio' : ''}`;
+    ? `compras${r.usaPromedios ? ' / cuentas por pagar promedio' : ''}`
+    : `costo de ventas (aprox.)${r.usaPromedios ? ' / cuentas por pagar promedio' : ''}`;
   const items = [
     ['Liquidez', '', '', ''],
     ['Ratio Corriente', val(r.RC, formatNumber, d.RC, 'el pasivo corriente', 'la liquidez corriente'), badgeSiHay(r.RC, r.RC >= UMBRALES.ratioCorrienteMin)],
@@ -555,14 +556,14 @@ function renderRazonesSection(period) {
     ['Actividad', '', '', ''],
     [`Rotación Inventario${r.usaPromedios ? ' (inv. promedio)' : ''}`, val(r.RotInv, formatNumber, d.RotInv, 'el inventario', 'la rotación de inventario'), 'badge-info'],
     ['Edad del Inventario (días)', r.edadInventario == null ? 'N/D' : formatNumber(r.edadInventario, 0), 'badge-info'],
-    [`Rotación CxC (ventas totales${r.usaPromedios ? ' / CxC promedio' : ''})`, val(r.RotCxC, formatNumber, d.RotCxC, 'las CxC', 'la rotación de CxC'), 'badge-info'],
+    [`Rotación de cuentas por cobrar (ventas totales${r.usaPromedios ? ' / cuentas por cobrar promedio' : ''})`, val(r.RotCxC, formatNumber, d.RotCxC, 'las cuentas por cobrar', 'la rotación de cuentas por cobrar'), 'badge-info'],
     ['Plazo Cobro (días)', r.PPC == null ? 'N/D' : formatNumber(r.PPC, 0), 'badge-info'],
     [`Rotación de Cuentas por Pagar (${fuenteCxP})`, r.rotacionCxP == null ? 'N/D' : formatNumber(r.rotacionCxP), 'badge-info'],
     ['Plazo Pago (días)', r.plazoPago == null ? 'N/D' : formatNumber(r.plazoPago, 0), 'badge-info'],
     ['Ciclo de Conversión (días)', r.cicloConversion == null ? 'N/D' : formatNumber(r.cicloConversion, 0), badgeSiHay(r.cicloConversion, r.cicloConversion <= UMBRALES.cicloConversionMaxDias)],
     [`Rotación Activos${r.usaPromedios ? ' (activo promedio)' : ''}`, r.rotacionActivos == null ? 'N/D' : formatNumber(r.rotacionActivos), 'badge-info'],
     ['Rotación Activos Fijos (Ventas / activo fijo neto)', r.rotacionActivosFijos == null ? 'N/D' : formatNumber(r.rotacionActivosFijos), 'badge-info'],
-    ['Rotación Capital de Trabajo (Ventas / CNT)', r.rotacionCapitalTrabajo == null ? 'N/D' : formatNumber(r.rotacionCapitalTrabajo), 'badge-info'],
+    ['Rotación Capital de Trabajo (ventas / capital neto de trabajo)', r.rotacionCapitalTrabajo == null ? 'N/D' : formatNumber(r.rotacionCapitalTrabajo), 'badge-info'],
     ['Endeudamiento y Cobertura', '', '', ''],
     ['Endeudamiento', val(r.endeudamiento, formatPercent, d.End, 'el activo total', 'el endeudamiento'), badgeSiHay(r.endeudamiento, r.endeudamiento <= UMBRALES.endeudamientoMax)],
     ['Deuda / Patrimonio', r.deudaPatrimonio == null ? 'N/D' : formatNumber(r.deudaPatrimonio), badgeSiHay(r.deudaPatrimonio, r.deudaPatrimonio <= UMBRALES.deudaPatrimonioMax)],
@@ -572,34 +573,34 @@ function renderRazonesSection(period) {
     ['Rentabilidad', '', '', ''],
     ['Margen Bruto', r.margenBruto == null ? 'N/D' : formatPercent(r.margenBruto), badgeSiHay(r.margenBruto, r.margenBruto >= UMBRALES.margenBrutoMin)],
     ['Margen Operativo', r.margenOperativo == null ? 'N/D' : formatPercent(r.margenOperativo), badgeSiHay(r.margenOperativo, r.margenOperativo >= UMBRALES.margenOperativoMin)],
-    [`ROE${r.usaPromedios ? ' (patrimonio promedio)' : ''}`, r.roe == null ? 'N/D' : formatPercent(r.roe), badgeSiHay(r.roe, r.roe >= UMBRALES.roeMin)],
+    [`Rentabilidad sobre el patrimonio (ROE)${r.usaPromedios ? ' — patrimonio promedio' : ''}`, r.roe == null ? 'N/D' : formatPercent(r.roe), badgeSiHay(r.roe, r.roe >= UMBRALES.roeMin)],
     ['Margen Neto', val(r.MN, formatPercent, d.MN, 'las ventas', 'el margen neto'), badgeSiHay(r.MN, r.MN >= UMBRALES.margenNetoMin)],
-    [`ROA${r.usaPromedios ? ' (activo promedio)' : ''}`, val(r.ROA, formatPercent, d.ROA, 'el activo total', 'el ROA'), badgeSiHay(r.ROA, r.ROA >= UMBRALES.roaMin)]
+    [`Rentabilidad sobre los activos (ROA)${r.usaPromedios ? ' — activo promedio' : ''}`, val(r.ROA, formatPercent, d.ROA, 'el activo total', 'la rentabilidad sobre los activos'), badgeSiHay(r.ROA, r.ROA >= UMBRALES.roaMin)]
   ];
   const notaPromedios = r.usaPromedios
     ? 'Rotaciones, ROA y DuPont usan saldos promedio ((inicial + final) / 2).'
     : 'Con un solo periodo se usan saldos finales. Ingrese dos periodos para usar promedios.';
   const notaCreditos = r.RotCxC == null
     ? ''
-    : 'Rotación CxC y plazo de cobro con ventas totales: el modelo de datos no separa las ventas a crédito; con ellas el resultado sería más preciso.';
+    : 'Rotación de cuentas por cobrar y plazo de cobro con ventas totales: el modelo de datos no separa las ventas a crédito; con ellas el resultado sería más preciso.';
   return `<p class="text-muted mb-4" style="font-size:var(--font-size-sm)">${notaPromedios}</p>
   ${notaCreditos ? `<p class="text-muted mb-4" style="font-size:var(--font-size-sm)">${notaCreditos}</p>` : ''}
   <div class="kpi-grid">${items.map(([label, value, badgeClass]) => {
     if (!value) return `<div class="kpi-card" style="grid-column:1/-1"><div class="kpi-label font-bold">${label}</div></div>`;
     const esError = value.startsWith('No se puede calcular');
-    return `<div class="kpi-card"><div class="kpi-value" style="${esError ? 'font-size:var(--font-size-sm);color:var(--color-danger)' : ''}">${value}</div><div class="kpi-label">${label}</div>${!esError && badgeClass && badgeClass !== 'badge-info' ? `<span class="badge ${badgeClass}" style="margin-top:var(--space-2)">${etiqueta(badgeClass)}</span>` : ''}</div>`;
+    return `<div class="kpi-card"><div class="kpi-value" style="${esError ? 'font-size:var(--font-size-sm);color:var(--ink-danger)' : ''}">${value}</div><div class="kpi-label">${label}</div>${!esError && badgeClass && badgeClass !== 'badge-info' ? `<span class="badge ${badgeClass}" style="margin-top:var(--space-2)">${etiqueta(badgeClass)}</span>` : ''}</div>`;
   }).join('')}</div>`;
 }
 
 function renderCNTCNOSection(period) {
   const { CNT, CNO, activosCorrientesOps, pasivosCorrientesOps, excluidosAC, excluidosPC } = computeCNTCNO(period);
   return `<div class="kpi-grid mb-4">
-    <div class="kpi-card"><div class="kpi-value ${CNT >= 0 ? '' : 'text-danger'}">${formatCurrency(CNT)}</div><div class="kpi-label">Capital Neto de Trabajo</div><div class="kpi-label" style="font-size:var(--font-size-sm)">Todo AC − todo PC</div></div>
-    <div class="kpi-card"><div class="kpi-value ${CNO >= 0 ? '' : 'text-danger'}">${formatCurrency(CNO)}</div><div class="kpi-label">Capital Neto Operativo</div><div class="kpi-label" style="font-size:var(--font-size-sm)">AC ops − PC ops</div></div>
+    <div class="kpi-card"><div class="kpi-value ${CNT >= 0 ? '' : 'text-danger'}">${formatCurrency(CNT)}</div><div class="kpi-label">Capital Neto de Trabajo</div><div class="kpi-label" style="font-size:var(--font-size-sm)">Activos corrientes − pasivos corrientes</div></div>
+    <div class="kpi-card"><div class="kpi-value ${CNO >= 0 ? '' : 'text-danger'}">${formatCurrency(CNO)}</div><div class="kpi-label">Capital Neto Operativo</div><div class="kpi-label" style="font-size:var(--font-size-sm)">Activos corrientes operativos − pasivos corrientes operativos</div></div>
   </div>
   <p class="text-muted" style="font-size:var(--font-size-sm)">
-    Composición del CNO — Activos corrientes operativos: <strong>CxC + Inventario</strong> = ${formatCurrency(activosCorrientesOps)};
-    Pasivos corrientes operativos: <strong>CxP + Provisiones</strong> = ${formatCurrency(pasivosCorrientesOps)}.
+    Composición del capital neto operativo — Activos corrientes operativos: <strong>Cuentas por cobrar + inventario</strong> = ${formatCurrency(activosCorrientesOps)};
+    Pasivos corrientes operativos: <strong>Cuentas por pagar + provisiones</strong> = ${formatCurrency(pasivosCorrientesOps)}.
     Excluidos por no ser operativos: Efectivo y otros activos corrientes (${formatCurrency(excluidosAC)}) y Pasivo corto plazo financiero (${formatCurrency(excluidosPC)}).
   </p>`;
 }
@@ -625,7 +626,7 @@ function renderEOAFSection(periods) {
   return `<div class="table-wrapper"><table>
     <thead><tr><th>Cuenta</th><th class="text-right">Cambio</th><th>Clasificación</th><th class="text-right">Monto</th></tr></thead>
     <tbody>${items.map(r => `<tr>
-      <td>${r.cuenta}</td>
+      <td>${escapeHTML(r.cuenta)}</td>
       <td class="text-right font-mono ${r.cambio < 0 ? 'text-danger' : 'text-success'}">${formatCurrency(r.cambio)}</td>
       <td><span class="badge ${r.clasificacion === 'Origen' ? 'badge-success' : 'badge-primary'}">${r.clasificacion}</span></td>
       <td class="text-right font-mono">${formatCurrency(r.monto)}</td>
@@ -652,7 +653,7 @@ function renderEFESection(period) {
     <div class="kpi-card"><div class="kpi-value">${formatCurrency(efe.utilidadNeta)}</div><div class="kpi-label">Utilidad Neta</div></div>
   </div>
   ${filasAjustes}
-  <p class="text-muted" style="font-size:var(--font-size-sm)">Método indirecto: UN − aumentos de activos operativos (Inventario, CxC) + aumentos de pasivos operativos (CxP, Provisiones), usando variaciones reales entre el periodo actual y el anterior.</p>`;
+  <p class="text-muted" style="font-size:var(--font-size-sm)">Método indirecto: utilidad neta − aumentos de activos operativos (inventario, cuentas por cobrar) + aumentos de pasivos operativos (cuentas por pagar, provisiones), usando variaciones reales entre el periodo actual y el anterior.</p>`;
 }
 
 function renderDuPontSection(period) {
@@ -662,17 +663,17 @@ function renderDuPontSection(period) {
     ? `Activo promedio = ${fmtProm(dp.activoProm)} · Patrimonio promedio = ${fmtProm(dp.patrimonioProm)} ((inicial + final) / 2)`
     : `Un solo periodo disponible: se usan saldos finales (Activo = ${fmtProm(dp.activoProm)}, Patrimonio = ${fmtProm(dp.patrimonioProm)}). Ingrese dos periodos para promediar.`;
   return `<div class="kpi-grid">
-    <div class="kpi-card"><div class="kpi-value">${dp.PM == null ? 'N/D' : formatPercent(dp.PM)}</div><div class="kpi-label">Margen Neto (PM)</div></div>
-    <div class="kpi-card"><div class="kpi-value">${dp.AT == null ? 'N/D' : formatNumber(dp.AT)}</div><div class="kpi-label">Rotación Activos (AT)</div></div>
-    <div class="kpi-card"><div class="kpi-value">${dp.EM == null ? 'N/D' : formatNumber(dp.EM)}</div><div class="kpi-label">Multiplicador (EM)</div></div>
-    <div class="kpi-card" style="border-color:var(--color-primary)"><div class="kpi-value" style="color:var(--color-primary)">${dp.ROE == null ? 'N/D' : formatPercent(dp.ROE)}</div><div class="kpi-label font-bold">ROE = PM × AT × EM</div></div>
+    <div class="kpi-card"><div class="kpi-value">${dp.PM == null ? 'N/D' : formatPercent(dp.PM)}</div><div class="kpi-label">Margen neto</div></div>
+    <div class="kpi-card"><div class="kpi-value">${dp.AT == null ? 'N/D' : formatNumber(dp.AT)}</div><div class="kpi-label">Rotación de activos</div></div>
+    <div class="kpi-card"><div class="kpi-value">${dp.EM == null ? 'N/D' : formatNumber(dp.EM)}</div><div class="kpi-label">Multiplicador de capital</div></div>
+    <div class="kpi-card" style="border-color:var(--ink-primary)"><div class="kpi-value" style="color:var(--ink-primary)">${dp.ROE == null ? 'N/D' : formatPercent(dp.ROE)}</div><div class="kpi-label font-bold">Rentabilidad sobre el patrimonio (ROE)</div></div>
   </div>
   <p class="text-muted mt-4" style="font-size:var(--font-size-sm)">${notaPromedios}</p>
   <div class="card" style="border-left:4px solid var(--color-primary)">
     <p style="margin:0;font-size:var(--font-size-sm);color:var(--text-secondary)">
       <strong>Lectura integrada:</strong> un ROE alto no implica por sí mismo buena salud financiera.
-      Identifique qué componente lo impulsa: PM alto (rentabilidad), AT alta (eficiencia en el uso de activos)
-      o EM alto (apalancamiento, que también amplifica el riesgo).
+      Identifique qué componente lo impulsa: margen neto, rotación de activos
+      o multiplicador de capital (apalancamiento, que también amplifica el riesgo).
     </p>
   </div>`;
 }
@@ -687,7 +688,7 @@ function renderInterpretacionSection(period) {
       <tbody>
         <tr><td>Liquidez Corriente</td><td class="text-right font-mono">${razones.RC == null ? 'N/D' : formatNumber(razones.RC)}</td><td>${razones.RC == null ? '—' : `Por cada unidad monetaria de pasivo corriente existen ${formatNumber(razones.RC)} unidades de activo corriente.`}</td><td>Complementar con la prueba ácida, la composición del activo corriente y la evolución histórica antes de concluir.</td></tr>
         <tr><td>Margen Neto</td><td class="text-right font-mono">${razones.MN == null ? 'N/D' : formatPercent(razones.MN)}</td><td>${razones.MN == null ? '—' : `Queda ${formatPercent(razones.MN)} de utilidad por cada unidad vendida.`}</td><td>Comparar con el sector y con periodos anteriores; revisar estructura de costos y gastos.</td></tr>
-        <tr><td>ROA</td><td class="text-right font-mono">${razones.ROA == null ? 'N/D' : formatPercent(razones.ROA)}</td><td>${razones.ROA == null ? '—' : `La operación genera ${formatPercent(razones.ROA)} de utilidad sobre los activos empleados.`}</td><td>Relacionar con DuPont: margen × rotación. Un margen bajo con rotación alta puede ser normal según el modelo de negocio.</td></tr>
+        <tr><td>Rentabilidad sobre los activos (ROA)</td><td class="text-right font-mono">${razones.ROA == null ? 'N/D' : formatPercent(razones.ROA)}</td><td>${razones.ROA == null ? '—' : `La operación genera ${formatPercent(razones.ROA)} de utilidad sobre los activos empleados.`}</td><td>Relacionar con DuPont: margen × rotación. Un margen bajo con rotación alta puede ser normal según el modelo de negocio.</td></tr>
       </tbody>
     </table></div>`;
   const evolucionData = computeEvolucion(getPeriods());
@@ -699,7 +700,7 @@ function renderInterpretacionSection(period) {
         const celda = v => (typeof v === 'number' && Number.isFinite(v)
           ? (e.indicador.includes('%') ? formatPercent(v) : formatNumber(v)) : 'N/D');
         return `<tr>
-        <td>${e.periodo}</td>
+        <td>${escapeHTML(e.periodo)}</td>
         <td>${e.indicador}</td>
         <td class="text-right font-mono">${celda(e.t1)}</td>
         <td class="text-right font-mono">${celda(e.t2)}</td>
@@ -712,7 +713,7 @@ function renderInterpretacionSection(period) {
       <div class="flex-gap mb-2"><span class="badge badge-warning">Hallazgo</span><strong>${h.hallazgo}</strong></div>
       <p style="font-size:var(--font-size-sm);color:var(--text-secondary);margin:var(--space-2) 0"><strong>Causa:</strong> ${h.causa}</p>
       <p style="font-size:var(--font-size-sm);color:var(--text-secondary);margin:var(--space-2) 0"><strong>Riesgo:</strong> ${h.riesgo}</p>
-      <p style="font-size:var(--font-size-sm);color:var(--color-primary);margin:var(--space-2) 0"><strong>Acción:</strong> ${h.accion}</p>
+      <p style="font-size:var(--font-size-sm);color:var(--ink-primary);margin:var(--space-2) 0"><strong>Acción:</strong> ${h.accion}</p>
     </div>`).join('');
 }
 
@@ -726,18 +727,18 @@ export function initAnalisis() {
   page.innerHTML = `
     <div class="page-header">
       <h1 class="page-title">Análisis Financiero</h1>
-      <p class="page-subtitle">AH, AV, Razones, CNT/CNO, EOAF, EFE, DuPont, Interpretación y razones de mercado</p>
+      <p class="page-subtitle">Compare periodos, revise la composición de los estados y evalúe los indicadores de la empresa.</p>
     </div>
     <div class="tabs">
-      <button class="tab-btn active" data-tab="ah">AH</button>
-      <button class="tab-btn" data-tab="av">AV</button>
-      <button class="tab-btn" data-tab="razones">Razones</button>
-      <button class="tab-btn" data-tab="cnt-cno">CNT/CNO</button>
-      <button class="tab-btn" data-tab="eoaf">EOAF</button>
-      <button class="tab-btn" data-tab="efe">EFE</button>
-      <button class="tab-btn" data-tab="dupont">DuPont</button>
+      <button class="tab-btn active" data-tab="ah">Análisis horizontal</button>
+      <button class="tab-btn" data-tab="av">Análisis vertical</button>
+      <button class="tab-btn" data-tab="razones">Razones financieras</button>
+      <button class="tab-btn" data-tab="cnt-cno">Capital neto de trabajo y operativo</button>
+      <button class="tab-btn" data-tab="eoaf">Estado de origen y aplicación de fondos</button>
+      <button class="tab-btn" data-tab="efe">Estado de flujo de efectivo</button>
+      <button class="tab-btn" data-tab="dupont">Modelo DuPont</button>
       <button class="tab-btn" data-tab="interpretacion">Interpretación</button>
-      <button class="tab-btn" data-tab="mercado">Mercado</button>
+      <button class="tab-btn" data-tab="mercado">Razones de mercado</button>
     </div>
     <div class="tab-content active" id="tab-ah">
       <h3 class="mb-4">Análisis Horizontal</h3>

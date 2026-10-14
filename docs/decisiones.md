@@ -498,3 +498,98 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 **Para revertirla.** Volver al bucle `store.set` de `bindExportEvents` y eliminar `integracion-respaldo.js` con sus tests.
 
 **Referencias.** [ficha importación/exportación](planificacion/importacion-exportacion/README.md).
+
+### D-021 — El borrador de Estados se conserva dentro de la sesión
+
+- **Fecha**: 2026-10-03
+- **Estado**: Vigente
+- **Decidió**: Carlos (sesión con IA; pendiente de revisión del equipo)
+- **Área**: `estados/index.js`, `estados-ui.js`, `app.js`
+
+**Contexto.** Volver desde Análisis reiniciaba Estados y descartaba el borrador sin avisar. Publicar cada tecla alteraría los datos que usan los cálculos.
+
+**Opciones.** Conservar el editor en memoria; guardar borradores separados en `localStorage`; o bloquear cada cambio de ruta con confirmación.
+
+**Decisión.** Conservar el DOM y sus eventos mientras el editor tiene cambios. Análisis sigue leyendo el conjunto publicado. `beforeunload` solicita el aviso nativo antes de cerrar o recargar; descargar JSON permite conservar el borrador entre sesiones.
+
+**Consecuencias.** No cambia el esquema guardado ni se crean escrituras automáticas. El borrador se pierde si se confirma salir; el aviso depende de la política del navegador. No resuelve aún todos los formularios pendientes de los otros módulos ni los campos de alta de cuentas sin enviar.
+
+**Para revertirla.** Quitar el editor conservado y el manejador `beforeunload`, con sus pruebas en `estados-borrador` y `app-borrador`.
+
+**Referencias.** [Ficha de fiabilidad](planificacion/fiabilidad-interfaz/README.md).
+
+### D-022 — Captura estricta de activos y conservación de puntajes cero
+
+- **Fecha**: 2026-10-03
+- **Estado**: Vigente
+- **Decidió**: Carlos (sesión con IA; pendiente de revisión del equipo)
+- **Área**: `activos/index.js`, `activos-calculations.js`
+
+**Contexto.** `parseInt(...) || 5` convertía una vida útil cero o vacía en cinco años, y `scores[i] || 5` cambiaba una condición cero por cinco al editar. El formulario guardaba valores negativos y residual mayor al costo.
+
+**Opciones.** Rechazar la captura inválida con explicación; corregir silenciosamente a valores por defecto; o admitirla y mostrar cálculos N/D.
+
+**Decisión.** Validación previa y sin truncar: vida útil entera positiva, años enteros no negativos, importes finitos no negativos, residual hasta el costo y ocho puntajes enteros entre 0 y 10. Cero se conserva. Años consumidos mayores que la vida útil siguen permitidos; la fórmula existente limita la depreciación. Reposición vacía sigue siendo cero.
+
+**Consecuencias.** Cambia la condición visible al editar un cero, que antes se elevaba a cinco. Los datos ya guardados no se migran; el siguiente guardado exige corregir registros inválidos. Las fórmulas y la previsión mensual permanecen iguales.
+
+**Para revertirla.** Restaurar los valores con `||` y quitar `validarActivo` del guardado (reintroduce el error de cero).
+
+**Referencias.** [Ficha de fiabilidad](planificacion/fiabilidad-interfaz/README.md), pruebas `activos-fiabilidad`.
+
+### D-023 — Etiquetas CSV protegidas como texto
+
+- **Fecha**: 2026-10-03
+- **Estado**: Vigente
+- **Decidió**: Carlos (sesión con IA; pendiente de revisión del equipo)
+- **Área**: `utils/export.js`
+
+**Contexto.** Escapar comas/comillas no impedía que un nombre de cuenta iniciado con `=` o `@` se abriera como fórmula en una hoja de cálculo.
+
+**Opciones.** Prefijar texto peligroso con apóstrofo; eliminar caracteres; o advertir sin modificar el archivo.
+
+**Decisión.** Prefijar cadenas iniciadas con `=`, `+`, `-` o `@` (también tras espacios), o controles iniciales de tabulación/salto de línea. Los valores de tipo `number` no cambian, incluido un importe negativo.
+
+**Consecuencias.** El CSV puede incorporar un apóstrofo a nombres y a números enviados como cadenas negativas. Al reimportarse se conserva ese prefijo; JSON es el respaldo para recuperar los nombres exactamente. La exportación de Reportes envía los importes como números.
+
+**Para revertirla.** Quitar el prefijo en `exportCSV` y su prueba `export-csv`.
+
+**Referencias.** API `exportCSV` y [ficha de fiabilidad](planificacion/fiabilidad-interfaz/README.md).
+
+### D-024 — Revisión de importaciones fuera del borrador y catálogo compartido
+
+- **Fecha**: 2026-10-12
+- **Estado**: Vigente
+- **Decidió**: Carlos (sesión con IA; pendiente de revisión del equipo)
+- **Área**: Estados, reconocimiento de cuentas e interfaz
+
+**Contexto.** Una sola cuenta desconocida detenía la importación y obligaba a editar el archivo. Las coincidencias por palabras no bastan para conocer el plazo de un préstamo o la función de un gasto.
+
+**Opciones.** Mantener el rechazo completo; aplicar parcialmente cuentas reconocidas; o mantener una sesión de revisión independiente hasta resolver los problemas.
+
+**Decisión.** Sesión en memoria con todas las filas y errores. El usuario corrige o excluye filas y aplica explícitamente al borrador antes de guardar. Un catálogo versionado en JavaScript sirve tanto al importador como al motor; su JSON descargable se genera desde la misma fuente. Las coincidencias exactas y reglas existentes se identifican en la revisión; no se introduce similitud aproximada automática. Deudas y gastos ambiguos exigen clasificación manual.
+
+**Consecuencias.** Se agrega una aprobación de importación distinta del guardado. Cancelar y errores conservan los datos anteriores; la sesión pendiente se conserva al cambiar de ruta, pero no al cerrar la pestaña. Se excluyen subtotales reconocidos de forma visible para evitar duplicar montos; el resultado del ejercicio dentro del patrimonio se conserva. Se distinguen datos ausentes de cero en la comparación. Los tipos y fórmulas se mantienen; el catálogo no cubre cualquier plan de cuentas.
+
+**Para revertirla.** Volver a la entrada estricta en Estados y retirar la pantalla/sesión de revisión; conservar la validación y el guardado persistente.
+
+**Referencias.** [Catálogo y formato](catalogo-cuentas.md), [ficha](planificacion/estados-importacion-review/README.md).
+
+### D-025 — Lector Excel actualizado y distribuido localmente
+
+- **Fecha**: 2026-10-12
+- **Estado**: Vigente
+- **Decidió**: Carlos (sesión con IA; pendiente de revisión del equipo)
+- **Área**: lector Excel y archivos estáticos
+
+**Contexto.** Importar un Excel dependía de descargar SheetJS 0.18.5 desde un CDN. Una falta de conexión impedía probar las soluciones locales.
+
+**Opciones.** Conservar el CDN; exigir CSV; o distribuir una versión fija del lector junto con GFO.
+
+**Decisión.** Copia oficial de SheetJS CE 0.20.3 en `assets/vendor/`, licencia Apache 2.0 y huella SHA-256 documentadas. Se carga bajo demanda con timeout y posibilidad de reintento. Se aplican límites al libro antes de convertir las hojas. Autorizado por el usuario para implementar eficientemente el avance, sin nuevas dependencias de npm.
+
+**Consecuencias.** La importación Excel funciona sin conexión y se añade aproximadamente 1 MB de código distribuido. La versión debe actualizarse explícitamente. Las hojas de la plantilla se verificaron con ese lector y en un navegador real con conexiones externas bloqueadas.
+
+**Para revertirla.** Cambiar la URL del lector y retirar el archivo/licencia locales; se pierde la independencia del CDN.
+
+**Referencias.** [Instalación oficial de SheetJS](https://docs.sheetjs.com/docs/getting-started/installation/standalone/), [ficha](planificacion/estados-importacion-review/README.md).

@@ -120,12 +120,14 @@ Con **Cargar ejemplo ficticio** (datos inventados, para no exponer información 
 
 ## 3. Módulo 2: Estados Financieros
 
+El borrador y la revisión de importación se conservan al ir a otra sección y volver. Análisis sigue leyendo los estados guardados. Antes de recargar o cerrar, el navegador avisa si hay cambios pendientes (según su política de interacción). Para conservar el borrador entre sesiones, pulse **Guardar estados** o **Exportar borrador JSON**. Las correcciones de una revisión pendiente deben aplicarse al borrador antes de exportarlas.
+
 ### 3.1 Cargar datos: importar, editar o usar la demo
 
 La sección Estados Financieros (`#/estados`) es la puerta de entrada de la información. El flujo es siempre el mismo:
 
-1. **Cargar o editar** el borrador (importar archivo, pegar desde Excel, escribir a mano o cargar el ejemplo).
-2. **Revisar el equilibrio** en el panel de validación.
+1. **Importar** un archivo o pegar la tabla desde Excel; también puede editar manualmente o cargar el ejemplo.
+2. **Revisar y corregir** cuentas e importes y pulsar **Aplicar al borrador**. Compruebe el equilibrio por periodo.
 3. **Guardar** para publicar los datos.
 4. **Analizar** los datos guardados en `#/analisis`.
 
@@ -149,9 +151,10 @@ El botón **"Cargar ejemplo"** inserta la empresa de demostración MUNO MODA S.A
 | Resultados | | Ventas | ventas | 850000 | 920000 |
 
 - La cabecera **`Cuenta`** es obligatoria; `Estado`, `Grupo` y `Clasificacion` son opcionales.
-- `Estado` acepta `Balance` o `Resultados`. `Grupo` acepta `activos`, `pasivos` o `patrimonio`.
-- Si omite `Grupo`, la cuenta se ubica a partir de su `Clasificacion`.
-- El botón **"Descargar plantilla CSV"** genera este formato listo para editar.
+- `Estado` acepta `Estado de situación financiera` o `Estado de resultados`, además de `Balance` y `Resultados`. `Grupo` acepta `Activos`, `Pasivos` o `Patrimonio`.
+- Si omite `Grupo`, se intenta ubicar la cuenta por su clasificación o por una coincidencia exacta del catálogo.
+- Los encabezados de periodo de la tabla ancha comienzan con un año (2024 o 2024-T1). Para otros nombres use la tabla larga.
+- **Descargar plantilla Excel** ofrece dos hojas con ejemplos equilibrados. **Descargar plantilla CSV** genera una tabla única lista para editar. El formato completo está en [Catálogo e importación](catalogo-cuentas.md).
 
 **Tabla larga (una fila por periodo).** Columnas `Periodo`, `Estado`, `Grupo`, `Cuenta` e `Importe`.
 
@@ -159,7 +162,15 @@ El botón **"Cargar ejemplo"** inserta la empresa de demostración MUNO MODA S.A
 
 **Excel con varias hojas.** Si el libro tiene hojas separadas por estado (`Activos`, `Pasivos`, `Patrimonio`, `Resultados`), cada hoja puede contener solo una columna `Cuenta` y una columna por periodo; el nombre de la hoja aporta el estado y el grupo.
 
-**Importes admitidos.** `45000`, `45,000`, `C$ 12.500,50`, `(500)` y `500-` se interpretan correctamente. Una celda en blanco **omite** la cuenta en ese periodo (no la convierte en cero). Las cuentas cuyo nombre no se reconoce exigen indicar `Clasificacion`; el error indica el número de fila.
+**Importes admitidos.** `45000`, `45,000`, `C$ 12.500,50`, `(500)` y `500-` se leen con el formato elegido. Una celda en blanco **omite** la cuenta en ese periodo; cero se conserva. Una cuenta desconocida queda pendiente en la revisión: seleccione su clasificación, corrija su nombre o excluya la fila. La depreciación acumulada debe ser negativa o cero.
+
+**Revisión del archivo.** Los problemas se reúnen por fila: nombres, clasificación, importes y duplicados. Puede buscar, filtrar pendientes o excluidos y navegar por páginas de 30 filas. Las hojas sin tabla y los subtotales reconocidos se muestran como excluidos. Pulse **Aplicar al borrador** cuando no haya problemas; luego **Guardar estados**. Cancelar conserva el borrador anterior. Guardar está deshabilitado mientras haya una revisión pendiente.
+
+**Organización.** Use los botones **Estado de situación financiera** y **Estado de resultados** para editar cada documento. La comparación entre periodos agrupa las cuentas y totales por estado. En Reportes, las acciones se ordenan en **Importar**, **Exportar** y **Resumen financiero**.
+
+**IA.** El botón **Asistencia con IA** está deshabilitado hasta configurar un servicio y una API key. No se envía el documento a ningún proveedor.
+
+**Límites y conexión.** La lectura de Excel utiliza un lector local y funciona sin internet. Máximo 10 MB, 50 hojas, 5000 filas, 120 columnas y 20000 celdas de importes; hasta 100 periodos y 200 cuentas por grupo y periodo. CSV admite UTF-8, UTF-16 con marca de codificación y Windows-1252 con aviso.
 
 **Formato de importes (punto o coma).** Elija en **"Formato de importes al importar CSV/Excel"** cómo escribe sus números:
 
@@ -403,6 +414,10 @@ El mercado paga 14.88 veces la utilidad por acción y valora la acción a 2.68 v
 ---
 
 ## 5. Módulo 4: Activos del Hogar
+
+El formulario exige costo y vida útil válidos: importes no negativos, valor residual hasta el costo original, vida útil entera mayor que cero y años consumidos enteros no negativos. Complete los ocho puntajes entre 0 y 10; cero es una condición válida y se conserva al editar. El costo de reposición vacío se toma como cero. **Cancelar**, el botón de cierre y Escape cierran el diálogo; al eliminar un bien se solicita confirmación.
+
+Si falla el almacenamiento en Activos o Presupuesto personal, se muestra **No se pudo guardar** y se conservan los datos anteriores y los campos para reintentar. El ajuste por inflación publica ingresos y gastos juntos. No cierre la pantalla hasta guardar o copiar sus entradas.
 
 Registra los bienes del hogar (tecnología, electrodomésticos, mobiliario, transporte, herramientas), su depreciación y su condición. Está en la sección **Finanzas personales** del menú y no se mezcla con los activos fijos del balance de la empresa.
 
