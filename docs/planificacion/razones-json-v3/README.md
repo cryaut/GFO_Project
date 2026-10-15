@@ -21,13 +21,15 @@ Generar los 20 JSON deterministas de razones financieras que pide `instrucciones
 - Los JSON van en `docs/razones_financieras/` (ruta relativa pedida por el documento de instrucciones, dentro del proyecto porque pide ejecutar las pruebas del proyecto): **D-021**.
 - Cada archivo es autónomo: catálogo, conjuntos, derivados y reglas completos, aunque se repitan (instrucción explícita; prevalece sobre la especificación, que prefiere un `financial-rules.json` único).
 - Convenciones de implementación no resueltas por el documento (literales `{"value": 365}`, refs a otra razón `{"ref": "ratio.<id>", "period": "previous_current"}`, conjuntos `bs.fixed_assets_components` y `bs.noncurrent_liabilities_components`, `parent_group` siempre con su conjunto completo incluido, depreciación acumulada `requires_data`): **D-022**.
-- El botón de cálculo directo de m1 va en las 11 razones de flujo (7, 8, 12–20), no en 9: el paréntesis del documento enumera 11 y la columna "m1 off" (9 con valor / 11 N/D) confirma 11 razones de flujo: **D-023**.
+- El botón de cálculo directo de m1 va en las 11 razones de flujo (7, 8, 12–20), no en 9: el paréntesis del documento enumera 11 y la columna "m1 off" (9 con valor / 11 N/D) confirma 11 razones de flujo: **D-023** (en revisión el equipo confirmó que el «9» de la v3 es un error del documento).
+- El separador decimal del formato numérico no se fija: queda como `DECISION_PENDIENTE` en `metadata.display` de los 20 JSON hasta que el usuario lo confirme: **D-024** (única decisión abierta).
 
 ## Qué se hizo
 - Fases 0–3 completadas: `notas/00_control.md`, `01_decisiones.md` (D1–D14, R1–R5), `02_fuentes.md` (10 fuentes confirmadas), `03_registro_cuentas.md` (71 cuentas), `04_derivados.md`.
 - 20 JSON en `docs/razones_financieras/` y 20 notas `ratios/NN_*.md` con fórmula, árbol de descomposición, cuentas, periodos y checks.
 - `notas/05_checks.md`: 40/40 celdas del caso iguales a la tabla del documento, conteos 9/11, 15/5 y 15/5, ecuación contable cuadrada y 12 verificaciones de consistencia en verde.
 - `npm test` (31 archivos, 375 pruebas) y `npm run lint` (0 errores) en verde; los avisos de lint son preexistentes y no tocan esta tarea.
+- Revisión 2026-10-14 aplicada: las 8 diferencias con la solución del profesor pasaron a `DIFERENCIA_CONOCIDA_PROFESOR` en `metadata.research_notes` (las 8 URLs se reabrieron y verificaron con texto de la norma; se corrigió la afirmación de NIC 38 en `02_fuentes.md`), `DECISION_PENDIENTE` quedó solo en `metadata.display`, el mensaje del commit `4a3bef0` se corrigió (`c50545a`) y la descripción del PR aclara que los JSON aún no se aplican en el motor ni en la app.
 
 ## Qué falta
 - Aprobación del equipo y merge del PR (CP5). El agente no hace el merge sin petición expresa.
