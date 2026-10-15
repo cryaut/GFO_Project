@@ -70,6 +70,9 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-018 | Presupuesto personal y Activos del hogar se separan de la empresa | Vigente |
 | D-019 | Importes con punto: formato elegible, deducción por archivo y aviso de ambigüedad | Vigente |
 | D-020 | El importador JSON de Reportes solo acepta respaldos validados | Vigente |
+| D-021 | Los 20 JSON de razones v3 van en `docs/razones_financieras/` dentro del proyecto | Vigente |
+| D-022 | Convenciones por defecto de los JSON: operandos, periodos, conjuntos y `parent_group` | Vigente |
+| D-023 | El botón de cálculo directo de m1 va en las 11 razones de flujo, no en 9 | Vigente |
 
 ## Decisiones
 
@@ -498,3 +501,68 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 **Para revertirla.** Volver al bucle `store.set` de `bindExportEvents` y eliminar `integracion-respaldo.js` con sus tests.
 
 **Referencias.** [ficha importación/exportación](planificacion/importacion-exportacion/README.md).
+
+### D-021 — Los 20 JSON de razones v3 van en `docs/razones_financieras/` dentro del proyecto
+
+- **Fecha**: 2026-10-14
+- **Estado**: Vigente
+- **Decidió**: Alejandro (con agente IA)
+- **Área**: `docs/razones_financieras/` (nuevo), `docs/planificacion/razones-json-v3/`
+
+**Contexto.** El documento de instrucciones pide 20 archivos JSON con una ruta relativa `razones_financieras/...` sin decir desde dónde se mide, y a la vez pide ejecutar las pruebas del proyecto. Medida desde el propio documento (`J_formulas/`), la carpeta quedaría fuera del repo y no pasaría por PR.
+
+**Opciones.**
+1. Dentro del proyecto, en `GFO_Project/docs/razones_financieras/` — se versiona, se revisa en PR y convive con el mapa de documentación / una extracción posterior solo mueve la carpeta sin tocar su contenido.
+2. Junto al documento de instrucciones, en `J_formulas/razones_financieras/` — literal al pie de la letra / fuera del repo: sin revisión del equipo ni historial de cambios.
+
+**Decisión.** Opción 1. El documento pide ejecutar las pruebas del proyecto, así que su raíz de trabajo es el proyecto; `AGENTS.md` exige además que todo lo entregable entre por PR.
+
+**Consecuencias.** Los archivos entran al repo en la rama `feat/razones-json-v3` y se revisan con el resto de la documentación. Ningún módulo del repo lee todavía estos JSON (son assets autónomos de documentación), así que no hay riesgo de código.
+
+**Para revertirla.** Mover la carpeta a `J_formulas/razones_financieras/`, marcar esta entrada como reemplazada por una nueva y corregir la ficha y el índice de `docs/planificacion/`.
+
+**Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `J_formulas/instrucciones_agente_json_razones_financieras_v3.md`.
+
+### D-022 — Convenciones por defecto de los JSON: operandos, periodos, conjuntos y `parent_group`
+
+- **Fecha**: 2026-10-14
+- **Estado**: Vigente
+- **Decidió**: Alejandro (con agente IA)
+- **Área**: `docs/razones_financieras/*.json` (20 archivos)
+
+**Contexto.** El documento fija los nombres de campo y la semántica N/D, pero no resuelve la forma de los operandos literales, la sintaxis de las referencias a otra razón, el nombre de los conjuntos de cuentas con padre, si `parent_group` arrastra su conjunto al archivo ni qué hacer cuando falta la depreciación acumulada.
+
+**Opciones.**
+1. Operandos como `{"ref": ...}` y `{"value": 365}`; refs cruzadas `{"ref": "ratio.<id>", "period": "previous_current"}`; conjuntos propios `bs.fixed_assets_components` y `bs.noncurrent_liabilities_components`; `parent_group` siempre con el conjunto completo incluido; depreciación acumulada `requires_data` — cada JSON se evalúa por separado, sin contexto externo / repite maquinaria en varios archivos.
+2. `op` explícito en todos los operandos y periodos crudos `m1`/`m2` — más uniforme / se aparta de los ejemplos de la sección 10 de la especificación y obliga a resolver tokens en cada referencia.
+3. `parent_group` contextual (solo el conjunto que corresponde al periodo) y depreciación ausente en 0 — menos cuentas por archivo / no se evalúa sin saber el periodo y aproxima un importe que la especificación exige conservar.
+
+**Decisión.** Opción 1. El documento de instrucciones manda sobre la especificación en los detalles de presentación, y es la única opción que permite evaluar cada JSON de forma autónoma.
+
+**Consecuencias.** No cambia ninguna cifra visible. Si falta la depreciación acumulada, las razones que la necesitan quedan en `N/D` con motivo `missing_required_account_data` en lugar de inflar el activo neto.
+
+**Para revertirla.** Regenerar los 20 JSON con otra sintaxis y crear la entrada que reemplace a esta.
+
+**Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/01_decisiones.md`.
+
+### D-023 — El botón de cálculo directo de m1 va en las 11 razones de flujo, no en 9
+
+- **Fecha**: 2026-10-14
+- **Estado**: Vigente
+- **Decidió**: Alejandro (con agente IA)
+- **Área**: `docs/razones_financieras/*.json` (`ratio.presentation.first_period_toggle`)
+
+**Contexto.** El punto 8 del documento habla de "9 razones de flujo (7, 8, 12–20)" y pide el botón de cálculo directo solo en ellas. El paréntesis enumera 11 razones y la tabla de valores esperados confirma 11: la columna "m1 off" muestra 9 con valor y 11 `N/D`, y las 9 con valor son exactamente las razones de punto.
+
+**Opciones.**
+1. Botón en las 11 razones de flujo (7, 8, 12–20) — el paréntesis y los conteos del documento cuadran; el botón es presentación, por defecto apagado, y no altera ningún valor / el número "9" queda interpretado como desliz.
+2. Botón en "9" razones — sigue el número escrito / la enumeración del paréntesis tiene 11 ítems, habría que adivinar cuáles quedan fuera y los conteos de la tabla no quedarían justificados.
+3. Botón solo donde el caso concreto usa un promedio — depende de los datos y no de la fórmula / el mismo JSON cambiaría de presentación según los datos cargados.
+
+**Decisión.** Opción 1. Con el botón encendido o apagado, las razones de flujo sin datos completos (14, 15, 16, 17, 20 con el caso MUNO MODA) siguen en `N/D`: primero por `missing_required_account_data` o `missing_required_period_balance`, según el estado, así que tener el botón presente en las 11 no cambia ninguna celda de la tabla esperada.
+
+**Consecuencias.** Los 11 JSON de flujo traen `first_period_toggle` con `default: false` (y `period_rules.first_period.toggle.default: false`); los 9 de punto lo traen en `null`. Si el profesor confirma otra lectura, se ajusta la presentación sin mover ninguna cifra.
+
+**Para revertirla.** Quitar el toggle de las razones señaladas y crear la entrada que reemplace a esta.
+
+**Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/05_checks.md`.
