@@ -59,7 +59,7 @@ Conjuntos usados: `bs.current_assets_components`.
 ## Notas de investigación
 
 - Referencia a la razón base con period previous_current (misma pareja de periodos); la convención de referencia entre razones no está definida en el documento.
-- DECISION_PENDIENTE: el profesor aproxima ventas a crédito con ventas totales (51.53 y 53.56); este documento exige no aproximar (D8). Por confirmar con el profesor; valores en 05_checks.md.
+- DIFERENCIA_CONOCIDA_PROFESOR: el profesor aproxima ventas a crédito con ventas totales (51.53 y 53.56); este documento exige no aproximar (D8). Por confirmar con el profesor; valores en 05_checks.md.
 
 ## Diferencia conocida con el profesor
 

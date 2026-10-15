@@ -7,6 +7,9 @@
     "formula_as_provided": "Utilidad operativa / Ventas",
     "formula_display": "utilidad_operativa / ventas_netas; utilidad_operativa = utilidad_bruta + is.other_operating_income − gastos_operativos (árbol D5)",
     "unit": "percentage",
+    "display": {
+      "decimal_separator": "DECISION_PENDIENTE: separador decimal (punto o coma) por confirmar con el usuario"
+    },
     "research_notes": [
       "Árbol D5: incluye is.other_operating_income. En el caso MUNO esa cuenta no existe y aporta cero, así que el resultado validado (15.88 % y 16.85 %) coincide con la decisión D5 tal como está escrita."
     ]

@@ -7,6 +7,9 @@
     "formula_as_provided": "Total pasivo / Total patrimonio",
     "formula_display": "pasivo_total / patrimonio_total",
     "unit": "ratio",
+    "display": {
+      "decimal_separator": "DECISION_PENDIENTE: separador decimal (punto o coma) por confirmar con el usuario"
+    },
     "research_notes": []
   },
   "normalization_rules": {

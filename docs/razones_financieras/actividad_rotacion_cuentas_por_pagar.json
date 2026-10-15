@@ -7,6 +7,9 @@
     "formula_as_provided": "Compras a crédito / CxP promedio",
     "formula_display": "compras_credito[current] / average(cxp_saldo[previous], cxp_saldo[current]); compras_credito = pagos_proveedores + cxp actual − cxp anterior (D10)",
     "unit": "ratio",
+    "display": {
+      "decimal_separator": "DECISION_PENDIENTE: separador decimal (punto o coma) por confirmar con el usuario"
+    },
     "research_notes": [
       "Si pagos_proveedores no está disponible, el resultado es not_available con motivo missing_required_account_data (D10). En m1 el resultado sigue en N/D porque requiere la CxP de cierre anterior."
     ]

@@ -94,7 +94,7 @@ Conjuntos usados: `bs.current_assets_components`, `bs.fixed_assets_components`, 
 
 ## Notas de investigación
 
-- DECISION_PENDIENTE: diferencia de método con la solución del profesor (promedio D1 frente a saldos de cierre) por confirmar con el profesor; valores en 05_checks.md.
+- DIFERENCIA_CONOCIDA_PROFESOR: diferencia de método con la solución del profesor (promedio D1 frente a saldos de cierre) por confirmar con el profesor; valores en 05_checks.md.
 
 ## Diferencia conocida con el profesor
 

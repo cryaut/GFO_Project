@@ -57,7 +57,7 @@ Motivos: D1 exige denominador promedio para ROA/ROE/rotaciones (el profesor usó
 |---|---|---|
 | JSON válidos | OK | 20/20 parseados |
 | Marcadores prohibidos en los 20 JSON | OK | ninguno |
-| DECISION_PENDIENTE solo en metadata.research_notes | OK | correcto |
+| DECISION_PENDIENTE solo en metadata.display; DIFERENCIA_CONOCIDA_PROFESOR solo en research_notes | OK | 8 DIFERENCIA_CONOCIDA_PROFESOR en research_notes y 1 DECISION_PENDIENTE por archivo en display |
 | Todos los id referenciados están definidos | OK | correcto |
 | Identidad de cuentas entre archivos (id/nombre/clasificación/signo) | OK | 71 cuentas con identidad única |
 | Botón de m1: 11 razones de flujo con default false; 9 de punto sin toggle | OK | 11 flujo / 9 punto |

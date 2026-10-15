@@ -7,6 +7,9 @@
     "formula_as_provided": "Utilidad operativa / Gastos por intereses",
     "formula_display": "utilidad_operativa / gasto_intereses; gasto_intereses = is.interest_expense",
     "unit": "ratio",
+    "display": {
+      "decimal_separator": "DECISION_PENDIENTE: separador decimal (punto o coma) por confirmar con el usuario"
+    },
     "research_notes": [
       "Si el gasto por intereses es cero, el resultado es not_available con motivo zero_denominator (regla de la razón 11)."
     ]

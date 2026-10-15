@@ -7,6 +7,9 @@
     "formula_as_provided": "Edad promedio del inventario + Período promedio de cobro − Período promedio de pago",
     "formula_display": "ratio.actividad.edad_promedio_inventario + ratio.actividad.periodo_promedio_cobro − ratio.actividad.periodo_promedio_pago (misma pareja de periodos)",
     "unit": "days",
+    "display": {
+      "decimal_separator": "DECISION_PENDIENTE: separador decimal (punto o coma) por confirmar con el usuario"
+    },
     "research_notes": [
       "Referencias a las tres razones base con period previous_current (misma pareja de periodos); la convención de referencia entre razones no está definida en el documento.",
       "Si cualquiera de las tres componentes es N/D, el ciclo es N/D y el motivo nombra la componente faltante."

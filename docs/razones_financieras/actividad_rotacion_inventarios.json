@@ -7,8 +7,11 @@
     "formula_as_provided": "Costo de ventas / Inventario promedio",
     "formula_display": "costo_ventas[current] / average(inventario_total[previous], inventario_total[current])",
     "unit": "ratio",
+    "display": {
+      "decimal_separator": "DECISION_PENDIENTE: separador decimal (punto o coma) por confirmar con el usuario"
+    },
     "research_notes": [
-      "DECISION_PENDIENTE: diferencia de método con la solución del profesor (promedio D1 frente a saldos de cierre) por confirmar con el profesor; valores en 05_checks.md."
+      "DIFERENCIA_CONOCIDA_PROFESOR: diferencia de método con la solución del profesor (promedio D1 frente a saldos de cierre) por confirmar con el profesor; valores en 05_checks.md."
     ]
   },
   "normalization_rules": {

@@ -7,6 +7,9 @@
     "formula_as_provided": "365 / Rotación de CxP",
     "formula_display": "365 / ratio.actividad.rotacion_cuentas_por_pagar[previous_current] (misma pareja de periodos; hereda N/D si 16 es N/D)",
     "unit": "days",
+    "display": {
+      "decimal_separator": "DECISION_PENDIENTE: separador decimal (punto o coma) por confirmar con el usuario"
+    },
     "research_notes": [
       "Referencia a la razón base con period previous_current (misma pareja de periodos); la convención de referencia entre razones no está definida en el documento."
     ]

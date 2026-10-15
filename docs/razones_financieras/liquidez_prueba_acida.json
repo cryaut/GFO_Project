@@ -7,6 +7,9 @@
     "formula_as_provided": "(Activo corriente − Inventarios) / Pasivo corriente",
     "formula_display": "(activo_corriente − inventario_total) / pasivo_corriente; inventario_total se resta una sola vez",
     "unit": "ratio",
+    "display": {
+      "decimal_separator": "DECISION_PENDIENTE: separador decimal (punto o coma) por confirmar con el usuario"
+    },
     "research_notes": []
   },
   "normalization_rules": {

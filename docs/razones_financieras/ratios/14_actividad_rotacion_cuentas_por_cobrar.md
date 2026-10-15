@@ -71,7 +71,7 @@ Conjuntos usados: `bs.current_assets_components`.
 ## Notas de investigación
 
 - Si ventas_credito no está disponible, el resultado es not_available con motivo missing_required_account_data; no se usa ventas_netas como sustituto (D8).
-- DECISION_PENDIENTE: el profesor aproxima ventas a crédito con ventas totales (7.08 y 6.81); este documento exige no aproximar (D8). Por confirmar con el profesor; valores en 05_checks.md.
+- DIFERENCIA_CONOCIDA_PROFESOR: el profesor aproxima ventas a crédito con ventas totales (7.08 y 6.81); este documento exige no aproximar (D8). Por confirmar con el profesor; valores en 05_checks.md.
 
 ## Diferencia conocida con el profesor
 

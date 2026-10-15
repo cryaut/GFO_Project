@@ -7,6 +7,9 @@
     "formula_as_provided": "Activo corriente − Pasivo corriente",
     "formula_display": "activo_corriente − pasivo_corriente (cada uno: total reportado válido o suma de componentes)",
     "unit": "currency",
+    "display": {
+      "decimal_separator": "DECISION_PENDIENTE: separador decimal (punto o coma) por confirmar con el usuario"
+    },
     "research_notes": []
   },
   "normalization_rules": {

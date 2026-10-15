@@ -7,6 +7,9 @@
     "formula_as_provided": "Utilidad neta / Ventas",
     "formula_display": "utilidad_neta / ventas_netas; utilidad_neta = utilidad_operativa + no operativos − intereses − impuesto (D6)",
     "unit": "percentage",
+    "display": {
+      "decimal_separator": "DECISION_PENDIENTE: separador decimal (punto o coma) por confirmar con el usuario"
+    },
     "research_notes": []
   },
   "normalization_rules": {

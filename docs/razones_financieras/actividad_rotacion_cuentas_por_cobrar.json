@@ -7,9 +7,12 @@
     "formula_as_provided": "Ventas a crédito / CxC promedio",
     "formula_display": "ventas_credito[current] / average(cxc_saldo[previous], cxc_saldo[current]); sin aproximación con ventas netas o totales (D8)",
     "unit": "ratio",
+    "display": {
+      "decimal_separator": "DECISION_PENDIENTE: separador decimal (punto o coma) por confirmar con el usuario"
+    },
     "research_notes": [
       "Si ventas_credito no está disponible, el resultado es not_available con motivo missing_required_account_data; no se usa ventas_netas como sustituto (D8).",
-      "DECISION_PENDIENTE: el profesor aproxima ventas a crédito con ventas totales (7.08 y 6.81); este documento exige no aproximar (D8). Por confirmar con el profesor; valores en 05_checks.md."
+      "DIFERENCIA_CONOCIDA_PROFESOR: el profesor aproxima ventas a crédito con ventas totales (7.08 y 6.81); este documento exige no aproximar (D8). Por confirmar con el profesor; valores en 05_checks.md."
     ]
   },
   "normalization_rules": {
