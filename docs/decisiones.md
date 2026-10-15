@@ -73,6 +73,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-021 | Los 20 JSON de razones v3 van en `docs/razones_financieras/` dentro del proyecto | Vigente |
 | D-022 | Convenciones por defecto de los JSON: operandos, periodos, conjuntos y `parent_group` | Vigente |
 | D-023 | El botón de cálculo directo de m1 va en las 11 razones de flujo, no en 9 | Vigente |
+| D-024 | El separador decimal del formato numérico queda abierto en `metadata.display` | Abierta |
 
 ## Decisiones
 
@@ -559,10 +560,31 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 2. Botón en "9" razones — sigue el número escrito / la enumeración del paréntesis tiene 11 ítems, habría que adivinar cuáles quedan fuera y los conteos de la tabla no quedarían justificados.
 3. Botón solo donde el caso concreto usa un promedio — depende de los datos y no de la fórmula / el mismo JSON cambiaría de presentación según los datos cargados.
 
-**Decisión.** Opción 1. Con el botón encendido o apagado, las razones de flujo sin datos completos (14, 15, 16, 17, 20 con el caso MUNO MODA) siguen en `N/D`: primero por `missing_required_account_data` o `missing_required_period_balance`, según el estado, así que tener el botón presente en las 11 no cambia ninguna celda de la tabla esperada.
+**Decisión.** Opción 1. Con el botón encendido o apagado, las razones de flujo sin datos completos (14, 15, 16, 17, 20 con el caso MUNO MODA) siguen en `N/D`: primero por `missing_required_account_data` o `missing_required_period_balance`, según el estado, así que tener el botón presente en las 11 no cambia ninguna celda de la tabla esperada. En revisión (2026-10-14) el equipo confirmó que el «9» de la v3 es un error del documento: se mantiene el botón en las 11 razones de flujo (7, 8, 12–20).
 
 **Consecuencias.** Los 11 JSON de flujo traen `first_period_toggle` con `default: false` (y `period_rules.first_period.toggle.default: false`); los 9 de punto lo traen en `null`. Si el profesor confirma otra lectura, se ajusta la presentación sin mover ninguna cifra.
 
 **Para revertirla.** Quitar el toggle de las razones señaladas y crear la entrada que reemplace a esta.
 
 **Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/05_checks.md`.
+
+### D-024 — El separador decimal del formato numérico queda abierto en `metadata.display`
+
+- **Fecha**: 2026-10-14
+- **Estado**: Abierta (por confirmar con el usuario)
+- **Decidió**: Alejandro (con agente IA)
+- **Área**: `docs/razones_financieras/*.json` (`metadata.display.decimal_separator`)
+
+**Contexto.** El reporte inicial de la entrega presentó los valores con formato `en-US` (punto decimal, coma de millares) como formato por defecto. En la revisión se pidió no fijar el separador decimal hasta que el usuario lo confirme, y dejar esa única decisión abierta de forma explícita dentro de los JSON.
+
+**Opciones.**
+1. `metadata.display.decimal_separator` con el marcador `DECISION_PENDIENTE` en los 20 JSON — la decisión queda visible para quien revise o consuma el archivo / el que formatea debe leer el campo antes de imprimir.
+2. Fijar `en-US` (o `es-VE`) desde ahora — formato determinado / podría cambiar cifras que ve el usuario sin acuerdo del equipo.
+
+**Decisión.** Opción 1, abierta: no se fija el separador decimal; cada JSON lo declara en `metadata.display` como `DECISION_PENDIENTE: separador decimal (punto o coma) por confirmar con el usuario`. Es la única decisión abierta de la entrega: las 8 diferencias conocidas con la solución del profesor no son decisiones abiertas y por eso pasaron a `DIFERENCIA_CONOCIDA_PROFESOR` dentro de `metadata.research_notes`.
+
+**Consecuencias.** Las tablas de las notas muestran importes con coma de millares solo como texto de documentación; ningún JSON fija el formato. Cuando el usuario confirme, se reemplaza el valor en los 20 archivos y esta entrada se marca como reemplazada por una nueva.
+
+**Para revertirla.** Confirmar el separador, actualizar los 20 JSON y crear la entrada que reemplace a esta.
+
+**Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/02_fuentes.md`.
