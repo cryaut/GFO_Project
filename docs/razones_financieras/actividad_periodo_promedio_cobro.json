@@ -69,23 +69,8 @@
       "doubtful_synonyms": [],
       "ambiguities": [],
       "research": {
-        "status": "verified",
-        "sources": [
-          {
-            "title": "IFRS 9 Financial Instruments",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/",
-            "source_type": "accounting_standard",
-            "supports": "NIIF 9 clasifica los activos financieros según el modelo de negocio y las características de los flujos de efectivo contractuales (por ejemplo, costo amortizado) y establece cuándo se reconoce un activo financiero. Confirma la definición de «Cuentas por cobrar comerciales» (bs.trade_receivables)."
-          },
-          {
-            "title": "IAS 1 Presentation of Financial Statements",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "accounting_standard",
-            "supports": "NIC 1 fija los requisitos generales de presentación, las pautas de estructura y el contenido mínimo de los estados financieros, y rige la clasificación corriente y no corriente (doce meses para los pasivos); la norma adoptó la presentación de activos y pasivos corrientes. Confirma la definición de «Cuentas por cobrar comerciales» (bs.trade_receivables)."
-          }
-        ]
+        "status": "partially_verified",
+        "sources": []
       }
     },
     {

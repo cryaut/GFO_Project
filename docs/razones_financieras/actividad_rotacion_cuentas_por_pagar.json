@@ -72,23 +72,8 @@
       "doubtful_synonyms": [],
       "ambiguities": [],
       "research": {
-        "status": "verified",
-        "sources": [
-          {
-            "title": "IFRS 9 Financial Instruments",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/",
-            "source_type": "accounting_standard",
-            "supports": "NIIF 9 clasifica los activos financieros según el modelo de negocio y las características de los flujos de efectivo contractuales (por ejemplo, costo amortizado) y establece cuándo se reconoce un activo financiero. Confirma la definición de «Cuentas por pagar comerciales» (bs.trade_payables)."
-          },
-          {
-            "title": "IAS 32 Financial Instruments: Presentation",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-32-financial-instruments-presentation/",
-            "source_type": "accounting_standard",
-            "supports": "NIC 32 clasifica los instrumentos financieros en activos, pasivos e instrumentos de patrimonio; la distinción entre pasivo financiero y patrimonio depende de la obligación de entregar. Confirma la definición de «Cuentas por pagar comerciales» (bs.trade_payables)."
-          }
-        ]
+        "status": "partially_verified",
+        "sources": []
       }
     },
     {

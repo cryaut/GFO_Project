@@ -753,3 +753,41 @@ exit=0
 exit=0
 ```
 
+## Corrección v7 (orden `prompt_correccion_agente_razones_v7.md`) — G2: validación tras cada bloque
+
+Cada bloque deja un commit con el árbol limpio; V0 exige árbol limpio, así que la salida de V0 a V17
+se añade aquí justo después de cada commit y viaja con el commit del bloque siguiente.
+
+### Tras C1 — commit `7841708` (decisiones y ficha)
+
+Comando: `node notas\validador_v6.mjs` (desde `docs/razones_financieras`)
+
+```text
+validador_v6 | raiz=C:\Users\aleja\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 18 validaciones
+OK   V0
+OK   V1
+OK   V2
+OK   V3
+OK   V4
+OK   V5
+OK   V6
+OK   V7
+OK   V8
+OK   V9
+OK   V10
+OK   V11
+OK   V12
+OK   V13
+OK   V14
+OK   V15
+OK   V16
+OK   V17
+CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=62 partially=4 ambiguous=5 notas_DIFERENCIA=8
+RESULTADO: 18/18 validaciones sin fallos
+exit=0
+```
+
+Comprobación de C1 (orden, punto 6): `Select-String docs\decisiones.md -Pattern "el equipo confirmó"` →
+`0 hit`; `Select-String docs\planificacion\razones-json-v3\README.md -Pattern "el equipo confirmó"` →
+`0 hit`; `Select-String docs\decisiones.md -Pattern "### D-02[5-8]"` → `4 hit`.
+
