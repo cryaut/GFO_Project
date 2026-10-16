@@ -28,7 +28,7 @@ completan en B4 (H1/H2). La investigación de fuentes todavía es la interina de
 Comando: `node notas\validador_v6.mjs --solo V1,V2,V3,V5`
 
 ```
-validador_v6 | raiz=C:\Users\aleja\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 4 validaciones
+validador_v6 | raiz=<raiz-local>\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 4 validaciones
 OK   V1
 OK   V2
 OK   V3
@@ -51,7 +51,7 @@ deja `02_fuentes.md` y `03_registro_cuentas.md` como punteros (regla 9).
 Comando: `node notas\validador_v6.mjs --solo V1,V2,V3,V5,V14,V15`
 
 ```
-validador_v6 | raiz=C:\Users\aleja\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 6 validaciones
+validador_v6 | raiz=<raiz-local>\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 6 validaciones
 OK   V1
 OK   V2
 OK   V3
@@ -76,7 +76,7 @@ de la orden y regenera `notas/04_derivados.md` en versión v6 (los JSON no cambi
 Comando: `node notas\validador_v6.mjs --solo V6,V7,V16`
 
 ```
-validador_v6 | raiz=C:\Users\aleja\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 3 validaciones
+validador_v6 | raiz=<raiz-local>\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 3 validaciones
 OK   V6
 OK   V7
 OK   V16
@@ -93,19 +93,21 @@ completa `presentacion` con los separadores y decimales F1 en los 20 JSON. Corri
 `docs/decisiones.md`: D-023 (control global, se elimina la atribución «el equipo confirmó» — H7) y
 D-024 (de Abierta a Cerrada: separador decimal `.` y de miles `,` — H2).
 
-**Ajuste de V12 documentado aquí (H8).** La primera corrida de B4 falló con `marcador "dato
+**Ajuste de V12 documentado aquí (H8; desviación registrada, D-027).** La primera corrida de B4 falló con `marcador "dato
 faltante"` en los 20 archivos: la frase venía del bloque `reglas_generales` **verbatim** de la orden
 («Un dato faltante nunca se convierte en número: el resultado es not_available con motivo.»), que V8
 exige copiar sin cambios. El marcador que R3 prohíbe es el placeholder entre corchetes
 (`[informacion faltante]`, `[DATO FALTANTE]`) o el token en mayúsculas, no la prosa. Se ajustó el
 patrón de V12 a los marcadores reales de R3 (corchetes/mayúsculas + `TODO` mayúsculas + `pendiente`
 palabra completa + `DECISION_PENDIENTE` + `???`), no a los datos; el detalle está en la cabecera del
-propio script.
+script. Relajar V12 a mitad de bloque fue una desviación de la orden v6; la orden v7 la
+registra aquí y la remite a **D-027** (los marcadores se buscan como placeholder: entre corchetes o
+en mayúsculas; la prosa en minúscula de `reglas_generales` no cuenta).
 
 Comando: `node notas\validador_v6.mjs --solo V8,V9,V10,V12,V13,V17`
 
 ```
-validador_v6 | raiz=C:\Users\aleja\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 6 validaciones
+validador_v6 | raiz=<raiz-local>\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 6 validaciones
 OK   V8
 OK   V9
 OK   V10
@@ -126,7 +128,7 @@ el historial de git) y calcula el caso provisional completo (60 celdas).
 Comando: `node notas\validador_v6.mjs --solo V2,V3,V4,V5,V16,V9`
 
 ```
-validador_v6 | raiz=C:\Users\aleja\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 6 validaciones
+validador_v6 | raiz=<raiz-local>\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 6 validaciones
 OK   V2
 OK   V3
 OK   V4
@@ -325,13 +327,13 @@ comparación celda a celda con la tabla de valores de referencia de la orden.
 
 Ejecutada sobre una copia del último commit, no sobre el árbol de trabajo.
 
-1. `git worktree add --detach C:\Users\aleja\AppData\Local\Temp\opencode\gfo_wt HEAD` → salida:
+1. `git worktree add --detach <raiz-local>\AppData\Local\Temp\opencode\gfo_wt HEAD` → salida:
    `Preparing worktree (detached HEAD 6ccf187)` y `HEAD is now at 6ccf187 docs: notas por razón en notas/ratios y caso a mano (B5)`.
 2. Comando completo (V0–V17 + conteos del conjunto), lanzado desde `docs/razones_financieras` de la
    rama contra la copia del worktree:
 
 ```
-validador_v6 | raiz=C:\Users\aleja\AppData\Local\Temp\opencode\gfo_wt\docs\razones_financieras | archivos JSON=20 | 18 validaciones
+validador_v6 | raiz=<raiz-local>\AppData\Local\Temp\opencode\gfo_wt\docs\razones_financieras | archivos JSON=20 | 18 validaciones
 OK   V0
 OK   V1
 OK   V2
@@ -600,7 +602,7 @@ vuelven a ejecutar aquí cuando el comando es corto.
    Comando: `node notas\validador_v6.mjs --solo V1,V2,V3`
 
 ```
-validador_v6 | raiz=C:\Users\aleja\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 3 validaciones
+validador_v6 | raiz=<raiz-local>\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 3 validaciones
 OK   V1
 OK   V2
 OK   V3
@@ -624,7 +626,7 @@ DECISION_PENDIENTE en JSON: 0 ocurrencias (esperado: 0)
    Comando: `node notas\validador_v6.mjs --solo V12,V13` (y el conteo del punto 4 da 0).
 
 ```
-validador_v6 | raiz=C:\Users\aleja\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 2 validaciones
+validador_v6 | raiz=<raiz-local>\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 2 validaciones
 OK   V12
 OK   V13
 CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=62 partially=4 ambiguous=5 notas_DIFERENCIA=8
@@ -636,9 +638,14 @@ exit=0
    archivos con `separador_decimal: "."` y `separador_miles: ","`): 20 y 20, y V17 de la sección B4.
 7. **Toda cuenta `verified` tiene su fila en la auditoría de fuentes.**
    Comando: `node notas\validador_v6.mjs --solo V14`
+   Nota V14 (orden v7, C3): la validación **solo compara la URL** de cada fuente de una cuenta
+   `verified` contra `REGISTRO_APERTURAS`; no comprueba que la norma se haya abierto. La evidencia
+   de apertura son el título y la fecha de cada fila de `notas/03_fuentes.md` (registro de
+   aperturas: las 11 normas abiertas el 2026-10-15). Las cuentas `partially_verified` y
+   `ambiguous` se omiten en V14.
 
 ```
-validador_v6 | raiz=C:\Users\aleja\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 1 validaciones
+validador_v6 | raiz=<raiz-local>\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 1 validaciones
 OK   V14
 CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=62 partially=4 ambiguous=5 notas_DIFERENCIA=8
 RESULTADO: 1/1 validaciones sin fallos
@@ -650,7 +657,7 @@ exit=0
    sección B5).
 
 ```
-validador_v6 | raiz=C:\Users\aleja\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 1 validaciones
+validador_v6 | raiz=<raiz-local>\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 1 validaciones
 OK   V16
 CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=62 partially=4 ambiguous=5 notas_DIFERENCIA=8
 RESULTADO: 1/1 validaciones sin fallos
@@ -672,8 +679,22 @@ seccion de correccion v6 presente: True
 body_len=5952 updated=2026-10-16T02:02:09Z
 ```
 
-11. **No hay commits reescritos.** Comando: `git log --oneline` (los 5 commits de la v3 conservan su
-    SHA; los 7 nuevos de esta orden van detrás, sin amend/rebase/force).
+11. **Los commits de la v3: uno fue reescrito con `--amend`; no se reescribe nada ahora.**
+     Corrección v7 (orden v7, C3): el reporte anterior afirmó que "los 5 commits de la v3 conservan
+     su SHA", y no es cierto. El reflog muestra que `c50545a` reemplazó a `4a3bef0` con un
+     `git commit --amend` el 2026-10-14 22:49:22, ambos con el mismo mensaje. El commit huérfano
+     `4a3bef0` existe en el repo pero no está en la rama. Esto ocurrió en la ronda v3, antes de la
+     orden v6; **no se reescribe historial para corregir este reporte**: los commits nuevos de la v7
+     van encima del head, sin amend/rebase/force.
+     Comandos: `git cat-file -t 4a3bef0` y `git reflog --date=iso`.
+
+```
+$ git cat-file -t 4a3bef0
+commit
+$ git reflog --date=iso | Select-String 'c50545a|4a3bef0'
+c50545a HEAD@{2026-10-14 22:49:22 -0600}: commit (amend): docs: registra decisiones D-021 a D-023, changelog y ficha de razones v3
+4a3bef0 HEAD@{2026-10-14 22:05:36 -0600}: commit: docs: registra decisiones D-021 a D-023, changelog y ficha de razones v3
+```
 
 ```
 9b62583 docs: validacion completa en worktree y trazabilidad por bloque (G3-G4)
@@ -763,7 +784,7 @@ se añade aquí justo después de cada commit y viaja con el commit del bloque s
 Comando: `node notas\validador_v6.mjs` (desde `docs/razones_financieras`)
 
 ```text
-validador_v6 | raiz=C:\Users\aleja\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 18 validaciones
+validador_v6 | raiz=<raiz-local>\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 18 validaciones
 OK   V0
 OK   V1
 OK   V2
@@ -790,4 +811,38 @@ exit=0
 Comprobación de C1 (orden, punto 6): `Select-String docs\decisiones.md -Pattern "el equipo confirmó"` →
 `0 hit`; `Select-String docs\planificacion\razones-json-v3\README.md -Pattern "el equipo confirmó"` →
 `0 hit`; `Select-String docs\decisiones.md -Pattern "### D-02[5-8]"` → `4 hit`.
+
+### Tras C2 — commit `7abe351` (auditoría de fuentes, D-028)
+
+Comando: `node notas\validador_v6.mjs` (desde `docs/razones_financieras`)
+
+```text
+validador_v6 | raiz=<raiz-local>\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 18 validaciones
+OK   V0
+OK   V1
+OK   V2
+OK   V3
+OK   V4
+OK   V5
+OK   V6
+OK   V7
+OK   V8
+OK   V9
+OK   V10
+OK   V11
+OK   V12
+OK   V13
+OK   V14
+OK   V15
+OK   V16
+OK   V17
+CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=29 partially=37 ambiguous=5 notas_DIFERENCIA=8
+RESULTADO: 18/18 validaciones sin fallos
+exit=0
+```
+
+Los conteos confirman el efecto de D-028: `verified` pasa de 62 a 29 y `partially_verified` de 4 a
+37; las 5 `ambiguous` no cambian. El script de aplicación (fuera del repo) verificó además, archivo
+por archivo antes de escribir, que el SHA-256 canónico "sin `cuentas[].research`" era idéntico al de
+la línea base G0: `OK: 20 archivos escritos; KEEP=29 DROP=33; hash sin research intacto en los 20`.
 
