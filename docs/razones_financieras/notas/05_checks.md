@@ -66,3 +66,22 @@ RESULTADO: 6/6 validaciones sin fallos
 (`bs.ppe_machinery`, `bs.other_current_liabilities`, `bs.long_term_borrowings`, `bs.other_reserves`)
 como `verified`; el conteo del validador (66/4/1) delató el fallo y se corrigió el generador para
 marcarlas `ambiguous` según la nota de la lista maestra (62/4/5).
+
+## B3 — Conjuntos y derivados (bloque B3)
+
+Los 11 conjuntos y los 17 derivados entraron en B1 junto con las fórmulas (V3 exige que todo id de
+árbol exista en su sección: no podía dejarse para B3). Este bloque los verifica como copia textual
+de la orden y regenera `notas/04_derivados.md` en versión v6 (los JSON no cambian en B3).
+
+Comando: `node notas\validador_v6.mjs --solo V6,V7,V16`
+
+```
+validador_v6 | raiz=C:\Users\aleja\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 3 validaciones
+OK   V6
+OK   V7
+OK   V16
+CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=62 partially=4 ambiguous=5 notas_DIFERENCIA=8
+RESULTADO: 3/3 validaciones sin fallos
+```
+
+**B3: pasa (3/3).**
