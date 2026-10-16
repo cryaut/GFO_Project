@@ -1,856 +1,249 @@
 {
-  "schema_version": "1.0",
-  "metadata": {
-    "id": "actividad.ciclo_conversion_efectivo",
-    "label": "Ciclo de conversión de efectivo",
+  "schema_version": "2.0",
+  "razon": {
+    "id": "actividad_ciclo_conversion_efectivo",
+    "name": "Ciclo de conversión de efectivo",
     "category": "actividad",
-    "formula_as_provided": "Edad promedio del inventario + Período promedio de cobro − Período promedio de pago",
-    "formula_display": "ratio.actividad.edad_promedio_inventario + ratio.actividad.periodo_promedio_cobro − ratio.actividad.periodo_promedio_pago (misma pareja de periodos)",
-    "unit": "days",
-    "display": {
-      "decimal_separator": "DECISION_PENDIENTE: separador decimal (punto o coma) por confirmar con el usuario"
+    "formula_as_provided": "Edad del inventario + Período de cobro − Período de pago",
+    "unit": "dias",
+    "period_mode": "flow_with_average_balance",
+    "formula": {
+      "op": "subtract",
+      "left": {
+        "op": "add",
+        "operands": [
+          {
+            "op": "ratio",
+            "id": "actividad_edad_promedio_inventario"
+          },
+          {
+            "op": "ratio",
+            "id": "actividad_periodo_promedio_cobro"
+          }
+        ]
+      },
+      "right": {
+        "op": "ratio",
+        "id": "actividad_periodo_promedio_pago"
+      }
     },
-    "research_notes": [
-      "Referencias a las tres razones base con period previous_current (misma pareja de periodos); la convención de referencia entre razones no está definida en el documento.",
-      "Si cualquiera de las tres componentes es N/D, el ciclo es N/D y el motivo nombra la componente faltante."
+    "notes": []
+  },
+  "razones_dependientes": [
+    {
+      "id": "actividad_rotacion_inventarios",
+      "name": "Rotación de inventarios",
+      "category": "actividad",
+      "formula_as_provided": "Costo de ventas / Inventario promedio",
+      "unit": "veces",
+      "period_mode": "flow_with_average_balance",
+      "formula": {
+        "op": "divide",
+        "numerator": {
+          "op": "derived",
+          "id": "derived.cost_of_sales"
+        },
+        "denominator": {
+          "op": "average",
+          "of": {
+            "op": "derived",
+            "id": "derived.inventory_total"
+          }
+        }
+      },
+      "notes": []
+    },
+    {
+      "id": "actividad_edad_promedio_inventario",
+      "name": "Edad promedio del inventario",
+      "category": "actividad",
+      "formula_as_provided": "365 / Rotación de inventarios",
+      "unit": "dias",
+      "period_mode": "flow_with_average_balance",
+      "formula": {
+        "op": "divide",
+        "numerator": {
+          "op": "constant",
+          "value": 365
+        },
+        "denominator": {
+          "op": "ratio",
+          "id": "actividad_rotacion_inventarios"
+        }
+      },
+      "notes": []
+    },
+    {
+      "id": "actividad_rotacion_cuentas_por_cobrar",
+      "name": "Rotación de cuentas por cobrar",
+      "category": "actividad",
+      "formula_as_provided": "Ventas a crédito / CxC promedio",
+      "unit": "veces",
+      "period_mode": "flow_with_average_balance",
+      "formula": {
+        "op": "divide",
+        "numerator": {
+          "op": "account",
+          "id": "supp.credit_sales"
+        },
+        "denominator": {
+          "op": "average",
+          "of": {
+            "op": "account",
+            "id": "bs.trade_receivables"
+          }
+        }
+      },
+      "notes": []
+    },
+    {
+      "id": "actividad_periodo_promedio_cobro",
+      "name": "Período promedio de cobro",
+      "category": "actividad",
+      "formula_as_provided": "365 / Rotación de CxC",
+      "unit": "dias",
+      "period_mode": "flow_with_average_balance",
+      "formula": {
+        "op": "divide",
+        "numerator": {
+          "op": "constant",
+          "value": 365
+        },
+        "denominator": {
+          "op": "ratio",
+          "id": "actividad_rotacion_cuentas_por_cobrar"
+        }
+      },
+      "notes": []
+    },
+    {
+      "id": "actividad_rotacion_cuentas_por_pagar",
+      "name": "Rotación de cuentas por pagar",
+      "category": "actividad",
+      "formula_as_provided": "Compras a crédito / CxP promedio",
+      "unit": "veces",
+      "period_mode": "flow_with_average_balance",
+      "formula": {
+        "op": "divide",
+        "numerator": {
+          "op": "derived",
+          "id": "derived.credit_purchases"
+        },
+        "denominator": {
+          "op": "average",
+          "of": {
+            "op": "account",
+            "id": "bs.trade_payables"
+          }
+        }
+      },
+      "notes": []
+    },
+    {
+      "id": "actividad_periodo_promedio_pago",
+      "name": "Período promedio de pago",
+      "category": "actividad",
+      "formula_as_provided": "365 / Rotación de CxP",
+      "unit": "dias",
+      "period_mode": "flow_with_average_balance",
+      "formula": {
+        "op": "divide",
+        "numerator": {
+          "op": "constant",
+          "value": 365
+        },
+        "denominator": {
+          "op": "ratio",
+          "id": "actividad_rotacion_cuentas_por_pagar"
+        }
+      },
+      "notes": []
+    }
+  ],
+  "derivados": [
+    {
+      "id": "derived.cost_of_sales",
+      "kind": "flow",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "is.cost_of_sales_reported",
+        "calculation": {
+          "op": "sum_accounts",
+          "account_set": "cost_of_sales_components"
+        }
+      }
+    },
+    {
+      "id": "derived.inventory_total",
+      "kind": "balance",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "bs.inventory_total",
+        "calculation": {
+          "op": "sum_accounts",
+          "account_set": "inventory_components"
+        }
+      }
+    },
+    {
+      "id": "derived.credit_purchases",
+      "kind": "flow",
+      "formula": {
+        "op": "subtract",
+        "left": {
+          "op": "add",
+          "operands": [
+            {
+              "op": "account",
+              "id": "supp.supplier_payments"
+            },
+            {
+              "op": "account",
+              "id": "bs.trade_payables",
+              "period": "current"
+            }
+          ]
+        },
+        "right": {
+          "op": "account",
+          "id": "bs.trade_payables",
+          "period": "previous"
+        }
+      }
+    }
+  ],
+  "conjuntos": {
+    "cost_of_sales_components": [
+      "is.merchandise_cost",
+      "is.product_cost",
+      "is.service_cost"
+    ],
+    "inventory_components": [
+      "bs.inventory_merchandise",
+      "bs.inventory_raw_materials",
+      "bs.inventory_work_in_process",
+      "bs.inventory_finished_goods"
     ]
   },
-  "normalization_rules": {
-    "lowercase": true,
-    "trim_spaces": true,
-    "collapse_internal_spaces": true,
-    "normalize_accents_for_comparison": true,
-    "keep_original_name_for_display": true,
-    "normalize_punctuation_and_abbreviations": true,
-    "expenses_positive_and_subtracted": true,
-    "accumulated_depreciation_negative": true,
-    "amounts": "keep_original_values_without_modification"
-  },
-  "matching_rules": {
-    "identification_order": [
-      "explicit_id",
-      "canonical_name_exact",
-      "synonym_exact",
-      "context_rule",
-      "fuzzy_match_if_allowed",
-      "mark_needs_review"
-    ],
-    "fuzzy_match_enabled": false,
-    "on_multiple_matches": "needs_review",
-    "on_no_match": "needs_review",
-    "store_match_method": true
-  },
-  "account_catalog": {
-    "bs.accrued_expenses_payable": {
-      "id": "bs.accrued_expenses_payable",
-      "canonical_name": "Gastos acumulados por pagar",
-      "statement": "balance_general",
-      "category": "Pasivo corriente",
-      "account_role": "detail",
-      "parent_group": "bs.current_liabilities_components",
-      "synonyms": [
-        "Gastos devengados por pagar",
-        "obligaciones acumuladas"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Gastos devengados ya reconocidos y aún no pagados (sueldos, servicios).",
-        "classification_basis": "Pasivo corriente cuando corresponda (F2 §5.2); presentación en el estado de situación financiera (S1).",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.accrued_expenses_payable (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.accrued_expenses_payable."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.cash_and_equivalents": {
-      "id": "bs.cash_and_equivalents",
-      "canonical_name": "Efectivo y equivalentes",
-      "statement": "balance_general",
-      "category": "Activo corriente",
-      "account_role": "detail",
-      "parent_group": "bs.current_assets_components",
-      "synonyms": [
-        "Efectivo",
-        "caja",
-        "bancos",
-        "caja y bancos"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Medios de pago disponibles y equivalentes de efectivo; su saldo crece con cobros y disminuye con pagos.",
-        "classification_basis": "Activo corriente: se espera realizar el ciclo de explotación o convertir en efectivo en el corto plazo (S1); los equivalentes de efectivo son inversiones a corto plazo, altamente líquidas y de conversión casi inmediata (S3).",
-        "synonym_notes": [
-          "Sinónimo exacto del caso «Efectivo» (tabla de mapeo, F1)."
-        ],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.cash_and_equivalents"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.cash_and_equivalents (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 7 — Estados de flujos de efectivo",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-7-statement-of-cash-flows/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 7 exige el estado de flujos de efectivo y define los equivalentes de efectivo como inversiones a corto plazo y altamente líquidas. Aplica a bs.cash_and_equivalents."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.current_portion_long_term_debt": {
-      "id": "bs.current_portion_long_term_debt",
-      "canonical_name": "Porción corriente de deuda de largo plazo",
-      "statement": "balance_general",
-      "category": "Pasivo corriente",
-      "account_role": "detail",
-      "parent_group": "bs.current_liabilities_components",
-      "synonyms": [
-        "Vencimientos corrientes de deuda a largo plazo"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Parte de una deuda a largo plazo que vence en los próximos doce meses.",
-        "classification_basis": "Pasivo corriente por vencimiento (F2 §5.2); presentación en el estado de situación financiera (S1).",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.current_portion_long_term_debt (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.current_portion_long_term_debt."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.current_provisions": {
-      "id": "bs.current_provisions",
-      "canonical_name": "Provisiones corrientes",
-      "statement": "balance_general",
-      "category": "Pasivo corriente",
-      "account_role": "detail",
-      "parent_group": "bs.current_liabilities_components",
-      "synonyms": [
-        "Provisiones de corto plazo"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Pasivos de tiempo o importe incierto con salida de recursos prevista dentro del corto plazo.",
-        "classification_basis": "Pasivo corriente (F2 §5.2); provisión reconocida conforme a NIC 37 (S7).",
-        "synonym_notes": [
-          "Sinónimo exacto del caso «Provisiones» (tabla de mapeo, F1)."
-        ],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.current_provisions"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.current_provisions (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 37 — Provisiones, pasivos y activos contingentes",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-37-provisions-contingent-liabilities-and-contingent-assets/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 37: una provisión es un pasivo de tiempo o importe incierto reconocido cuando es probable la salida de recursos. Aplica a bs.current_provisions."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.inventory_finished_goods": {
-      "id": "bs.inventory_finished_goods",
-      "canonical_name": "Inventario de productos terminados",
-      "statement": "balance_general",
-      "category": "Inventario / activo corriente",
-      "account_role": "detail",
-      "parent_group": "bs.current_assets_components",
-      "synonyms": [
-        "Productos terminados",
-        "bienes terminados"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Producto terminado listo para la venta; se lleva a costo de ventas al venderse.",
-        "classification_basis": "Componente de inventario y activo corriente (F2 §5.1); reconocimiento del coste al vender conforme a NIC 2 (S2).",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.inventory_finished_goods (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 2 — Inventarios",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a bs.inventory_finished_goods."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.inventory_merchandise": {
-      "id": "bs.inventory_merchandise",
-      "canonical_name": "Inventario de mercaderías",
-      "statement": "balance_general",
-      "category": "Inventario / activo corriente",
-      "account_role": "detail",
-      "parent_group": "bs.current_assets_components",
-      "synonyms": [
-        "Mercaderías",
-        "mercancías",
-        "inventario para la venta"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Bienes adquiridos para revender sin transformación; mide su coste de adquisición.",
-        "classification_basis": "Componente de inventario y activo corriente (F2 §5.1); medición y reconocimiento conforme a NIC 2 (S2).",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.inventory_merchandise (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 2 — Inventarios",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a bs.inventory_merchandise."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.inventory_raw_materials": {
-      "id": "bs.inventory_raw_materials",
-      "canonical_name": "Inventario de materias primas",
-      "statement": "balance_general",
-      "category": "Inventario / activo corriente",
-      "account_role": "detail",
-      "parent_group": "bs.current_assets_components",
-      "synonyms": [
-        "Materias primas",
-        "materiales en almacén para producción"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Materiales adquiridos para la producción que aún no se han transformado.",
-        "classification_basis": "Componente de inventario y activo corriente (F2 §5.1); medición conforme a NIC 2 (S2).",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.inventory_raw_materials (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 2 — Inventarios",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a bs.inventory_raw_materials."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.inventory_total": {
-      "id": "bs.inventory_total",
-      "canonical_name": "Inventario total",
-      "statement": "balance_general",
-      "category": "Inventario",
-      "account_role": "reported_total",
-      "parent_group": "bs.current_assets_components",
-      "synonyms": [
-        "Inventario",
-        "existencias totales"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Total de inventarios sin desglose de componentes (R5). El inventario se reconoce a coste y se expensa como costo de ventas cuando se vende.",
-        "classification_basis": "Activo corriente dentro del ciclo de explotación (S1); total de categoría definido por R5 (F1) y por las reglas de inventario de NIC 2 (S2).",
-        "synonym_notes": [
-          "Sinónimo exacto del caso «Inventario»: total sin desglose de R5 (tabla de mapeo, F1)."
-        ],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.inventory_total"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.inventory_total (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 2 — Inventarios",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a bs.inventory_total."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.inventory_work_in_process": {
-      "id": "bs.inventory_work_in_process",
-      "canonical_name": "Inventario de productos en proceso",
-      "statement": "balance_general",
-      "category": "Inventario / activo corriente",
-      "account_role": "detail",
-      "parent_group": "bs.current_assets_components",
-      "synonyms": [
-        "Producción en proceso",
-        "productos en proceso"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Producto con transformación iniciada pero sin terminar; acumula materiales, mano de obra y costes indirectos.",
-        "classification_basis": "Componente de inventario y activo corriente (F2 §5.1); medición conforme a NIC 2 (S2).",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.inventory_work_in_process (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 2 — Inventarios",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a bs.inventory_work_in_process."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.other_current_assets": {
-      "id": "bs.other_current_assets",
-      "canonical_name": "Otros activos corrientes",
-      "statement": "balance_general",
-      "category": "Activo corriente",
-      "account_role": "detail",
-      "parent_group": "bs.current_assets_components",
-      "synonyms": [
-        "Otros activos circulantes"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Activos corrientes que no tienen una cuenta específica (anticipos, impuestos a favor de corto plazo).",
-        "classification_basis": "Activo corriente por plazo de realización (F2 §5.1); presentación por partidas (S1).",
-        "synonym_notes": [
-          "Sinónimo exacto del caso «Activos Corrientes Otros» (tabla de mapeo, F1)."
-        ],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.other_current_assets"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.other_current_assets (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.other_current_assets."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.other_current_liabilities": {
-      "id": "bs.other_current_liabilities",
-      "canonical_name": "Otros pasivos corrientes",
-      "statement": "balance_general",
-      "category": "Pasivo corriente",
-      "account_role": "detail",
-      "parent_group": "bs.current_liabilities_components",
-      "synonyms": [
-        "Otros pasivos circulantes"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "ambiguous",
-        "definition": "Pasivos corrientes sin cuenta específica (anticipos de clientes, dividendos por pagar de corto plazo).",
-        "classification_basis": "Pasivo corriente por plazo (F2 §5.2); presentación en el estado de situación financiera (S1).",
-        "synonym_notes": [
-          "Sinónimo exacto del caso «Pasivo Corto Plazo» (tabla de mapeo, F1)."
-        ],
-        "ambiguities": [
-          "Nombre genérico del caso «Pasivo Corto Plazo»: el detalle de la cuenta es incierto, pero su clasificación en pasivo corriente es segura y el detalle no altera ningún resultado (tabla de mapeo, F1)."
-        ],
-        "sources": [
-          {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.other_current_liabilities"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.other_current_liabilities (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.other_current_liabilities."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.other_current_receivables": {
-      "id": "bs.other_current_receivables",
-      "canonical_name": "Otras cuentas por cobrar corrientes",
-      "statement": "balance_general",
-      "category": "Activo corriente",
-      "account_role": "detail",
-      "parent_group": "bs.current_assets_components",
-      "synonyms": [
-        "Deudores varios corrientes",
-        "otras cuentas por cobrar de corto plazo"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Cobros distintos de las ventas comerciales con recuperación dentro del corto plazo (anticipos, deudores varios).",
-        "classification_basis": "Activo corriente por plazo de recuperación (F2 §5.1); presentación por partidas (S1).",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.other_current_receivables (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.other_current_receivables."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.prepaid_expenses": {
-      "id": "bs.prepaid_expenses",
-      "canonical_name": "Gastos pagados por anticipado",
-      "statement": "balance_general",
-      "category": "Activo corriente",
-      "account_role": "detail",
-      "parent_group": "bs.current_assets_components",
-      "synonyms": [
-        "Pagos anticipados",
-        "seguros pagados por anticipado"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Pagos realizados por adelantado que se consumen como gasto en periodos futuros (seguros, rentas).",
-        "classification_basis": "Activo corriente cuando corresponda según su consumo (F2 §5.1); presentación por partidas (S1).",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.prepaid_expenses (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.prepaid_expenses."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.short_term_borrowings": {
-      "id": "bs.short_term_borrowings",
-      "canonical_name": "Préstamos de corto plazo",
-      "statement": "balance_general",
-      "category": "Pasivo corriente",
-      "account_role": "detail",
-      "parent_group": "bs.current_liabilities_components",
-      "synonyms": [
-        "Deudas bancarias de corto plazo",
-        "obligaciones financieras corrientes"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Deudas financieras con vencimiento dentro del corto plazo.",
-        "classification_basis": "Pasivo corriente por vencimiento (F2 §5.2); presentación en el estado de situación financiera (S1).",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.short_term_borrowings (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.short_term_borrowings."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.short_term_investments": {
-      "id": "bs.short_term_investments",
-      "canonical_name": "Inversiones de corto plazo",
-      "statement": "balance_general",
-      "category": "Activo corriente",
-      "account_role": "detail",
-      "parent_group": "bs.current_assets_components",
-      "synonyms": [
-        "Inversiones temporales",
-        "valores negociables de corto plazo"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Valores negociables u otros instrumentos con vencimiento o disponibilidad dentro del corto plazo.",
-        "classification_basis": "Activo corriente si su vencimiento o clasificación lo confirma (F2 §5.1); presentación por partidas en el estado de situación financiera (S1).",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.short_term_investments (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.short_term_investments."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.taxes_payable": {
-      "id": "bs.taxes_payable",
-      "canonical_name": "Impuestos por pagar",
-      "statement": "balance_general",
-      "category": "Pasivo corriente",
-      "account_role": "detail",
-      "parent_group": "bs.current_liabilities_components",
-      "synonyms": [
-        "Tributos por pagar",
-        "impuestos corrientes por pagar"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Obligaciones tributarias devengadas sin pagar dentro del corto plazo.",
-        "classification_basis": "Pasivo corriente cuando corresponda (F2 §5.2); presentación en el estado de situación financiera (S1).",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.taxes_payable (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.taxes_payable."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.trade_payables": {
-      "id": "bs.trade_payables",
-      "canonical_name": "Cuentas por pagar comerciales",
-      "statement": "balance_general",
-      "category": "Pasivo corriente",
-      "account_role": "detail",
-      "parent_group": "bs.current_liabilities_components",
-      "synonyms": [
-        "CxP",
-        "proveedores",
-        "cuentas por pagar a proveedores"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Obligaciones con proveedores por compras a crédito; su saldo crece con las compras y disminuye con los pagos.",
-        "classification_basis": "Pasivo corriente cuando son de corto plazo (F2 §5.2); partida del estado de situación financiera (S1).",
-        "synonym_notes": [
-          "Sinónimo exacto del caso «Cuentas por Pagar» (tabla de mapeo, F1)."
-        ],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.trade_payables"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.trade_payables (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.trade_payables."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.trade_receivables": {
-      "id": "bs.trade_receivables",
-      "canonical_name": "Cuentas por cobrar comerciales",
-      "statement": "balance_general",
-      "category": "Activo corriente",
-      "account_role": "detail",
-      "parent_group": "bs.current_assets_components",
-      "synonyms": [
-        "CxC",
-        "clientes",
-        "cuentas por cobrar a clientes",
-        "deudores comerciales"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Derechos de cobro generados por ventas o servicios a crédito; nacen al entregar el bien o prestar el servicio.",
-        "classification_basis": "Activo corriente cuando son de corto plazo (F2 §5.1); partida del estado de situación financiera según NIC 1 (S1).",
-        "synonym_notes": [
-          "Sinónimo exacto del caso «Cuentas por Cobrar» (tabla de mapeo, F1)."
-        ],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.trade_receivables"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.trade_receivables (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.trade_receivables."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.cost_of_sales_reported": {
+  "cuentas": [
+    {
       "id": "is.cost_of_sales_reported",
       "canonical_name": "Costo de ventas reportado",
+      "definition": "Costo de lo vendido reportado por el ejercicio (total sin desglose); si existe, sustituye a la suma de componentes.",
       "statement": "estado_resultados",
-      "category": "Costo",
+      "classification": "costo",
       "account_role": "reported_total",
-      "parent_group": null,
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "not_applicable",
       "synonyms": [
         "Costo de ventas",
         "costo de los bienes vendidos"
       ],
-      "normal_balance": "deudor",
-      "value_semantics": "expense",
-      "absence_policy": "not_applicable",
-      "include_as_component": false,
+      "doubtful_synonyms": [],
+      "ambiguities": [],
       "research": {
         "status": "verified",
-        "definition": "Costo de lo vendido reportado por el ejercicio (total sin desglose); si existe, sustituye a la suma de componentes.",
-        "classification_basis": "Gasto del periodo: el coste de los inventarios vendidos se reconoce como gasto (S2); catálogo F2 §5.4.",
-        "synonym_notes": [
-          "Sinónimo exacto del caso «Costo de Ventas» (tabla de mapeo, F1)."
-        ],
-        "ambiguities": [],
         "sources": [
           {
             "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
@@ -874,30 +267,26 @@
             "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a is.cost_of_sales_reported."
           }
         ]
-      },
-      "enabled": true
+      }
     },
-    "is.merchandise_cost": {
+    {
       "id": "is.merchandise_cost",
       "canonical_name": "Costo de mercadería vendida",
+      "definition": "Coste de las mercaderías vendidas en el periodo.",
       "statement": "estado_resultados",
-      "category": "Costo",
+      "classification": "costo",
       "account_role": "detail",
-      "parent_group": "is.cost_of_sales_components",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "zero_if_not_reported",
       "synonyms": [
         "Costo de ventas de mercaderías",
         "costo de bienes vendidos"
       ],
-      "normal_balance": "deudor",
-      "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
+      "doubtful_synonyms": [],
+      "ambiguities": [],
       "research": {
         "status": "verified",
-        "definition": "Coste de las mercaderías vendidas en el periodo.",
-        "classification_basis": "Gasto del periodo cuando se venden los inventarios (S2); catálogo F2 §5.4.",
-        "synonym_notes": [],
-        "ambiguities": [],
         "sources": [
           {
             "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
@@ -914,30 +303,26 @@
             "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a is.merchandise_cost."
           }
         ]
-      },
-      "enabled": true
+      }
     },
-    "is.product_cost": {
+    {
       "id": "is.product_cost",
       "canonical_name": "Costo de productos vendidos",
+      "definition": "Coste de producción de los productos vendidos en el periodo.",
       "statement": "estado_resultados",
-      "category": "Costo",
+      "classification": "costo",
       "account_role": "detail",
-      "parent_group": "is.cost_of_sales_components",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "zero_if_not_reported",
       "synonyms": [
         "Costo de producción vendido",
         "costo de productos vendidos"
       ],
-      "normal_balance": "deudor",
-      "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
+      "doubtful_synonyms": [],
+      "ambiguities": [],
       "research": {
         "status": "verified",
-        "definition": "Coste de producción de los productos vendidos en el periodo.",
-        "classification_basis": "Gasto del periodo cuando se venden los inventarios (S2); catálogo F2 §5.4.",
-        "synonym_notes": [],
-        "ambiguities": [],
         "sources": [
           {
             "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
@@ -954,29 +339,25 @@
             "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a is.product_cost."
           }
         ]
-      },
-      "enabled": true
+      }
     },
-    "is.service_cost": {
+    {
       "id": "is.service_cost",
       "canonical_name": "Costo de servicios",
+      "definition": "Coste directo de los servicios prestados en el periodo.",
       "statement": "estado_resultados",
-      "category": "Costo",
+      "classification": "costo",
       "account_role": "detail",
-      "parent_group": "is.cost_of_sales_components",
-      "synonyms": [
-        "Costos de servicios prestados"
-      ],
       "normal_balance": "deudor",
       "value_semantics": "expense",
       "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
+      "synonyms": [
+        "Costos de servicios prestados"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
       "research": {
         "status": "verified",
-        "definition": "Coste directo de los servicios prestados en el periodo.",
-        "classification_basis": "Gasto del periodo asociado a los ingresos de servicios (S1); catálogo F2 §5.4.",
-        "synonym_notes": [],
-        "ambiguities": [],
         "sources": [
           {
             "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
@@ -993,31 +374,302 @@
             "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.service_cost."
           }
         ]
-      },
-      "enabled": true
+      }
     },
-    "supp.credit_sales": {
+    {
+      "id": "bs.trade_receivables",
+      "canonical_name": "Cuentas por cobrar comerciales",
+      "definition": "Derechos de cobro generados por ventas o servicios a crédito; nacen al entregar el bien o prestar el servicio.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "CxC",
+        "clientes",
+        "cuentas por cobrar a clientes",
+        "deudores comerciales"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
+            "organization_or_author": "Material del profesor (curso GFO)",
+            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
+            "source_type": "documento_local",
+            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.trade_receivables"
+          },
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.trade_receivables (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.trade_receivables."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.inventory_total",
+      "canonical_name": "Inventario total",
+      "definition": "Total de inventarios sin desglose de componentes (R5). El inventario se reconoce a coste y se expensa como costo de ventas cuando se vende.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "reported_total",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Inventario",
+        "existencias totales"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
+            "organization_or_author": "Material del profesor (curso GFO)",
+            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
+            "source_type": "documento_local",
+            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.inventory_total"
+          },
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.inventory_total (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 2 — Inventarios",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a bs.inventory_total."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.inventory_merchandise",
+      "canonical_name": "Inventario de mercaderías",
+      "definition": "Bienes adquiridos para revender sin transformación; mide su coste de adquisición.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Mercaderías",
+        "mercancías",
+        "inventario para la venta"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.inventory_merchandise (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 2 — Inventarios",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a bs.inventory_merchandise."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.inventory_raw_materials",
+      "canonical_name": "Inventario de materias primas",
+      "definition": "Materiales adquiridos para la producción que aún no se han transformado.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Materias primas",
+        "materiales en almacén para producción"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.inventory_raw_materials (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 2 — Inventarios",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a bs.inventory_raw_materials."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.inventory_work_in_process",
+      "canonical_name": "Inventario de productos en proceso",
+      "definition": "Producto con transformación iniciada pero sin terminar; acumula materiales, mano de obra y costes indirectos.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Producción en proceso",
+        "productos en proceso"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.inventory_work_in_process (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 2 — Inventarios",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a bs.inventory_work_in_process."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.inventory_finished_goods",
+      "canonical_name": "Inventario de productos terminados",
+      "definition": "Producto terminado listo para la venta; se lleva a costo de ventas al venderse.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Productos terminados",
+        "bienes terminados"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.inventory_finished_goods (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 2 — Inventarios",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a bs.inventory_finished_goods."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.trade_payables",
+      "canonical_name": "Cuentas por pagar comerciales",
+      "definition": "Obligaciones con proveedores por compras a crédito; su saldo crece con las compras y disminuye con los pagos.",
+      "statement": "balance_general",
+      "classification": "pasivo_corriente",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "CxP",
+        "proveedores",
+        "cuentas por pagar a proveedores"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
+            "organization_or_author": "Material del profesor (curso GFO)",
+            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
+            "source_type": "documento_local",
+            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.trade_payables"
+          },
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.trade_payables (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.trade_payables."
+          }
+        ]
+      }
+    },
+    {
       "id": "supp.credit_sales",
       "canonical_name": "Ventas a crédito",
+      "definition": "Ventas cobrables a crédito del periodo actual; es el numerador de la rotación de CxC. Nunca se aproxima con ventas netas ni totales (D8): si falta, la razón es N/D.",
       "statement": "supplemental_data",
-      "category": "Dato suplementario",
+      "classification": "suplementario",
       "account_role": "detail",
-      "parent_group": null,
-      "synonyms": [
-        "Ventas a crédito del periodo"
-      ],
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
       "absence_policy": "requires_data",
-      "include_as_component": false,
+      "synonyms": [
+        "Ventas a crédito del periodo"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
       "research": {
         "status": "verified",
-        "definition": "Ventas cobrables a crédito del periodo actual; es el numerador de la rotación de CxC. Nunca se aproxima con ventas netas ni totales (D8): si falta, la razón es N/D.",
-        "classification_basis": "Dato suplementario fuera de los estados habituales (F2 §5.5); regla D8 del material del profesor (F1).",
-        "synonym_notes": [
-          "No aparece en el caso MUNO MODA S.A. (F1)."
-        ],
-        "ambiguities": [],
         "sources": [
           {
             "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
@@ -1034,31 +686,25 @@
             "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de supp.credit_sales (secciones 5 a 8)"
           }
         ]
-      },
-      "enabled": true
+      }
     },
-    "supp.supplier_payments": {
+    {
       "id": "supp.supplier_payments",
       "canonical_name": "Pagos a proveedores",
+      "definition": "Pagos efectuados a proveedores en el periodo actual; forma con la CxP el numerador de compras a crédito (D10). Si falta, la razón es N/D con `missing_required_account_data`.",
       "statement": "supplemental_data",
-      "category": "Dato suplementario",
+      "classification": "suplementario",
       "account_role": "detail",
-      "parent_group": null,
-      "synonyms": [
-        "Pagos a proveedores del periodo"
-      ],
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
       "absence_policy": "requires_data",
-      "include_as_component": false,
+      "synonyms": [
+        "Pagos a proveedores del periodo"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
       "research": {
         "status": "verified",
-        "definition": "Pagos efectuados a proveedores en el periodo actual; forma con la CxP el numerador de compras a crédito (D10). Si falta, la razón es N/D con `missing_required_account_data`.",
-        "classification_basis": "Dato suplementario fuera de los estados habituales (F2 §5.5); regla D10 del material del profesor (F1).",
-        "synonym_notes": [
-          "No aparece en el caso MUNO MODA S.A. (F1)."
-        ],
-        "ambiguities": [],
         "sources": [
           {
             "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
@@ -1075,247 +721,66 @@
             "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de supp.supplier_payments (secciones 5 a 8)"
           }
         ]
-      },
-      "enabled": true
-    }
-  },
-  "account_sets": {
-    "bs.current_assets_components": [
-      "bs.cash_and_equivalents",
-      "bs.short_term_investments",
-      "bs.trade_receivables",
-      "bs.other_current_receivables",
-      "bs.inventory_total",
-      "bs.inventory_merchandise",
-      "bs.inventory_raw_materials",
-      "bs.inventory_work_in_process",
-      "bs.inventory_finished_goods",
-      "bs.prepaid_expenses",
-      "bs.other_current_assets"
-    ],
-    "bs.current_liabilities_components": [
-      "bs.trade_payables",
-      "bs.short_term_borrowings",
-      "bs.current_portion_long_term_debt",
-      "bs.taxes_payable",
-      "bs.accrued_expenses_payable",
-      "bs.current_provisions",
-      "bs.other_current_liabilities"
-    ],
-    "bs.inventory_components": [
-      "bs.inventory_merchandise",
-      "bs.inventory_raw_materials",
-      "bs.inventory_work_in_process",
-      "bs.inventory_finished_goods"
-    ],
-    "is.cost_of_sales_components": [
-      "is.merchandise_cost",
-      "is.product_cost",
-      "is.service_cost"
-    ]
-  },
-  "aggregation_rules": {
-    "prefer_reported_subtotal": true,
-    "subtotal_vs_components": {
-      "selection_order": [
-        "valid_reported_subtotal",
-        "sum_recognized_components"
-      ],
-      "when_subtotal_selected": "exclude_components_from_this_aggregate",
-      "preserve_original_component_values": true,
-      "reconcile_subtotal_with_components": true,
-      "on_difference": "use_selected_subtotal_and_raise_warning"
-    },
-    "component_missing_from_statement": "zero_for_aggregation",
-    "unknown_imported_account": "review_not_zero",
-    "invalid_or_blank_reported_value": "not_a_valid_subtotal"
-  },
-  "derived_values": {
-    "compras_credito": {
-      "display_name": "Compras a crédito",
-      "value_type": "flow",
-      "expression": {
-        "op": "subtract",
-        "left": {
-          "op": "add",
-          "left": {
-            "ref": "derived.pagos_proveedores",
-            "period": "current"
-          },
-          "right": {
-            "ref": "derived.cxp_saldo",
-            "period": "current"
-          }
-        },
-        "right": {
-          "ref": "derived.cxp_saldo",
-          "period": "previous"
-        }
-      }
-    },
-    "costo_ventas": {
-      "display_name": "Costo de ventas",
-      "value_type": "flow",
-      "reported_account_candidates": [
-        "is.cost_of_sales_reported"
-      ],
-      "prefer_reported_value": true,
-      "fallback_expression": {
-        "op": "sum_accounts",
-        "account_set": "is.cost_of_sales_components"
-      },
-      "when_reported_total_selected": "exclude_components_from_this_aggregate",
-      "validate_against_components": true
-    },
-    "cxc_saldo": {
-      "display_name": "Saldo de cierre de cuentas por cobrar",
-      "value_type": "balance_at_period_end",
-      "expression": {
-        "op": "reference",
-        "ref": "bs.trade_receivables"
-      }
-    },
-    "cxp_saldo": {
-      "display_name": "Saldo de cierre de cuentas por pagar",
-      "value_type": "balance_at_period_end",
-      "expression": {
-        "op": "reference",
-        "ref": "bs.trade_payables"
-      }
-    },
-    "inventario_total": {
-      "display_name": "Inventario total",
-      "value_type": "balance_at_period_end",
-      "reported_account_candidates": [
-        "bs.inventory_total"
-      ],
-      "prefer_reported_value": true,
-      "fallback_expression": {
-        "op": "sum_accounts",
-        "account_set": "bs.inventory_components"
-      },
-      "when_reported_total_selected": "exclude_components_from_this_aggregate",
-      "validate_against_components": true
-    },
-    "pagos_proveedores": {
-      "display_name": "Pagos a proveedores",
-      "value_type": "flow",
-      "expression": {
-        "op": "reference",
-        "ref": "supp.supplier_payments",
-        "period": "current"
-      }
-    },
-    "ventas_credito": {
-      "display_name": "Ventas a crédito",
-      "value_type": "flow",
-      "expression": {
-        "op": "reference",
-        "ref": "supp.credit_sales",
-        "period": "current"
       }
     }
-  },
-  "ratio": {
-    "id": "actividad.ciclo_conversion_efectivo",
-    "period_mode": "flow_with_average_balance",
-    "formula": {
-      "op": "subtract",
-      "left": {
-        "op": "add",
-        "left": {
-          "ref": "ratio.actividad.edad_promedio_inventario",
-          "period": "previous_current"
-        },
-        "right": {
-          "ref": "ratio.actividad.periodo_promedio_cobro",
-          "period": "previous_current"
-        }
-      },
-      "right": {
-        "ref": "ratio.actividad.periodo_promedio_pago",
-        "period": "previous_current"
-      }
-    },
-    "required_inputs": [
-      "ratio.actividad.edad_promedio_inventario[previous_current]",
-      "ratio.actividad.periodo_promedio_cobro[previous_current]",
-      "ratio.actividad.periodo_promedio_pago[previous_current]",
-      "derived.costo_ventas[current]",
-      "derived.inventario_total[previous]",
-      "derived.inventario_total[current]",
-      "derived.ventas_credito[current]",
-      "derived.cxc_saldo[previous]",
-      "derived.cxc_saldo[current]",
-      "derived.compras_credito[current]",
-      "derived.cxp_saldo[previous]",
-      "derived.cxp_saldo[current]"
-    ],
-    "presentation": {
-      "badges_enabled": true,
-      "direct_badge": "Saldo directo, sin promedio",
-      "average_badge": "Promedio {periodo_anterior}–{periodo_actual}",
-      "first_period_toggle": {
-        "label": "Mostrar cálculo directo de {primer_periodo}",
-        "default": false
-      },
-      "footnote_direct": "Cálculo con saldos de cierre del periodo {periodo}, sin promedio."
-    },
-    "unavailable_behavior": {
-      "result": "not_available",
-      "on_missing_required_account_data": "missing_required_account_data",
-      "on_missing_required_period_balance": "missing_required_period_balance",
-      "on_unavailable_component": "not_available_component",
-      "report_component_id": true,
-      "never_replace_with_zero": true
+  ],
+  "modo_periodo": {
+    "name": "flow_with_average_balance",
+    "average": "(cierre del periodo anterior + cierre del periodo actual) / 2",
+    "flow_period": "current",
+    "politica_sin_periodo_anterior": {
+      "por_defecto": "not_available",
+      "un_solo_periodo_en_el_estado": "direct_closing",
+      "primer_periodo_con_control_activo": "direct_closing"
     }
   },
-  "period_rules": {
-    "mode": "flow_with_average_balance",
-    "methods": [
-      "average",
-      "direct_closing"
-    ],
-    "default_method": "average",
-    "average": {
-      "required_periods": 2,
-      "uses_closing_balances": true,
-      "flow_period": "current",
-      "if_previous_period_missing": "not_available",
-      "reason_if_previous_period_missing": "missing_required_period_balance",
-      "never_substitute_zero_for_missing_balance": true
-    },
-    "first_period": {
-      "default_method": "not_available",
-      "reason": "missing_required_period_balance",
-      "toggle": {
-        "label": "Mostrar cálculo directo de {primer_periodo}",
-        "default": false,
-        "method": "direct_closing",
-        "badge": "Saldo directo, sin promedio",
-        "stays_not_available_when_previous_balance_missing": true
-      }
-    },
-    "period_label": "m(i−1)_mi"
+  "presentacion": {
+    "marca_directa": "Saldo directo, sin promedio",
+    "marca_promedio": "Promedio {periodo_anterior}–{periodo_actual}",
+    "nota_directa": "Cálculo con saldos de cierre del periodo {periodo}, sin promedio."
   },
-  "validation_rules": {
-    "unknown_imported_account": "needs_review",
-    "ambiguous_account_match": "needs_review",
-    "missing_component_account": "zero_if_absence_confirmed",
-    "missing_required_supplemental_input": "ratio_not_available",
-    "missing_required_account_data": "ratio_not_available",
-    "zero_denominator": "ratio_not_available",
-    "missing_previous_period_for_average": "ratio_not_available",
-    "missing_required_period_balance": "ratio_not_available",
-    "reported_total_and_components_both_present": "do_not_double_count_and_reconcile",
-    "balance_equation": {
-      "enabled": true,
-      "equation": "total_assets = total_liabilities + total_equity",
-      "tolerance": 0.01,
-      "compare_absolute_difference": true
+  "reglas_generales": {
+    "principios": [
+      "Las fórmulas están en este archivo. No hay fórmulas en código.",
+      "Un dato faltante nunca se convierte en número: el resultado es not_available con motivo.",
+      "Ninguna decisión de fórmula se toma durante el cálculo."
+    ],
+    "normalizacion": {
+      "nombres": "minúsculas, sin tildes, espacios simples para comparar; el nombre original se conserva.",
+      "montos": "se conserva el monto original y el monto normalizado.",
+      "signos": "gastos y costos son magnitudes positivas que se restan explícitamente; la depreciación acumulada es negativa y se suma con su signo; una pérdida conserva su signo negativo."
     },
-    "preserve_raw_imported_values": true,
-    "record_calculation_trace": true,
-    "unavailable_component": "ratio_not_available"
+    "orden_de_identificacion": [
+      "id explícito válido",
+      "nombre canónico exacto",
+      "sinónimo exacto",
+      "regla contextual definida",
+      "revisión si hay más de un candidato o ninguno"
+    ],
+    "cuenta_no_reconocida": "se marca para revisión. Nunca se convierte en cero.",
+    "cuenta_ausente": {
+      "zero_if_not_reported": "vale cero dentro de la suma.",
+      "requires_data": "el resultado es not_available con motivo missing_required_account_data."
+    },
+    "total_reportado_y_componentes": {
+      "seleccion": "si el total reportado existe con valor numérico, se usa. Sus componentes no se suman en esa agregación.",
+      "conciliacion": "si el total y sus componentes son comparables, se comparan. Si la diferencia supera la tolerancia, se registra reported_subtotal_mismatch. Se usa el total reportado.",
+      "tolerancia": 0.01,
+      "cero_explicito": "un total reportado de cero es un valor válido, no una ausencia."
+    },
+    "total_sin_desglose": "R5: el total de categoría se usa y sus componentes quedan en cero en esa agregación.",
+    "denominador_cero": "not_available con motivo zero_denominator.",
+    "motivos_permitidos": [
+      "missing_required_account_data",
+      "missing_required_period_balance",
+      "zero_denominator",
+      "unrecognized_imported_account",
+      "ambiguous_account_match",
+      "reported_subtotal_mismatch",
+      "overlapping_account_aggregation",
+      "assumption_applied"
+    ],
+    "supuestos": "toda aproximación se declara con el motivo assumption_applied. En este proyecto no hay aproximaciones activas: D8 y D10 no las usan.",
+    "metodo_resultado": "cada resultado indica su método: average, direct_closing o not_applicable. Si el resultado es N/D, el método es not_applicable."
   }
 }

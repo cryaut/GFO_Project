@@ -1,1307 +1,244 @@
 {
-  "schema_version": "1.0",
-  "metadata": {
-    "id": "rentabilidad.roe",
-    "label": "ROE (rendimiento sobre patrimonio)",
+  "schema_version": "2.0",
+  "razon": {
+    "id": "rentabilidad_roe",
+    "name": "ROE",
     "category": "rentabilidad",
     "formula_as_provided": "Utilidad neta / Patrimonio promedio",
-    "formula_display": "utilidad_neta[current] / average(patrimonio_total[previous], patrimonio_total[current])",
-    "unit": "percentage",
-    "display": {
-      "decimal_separator": "DECISION_PENDIENTE: separador decimal (punto o coma) por confirmar con el usuario"
+    "unit": "porcentaje",
+    "period_mode": "flow_with_average_balance",
+    "formula": {
+      "op": "divide",
+      "numerator": {
+        "op": "derived",
+        "id": "derived.net_income"
+      },
+      "denominator": {
+        "op": "average",
+        "of": {
+          "op": "derived",
+          "id": "derived.total_equity"
+        }
+      }
     },
-    "research_notes": [
-      "DIFERENCIA_CONOCIDA_PROFESOR: diferencia de método con la solución del profesor (promedio D1 frente a saldos de cierre) por confirmar con el profesor; valores en 05_checks.md."
+    "notes": [
+      "DIFERENCIA_CONOCIDA_PROFESOR: ROE 2024 — profesor: 18.00 %; este trabajo: 19.06 % — motivo: D1: promedio."
     ]
   },
-  "normalization_rules": {
-    "lowercase": true,
-    "trim_spaces": true,
-    "collapse_internal_spaces": true,
-    "normalize_accents_for_comparison": true,
-    "keep_original_name_for_display": true,
-    "normalize_punctuation_and_abbreviations": true,
-    "expenses_positive_and_subtracted": true,
-    "accumulated_depreciation_negative": true,
-    "amounts": "keep_original_values_without_modification"
-  },
-  "matching_rules": {
-    "identification_order": [
-      "explicit_id",
-      "canonical_name_exact",
-      "synonym_exact",
-      "context_rule",
-      "fuzzy_match_if_allowed",
-      "mark_needs_review"
+  "razones_dependientes": [],
+  "derivados": [
+    {
+      "id": "derived.gross_sales",
+      "kind": "flow",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "is.sales_total",
+        "calculation": {
+          "op": "sum_accounts",
+          "account_set": "gross_sales_components"
+        }
+      }
+    },
+    {
+      "id": "derived.sales_deductions",
+      "kind": "flow",
+      "formula": {
+        "op": "sum_accounts",
+        "account_set": "sales_deduction_components"
+      }
+    },
+    {
+      "id": "derived.net_sales",
+      "kind": "flow",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "is.net_sales_reported",
+        "calculation": {
+          "op": "subtract",
+          "left": {
+            "op": "derived",
+            "id": "derived.gross_sales"
+          },
+          "right": {
+            "op": "derived",
+            "id": "derived.sales_deductions"
+          }
+        }
+      }
+    },
+    {
+      "id": "derived.cost_of_sales",
+      "kind": "flow",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "is.cost_of_sales_reported",
+        "calculation": {
+          "op": "sum_accounts",
+          "account_set": "cost_of_sales_components"
+        }
+      }
+    },
+    {
+      "id": "derived.gross_profit",
+      "kind": "flow",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "is.gross_profit_reported",
+        "calculation": {
+          "op": "subtract",
+          "left": {
+            "op": "derived",
+            "id": "derived.net_sales"
+          },
+          "right": {
+            "op": "derived",
+            "id": "derived.cost_of_sales"
+          }
+        }
+      }
+    },
+    {
+      "id": "derived.operating_expenses",
+      "kind": "flow",
+      "formula": {
+        "op": "sum_accounts",
+        "account_set": "operating_expense_components"
+      }
+    },
+    {
+      "id": "derived.operating_profit",
+      "kind": "flow",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "is.operating_profit_reported",
+        "calculation": {
+          "op": "subtract",
+          "left": {
+            "op": "add",
+            "operands": [
+              {
+                "op": "derived",
+                "id": "derived.gross_profit"
+              },
+              {
+                "op": "account",
+                "id": "is.other_operating_income"
+              }
+            ]
+          },
+          "right": {
+            "op": "derived",
+            "id": "derived.operating_expenses"
+          }
+        }
+      }
+    },
+    {
+      "id": "derived.net_income",
+      "kind": "flow",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "is.net_income_reported",
+        "calculation": {
+          "op": "subtract",
+          "left": {
+            "op": "add",
+            "operands": [
+              {
+                "op": "derived",
+                "id": "derived.operating_profit"
+              },
+              {
+                "op": "account",
+                "id": "is.nonoperating_income"
+              }
+            ]
+          },
+          "right": {
+            "op": "add",
+            "operands": [
+              {
+                "op": "account",
+                "id": "is.noninterest_nonoperating_expenses"
+              },
+              {
+                "op": "account",
+                "id": "is.interest_expense"
+              },
+              {
+                "op": "account",
+                "id": "is.income_tax_expense"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "derived.total_equity",
+      "kind": "balance",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "bs.total_equity",
+        "calculation": {
+          "op": "sum_accounts",
+          "account_set": "patrimony_components"
+        }
+      }
+    }
+  ],
+  "conjuntos": {
+    "gross_sales_components": [
+      "is.product_sales",
+      "is.service_revenue",
+      "is.other_sales_revenue"
     ],
-    "fuzzy_match_enabled": false,
-    "on_multiple_matches": "needs_review",
-    "on_no_match": "needs_review",
-    "store_match_method": true
+    "sales_deduction_components": [
+      "is.sales_returns",
+      "is.sales_discounts",
+      "is.sales_allowances"
+    ],
+    "cost_of_sales_components": [
+      "is.merchandise_cost",
+      "is.product_cost",
+      "is.service_cost"
+    ],
+    "operating_expense_components": [
+      "is.selling_expenses",
+      "is.administrative_expenses",
+      "is.operating_depreciation",
+      "is.operating_amortization",
+      "is.other_operating_expenses"
+    ],
+    "patrimony_components": [
+      "bs.share_capital",
+      "bs.additional_paid_in_capital",
+      "bs.legal_reserve",
+      "bs.other_reserves",
+      "bs.retained_earnings",
+      "bs.current_year_result_equity",
+      "bs.other_equity_components"
+    ]
   },
-  "account_catalog": {
-    "bs.additional_paid_in_capital": {
-      "id": "bs.additional_paid_in_capital",
-      "canonical_name": "Aportes adicionales de capital",
-      "statement": "balance_general",
-      "category": "Patrimonio",
-      "account_role": "detail",
-      "parent_group": "bs.patrimony_components",
-      "synonyms": [
-        "Prima en emisión",
-        "aportes adicionales"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Excedente aportado por encima del valor nominal de las acciones.",
-        "classification_basis": "Patrimonio (F2 §5.3); presentación en el estado de situación financiera (S1).",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.additional_paid_in_capital (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.additional_paid_in_capital."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.current_year_result_equity": {
-      "id": "bs.current_year_result_equity",
-      "canonical_name": "Resultado del período incluido en patrimonio",
-      "statement": "balance_general",
-      "category": "Patrimonio",
-      "account_role": "detail",
-      "parent_group": "bs.patrimony_components",
-      "synonyms": [
-        "Utilidad del ejercicio",
-        "pérdida del ejercicio",
-        "resultado del período dentro del patrimonio"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Resultado del periodo presentado como línea separada del patrimonio; puede residir en otro archivo o estar ya incluido en utilidades retenidas.",
-        "classification_basis": "Patrimonio (F2 §5.3). No duplicar con `is.net_income_reported` dentro de la misma suma (F2 §5.3, advertencia de duplicación).",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.current_year_result_equity (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.current_year_result_equity."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.legal_reserve": {
-      "id": "bs.legal_reserve",
-      "canonical_name": "Reserva legal",
-      "statement": "balance_general",
-      "category": "Patrimonio",
-      "account_role": "detail",
-      "parent_group": "bs.patrimony_components",
-      "synonyms": [
-        "Reserva legal acumulada"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Porción de utilidades retenidas legalmente reservada; no está disponible para distribución.",
-        "classification_basis": "Patrimonio (F2 §5.3); presentación en el estado de situación financiera (S1).",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.legal_reserve (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.legal_reserve."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.other_equity_components": {
-      "id": "bs.other_equity_components",
-      "canonical_name": "Otros componentes del patrimonio",
-      "statement": "balance_general",
-      "category": "Patrimonio",
-      "account_role": "detail",
-      "parent_group": "bs.patrimony_components",
-      "synonyms": [
-        "Otras cuentas patrimoniales que no tengan un identificador más específico"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Partidas patrimoniales diversas sin identificador más específico (ajustes de conversión, acciones propias).",
-        "classification_basis": "Patrimonio (F2 §5.3); presentación en el estado de situación financiera (S1).",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.other_equity_components (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.other_equity_components."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.other_reserves": {
-      "id": "bs.other_reserves",
-      "canonical_name": "Otras reservas patrimoniales",
-      "statement": "balance_general",
-      "category": "Patrimonio",
-      "account_role": "detail",
-      "parent_group": "bs.patrimony_components",
-      "synonyms": [
-        "Reservas",
-        "otras reservas de capital o patrimonio"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "ambiguous",
-        "definition": "Reservas patrimoniales distintas de la reserva legal (revaluación, estatutarias).",
-        "classification_basis": "Patrimonio (F2 §5.3); presentación en el estado de situación financiera (S1).",
-        "synonym_notes": [
-          "Sinónimo exacto del caso «Reservas» (tabla de mapeo, F1)."
-        ],
-        "ambiguities": [
-          "Nombre genérico del caso «Reservas»: el detalle de la reserva es incierto, pero su clasificación en el patrimonio es segura y el detalle no altera ningún resultado (tabla de mapeo, F1)."
-        ],
-        "sources": [
-          {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.other_reserves"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.other_reserves (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.other_reserves."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.retained_earnings": {
-      "id": "bs.retained_earnings",
-      "canonical_name": "Utilidades retenidas",
-      "statement": "balance_general",
-      "category": "Patrimonio",
-      "account_role": "detail",
-      "parent_group": "bs.patrimony_components",
-      "synonyms": [
-        "Resultados acumulados",
-        "utilidades acumuladas"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Utilidades acumuladas no distribuidas; su saldo se actualiza con la utilidad del periodo menos dividendos.",
-        "classification_basis": "Patrimonio (F2 §5.3); presentación en el estado de situación financiera (S1).",
-        "synonym_notes": [
-          "Sinónimo exacto del caso «Utilidades Acumuladas» (tabla de mapeo, F1)."
-        ],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.retained_earnings"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.retained_earnings (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.retained_earnings."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.share_capital": {
-      "id": "bs.share_capital",
-      "canonical_name": "Capital social",
-      "statement": "balance_general",
-      "category": "Patrimonio",
-      "account_role": "detail",
-      "parent_group": "bs.patrimony_components",
-      "synonyms": [
-        "Capital emitido",
-        "capital aportado",
-        "capital social pagado"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Aportes de los propietores representados en títulos; su saldo cambia con aportes y retiros, no con utilidades.",
-        "classification_basis": "Patrimonio (F2 §5.3); línea del estado de situación financiera (S1).",
-        "synonym_notes": [
-          "Sinónimo exacto del caso «Capital Social» (tabla de mapeo, F1)."
-        ],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.share_capital"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.share_capital (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.share_capital."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "bs.total_equity": {
-      "id": "bs.total_equity",
-      "canonical_name": "Total patrimonio",
-      "statement": "balance_general",
-      "category": "Total reportado",
-      "account_role": "reported_total",
-      "parent_group": null,
-      "synonyms": [
-        "Patrimonio total",
-        "capital contable total",
-        "patrimonio neto"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "positive_magnitude",
-      "absence_policy": "not_applicable",
-      "include_as_component": false,
-      "research": {
-        "status": "verified",
-        "definition": "Total del patrimonio reportado por el ejercicio; si existe, sustituye a la suma de `bs.patrimony_components`.",
-        "classification_basis": "Línea requerida del estado de situación financiera (S1); definido por F2 §5.3.",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.total_equity (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.total_equity."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.administrative_expenses": {
-      "id": "is.administrative_expenses",
-      "canonical_name": "Gastos administrativos",
-      "statement": "estado_resultados",
-      "category": "Gasto operativo",
-      "account_role": "detail",
-      "parent_group": "is.operating_expense_components",
-      "synonyms": [
-        "Gastos de administración",
-        "gastos generales y administrativos"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Gastos de la administración general del periodo (magnitudes positivas que se restan, D13).",
-        "classification_basis": "Gasto operativo por función (S1); catálogo F2 §5.4.",
-        "synonym_notes": [
-          "Sinónimo exacto del caso «Gastos de Administracion» (tabla de mapeo, F1)."
-        ],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a is.administrative_expenses"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.administrative_expenses (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.administrative_expenses."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.cost_of_sales_reported": {
-      "id": "is.cost_of_sales_reported",
-      "canonical_name": "Costo de ventas reportado",
-      "statement": "estado_resultados",
-      "category": "Costo",
-      "account_role": "reported_total",
-      "parent_group": null,
-      "synonyms": [
-        "Costo de ventas",
-        "costo de los bienes vendidos"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "expense",
-      "absence_policy": "not_applicable",
-      "include_as_component": false,
-      "research": {
-        "status": "verified",
-        "definition": "Costo de lo vendido reportado por el ejercicio (total sin desglose); si existe, sustituye a la suma de componentes.",
-        "classification_basis": "Gasto del periodo: el coste de los inventarios vendidos se reconoce como gasto (S2); catálogo F2 §5.4.",
-        "synonym_notes": [
-          "Sinónimo exacto del caso «Costo de Ventas» (tabla de mapeo, F1)."
-        ],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a is.cost_of_sales_reported"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.cost_of_sales_reported (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 2 — Inventarios",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a is.cost_of_sales_reported."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.gross_profit_reported": {
-      "id": "is.gross_profit_reported",
-      "canonical_name": "Utilidad bruta reportada",
-      "statement": "estado_resultados",
-      "category": "Total reportado, resultado",
-      "account_role": "reported_total",
-      "parent_group": null,
-      "synonyms": [
-        "Ganancia bruta",
-        "resultado bruto"
-      ],
-      "normal_balance": "depends_on_context",
-      "value_semantics": "signed_balance",
-      "absence_policy": "not_applicable",
-      "include_as_component": false,
-      "research": {
-        "status": "verified",
-        "definition": "Diferencia entre ventas netas y costo de ventas, reportada por el ejercicio; una pérdida conserva signo negativo.",
-        "classification_basis": "Subtotal del estado de resultados (S1); definido por F2 §5.4.",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.gross_profit_reported (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.gross_profit_reported."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.income_tax_expense": {
-      "id": "is.income_tax_expense",
-      "canonical_name": "Gasto por impuesto sobre la renta",
-      "statement": "estado_resultados",
-      "category": "Impuesto",
-      "account_role": "detail",
-      "parent_group": null,
-      "synonyms": [
-        "Impuesto sobre la renta",
-        "impuesto a las ganancias del período"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": false,
-      "research": {
-        "status": "verified",
-        "definition": "Impuesto corriente sobre la utilidad del periodo; se resta después de la utilidad antes de impuestos (D6).",
-        "classification_basis": "Partida del estado de resultados (S1); impuesto corriente reconocido como gasto conforme a NIC 12 (S4).",
-        "synonym_notes": [
-          "Sinónimo exacto del caso «Impuesto sobre la Renta» (tabla de mapeo, F1)."
-        ],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a is.income_tax_expense"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.income_tax_expense (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 12 — Impuesto sobre la renta",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-12-income-taxes/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 12 obliga a reconocer el impuesto corriente como gasto del periodo en que se obtiene la utilidad. Aplica a is.income_tax_expense."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.interest_expense": {
-      "id": "is.interest_expense",
-      "canonical_name": "Gastos por intereses",
-      "statement": "estado_resultados",
-      "category": "Financiero, intereses",
-      "account_role": "detail",
-      "parent_group": null,
-      "synonyms": [
-        "Intereses pagados o devengados",
-        "gastos financieros por intereses"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": false,
-      "research": {
-        "status": "verified",
-        "definition": "Costos de financiación de deudas; si es cero, la cobertura de intereses queda en `zero_denominator` (D, razón 11).",
-        "classification_basis": "Gasto financiero del periodo: los costos de financiación se reconocen como gasto (S6); partida del estado de resultados (S1).",
-        "synonym_notes": [
-          "Sinónimo exacto del caso «Gastos por Intereses» (tabla de mapeo, F1)."
-        ],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a is.interest_expense"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.interest_expense (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 23 — Costos de financiación",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-23-borrowing-costs/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 23: los costos de financiación (intereses) se reconocen como gasto del periodo. Aplica a is.interest_expense."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.merchandise_cost": {
-      "id": "is.merchandise_cost",
-      "canonical_name": "Costo de mercadería vendida",
-      "statement": "estado_resultados",
-      "category": "Costo",
-      "account_role": "detail",
-      "parent_group": "is.cost_of_sales_components",
-      "synonyms": [
-        "Costo de ventas de mercaderías",
-        "costo de bienes vendidos"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Coste de las mercaderías vendidas en el periodo.",
-        "classification_basis": "Gasto del periodo cuando se venden los inventarios (S2); catálogo F2 §5.4.",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.merchandise_cost (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 2 — Inventarios",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a is.merchandise_cost."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.net_income_reported": {
-      "id": "is.net_income_reported",
-      "canonical_name": "Utilidad neta reportada",
-      "statement": "estado_resultados",
-      "category": "Total reportado, resultado",
-      "account_role": "reported_total",
-      "parent_group": null,
-      "synonyms": [
-        "Utilidad del ejercicio",
-        "ganancia neta",
-        "resultado neto"
-      ],
-      "normal_balance": "depends_on_context",
-      "value_semantics": "signed_balance",
-      "absence_policy": "not_applicable",
-      "include_as_component": false,
-      "research": {
-        "status": "verified",
-        "definition": "Resultado final después de impuestos reportado por el ejercicio; una pérdida conserva signo negativo (D6).",
-        "classification_basis": "Línea requerida del estado de resultados (S1); definido por F2 §5.4.",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.net_income_reported (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.net_income_reported."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.net_sales_reported": {
-      "id": "is.net_sales_reported",
-      "canonical_name": "Ventas netas reportadas",
-      "statement": "estado_resultados",
-      "category": "Total reportado, ingreso",
-      "account_role": "reported_total",
-      "parent_group": null,
-      "synonyms": [
-        "Ventas netas",
-        "ventas netas totales"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "revenue",
-      "absence_policy": "not_applicable",
-      "include_as_component": false,
-      "research": {
-        "status": "verified",
-        "definition": "Ventas netas de devoluciones, descuentos y rebajas, reportadas directamente por el ejercicio.",
-        "classification_basis": "Ingreso neto del periodo (S1); definido por F2 §5.4.",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.net_sales_reported (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.net_sales_reported."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.noninterest_nonoperating_expenses": {
-      "id": "is.noninterest_nonoperating_expenses",
-      "canonical_name": "Gastos no operativos distintos de intereses",
-      "statement": "estado_resultados",
-      "category": "No operativo",
-      "account_role": "detail",
-      "parent_group": null,
-      "synonyms": [
-        "Otros gastos no operativos",
-        "gastos no operacionales excluyendo intereses identificados por separado"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": false,
-      "research": {
-        "status": "verified",
-        "definition": "Gastos ajenos a la operación que no son intereses; entran en utilidad neta, no en la operativa (D5).",
-        "classification_basis": "Partida no operativa del estado de resultados (S1); catálogo F2 §5.4.",
-        "synonym_notes": [
-          "Sinónimo exacto del caso «Otros Gastos» (tabla de mapeo, F1)."
-        ],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a is.noninterest_nonoperating_expenses"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.noninterest_nonoperating_expenses (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.noninterest_nonoperating_expenses."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.nonoperating_income": {
-      "id": "is.nonoperating_income",
-      "canonical_name": "Ingresos no operativos",
-      "statement": "estado_resultados",
-      "category": "No operativo",
-      "account_role": "detail",
-      "parent_group": null,
-      "synonyms": [
-        "Otros ingresos no operativos",
-        "ingresos financieros no clasificados en otra cuenta específica"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "revenue",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": false,
-      "research": {
-        "status": "verified",
-        "definition": "Ingresos ajenos a la operación principal (arrendamientos, plusvalías, intereses ganados); entran en utilidad neta, no en la operativa (D5).",
-        "classification_basis": "Partida no operativa del estado de resultados (S1); catálogo F2 §5.4.",
-        "synonym_notes": [
-          "Sinónimo exacto del caso «Otros Ingresos» (tabla de mapeo, F1)."
-        ],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a is.nonoperating_income"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.nonoperating_income (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.nonoperating_income."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.operating_amortization": {
-      "id": "is.operating_amortization",
-      "canonical_name": "Amortización operativa",
-      "statement": "estado_resultados",
-      "category": "Gasto operativo",
-      "account_role": "detail",
-      "parent_group": "is.operating_expense_components",
-      "synonyms": [
-        "Amortización de activos usados en operaciones, bajo la misma regla de no duplicación"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Gasto de amortización del periodo reconocido fuera de otras cuentas ya agregadas; evitar duplicación.",
-        "classification_basis": "Gasto operativo (S1); amortización de activos intangibles conforme a NIC 38 (S8).",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.operating_amortization (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 38 — Activos intangibles",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-38-intangible-assets/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 38: un activo intangible es un activo no financiero identificable sin sustancia física y se amortiza. Aplica a is.operating_amortization."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.operating_depreciation": {
-      "id": "is.operating_depreciation",
-      "canonical_name": "Depreciación operativa",
-      "statement": "estado_resultados",
-      "category": "Gasto operativo",
-      "account_role": "detail",
-      "parent_group": "is.operating_expense_components",
-      "synonyms": [
-        "Depreciación de activos usados en operaciones, solo si no está incluida ya en otra cuenta agregada utilizada"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Gasto de depreciación del periodo reconocido fuera de otras cuentas ya agregadas; evitar duplicación con costo de ventas o gastos administrativos.",
-        "classification_basis": "Gasto operativo (S1); la depreciación se reconoce como gasto a lo largo de la vida útil (S5).",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.operating_depreciation (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 16 — Propiedades, planta y equipo",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 16: las propiedades, planta y equipo son partidas tangibles usadas más de un periodo y se deprecian a lo largo de su vida útil. Aplica a is.operating_depreciation."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.operating_profit_reported": {
-      "id": "is.operating_profit_reported",
-      "canonical_name": "Utilidad operativa reportada",
-      "statement": "estado_resultados",
-      "category": "Total reportado, resultado",
-      "account_role": "reported_total",
-      "parent_group": null,
-      "synonyms": [
-        "Resultado operativo",
-        "utilidad de operación"
-      ],
-      "normal_balance": "depends_on_context",
-      "value_semantics": "signed_balance",
-      "absence_policy": "not_applicable",
-      "include_as_component": false,
-      "research": {
-        "status": "verified",
-        "definition": "Utilidad de la operación reportada por el ejercicio (utilidad bruta menos gastos operativos); una pérdida conserva signo negativo.",
-        "classification_basis": "Subtotal del estado de resultados (S1); definido por F2 §5.4.",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.operating_profit_reported (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.operating_profit_reported."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.other_operating_expenses": {
-      "id": "is.other_operating_expenses",
-      "canonical_name": "Otros gastos operativos",
-      "statement": "estado_resultados",
-      "category": "Gasto operativo",
-      "account_role": "detail",
-      "parent_group": "is.operating_expense_components",
-      "synonyms": [
-        "Otros gastos de operación"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Gastos operativos menores sin cuenta específica (magnitudes positivas que se restan, D13).",
-        "classification_basis": "Gasto operativo por función (S1); catálogo F2 §5.4.",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.other_operating_expenses (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.other_operating_expenses."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.other_operating_income": {
-      "id": "is.other_operating_income",
-      "canonical_name": "Otros ingresos operativos",
-      "statement": "estado_resultados",
-      "category": "Ingreso operativo",
-      "account_role": "detail",
-      "parent_group": null,
-      "synonyms": [
-        "Otros ingresos de operación si pertenecen a la actividad operativa"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "revenue",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": false,
-      "research": {
-        "status": "verified",
-        "definition": "Ingresos derivados de la actividad operativa que no son ventas (participaciones, excedentes operativos).",
-        "classification_basis": "Ingreso operativo del periodo (S1); catálogo F2 §5.4, entra en utilidad operativa según árbol D5.",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.other_operating_income (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.other_operating_income."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.other_sales_revenue": {
-      "id": "is.other_sales_revenue",
-      "canonical_name": "Otras ventas ordinarias",
-      "statement": "estado_resultados",
-      "category": "Ingreso bruto",
-      "account_role": "detail",
-      "parent_group": "is.gross_sales_components",
-      "synonyms": [
-        "Otras ventas",
-        "otras ventas operativas si efectivamente son ventas"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "revenue",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Ventas operativas menores sin cuenta específica; solo si efectivamente son ventas.",
-        "classification_basis": "Ingreso bruto del periodo (S1); catálogo F2 §5.4.",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.other_sales_revenue (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.other_sales_revenue."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.product_cost": {
-      "id": "is.product_cost",
-      "canonical_name": "Costo de productos vendidos",
-      "statement": "estado_resultados",
-      "category": "Costo",
-      "account_role": "detail",
-      "parent_group": "is.cost_of_sales_components",
-      "synonyms": [
-        "Costo de producción vendido",
-        "costo de productos vendidos"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Coste de producción de los productos vendidos en el periodo.",
-        "classification_basis": "Gasto del periodo cuando se venden los inventarios (S2); catálogo F2 §5.4.",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.product_cost (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 2 — Inventarios",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a is.product_cost."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.product_sales": {
-      "id": "is.product_sales",
-      "canonical_name": "Ventas de productos",
-      "statement": "estado_resultados",
-      "category": "Ingreso bruto",
-      "account_role": "detail",
-      "parent_group": "is.gross_sales_components",
-      "synonyms": [
-        "Ventas de mercaderías",
-        "ventas de bienes"
-      ],
-      "normal_balance": "acreedor",
-      "value_semantics": "revenue",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Ingresos por venta de bienes; contribuyen a ventas brutas cuando no existe total reportado.",
-        "classification_basis": "Ingreso bruto del periodo (S1); catálogo F2 §5.4.",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.product_sales (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.product_sales."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.sales_allowances": {
-      "id": "is.sales_allowances",
-      "canonical_name": "Rebajas sobre ventas",
-      "statement": "estado_resultados",
-      "category": "Contra-ingreso, correctora",
-      "account_role": "contra_account",
-      "parent_group": "is.sales_deduction_components",
-      "synonyms": [
-        "Rebajas y bonificaciones sobre ventas"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "other",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Contra-ingreso por rebajas y bonificaciones; se suma con signo positivo en deducciones y se resta de ventas brutas (D7).",
-        "classification_basis": "Deducción de ingreso del periodo (S1); catálogo F2 §5.4.",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.sales_allowances (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.sales_allowances."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.sales_discounts": {
-      "id": "is.sales_discounts",
-      "canonical_name": "Descuentos sobre ventas",
-      "statement": "estado_resultados",
-      "category": "Contra-ingreso, correctora",
-      "account_role": "contra_account",
-      "parent_group": "is.sales_deduction_components",
-      "synonyms": [
-        "Descuentos concedidos sobre ventas"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "other",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Contra-ingreso por descuentos concedidos; se suma con signo positivo en deducciones y se resta de ventas brutas (D7).",
-        "classification_basis": "Deducción de ingreso del periodo (S1); catálogo F2 §5.4.",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.sales_discounts (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.sales_discounts."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.sales_returns": {
-      "id": "is.sales_returns",
-      "canonical_name": "Devoluciones sobre ventas",
-      "statement": "estado_resultados",
-      "category": "Contra-ingreso, correctora",
-      "account_role": "contra_account",
-      "parent_group": "is.sales_deduction_components",
-      "synonyms": [
-        "Devoluciones de ventas",
-        "ventas devueltas"
-      ],
-      "normal_balance": "deudor",
-      "value_semantics": "other",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
-      "research": {
-        "status": "verified",
-        "definition": "Contra-ingreso por bienes devueltos por clientes; se suma con signo positivo en deducciones y se resta de ventas brutas (D7).",
-        "classification_basis": "Deducción de ingreso del periodo (S1); catálogo F2 §5.4.",
-        "synonym_notes": [],
-        "ambiguities": [],
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.sales_returns (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.sales_returns."
-          }
-        ]
-      },
-      "enabled": true
-    },
-    "is.sales_total": {
+  "cuentas": [
+    {
       "id": "is.sales_total",
       "canonical_name": "Ventas totales",
+      "definition": "Total de ingresos por ventas sin desglose de componentes (R5); se reconoce al entregar los bienes o prestar los servicios.",
       "statement": "estado_resultados",
-      "category": "Ingreso bruto",
+      "classification": "ingreso",
       "account_role": "reported_total",
-      "parent_group": null,
+      "normal_balance": "acreedor",
+      "value_semantics": "revenue",
+      "absence_policy": "not_applicable",
       "synonyms": [
         "Ventas",
         "ventas ordinarias totales"
       ],
-      "normal_balance": "acreedor",
-      "value_semantics": "revenue",
-      "absence_policy": "not_applicable",
-      "include_as_component": false,
+      "doubtful_synonyms": [],
+      "ambiguities": [],
       "research": {
         "status": "verified",
-        "definition": "Total de ingresos por ventas sin desglose de componentes (R5); se reconoce al entregar los bienes o prestar los servicios.",
-        "classification_basis": "Ingreso bruto del periodo; ingreso requerido en el estado de resultados (S1); total de categoría definido por R5 (F1).",
-        "synonym_notes": [
-          "Sinónimo exacto del caso «Ventas»: total sin desglose de R5 (tabla de mapeo, F1)."
-        ],
-        "ambiguities": [],
         "sources": [
           {
             "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
@@ -1325,32 +262,462 @@
             "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.sales_total."
           }
         ]
-      },
-      "enabled": true
+      }
     },
-    "is.selling_expenses": {
+    {
+      "id": "is.product_sales",
+      "canonical_name": "Ventas de productos",
+      "definition": "Ingresos por venta de bienes; contribuyen a ventas brutas cuando no existe total reportado.",
+      "statement": "estado_resultados",
+      "classification": "ingreso",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "revenue",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Ventas de mercaderías",
+        "ventas de bienes"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.product_sales (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.product_sales."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.service_revenue",
+      "canonical_name": "Ingresos por servicios",
+      "definition": "Ingresos por servicios prestados; contribuyen a ventas brutas cuando no existe total reportado.",
+      "statement": "estado_resultados",
+      "classification": "ingreso",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "revenue",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Ventas de servicios",
+        "ingresos por servicios prestados"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.service_revenue (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.service_revenue."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.other_sales_revenue",
+      "canonical_name": "Otras ventas ordinarias",
+      "definition": "Ventas operativas menores sin cuenta específica; solo si efectivamente son ventas.",
+      "statement": "estado_resultados",
+      "classification": "ingreso",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "revenue",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Otras ventas",
+        "otras ventas operativas si efectivamente son ventas"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.other_sales_revenue (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.other_sales_revenue."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.sales_returns",
+      "canonical_name": "Devoluciones sobre ventas",
+      "definition": "Contra-ingreso por bienes devueltos por clientes; se suma con signo positivo en deducciones y se resta de ventas brutas (D7).",
+      "statement": "estado_resultados",
+      "classification": "deduccion_ingreso",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "other",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Devoluciones de ventas",
+        "ventas devueltas"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.sales_returns (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.sales_returns."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.sales_discounts",
+      "canonical_name": "Descuentos sobre ventas",
+      "definition": "Contra-ingreso por descuentos concedidos; se suma con signo positivo en deducciones y se resta de ventas brutas (D7).",
+      "statement": "estado_resultados",
+      "classification": "deduccion_ingreso",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "other",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Descuentos concedidos sobre ventas"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.sales_discounts (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.sales_discounts."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.sales_allowances",
+      "canonical_name": "Rebajas sobre ventas",
+      "definition": "Contra-ingreso por rebajas y bonificaciones; se suma con signo positivo en deducciones y se resta de ventas brutas (D7).",
+      "statement": "estado_resultados",
+      "classification": "deduccion_ingreso",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "other",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Rebajas y bonificaciones sobre ventas"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.sales_allowances (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.sales_allowances."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.net_sales_reported",
+      "canonical_name": "Ventas netas reportadas",
+      "definition": "Ventas netas de devoluciones, descuentos y rebajas, reportadas directamente por el ejercicio.",
+      "statement": "estado_resultados",
+      "classification": "ingreso",
+      "account_role": "reported_total",
+      "normal_balance": "acreedor",
+      "value_semantics": "revenue",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Ventas netas",
+        "ventas netas totales"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.net_sales_reported (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.net_sales_reported."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.cost_of_sales_reported",
+      "canonical_name": "Costo de ventas reportado",
+      "definition": "Costo de lo vendido reportado por el ejercicio (total sin desglose); si existe, sustituye a la suma de componentes.",
+      "statement": "estado_resultados",
+      "classification": "costo",
+      "account_role": "reported_total",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Costo de ventas",
+        "costo de los bienes vendidos"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
+            "organization_or_author": "Material del profesor (curso GFO)",
+            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
+            "source_type": "documento_local",
+            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a is.cost_of_sales_reported"
+          },
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.cost_of_sales_reported (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 2 — Inventarios",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a is.cost_of_sales_reported."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.merchandise_cost",
+      "canonical_name": "Costo de mercadería vendida",
+      "definition": "Coste de las mercaderías vendidas en el periodo.",
+      "statement": "estado_resultados",
+      "classification": "costo",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Costo de ventas de mercaderías",
+        "costo de bienes vendidos"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.merchandise_cost (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 2 — Inventarios",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a is.merchandise_cost."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.product_cost",
+      "canonical_name": "Costo de productos vendidos",
+      "definition": "Coste de producción de los productos vendidos en el periodo.",
+      "statement": "estado_resultados",
+      "classification": "costo",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Costo de producción vendido",
+        "costo de productos vendidos"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.product_cost (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 2 — Inventarios",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a is.product_cost."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.service_cost",
+      "canonical_name": "Costo de servicios",
+      "definition": "Coste directo de los servicios prestados en el periodo.",
+      "statement": "estado_resultados",
+      "classification": "costo",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Costos de servicios prestados"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.service_cost (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.service_cost."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.gross_profit_reported",
+      "canonical_name": "Utilidad bruta reportada",
+      "definition": "Diferencia entre ventas netas y costo de ventas, reportada por el ejercicio; una pérdida conserva signo negativo.",
+      "statement": "estado_resultados",
+      "classification": "resultado",
+      "account_role": "reported_total",
+      "normal_balance": "depends_on_context",
+      "value_semantics": "signed_balance",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Ganancia bruta",
+        "resultado bruto"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.gross_profit_reported (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.gross_profit_reported."
+          }
+        ]
+      }
+    },
+    {
       "id": "is.selling_expenses",
       "canonical_name": "Gastos de ventas",
+      "definition": "Gastos de distribución y promoción de ventas del periodo (magnitudes positivas que se restan, D13).",
       "statement": "estado_resultados",
-      "category": "Gasto operativo",
+      "classification": "gasto_operativo",
       "account_role": "detail",
-      "parent_group": "is.operating_expense_components",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "zero_if_not_reported",
       "synonyms": [
         "Gastos comerciales",
         "gastos de distribución si el criterio de clase los clasifica como operativos"
       ],
-      "normal_balance": "deudor",
-      "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
+      "doubtful_synonyms": [],
+      "ambiguities": [],
       "research": {
         "status": "verified",
-        "definition": "Gastos de distribución y promoción de ventas del periodo (magnitudes positivas que se restan, D13).",
-        "classification_basis": "Gasto operativo por función (S1); catálogo F2 §5.4.",
-        "synonym_notes": [
-          "Sinónimo exacto del caso «Gastos de Ventas» (tabla de mapeo, F1)."
-        ],
-        "ambiguities": [],
         "sources": [
           {
             "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
@@ -1374,391 +741,806 @@
             "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.selling_expenses."
           }
         ]
-      },
-      "enabled": true
+      }
     },
-    "is.service_cost": {
-      "id": "is.service_cost",
-      "canonical_name": "Costo de servicios",
+    {
+      "id": "is.administrative_expenses",
+      "canonical_name": "Gastos administrativos",
+      "definition": "Gastos de la administración general del periodo (magnitudes positivas que se restan, D13).",
       "statement": "estado_resultados",
-      "category": "Costo",
+      "classification": "gasto_operativo",
       "account_role": "detail",
-      "parent_group": "is.cost_of_sales_components",
-      "synonyms": [
-        "Costos de servicios prestados"
-      ],
       "normal_balance": "deudor",
       "value_semantics": "expense",
       "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
+      "synonyms": [
+        "Gastos de administración",
+        "gastos generales y administrativos"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
       "research": {
         "status": "verified",
-        "definition": "Coste directo de los servicios prestados en el periodo.",
-        "classification_basis": "Gasto del periodo asociado a los ingresos de servicios (S1); catálogo F2 §5.4.",
-        "synonym_notes": [],
-        "ambiguities": [],
         "sources": [
+          {
+            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
+            "organization_or_author": "Material del profesor (curso GFO)",
+            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
+            "source_type": "documento_local",
+            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a is.administrative_expenses"
+          },
           {
             "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
             "organization_or_author": "Equipo GFO",
             "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
             "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.service_cost (secciones 5 a 8)"
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.administrative_expenses (secciones 5 a 8)"
           },
           {
             "title": "NIC 1 — Presentación de estados financieros",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
             "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.service_cost."
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.administrative_expenses."
           }
         ]
-      },
-      "enabled": true
+      }
     },
-    "is.service_revenue": {
-      "id": "is.service_revenue",
-      "canonical_name": "Ingresos por servicios",
+    {
+      "id": "is.operating_depreciation",
+      "canonical_name": "Depreciación operativa",
+      "definition": "Gasto de depreciación del periodo reconocido fuera de otras cuentas ya agregadas; evitar duplicación con costo de ventas o gastos administrativos.",
       "statement": "estado_resultados",
-      "category": "Ingreso bruto",
+      "classification": "gasto_operativo",
       "account_role": "detail",
-      "parent_group": "is.gross_sales_components",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "zero_if_not_reported",
       "synonyms": [
-        "Ventas de servicios",
-        "ingresos por servicios prestados"
+        "Depreciación de activos usados en operaciones, solo si no está incluida ya en otra cuenta agregada utilizada"
       ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.operating_depreciation (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 16 — Propiedades, planta y equipo",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 16: las propiedades, planta y equipo son partidas tangibles usadas más de un periodo y se deprecian a lo largo de su vida útil. Aplica a is.operating_depreciation."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.operating_amortization",
+      "canonical_name": "Amortización operativa",
+      "definition": "Gasto de amortización del periodo reconocido fuera de otras cuentas ya agregadas; evitar duplicación.",
+      "statement": "estado_resultados",
+      "classification": "gasto_operativo",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Amortización de activos usados en operaciones, bajo la misma regla de no duplicación"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.operating_amortization (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 38 — Activos intangibles",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-38-intangible-assets/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 38: un activo intangible es un activo no financiero identificable sin sustancia física y se amortiza. Aplica a is.operating_amortization."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.other_operating_expenses",
+      "canonical_name": "Otros gastos operativos",
+      "definition": "Gastos operativos menores sin cuenta específica (magnitudes positivas que se restan, D13).",
+      "statement": "estado_resultados",
+      "classification": "gasto_operativo",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Otros gastos de operación"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.other_operating_expenses (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.other_operating_expenses."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.other_operating_income",
+      "canonical_name": "Otros ingresos operativos",
+      "definition": "Ingresos derivados de la actividad operativa que no son ventas (participaciones, excedentes operativos).",
+      "statement": "estado_resultados",
+      "classification": "ingreso",
+      "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "revenue",
       "absence_policy": "zero_if_not_reported",
-      "include_as_component": true,
+      "synonyms": [
+        "Otros ingresos de operación si pertenecen a la actividad operativa"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
       "research": {
         "status": "verified",
-        "definition": "Ingresos por servicios prestados; contribuyen a ventas brutas cuando no existe total reportado.",
-        "classification_basis": "Ingreso bruto del periodo (S1); catálogo F2 §5.4.",
-        "synonym_notes": [],
-        "ambiguities": [],
         "sources": [
           {
             "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
             "organization_or_author": "Equipo GFO",
             "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
             "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.service_revenue (secciones 5 a 8)"
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.other_operating_income (secciones 5 a 8)"
           },
           {
             "title": "NIC 1 — Presentación de estados financieros",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
             "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.service_revenue."
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.other_operating_income."
           }
         ]
-      },
-      "enabled": true
-    }
-  },
-  "account_sets": {
-    "bs.patrimony_components": [
-      "bs.share_capital",
-      "bs.additional_paid_in_capital",
-      "bs.legal_reserve",
-      "bs.other_reserves",
-      "bs.retained_earnings",
-      "bs.current_year_result_equity",
-      "bs.other_equity_components"
-    ],
-    "is.cost_of_sales_components": [
-      "is.merchandise_cost",
-      "is.product_cost",
-      "is.service_cost"
-    ],
-    "is.gross_sales_components": [
-      "is.product_sales",
-      "is.service_revenue",
-      "is.other_sales_revenue"
-    ],
-    "is.operating_expense_components": [
-      "is.selling_expenses",
-      "is.administrative_expenses",
-      "is.operating_depreciation",
-      "is.operating_amortization",
-      "is.other_operating_expenses"
-    ],
-    "is.sales_deduction_components": [
-      "is.sales_returns",
-      "is.sales_discounts",
-      "is.sales_allowances"
-    ]
-  },
-  "aggregation_rules": {
-    "prefer_reported_subtotal": true,
-    "subtotal_vs_components": {
-      "selection_order": [
-        "valid_reported_subtotal",
-        "sum_recognized_components"
-      ],
-      "when_subtotal_selected": "exclude_components_from_this_aggregate",
-      "preserve_original_component_values": true,
-      "reconcile_subtotal_with_components": true,
-      "on_difference": "use_selected_subtotal_and_raise_warning"
-    },
-    "component_missing_from_statement": "zero_for_aggregation",
-    "unknown_imported_account": "review_not_zero",
-    "invalid_or_blank_reported_value": "not_a_valid_subtotal"
-  },
-  "derived_values": {
-    "costo_ventas": {
-      "display_name": "Costo de ventas",
-      "value_type": "flow",
-      "reported_account_candidates": [
-        "is.cost_of_sales_reported"
-      ],
-      "prefer_reported_value": true,
-      "fallback_expression": {
-        "op": "sum_accounts",
-        "account_set": "is.cost_of_sales_components"
-      },
-      "when_reported_total_selected": "exclude_components_from_this_aggregate",
-      "validate_against_components": true
-    },
-    "deducciones_ventas": {
-      "display_name": "Deducciones de ventas",
-      "value_type": "flow",
-      "expression": {
-        "op": "sum_accounts",
-        "account_set": "is.sales_deduction_components"
       }
     },
-    "gastos_operativos": {
-      "display_name": "Gastos operativos",
-      "value_type": "flow",
-      "expression": {
-        "op": "sum_accounts",
-        "account_set": "is.operating_expense_components"
-      }
-    },
-    "patrimonio_total": {
-      "display_name": "Patrimonio total",
-      "value_type": "balance_at_period_end",
-      "reported_account_candidates": [
-        "bs.total_equity"
+    {
+      "id": "is.operating_profit_reported",
+      "canonical_name": "Utilidad operativa reportada",
+      "definition": "Utilidad de la operación reportada por el ejercicio (utilidad bruta menos gastos operativos); una pérdida conserva signo negativo.",
+      "statement": "estado_resultados",
+      "classification": "resultado",
+      "account_role": "reported_total",
+      "normal_balance": "depends_on_context",
+      "value_semantics": "signed_balance",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Resultado operativo",
+        "utilidad de operación"
       ],
-      "prefer_reported_value": true,
-      "fallback_expression": {
-        "op": "sum_accounts",
-        "account_set": "bs.patrimony_components"
-      },
-      "when_reported_total_selected": "exclude_components_from_this_aggregate",
-      "validate_against_components": true
-    },
-    "utilidad_bruta": {
-      "display_name": "Utilidad bruta",
-      "value_type": "flow",
-      "reported_account_candidates": [
-        "is.gross_profit_reported"
-      ],
-      "prefer_reported_value": true,
-      "fallback_expression": {
-        "op": "subtract",
-        "left": {
-          "ref": "derived.ventas_netas"
-        },
-        "right": {
-          "ref": "derived.costo_ventas"
-        }
-      },
-      "when_reported_total_selected": "exclude_components_from_this_aggregate",
-      "validate_against_components": true
-    },
-    "utilidad_neta": {
-      "display_name": "Utilidad neta",
-      "value_type": "flow",
-      "reported_account_candidates": [
-        "is.net_income_reported"
-      ],
-      "prefer_reported_value": true,
-      "fallback_expression": {
-        "op": "subtract",
-        "left": {
-          "op": "subtract",
-          "left": {
-            "op": "subtract",
-            "left": {
-              "op": "add",
-              "left": {
-                "ref": "derived.utilidad_operativa"
-              },
-              "right": {
-                "ref": "is.nonoperating_income"
-              }
-            },
-            "right": {
-              "ref": "is.noninterest_nonoperating_expenses"
-            }
-          },
-          "right": {
-            "ref": "is.interest_expense"
-          }
-        },
-        "right": {
-          "ref": "is.income_tax_expense"
-        }
-      },
-      "when_reported_total_selected": "exclude_components_from_this_aggregate",
-      "validate_against_components": true
-    },
-    "utilidad_operativa": {
-      "display_name": "Utilidad operativa",
-      "value_type": "flow",
-      "reported_account_candidates": [
-        "is.operating_profit_reported"
-      ],
-      "prefer_reported_value": true,
-      "fallback_expression": {
-        "op": "subtract",
-        "left": {
-          "op": "add",
-          "left": {
-            "ref": "derived.utilidad_bruta"
-          },
-          "right": {
-            "ref": "is.other_operating_income"
-          }
-        },
-        "right": {
-          "ref": "derived.gastos_operativos"
-        }
-      },
-      "when_reported_total_selected": "exclude_components_from_this_aggregate",
-      "validate_against_components": true
-    },
-    "ventas_brutas": {
-      "display_name": "Ventas brutas",
-      "value_type": "flow",
-      "reported_account_candidates": [
-        "is.sales_total"
-      ],
-      "prefer_reported_value": true,
-      "fallback_expression": {
-        "op": "sum_accounts",
-        "account_set": "is.gross_sales_components"
-      },
-      "when_reported_total_selected": "exclude_components_from_this_aggregate",
-      "validate_against_components": true
-    },
-    "ventas_netas": {
-      "display_name": "Ventas netas",
-      "value_type": "flow",
-      "reported_account_candidates": [
-        "is.net_sales_reported"
-      ],
-      "prefer_reported_value": true,
-      "fallback_expression": {
-        "op": "subtract",
-        "left": {
-          "ref": "derived.ventas_brutas"
-        },
-        "right": {
-          "ref": "derived.deducciones_ventas"
-        }
-      },
-      "when_reported_total_selected": "exclude_components_from_this_aggregate",
-      "validate_against_components": true
-    }
-  },
-  "ratio": {
-    "id": "rentabilidad.roe",
-    "period_mode": "flow_with_average_balance",
-    "formula": {
-      "op": "divide",
-      "numerator": {
-        "ref": "derived.utilidad_neta",
-        "period": "current"
-      },
-      "denominator": {
-        "op": "average",
-        "values": [
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
           {
-            "ref": "derived.patrimonio_total",
-            "period": "previous"
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.operating_profit_reported (secciones 5 a 8)"
           },
           {
-            "ref": "derived.patrimonio_total",
-            "period": "current"
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.operating_profit_reported."
           }
-        ],
-        "required_periods": 2,
-        "if_previous_period_missing": "not_available"
+        ]
       }
     },
-    "required_inputs": [
-      "derived.utilidad_neta[current]",
-      "derived.patrimonio_total[previous]",
-      "derived.patrimonio_total[current]"
-    ],
-    "presentation": {
-      "badges_enabled": true,
-      "direct_badge": "Saldo directo, sin promedio",
-      "average_badge": "Promedio {periodo_anterior}–{periodo_actual}",
-      "first_period_toggle": {
-        "label": "Mostrar cálculo directo de {primer_periodo}",
-        "default": false
-      },
-      "footnote_direct": "Cálculo con saldos de cierre del periodo {periodo}, sin promedio."
+    {
+      "id": "is.nonoperating_income",
+      "canonical_name": "Ingresos no operativos",
+      "definition": "Ingresos ajenos a la operación principal (arrendamientos, plusvalías, intereses ganados); entran en utilidad neta, no en la operativa (D5).",
+      "statement": "estado_resultados",
+      "classification": "no_operativo",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "revenue",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Otros ingresos no operativos",
+        "ingresos financieros no clasificados en otra cuenta específica"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
+            "organization_or_author": "Material del profesor (curso GFO)",
+            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
+            "source_type": "documento_local",
+            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a is.nonoperating_income"
+          },
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.nonoperating_income (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.nonoperating_income."
+          }
+        ]
+      }
     },
-    "unavailable_behavior": {
-      "result": "not_available",
-      "on_zero_denominator": "zero_denominator",
-      "on_missing_required_account_data": "missing_required_account_data",
-      "on_missing_required_period_balance": "missing_required_period_balance",
-      "never_replace_with_zero": true
+    {
+      "id": "is.noninterest_nonoperating_expenses",
+      "canonical_name": "Gastos no operativos distintos de intereses",
+      "definition": "Gastos ajenos a la operación que no son intereses; entran en utilidad neta, no en la operativa (D5).",
+      "statement": "estado_resultados",
+      "classification": "no_operativo",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Otros gastos no operativos",
+        "gastos no operacionales excluyendo intereses identificados por separado"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
+            "organization_or_author": "Material del profesor (curso GFO)",
+            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
+            "source_type": "documento_local",
+            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a is.noninterest_nonoperating_expenses"
+          },
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.noninterest_nonoperating_expenses (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.noninterest_nonoperating_expenses."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.interest_expense",
+      "canonical_name": "Gastos por intereses",
+      "definition": "Costos de financiación de deudas; si es cero, la cobertura de intereses queda en `zero_denominator` (D, razón 11).",
+      "statement": "estado_resultados",
+      "classification": "financiero",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Intereses pagados o devengados",
+        "gastos financieros por intereses"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
+            "organization_or_author": "Material del profesor (curso GFO)",
+            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
+            "source_type": "documento_local",
+            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a is.interest_expense"
+          },
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.interest_expense (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 23 — Costos de financiación",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-23-borrowing-costs/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 23: los costos de financiación (intereses) se reconocen como gasto del periodo. Aplica a is.interest_expense."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.income_tax_expense",
+      "canonical_name": "Gasto por impuesto sobre la renta",
+      "definition": "Impuesto corriente sobre la utilidad del periodo; se resta después de la utilidad antes de impuestos (D6).",
+      "statement": "estado_resultados",
+      "classification": "impuesto",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Impuesto sobre la renta",
+        "impuesto a las ganancias del período"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
+            "organization_or_author": "Material del profesor (curso GFO)",
+            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
+            "source_type": "documento_local",
+            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a is.income_tax_expense"
+          },
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.income_tax_expense (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 12 — Impuesto sobre la renta",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-12-income-taxes/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 12 obliga a reconocer el impuesto corriente como gasto del periodo en que se obtiene la utilidad. Aplica a is.income_tax_expense."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.net_income_reported",
+      "canonical_name": "Utilidad neta reportada",
+      "definition": "Resultado final después de impuestos reportado por el ejercicio; una pérdida conserva signo negativo (D6).",
+      "statement": "estado_resultados",
+      "classification": "resultado",
+      "account_role": "reported_total",
+      "normal_balance": "depends_on_context",
+      "value_semantics": "signed_balance",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Utilidad del ejercicio",
+        "ganancia neta",
+        "resultado neto"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.net_income_reported (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.net_income_reported."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.total_equity",
+      "canonical_name": "Total patrimonio",
+      "definition": "Total del patrimonio reportado por el ejercicio; si existe, sustituye a la suma de `bs.patrimony_components`.",
+      "statement": "balance_general",
+      "classification": "total",
+      "account_role": "reported_total",
+      "normal_balance": "acreedor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Patrimonio total",
+        "capital contable total",
+        "patrimonio neto"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.total_equity (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.total_equity."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.share_capital",
+      "canonical_name": "Capital social",
+      "definition": "Aportes de los propietores representados en títulos; su saldo cambia con aportes y retiros, no con utilidades.",
+      "statement": "balance_general",
+      "classification": "patrimonio",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Capital emitido",
+        "capital aportado",
+        "capital social pagado"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
+            "organization_or_author": "Material del profesor (curso GFO)",
+            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
+            "source_type": "documento_local",
+            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.share_capital"
+          },
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.share_capital (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.share_capital."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.additional_paid_in_capital",
+      "canonical_name": "Aportes adicionales de capital",
+      "definition": "Excedente aportado por encima del valor nominal de las acciones.",
+      "statement": "balance_general",
+      "classification": "patrimonio",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Prima en emisión",
+        "aportes adicionales"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.additional_paid_in_capital (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.additional_paid_in_capital."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.legal_reserve",
+      "canonical_name": "Reserva legal",
+      "definition": "Porción de utilidades retenidas legalmente reservada; no está disponible para distribución.",
+      "statement": "balance_general",
+      "classification": "patrimonio",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Reserva legal acumulada"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.legal_reserve (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.legal_reserve."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.other_reserves",
+      "canonical_name": "Otras reservas patrimoniales",
+      "definition": "Reservas patrimoniales distintas de la reserva legal (revaluación, estatutarias).",
+      "statement": "balance_general",
+      "classification": "patrimonio",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Reservas",
+        "otras reservas de capital o patrimonio"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [
+        "Nombre genérico del caso «Reservas»: el detalle de la reserva es incierto, pero su clasificación en el patrimonio es segura y el detalle no altera ningún resultado (tabla de mapeo, F1)."
+      ],
+      "research": {
+        "status": "ambiguous",
+        "sources": [
+          {
+            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
+            "organization_or_author": "Material del profesor (curso GFO)",
+            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
+            "source_type": "documento_local",
+            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.other_reserves"
+          },
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.other_reserves (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.other_reserves."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.retained_earnings",
+      "canonical_name": "Utilidades retenidas",
+      "definition": "Utilidades acumuladas no distribuidas; su saldo se actualiza con la utilidad del periodo menos dividendos.",
+      "statement": "balance_general",
+      "classification": "patrimonio",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Resultados acumulados",
+        "utilidades acumuladas"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
+            "organization_or_author": "Material del profesor (curso GFO)",
+            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
+            "source_type": "documento_local",
+            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.retained_earnings"
+          },
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.retained_earnings (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.retained_earnings."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.current_year_result_equity",
+      "canonical_name": "Resultado del período incluido en patrimonio",
+      "definition": "Resultado del periodo presentado como línea separada del patrimonio; puede residir en otro archivo o estar ya incluido en utilidades retenidas.",
+      "statement": "balance_general",
+      "classification": "patrimonio",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Utilidad del ejercicio",
+        "pérdida del ejercicio",
+        "resultado del período dentro del patrimonio"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.current_year_result_equity (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.current_year_result_equity."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.other_equity_components",
+      "canonical_name": "Otros componentes del patrimonio",
+      "definition": "Partidas patrimoniales diversas sin identificador más específico (ajustes de conversión, acciones propias).",
+      "statement": "balance_general",
+      "classification": "patrimonio",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Otras cuentas patrimoniales que no tengan un identificador más específico"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
+            "organization_or_author": "Equipo GFO",
+            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
+            "source_type": "documento_local",
+            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.other_equity_components (secciones 5 a 8)"
+          },
+          {
+            "title": "NIC 1 — Presentación de estados financieros",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "norma_internacional",
+            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.other_equity_components."
+          }
+        ]
+      }
+    }
+  ],
+  "modo_periodo": {
+    "name": "flow_with_average_balance",
+    "average": "(cierre del periodo anterior + cierre del periodo actual) / 2",
+    "flow_period": "current",
+    "politica_sin_periodo_anterior": {
+      "por_defecto": "not_available",
+      "un_solo_periodo_en_el_estado": "direct_closing",
+      "primer_periodo_con_control_activo": "direct_closing"
     }
   },
-  "period_rules": {
-    "mode": "flow_with_average_balance",
-    "methods": [
-      "average",
-      "direct_closing"
-    ],
-    "default_method": "average",
-    "average": {
-      "required_periods": 2,
-      "uses_closing_balances": true,
-      "flow_period": "current",
-      "if_previous_period_missing": "not_available",
-      "reason_if_previous_period_missing": "missing_required_period_balance",
-      "never_substitute_zero_for_missing_balance": true
-    },
-    "first_period": {
-      "default_method": "not_available",
-      "reason": "missing_required_period_balance",
-      "toggle": {
-        "label": "Mostrar cálculo directo de {primer_periodo}",
-        "default": false,
-        "method": "direct_closing",
-        "badge": "Saldo directo, sin promedio",
-        "stays_not_available_when_previous_balance_missing": true
-      }
-    },
-    "period_label": "m(i−1)_mi"
+  "presentacion": {
+    "marca_directa": "Saldo directo, sin promedio",
+    "marca_promedio": "Promedio {periodo_anterior}–{periodo_actual}",
+    "nota_directa": "Cálculo con saldos de cierre del periodo {periodo}, sin promedio."
   },
-  "validation_rules": {
-    "unknown_imported_account": "needs_review",
-    "ambiguous_account_match": "needs_review",
-    "missing_component_account": "zero_if_absence_confirmed",
-    "missing_required_supplemental_input": "ratio_not_available",
-    "missing_required_account_data": "ratio_not_available",
-    "zero_denominator": "ratio_not_available",
-    "missing_previous_period_for_average": "ratio_not_available",
-    "missing_required_period_balance": "ratio_not_available",
-    "reported_total_and_components_both_present": "do_not_double_count_and_reconcile",
-    "balance_equation": {
-      "enabled": true,
-      "equation": "total_assets = total_liabilities + total_equity",
-      "tolerance": 0.01,
-      "compare_absolute_difference": true
+  "reglas_generales": {
+    "principios": [
+      "Las fórmulas están en este archivo. No hay fórmulas en código.",
+      "Un dato faltante nunca se convierte en número: el resultado es not_available con motivo.",
+      "Ninguna decisión de fórmula se toma durante el cálculo."
+    ],
+    "normalizacion": {
+      "nombres": "minúsculas, sin tildes, espacios simples para comparar; el nombre original se conserva.",
+      "montos": "se conserva el monto original y el monto normalizado.",
+      "signos": "gastos y costos son magnitudes positivas que se restan explícitamente; la depreciación acumulada es negativa y se suma con su signo; una pérdida conserva su signo negativo."
     },
-    "preserve_raw_imported_values": true,
-    "record_calculation_trace": true
+    "orden_de_identificacion": [
+      "id explícito válido",
+      "nombre canónico exacto",
+      "sinónimo exacto",
+      "regla contextual definida",
+      "revisión si hay más de un candidato o ninguno"
+    ],
+    "cuenta_no_reconocida": "se marca para revisión. Nunca se convierte en cero.",
+    "cuenta_ausente": {
+      "zero_if_not_reported": "vale cero dentro de la suma.",
+      "requires_data": "el resultado es not_available con motivo missing_required_account_data."
+    },
+    "total_reportado_y_componentes": {
+      "seleccion": "si el total reportado existe con valor numérico, se usa. Sus componentes no se suman en esa agregación.",
+      "conciliacion": "si el total y sus componentes son comparables, se comparan. Si la diferencia supera la tolerancia, se registra reported_subtotal_mismatch. Se usa el total reportado.",
+      "tolerancia": 0.01,
+      "cero_explicito": "un total reportado de cero es un valor válido, no una ausencia."
+    },
+    "total_sin_desglose": "R5: el total de categoría se usa y sus componentes quedan en cero en esa agregación.",
+    "denominador_cero": "not_available con motivo zero_denominator.",
+    "motivos_permitidos": [
+      "missing_required_account_data",
+      "missing_required_period_balance",
+      "zero_denominator",
+      "unrecognized_imported_account",
+      "ambiguous_account_match",
+      "reported_subtotal_mismatch",
+      "overlapping_account_aggregation",
+      "assumption_applied"
+    ],
+    "supuestos": "toda aproximación se declara con el motivo assumption_applied. En este proyecto no hay aproximaciones activas: D8 y D10 no las usan.",
+    "metodo_resultado": "cada resultado indica su método: average, direct_closing o not_applicable. Si el resultado es N/D, el método es not_applicable."
   }
 }
