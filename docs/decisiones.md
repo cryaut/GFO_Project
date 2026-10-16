@@ -72,8 +72,8 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-020 | El importador JSON de Reportes solo acepta respaldos validados | Vigente |
 | D-021 | Los 20 JSON de razones v3 van en `docs/razones_financieras/` dentro del proyecto | Vigente |
 | D-022 | Convenciones por defecto de los JSON: operandos, periodos, conjuntos y `parent_group` | Vigente |
-| D-023 | El botón de cálculo directo de m1 va en las 11 razones de flujo, no en 9 | Vigente |
-| D-024 | El separador decimal del formato numérico queda abierto en `metadata.display` | Abierta |
+| D-023 | El control de cálculo directo de m1 es único y global en las 11 razones de flujo, no 9 ni uno por razón | Vigente |
+| D-024 | Separador decimal `.` y de miles `,` fijados en los 20 JSON (formato F1) | Cerrada (decidida 2026-10-15) |
 
 ## Decisiones
 
@@ -546,12 +546,12 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 
 **Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/01_decisiones.md`.
 
-### D-023 — El botón de cálculo directo de m1 va en las 11 razones de flujo, no en 9
+### D-023 — El control de cálculo directo de m1 es único y global en las 11 razones de flujo, no 9 ni uno por razón
 
 - **Fecha**: 2026-10-14
 - **Estado**: Vigente
 - **Decidió**: Alejandro (con agente IA)
-- **Área**: `docs/razones_financieras/*.json` (`ratio.presentation.first_period_toggle`)
+- **Área**: `docs/razones_financieras/*.json` (`modo_periodo.control_global`)
 
 **Contexto.** El punto 8 del documento habla de "9 razones de flujo (7, 8, 12–20)" y pide el botón de cálculo directo solo en ellas. El paréntesis enumera 11 razones y la tabla de valores esperados confirma 11: la columna "m1 off" muestra 9 con valor y 11 `N/D`, y las 9 con valor son exactamente las razones de punto.
 
@@ -560,20 +560,22 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 2. Botón en "9" razones — sigue el número escrito / la enumeración del paréntesis tiene 11 ítems, habría que adivinar cuáles quedan fuera y los conteos de la tabla no quedarían justificados.
 3. Botón solo donde el caso concreto usa un promedio — depende de los datos y no de la fórmula / el mismo JSON cambiaría de presentación según los datos cargados.
 
-**Decisión.** Opción 1. Con el botón encendido o apagado, las razones de flujo sin datos completos (14, 15, 16, 17, 20 con el caso MUNO MODA) siguen en `N/D`: primero por `missing_required_account_data` o `missing_required_period_balance`, según el estado, así que tener el botón presente en las 11 no cambia ninguna celda de la tabla esperada. En revisión (2026-10-14) el equipo confirmó que el «9» de la v3 es un error del documento: se mantiene el botón en las 11 razones de flujo (7, 8, 12–20).
+**Decisión.** Opción 1. Con el control encendido o apagado, las razones de flujo sin datos completos (14, 15, 16, 17, 20 con el caso MUNO MODA) siguen en `N/D`: primero por `missing_required_account_data` o `missing_required_period_balance`, según el estado, así que tener el control presente en las 11 no cambia ninguna celda de la tabla esperada. El «9» del documento es incoherente con su propia enumeración (11 ítems) y con los conteos de su tabla de valores: esa es la razón de la decisión, no una aprobación de nadie.
 
-**Consecuencias.** Los 11 JSON de flujo traen `first_period_toggle` con `default: false` (y `period_rules.first_period.toggle.default: false`); los 9 de punto lo traen en `null`. Si el profesor confirma otra lectura, se ajusta la presentación sin mover ninguna cifra.
+**Corrección (2026-10-15, orden `prompt_correccion_agente_razones_v6.md`, hallazgos H1 y H7).** Se corrige esta entrada en el lugar (la orden prohíbe crear D-xxx nuevas en esta ejecución); los cambios respecto del texto anterior son: (1) **H7** — se elimina la atribución «el equipo confirmó que el «9» de la v3 es un error del documento», porque no existe tal confirmación; no se atribuyen aprobaciones que no existen. (2) **H1** — el control no es un botón por razón (`first_period_toggle`): es **un solo control global**, definido en el bloque `modo_periodo.control_global` con el mismo id (`mostrar_calculo_directo_primer_periodo`) en los 11 JSON de flujo, `default: false`, que solo afecta al primer periodo de cada serie. En los 9 JSON de punto `modo_periodo.control_global` es `null`.
 
-**Para revertirla.** Quitar el toggle de las razones señaladas y crear la entrada que reemplace a esta.
+**Consecuencias.** Los 11 JSON de flujo traen `modo_periodo.control_global` con `id: "mostrar_calculo_directo_primer_periodo"`, `label` y `default: false` (mismo id en los 11); los 9 de punto lo traen en `null`. Si el profesor confirma otra lectura, se ajusta la presentación sin mover ninguna cifra.
+
+**Para revertirla.** Quitar el control global de las razones señaladas y crear la entrada que reemplace a esta.
 
 **Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/05_checks.md`.
 
-### D-024 — El separador decimal del formato numérico queda abierto en `metadata.display`
+### D-024 — Separador decimal `.` y de miles `,` fijados en los 20 JSON (formato F1)
 
 - **Fecha**: 2026-10-14
-- **Estado**: Abierta (por confirmar con el usuario)
+- **Estado**: Cerrada (decidida 2026-10-15)
 - **Decidió**: Alejandro (con agente IA)
-- **Área**: `docs/razones_financieras/*.json` (`metadata.display.decimal_separator`)
+- **Área**: `docs/razones_financieras/*.json` (`presentacion.separador_decimal`, `presentacion.separador_miles`)
 
 **Contexto.** El reporte inicial de la entrega presentó los valores con formato `en-US` (punto decimal, coma de millares) como formato por defecto. En la revisión se pidió no fijar el separador decimal hasta que el usuario lo confirme, y dejar esa única decisión abierta de forma explícita dentro de los JSON.
 
@@ -581,10 +583,12 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 1. `metadata.display.decimal_separator` con el marcador `DECISION_PENDIENTE` en los 20 JSON — la decisión queda visible para quien revise o consuma el archivo / el que formatea debe leer el campo antes de imprimir.
 2. Fijar `en-US` (o `es-VE`) desde ahora — formato determinado / podría cambiar cifras que ve el usuario sin acuerdo del equipo.
 
-**Decisión.** Opción 1, abierta: no se fija el separador decimal; cada JSON lo declara en `metadata.display` como `DECISION_PENDIENTE: separador decimal (punto o coma) por confirmar con el usuario`. Es la única decisión abierta de la entrega: las 8 diferencias conocidas con la solución del profesor no son decisiones abiertas y por eso pasaron a `DIFERENCIA_CONOCIDA_PROFESOR` dentro de `metadata.research_notes`.
+**Decisión (cerrada).** Opción 2, en la forma definida por la orden de corrección v6 (2026-10-15): el formato está decidido y fijo en los 20 JSON, en el bloque `presentacion` (formato F1): `separador_decimal: "."`, `separador_miles: ","`, `sufijo_porcentaje: " %"` y `decimales` por unidad (`moneda: 0`, el resto `2`). El marcador `DECISION_PENDIENTE` desaparece de `metadata.display` y de todo el JSON (R3/H2; lo comprueba V12/V17). La única etiqueta permitida en un archivo es ahora `DIFERENCIA_CONOCIDA_PROFESOR`, dentro de `razon.notes`.
 
-**Consecuencias.** Las tablas de las notas muestran importes con coma de millares solo como texto de documentación; ningún JSON fija el formato. Cuando el usuario confirme, se reemplaza el valor en los 20 archivos y esta entrada se marca como reemplazada por una nueva.
+**Corrección (2026-10-15, orden `prompt_correccion_agente_razones_v6.md`, hallazgo H2).** Se corrige esta entrada en el lugar (la orden prohíbe crear D-xxx nuevas en esta ejecución): pasa de **Abierta** a **Cerrada (decidida)**; la opción 1 (`DECISION_PENDIENTE`) queda descartada porque las decisiones abiertas se reportan en el chat, nunca en los archivos.
 
-**Para revertirla.** Confirmar el separador, actualizar los 20 JSON y crear la entrada que reemplace a esta.
+**Consecuencias.** Los 20 JSON declaran el separador en `presentacion`; las tablas de las notas muestran importes con coma de millares solo como texto de documentación, y el valor calculado no cambia: solo cambia cómo se imprime.
 
-**Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/02_fuentes.md`.
+**Para revertirla.** Cambiar `presentacion.separador_decimal`/`separador_miles` en los 20 JSON y crear la entrada que reemplace a esta.
+
+**Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/05_checks.md`.

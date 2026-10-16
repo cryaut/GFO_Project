@@ -589,12 +589,27 @@
       "por_defecto": "not_available",
       "un_solo_periodo_en_el_estado": "direct_closing",
       "primer_periodo_con_control_activo": "direct_closing"
+    },
+    "control_global": {
+      "id": "mostrar_calculo_directo_primer_periodo",
+      "label": "Mostrar cálculo directo del primer periodo",
+      "default": false,
+      "alcance": "Un solo control para todas las razones de flujo. Solo afecta al primer periodo de cada serie. No existe un control por razón."
     }
   },
   "presentacion": {
     "marca_directa": "Saldo directo, sin promedio",
     "marca_promedio": "Promedio {periodo_anterior}–{periodo_actual}",
-    "nota_directa": "Cálculo con saldos de cierre del periodo {periodo}, sin promedio."
+    "nota_directa": "Cálculo con saldos de cierre del periodo {periodo}, sin promedio.",
+    "separador_decimal": ".",
+    "separador_miles": ",",
+    "sufijo_porcentaje": " %",
+    "decimales": {
+      "veces": 2,
+      "dias": 2,
+      "porcentaje": 2,
+      "moneda": 0
+    }
   },
   "reglas_generales": {
     "principios": [

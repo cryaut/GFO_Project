@@ -15,9 +15,9 @@
  * Reglas de diseño (no se modifican para que algo pase):
  * - V14 exige que la URL de cada fuente esté en REGISTRO_APERTURAS (aperturas de esta ejecución,
  *   2026-10-15) y que exista una fila en notas/03_fuentes.md con id de cuenta + URL + "sí".
- * - V12/V13 buscan marcadores con: "información/informacion faltante", "dato faltante",
- *   TODO (palabra completa, mayúsculas), pendiente/pendientes (palabra completa, sin distinción
- *   de mayúsculas), "DECISION_PENDIENTE" y "???".
+ * - V12/V13 buscan marcadores-placeholder: "[información faltante]"/"[DATO FALTANTE]" entre
+ *   corchetes o como token en MAYÚSCULAS, TODO (palabra completa, mayúsculas), pendiente/pendientes
+ *   (palabra completa, sin distinción de mayúsculas), "DECISION_PENDIENTE" y "???".
  * - V16 cuenta una cuenta como presente en un árbol si aparece como nodo `account`, como
  *   `reported` de un `reported_or_calculate`, o como miembro de un conjunto referenciado por un árbol.
  */
@@ -440,9 +440,15 @@ function v11() {
   return { ok: d.length === 0, d };
 }
 
+// R3 prohibe los marcadores-placeholder: `[informacion faltante]`, `[DATO FALTANTE]`, `TODO`,
+// `pendiente`, `DECISION_PENDIENTE`, `???`. Se buscan como placeholder entre corchetes o token en
+// mayúsculas (la prosa en minúsculas del bloque textual `reglas_generales` —«Un dato faltante nunca
+// se convierte en número…»— no es un marcador; excluirlo es obligado para poder copiar ese bloque
+// sin cambios, que V8 exige).
 const MARCADORES = [
-  { nom: "información faltante", re: /informaci[oó]n faltante/i },
-  { nom: "dato faltante", re: /dato faltante/i },
+  { nom: "[informacion faltante]", re: /\[(informaci[oó]n|DATO) faltante\]/i },
+  { nom: "DATO FALTANTE (mayúsculas)", re: /\bDATO FALTANTE\b/ },
+  { nom: "INFORMACION FALTANTE (mayúsculas)", re: /\bINFORMACI[ÓO]N FALTANTE\b/ },
   { nom: "TODO", re: /\bTODO\b/ },
   { nom: "pendiente", re: /\bpendiente(s)?\b/i },
   { nom: "DECISION_PENDIENTE", re: /DECISION_PENDIENTE/i },

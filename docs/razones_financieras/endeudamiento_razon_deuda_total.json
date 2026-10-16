@@ -1322,11 +1322,21 @@
   "modo_periodo": {
     "name": "point_in_time",
     "value": "saldos de cierre del periodo",
-    "average": null
+    "average": null,
+    "control_global": null
   },
   "presentacion": {
     "marca_directa": "Saldo directo, sin promedio",
-    "nota_directa": "Cálculo con saldos de cierre del periodo {periodo}, sin promedio."
+    "nota_directa": "Cálculo con saldos de cierre del periodo {periodo}, sin promedio.",
+    "separador_decimal": ".",
+    "separador_miles": ",",
+    "sufijo_porcentaje": " %",
+    "decimales": {
+      "veces": 2,
+      "dias": 2,
+      "porcentaje": 2,
+      "moneda": 0
+    }
   },
   "reglas_generales": {
     "principios": [

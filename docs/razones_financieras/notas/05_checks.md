@@ -85,3 +85,35 @@ RESULTADO: 3/3 validaciones sin fallos
 ```
 
 **B3: pasa (3/3).**
+
+## B4 — Control global y formato F1 (bloque B4)
+
+Aplica `modo_periodo.control_global` (mismo id en los 11 JSON de flujo, `null` en los 9 de punto) y
+completa `presentacion` con los separadores y decimales F1 en los 20 JSON. Corrige además
+`docs/decisiones.md`: D-023 (control global, se elimina la atribución «el equipo confirmó» — H7) y
+D-024 (de Abierta a Cerrada: separador decimal `.` y de miles `,` — H2).
+
+**Ajuste de V12 documentado aquí (H8).** La primera corrida de B4 falló con `marcador "dato
+faltante"` en los 20 archivos: la frase venía del bloque `reglas_generales` **verbatim** de la orden
+(«Un dato faltante nunca se convierte en número: el resultado es not_available con motivo.»), que V8
+exige copiar sin cambios. El marcador que R3 prohíbe es el placeholder entre corchetes
+(`[informacion faltante]`, `[DATO FALTANTE]`) o el token en mayúsculas, no la prosa. Se ajustó el
+patrón de V12 a los marcadores reales de R3 (corchetes/mayúsculas + `TODO` mayúsculas + `pendiente`
+palabra completa + `DECISION_PENDIENTE` + `???`), no a los datos; el detalle está en la cabecera del
+propio script.
+
+Comando: `node notas\validador_v6.mjs --solo V8,V9,V10,V12,V13,V17`
+
+```
+validador_v6 | raiz=C:\Users\aleja\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 6 validaciones
+OK   V8
+OK   V9
+OK   V10
+OK   V12
+OK   V13
+OK   V17
+CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=62 partially=4 ambiguous=5 notas_DIFERENCIA=8
+RESULTADO: 6/6 validaciones sin fallos
+```
+
+**B4: pasa (6/6).**
