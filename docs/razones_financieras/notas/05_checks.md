@@ -39,3 +39,30 @@ RESULTADO: 4/4 validaciones sin fallos
 
 **B1: pasa (4/4).** El conteo `verified=67 / partially=0 / ambiguous=4` es el estado interino de la v3;
 se corrige en B2 (V14/V15).
+
+## B2 — Fuentes y estados (bloque B2)
+
+Reconstruye la investigación de las 71 cuentas: quita F1/F2 de las fuentes (H4), abre y registra las
+normas que faltaban (NIC 1, NIIF 9, NIIF 15, NIC 32; ya abiertas en esta ejecución), corrige estados
+(las 4 internas → `partially_verified` con `ambiguities`; las 5 `ambiguous` con motivo; el resto
+`verified` con fuente normativa), escribe `notas/02_cuentas_maestras.md` y `notas/03_fuentes.md`, y
+deja `02_fuentes.md` y `03_registro_cuentas.md` como punteros (regla 9).
+
+Comando: `node notas\validador_v6.mjs --solo V1,V2,V3,V5,V14,V15`
+
+```
+validador_v6 | raiz=C:\Users\aleja\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 6 validaciones
+OK   V1
+OK   V2
+OK   V3
+OK   V5
+OK   V14
+OK   V15
+CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=62 partially=4 ambiguous=5 notas_DIFERENCIA=8
+RESULTADO: 6/6 validaciones sin fallos
+```
+
+**B2: pasa (6/6).** Corrección durante el bloque: el primer pase dejó 4 cuentas ambiguas del caso
+(`bs.ppe_machinery`, `bs.other_current_liabilities`, `bs.long_term_borrowings`, `bs.other_reserves`)
+como `verified`; el conteo del validador (66/4/1) delató el fallo y se corrigió el generador para
+marcarlas `ambiguous` según la nota de la lista maestra (62/4/5).

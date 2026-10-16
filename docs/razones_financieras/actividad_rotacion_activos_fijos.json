@@ -124,32 +124,12 @@
         "ventas ordinarias totales"
       ],
       "doubtful_synonyms": [],
-      "ambiguities": [],
+      "ambiguities": [
+        "Cuenta interna del caso (R5): total de ventas reportado por el caso; se usa como ingreso bruto de ventas sin desglose (D7 y D11). No es una cuenta de un catálogo normativo."
+      ],
       "research": {
-        "status": "verified",
-        "sources": [
-          {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a is.sales_total"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.sales_total (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.sales_total."
-          }
-        ]
+        "status": "partially_verified",
+        "sources": []
       }
     },
     {
@@ -172,18 +152,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.product_sales (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IFRS 15 Revenue from Contracts with Customers",
             "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.product_sales."
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "NIIF 15 exige reconocer ingresos de actividades ordinarias por contratos con clientes siguiendo cinco pasos, entre ellos fijar el precio de la transacción (la contraprestación que la entidad espera recibir). Confirma la definición de «Ventas de productos» (is.product_sales)."
           }
         ]
       }
@@ -208,18 +181,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.service_revenue (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IFRS 15 Revenue from Contracts with Customers",
             "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.service_revenue."
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "NIIF 15 exige reconocer ingresos de actividades ordinarias por contratos con clientes siguiendo cinco pasos, entre ellos fijar el precio de la transacción (la contraprestación que la entidad espera recibir). Confirma la definición de «Ingresos por servicios» (is.service_revenue)."
           }
         ]
       }
@@ -244,18 +210,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.other_sales_revenue (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IFRS 15 Revenue from Contracts with Customers",
             "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.other_sales_revenue."
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "NIIF 15 exige reconocer ingresos de actividades ordinarias por contratos con clientes siguiendo cinco pasos, entre ellos fijar el precio de la transacción (la contraprestación que la entidad espera recibir). Confirma la definición de «Otras ventas ordinarias» (is.other_sales_revenue)."
           }
         ]
       }
@@ -280,18 +239,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.sales_returns (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IFRS 15 Revenue from Contracts with Customers",
             "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.sales_returns."
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "NIIF 15 trata la contraprestación del contrato con clientes; las devoluciones, descuentos y rebajas reducen ese ingreso. Confirma la definición de «Devoluciones sobre ventas» (is.sales_returns)."
           }
         ]
       }
@@ -315,18 +267,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.sales_discounts (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IFRS 15 Revenue from Contracts with Customers",
             "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.sales_discounts."
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "NIIF 15 trata la contraprestación del contrato con clientes; las devoluciones, descuentos y rebajas reducen ese ingreso. Confirma la definición de «Descuentos sobre ventas» (is.sales_discounts)."
           }
         ]
       }
@@ -350,18 +295,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.sales_allowances (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IFRS 15 Revenue from Contracts with Customers",
             "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.sales_allowances."
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "NIIF 15 trata la contraprestación del contrato con clientes; las devoluciones, descuentos y rebajas reducen ese ingreso. Confirma la definición de «Rebajas sobre ventas» (is.sales_allowances)."
           }
         ]
       }
@@ -386,18 +324,18 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.net_sales_reported (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 1 Presentation of Financial Statements",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.net_sales_reported."
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Ventas netas reportadas» (is.net_sales_reported)."
+          },
+          {
+            "title": "IFRS 15 Revenue from Contracts with Customers",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "NIIF 15 exige reconocer ingresos de actividades ordinarias por contratos con clientes siguiendo cinco pasos, entre ellos fijar el precio de la transacción (la contraprestación que la entidad espera recibir). Confirma la definición de «Ventas netas reportadas» (is.net_sales_reported)."
           }
         ]
       }
@@ -422,18 +360,18 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.fixed_assets_net_total (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 1 Presentation of Financial Statements",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.fixed_assets_net_total."
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Total de activos fijos netos» (bs.fixed_assets_net_total)."
+          },
+          {
+            "title": "IAS 16 Property, Plant and Equipment",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
+            "source_type": "accounting_standard",
+            "supports": "NIC 16 trata elementos tangibles mantenidos para usarlos en la producción o suministro de bienes o servicios y exige reconocerlos como activo por su costo. Confirma la definición de «Total de activos fijos netos» (bs.fixed_assets_net_total)."
           }
         ]
       }
@@ -457,25 +395,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.ppe_land"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.ppe_land (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 16 — Propiedades, planta y equipo",
+            "title": "IAS 16 Property, Plant and Equipment",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 16: las propiedades, planta y equipo son partidas tangibles usadas más de un periodo y se deprecian a lo largo de su vida útil. Aplica a bs.ppe_land."
+            "source_type": "accounting_standard",
+            "supports": "NIC 16 trata elementos tangibles mantenidos para usarlos en la producción o suministro de bienes o servicios y exige reconocerlos como activo por su costo. Confirma la definición de «Terrenos» (bs.ppe_land)."
           }
         ]
       }
@@ -500,25 +424,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.ppe_buildings"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.ppe_buildings (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 16 — Propiedades, planta y equipo",
+            "title": "IAS 16 Property, Plant and Equipment",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 16: las propiedades, planta y equipo son partidas tangibles usadas más de un periodo y se deprecian a lo largo de su vida útil. Aplica a bs.ppe_buildings."
+            "source_type": "accounting_standard",
+            "supports": "NIC 16 trata elementos tangibles mantenidos para usarlos en la producción o suministro de bienes o servicios y exige reconocerlos como activo por su costo. Confirma la definición de «Edificios e instalaciones» (bs.ppe_buildings)."
           }
         ]
       }
@@ -545,25 +455,11 @@
         "status": "ambiguous",
         "sources": [
           {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.ppe_machinery"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.ppe_machinery (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 16 — Propiedades, planta y equipo",
+            "title": "IAS 16 Property, Plant and Equipment",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 16: las propiedades, planta y equipo son partidas tangibles usadas más de un periodo y se deprecian a lo largo de su vida útil. Aplica a bs.ppe_machinery."
+            "source_type": "accounting_standard",
+            "supports": "NIC 16 trata elementos tangibles mantenidos para usarlos en la producción o suministro de bienes o servicios y exige reconocerlos como activo por su costo. Confirma la definición de «Maquinaria y equipo» (bs.ppe_machinery)."
           }
         ]
       }
@@ -588,25 +484,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.ppe_vehicles"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.ppe_vehicles (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 16 — Propiedades, planta y equipo",
+            "title": "IAS 16 Property, Plant and Equipment",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 16: las propiedades, planta y equipo son partidas tangibles usadas más de un periodo y se deprecian a lo largo de su vida útil. Aplica a bs.ppe_vehicles."
+            "source_type": "accounting_standard",
+            "supports": "NIC 16 trata elementos tangibles mantenidos para usarlos en la producción o suministro de bienes o servicios y exige reconocerlos como activo por su costo. Confirma la definición de «Vehículos» (bs.ppe_vehicles)."
           }
         ]
       }
@@ -632,18 +514,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.ppe_furniture (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 16 — Propiedades, planta y equipo",
+            "title": "IAS 16 Property, Plant and Equipment",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 16: las propiedades, planta y equipo son partidas tangibles usadas más de un periodo y se deprecian a lo largo de su vida útil. Aplica a bs.ppe_furniture."
+            "source_type": "accounting_standard",
+            "supports": "NIC 16 trata elementos tangibles mantenidos para usarlos en la producción o suministro de bienes o servicios y exige reconocerlos como activo por su costo. Confirma la definición de «Mobiliario y equipo de oficina» (bs.ppe_furniture)."
           }
         ]
       }
@@ -668,18 +543,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.ppe_other (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 16 — Propiedades, planta y equipo",
+            "title": "IAS 16 Property, Plant and Equipment",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 16: las propiedades, planta y equipo son partidas tangibles usadas más de un periodo y se deprecian a lo largo de su vida útil. Aplica a bs.ppe_other."
+            "source_type": "accounting_standard",
+            "supports": "NIC 16 trata elementos tangibles mantenidos para usarlos en la producción o suministro de bienes o servicios y exige reconocerlos como activo por su costo. Confirma la definición de «Otros activos fijos tangibles» (bs.ppe_other)."
           }
         ]
       }
@@ -703,25 +571,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.accumulated_depreciation"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.accumulated_depreciation (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 16 — Propiedades, planta y equipo",
+            "title": "IAS 16 Property, Plant and Equipment",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 16: las propiedades, planta y equipo son partidas tangibles usadas más de un periodo y se deprecian a lo largo de su vida útil. Aplica a bs.accumulated_depreciation."
+            "source_type": "accounting_standard",
+            "supports": "NIC 16 trata la depreciación: el importe depreciable se reconoce como gasto de forma sistemática durante la vida útil de los activos fijos. Confirma la definición de «Depreciación acumulada» (bs.accumulated_depreciation)."
           }
         ]
       }

@@ -107,25 +107,18 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a is.cost_of_sales_reported"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.cost_of_sales_reported (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 2 — Inventarios",
+            "title": "IAS 2 Inventories",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a is.cost_of_sales_reported."
+            "source_type": "accounting_standard",
+            "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Costo de ventas reportado» (is.cost_of_sales_reported)."
+          },
+          {
+            "title": "IAS 1 Presentation of Financial Statements",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Costo de ventas reportado» (is.cost_of_sales_reported)."
           }
         ]
       }
@@ -150,18 +143,18 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.merchandise_cost (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 2 — Inventarios",
+            "title": "IAS 2 Inventories",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a is.merchandise_cost."
+            "source_type": "accounting_standard",
+            "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Costo de mercadería vendida» (is.merchandise_cost)."
+          },
+          {
+            "title": "IAS 1 Presentation of Financial Statements",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Costo de mercadería vendida» (is.merchandise_cost)."
           }
         ]
       }
@@ -186,18 +179,18 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.product_cost (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 2 — Inventarios",
+            "title": "IAS 2 Inventories",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a is.product_cost."
+            "source_type": "accounting_standard",
+            "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Costo de productos vendidos» (is.product_cost)."
+          },
+          {
+            "title": "IAS 1 Presentation of Financial Statements",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Costo de productos vendidos» (is.product_cost)."
           }
         ]
       }
@@ -221,18 +214,18 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.service_cost (secciones 5 a 8)"
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Costo de servicios» (is.service_cost)."
           },
           {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 1 Presentation of Financial Statements",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.service_cost."
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Costo de servicios» (is.service_cost)."
           }
         ]
       }
@@ -252,32 +245,12 @@
         "existencias totales"
       ],
       "doubtful_synonyms": [],
-      "ambiguities": [],
+      "ambiguities": [
+        "Cuenta interna del caso (R5): el caso reporta un total de inventario sin desglose; la definición viene de la construcción del caso, no de una norma. Se usa el total reportado primero y los componentes solo si el total falta."
+      ],
       "research": {
-        "status": "verified",
-        "sources": [
-          {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.inventory_total"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.inventory_total (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 2 — Inventarios",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a bs.inventory_total."
-          }
-        ]
+        "status": "partially_verified",
+        "sources": []
       }
     },
     {
@@ -301,18 +274,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.inventory_merchandise (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 2 — Inventarios",
+            "title": "IAS 2 Inventories",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a bs.inventory_merchandise."
+            "source_type": "accounting_standard",
+            "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Inventario de mercaderías» (bs.inventory_merchandise)."
           }
         ]
       }
@@ -337,18 +303,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.inventory_raw_materials (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 2 — Inventarios",
+            "title": "IAS 2 Inventories",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a bs.inventory_raw_materials."
+            "source_type": "accounting_standard",
+            "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Inventario de materias primas» (bs.inventory_raw_materials)."
           }
         ]
       }
@@ -373,18 +332,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.inventory_work_in_process (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 2 — Inventarios",
+            "title": "IAS 2 Inventories",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a bs.inventory_work_in_process."
+            "source_type": "accounting_standard",
+            "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Inventario de productos en proceso» (bs.inventory_work_in_process)."
           }
         ]
       }
@@ -409,18 +361,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.inventory_finished_goods (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 2 — Inventarios",
+            "title": "IAS 2 Inventories",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a bs.inventory_finished_goods."
+            "source_type": "accounting_standard",
+            "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Inventario de productos terminados» (bs.inventory_finished_goods)."
           }
         ]
       }

@@ -122,18 +122,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.current_liabilities_total (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 1 Presentation of Financial Statements",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.current_liabilities_total."
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Total de pasivos corrientes» (bs.current_liabilities_total)."
           }
         ]
       }
@@ -159,25 +152,18 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.trade_payables"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.trade_payables (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IFRS 9 Financial Instruments",
             "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.trade_payables."
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/",
+            "source_type": "accounting_standard",
+            "supports": "NIIF 9 clasifica los activos financieros según el modelo de negocio y las características de los flujos de efectivo contractuales (por ejemplo, costo amortizado) y establece cuándo se reconoce un activo financiero. Confirma la definición de «Cuentas por pagar comerciales» (bs.trade_payables)."
+          },
+          {
+            "title": "IAS 32 Financial Instruments: Presentation",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-32-financial-instruments-presentation/",
+            "source_type": "accounting_standard",
+            "supports": "NIC 32 clasifica los instrumentos financieros en activos, pasivos e instrumentos de patrimonio; la distinción entre pasivo financiero y patrimonio depende de la obligación de entregar. Confirma la definición de «Cuentas por pagar comerciales» (bs.trade_payables)."
           }
         ]
       }
@@ -202,18 +188,18 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.short_term_borrowings (secciones 5 a 8)"
+            "title": "IFRS 9 Financial Instruments",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/",
+            "source_type": "accounting_standard",
+            "supports": "NIIF 9 clasifica los activos financieros según el modelo de negocio y las características de los flujos de efectivo contractuales (por ejemplo, costo amortizado) y establece cuándo se reconoce un activo financiero. Confirma la definición de «Préstamos de corto plazo» (bs.short_term_borrowings)."
           },
           {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 32 Financial Instruments: Presentation",
             "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.short_term_borrowings."
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-32-financial-instruments-presentation/",
+            "source_type": "accounting_standard",
+            "supports": "NIC 32 clasifica los instrumentos financieros en activos, pasivos e instrumentos de patrimonio; la distinción entre pasivo financiero y patrimonio depende de la obligación de entregar. Confirma la definición de «Préstamos de corto plazo» (bs.short_term_borrowings)."
           }
         ]
       }
@@ -237,18 +223,18 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.current_portion_long_term_debt (secciones 5 a 8)"
+            "title": "IFRS 9 Financial Instruments",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/",
+            "source_type": "accounting_standard",
+            "supports": "NIIF 9 clasifica los activos financieros según el modelo de negocio y las características de los flujos de efectivo contractuales (por ejemplo, costo amortizado) y establece cuándo se reconoce un activo financiero. Confirma la definición de «Porción corriente de deuda de largo plazo» (bs.current_portion_long_term_debt)."
           },
           {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 32 Financial Instruments: Presentation",
             "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.current_portion_long_term_debt."
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-32-financial-instruments-presentation/",
+            "source_type": "accounting_standard",
+            "supports": "NIC 32 clasifica los instrumentos financieros en activos, pasivos e instrumentos de patrimonio; la distinción entre pasivo financiero y patrimonio depende de la obligación de entregar. Confirma la definición de «Porción corriente de deuda de largo plazo» (bs.current_portion_long_term_debt)."
           }
         ]
       }
@@ -273,18 +259,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.taxes_payable (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 12 Income Taxes",
             "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.taxes_payable."
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-12-income-taxes/",
+            "source_type": "accounting_standard",
+            "supports": "NIC 12 exige reconocer como pasivo el impuesto corriente no pagado del periodo y regula los impuestos corrientes y diferidos sobre la renta. Confirma la definición de «Impuestos por pagar» (bs.taxes_payable)."
           }
         ]
       }
@@ -309,18 +288,18 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.accrued_expenses_payable (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 1 Presentation of Financial Statements",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.accrued_expenses_payable."
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 fija los requisitos generales de presentación, las pautas de estructura y el contenido mínimo de los estados financieros, y rige la clasificación corriente y no corriente (doce meses para los pasivos); la norma adoptó la presentación de activos y pasivos corrientes. Confirma la definición de «Gastos acumulados por pagar» (bs.accrued_expenses_payable)."
+          },
+          {
+            "title": "IAS 37 Provisions, Contingent Liabilities and Contingent Assets",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-37-provisions-contingent-liabilities-and-contingent-assets/",
+            "source_type": "accounting_standard",
+            "supports": "NIC 37 trata la obligación presente y las obligaciones de fecha o importe incierto; respalda que un gasto ya incurrido que no se ha pagado genera una obligación presente. Confirma la definición de «Gastos acumulados por pagar» (bs.accrued_expenses_payable)."
           }
         ]
       }
@@ -344,25 +323,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.current_provisions"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.current_provisions (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 37 — Provisiones, pasivos y activos contingentes",
+            "title": "IAS 37 Provisions, Contingent Liabilities and Contingent Assets",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-37-provisions-contingent-liabilities-and-contingent-assets/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 37: una provisión es un pasivo de tiempo o importe incierto reconocido cuando es probable la salida de recursos. Aplica a bs.current_provisions."
+            "source_type": "accounting_standard",
+            "supports": "NIC 37 define una provisión como una obligación presente de fecha o importe incierto y la distingue de las cuentas por pagar, que sí tienen fecha e importe ciertos. Confirma la definición de «Provisiones corrientes» (bs.current_provisions)."
           }
         ]
       }
@@ -388,25 +353,11 @@
         "status": "ambiguous",
         "sources": [
           {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.other_current_liabilities"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.other_current_liabilities (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 1 Presentation of Financial Statements",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.other_current_liabilities."
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 fija los requisitos generales de presentación, las pautas de estructura y el contenido mínimo de los estados financieros, y rige la clasificación corriente y no corriente (doce meses para los pasivos); la norma adoptó la presentación de activos y pasivos corrientes. Confirma la definición de «Otros pasivos corrientes» (bs.other_current_liabilities)."
           }
         ]
       }
@@ -433,25 +384,18 @@
         "status": "ambiguous",
         "sources": [
           {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.long_term_borrowings"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.long_term_borrowings (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IFRS 9 Financial Instruments",
             "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.long_term_borrowings."
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/",
+            "source_type": "accounting_standard",
+            "supports": "NIIF 9 clasifica los activos financieros según el modelo de negocio y las características de los flujos de efectivo contractuales (por ejemplo, costo amortizado) y establece cuándo se reconoce un activo financiero. Confirma la definición de «Deudas de largo plazo» (bs.long_term_borrowings)."
+          },
+          {
+            "title": "IAS 32 Financial Instruments: Presentation",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-32-financial-instruments-presentation/",
+            "source_type": "accounting_standard",
+            "supports": "NIC 32 clasifica los instrumentos financieros en activos, pasivos e instrumentos de patrimonio; la distinción entre pasivo financiero y patrimonio depende de la obligación de entregar. Confirma la definición de «Deudas de largo plazo» (bs.long_term_borrowings)."
           }
         ]
       }
@@ -475,18 +419,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.long_term_provisions (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 37 — Provisiones, pasivos y activos contingentes",
+            "title": "IAS 37 Provisions, Contingent Liabilities and Contingent Assets",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-37-provisions-contingent-liabilities-and-contingent-assets/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 37: una provisión es un pasivo de tiempo o importe incierto reconocido cuando es probable la salida de recursos. Aplica a bs.long_term_provisions."
+            "source_type": "accounting_standard",
+            "supports": "NIC 37 define una provisión como una obligación presente de fecha o importe incierto y la distingue de las cuentas por pagar, que sí tienen fecha e importe ciertos. Confirma la definición de «Provisiones de largo plazo» (bs.long_term_provisions)."
           }
         ]
       }
@@ -510,25 +447,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.other_noncurrent_liabilities"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.other_noncurrent_liabilities (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 1 Presentation of Financial Statements",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.other_noncurrent_liabilities."
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 fija los requisitos generales de presentación, las pautas de estructura y el contenido mínimo de los estados financieros, y rige la clasificación corriente y no corriente (doce meses para los pasivos); la norma adoptó la presentación de activos y pasivos corrientes. Confirma la definición de «Otros pasivos no corrientes» (bs.other_noncurrent_liabilities)."
           }
         ]
       }
@@ -553,18 +476,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.total_liabilities (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 1 Presentation of Financial Statements",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.total_liabilities."
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Total de pasivos» (bs.total_liabilities)."
           }
         ]
       }
@@ -590,18 +506,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.total_equity (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 1 Presentation of Financial Statements",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.total_equity."
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Total patrimonio» (bs.total_equity)."
           }
         ]
       }
@@ -627,25 +536,18 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.share_capital"
+            "title": "IAS 32 Financial Instruments: Presentation",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-32-financial-instruments-presentation/",
+            "source_type": "accounting_standard",
+            "supports": "NIC 32 clasifica los instrumentos financieros en activos, pasivos e instrumentos de patrimonio; la distinción entre pasivo financiero y patrimonio depende de la obligación de entregar. Confirma la definición de «Capital social» (bs.share_capital)."
           },
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.share_capital (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 1 Presentation of Financial Statements",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.share_capital."
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Capital social» (bs.share_capital)."
           }
         ]
       }
@@ -670,18 +572,18 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.additional_paid_in_capital (secciones 5 a 8)"
+            "title": "IAS 32 Financial Instruments: Presentation",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-32-financial-instruments-presentation/",
+            "source_type": "accounting_standard",
+            "supports": "NIC 32 clasifica los instrumentos financieros en activos, pasivos e instrumentos de patrimonio; la distinción entre pasivo financiero y patrimonio depende de la obligación de entregar. Confirma la definición de «Aportes adicionales de capital» (bs.additional_paid_in_capital)."
           },
           {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 1 Presentation of Financial Statements",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.additional_paid_in_capital."
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Aportes adicionales de capital» (bs.additional_paid_in_capital)."
           }
         ]
       }
@@ -700,25 +602,12 @@
         "Reserva legal acumulada"
       ],
       "doubtful_synonyms": [],
-      "ambiguities": [],
+      "ambiguities": [
+        "Reserva legal: figura del marco legal local, fuera de NIIF; el nombre puede aludir a reservas legales de distintos regímenes. Se clasifica como patrimonio por el nombre y se marca ambiguous porque ninguna norma NIIF la define."
+      ],
       "research": {
-        "status": "verified",
-        "sources": [
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.legal_reserve (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.legal_reserve."
-          }
-        ]
+        "status": "ambiguous",
+        "sources": []
       }
     },
     {
@@ -743,25 +632,11 @@
         "status": "ambiguous",
         "sources": [
           {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.other_reserves"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.other_reserves (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 1 Presentation of Financial Statements",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.other_reserves."
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Otras reservas patrimoniales» (bs.other_reserves)."
           }
         ]
       }
@@ -786,25 +661,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a bs.retained_earnings"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.retained_earnings (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 1 Presentation of Financial Statements",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.retained_earnings."
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Utilidades retenidas» (bs.retained_earnings)."
           }
         ]
       }
@@ -830,18 +691,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.current_year_result_equity (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 1 Presentation of Financial Statements",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.current_year_result_equity."
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Resultado del período incluido en patrimonio» (bs.current_year_result_equity)."
           }
         ]
       }
@@ -865,18 +719,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de bs.other_equity_components (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 1 Presentation of Financial Statements",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a bs.other_equity_components."
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Otros componentes del patrimonio» (bs.other_equity_components)."
           }
         ]
       }

@@ -126,32 +126,12 @@
         "ventas ordinarias totales"
       ],
       "doubtful_synonyms": [],
-      "ambiguities": [],
+      "ambiguities": [
+        "Cuenta interna del caso (R5): total de ventas reportado por el caso; se usa como ingreso bruto de ventas sin desglose (D7 y D11). No es una cuenta de un catálogo normativo."
+      ],
       "research": {
-        "status": "verified",
-        "sources": [
-          {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a is.sales_total"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.sales_total (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.sales_total."
-          }
-        ]
+        "status": "partially_verified",
+        "sources": []
       }
     },
     {
@@ -174,18 +154,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.product_sales (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IFRS 15 Revenue from Contracts with Customers",
             "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.product_sales."
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "NIIF 15 exige reconocer ingresos de actividades ordinarias por contratos con clientes siguiendo cinco pasos, entre ellos fijar el precio de la transacción (la contraprestación que la entidad espera recibir). Confirma la definición de «Ventas de productos» (is.product_sales)."
           }
         ]
       }
@@ -210,18 +183,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.service_revenue (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IFRS 15 Revenue from Contracts with Customers",
             "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.service_revenue."
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "NIIF 15 exige reconocer ingresos de actividades ordinarias por contratos con clientes siguiendo cinco pasos, entre ellos fijar el precio de la transacción (la contraprestación que la entidad espera recibir). Confirma la definición de «Ingresos por servicios» (is.service_revenue)."
           }
         ]
       }
@@ -246,18 +212,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.other_sales_revenue (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IFRS 15 Revenue from Contracts with Customers",
             "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.other_sales_revenue."
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "NIIF 15 exige reconocer ingresos de actividades ordinarias por contratos con clientes siguiendo cinco pasos, entre ellos fijar el precio de la transacción (la contraprestación que la entidad espera recibir). Confirma la definición de «Otras ventas ordinarias» (is.other_sales_revenue)."
           }
         ]
       }
@@ -282,18 +241,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.sales_returns (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IFRS 15 Revenue from Contracts with Customers",
             "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.sales_returns."
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "NIIF 15 trata la contraprestación del contrato con clientes; las devoluciones, descuentos y rebajas reducen ese ingreso. Confirma la definición de «Devoluciones sobre ventas» (is.sales_returns)."
           }
         ]
       }
@@ -317,18 +269,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.sales_discounts (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IFRS 15 Revenue from Contracts with Customers",
             "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.sales_discounts."
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "NIIF 15 trata la contraprestación del contrato con clientes; las devoluciones, descuentos y rebajas reducen ese ingreso. Confirma la definición de «Descuentos sobre ventas» (is.sales_discounts)."
           }
         ]
       }
@@ -352,18 +297,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.sales_allowances (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IFRS 15 Revenue from Contracts with Customers",
             "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.sales_allowances."
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "NIIF 15 trata la contraprestación del contrato con clientes; las devoluciones, descuentos y rebajas reducen ese ingreso. Confirma la definición de «Rebajas sobre ventas» (is.sales_allowances)."
           }
         ]
       }
@@ -388,18 +326,18 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.net_sales_reported (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 1 Presentation of Financial Statements",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.net_sales_reported."
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Ventas netas reportadas» (is.net_sales_reported)."
+          },
+          {
+            "title": "IFRS 15 Revenue from Contracts with Customers",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "NIIF 15 exige reconocer ingresos de actividades ordinarias por contratos con clientes siguiendo cinco pasos, entre ellos fijar el precio de la transacción (la contraprestación que la entidad espera recibir). Confirma la definición de «Ventas netas reportadas» (is.net_sales_reported)."
           }
         ]
       }
@@ -424,25 +362,18 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Instrucciones para el agente: construir 20 JSON de razones financieras v3 (material del profesor)",
-            "organization_or_author": "Material del profesor (curso GFO)",
-            "url": "J_formulas/instrucciones_agente_json_razones_financieras_v3.md",
-            "source_type": "documento_local",
-            "supports": "Fórmulas, decisiones D1-D14, R1-R5 y tabla de mapeo del caso que definen a is.cost_of_sales_reported"
-          },
-          {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.cost_of_sales_reported (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 2 — Inventarios",
+            "title": "IAS 2 Inventories",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a is.cost_of_sales_reported."
+            "source_type": "accounting_standard",
+            "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Costo de ventas reportado» (is.cost_of_sales_reported)."
+          },
+          {
+            "title": "IAS 1 Presentation of Financial Statements",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Costo de ventas reportado» (is.cost_of_sales_reported)."
           }
         ]
       }
@@ -467,18 +398,18 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.merchandise_cost (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 2 — Inventarios",
+            "title": "IAS 2 Inventories",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a is.merchandise_cost."
+            "source_type": "accounting_standard",
+            "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Costo de mercadería vendida» (is.merchandise_cost)."
+          },
+          {
+            "title": "IAS 1 Presentation of Financial Statements",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Costo de mercadería vendida» (is.merchandise_cost)."
           }
         ]
       }
@@ -503,18 +434,18 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.product_cost (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 2 — Inventarios",
+            "title": "IAS 2 Inventories",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 2 define los inventarios, su coste y su reconocimiento como gasto cuando se venden. Aplica a is.product_cost."
+            "source_type": "accounting_standard",
+            "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Costo de productos vendidos» (is.product_cost)."
+          },
+          {
+            "title": "IAS 1 Presentation of Financial Statements",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Costo de productos vendidos» (is.product_cost)."
           }
         ]
       }
@@ -538,18 +469,18 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.service_cost (secciones 5 a 8)"
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Costo de servicios» (is.service_cost)."
           },
           {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 1 Presentation of Financial Statements",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.service_cost."
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Costo de servicios» (is.service_cost)."
           }
         ]
       }
@@ -574,18 +505,11 @@
         "status": "verified",
         "sources": [
           {
-            "title": "Especificación del JSON para cuentas, fórmulas y razones financieras",
-            "organization_or_author": "Equipo GFO",
-            "url": "C:/Users/aleja/Downloads/especificacion_json_razones_financieras.md",
-            "source_type": "documento_local",
-            "supports": "Nombre canónico, sinónimos, categoría y reglas de agregación de is.gross_profit_reported (secciones 5 a 8)"
-          },
-          {
-            "title": "NIC 1 — Presentación de estados financieros",
+            "title": "IAS 1 Presentation of Financial Statements",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-            "source_type": "norma_internacional",
-            "supports": "NIC 1 fija los requisitos generales de presentación del conjunto completo de estados con cifras comparativas y la presentación de partidas. Aplica a is.gross_profit_reported."
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Utilidad bruta reportada» (is.gross_profit_reported)."
           }
         ]
       }
