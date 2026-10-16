@@ -110,6 +110,7 @@ Todos los cambios notables en GFO Toolkit.
 - `docs/contexto/` (arquitectura y dominio financiero) y `docs/reglas/` (flujo de trabajo, código, y pruebas y documentación).
 - Plantilla de Pull Request en `.github/` y planificación con una carpeta por feature en `docs/planificacion/`.
 - `docs/api.md` documenta las razones agregadas, `DIAS_ANIO`, `saldoPromedio`, `variacion` y `escapeHTML`.
+- `docs/razones_financieras/`: 20 JSON autónomos de razones financieras v3 (fórmulas del profesor, semántica N/D, promedios de saldos de cierre y botón de cálculo directo de m1) con sus notas `notas/` y `ratios/NN_*.md`; `notas/05_checks.md` valida 40/40 celdas del caso MUNO MODA S.A. y los conteos 9/11, 15/5 y 15/5. Decisiones D-021 a D-023 en `docs/decisiones.md`.
 
 ---
 

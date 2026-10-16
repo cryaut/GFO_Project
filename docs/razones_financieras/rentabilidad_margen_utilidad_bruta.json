@@ -1,0 +1,498 @@
+{
+  "schema_version": "2.0",
+  "razon": {
+    "id": "rentabilidad_margen_utilidad_bruta",
+    "name": "Margen de utilidad bruta",
+    "category": "rentabilidad",
+    "formula_as_provided": "Utilidad bruta / Ventas",
+    "unit": "porcentaje",
+    "period_mode": "point_in_time",
+    "formula": {
+      "op": "divide",
+      "numerator": {
+        "op": "derived",
+        "id": "derived.gross_profit"
+      },
+      "denominator": {
+        "op": "derived",
+        "id": "derived.net_sales"
+      }
+    },
+    "notes": []
+  },
+  "razones_dependientes": [],
+  "derivados": [
+    {
+      "id": "derived.gross_sales",
+      "kind": "flow",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "is.sales_total",
+        "calculation": {
+          "op": "sum_accounts",
+          "account_set": "gross_sales_components"
+        }
+      }
+    },
+    {
+      "id": "derived.sales_deductions",
+      "kind": "flow",
+      "formula": {
+        "op": "sum_accounts",
+        "account_set": "sales_deduction_components"
+      }
+    },
+    {
+      "id": "derived.net_sales",
+      "kind": "flow",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "is.net_sales_reported",
+        "calculation": {
+          "op": "subtract",
+          "left": {
+            "op": "derived",
+            "id": "derived.gross_sales"
+          },
+          "right": {
+            "op": "derived",
+            "id": "derived.sales_deductions"
+          }
+        }
+      }
+    },
+    {
+      "id": "derived.cost_of_sales",
+      "kind": "flow",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "is.cost_of_sales_reported",
+        "calculation": {
+          "op": "sum_accounts",
+          "account_set": "cost_of_sales_components"
+        }
+      }
+    },
+    {
+      "id": "derived.gross_profit",
+      "kind": "flow",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "is.gross_profit_reported",
+        "calculation": {
+          "op": "subtract",
+          "left": {
+            "op": "derived",
+            "id": "derived.net_sales"
+          },
+          "right": {
+            "op": "derived",
+            "id": "derived.cost_of_sales"
+          }
+        }
+      }
+    }
+  ],
+  "conjuntos": {
+    "gross_sales_components": [
+      "is.product_sales",
+      "is.service_revenue",
+      "is.other_sales_revenue"
+    ],
+    "sales_deduction_components": [
+      "is.sales_returns",
+      "is.sales_discounts",
+      "is.sales_allowances"
+    ],
+    "cost_of_sales_components": [
+      "is.merchandise_cost",
+      "is.product_cost",
+      "is.service_cost"
+    ]
+  },
+  "cuentas": [
+    {
+      "id": "is.sales_total",
+      "canonical_name": "Ventas totales",
+      "definition": "Total de ingresos por ventas sin desglose de componentes (R5); se reconoce al entregar los bienes o prestar los servicios.",
+      "statement": "estado_resultados",
+      "classification": "ingreso",
+      "account_role": "reported_total",
+      "normal_balance": "acreedor",
+      "value_semantics": "revenue",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Ventas",
+        "ventas ordinarias totales"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [
+        "Cuenta interna del caso (R5): total de ventas reportado por el caso; se usa como ingreso bruto de ventas sin desglose (D7 y D11). No es una cuenta de un catálogo normativo."
+      ],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "is.product_sales",
+      "canonical_name": "Ventas de productos",
+      "definition": "Ingresos por venta de bienes; contribuyen a ventas brutas cuando no existe total reportado.",
+      "statement": "estado_resultados",
+      "classification": "ingreso",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "revenue",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Ventas de mercaderías",
+        "ventas de bienes"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IFRS 15 Revenue from Contracts with Customers",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "\"recognises revenue to depict the transfer of promised goods or services to the customer\". Frase textual de IFRS 15 Revenue from Contracts with Customers, abierto el 2026-10-15; confirma la definición de «Ventas de productos» (is.product_sales) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.service_revenue",
+      "canonical_name": "Ingresos por servicios",
+      "definition": "Ingresos por servicios prestados; contribuyen a ventas brutas cuando no existe total reportado.",
+      "statement": "estado_resultados",
+      "classification": "ingreso",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "revenue",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Ventas de servicios",
+        "ingresos por servicios prestados"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IFRS 15 Revenue from Contracts with Customers",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "\"recognises revenue to depict the transfer of promised goods or services to the customer\". Frase textual de IFRS 15 Revenue from Contracts with Customers, abierto el 2026-10-15; confirma la definición de «Ingresos por servicios» (is.service_revenue) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.other_sales_revenue",
+      "canonical_name": "Otras ventas ordinarias",
+      "definition": "Ventas operativas menores sin cuenta específica; solo si efectivamente son ventas.",
+      "statement": "estado_resultados",
+      "classification": "ingreso",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "revenue",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Otras ventas",
+        "otras ventas operativas si efectivamente son ventas"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IFRS 15 Revenue from Contracts with Customers",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "\"recognises revenue to depict the transfer of promised goods or services to the customer\". Frase textual de IFRS 15 Revenue from Contracts with Customers, abierto el 2026-10-15; confirma la definición de «Otras ventas ordinarias» (is.other_sales_revenue) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.sales_returns",
+      "canonical_name": "Devoluciones sobre ventas",
+      "definition": "Contra-ingreso por bienes devueltos por clientes; se suma con signo positivo en deducciones y se resta de ventas brutas (D7).",
+      "statement": "estado_resultados",
+      "classification": "deduccion_ingreso",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "other",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Devoluciones de ventas",
+        "ventas devueltas"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "is.sales_discounts",
+      "canonical_name": "Descuentos sobre ventas",
+      "definition": "Contra-ingreso por descuentos concedidos; se suma con signo positivo en deducciones y se resta de ventas brutas (D7).",
+      "statement": "estado_resultados",
+      "classification": "deduccion_ingreso",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "other",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Descuentos concedidos sobre ventas"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "is.sales_allowances",
+      "canonical_name": "Rebajas sobre ventas",
+      "definition": "Contra-ingreso por rebajas y bonificaciones; se suma con signo positivo en deducciones y se resta de ventas brutas (D7).",
+      "statement": "estado_resultados",
+      "classification": "deduccion_ingreso",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "other",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Rebajas y bonificaciones sobre ventas"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "is.net_sales_reported",
+      "canonical_name": "Ventas netas reportadas",
+      "definition": "Ventas netas de devoluciones, descuentos y rebajas, reportadas directamente por el ejercicio.",
+      "statement": "estado_resultados",
+      "classification": "ingreso",
+      "account_role": "reported_total",
+      "normal_balance": "acreedor",
+      "value_semantics": "revenue",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Ventas netas",
+        "ventas netas totales"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "is.cost_of_sales_reported",
+      "canonical_name": "Costo de ventas reportado",
+      "definition": "Costo de lo vendido reportado por el ejercicio (total sin desglose); si existe, sustituye a la suma de componentes.",
+      "statement": "estado_resultados",
+      "classification": "costo",
+      "account_role": "reported_total",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Costo de ventas",
+        "costo de los bienes vendidos"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "\"the carrying amount of those inventories is recognised as an expense\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Costo de ventas reportado» (is.cost_of_sales_reported) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.merchandise_cost",
+      "canonical_name": "Costo de mercadería vendida",
+      "definition": "Coste de las mercaderías vendidas en el periodo.",
+      "statement": "estado_resultados",
+      "classification": "costo",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Costo de ventas de mercaderías",
+        "costo de bienes vendidos"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "\"the carrying amount of those inventories is recognised as an expense\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Costo de mercadería vendida» (is.merchandise_cost) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.product_cost",
+      "canonical_name": "Costo de productos vendidos",
+      "definition": "Coste de producción de los productos vendidos en el periodo.",
+      "statement": "estado_resultados",
+      "classification": "costo",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Costo de producción vendido",
+        "costo de productos vendidos"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "\"The cost of inventories includes all costs of purchase, costs of conversion\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Costo de productos vendidos» (is.product_cost) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.service_cost",
+      "canonical_name": "Costo de servicios",
+      "definition": "Coste directo de los servicios prestados en el periodo.",
+      "statement": "estado_resultados",
+      "classification": "costo",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Costos de servicios prestados"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "is.gross_profit_reported",
+      "canonical_name": "Utilidad bruta reportada",
+      "definition": "Diferencia entre ventas netas y costo de ventas, reportada por el ejercicio; una pérdida conserva signo negativo.",
+      "statement": "estado_resultados",
+      "classification": "resultado",
+      "account_role": "reported_total",
+      "normal_balance": "depends_on_context",
+      "value_semantics": "signed_balance",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Ganancia bruta",
+        "resultado bruto"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    }
+  ],
+  "modo_periodo": {
+    "name": "point_in_time",
+    "value": "saldos de cierre del periodo",
+    "average": null,
+    "control_global": null
+  },
+  "presentacion": {
+    "marca_directa": "Saldo directo, sin promedio",
+    "nota_directa": "Cálculo con saldos de cierre del periodo {periodo}, sin promedio.",
+    "separador_decimal": ".",
+    "separador_miles": ",",
+    "sufijo_porcentaje": " %",
+    "decimales": {
+      "veces": 2,
+      "dias": 2,
+      "porcentaje": 2,
+      "moneda": 0
+    }
+  },
+  "reglas_generales": {
+    "principios": [
+      "Las fórmulas están en este archivo. No hay fórmulas en código.",
+      "Un dato faltante nunca se convierte en número: el resultado es not_available con motivo.",
+      "Ninguna decisión de fórmula se toma durante el cálculo."
+    ],
+    "normalizacion": {
+      "nombres": "minúsculas, sin tildes, espacios simples para comparar; el nombre original se conserva.",
+      "montos": "se conserva el monto original y el monto normalizado.",
+      "signos": "gastos y costos son magnitudes positivas que se restan explícitamente; la depreciación acumulada es negativa y se suma con su signo; una pérdida conserva su signo negativo."
+    },
+    "orden_de_identificacion": [
+      "id explícito válido",
+      "nombre canónico exacto",
+      "sinónimo exacto",
+      "regla contextual definida",
+      "revisión si hay más de un candidato o ninguno"
+    ],
+    "cuenta_no_reconocida": "se marca para revisión. Nunca se convierte en cero.",
+    "cuenta_ausente": {
+      "zero_if_not_reported": "vale cero dentro de la suma.",
+      "requires_data": "el resultado es not_available con motivo missing_required_account_data."
+    },
+    "total_reportado_y_componentes": {
+      "seleccion": "si el total reportado existe con valor numérico, se usa. Sus componentes no se suman en esa agregación.",
+      "conciliacion": "si el total y sus componentes son comparables, se comparan. Si la diferencia supera la tolerancia, se registra reported_subtotal_mismatch. Se usa el total reportado.",
+      "tolerancia": 0.01,
+      "cero_explicito": "un total reportado de cero es un valor válido, no una ausencia."
+    },
+    "total_sin_desglose": "R5: el total de categoría se usa y sus componentes quedan en cero en esa agregación.",
+    "denominador_cero": "not_available con motivo zero_denominator.",
+    "motivos_permitidos": [
+      "missing_required_account_data",
+      "missing_required_period_balance",
+      "zero_denominator",
+      "unrecognized_imported_account",
+      "ambiguous_account_match",
+      "reported_subtotal_mismatch",
+      "overlapping_account_aggregation",
+      "assumption_applied"
+    ],
+    "supuestos": "toda aproximación se declara con el motivo assumption_applied. En este proyecto no hay aproximaciones activas: D8 y D10 no las usan.",
+    "metodo_resultado": "cada resultado indica su método: average, direct_closing o not_applicable. Si el resultado es N/D, el método es not_applicable."
+  }
+}

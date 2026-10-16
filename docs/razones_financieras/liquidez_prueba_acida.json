@@ -1,0 +1,666 @@
+{
+  "schema_version": "2.0",
+  "razon": {
+    "id": "liquidez_prueba_acida",
+    "name": "Prueba ácida",
+    "category": "liquidez",
+    "formula_as_provided": "(Activo corriente − Inventarios) / Pasivo corriente",
+    "unit": "veces",
+    "period_mode": "point_in_time",
+    "formula": {
+      "op": "divide",
+      "numerator": {
+        "op": "subtract",
+        "left": {
+          "op": "derived",
+          "id": "derived.current_assets"
+        },
+        "right": {
+          "op": "derived",
+          "id": "derived.inventory_total"
+        }
+      },
+      "denominator": {
+        "op": "derived",
+        "id": "derived.current_liabilities"
+      }
+    },
+    "notes": []
+  },
+  "razones_dependientes": [],
+  "derivados": [
+    {
+      "id": "derived.inventory_total",
+      "kind": "balance",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "bs.inventory_total",
+        "calculation": {
+          "op": "sum_accounts",
+          "account_set": "inventory_components"
+        }
+      }
+    },
+    {
+      "id": "derived.current_assets",
+      "kind": "balance",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "bs.current_assets_total",
+        "calculation": {
+          "op": "add",
+          "operands": [
+            {
+              "op": "sum_accounts",
+              "account_set": "current_assets_excluding_inventory"
+            },
+            {
+              "op": "derived",
+              "id": "derived.inventory_total"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "derived.current_liabilities",
+      "kind": "balance",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "bs.current_liabilities_total",
+        "calculation": {
+          "op": "sum_accounts",
+          "account_set": "current_liabilities_components"
+        }
+      }
+    }
+  ],
+  "conjuntos": {
+    "current_assets_excluding_inventory": [
+      "bs.cash_and_equivalents",
+      "bs.short_term_investments",
+      "bs.trade_receivables",
+      "bs.other_current_receivables",
+      "bs.prepaid_expenses",
+      "bs.other_current_assets"
+    ],
+    "inventory_components": [
+      "bs.inventory_merchandise",
+      "bs.inventory_raw_materials",
+      "bs.inventory_work_in_process",
+      "bs.inventory_finished_goods"
+    ],
+    "current_liabilities_components": [
+      "bs.trade_payables",
+      "bs.short_term_borrowings",
+      "bs.current_portion_long_term_debt",
+      "bs.taxes_payable",
+      "bs.accrued_expenses_payable",
+      "bs.current_provisions",
+      "bs.other_current_liabilities"
+    ]
+  },
+  "cuentas": [
+    {
+      "id": "bs.current_assets_total",
+      "canonical_name": "Total de activos corrientes",
+      "definition": "Subtotal de activos corrientes reportado por el ejercicio; si existe, sustituye a la suma de componentes (regla del subtotal).",
+      "statement": "balance_general",
+      "classification": "total",
+      "account_role": "reported_total",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Total activo corriente",
+        "total activo circulante"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.cash_and_equivalents",
+      "canonical_name": "Efectivo y equivalentes",
+      "definition": "Medios de pago disponibles y equivalentes de efectivo; su saldo crece con cobros y disminuye con pagos.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Efectivo",
+        "caja",
+        "bancos",
+        "caja y bancos"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IAS 7 Statement of Cash Flows",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-7-statement-of-cash-flows/",
+            "source_type": "accounting_standard",
+            "supports": "\"Cash comprises cash on hand and demand deposits\". Frase textual de IAS 7 Statement of Cash Flows, abierto el 2026-10-15; confirma la definición de «Efectivo y equivalentes» (bs.cash_and_equivalents) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.short_term_investments",
+      "canonical_name": "Inversiones de corto plazo",
+      "definition": "Valores negociables u otros instrumentos con vencimiento o disponibilidad dentro del corto plazo.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Inversiones temporales",
+        "valores negociables de corto plazo"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IAS 7 Statement of Cash Flows",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-7-statement-of-cash-flows/",
+            "source_type": "accounting_standard",
+            "supports": "\"Cash equivalents are short-term, highly liquid investments\". Frase textual de IAS 7 Statement of Cash Flows, abierto el 2026-10-15; confirma la definición de «Inversiones de corto plazo» (bs.short_term_investments) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.trade_receivables",
+      "canonical_name": "Cuentas por cobrar comerciales",
+      "definition": "Derechos de cobro generados por ventas o servicios a crédito; nacen al entregar el bien o prestar el servicio.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "CxC",
+        "clientes",
+        "cuentas por cobrar a clientes",
+        "deudores comerciales"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.other_current_receivables",
+      "canonical_name": "Otras cuentas por cobrar corrientes",
+      "definition": "Cobros distintos de las ventas comerciales con recuperación dentro del corto plazo (anticipos, deudores varios).",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Deudores varios corrientes",
+        "otras cuentas por cobrar de corto plazo"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.inventory_total",
+      "canonical_name": "Inventario total",
+      "definition": "Total de inventarios sin desglose de componentes (R5). El inventario se reconoce a coste y se expensa como costo de ventas cuando se vende.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "reported_total",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Inventario",
+        "existencias totales"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [
+        "Cuenta interna del caso (R5): el caso reporta un total de inventario sin desglose; la definición viene de la construcción del caso, no de una norma. Se usa el total reportado primero y los componentes solo si el total falta."
+      ],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.inventory_merchandise",
+      "canonical_name": "Inventario de mercaderías",
+      "definition": "Bienes adquiridos para revender sin transformación; mide su coste de adquisición.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Mercaderías",
+        "mercancías",
+        "inventario para la venta"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "\"Inventories are measured at the lower of cost and net realisable value\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de mercaderías» (bs.inventory_merchandise) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.inventory_raw_materials",
+      "canonical_name": "Inventario de materias primas",
+      "definition": "Materiales adquiridos para la producción que aún no se han transformado.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Materias primas",
+        "materiales en almacén para producción"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "\"The cost of inventories includes all costs of purchase, costs of conversion\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de materias primas» (bs.inventory_raw_materials) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.inventory_work_in_process",
+      "canonical_name": "Inventario de productos en proceso",
+      "definition": "Producto con transformación iniciada pero sin terminar; acumula materiales, mano de obra y costes indirectos.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Producción en proceso",
+        "productos en proceso"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "\"costs of conversion (direct labour and production overhead)\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de productos en proceso» (bs.inventory_work_in_process) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.inventory_finished_goods",
+      "canonical_name": "Inventario de productos terminados",
+      "definition": "Producto terminado listo para la venta; se lleva a costo de ventas al venderse.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Productos terminados",
+        "bienes terminados"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "\"the carrying amount of those inventories is recognised as an expense\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de productos terminados» (bs.inventory_finished_goods) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.prepaid_expenses",
+      "canonical_name": "Gastos pagados por anticipado",
+      "definition": "Pagos realizados por adelantado que se consumen como gasto en periodos futuros (seguros, rentas).",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Pagos anticipados",
+        "seguros pagados por anticipado"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.other_current_assets",
+      "canonical_name": "Otros activos corrientes",
+      "definition": "Activos corrientes que no tienen una cuenta específica (anticipos, impuestos a favor de corto plazo).",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Otros activos circulantes"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.current_liabilities_total",
+      "canonical_name": "Total de pasivos corrientes",
+      "definition": "Subtotal de pasivos corrientes reportado por el ejercicio; si existe, sustituye a la suma de componentes (regla del subtotal).",
+      "statement": "balance_general",
+      "classification": "total",
+      "account_role": "reported_total",
+      "normal_balance": "acreedor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Total pasivo corriente",
+        "total pasivo circulante"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.trade_payables",
+      "canonical_name": "Cuentas por pagar comerciales",
+      "definition": "Obligaciones con proveedores por compras a crédito; su saldo crece con las compras y disminuye con los pagos.",
+      "statement": "balance_general",
+      "classification": "pasivo_corriente",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "CxP",
+        "proveedores",
+        "cuentas por pagar a proveedores"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.short_term_borrowings",
+      "canonical_name": "Préstamos de corto plazo",
+      "definition": "Deudas financieras con vencimiento dentro del corto plazo.",
+      "statement": "balance_general",
+      "classification": "pasivo_corriente",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Deudas bancarias de corto plazo",
+        "obligaciones financieras corrientes"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.current_portion_long_term_debt",
+      "canonical_name": "Porción corriente de deuda de largo plazo",
+      "definition": "Parte de una deuda a largo plazo que vence en los próximos doce meses.",
+      "statement": "balance_general",
+      "classification": "pasivo_corriente",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Vencimientos corrientes de deuda a largo plazo"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.taxes_payable",
+      "canonical_name": "Impuestos por pagar",
+      "definition": "Obligaciones tributarias devengadas sin pagar dentro del corto plazo.",
+      "statement": "balance_general",
+      "classification": "pasivo_corriente",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Tributos por pagar",
+        "impuestos corrientes por pagar"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IAS 12 Income Taxes",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-12-income-taxes/",
+            "source_type": "accounting_standard",
+            "supports": "\"to the extent that it is unpaid, recognised as a liability\". Frase textual de IAS 12 Income Taxes, abierto el 2026-10-15; confirma la definición de «Impuestos por pagar» (bs.taxes_payable) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.accrued_expenses_payable",
+      "canonical_name": "Gastos acumulados por pagar",
+      "definition": "Gastos devengados ya reconocidos y aún no pagados (sueldos, servicios).",
+      "statement": "balance_general",
+      "classification": "pasivo_corriente",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Gastos devengados por pagar",
+        "obligaciones acumuladas"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.current_provisions",
+      "canonical_name": "Provisiones corrientes",
+      "definition": "Pasivos de tiempo o importe incierto con salida de recursos prevista dentro del corto plazo.",
+      "statement": "balance_general",
+      "classification": "pasivo_corriente",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Provisiones de corto plazo"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IAS 37 Provisions, Contingent Liabilities and Contingent Assets",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-37-provisions-contingent-liabilities-and-contingent-assets/",
+            "source_type": "accounting_standard",
+            "supports": "\"A provision is a liability of uncertain timing or amount\". Frase textual de IAS 37 Provisions, Contingent Liabilities and Contingent Assets, abierto el 2026-10-15; confirma la definición de «Provisiones corrientes» (bs.current_provisions) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.other_current_liabilities",
+      "canonical_name": "Otros pasivos corrientes",
+      "definition": "Pasivos corrientes sin cuenta específica (anticipos de clientes, dividendos por pagar de corto plazo).",
+      "statement": "balance_general",
+      "classification": "pasivo_corriente",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Otros pasivos circulantes"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [
+        "Nombre genérico del caso «Pasivo Corto Plazo»: el detalle de la cuenta es incierto, pero su clasificación en pasivo corriente es segura y el detalle no altera ningún resultado (tabla de mapeo, F1)."
+      ],
+      "research": {
+        "status": "ambiguous",
+        "sources": [
+          {
+            "title": "IAS 1 Presentation of Financial Statements",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
+            "source_type": "accounting_standard",
+            "supports": "NIC 1 fija los requisitos generales de presentación, las pautas de estructura y el contenido mínimo de los estados financieros, y rige la clasificación corriente y no corriente (doce meses para los pasivos); la norma adoptó la presentación de activos y pasivos corrientes. Confirma la definición de «Otros pasivos corrientes» (bs.other_current_liabilities)."
+          }
+        ]
+      }
+    }
+  ],
+  "modo_periodo": {
+    "name": "point_in_time",
+    "value": "saldos de cierre del periodo",
+    "average": null,
+    "control_global": null
+  },
+  "presentacion": {
+    "marca_directa": "Saldo directo, sin promedio",
+    "nota_directa": "Cálculo con saldos de cierre del periodo {periodo}, sin promedio.",
+    "separador_decimal": ".",
+    "separador_miles": ",",
+    "sufijo_porcentaje": " %",
+    "decimales": {
+      "veces": 2,
+      "dias": 2,
+      "porcentaje": 2,
+      "moneda": 0
+    }
+  },
+  "reglas_generales": {
+    "principios": [
+      "Las fórmulas están en este archivo. No hay fórmulas en código.",
+      "Un dato faltante nunca se convierte en número: el resultado es not_available con motivo.",
+      "Ninguna decisión de fórmula se toma durante el cálculo."
+    ],
+    "normalizacion": {
+      "nombres": "minúsculas, sin tildes, espacios simples para comparar; el nombre original se conserva.",
+      "montos": "se conserva el monto original y el monto normalizado.",
+      "signos": "gastos y costos son magnitudes positivas que se restan explícitamente; la depreciación acumulada es negativa y se suma con su signo; una pérdida conserva su signo negativo."
+    },
+    "orden_de_identificacion": [
+      "id explícito válido",
+      "nombre canónico exacto",
+      "sinónimo exacto",
+      "regla contextual definida",
+      "revisión si hay más de un candidato o ninguno"
+    ],
+    "cuenta_no_reconocida": "se marca para revisión. Nunca se convierte en cero.",
+    "cuenta_ausente": {
+      "zero_if_not_reported": "vale cero dentro de la suma.",
+      "requires_data": "el resultado es not_available con motivo missing_required_account_data."
+    },
+    "total_reportado_y_componentes": {
+      "seleccion": "si el total reportado existe con valor numérico, se usa. Sus componentes no se suman en esa agregación.",
+      "conciliacion": "si el total y sus componentes son comparables, se comparan. Si la diferencia supera la tolerancia, se registra reported_subtotal_mismatch. Se usa el total reportado.",
+      "tolerancia": 0.01,
+      "cero_explicito": "un total reportado de cero es un valor válido, no una ausencia."
+    },
+    "total_sin_desglose": "R5: el total de categoría se usa y sus componentes quedan en cero en esa agregación.",
+    "denominador_cero": "not_available con motivo zero_denominator.",
+    "motivos_permitidos": [
+      "missing_required_account_data",
+      "missing_required_period_balance",
+      "zero_denominator",
+      "unrecognized_imported_account",
+      "ambiguous_account_match",
+      "reported_subtotal_mismatch",
+      "overlapping_account_aggregation",
+      "assumption_applied"
+    ],
+    "supuestos": "toda aproximación se declara con el motivo assumption_applied. En este proyecto no hay aproximaciones activas: D8 y D10 no las usan.",
+    "metodo_resultado": "cada resultado indica su método: average, direct_closing o not_applicable. Si el resultado es N/D, el método es not_applicable."
+  }
+}

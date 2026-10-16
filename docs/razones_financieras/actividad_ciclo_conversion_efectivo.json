@@ -1,0 +1,640 @@
+{
+  "schema_version": "2.0",
+  "razon": {
+    "id": "actividad_ciclo_conversion_efectivo",
+    "name": "Ciclo de conversión de efectivo",
+    "category": "actividad",
+    "formula_as_provided": "Edad del inventario + Período de cobro − Período de pago",
+    "unit": "dias",
+    "period_mode": "flow_with_average_balance",
+    "formula": {
+      "op": "subtract",
+      "left": {
+        "op": "add",
+        "operands": [
+          {
+            "op": "ratio",
+            "id": "actividad_edad_promedio_inventario"
+          },
+          {
+            "op": "ratio",
+            "id": "actividad_periodo_promedio_cobro"
+          }
+        ]
+      },
+      "right": {
+        "op": "ratio",
+        "id": "actividad_periodo_promedio_pago"
+      }
+    },
+    "notes": []
+  },
+  "razones_dependientes": [
+    {
+      "id": "actividad_rotacion_inventarios",
+      "name": "Rotación de inventarios",
+      "category": "actividad",
+      "formula_as_provided": "Costo de ventas / Inventario promedio",
+      "unit": "veces",
+      "period_mode": "flow_with_average_balance",
+      "formula": {
+        "op": "divide",
+        "numerator": {
+          "op": "derived",
+          "id": "derived.cost_of_sales"
+        },
+        "denominator": {
+          "op": "average",
+          "of": {
+            "op": "derived",
+            "id": "derived.inventory_total"
+          }
+        }
+      },
+      "notes": []
+    },
+    {
+      "id": "actividad_edad_promedio_inventario",
+      "name": "Edad promedio del inventario",
+      "category": "actividad",
+      "formula_as_provided": "365 / Rotación de inventarios",
+      "unit": "dias",
+      "period_mode": "flow_with_average_balance",
+      "formula": {
+        "op": "divide",
+        "numerator": {
+          "op": "constant",
+          "value": 365
+        },
+        "denominator": {
+          "op": "ratio",
+          "id": "actividad_rotacion_inventarios"
+        }
+      },
+      "notes": []
+    },
+    {
+      "id": "actividad_rotacion_cuentas_por_cobrar",
+      "name": "Rotación de cuentas por cobrar",
+      "category": "actividad",
+      "formula_as_provided": "Ventas a crédito / CxC promedio",
+      "unit": "veces",
+      "period_mode": "flow_with_average_balance",
+      "formula": {
+        "op": "divide",
+        "numerator": {
+          "op": "account",
+          "id": "supp.credit_sales"
+        },
+        "denominator": {
+          "op": "average",
+          "of": {
+            "op": "account",
+            "id": "bs.trade_receivables"
+          }
+        }
+      },
+      "notes": []
+    },
+    {
+      "id": "actividad_periodo_promedio_cobro",
+      "name": "Período promedio de cobro",
+      "category": "actividad",
+      "formula_as_provided": "365 / Rotación de CxC",
+      "unit": "dias",
+      "period_mode": "flow_with_average_balance",
+      "formula": {
+        "op": "divide",
+        "numerator": {
+          "op": "constant",
+          "value": 365
+        },
+        "denominator": {
+          "op": "ratio",
+          "id": "actividad_rotacion_cuentas_por_cobrar"
+        }
+      },
+      "notes": []
+    },
+    {
+      "id": "actividad_rotacion_cuentas_por_pagar",
+      "name": "Rotación de cuentas por pagar",
+      "category": "actividad",
+      "formula_as_provided": "Compras a crédito / CxP promedio",
+      "unit": "veces",
+      "period_mode": "flow_with_average_balance",
+      "formula": {
+        "op": "divide",
+        "numerator": {
+          "op": "derived",
+          "id": "derived.credit_purchases"
+        },
+        "denominator": {
+          "op": "average",
+          "of": {
+            "op": "account",
+            "id": "bs.trade_payables"
+          }
+        }
+      },
+      "notes": []
+    },
+    {
+      "id": "actividad_periodo_promedio_pago",
+      "name": "Período promedio de pago",
+      "category": "actividad",
+      "formula_as_provided": "365 / Rotación de CxP",
+      "unit": "dias",
+      "period_mode": "flow_with_average_balance",
+      "formula": {
+        "op": "divide",
+        "numerator": {
+          "op": "constant",
+          "value": 365
+        },
+        "denominator": {
+          "op": "ratio",
+          "id": "actividad_rotacion_cuentas_por_pagar"
+        }
+      },
+      "notes": []
+    }
+  ],
+  "derivados": [
+    {
+      "id": "derived.cost_of_sales",
+      "kind": "flow",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "is.cost_of_sales_reported",
+        "calculation": {
+          "op": "sum_accounts",
+          "account_set": "cost_of_sales_components"
+        }
+      }
+    },
+    {
+      "id": "derived.inventory_total",
+      "kind": "balance",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "bs.inventory_total",
+        "calculation": {
+          "op": "sum_accounts",
+          "account_set": "inventory_components"
+        }
+      }
+    },
+    {
+      "id": "derived.credit_purchases",
+      "kind": "flow",
+      "formula": {
+        "op": "subtract",
+        "left": {
+          "op": "add",
+          "operands": [
+            {
+              "op": "account",
+              "id": "supp.supplier_payments"
+            },
+            {
+              "op": "account",
+              "id": "bs.trade_payables",
+              "period": "current"
+            }
+          ]
+        },
+        "right": {
+          "op": "account",
+          "id": "bs.trade_payables",
+          "period": "previous"
+        }
+      }
+    }
+  ],
+  "conjuntos": {
+    "cost_of_sales_components": [
+      "is.merchandise_cost",
+      "is.product_cost",
+      "is.service_cost"
+    ],
+    "inventory_components": [
+      "bs.inventory_merchandise",
+      "bs.inventory_raw_materials",
+      "bs.inventory_work_in_process",
+      "bs.inventory_finished_goods"
+    ]
+  },
+  "cuentas": [
+    {
+      "id": "is.cost_of_sales_reported",
+      "canonical_name": "Costo de ventas reportado",
+      "definition": "Costo de lo vendido reportado por el ejercicio (total sin desglose); si existe, sustituye a la suma de componentes.",
+      "statement": "estado_resultados",
+      "classification": "costo",
+      "account_role": "reported_total",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Costo de ventas",
+        "costo de los bienes vendidos"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "\"the carrying amount of those inventories is recognised as an expense\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Costo de ventas reportado» (is.cost_of_sales_reported) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.merchandise_cost",
+      "canonical_name": "Costo de mercadería vendida",
+      "definition": "Coste de las mercaderías vendidas en el periodo.",
+      "statement": "estado_resultados",
+      "classification": "costo",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Costo de ventas de mercaderías",
+        "costo de bienes vendidos"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "\"the carrying amount of those inventories is recognised as an expense\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Costo de mercadería vendida» (is.merchandise_cost) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.product_cost",
+      "canonical_name": "Costo de productos vendidos",
+      "definition": "Coste de producción de los productos vendidos en el periodo.",
+      "statement": "estado_resultados",
+      "classification": "costo",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Costo de producción vendido",
+        "costo de productos vendidos"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "\"The cost of inventories includes all costs of purchase, costs of conversion\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Costo de productos vendidos» (is.product_cost) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.service_cost",
+      "canonical_name": "Costo de servicios",
+      "definition": "Coste directo de los servicios prestados en el periodo.",
+      "statement": "estado_resultados",
+      "classification": "costo",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "expense",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Costos de servicios prestados"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.trade_receivables",
+      "canonical_name": "Cuentas por cobrar comerciales",
+      "definition": "Derechos de cobro generados por ventas o servicios a crédito; nacen al entregar el bien o prestar el servicio.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "CxC",
+        "clientes",
+        "cuentas por cobrar a clientes",
+        "deudores comerciales"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.inventory_total",
+      "canonical_name": "Inventario total",
+      "definition": "Total de inventarios sin desglose de componentes (R5). El inventario se reconoce a coste y se expensa como costo de ventas cuando se vende.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "reported_total",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Inventario",
+        "existencias totales"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [
+        "Cuenta interna del caso (R5): el caso reporta un total de inventario sin desglose; la definición viene de la construcción del caso, no de una norma. Se usa el total reportado primero y los componentes solo si el total falta."
+      ],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.inventory_merchandise",
+      "canonical_name": "Inventario de mercaderías",
+      "definition": "Bienes adquiridos para revender sin transformación; mide su coste de adquisición.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Mercaderías",
+        "mercancías",
+        "inventario para la venta"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "\"Inventories are measured at the lower of cost and net realisable value\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de mercaderías» (bs.inventory_merchandise) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.inventory_raw_materials",
+      "canonical_name": "Inventario de materias primas",
+      "definition": "Materiales adquiridos para la producción que aún no se han transformado.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Materias primas",
+        "materiales en almacén para producción"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "\"The cost of inventories includes all costs of purchase, costs of conversion\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de materias primas» (bs.inventory_raw_materials) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.inventory_work_in_process",
+      "canonical_name": "Inventario de productos en proceso",
+      "definition": "Producto con transformación iniciada pero sin terminar; acumula materiales, mano de obra y costes indirectos.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Producción en proceso",
+        "productos en proceso"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "\"costs of conversion (direct labour and production overhead)\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de productos en proceso» (bs.inventory_work_in_process) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.inventory_finished_goods",
+      "canonical_name": "Inventario de productos terminados",
+      "definition": "Producto terminado listo para la venta; se lleva a costo de ventas al venderse.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Productos terminados",
+        "bienes terminados"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "verified",
+        "sources": [
+          {
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "\"the carrying amount of those inventories is recognised as an expense\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de productos terminados» (bs.inventory_finished_goods) (D-028)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.trade_payables",
+      "canonical_name": "Cuentas por pagar comerciales",
+      "definition": "Obligaciones con proveedores por compras a crédito; su saldo crece con las compras y disminuye con los pagos.",
+      "statement": "balance_general",
+      "classification": "pasivo_corriente",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "CxP",
+        "proveedores",
+        "cuentas por pagar a proveedores"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "supp.credit_sales",
+      "canonical_name": "Ventas a crédito",
+      "definition": "Ventas cobrables a crédito del periodo actual; es el numerador de la rotación de CxC. Nunca se aproxima con ventas netas ni totales (D8): si falta, la razón es N/D.",
+      "statement": "supplemental_data",
+      "classification": "suplementario",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "requires_data",
+      "synonyms": [
+        "Ventas a crédito del periodo"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [
+        "Dato suplementario del caso (D8): ventas a crédito reportadas solo por el caso; sin fuente externa. Se usa con requires_data y nunca se iguala a ventas netas."
+      ],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "supp.supplier_payments",
+      "canonical_name": "Pagos a proveedores",
+      "definition": "Pagos efectuados a proveedores en el periodo actual; forma con la CxP el numerador de compras a crédito (D10). Si falta, la razón es N/D con `missing_required_account_data`.",
+      "statement": "supplemental_data",
+      "classification": "suplementario",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "requires_data",
+      "synonyms": [
+        "Pagos a proveedores del periodo"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [
+        "Dato suplementario del caso (D10): pagos a proveedores reportados solo por el caso; sin fuente externa. Se usa con requires_data para derivar compras a crédito."
+      ],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    }
+  ],
+  "modo_periodo": {
+    "name": "flow_with_average_balance",
+    "average": "(cierre del periodo anterior + cierre del periodo actual) / 2",
+    "flow_period": "current",
+    "politica_sin_periodo_anterior": {
+      "por_defecto": "not_available",
+      "un_solo_periodo_en_el_estado": "direct_closing",
+      "primer_periodo_con_control_activo": "direct_closing"
+    },
+    "control_global": {
+      "id": "mostrar_calculo_directo_primer_periodo",
+      "label": "Mostrar cálculo directo del primer periodo",
+      "default": false,
+      "alcance": "Un solo control para todas las razones de flujo. Solo afecta al primer periodo de cada serie. No existe un control por razón."
+    }
+  },
+  "presentacion": {
+    "marca_directa": "Saldo directo, sin promedio",
+    "marca_promedio": "Promedio {periodo_anterior}–{periodo_actual}",
+    "nota_directa": "Cálculo con saldos de cierre del periodo {periodo}, sin promedio.",
+    "separador_decimal": ".",
+    "separador_miles": ",",
+    "sufijo_porcentaje": " %",
+    "decimales": {
+      "veces": 2,
+      "dias": 2,
+      "porcentaje": 2,
+      "moneda": 0
+    }
+  },
+  "reglas_generales": {
+    "principios": [
+      "Las fórmulas están en este archivo. No hay fórmulas en código.",
+      "Un dato faltante nunca se convierte en número: el resultado es not_available con motivo.",
+      "Ninguna decisión de fórmula se toma durante el cálculo."
+    ],
+    "normalizacion": {
+      "nombres": "minúsculas, sin tildes, espacios simples para comparar; el nombre original se conserva.",
+      "montos": "se conserva el monto original y el monto normalizado.",
+      "signos": "gastos y costos son magnitudes positivas que se restan explícitamente; la depreciación acumulada es negativa y se suma con su signo; una pérdida conserva su signo negativo."
+    },
+    "orden_de_identificacion": [
+      "id explícito válido",
+      "nombre canónico exacto",
+      "sinónimo exacto",
+      "regla contextual definida",
+      "revisión si hay más de un candidato o ninguno"
+    ],
+    "cuenta_no_reconocida": "se marca para revisión. Nunca se convierte en cero.",
+    "cuenta_ausente": {
+      "zero_if_not_reported": "vale cero dentro de la suma.",
+      "requires_data": "el resultado es not_available con motivo missing_required_account_data."
+    },
+    "total_reportado_y_componentes": {
+      "seleccion": "si el total reportado existe con valor numérico, se usa. Sus componentes no se suman en esa agregación.",
+      "conciliacion": "si el total y sus componentes son comparables, se comparan. Si la diferencia supera la tolerancia, se registra reported_subtotal_mismatch. Se usa el total reportado.",
+      "tolerancia": 0.01,
+      "cero_explicito": "un total reportado de cero es un valor válido, no una ausencia."
+    },
+    "total_sin_desglose": "R5: el total de categoría se usa y sus componentes quedan en cero en esa agregación.",
+    "denominador_cero": "not_available con motivo zero_denominator.",
+    "motivos_permitidos": [
+      "missing_required_account_data",
+      "missing_required_period_balance",
+      "zero_denominator",
+      "unrecognized_imported_account",
+      "ambiguous_account_match",
+      "reported_subtotal_mismatch",
+      "overlapping_account_aggregation",
+      "assumption_applied"
+    ],
+    "supuestos": "toda aproximación se declara con el motivo assumption_applied. En este proyecto no hay aproximaciones activas: D8 y D10 no las usan.",
+    "metodo_resultado": "cada resultado indica su método: average, direct_closing o not_applicable. Si el resultado es N/D, el método es not_applicable."
+  }
+}
