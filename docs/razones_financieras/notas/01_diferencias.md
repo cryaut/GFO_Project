@@ -98,6 +98,38 @@ Leyenda de estados: `cumple` = el entregado ya satisface el requisito y no se re
 | R-49 | H8: script o descripción exacta + comando + salida en `notas/05_checks.md` | notas/05_checks | no_cumple | `Select-String notas\05_checks.md -Pattern "validador\|node .*\.mjs\|script"` → `(ninguno)` (el "verificador 12/12" no estaba registrado) | B1 |
 | R-50 | Una nota por razón en `notas/ratios/NN_<id>.md` con la fórmula del profesor, el árbol y las listas de derivados, conjuntos, cuentas y razones dependientes; caso a mano registrado en `05_checks.md` (orden, bloque B5) | notas | no_cumple (fila añadida en G4: el inventario de G1 la omitió y sin ella los cambios de B5 no tienen ID) | `Test-Path notas\ratios` → `False` en `2a607c1` (las notas vivían en `ratios/` de la raíz); tras B5: 20 notas en `notas/ratios/` y 60/60 celdas en `05_checks.md` | B5 |
 
+## Corrección v7 — filas R-51 en adelante (orden `prompt_correccion_agente_razones_v7.md`)
+
+Recorrido de los requisitos de **C1**, **C2**, **C3** y **G3** de la orden v7 sobre el árbol limpio
+del commit `b325ab2` (2026-10-15), sin editar nada. Mismas columnas que la tabla v6:
+ID · requisito · archivos · estado · evidencia (comando → salida) · bloque.
+
+| ID | Requisito | Archivos | Estado | Evidencia (comando → salida) | Bloque |
+|---|---|---|---|---|---|
+| R-51 | C1: D-023 restaurada al texto de `ab2f3a5` con Estado `Reemplazada por D-025`, sin la frase que atribuye al equipo la confirmación del «9» y con la nota de corrección al final | `docs/decisiones.md` | no_cumple | `Select-String docs\decisiones.md -Pattern "D-023"` → 2 hit: fila 75 con estado `Vigente` y entrada 549 con "el equipo confirmó" (línea 565) | C1 |
+| R-52 | C1: D-024 restaurada al texto de `ab2f3a5` con Estado `Cerrada por D-026` | `docs/decisiones.md` | no_cumple | fila 76 → `Cerrada (decidida 2026-10-15)` (estado actual, no el que fija la orden) | C1 |
+| R-53 | C1: D-025, D-026, D-027 y D-028 añadidas al final del archivo con la plantilla propia (Decidió y Fecha 2026-10-15) | `docs/decisiones.md` | no_cumple | `Select-String docs\decisiones.md -Pattern "D-025\|D-026\|D-027\|D-028"` → `0 hit` | C1 |
+| R-54 | C1: tabla de decisiones del inicio del archivo con los estados de D-023 a D-028 | `docs/decisiones.md` | no_cumple | la tabla termina en la fila 76 (D-024): faltan las 4 filas nuevas y los estados de reemplazo | C1 |
+| R-55 | C1: en `docs/planificacion/razones-json-v3/README.md` línea 24 se quita solo la frase "(en revisión el equipo confirmó que el «9» de la v3 es un error del documento)" | ficha README | no_cumple | `Get-Content README.md [23]` → la línea contiene la frase completa entre paréntesis | C1 |
+| R-56 | C2 (D-028): una cuenta sigue `verified` solo con frase textual de menos de 15 palabras de una norma abierta en esta ejecución que confirme su definición concreta, con la frase en `notas/03_fuentes.md` | 20 JSON + `notas/03_fuentes.md` | no_cumple | `03_fuentes.md` → 142 líneas con 29 filas de la misma justificación genérica "NIC 1 exige presentar un juego completo…" (vale también para `is.merchandise_cost`, `is.product_cost`, `is.service_cost`, `is.net_sales_reported`) | C2 |
+| R-57 | C2: sin frase específica la cuenta pasa a `partially_verified`; en los JSON solo cambia `cuentas[].research.status` y, si hace falta, `research.sources` | 20 JSON | no_cumple | validador → `verified=62 partially=4 ambiguous=5` (tras C2 se espera `verified=29 partially=37 ambiguous=5`) | C2 |
+| R-58 | C2: no se cambian la clasificación de cuentas, las 5 `ambiguous` ni las cuentas internas (`bs.inventory_total`, `is.sales_total`, `supp.*`) | 20 JSON | cumple | validador → `cuentas=71 ambiguous=5`; restricción vigente, se re-verifica en G2 y G3 | C2 |
+| R-59 | C2: no se declara abierta una norma que no se pudo abrir (las cuentas de esa norma pasan a `partially_verified`) | `notas/03_fuentes.md` + 20 JSON | no_cumple | hoy la tabla no registra título y fecha de apertura por cuenta; tras C2 cada fila conservada lleva la frase textual y la fecha 2026-10-15 | C2 |
+| R-60 | C3: punto 11 de `notas/05_checks.md` corregido: `c50545a` reemplazó a `4a3bef0` con `--amend`; sin reescritura de historial para arreglarlo | `notas/05_checks.md` | no_cumple | línea 675 → "los 5 commits de la v3 conservan su SHA" (falso: `git cat-file -t 4a3bef0` → `commit`) | C3 |
+| R-61 | C3: nota de V14 que aclara que la validación solo compara la URL con `REGISTRO_APERTURAS` y que la evidencia de apertura es el título y la fecha en `03_fuentes.md` | `notas/05_checks.md` | no_cumple | V14 registrado en la línea 638 sin esa aclaración | C3 |
+| R-62 | C3: desviación de V12 registrada en `05_checks.md` remitiendo a D-027 | `notas/05_checks.md` | no_cumple | líneas 96–101: el ajuste de V12 remite a H8/B4, no a D-027 | C3 |
+| R-63 | C3: rutas locales `C:\Users\…` sustituidas por `<raiz-local>` sin cambiar salidas ni números | `notas/05_checks.md` | no_cumple | `Select-String notas\05_checks.md -Pattern "C:\\Users"` → `11 hit` | C3 |
+| R-64 | G3: en un worktree temporal, en el último commit, V0 a V17 sin fallos y 0 diferencias de SHA-256 "sin `cuentas[].research`" contra G0, con un script fuera del repo | repo + `notas/05_checks.md` | no_cumple | se ejecuta al cerrar C1–C3; el comando y la salida quedan en `05_checks.md` | G3 |
+| R-65 | G3: sin cambio de fórmulas, valores, lógica del validador ni de D-001 a D-022 (comprobado por hash y por `git diff` por bloque) | 20 JSON + `notas/validador_v6.mjs` + `docs/decisiones.md` | no_cumple | se comprueba con los SHA-256 de `00_linea_base_v7.md` (G0) y con el mapeo de la sección G4 | G3 |
+
+## Compuerta G1 (v7)
+
+- [x] Ninguna fila sin estado (15 filas: R-51…R-65).
+- [x] Cada `no_cumple` tiene un bloque asignado (C1, C2, C3 o G3).
+- [x] Nada editado aún: los comandos corrieron sobre el árbol limpio de `b325ab2`.
+
+**G1 (v7): pasa.**
+
 ## Notas reemplazadas (regla 9 de la orden)
 
 Reemplazos con rastro (el contenido anterior queda en el historial de git y el archivo nuevo explica el cambio):
