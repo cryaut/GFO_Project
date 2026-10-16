@@ -96,6 +96,7 @@ Leyenda de estados: `cumple` = el entregado ya satisface el requisito y no se re
 | R-47 | H6: sin reescritura de historial (sin amend/rebase/force) | repo | cumple | `git log --oneline -6` → `86e04e0`, `c50545a`, `dcdbb44`, `ab2f3a5`, `2a607c1` (5 commits intactos; esta orden trabaja solo con commits nuevos) | — |
 | R-48 | H7: no atribuir aprobaciones inexistentes (texto "el equipo confirmó" en D-023) | `docs/decisiones.md` | no_cumple | `Get-Content docs\decisiones.md [563]` → `… En revisión (2026-10-14) el equipo confirmó que el «9» de la v3 es un error del documento…` | B4 |
 | R-49 | H8: script o descripción exacta + comando + salida en `notas/05_checks.md` | notas/05_checks | no_cumple | `Select-String notas\05_checks.md -Pattern "validador\|node .*\.mjs\|script"` → `(ninguno)` (el "verificador 12/12" no estaba registrado) | B1 |
+| R-50 | Una nota por razón en `notas/ratios/NN_<id>.md` con la fórmula del profesor, el árbol y las listas de derivados, conjuntos, cuentas y razones dependientes; caso a mano registrado en `05_checks.md` (orden, bloque B5) | notas | no_cumple (fila añadida en G4: el inventario de G1 la omitió y sin ella los cambios de B5 no tienen ID) | `Test-Path notas\ratios` → `False` en `2a607c1` (las notas vivían en `ratios/` de la raíz); tras B5: 20 notas en `notas/ratios/` y 60/60 celdas en `05_checks.md` | B5 |
 
 ## Notas reemplazadas (regla 9 de la orden)
 
@@ -113,7 +114,7 @@ Reemplazos con rastro (el contenido anterior queda en el historial de git y el a
 
 ## Compuerta G1
 
-- [x] Ninguna fila sin estado (49 filas: R-01…R-49).
+- [x] Ninguna fila sin estado (49 filas al cerrar G1: R-01…R-49; R-50 se añadió después en G4, al detectar que faltaba la fila de la nota por razón del bloque B5).
 - [x] Cada `no_cumple` tiene un bloque asignado (B1…B5).
 - [x] Nada editado aún: los comandos corrieron sobre el árbol limpio de `2a607c1`.
 

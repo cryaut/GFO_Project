@@ -321,3 +321,263 @@ comparación celda a celda con la tabla de valores de referencia de la orden.
 
 **B5: pasa (6/6).**
 
+## G3 — Verificación independiente (worktree temporal)
+
+Ejecutada sobre una copia del último commit, no sobre el árbol de trabajo.
+
+1. `git worktree add --detach C:\Users\aleja\AppData\Local\Temp\opencode\gfo_wt HEAD` → salida:
+   `Preparing worktree (detached HEAD 6ccf187)` y `HEAD is now at 6ccf187 docs: notas por razón en notas/ratios y caso a mano (B5)`.
+2. Comando completo (V0–V17 + conteos del conjunto), lanzado desde `docs/razones_financieras` de la
+   rama contra la copia del worktree:
+
+```
+validador_v6 | raiz=C:\Users\aleja\AppData\Local\Temp\opencode\gfo_wt\docs\razones_financieras | archivos JSON=20 | 18 validaciones
+OK   V0
+OK   V1
+OK   V2
+OK   V3
+OK   V4
+OK   V5
+OK   V6
+OK   V7
+OK   V8
+OK   V9
+OK   V10
+OK   V11
+OK   V12
+OK   V13
+OK   V14
+OK   V15
+OK   V16
+OK   V17
+CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=62 partially=4 ambiguous=5 notas_DIFERENCIA=8
+RESULTADO: 18/18 validaciones sin fallos
+```
+
+**G3: pasa (18/18, V0 a V17 sin fallos, conteos correctos).**
+
+
+## G4 — Revisión de cambios por bloque (git diff --stat + R-IDs)
+
+Por cada commit de la orden: `git diff --stat <padre> <hijo>` con su salida literal abajo, y el
+mapeo de cada archivo cambiado a su fila R-ID de `01_diferencias.md`. Revisión de alcance con
+`git diff --name-only <padre> <hijo>` por bloque: todos los cambios están en
+`docs/razones_financieras/` (JSON y `notas/`) salvo `docs/decisiones.md` en B4, la excepción
+permitida por la regla 6 de la orden (solo D-023 y D-024). Sin cambios fuera de alcance → nada que
+revertir.
+
+Además, en esta fase se completó el inventario con **R-50** (nota por razón del bloque B5), fila que
+faltaba en G1 y sin la cual los 41 archivos de B5 no tendrían ID.
+
+### G0-G1 - commit 68f1a6a (padre 2a607c1)
+
+Comando: `git diff --stat 2a607c1 68f1a6a`
+
+``` docs/razones_financieras/notas/00_control.md     |  47 +-
+ docs/razones_financieras/notas/00_linea_base.md  |  74 +++
+ docs/razones_financieras/notas/01_decisiones.md  | 107 ++--
+ docs/razones_financieras/notas/01_diferencias.md | 120 +++++
+ docs/razones_financieras/notas/validador_v6.mjs  | 614 +++++++++++++++++++++++
+ 5 files changed, 870 insertions(+), 92 deletions(-)
+```
+
+→ **Cambios:** 5 archivos de `notas/` (`00_linea_base.md`, `01_diferencias.md`, `01_decisiones.md`,
+  `00_control.md` → puntero, `validador_v6.mjs`). Ningún JSON y ningún archivo fuera de `notas/`.
+→ **R-IDs:** es la fase de puertas G0/G1 que crea el inventario R-01…R-49 y el script del validador
+  (base de H8, fila R-49, que se completa en B1 con comando + salida en `05_checks.md`); no es un
+  bloque de corrección del entregable.
+
+### B1 - commit bcd7dc2 (padre 68f1a6a)
+
+Comando: `git diff --stat 68f1a6a bcd7dc2`
+
+``` .../actividad_ciclo_conversion_efectivo.json       | 1525 +++------
+ .../actividad_edad_promedio_inventario.json        |  896 ++----
+ .../actividad_periodo_promedio_cobro.json          |  742 +----
+ .../actividad_periodo_promedio_pago.json           |  614 +---
+ .../actividad_rotacion_activos_fijos.json          | 1105 +++----
+ .../actividad_rotacion_activos_totales.json        | 1859 +++++------
+ .../actividad_rotacion_cuentas_por_cobrar.json     |  733 +----
+ .../actividad_rotacion_cuentas_por_pagar.json      |  605 +---
+ .../actividad_rotacion_inventarios.json            |  882 ++----
+ .../endeudamiento_cobertura_interes.json           | 1281 ++++----
+ .../endeudamiento_razon_deuda_patrimonio.json      | 1104 +++----
+ .../endeudamiento_razon_deuda_total.json           | 1972 ++++++------
+ .../liquidez_capital_trabajo_neto.json             | 1013 +++---
+ .../razones_financieras/liquidez_prueba_acida.json | 1048 +++---
+ .../liquidez_razon_corriente.json                  | 1014 +++---
+ .../notas/02_cuentas_maestras.md                   | 3320 ++++++++++++++++++++
+ docs/razones_financieras/notas/05_checks.md        |  110 +-
+ .../rentabilidad_margen_utilidad_bruta.json        |  832 +++--
+ .../rentabilidad_margen_utilidad_neta.json         | 1469 ++++-----
+ .../rentabilidad_margen_utilidad_operativa.json    | 1209 ++++---
+ docs/razones_financieras/rentabilidad_roa.json     | 2894 ++++++++---------
+ docs/razones_financieras/rentabilidad_roe.json     | 1948 +++++-------
+ 22 files changed, 13204 insertions(+), 14971 deletions(-)
+```
+
+→ **R-IDs:** R-01 (schema 2.0, 9 claves), R-02 (id = nombre del archivo), R-03 (unidades v6), R-04
+  (`DIFERENCIA_CONOCIDA_PROFESOR` en `razon.notes`), R-05 (`razones_dependientes`), R-06 (derivados
+  `{id,kind,formula}`), R-07 (conjuntos v6 — entran aquí porque V3 exige que todo id referenciado ya
+  exista con su fórmula; el cierre documental es B3), R-08 (objeto cuenta v6), R-09 (bloques
+  comunes), R-10 (sin sobrantes), R-11 (classification), R-12 (absence_policy), R-22 (11 operaciones),
+  R-27 (politica_sin_periodo_anterior), R-28 (marcas de `presentacion`), R-30 (`reglas_generales`
+  verbatim), R-37 (fórmulas con sintaxis de nodos v6), R-49 (comando + salida del validador en
+  `05_checks.md`).
+→ **Archivos:** 20 JSON + `notas/02_cuentas_maestras.md` + `notas/05_checks.md` = 22 (20 + 2 ✓).
+
+### B2 - commit 1217e5e (padre bcd7dc2)
+
+Comando: `git diff --stat bcd7dc2 1217e5e`
+
+``` .../actividad_ciclo_conversion_efectivo.json       |  253 ++--
+ .../actividad_edad_promedio_inventario.json        |  159 +--
+ .../actividad_periodo_promedio_cobro.json          |   46 +-
+ .../actividad_periodo_promedio_pago.json           |   48 +-
+ .../actividad_rotacion_activos_fijos.json          |  282 ++---
+ .../actividad_rotacion_activos_totales.json        |  559 +++------
+ .../actividad_rotacion_cuentas_por_cobrar.json     |   46 +-
+ .../actividad_rotacion_cuentas_por_pagar.json      |   48 +-
+ .../actividad_rotacion_inventarios.json            |  159 +--
+ .../endeudamiento_cobertura_interes.json           |  364 ++----
+ .../endeudamiento_razon_deuda_patrimonio.json      |  359 ++----
+ .../endeudamiento_razon_deuda_total.json           |  639 +++-------
+ .../liquidez_capital_trabajo_neto.json             |  355 ++----
+ .../razones_financieras/liquidez_prueba_acida.json |  355 ++----
+ .../liquidez_razon_corriente.json                  |  355 ++----
+ .../notas/02_cuentas_maestras.md                   | 1263 ++++++--------------
+ docs/razones_financieras/notas/02_fuentes.md       |   36 +-
+ docs/razones_financieras/notas/03_fuentes.md       |  142 +++
+ .../notas/03_registro_cuentas.md                   |   83 +-
+ docs/razones_financieras/notas/05_checks.md        |   27 +
+ .../rentabilidad_margen_utilidad_bruta.json        |  228 ++--
+ .../rentabilidad_margen_utilidad_neta.json         |  437 ++-----
+ .../rentabilidad_margen_utilidad_operativa.json    |  339 ++----
+ docs/razones_financieras/rentabilidad_roa.json     |  858 ++++---------
+ docs/razones_financieras/rentabilidad_roe.json     |  578 +++------
+ 25 files changed, 2432 insertions(+), 5586 deletions(-)
+```
+
+→ **R-IDs:** R-13 (estados: internas → `partially_verified` con `ambiguities`), R-14 (verified con
+  fuente abierta que respalda la definición), R-15 (F1/F2 fuera de las fuentes), R-16
+  (`source_type` con vocabulario v6), R-18 (`bs.legal_reserve` → `ambiguous`), R-19
+  (`02_cuentas_maestras.md`), R-20 (`03_fuentes.md`), R-21 (fuentes faltantes abiertas y
+  registradas), R-40 (fila de auditoría por cuenta verified), R-41 (sin fuente →
+  `partially_verified`), R-45 (H4 completo). R-17 (máx. 3 fuentes) ya cumplía y se re-verifica en
+  V14.
+→ **Archivos:** 20 JSON + `notas/02_cuentas_maestras.md` + `notas/03_fuentes.md` +
+  `notas/02_fuentes.md` (puntero, regla 9) + `notas/03_registro_cuentas.md` (puntero, regla 9) +
+  `notas/05_checks.md` = 25 (20 + 5 ✓).
+
+### B3 - commit b0c9f0b (padre 1217e5e)
+
+Comando: `git diff --stat 1217e5e b0c9f0b`
+
+``` docs/razones_financieras/notas/04_derivados.md | 548 ++++++++++++++++++++++---
+ docs/razones_financieras/notas/05_checks.md    |  19 +
+ 2 files changed, 520 insertions(+), 47 deletions(-)
+```
+
+→ **R-IDs:** R-33 (ningún conjunto mezcla un total reportado con sus componentes), R-34 (los 11
+  conjuntos copiados de la orden sin cambios), R-35 (derivados v6 con `id`, `kind` y `formula`,
+  incluido `derived.credit_purchases` con periodo anterior), R-07 (cierre: nombres y miembros v6
+  verificados), R-36 (identidad de definiciones entre archivos — V7 re-corrida).
+→ **Archivos:** `notas/04_derivados.md` + `notas/05_checks.md` = 2 ✓. Los 20 JSON no cambian en B3
+  (los conjuntos y derivados entraron en B1 por exigencia de V3; documentado en la sección B3 de
+  `05_checks.md`).
+
+### B4 - commit 2fe3c5d (padre b0c9f0b)
+
+Comando: `git diff --stat b0c9f0b 2fe3c5d`
+
+``` docs/decisiones.md                                 | 32 ++++++++++++----------
+ .../actividad_ciclo_conversion_efectivo.json       | 17 +++++++++++-
+ .../actividad_edad_promedio_inventario.json        | 17 +++++++++++-
+ .../actividad_periodo_promedio_cobro.json          | 17 +++++++++++-
+ .../actividad_periodo_promedio_pago.json           | 17 +++++++++++-
+ .../actividad_rotacion_activos_fijos.json          | 17 +++++++++++-
+ .../actividad_rotacion_activos_totales.json        | 17 +++++++++++-
+ .../actividad_rotacion_cuentas_por_cobrar.json     | 17 +++++++++++-
+ .../actividad_rotacion_cuentas_por_pagar.json      | 17 +++++++++++-
+ .../actividad_rotacion_inventarios.json            | 17 +++++++++++-
+ .../endeudamiento_cobertura_interes.json           | 14 ++++++++--
+ .../endeudamiento_razon_deuda_patrimonio.json      | 14 ++++++++--
+ .../endeudamiento_razon_deuda_total.json           | 14 ++++++++--
+ .../liquidez_capital_trabajo_neto.json             | 14 ++++++++--
+ .../razones_financieras/liquidez_prueba_acida.json | 14 ++++++++--
+ .../liquidez_razon_corriente.json                  | 14 ++++++++--
+ docs/razones_financieras/notas/05_checks.md        | 32 ++++++++++++++++++++++
+ docs/razones_financieras/notas/validador_v6.mjs    | 16 +++++++----
+ .../rentabilidad_margen_utilidad_bruta.json        | 14 ++++++++--
+ .../rentabilidad_margen_utilidad_neta.json         | 14 ++++++++--
+ .../rentabilidad_margen_utilidad_operativa.json    | 14 ++++++++--
+ docs/razones_financieras/rentabilidad_roa.json     | 17 +++++++++++-
+ docs/razones_financieras/rentabilidad_roe.json     | 17 +++++++++++-
+ 23 files changed, 345 insertions(+), 48 deletions(-)
+```
+
+→ **R-IDs:** R-25 (`modo_periodo` de flujo con un único `control_global`), R-26 (`control_global:
+  null` en las 9 de saldo), R-29 (formato F1: `separador_decimal` `.`, `separador_miles` `,`), R-42
+  (H1: 20 JSON + D-023 corregida), R-43 (H2: D-024 marcada decidida), R-44 (H3: fuera
+  `DECISION_PENDIENTE`), R-48 (H7: fuera la atribución «el equipo confirmó»).
+→ **Archivos:** 20 JSON + `docs/decisiones.md` (excepción de la regla 6: solo D-023 y D-024) +
+  `notas/05_checks.md` + `notas/validador_v6.mjs` (ajuste de V12 documentado en la sección B4:
+  marcadores-placeholder de R3, no debilitamiento; se reporta también en G5) = 23 (20 + 3 ✓).
+
+### B5 - commit 6ccf187 (padre 2fe3c5d)
+
+Comando: `git diff --stat 2fe3c5d 6ccf187`
+
+``` docs/razones_financieras/notas/05_checks.md        | 204 +++++++++++++++++++++
+ .../ratios/01_liquidez_capital_trabajo_neto.md     |  65 +++++++
+ .../notas/ratios/02_liquidez_razon_corriente.md    |  65 +++++++
+ .../notas/ratios/03_liquidez_prueba_acida.md       |  72 ++++++++
+ .../04_rentabilidad_margen_utilidad_bruta.md       |  60 ++++++
+ .../05_rentabilidad_margen_utilidad_operativa.md   |  70 +++++++
+ .../ratios/06_rentabilidad_margen_utilidad_neta.md |  76 ++++++++
+ .../notas/ratios/07_rentabilidad_roa.md            | 115 ++++++++++++
+ .../notas/ratios/08_rentabilidad_roe.md            |  93 ++++++++++
+ .../ratios/09_endeudamiento_razon_deuda_total.md   |  88 +++++++++
+ .../10_endeudamiento_razon_deuda_patrimonio.md     |  66 +++++++
+ .../ratios/11_endeudamiento_cobertura_interes.md   |  71 +++++++
+ .../ratios/12_actividad_rotacion_inventarios.md    |  59 ++++++
+ .../13_actividad_edad_promedio_inventario.md       |  56 ++++++
+ .../14_actividad_rotacion_cuentas_por_cobrar.md    |  50 +++++
+ .../ratios/15_actividad_periodo_promedio_cobro.md  |  47 +++++
+ .../16_actividad_rotacion_cuentas_por_pagar.md     |  46 +++++
+ .../ratios/17_actividad_periodo_promedio_pago.md   |  43 +++++
+ .../ratios/18_actividad_rotacion_activos_fijos.md  |  69 +++++++
+ .../19_actividad_rotacion_activos_totales.md       |  91 +++++++++
+ .../20_actividad_ciclo_conversion_efectivo.md      |  71 +++++++
+ .../ratios/01_liquidez_capital_trabajo_neto.md     |  82 ---------
+ .../ratios/02_liquidez_razon_corriente.md          |  82 ---------
+ .../ratios/03_liquidez_prueba_acida.md             |  89 ---------
+ .../04_rentabilidad_margen_utilidad_bruta.md       |  78 --------
+ .../05_rentabilidad_margen_utilidad_operativa.md   |  87 ---------
+ .../ratios/06_rentabilidad_margen_utilidad_neta.md |  93 ----------
+ .../ratios/07_rentabilidad_roa.md                  | 135 --------------
+ .../ratios/08_rentabilidad_roe.md                  | 117 ------------
+ .../ratios/09_endeudamiento_razon_deuda_total.md   | 102 -----------
+ .../10_endeudamiento_razon_deuda_patrimonio.md     |  84 ---------
+ .../ratios/11_endeudamiento_cobertura_interes.md   |  89 ---------
+ .../ratios/12_actividad_rotacion_inventarios.md    |  92 ----------
+ .../13_actividad_edad_promedio_inventario.md       |  81 --------
+ .../14_actividad_rotacion_cuentas_por_cobrar.md    |  90 ---------
+ .../ratios/15_actividad_periodo_promedio_cobro.md  |  78 --------
+ .../16_actividad_rotacion_cuentas_por_pagar.md     |  86 ---------
+ .../ratios/17_actividad_periodo_promedio_pago.md   |  74 --------
+ .../ratios/18_actividad_rotacion_activos_fijos.md  |  95 ----------
+ .../19_actividad_rotacion_activos_totales.md       | 113 ------------
+ .../20_actividad_ciclo_conversion_efectivo.md      | 103 -----------
+ 41 files changed, 1577 insertions(+), 1850 deletions(-)
+```
+
+→ **R-IDs:** R-50 (fila añadida en G4: una nota por razón en `notas/ratios/NN_<id>.md` con fórmula,
+  árbol, derivados, conjuntos, cuentas y dependientes, más el caso a mano en `05_checks.md` —
+  requisito del bloque B5 de la orden que faltaba en el inventario G1) y R-39 (verificación del caso
+  contra la tabla de referencia: 60/60 celdas registradas en `05_checks.md`).
+→ **Archivos:** 20 notas nuevas en `notas/ratios/` + 20 notas antiguas de `ratios/` reemplazadas
+  (borradas con rastro en el historial de git, regla 9) + `notas/05_checks.md` = 41 (20 + 20 + 1 ✓).
+
+**G4: pasa (todos los cambios con R-ID, ninguno fuera de alcance, nada por revertir).**
+
