@@ -846,3 +846,205 @@ Los conteos confirman el efecto de D-028: `verified` pasa de 62 a 29 y `partiall
 por archivo antes de escribir, que el SHA-256 canónico "sin `cuentas[].research`" era idéntico al de
 la línea base G0: `OK: 20 archivos escritos; KEEP=29 DROP=33; hash sin research intacto en los 20`.
 
+### Tras C3 — commit `ba3db23` (notas: punto 11, V14, V12/D-027, rutas)
+
+Comando: `node notas\validador_v6.mjs` (desde `docs/razones_financieras`)
+
+```text
+validador_v6 | raiz=<raiz-local>\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 18 validaciones
+OK   V0
+OK   V1
+OK   V2
+OK   V3
+OK   V4
+OK   V5
+OK   V6
+OK   V7
+OK   V8
+OK   V9
+OK   V10
+OK   V11
+OK   V12
+OK   V13
+OK   V14
+OK   V15
+OK   V16
+OK   V17
+CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=29 partially=37 ambiguous=5 notas_DIFERENCIA=8
+RESULTADO: 18/18 validaciones sin fallos
+exit=0
+```
+
+## Corrección v7 — G3: verificación independiente en worktree
+
+Comandos y salidas:
+
+```text
+$ git worktree add --detach <raiz-local>\AppData\Local\Temp\opencode\gfo_wt_v7 ba3db23
+Preparing worktree (detached HEAD ba3db23)
+HEAD is now at ba3db23 docs: corrige el punto 11, aclara V14, registra la desviacion V12 (D-027) y sustituye rutas locales (C3)
+
+$ node notas\validador_v6.mjs   (desde <raiz-local>\AppData\Local\Temp\opencode\gfo_wt_v7\docs\razones_financieras)
+validador_v6 | raiz=<raiz-local>\AppData\Local\Temp\opencode\gfo_wt_v7\docs\razones_financieras | archivos JSON=20 | 18 validaciones
+OK   V0
+OK   V1
+OK   V2
+OK   V3
+OK   V4
+OK   V5
+OK   V6
+OK   V7
+OK   V8
+OK   V9
+OK   V10
+OK   V11
+OK   V12
+OK   V13
+OK   V14
+OK   V15
+OK   V16
+OK   V17
+CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=29 partially=37 ambiguous=5 notas_DIFERENCIA=8
+RESULTADO: 18/18 validaciones sin fallos
+exit=0
+
+$ node <ruta-fuera-del-repo>\gfo_gen\cmp_g3.mjs
+JSON comparados=20
+diferencias sin cuentas[].research (metrica de G3)=0
+diferencias del SHA-256 completo (esperado: cambia por el research que toco C2)=20
+G3: 0 diferencias sin cuentas[].research contra la linea base G0
+```
+
+El script de comparación vive fuera del repo (área de trabajo temporal del agente), lee la tabla
+SHA-256 de `notas/00_linea_base_v7.md` (G0) desde el worktree y recalcula por archivo el SHA-256
+completo y el canónico "sin `cuentas[].research`" (claves ordenadas). La métrica de G3 es la segunda:
+**0 diferencias**. La primera columna cambia en los 20 archivos, como era de esperar: C2 modificó
+`cuentas[].research`, que es el único campo que la orden v7 permite tocar en los JSON. Las cifras
+del caso son iguales a las de `b325ab2` porque ningún valor ajeno a `research` cambió (lo confirma
+también V16 y la tabla de la sección B5).
+
+**G3: pasa (18/18 validaciones, 0 diferencias).**
+
+## Corrección v7 — G4: `git diff --stat` por bloque mapeado a R-IDs
+
+```text
+$ git diff --stat b325ab2 e4432ec    (G0-G1: linea base y filas R-51+)
+ docs/razones_financieras/notas/00_linea_base_v7.md | 40 ++++++++++++++++++++++
+ docs/razones_financieras/notas/01_diferencias.md   | 32 +++++++++++++++++
+ 2 files changed, 72 insertions(+)
+
+$ git diff --stat e4432ec 7841708    (C1)
+ docs/decisiones.md                           | 116 +++++++++++++++++++++++----
+ docs/planificacion/razones-json-v3/README.md |   2 +-
+ 2 files changed, 100 insertions(+), 18 deletions(-)
+
+$ git diff --stat 7841708 7abe351    (C2)
+ 20 JSON de docs/razones_financieras/ + docs/razones_financieras/notas/03_fuentes.md
+ + docs/razones_financieras/notas/05_checks.md (evidencia de C1 que viaja con este commit)
+ 22 files changed, 610 insertions(+), 2764 deletions(-)
+
+$ git diff --stat 7abe351 ba3db23    (C3)
+ docs/razones_financieras/notas/05_checks.md | 87 +++++++++++++++++++++++------
+ 1 file changed, 71 insertions(+), 16 deletions(-)
+```
+
+Mapeo archivo → R-ID:
+
+| Commit | Archivos | R-IDs |
+|---|---|---|
+| `e4432ec` (G0-G1) | `notas/00_linea_base_v7.md`, `notas/01_diferencias.md` | G0, G1 (R-51…R-65) |
+| `7841708` (C1) | `docs/decisiones.md`, `docs/planificacion/razones-json-v3/README.md` | R-51, R-52, R-53, R-54, R-55 |
+| `7abe351` (C2) | 20 JSON (`cuentas[].research` únicamente), `notas/03_fuentes.md` | R-56, R-57, R-58, R-59 |
+| `7abe351` (C2, evidencia) | `notas/05_checks.md` (salida de C1) | G2 |
+| `ba3db23` (C3) | `notas/05_checks.md` | R-60, R-61, R-62, R-63 |
+
+Ningún cambio queda sin ID. En los 20 JSON el diff toca solo `cuentas[].research` (comprobado
+commit por commit con el hash canónico "sin research" de G3, idéntico al de G0 en los 20: 0
+diferencias); no hay nada por revertir. Filas R-64 y R-65 (G3) se cierran con la sección G3 de
+este archivo.
+
+**G4: pasa.**
+
+## Corrección v7 — C4 y G5: PR y checklist de 10 puntos
+
+### C4 — descripción del PR #10 actualizada
+
+```text
+$ curl -X PATCH https://api.github.com/repos/cryaut/GFO_Project/pulls/10 (cuerpo desde pr10_body_v7.txt)
+state=open merged=false head=ba3db2305e2c24ab152a2f52468bef5e21e7d546 base=main
+body_len=8170 updated=2026-10-16T23:31:19Z
+```
+
+El cuerpo nuevo describe los 4 commits de v7 (`e4432ec…ba3db23`), las decisiones D-023…D-028, el
+conteo de fuentes (29 `verified` / 37 `partially_verified` / 5 `ambiguous`), el resultado de G3
+(18/18 en worktree, 0 diferencias) y las pruebas (375 tests; lint 0 errores). Sin frases sobre el
+motor, sin aprobaciones de nadie y sin "correcciones aplicadas" sin evidencia. Tras el push normal
+de los 4 commits, la API confirma `state=open merged=false head=ba3db23` (el head del PR avanza al
+último commit de la rama; el push fue normal, sin force).
+
+### G5 — checklist de 10 puntos (orden v7, "Razonamiento / verificación")
+
+1. **G0 a G4 pasaron.** Comando: `git log --oneline -5`
+
+```
+ba3db23 docs: corrige el punto 11, aclara V14, registra la desviacion V12 (D-027) y sustituye rutas locales (C3)
+7abe351 fix: audita fuentes por D-028: 29 verified con frase textual y 33 a partially_verified (C2)
+7841708 docs: restaura D-023 y D-024, registra D-025 a D-028 y corrige la ficha (C1)
+e4432ec docs: linea base v7 y filas R-51+ (G0-G1)
+b325ab2 docs: checklist de 12 puntos con evidencia en 05_checks (G5)
+```
+
+Evidencia: G0 → sección "Línea base v7"; G1 → sección "Compuerta G1 (v7)" de `01_diferencias.md`;
+G2 → secciones "Tras C1/C2/C3" de este archivo (18/18 cada vez); G3 y G4 → secciones
+homónimas de este archivo.
+
+2. **G3: 0 diferencias en los 20 JSON sin `cuentas[].research`.** Comando:
+   `node <ruta-fuera-del-repo>\gfo_gen\cmp_g3.mjs` → salida registrada en la sección G3:
+   `diferencias sin cuentas[].research (metrica de G3)=0`.
+
+3. **Los valores del caso son iguales a los de `b325ab2`.** Comando: mismo script de G3 (el hash
+   canónico "sin research" cubre `razon`, fórmulas, derivados, conjuntos, valores y reglas):
+   `JSON comparados=20 ... =0`; y V16 OK en las tres corridas (60/60 celdas intactas en B5).
+
+4. **V0 a V17 sin fallos en el worktree.** Comando: `node notas\validador_v6.mjs` en el worktree
+   `gfo_wt_v7` (detached en `ba3db23`) → `RESULTADO: 18/18 validaciones sin fallos` (sección G3).
+
+5. **Conteos.** Salida del validador tras C3 y en el worktree:
+   `CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=29 partially=37 ambiguous=5 notas_DIFERENCIA=8`.
+   Las `ambiguous` siguen siendo 5.
+
+6. **Ni `docs/decisiones.md` ni la ficha contienen "el equipo confirmó".** Comando:
+   `Select-String docs\decisiones.md -Pattern "el equipo confirmó"` → `0 hit`;
+   `Select-String docs\planificacion\razones-json-v3\README.md -Pattern "el equipo confirmó"` → `0 hit`.
+
+7. **D-023 a D-028 presentes; D-023 y D-024 con su estado de reemplazo.** Comando:
+   `Select-String docs\decisiones.md -Pattern "### D-02[3-8]"` → `6 hit`; los estados en el cuerpo
+   y en la tabla son: D-023 `Reemplazada por D-025`, D-024 `Cerrada por D-026`, D-025/D-027/D-028
+   `Vigente`, D-026 `Cerrada`.
+
+8. **`npm test` y `npm run lint`: conteo exacto.** Comandos y salidas (2026-10-15, tras los 4 commits
+   de v7):
+
+```
+$ npm.cmd test
+ Test Files  31 passed (31)
+      Tests  375 passed (375)
+exit=0
+
+$ npm.cmd run lint
+✖ 10 problems (0 errors, 10 warnings)
+exit=0
+```
+
+9. **Commits nuevos encima de `b325ab2`; ninguno reescrito.** Comando:
+   `git push origin feat/razones-json-v3` (normal, sin force) →
+   `b325ab2..ba3db23  feat/razones-json-v3 -> feat/razones-json-v3`; los 5 commits de la v3 y los 8
+   de la v6 siguen intactos (el punto 11 documenta el `--amend` previo de `c50545a`, hecho en la
+   ronda v3; no se repitió ninguno).
+
+10. **PR #10 actualizado con el estado real.** Comando: API de GitHub sobre `cryaut/GFO_Project`
+    #10 (2026-10-16) → `state=open merged=false head=ba3db23 base=main`, cuerpo con la sección
+    "Corrección v7", `body_len=8170`.
+
+**G5: pasa. La corrección v7 queda "lista para revisión".**
+
