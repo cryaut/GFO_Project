@@ -72,8 +72,12 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-020 | El importador JSON de Reportes solo acepta respaldos validados | Vigente |
 | D-021 | Los 20 JSON de razones v3 van en `docs/razones_financieras/` dentro del proyecto | Vigente |
 | D-022 | Convenciones por defecto de los JSON: operandos, periodos, conjuntos y `parent_group` | Vigente |
-| D-023 | El control de cálculo directo de m1 es único y global en las 11 razones de flujo, no 9 ni uno por razón | Vigente |
-| D-024 | Separador decimal `.` y de miles `,` fijados en los 20 JSON (formato F1) | Cerrada (decidida 2026-10-15) |
+| D-023 | El botón de cálculo directo de m1 va en las 11 razones de flujo, no en 9 | Reemplazada por D-025 |
+| D-024 | El separador decimal del formato numérico queda abierto en `metadata.display` | Cerrada por D-026 |
+| D-025 | El control de cálculo directo es único y global en las 11 razones de flujo (reemplaza a D-023) | Vigente |
+| D-026 | Formato numérico F1 fijo en los 20 JSON (cierra D-024) | Cerrada |
+| D-027 | V12 busca los marcadores prohibidos como placeholder: entre corchetes o en mayúsculas | Vigente |
+| D-028 | Una cuenta solo es `verified` con una frase de una norma abierta que respalde su definición concreta | Vigente |
 
 ## Decisiones
 
@@ -546,12 +550,12 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 
 **Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/01_decisiones.md`.
 
-### D-023 — El control de cálculo directo de m1 es único y global en las 11 razones de flujo, no 9 ni uno por razón
+### D-023 — El botón de cálculo directo de m1 va en las 11 razones de flujo, no en 9
 
 - **Fecha**: 2026-10-14
-- **Estado**: Vigente
+- **Estado**: Reemplazada por D-025
 - **Decidió**: Alejandro (con agente IA)
-- **Área**: `docs/razones_financieras/*.json` (`modo_periodo.control_global`)
+- **Área**: `docs/razones_financieras/*.json` (`ratio.presentation.first_period_toggle`)
 
 **Contexto.** El punto 8 del documento habla de "9 razones de flujo (7, 8, 12–20)" y pide el botón de cálculo directo solo en ellas. El paréntesis enumera 11 razones y la tabla de valores esperados confirma 11: la columna "m1 off" muestra 9 con valor y 11 `N/D`, y las 9 con valor son exactamente las razones de punto.
 
@@ -560,22 +564,22 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 2. Botón en "9" razones — sigue el número escrito / la enumeración del paréntesis tiene 11 ítems, habría que adivinar cuáles quedan fuera y los conteos de la tabla no quedarían justificados.
 3. Botón solo donde el caso concreto usa un promedio — depende de los datos y no de la fórmula / el mismo JSON cambiaría de presentación según los datos cargados.
 
-**Decisión.** Opción 1. Con el control encendido o apagado, las razones de flujo sin datos completos (14, 15, 16, 17, 20 con el caso MUNO MODA) siguen en `N/D`: primero por `missing_required_account_data` o `missing_required_period_balance`, según el estado, así que tener el control presente en las 11 no cambia ninguna celda de la tabla esperada. El «9» del documento es incoherente con su propia enumeración (11 ítems) y con los conteos de su tabla de valores: esa es la razón de la decisión, no una aprobación de nadie.
+**Decisión.** Opción 1. Con el botón encendido o apagado, las razones de flujo sin datos completos (14, 15, 16, 17, 20 con el caso MUNO MODA) siguen en `N/D`: primero por `missing_required_account_data` o `missing_required_period_balance`, según el estado, así que tener el botón presente en las 11 no cambia ninguna celda de la tabla esperada.
 
-**Corrección (2026-10-15, orden `prompt_correccion_agente_razones_v6.md`, hallazgos H1 y H7).** Se corrige esta entrada en el lugar (la orden prohíbe crear D-xxx nuevas en esta ejecución); los cambios respecto del texto anterior son: (1) **H7** — se elimina la atribución «el equipo confirmó que el «9» de la v3 es un error del documento», porque no existe tal confirmación; no se atribuyen aprobaciones que no existen. (2) **H1** — el control no es un botón por razón (`first_period_toggle`): es **un solo control global**, definido en el bloque `modo_periodo.control_global` con el mismo id (`mostrar_calculo_directo_primer_periodo`) en los 11 JSON de flujo, `default: false`, que solo afecta al primer periodo de cada serie. En los 9 JSON de punto `modo_periodo.control_global` es `null`.
+**Consecuencias.** Los 11 JSON de flujo traen `first_period_toggle` con `default: false` (y `period_rules.first_period.toggle.default: false`); los 9 de punto lo traen en `null`. Si el profesor confirma otra lectura, se ajusta la presentación sin mover ninguna cifra.
 
-**Consecuencias.** Los 11 JSON de flujo traen `modo_periodo.control_global` con `id: "mostrar_calculo_directo_primer_periodo"`, `label` y `default: false` (mismo id en los 11); los 9 de punto lo traen en `null`. Si el profesor confirma otra lectura, se ajusta la presentación sin mover ninguna cifra.
-
-**Para revertirla.** Quitar el control global de las razones señaladas y crear la entrada que reemplace a esta.
+**Para revertirla.** Quitar el toggle de las razones señaladas y crear la entrada que reemplace a esta.
 
 **Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/05_checks.md`.
 
-### D-024 — Separador decimal `.` y de miles `,` fijados en los 20 JSON (formato F1)
+Corrección 2026-10-15: no hubo confirmación del equipo; la frase se retiró.
+
+### D-024 — El separador decimal del formato numérico queda abierto en `metadata.display`
 
 - **Fecha**: 2026-10-14
-- **Estado**: Cerrada (decidida 2026-10-15)
+- **Estado**: Cerrada por D-026
 - **Decidió**: Alejandro (con agente IA)
-- **Área**: `docs/razones_financieras/*.json` (`presentacion.separador_decimal`, `presentacion.separador_miles`)
+- **Área**: `docs/razones_financieras/*.json` (`metadata.display.decimal_separator`)
 
 **Contexto.** El reporte inicial de la entrega presentó los valores con formato `en-US` (punto decimal, coma de millares) como formato por defecto. En la revisión se pidió no fijar el separador decimal hasta que el usuario lo confirme, y dejar esa única decisión abierta de forma explícita dentro de los JSON.
 
@@ -583,12 +587,90 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 1. `metadata.display.decimal_separator` con el marcador `DECISION_PENDIENTE` en los 20 JSON — la decisión queda visible para quien revise o consuma el archivo / el que formatea debe leer el campo antes de imprimir.
 2. Fijar `en-US` (o `es-VE`) desde ahora — formato determinado / podría cambiar cifras que ve el usuario sin acuerdo del equipo.
 
-**Decisión (cerrada).** Opción 2, en la forma definida por la orden de corrección v6 (2026-10-15): el formato está decidido y fijo en los 20 JSON, en el bloque `presentacion` (formato F1): `separador_decimal: "."`, `separador_miles: ","`, `sufijo_porcentaje: " %"` y `decimales` por unidad (`moneda: 0`, el resto `2`). El marcador `DECISION_PENDIENTE` desaparece de `metadata.display` y de todo el JSON (R3/H2; lo comprueba V12/V17). La única etiqueta permitida en un archivo es ahora `DIFERENCIA_CONOCIDA_PROFESOR`, dentro de `razon.notes`.
+**Decisión.** Opción 1, abierta: no se fija el separador decimal; cada JSON lo declara en `metadata.display` como `DECISION_PENDIENTE: separador decimal (punto o coma) por confirmar con el usuario`. Es la única decisión abierta de la entrega: las 8 diferencias conocidas con la solución del profesor no son decisiones abiertas y por eso pasaron a `DIFERENCIA_CONOCIDA_PROFESOR` dentro de `metadata.research_notes`.
 
-**Corrección (2026-10-15, orden `prompt_correccion_agente_razones_v6.md`, hallazgo H2).** Se corrige esta entrada en el lugar (la orden prohíbe crear D-xxx nuevas en esta ejecución): pasa de **Abierta** a **Cerrada (decidida)**; la opción 1 (`DECISION_PENDIENTE`) queda descartada porque las decisiones abiertas se reportan en el chat, nunca en los archivos.
+**Consecuencias.** Las tablas de las notas muestran importes con coma de millares solo como texto de documentación; ningún JSON fija el formato. Cuando el usuario confirme, se reemplaza el valor en los 20 archivos y esta entrada se marca como reemplazada por una nueva.
 
-**Consecuencias.** Los 20 JSON declaran el separador en `presentacion`; las tablas de las notas muestran importes con coma de millares solo como texto de documentación, y el valor calculado no cambia: solo cambia cómo se imprime.
+**Para revertirla.** Confirmar el separador, actualizar los 20 JSON y crear la entrada que reemplace a esta.
 
-**Para revertirla.** Cambiar `presentacion.separador_decimal`/`separador_miles` en los 20 JSON y crear la entrada que reemplace a esta.
+**Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/02_fuentes.md`.
+
+### D-025 — El control de cálculo directo es único y global en las 11 razones de flujo (reemplaza a D-023)
+
+- **Fecha**: 2026-10-15
+- **Estado**: Vigente (reemplaza a D-023)
+- **Decidió**: Alejandro
+- **Área**: `docs/razones_financieras/*.json` (`modo_periodo.control_global`)
+
+**Contexto.** D-023 quedó reemplazada: su texto mezclaba el planteamiento original con una atribución de confirmación al equipo que no existía. La orden de corrección v7 pide una entrada nueva (AGENTS.md regla 13) que fije lo decidido sin atribuciones.
+
+**Opciones.**
+1. Un solo control global en las 11 razones de flujo, apagado por defecto / un control por razón o "9 razones": la enumeración del documento tiene 11 ítems y los conteos de su tabla confirman 11.
+
+**Decisión.** Un solo control de cálculo directo, global, apagado por defecto, en las 11 razones de flujo. Solo afecta al primer periodo de cada serie. No hay un control por razón ni hay 9 razones.
+
+**Consecuencias.** Igual que D-023: los 11 JSON de flujo traen `modo_periodo.control_global` (`default: false`) y los 9 de punto lo traen en `null`. Ninguna celda de la tabla esperada cambia.
+
+**Para revertirla.** Cambiar el alcance del control en los 20 JSON y crear la entrada que reemplace a esta.
 
 **Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/05_checks.md`.
+
+### D-026 — Formato numérico F1 fijo en los 20 JSON (cierra D-024)
+
+- **Fecha**: 2026-10-15
+- **Estado**: Cerrada (cierra D-024)
+- **Decidió**: Alejandro
+- **Área**: `docs/razones_financieras/*.json` (`presentacion`)
+
+**Contexto.** D-024 dejó el separador decimal como única decisión abierta de la entrega v3, con el marcador en `metadata.display`. En la revisión del PR #10 se pidió fijar el formato.
+
+**Opciones.**
+1. Formato F1: punto decimal, coma de miles, sufijo ` %`, decimales 0 en moneda y 2 en el resto / mantener el marcador abierto (las decisiones abiertas se reportan en el chat, no en los archivos).
+
+**Decisión.** Formato numérico F1: separador decimal `.`, separador de miles `,`, sufijo de porcentaje ` %`, decimales: moneda 0, el resto 2.
+
+**Consecuencias.** Los 20 JSON declaran el formato en `presentacion`; el marcador de D-024 desaparece de los archivos (lo comprueba V12/V17). Solo cambia cómo se imprime el valor, no el valor.
+
+**Para revertirla.** Cambiar `presentacion` en los 20 JSON y crear la entrada que reemplace a esta.
+
+**Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/05_checks.md`.
+
+### D-027 — V12 busca los marcadores prohibidos como placeholder: entre corchetes o en mayúsculas
+
+- **Fecha**: 2026-10-15
+- **Estado**: Vigente
+- **Decidió**: agente, ratificado por Alejandro (con dos condiciones)
+- **Área**: `docs/razones_financieras/notas/validador_v6.mjs` (V12)
+
+**Contexto.** La primera corrida de B4 hizo fallar V12 con `marcador "dato…"` dentro de la prosa de `reglas_generales`, que cita los marcadores que prohíbe. Relajar V12 a mitad de bloque fue una desviación de la orden v6, que pide registrarla.
+
+**Opciones.**
+1. Buscar los marcadores como placeholder: entre corchetes o en mayúsculas (la prosa en minúscula de `reglas_generales` no cuenta) / dejar V12 como estaba (marcaría la cita legítima de la regla) / borrar la cita de `reglas_generales` (pierde la explicación del límite).
+
+**Decisión.** Los marcadores prohibidos se buscan como placeholder: entre corchetes o en mayúsculas. La prosa en minúscula de `reglas_generales` no cuenta.
+
+**Consecuencias.** V12 sigue detectando marcadores reales en los campos (R3); la desviación queda registrada en `notas/05_checks.md` (condiciones de la ratificación: esta orden fija la regla y la desviación se registra allí).
+
+**Para revertirla.** Restaurar el patrón original de V12 y crear la entrada que reemplace a esta.
+
+**Referencias.** `docs/razones_financieras/notas/05_checks.md`, orden `prompt_correccion_agente_razones_v7.md`.
+
+### D-028 — Una cuenta solo es `verified` con una frase de una norma abierta que respalde su definición concreta
+
+- **Fecha**: 2026-10-15
+- **Estado**: Vigente
+- **Decidió**: Alejandro
+- **Área**: `docs/razones_financieras/*.json` (`cuentas[].research`), `docs/razones_financieras/notas/03_fuentes.md`
+
+**Contexto.** El audit de fuentes del PR #10 mostró la misma justificación genérica ("NIC 1 exige presentar un juego completo de estados financieros…") repetida en 29 cuentas, también para cuentas de resultado como `is.merchandise_cost` o `is.service_cost`, que una norma general no define.
+
+**Opciones.**
+1. `verified` solo con una frase textual de menos de 15 palabras de una norma abierta en la misma ejecución que confirme la definición concreta de la cuenta, con la frase registrada en `03_fuentes.md` / aceptar la justificación genérica repetida (aprueba cuentas que la norma no nombra).
+
+**Decisión.** Una cuenta es `verified` solo si una norma abierta en esta ejecución respalda su definición concreta. Una justificación genérica repetida en varias cuentas no basta. Sin frase específica, la cuenta pasa a `partially_verified`.
+
+**Consecuencias.** En los 20 JSON solo cambian `cuentas[].research.status` y `cuentas[].research.sources`. Las clasificaciones, las 5 `ambiguous` y las cuentas internas del caso no cambian.
+
+**Para revertirla.** Abrir una norma que respalde la cuenta, actualizar la frase en `03_fuentes.md` y crear la entrada que reemplace a esta.
+
+**Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/03_fuentes.md`, `docs/razones_financieras/notas/05_checks.md`.

@@ -21,7 +21,7 @@ Generar los 20 JSON deterministas de razones financieras que pide `instrucciones
 - Los JSON van en `docs/razones_financieras/` (ruta relativa pedida por el documento de instrucciones, dentro del proyecto porque pide ejecutar las pruebas del proyecto): **D-021**.
 - Cada archivo es autónomo: catálogo, conjuntos, derivados y reglas completos, aunque se repitan (instrucción explícita; prevalece sobre la especificación, que prefiere un `financial-rules.json` único).
 - Convenciones de implementación no resueltas por el documento (literales `{"value": 365}`, refs a otra razón `{"ref": "ratio.<id>", "period": "previous_current"}`, conjuntos `bs.fixed_assets_components` y `bs.noncurrent_liabilities_components`, `parent_group` siempre con su conjunto completo incluido, depreciación acumulada `requires_data`): **D-022**.
-- El botón de cálculo directo de m1 va en las 11 razones de flujo (7, 8, 12–20), no en 9: el paréntesis del documento enumera 11 y la columna "m1 off" (9 con valor / 11 N/D) confirma 11 razones de flujo: **D-023** (en revisión el equipo confirmó que el «9» de la v3 es un error del documento).
+- El botón de cálculo directo de m1 va en las 11 razones de flujo (7, 8, 12–20), no en 9: el paréntesis del documento enumera 11 y la columna "m1 off" (9 con valor / 11 N/D) confirma 11 razones de flujo: **D-023**.
 - El separador decimal del formato numérico no se fija: queda como `DECISION_PENDIENTE` en `metadata.display` de los 20 JSON hasta que el usuario lo confirme: **D-024** (única decisión abierta).
 
 ## Qué se hizo
