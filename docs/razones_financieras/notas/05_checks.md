@@ -581,3 +581,175 @@ Comando: `git diff --stat 2fe3c5d 6ccf187`
 
 **G4: pasa (todos los cambios con R-ID, ninguno fuera de alcance, nada por revertir).**
 
+
+
+## Checklist antes de "listo para revisión" (orden, 12 puntos)
+
+Evidencia (comando y salida) de cada punto; los puntos ya registrados arriba se referencian y se
+vuelven a ejecutar aquí cuando el comando es corto.
+
+1. **G0 a G4 pasaron.** Evidencia: este archivo (secciones H8, B1…B5), sección G3 (18/18 en worktree
+   del `6ccf187`) y sección G4 (diff por bloque + R-IDs); línea base en `00_linea_base.md` (commit
+   inicial `2a607c1`, SHA-256 de 20 JSON + 6 notas) e inventario R-01…R-50 en `01_diferencias.md`
+   (commit `68f1a6a`).
+2. **H1 a H8 cerrados, cada uno con su evidencia.** H1 y H7 → sección B4 y filas R-42/R-48 (D-023
+   corregida en `docs/decisiones.md`); H2 → sección B4 y R-43 (D-024 cerrada, formato F1 en los 20);
+   H3 → V12/V13 de la sección B4 y R-44; H4 → sección B2, `03_fuentes.md` y R-45; H5 → PR #10
+   (punto 10 abajo); H6 → punto 11 abajo (git log); H8 → sección H8 de este archivo.
+3. **Los 20 archivos tienen la estructura de "Estructura".**
+   Comando: `node notas\validador_v6.mjs --solo V1,V2,V3`
+
+```
+validador_v6 | raiz=C:\Users\aleja\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 3 validaciones
+OK   V1
+OK   V2
+OK   V3
+CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=62 partially=4 ambiguous=5 notas_DIFERENCIA=8
+RESULTADO: 3/3 validaciones sin fallos
+exit=0
+```
+
+4. **El control de periodo es uno solo y global en las 11 razones de flujo.** Comando:
+   `Select-String -Path *.json -Pattern ...` contando archivos (vía rutas únicas).
+
+```
+control_global con id unico: 11 archivos (esperado: 11 de flujo)
+control_global null:        9 archivos (esperado: 9 de saldo)
+separador_decimal ".":     20 archivos (esperado: 20)
+separador_miles ",":      20 archivos (esperado: 20)
+DECISION_PENDIENTE en JSON: 0 ocurrencias (esperado: 0)
+```
+
+5. **Ningún archivo contiene `DECISION_PENDIENTE` ni otro marcador prohibido.**
+   Comando: `node notas\validador_v6.mjs --solo V12,V13` (y el conteo del punto 4 da 0).
+
+```
+validador_v6 | raiz=C:\Users\aleja\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 2 validaciones
+OK   V12
+OK   V13
+CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=62 partially=4 ambiguous=5 notas_DIFERENCIA=8
+RESULTADO: 2/2 validaciones sin fallos
+exit=0
+```
+
+6. **El separador decimal es `.` y el de miles `,`.** Comando: mismo bloque del punto 4 (cuenta de
+   archivos con `separador_decimal: "."` y `separador_miles: ","`): 20 y 20, y V17 de la sección B4.
+7. **Toda cuenta `verified` tiene su fila en la auditoría de fuentes.**
+   Comando: `node notas\validador_v6.mjs --solo V14`
+
+```
+validador_v6 | raiz=C:\Users\aleja\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 1 validaciones
+OK   V14
+CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=62 partially=4 ambiguous=5 notas_DIFERENCIA=8
+RESULTADO: 1/1 validaciones sin fallos
+exit=0
+```
+
+8. **Ningún resultado N/D fue convertido en número.**
+   Comando: `node notas\validador_v6.mjs --solo V16` (y 60/60 celdas con las N/D intactas en la
+   sección B5).
+
+```
+validador_v6 | raiz=C:\Users\aleja\Desktop\Cris (Temporal)\GFO\Toolkit\GFO_Project\docs\razones_financieras | archivos JSON=20 | 1 validaciones
+OK   V16
+CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=62 partially=4 ambiguous=5 notas_DIFERENCIA=8
+RESULTADO: 1/1 validaciones sin fallos
+exit=0
+```
+
+9. **No hay cambios sin ID en `notas/01_diferencias.md`.** → Sección G4 de este archivo: mapeo
+   completo de los 6 commits a R-IDs (con R-50 añadida en G4), todos los archivos dentro de alcance
+   y nada por revertir.
+10. **El PR #10 describe el estado real, sin afirmar correcciones del motor de la ronda anterior.**
+    Comando: API de GitHub sobre `cryaut/GFO_Project` #10 (2026-10-15).
+
+```
+state=open
+head=9b62583 base=main
+declara que los JSON no estan aplicados en el motor: True
+sin la frase 'correcciones del motor de la ronda anterior': True
+seccion de correccion v6 presente: True
+body_len=5952 updated=2026-10-16T02:02:09Z
+```
+
+11. **No hay commits reescritos.** Comando: `git log --oneline` (los 5 commits de la v3 conservan su
+    SHA; los 7 nuevos de esta orden van detrás, sin amend/rebase/force).
+
+```
+9b62583 docs: validacion completa en worktree y trazabilidad por bloque (G3-G4)
+6ccf187 docs: notas por raz├│n en notas/ratios y caso a mano (B5)
+2fe3c5d fix: control global y formato F1 en los 20 JSON (B4)
+b0c9f0b docs: conjuntos y derivados v6 verificados (B3)
+1217e5e fix: corrige fuentes y estados de las 71 cuentas (B2)
+bcd7dc2 fix: migra los 20 JSON a la estructura v6 (B1)
+68f1a6a docs: linea base, diferencias y validador v6 (G0-G1)
+2a607c1 docs: actualiza la ficha tras la revision del PR
+ab2f3a5 docs: registra D-024, confirma D-023 y corrige la afirmacion de NIC 38
+dcdbb44 fix: aplica revision del PR a los 20 JSON: DIFERENCIA_CONOCIDA_PROFESOR y display decimal abierto
+c50545a docs: registra decisiones D-021 a D-023, changelog y ficha de razones v3
+86e04e0 feat: a├▒ade 20 JSON de razones financieras v3 con notas y checks
+cb5620c Merge pull request #7 from cryaut/fix/importacion-exportacion
+1178073 docs: importaci├│n y exportaci├│n (D-019, D-020) y ficha de la feature
+2fc898a fix: valida el JSON importado y corrige el reporte HTML en Reportes
+a1fef31 fix: importes con punto o coma en la importaci├│n de estados
+4e7f414 Merge pull request #6 from cryaut/feat/mejoras-apariencia
+a4dc216 docs: Inicio, finanzas personales y decisiones D-017 y D-018
+9423305 style: tema oscuro legible, gradientes suaves y foco visible
+0110c48 feat: Inicio como panorama general y finanzas personales separadas
+f288dc5 Merge pull request #5 from cryaut/feat/modulos-guia
+f5595d1 docs: marca como resueltos los pendientes de la gu├¡a y de razones-financieras-v3
+2a821cb fix: ordena solos los periodos solo cuando empiezan con un a├▒o
+c89e974 fix: calcula la rotaci├│n de CxC con las ventas totales
+262dd0f Merge: integra razones-financieras-v3 de Henry
+8e9b09c docs: documenta los m├│dulos de la gu├¡a, su plan y sus decisiones
+2a4738d fix: evita que una tabla ancha ensanche toda la p├ígina
+7d03ceb feat: agrega las rutas y el men├║ de los m├│dulos nuevos
+dd002e8 feat: completa el presupuesto personal con ingresos y capacidad de ahorro
+3be0818 feat: agrega razones de mercado, reporte integrado y una demo que cuadra
+4d32bf3 feat: agrega inventario, punto de equilibrio, flujo de efectivo y presupuesto maestro
+3f38e12 docs: agrega los requisitos de la gu├¡a del proyecto final
+c9cef23 fix: correct financial ratios calculations
+92a9ff9 Merge pull request #4 from cryaut/feat/apalancamiento
+8e1b15a Merge pull request #2 from cryaut/docs/registro-decisiones
+906c123 feat: agrega la pantalla de apalancamiento con traza
+42c3337 feat: deriva el apalancamiento desde los estados guardados
+c2c7474 feat: agrega las funciones de GAO, GAF y GAT con sus tests
+bd87df3 docs: planifica los pasos 02 a 05 de apalancamiento
+ed5efe2 docs: cierra el paso 00 de apalancamiento y abre el paso 01 de formulas
+dbb76ff docs: agrega el registro de decisiones y la regla para anotarlas
+040d81a Merge pull request #1 from cryaut/core
+c6a5871 docs: permite que una IA integre un PR aprobado
+bba257c docs: documenta las razones agregadas y actualiza el changelog
+6a91793 docs: organiza la planificacion por feature
+d71aac7 docs: agrega guias para agentes de IA, contexto y reglas del equipo
+621a99b test: carga de modulos, razones unificadas y cobertura de intereses
+64acf0b feat: usa un a├▒o de 365 d├¡as en plazos y ciclos (DIAS_ANIO)
+497740e merge: integra razones-financieras (Henry) y unifica razones duplicadas
+98b5552 merge: integra fix/estados-import-razones (Cris) en core
+549912e Agrega modulo de razones financieras
+0199865 feat: import external financial statements and unify financial analysis
+4bac9b9 Correcciones metodologicas de auditoria GFO: EFE indirecto con variaciones reales, CNO separado de CNT, promedios en razones/ROA/DuPont, AV por estado, AH con T1=0, umbrales configurables e interpretacion en 3 niveles
+c206144 GFO Toolkit: app de gestion financiera y operativa (proyecto final semestre 4)
+git status --porcelain:  M docs/razones_financieras/notas/05_checks.md
+
+```
+
+12. **Las pruebas del repo se ejecutaron y el conteo está en el reporte.**
+    Comando: `npm.cmd test` y `npm.cmd run lint`
+
+```
+ Ô£ô tests/unit/analisis-reexports.test.js (1 test) 3ms
+
+ Test Files  31 passed (31)
+      Tests  375 passed (375)
+   Start at  20:09:53
+   Duration  2.65s (transform 1.36s, setup 0ms, collect 3.46s, tests 4.77s, environment 8ms, prepare 6.34s)
+
+exit=0
+---
+
+Ô£û 10 problems (0 errors, 10 warnings)
+
+exit=0
+```
+
