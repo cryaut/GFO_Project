@@ -49,4 +49,4 @@ D-029 a D-034 en `docs/decisiones.md`. Carlos aprobó las recomendaciones 1–4 
 - [x] Corpus e identidad del catálogo comprobados.
 - [x] Regresión de las cifras y formulario manual comprobados.
 - [x] Excel real y persistencia JSON comprobados.
-- [x] Registrar resultado final de tests/lint; se prepara el PR en borrador con esta ficha.
+- [x] Registrar resultado final de tests/lint y [PR #14 en borrador](https://github.com/cryaut/GFO_Project/pull/14).

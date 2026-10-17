@@ -4,6 +4,7 @@
 - **Responsable**: Carlos, con Codex
 - **Rama**: `feat/cuentas-identificador`
 - **Última actualización**: 2026-10-17
+- **PR**: [#14 — borrador](https://github.com/cryaut/GFO_Project/pull/14)
 
 ## Objetivo
 Unificar la identificación de cuentas de importación y alta manual mediante identificadores estables, investigación trazable y sugerencias que requieren confirmación. Conservar las claves por nombre y los estados guardados existentes.
