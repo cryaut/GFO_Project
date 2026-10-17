@@ -37,6 +37,13 @@ Todos los cambios notables en GFO Toolkit.
 - Interpretación sin conclusiones falsas: las razones N/D no generan hallazgos ni insignias; si nada es calculable muestra "No hay indicadores calculables (N/D)".
 - DuPont sin `Infinity` ni `NaN`: un componente N/D anula el ROE y las tarjetas muestran N/D; la evolución entre periodos marca N/D cuando una razón no se calcula.
 - Una sola función por concepto en `calculate.js`: se eliminaron 5 funciones repetidas que impedían cargar la app y 4 equivalentes con otro nombre.
+- **Estado de Origen y Aplicación de Fondos (EOAF)**, la pestaña EOAF de Análisis: la lógica pura vive en `js/modules/analisis/eoaf-calculations.js` (`construirEOAF`, `clasificarMovimientoEOAF`, `seleccionarPeriodoPar`, `interpretarEOAF`); antes `computeEOAF` clasificaba solo 6 agregados y contaba dos veces el mismo movimiento.
+- Cada cuenta del balance comparado (dos periodos más recientes) se clasifica con su grupo y tipo de `ACCOUNT_TYPES`: activo que aumenta = aplicación, que disminuye = origen; pasivo o patrimonio que aumenta = origen, que disminuye = aplicación; sin variación no genera movimiento.
+- Comprobación `Σ orígenes − Σ aplicaciones` con tolerancia de C$ 0.01, sin redistribuir diferencias: si no cuadra se muestra la cifra exacta y la interpretación lo dice.
+- La depreciación acumulada se clasifica por la variación de su magnitud (creciente = origen) y se informa que el modelo no guarda el gasto del periodo por separado; el retiro de un activo no duplica el movimiento.
+- Cuentas con saldo faltante o sin clasificar se reportan como filas con etiqueta ("Dato faltante", "Sin clasificar") y la comprobación queda "incompleta" en lugar de adivinar el dato.
+- Interfaz nueva: tabla Excel-like con secciones y subtotales (solo saldos), fila "Total Pasivos y Patrimonio", KPI de comprobación, notas e interpretación; los nombres de cuenta se escapan con `escapeHTML`.
+- Pruebas: `tests/unit/eoaf.test.js` con 24 casos (clasificación por grupo, depreciación, retiros, saldos en cero y negativos, selección de períodos, datos faltantes, cuadre y descuadre, escape de HTML y cuadre de la demo MUNO MODA con C$ 97,775 de cada lado).
 
 ### Apalancamiento (GAO, GAF y GAT)
 - Fórmulas en `calculate.js`: `gao`, `gaf` y `gat` (estructurales), `gaoVariacion`, `gafVariacion` y `gatVariacion` (entre dos periodos), `tasaEfectiva`, `tasaImpuesto`, `denominadorGaf` y la constante `TASA_IR_DEFECTO` (30 %). Devuelven N/D si falta un dato o el denominador es 0.
