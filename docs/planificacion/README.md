@@ -13,6 +13,7 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 | Mejoras de apariencia, Inicio como panorama y finanzas personales separadas | Carlos | En revisión | [mejoras-apariencia](mejoras-apariencia/README.md) |
 | Importación y exportación: importes, respaldo JSON y reporte HTML | Carlos | En revisión | [importacion-exportacion](importacion-exportacion/README.md) |
 | Origen y Aplicación de Fondos (EOAF) | Henry | En revisión | [origen-y-aplicacion](origen-y-aplicacion/README.md) |
+| Flujo de efectivo desde los estados (EFE de Análisis) | Henry | En revisión | [flujo-de-efectivo](flujo-de-efectivo/README.md) |
 
 Agrega una fila cuando empieces una feature y actualiza el estado cuando cambie.
 
