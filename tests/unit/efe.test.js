@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
-  TOLERANCIA_EFE, seleccionarPeriodoEFE, esResultadoAcumulado,
-  construirEFE, interpretarEFE
+  esResultadoAcumulado, construirEFE, interpretarEFE
 } from '../../js/modules/analisis/efe-calculations.js';
+import { TOLERANCIA_COMPROBACION } from '../../js/modules/analisis/comprobacion-calculations.js';
 import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
 
 // Estados con cuentas de nombre propio, como los deja el importador. Las
@@ -23,24 +23,6 @@ function itemDe(seccion, concepto) {
   return seccion.items.find(fila => fila.concepto.includes(concepto));
 }
 
-describe('selección de periodos', () => {
-  it('compara el periodo final con el inmediatamente anterior', () => {
-    expect(seleccionarPeriodoEFE(['2025', '2023', '2024'])).toMatchObject({
-      periodoInicial: '2024', periodoFinal: '2025'
-    });
-    expect(seleccionarPeriodoEFE(['Marzo', 'Enero'])).toMatchObject({
-      periodoInicial: 'Marzo', periodoFinal: 'Enero'
-    });
-  });
-
-  it('sin dos periodos distintos informa qué falta', () => {
-    expect(seleccionarPeriodoEFE([]).incompleto).toContain('al menos 2 periodos');
-    expect(seleccionarPeriodoEFE(['2025']).incompleto).toContain('al menos 2 periodos');
-    expect(seleccionarPeriodoEFE(['2024', '2024']).incompleto).toContain('no son distintos');
-    expect(seleccionarPeriodoEFE(undefined).incompleto).toContain('al menos 2 periodos');
-  });
-});
-
 describe('cuentas de resultados acumulados', () => {
   it('reconoce las utilidades acumuladas y no el capital', () => {
     expect(esResultadoAcumulado('Utilidades Acumuladas')).toBe(true);
@@ -49,6 +31,19 @@ describe('cuentas de resultados acumulados', () => {
     expect(esResultadoAcumulado('Capital Social')).toBe(false);
     expect(esResultadoAcumulado('Reservas')).toBe(false);
     expect(esResultadoAcumulado('Préstamo a Largo Plazo')).toBe(false);
+  });
+
+  it('reconoce el singular y las cuentas del resultado del ejercicio', () => {
+    expect(esResultadoAcumulado('Utilidad acumulada')).toBe(true);
+    expect(esResultadoAcumulado('Resultado acumulado')).toBe(true);
+    expect(esResultadoAcumulado('Utilidad retenida')).toBe(true);
+    expect(esResultadoAcumulado('Ganancias acumuladas')).toBe(true);
+    expect(esResultadoAcumulado('Pérdidas acumuladas')).toBe(true);
+    expect(esResultadoAcumulado('Utilidad del ejercicio')).toBe(true);
+    expect(esResultadoAcumulado('Utilidades del periodo')).toBe(true);
+    expect(esResultadoAcumulado('Resultado del ejercicio')).toBe(true);
+    // Una reserva sale de las utilidades pero no es el resultado acumulado.
+    expect(esResultadoAcumulado('Reserva legal')).toBe(false);
   });
 });
 
@@ -113,7 +108,50 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
     expect(r.estado).toBe('cuadra');
     expect(r.motivos).toEqual([]);
     expect(r.interpretacion).toContain('el estado cuadra');
-    expect(TOLERANCIA_EFE).toBe(0.01);
+    expect(TOLERANCIA_COMPROBACION).toBe(0.01);
+  });
+
+  it('la interpretación dice si la operación alcanza para la inversión y qué hizo el financiamiento', () => {
+    // CFO 95, CFI −60, CFF −5: la operación cubre la inversión (95 − 60 = 35 ≥ 0)
+    // y el financiamiento devolvió o distribuyó 5 (préstamo +20, dividendos −25).
+    const r = construirEFE(estados(bg, er), '2024', '2025');
+    expect(r.interpretacion).toContain('La operación generó C$ 95.00 de efectivo');
+    expect(r.interpretacion).toContain('alcanzó para cubrir la inversión');
+    expect(r.interpretacion).toContain('el financiamiento devolvió o distribuyó C$ 5.00');
+
+    // Operación negativa (−30) con inversión (−20) y financiamiento (+50): consume
+    // efectivo, no cubre la inversión por 50 y el financiamiento aporta 50.
+    const consume = {
+      '2024': { activos: { Efectivo: 100, Inventario: 0, Equipos: 100 }, pasivos: { 'Prestamo Largo Plazo': 0 }, patrimonio: { Capital: 200 } },
+      '2025': { activos: { Efectivo: 100, Inventario: 30, Equipos: 120 }, pasivos: { 'Prestamo Largo Plazo': 50 }, patrimonio: { Capital: 200 } }
+    };
+    const c = construirEFE(estados(consume, { '2024': {}, '2025': {} }), '2024', '2025');
+    // UN 0; CFO = 0 − 30 (inventario) = −30; CFI = −20; CFF = +50 (préstamo); total 0 = Δ efectivo.
+    expect(c.operacion.total).toBe(-30);
+    expect(c.inversion.total).toBe(-20);
+    expect(c.financiamiento.total).toBe(50);
+    expect(c.estado).toBe('cuadra');
+    expect(c.interpretacion).toContain('La operación consumió C$ 30.00 de efectivo');
+    expect(c.interpretacion).toContain('no alcanzó a cubrir la inversión (faltaron C$ 50.00)');
+    expect(c.interpretacion).toContain('el financiamiento aportó C$ 50.00');
+  });
+
+  it('un cambio de cero no se presenta como menos cero', () => {
+    // Inventario, CxC y activos fijos sin variación: el opuesto de 0 no debe ser -0
+    // (formatCurrency(-0) mostraría "C$ -0.00").
+    const sinCambios = {
+      '2024': { activos: { Efectivo: 100, Inventario: 50, 'Cuentas por Cobrar': 20, Equipos: 100 }, pasivos: { 'Cuentas por Pagar': 70 }, patrimonio: { Capital: 200 } },
+      '2025': { activos: { Efectivo: 100, Inventario: 50, 'Cuentas por Cobrar': 20, Equipos: 100 }, pasivos: { 'Cuentas por Pagar': 70 }, patrimonio: { Capital: 200 } }
+    };
+    const r = construirEFE(estados(sinCambios, { '2024': {}, '2025': {} }), '2024', '2025');
+    const todos = [...r.operacion.items, ...r.inversion.items, ...r.financiamiento.items];
+    expect(todos.length).toBeGreaterThan(0);
+    for (const fila of todos) {
+      expect(Object.is(fila.monto, -0)).toBe(false);
+    }
+    expect(r.inversion.items[0].monto).toBe(0);
+    expect(r.operacion.total).toBe(0);
+    expect(Object.is(r.totalFlujos, -0)).toBe(false);
   });
 
   it('no cuadra y muestra la diferencia exacta cuando el balance no cierra', () => {
@@ -228,6 +266,87 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
     expect(r.motivos.join(' ')).toContain('no tiene cuentas de efectivo');
     expect(r.efectivoInicial).toBeNull();
     expect(r.diferencia).toBeNull();
+  });
+
+  it('un importe que no es un número deja el estado incompleto en lugar de lanzar', () => {
+    // El efectivo de 2025 llegó como texto: antes computeFinancialTotals lanzaba
+    // "Importe inválido" y la pantalla de Análisis quedaba vacía.
+    const textoEnSaldo = {
+      '2024': { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { Capital: 100 } },
+      '2025': { activos: { Efectivo: 'cien' }, pasivos: {}, patrimonio: { Capital: 100 } }
+    };
+    const r = construirEFE(estados(textoEnSaldo, { '2024': {}, '2025': { Ventas: 1 } }), '2024', '2025');
+    expect(r.estado).toBe('incompleta');
+    expect(r.efectivoFinal).toBeNull();
+    expect(r.variacionEfectivo).toBeNull();
+    expect(r.diferencia).toBeNull();
+    expect(r.motivos.join(' ')).toContain('«Efectivo» no tiene saldo en el periodo 2025');
+    expect(r.motivos.join(' ')).toContain('No se pudo calcular la utilidad neta');
+
+    // Un importe inválido en el estado de resultados tampoco lanza.
+    const balanceado = {
+      '2024': { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { Capital: 100 } },
+      '2025': { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { Capital: 100 } }
+    };
+    const erInvalido = construirEFE(estados(balanceado, { '2024': {}, '2025': { Ventas: 'abc' } }), '2024', '2025');
+    expect(erInvalido.estado).toBe('incompleta');
+    expect(erInvalido.utilidadNeta).toBeNull();
+    expect(erInvalido.motivos.join(' ')).toContain('Ventas');
+  });
+
+  it('sin estado de resultados lo dice una vez; con estado de resultados vacío avisa', () => {
+    const balanceado = {
+      '2024': { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { Capital: 100 } },
+      '2025': { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { Capital: 100 } }
+    };
+    const sinER = construirEFE(estados(balanceado, { '2024': {} }), '2024', '2025');
+    expect(sinER.estado).toBe('incompleta');
+    expect(sinER.motivos).toHaveLength(1);
+    expect(sinER.motivos[0]).toContain('No hay estado de resultados del periodo 2025');
+    // No se culpa a "cuentas sin clasificar" cuando lo que falta es el estado.
+    expect(sinER.motivos.join(' ')).not.toContain('sin clasificar');
+
+    const erVacio = construirEFE(estados(balanceado, { '2024': {}, '2025': {} }), '2024', '2025');
+    expect(erVacio.utilidadNeta).toBe(0);
+    expect(erVacio.estado).toBe('cuadra');
+    expect(erVacio.advertencias.join(' ')).toContain('no tiene cuentas');
+  });
+
+  it('un balance descuadrado se avisa por periodo, igual que en el EOAF', () => {
+    const descuadrado = {
+      '2024': { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { Capital: 100 } },
+      '2025': { activos: { Efectivo: 130 }, pasivos: {}, patrimonio: { Capital: 100 } }
+    };
+    const r = construirEFE(estados(descuadrado, { '2024': {}, '2025': {} }), '2024', '2025');
+    // 2025: activos 130 contra 100 de patrimonio → descuadre de 30.
+    expect(r.advertencias.join(' ')).toContain('El balance del periodo 2025 no cumple A = P + O');
+    expect(r.advertencias.join(' ')).not.toContain('El balance del periodo 2024');
+    expect(r.estado).toBe('no-cuadra');
+  });
+
+  it('las cuentas del resultado del ejercicio no se confunden con aportaciones ni con dividendos', () => {
+    // Caso resuelto a mano (2024 → 2025), sin deuda:
+    //   Efectivo 180 → 210 (+30)    Capital 100 → 100
+    //   Utilidades acumuladas 50 → 70 (+20)  Utilidad del ejercicio 30 → 40 (+10)
+    //   UN 2025 = 100 − 60 = 40. ΔRE = 20 + 10 = 30 → dividendos = 40 − 30 = 10.
+    //   Aportaciones = Δpatrimonio (30) − ΔRE (30) = 0. CFO 40 + CFF (−10) = 30 = Δ efectivo.
+    // Si «Utilidad del ejercicio» no se reconociera, ΔRE sería 20: los dividendos
+    // saldrían en 20 y el ejercicio (+10) figuraría como aportación de capital.
+    const conEjercicio = {
+      '2024': { activos: { Efectivo: 180 }, pasivos: {}, patrimonio: { Capital: 100, 'Utilidad acumulada': 50, 'Utilidad del ejercicio': 30 } },
+      '2025': { activos: { Efectivo: 210 }, pasivos: {}, patrimonio: { Capital: 100, 'Utilidad acumulada': 70, 'Utilidad del ejercicio': 40 } }
+    };
+    const r = construirEFE(estados(conEjercicio, {
+      '2024': {}, '2025': { Ventas: 100, 'Costo de Ventas': 60 }
+    }), '2024', '2025');
+    expect(r.utilidadNeta).toBe(40);
+    expect(itemDe(r.financiamiento, 'Dividendos').monto).toBe(-10);
+    expect(itemDe(r.financiamiento, 'Aportaciones').monto).toBe(0);
+    expect(r.operacion.total).toBe(40);
+    expect(r.financiamiento.total).toBe(-10);
+    expect(r.totalFlujos).toBe(30);
+    expect(r.variacionEfectivo).toBe(30);
+    expect(r.estado).toBe('cuadra');
   });
 
   it('sin balance general de un periodo no se presenta ningún estado', () => {
@@ -386,5 +505,58 @@ describe('pantalla de EFE en Análisis', () => {
     const bloque = html.slice(inicio, html.indexOf('Tolerancia de la comprobación', inicio));
     expect(bloque).toContain('&lt;img src=x onerror=alert(1)&gt;');
     expect(bloque).not.toContain('<img src=x');
+  });
+
+  it('un importe no numérico guardado no deja vacía la pantalla de Análisis', async () => {
+    // Regresión: computeEFE lanzaba "Importe inválido" y toda la pantalla quedaba
+    // en blanco; en main, con los mismos datos, se renderizaba completa.
+    const { html } = await cargarAnalisis({
+      name: 'Importe de texto',
+      periods: ['2024', '2025'],
+      balanceGeneral: {
+        '2024': { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { Capital: 100 } },
+        '2025': { activos: { Efectivo: 'cien' }, pasivos: {}, patrimonio: { Capital: 100 } }
+      },
+      estadoResultados: { '2024': { Ventas: 1 }, '2025': { Ventas: 2 } },
+      accountTypes: {
+        activos: { Efectivo: 'efectivo' }, pasivos: {}, patrimonio: { Capital: 'patrimonio' },
+        estadoResultados: { Ventas: 'ventas' }
+      }
+    });
+    expect(html.length).toBeGreaterThan(0);
+    expect(html).toContain('Método indirecto desde dos balances');
+    expect(html).toContain('No se pudo calcular la utilidad neta');
+    expect(html).toContain('Comprobación incompleta');
+  });
+
+  it('computeEFE compara el cierre indicado con el periodo inmediatamente anterior', async () => {
+    const periodo = () => ({ activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { Capital: 100 } });
+    const { analisis } = await cargarAnalisis(normalizeFinancialData({
+      name: 'Tres periodos',
+      periods: ['2023', '2024', '2025'],
+      balanceGeneral: { '2023': periodo(), '2024': periodo(), '2025': periodo() },
+      estadoResultados: { '2023': { Ventas: 1 }, '2024': { Ventas: 2 }, '2025': { Ventas: 3 } },
+      accountTypes: {
+        activos: { Efectivo: 'efectivo' }, pasivos: {}, patrimonio: { Capital: 'patrimonio' },
+        estadoResultados: { Ventas: 'ventas' }
+      }
+    }));
+    expect(analisis.computeEFE('2025').periodos).toEqual({ inicial: '2024', final: '2025' });
+    expect(analisis.computeEFE('2024').periodos).toEqual({ inicial: '2023', final: '2024' });
+    // El primer periodo no tiene anterior: se explica qué falta.
+    expect(analisis.computeEFE('2023').incompleto).toContain('No hay un periodo anterior a 2023');
+  });
+
+  it('la demo no muestra "C$ -0.00" en ninguna fila del EFE', async () => {
+    vi.resetModules();
+    stubNavegador();
+    const { DEMO_MUNOMODA } = await import('../../js/modules/estados/index.js');
+    const { html } = await cargarAnalisis(normalizeFinancialData(DEMO_MUNOMODA));
+    const inicio = html.indexOf('Método indirecto desde dos balances');
+    const bloque = html.slice(inicio, html.indexOf('Tolerancia de la comprobación', inicio));
+    expect(inicio).toBeGreaterThan(-1);
+    // La fila de activos fijos de la demo no varía: es C$ 0.00, no C$ -0.00.
+    expect(bloque).toContain('Venta o baja de activos fijos');
+    expect(bloque).not.toContain('-0.00');
   });
 });

@@ -15,8 +15,9 @@ import {
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
 import { normalizeFinancialData, sortPeriods } from '../estados/estados-normalize.js';
 import { escapeHTML } from '../../utils/html.js';
-import { construirEOAF, seleccionarPeriodoPar } from './eoaf-calculations.js';
-import { construirEFE, seleccionarPeriodoEFE } from './efe-calculations.js';
+import { construirEOAF } from './eoaf-calculations.js';
+import { construirEFE } from './efe-calculations.js';
+import { seleccionarPeriodoPar, TOLERANCIA_COMPROBACION } from './comprobacion-calculations.js';
 
 export const UMBRALES = {
   ratioCorrienteMin: 1,
@@ -351,17 +352,12 @@ export function computeCNTCNO(period) {
   };
 }
 
-// El EFE es un estado de dos periodos: `period` señala el cierre (la pestaña
-// pasa el último periodo) y el par se elige con el mismo criterio que el resto
-// de Análisis. Devuelve el estado completo o `incompleto` si falta un periodo.
+// El EFE es un estado de dos periodos: `period` es el cierre (la pestaña pasa el
+// último periodo) y se compara contra el inmediatamente anterior, con el mismo
+// criterio que el EOAF. Devuelve el estado completo o `incompleto` si falta un
+// periodo.
 export function computeEFE(period) {
-  const par = seleccionarPeriodoEFE(getPeriods());
-  const estados = savedCache || refreshSavedStates();
-  const datos = estados || {
-    balanceGeneral: store.get('estados.balanceGeneral') || {},
-    estadoResultados: store.get('estados.estadoResultados') || {},
-    accountTypes: store.get('estados.accountTypes')
-  };
+  const par = seleccionarPeriodoPar(getPeriods(), period);
   if (par.incompleto) {
     return {
       periodos: { inicial: null, final: period },
@@ -372,7 +368,7 @@ export function computeEFE(period) {
       motivos: [], advertencias: [], interpretacion: ''
     };
   }
-  return construirEFE(datos, par.periodoInicial, par.periodoFinal);
+  return construirEFE(estadosParaComprobacion(), par.periodoInicial, par.periodoFinal);
 }
 
 function interpretacion(razones) {
@@ -601,20 +597,58 @@ function renderCNTCNOSection(period) {
   </p>`;
 }
 
+// Estados que leen el EOAF y el EFE: los normalizados si la caché es válida; si
+// no, los guardados en bruto, porque las cuentas sin clasificar o con importes
+// inválidos se reportan en la comprobación en lugar de ignorarse.
+function estadosParaComprobacion() {
+  const estados = savedCache || refreshSavedStates();
+  return estados || {
+    balanceGeneral: store.get('estados.balanceGeneral') || {},
+    estadoResultados: store.get('estados.estadoResultados') || {},
+    accountTypes: store.get('estados.accountTypes')
+  };
+}
+
 export function computeEOAF(periods) {
   const par = seleccionarPeriodoPar(periods);
   if (par.incompleto) {
     return { periodos: null, incompleto: par.incompleto, secciones: [], resumen: null, advertencias: [], interpretacion: '' };
   }
-  // Estados normalizados si la caché es válida; si no, los guardados en bruto:
-  // las cuentas sin clasificar se reportan en la comprobación, no se ignoran.
-  const estados = savedCache || refreshSavedStates();
-  const datos = estados || {
-    balanceGeneral: store.get('estados.balanceGeneral') || {},
-    estadoResultados: store.get('estados.estadoResultados') || {},
-    accountTypes: store.get('estados.accountTypes')
-  };
-  return construirEOAF(datos, par.periodoInicial, par.periodoFinal);
+  return construirEOAF(estadosParaComprobacion(), par.periodoInicial, par.periodoFinal);
+}
+
+// Piezas de interfaz que comparten las pestañas EOAF y EFE.
+const INSIGNIAS_COMPROBACION = {
+  cuadra: '<span class="badge badge-success">Cuadra</span>',
+  'no-cuadra': '<span class="badge badge-danger">No cuadra</span>',
+  incompleta: '<span class="badge badge-warning">Comprobación incompleta</span>'
+};
+
+function insigniaComprobacion(estado) {
+  return INSIGNIAS_COMPROBACION[estado] || INSIGNIAS_COMPROBACION.incompleta;
+}
+
+// Tarjeta con una lista de textos. Pueden traer nombres de cuenta de un archivo
+// importado, así que cada uno se escapa; `titulo` y `color` son literales.
+function tarjetaLista(titulo, textos, color) {
+  if (!textos || textos.length === 0) return '';
+  return `<div class="card mb-4" style="border-left:4px solid var(${color})">
+    <p class="font-bold mb-2">${titulo}</p>
+    <ul style="margin:0;padding-left:1.2em;font-size:var(--font-size-sm)">
+      ${textos.map(texto => `<li>${escapeHTML(texto)}</li>`).join('')}
+    </ul>
+  </div>`;
+}
+
+function tarjetaInterpretacion(texto) {
+  return `<div class="card mb-4" style="border-left:4px solid var(--color-primary)">
+    <p class="font-bold mb-2">Interpretación</p>
+    <p style="margin:0;font-size:var(--font-size-sm);color:var(--text-secondary)">${escapeHTML(texto)}</p>
+  </div>`;
+}
+
+function pieComprobacion() {
+  return `<p class="text-muted" style="font-size:var(--font-size-sm)">Tolerancia de la comprobación: ${formatCurrency(TOLERANCIA_COMPROBACION)} (un centavo), más el redondeo de coma flotante de los totales. «Cuadra» confirma que los dos balances cierran y que sus variaciones se explican entre sí; no verifica que los importes capturados sean correctos.</p>`;
 }
 
 function renderEOAFSection(periods) {
@@ -668,12 +702,6 @@ function renderEOAFSection(periods) {
     }
     : { saldoInicial: null, saldoFinal: null, variacion: null };
 
-  const insigniaEstado = {
-    cuadra: '<span class="badge badge-success">Cuadra</span>',
-    'no-cuadra': '<span class="badge badge-danger">No cuadra</span>',
-    incompleta: '<span class="badge badge-warning">Comprobación incompleta</span>'
-  }[resumen.estado];
-
   return `<p class="text-muted mb-4" style="font-size:var(--font-size-sm)">
     Comparación de saldos: <strong>${escapeHTML(periodos.inicial)}</strong> (periodo inicial) → <strong>${escapeHTML(periodos.final)}</strong> (periodo final).
     Reglas: aumento de activo = aplicación, disminución de activo = origen; aumento de pasivo o patrimonio = origen, disminución = aplicación;
@@ -702,28 +730,15 @@ function renderEOAFSection(periods) {
     </tbody>
   </table></div>
   <div class="kpi-grid mb-4">
-    <div class="kpi-card"><div class="kpi-value">${formatCurrency(resumen.totalOrigenes)}</div><div class="kpi-label">Total de orígenes</div></div>
-    <div class="kpi-card"><div class="kpi-value">${formatCurrency(resumen.totalAplicaciones)}</div><div class="kpi-label">Total de aplicaciones</div></div>
-    <div class="kpi-card"><div class="kpi-value ${resumen.estado === 'no-cuadra' ? 'text-danger' : ''}">${formatCurrency(resumen.diferencia)}</div><div class="kpi-label">Diferencia (orígenes − aplicaciones)</div></div>
-    <div class="kpi-card">${insigniaEstado}<div class="kpi-label font-bold" style="margin-top:var(--space-2)">Estado de la comprobación</div></div>
+    <div class="kpi-card"><div class="kpi-value">${fmtSaldo(resumen.totalOrigenes)}</div><div class="kpi-label">Total de orígenes</div></div>
+    <div class="kpi-card"><div class="kpi-value">${fmtSaldo(resumen.totalAplicaciones)}</div><div class="kpi-label">Total de aplicaciones</div></div>
+    <div class="kpi-card"><div class="kpi-value ${resumen.estado === 'no-cuadra' ? 'text-danger' : ''}">${fmtSaldo(resumen.diferencia)}</div><div class="kpi-label">Diferencia (orígenes − aplicaciones)</div></div>
+    <div class="kpi-card">${insigniaComprobacion(resumen.estado)}<div class="kpi-label font-bold" style="margin-top:var(--space-2)">Estado de la comprobación</div></div>
   </div>
-  ${resumen.motivos.length ? `<div class="card mb-4" style="border-left:4px solid var(--color-warning)">
-    <p class="font-bold mb-2">Comprobación incompleta</p>
-    <ul style="margin:0;padding-left:1.2em;font-size:var(--font-size-sm)">
-      ${resumen.motivos.map(motivo => `<li>${escapeHTML(motivo)}</li>`).join('')}
-    </ul>
-  </div>` : ''}
-  ${advertencias.length ? `<div class="card mb-4" style="border-left:4px solid var(--color-info)">
-    <p class="font-bold mb-2">Notas de la comprobación</p>
-    <ul style="margin:0;padding-left:1.2em;font-size:var(--font-size-sm)">
-      ${advertencias.map(advertencia => `<li>${escapeHTML(advertencia)}</li>`).join('')}
-    </ul>
-  </div>` : ''}
-  <div class="card mb-4" style="border-left:4px solid var(--color-primary)">
-    <p class="font-bold mb-2">Interpretación</p>
-    <p style="margin:0;font-size:var(--font-size-sm);color:var(--text-secondary)">${escapeHTML(interpretacion)}</p>
-  </div>
-  <p class="text-muted" style="font-size:var(--font-size-sm)">Tolerancia de la comprobación: C$ 0.01 (un centavo), más el redondeo de coma flotante de los totales.</p>`;
+  ${tarjetaLista('Comprobación incompleta', resumen.motivos, '--color-warning')}
+  ${tarjetaLista('Notas de la comprobación', advertencias, '--color-info')}
+  ${tarjetaInterpretacion(interpretacion)}
+  ${pieComprobacion()}`;
 }
 
 function renderEFESection(period) {
@@ -745,12 +760,6 @@ function renderEFESection(period) {
       <td>Total de ${titulo.toLowerCase()}</td>
       ${celda(seccion.total)}
     </tr>`;
-  const insigniaEstado = {
-    cuadra: '<span class="badge badge-success">Cuadra</span>',
-    'no-cuadra': '<span class="badge badge-danger">No cuadra</span>',
-    incompleta: '<span class="badge badge-warning">Comprobación incompleta</span>'
-  }[efe.estado];
-
   return `<p class="text-muted mb-4" style="font-size:var(--font-size-sm)">
     Método indirecto desde dos balances: <strong>${escapeHTML(efe.periodos.inicial)}</strong> (inicial) → <strong>${escapeHTML(efe.periodos.final)}</strong> (final).
     Operación = utilidad neta + depreciación + capital de trabajo; Inversión = activos fijos; Financiamiento = deuda, patrimonio y dividendos.
@@ -773,25 +782,12 @@ function renderEFESection(period) {
     <div class="kpi-card"><div class="kpi-value">${fmt(efe.operacion.total)}</div><div class="kpi-label">Flujo de Efectivo Operativo (CFO)</div></div>
     <div class="kpi-card"><div class="kpi-value">${fmt(efe.inversion.total)}</div><div class="kpi-label">Flujo de Efectivo de Inversión (CFI)</div></div>
     <div class="kpi-card"><div class="kpi-value">${fmt(efe.financiamiento.total)}</div><div class="kpi-label">Flujo de Efectivo de Financiamiento (CFF)</div></div>
-    <div class="kpi-card">${insigniaEstado}<div class="kpi-label font-bold" style="margin-top:var(--space-2)">Estado de la comprobación</div></div>
+    <div class="kpi-card">${insigniaComprobacion(efe.estado)}<div class="kpi-label font-bold" style="margin-top:var(--space-2)">Estado de la comprobación</div></div>
   </div>
-  ${efe.motivos.length ? `<div class="card mb-4" style="border-left:4px solid var(--color-warning)">
-    <p class="font-bold mb-2">Comprobación incompleta</p>
-    <ul style="margin:0;padding-left:1.2em;font-size:var(--font-size-sm)">
-      ${efe.motivos.map(motivo => `<li>${escapeHTML(motivo)}</li>`).join('')}
-    </ul>
-  </div>` : ''}
-  ${efe.advertencias.length ? `<div class="card mb-4" style="border-left:4px solid var(--color-info)">
-    <p class="font-bold mb-2">Notas del EFE</p>
-    <ul style="margin:0;padding-left:1.2em;font-size:var(--font-size-sm)">
-      ${efe.advertencias.map(advertencia => `<li>${escapeHTML(advertencia)}</li>`).join('')}
-    </ul>
-  </div>` : ''}
-  <div class="card mb-4" style="border-left:4px solid var(--color-primary)">
-    <p class="font-bold mb-2">Interpretación</p>
-    <p style="margin:0;font-size:var(--font-size-sm);color:var(--text-secondary)">${escapeHTML(efe.interpretacion)}</p>
-  </div>
-  <p class="text-muted" style="font-size:var(--font-size-sm)">Tolerancia de la comprobación: C$ 0.01 (un centavo), más el redondeo de coma flotante de los totales.</p>`;
+  ${tarjetaLista('Comprobación incompleta', efe.motivos, '--color-warning')}
+  ${tarjetaLista('Notas del EFE', efe.advertencias, '--color-info')}
+  ${tarjetaInterpretacion(efe.interpretacion)}
+  ${pieComprobacion()}`;
 }
 
 function renderDuPontSection(period) {

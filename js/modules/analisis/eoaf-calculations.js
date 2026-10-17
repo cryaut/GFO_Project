@@ -6,13 +6,9 @@
 
 import { eoaf } from '../../utils/calculate.js';
 import { formatCurrency } from '../../utils/format.js';
-import { resolveAccountType } from '../estados/estados-calculations.js';
-import { ordenarPeriodos } from '../estados/estados-normalize.js';
-
-// Tolerancia de la comprobación: un centavo, más el epsilon de coma flotante
-// escalado a los totales (misma regla que validateFinancialData). No se
-// redistribuyen diferencias: si el estado no cuadra, se informa la cifra exacta.
-export const TOLERANCIA_EOAF = 0.01;
+import {
+  variacionesDeCuentas, advertenciasDeBalance, toleranciaComprobacion
+} from './comprobacion-calculations.js';
 
 const SECCIONES = [
   { id: 'activos', titulo: 'Activos' },
@@ -29,27 +25,6 @@ const ETIQUETA_FALTA = {
   'sin-clasificar': 'Sin clasificar',
   'signo-cambiado': 'Revisar'
 };
-
-// Periodo inicial y final de la comparación: los dos últimos periodos en orden
-// cronológico, con el mismo criterio que usa Análisis para el resto de pestañas.
-export function seleccionarPeriodoPar(periodos) {
-  const lista = (Array.isArray(periodos) ? periodos : [])
-    .filter(periodo => typeof periodo === 'string' && periodo.trim());
-  if (lista.length < 2) {
-    return {
-      incompleto: `Se necesitan al menos 2 periodos para comparar y hay ${lista.length}. Capture o importe un periodo adicional en Estados Financieros.`
-    };
-  }
-  // Con año al inicio se ordenan solos; con nombres ("Marzo") se respeta el
-  // orden que el usuario dejó en Estados, igual que normalizeFinancialData.
-  const ordenados = ordenarPeriodos(lista);
-  const periodoFinal = ordenados[ordenados.length - 1];
-  const periodoInicial = ordenados[ordenados.length - 2];
-  if (periodoInicial === periodoFinal) {
-    return { incompleto: 'Los periodos comparables no son distintos: no hay dos periodos diferentes para armar el estado.' };
-  }
-  return { periodoInicial, periodoFinal, periodos: ordenados };
-}
 
 // Clasifica la variación de una cuenta del balance.
 // - `grupo`: sección del balance ('activos', 'pasivos', 'patrimonio').
@@ -103,23 +78,6 @@ function mensajeFalta(motivo, cuenta, saldoInicial, saldoFinal, periodos) {
   return '';
 }
 
-function totalGrupo(bg, grupo) {
-  return Object.values(bg[grupo] || {}).reduce(
-    (suma, valor) => (Number.isFinite(valor) ? suma + valor : suma), 0
-  );
-}
-
-function advertenciasDeBalance(periodos, bgInicial, bgFinal) {
-  const advertencias = [];
-  for (const [etiqueta, bg] of [[periodos.inicial, bgInicial], [periodos.final, bgFinal]]) {
-    const descuadre = totalGrupo(bg, 'activos') - totalGrupo(bg, 'pasivos') - totalGrupo(bg, 'patrimonio');
-    if (Math.abs(descuadre) > TOLERANCIA_EOAF) {
-      advertencias.push(`El balance del periodo ${etiqueta} no cumple A = P + O (diferencia de ${formatCurrency(descuadre)}); esa diferencia se refleja en la comprobación del EOAF.`);
-    }
-  }
-  return advertencias;
-}
-
 // Construye el estado completo: secciones con sus filas y subtotales, resumen de
 // la comprobación (origenes vs aplicaciones), advertencias e interpretación.
 export function construirEOAF(datos, periodoInicial, periodoFinal) {
@@ -139,20 +97,11 @@ export function construirEOAF(datos, periodoInicial, periodoFinal) {
 
   const secciones = [];
   for (const { id, titulo } of SECCIONES) {
-    const cuentasInicial = bgInicial[id] || {};
-    const cuentasFinal = bgFinal[id] || {};
-    // Unión de cuentas: primero las del periodo inicial y después las que solo
-    // aparecen en el final (sin saldo inicial no hay variación clasificable).
-    const nombres = [
-      ...Object.keys(cuentasInicial),
-      ...Object.keys(cuentasFinal).filter(nombre => !Object.hasOwn(cuentasInicial, nombre))
-    ];
+    // Unión de cuentas de los dos periodos; un saldo ausente o no numérico queda
+    // en null (sin saldo inicial no hay variación clasificable).
     const filas = [];
     let avisoDepreciacion = false;
-    for (const cuenta of nombres) {
-      const saldoInicial = Object.hasOwn(cuentasInicial, cuenta) ? cuentasInicial[cuenta] : null;
-      const saldoFinal = Object.hasOwn(cuentasFinal, cuenta) ? cuentasFinal[cuenta] : null;
-      const tipo = resolveAccountType(datos, id, cuenta) || '';
+    for (const { cuenta, tipo, saldoInicial, saldoFinal, variacion } of variacionesDeCuentas(datos, id, periodoInicial, periodoFinal)) {
       const r = clasificarMovimientoEOAF(id, tipo, saldoInicial, saldoFinal);
       const mensaje = mensajeFalta(r.motivo, cuenta, saldoInicial, saldoFinal, periodos);
       if (mensaje) motivos.push(mensaje);
@@ -169,7 +118,7 @@ export function construirEOAF(datos, periodoInicial, periodoFinal) {
         tipo: tipo || null,
         saldoInicial,
         saldoFinal,
-        variacion: saldoInicial !== null && saldoFinal !== null ? saldoFinal - saldoInicial : null,
+        variacion,
         clasificacion: r.clasificacion,
         origen: r.clasificacion === 'Origen' ? r.monto : null,
         aplicacion: r.clasificacion === 'Aplicacion' ? r.monto : null,
@@ -200,13 +149,17 @@ export function construirEOAF(datos, periodoInicial, periodoFinal) {
   advertencias.push(...advertenciasDeBalance(periodos, bgInicial, bgFinal));
 
   const filas = secciones.flatMap(seccion => seccion.filas);
-  const totalOrigenes = filas.reduce((suma, fila) => suma + (fila.origen ?? 0), 0);
-  const totalAplicaciones = filas.reduce((suma, fila) => suma + (fila.aplicacion ?? 0), 0);
-  const diferencia = totalOrigenes - totalAplicaciones;
-  const tolerancia = TOLERANCIA_EOAF
-    + Number.EPSILON * Math.max(1, Math.abs(totalOrigenes), Math.abs(totalAplicaciones));
   const motivosUnicos = [...new Set(motivos)];
-  const estado = motivosUnicos.length > 0
+  // Con la comprobación incompleta los totales serían sumas parciales que se
+  // leen como cifras firmes: se informan como N/D (null). El detalle por cuenta
+  // sigue en las filas.
+  const completa = motivosUnicos.length === 0;
+  const sumar = campo => filas.reduce((suma, fila) => suma + (fila[campo] ?? 0), 0);
+  const totalOrigenes = completa ? sumar('origen') : null;
+  const totalAplicaciones = completa ? sumar('aplicacion') : null;
+  const diferencia = completa ? totalOrigenes - totalAplicaciones : null;
+  const tolerancia = toleranciaComprobacion(totalOrigenes, totalAplicaciones);
+  const estado = !completa
     ? 'incompleta'
     : (Math.abs(diferencia) <= tolerancia ? 'cuadra' : 'no-cuadra');
 

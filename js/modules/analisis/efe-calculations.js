@@ -11,17 +11,18 @@
 
 import { formatCurrency } from '../../utils/format.js';
 import { computeFinancialTotals, resolveAccountType } from '../estados/estados-calculations.js';
-import { ordenarPeriodos } from '../estados/estados-normalize.js';
-
-// Misma tolerancia que la comprobación del EOAF y que validateFinancialData:
-// un centavo, más el epsilon de coma flotante escalado a las magnitudes.
-export const TOLERANCIA_EFE = 0.01;
+import {
+  variacionesDeCuentas, advertenciasDeBalance, toleranciaComprobacion
+} from './comprobacion-calculations.js';
 
 // Cuentas de patrimonio que acumulan resultados: su variación permite separar
 // los dividendos de las aportaciones de capital. Es una inferencia local por
 // nombre: ACCOUNT_TYPES no tiene subtipos de patrimonio, porque partirlo
-// cambiaría el patrimonio que consumen las razones.
-const RE_RESULTADOS = /\b(utilidades acumuladas|resultados acumulados|utilidades retenidas|resultados de ejercicios anteriores|resultados del ejercicio|ganancias retenidas|perdidas acumuladas)\b/;
+// cambiaría el patrimonio que consumen las razones. Incluye las cuentas del
+// resultado del ejercicio (utilidad del ejercicio o del periodo): si se
+// dejaran fuera, su cambio se leería como aportación de capital y los
+// dividendos saldrían distorsionados por la utilidad del año anterior.
+const RE_RESULTADOS = /\b(utilidad(es)? (acumuladas?|retenidas?|del (ejercicio|periodo))|resultados? (acumulados?|del (ejercicio|periodo)|de ejercicios anteriores)|ganancias? (acumuladas?|retenidas?)|perdidas? acumuladas?)\b/;
 
 function normalizarNombre(nombre) {
   return String(nombre).normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -32,46 +33,10 @@ export function esResultadoAcumulado(nombre) {
   return RE_RESULTADOS.test(normalizarNombre(nombre));
 }
 
-// Par de periodos a comparar: los dos más recientes en orden cronológico; con
-// nombres sin año ("Marzo") se respeta el orden que dejó el usuario.
-export function seleccionarPeriodoEFE(periodos) {
-  const lista = (Array.isArray(periodos) ? periodos : [])
-    .filter(periodo => typeof periodo === 'string' && periodo.trim());
-  if (lista.length < 2) {
-    return {
-      incompleto: `Se necesitan al menos 2 periodos para comparar y hay ${lista.length}. Capture o importe un periodo adicional en Estados Financieros.`
-    };
-  }
-  const ordenados = ordenarPeriodos(lista);
-  const periodoFinal = ordenados[ordenados.length - 1];
-  const periodoInicial = ordenados[ordenados.length - 2];
-  if (periodoInicial === periodoFinal) {
-    return { incompleto: 'Los periodos comparables no son distintos: no hay dos periodos diferentes para armar el estado.' };
-  }
-  return { periodoInicial, periodoFinal, periodos: ordenados };
-}
-
-// Variación de cada cuenta de un grupo entre dos periodos, con su tipo.
-function variacionesPorGrupo(datos, grupo, periodoInicial, periodoFinal) {
-  const cuentasInicial = datos?.balanceGeneral?.[periodoInicial]?.[grupo] || {};
-  const cuentasFinal = datos?.balanceGeneral?.[periodoFinal]?.[grupo] || {};
-  const nombres = [
-    ...Object.keys(cuentasInicial),
-    ...Object.keys(cuentasFinal).filter(nombre => !Object.hasOwn(cuentasInicial, nombre))
-  ];
-  return nombres.map(cuenta => {
-    const saldoInicial = Object.hasOwn(cuentasInicial, cuenta) ? cuentasInicial[cuenta] : null;
-    const saldoFinal = Object.hasOwn(cuentasFinal, cuenta) ? cuentasFinal[cuenta] : null;
-    const tipo = resolveAccountType(datos, grupo, cuenta) || '';
-    return {
-      cuenta,
-      grupo,
-      tipo,
-      saldoInicial,
-      saldoFinal,
-      variacion: saldoInicial !== null && saldoFinal !== null ? saldoFinal - saldoInicial : null
-    };
-  });
+// Opuesto de un monto sin producir -0: un cambio de 0 se mostraría "C$ -0.00".
+// `null` (N/D) se conserva.
+function opuesto(monto) {
+  return monto == null ? null : 0 - monto;
 }
 
 // Δ de un tipo dentro de un grupo. Si la empresa no tiene cuentas de ese tipo
@@ -118,7 +83,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     periodos, incompleto, utilidadNeta: null,
     operacion: null, inversion: null, financiamiento: null,
     totalFlujos: null, efectivoInicial: null, efectivoFinal: null,
-    variacionEfectivo: null, diferencia: null,
+    variacionEfectivo: null, diferencia: null, tolerancia: toleranciaComprobacion(),
     estado: 'incompleta', motivos, advertencias, interpretacion: ''
   });
 
@@ -129,9 +94,11 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     return sinDatos(`No hay balance general del periodo ${faltante}. Capture o importe los estados de ambos periodos en Estados Financieros.`);
   }
 
-  const activos = variacionesPorGrupo(datos, 'activos', periodoInicial, periodoFinal);
-  const pasivos = variacionesPorGrupo(datos, 'pasivos', periodoInicial, periodoFinal);
-  const patrimonio = variacionesPorGrupo(datos, 'patrimonio', periodoInicial, periodoFinal);
+  const activos = variacionesDeCuentas(datos, 'activos', periodoInicial, periodoFinal);
+  const pasivos = variacionesDeCuentas(datos, 'pasivos', periodoInicial, periodoFinal);
+  const patrimonio = variacionesDeCuentas(datos, 'patrimonio', periodoInicial, periodoFinal);
+  // Si el balance no cierra, la comprobación lo va a reflejar: se avisa de dónde viene.
+  advertencias.push(...advertenciasDeBalance(periodos, bgInicial, bgFinal));
 
   for (const fila of [...activos, ...pasivos, ...patrimonio]) {
     if (fila.saldoInicial === null || fila.saldoFinal === null) {
@@ -157,14 +124,25 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
   const efectivoFinal = efectivo.completo && efectivo.presente
     ? efectivo.filas.reduce((suma, fila) => suma + fila.saldoFinal, 0) : null;
 
-  // Utilidad neta del periodo final.
-  const hayER = datos?.estadoResultados && Object.hasOwn(datos.estadoResultados, periodoFinal);
-  if (!hayER) {
+  // Utilidad neta del periodo final. computeFinancialTotals lanza si algún
+  // importe del balance o del estado de resultados no es un número: en ese caso
+  // el estado queda incompleto en lugar de dejar la pantalla de Análisis vacía.
+  const erFinal = datos?.estadoResultados && Object.hasOwn(datos.estadoResultados, periodoFinal)
+    ? datos.estadoResultados[periodoFinal] : null;
+  let utilidadNeta = null;
+  if (!erFinal) {
     motivos.push(`No hay estado de resultados del periodo ${periodoFinal}: sin utilidad neta no se puede armar la operación.`);
-  }
-  const utilidadNeta = hayER ? computeFinancialTotals(datos, periodoFinal).utilidadNeta : null;
-  if (utilidadNeta === null) {
-    motivos.push('La utilidad neta no se puede determinar: el estado de resultados tiene cuentas sin clasificar.');
+  } else {
+    try {
+      utilidadNeta = computeFinancialTotals(datos, periodoFinal).utilidadNeta;
+      if (utilidadNeta === null) {
+        motivos.push('La utilidad neta no se puede determinar: el estado de resultados tiene cuentas sin clasificar.');
+      } else if (Object.keys(erFinal).length === 0) {
+        advertencias.push(`El estado de resultados del periodo ${periodoFinal} no tiene cuentas: la utilidad neta se toma como 0 y la operación parte de ahí.`);
+      }
+    } catch (error) {
+      motivos.push(`No se pudo calcular la utilidad neta del periodo ${periodoFinal} (${error.message}). Corrija el importe en Estados Financieros.`);
+    }
   }
 
   // --- Operación ---
@@ -195,11 +173,11 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     item('Utilidad Neta', utilidadNeta, utilidadNeta == null ? 'sin-utilidad-neta' : null),
     item('(+) Depreciación y amortización del periodo', depreciacion.delta,
       depreciacion.presente && !depreciacion.completo ? 'falta-saldo' : null),
-    item('(-) Aumento de Inventario (o + si disminuye)', inventario.delta == null ? null : -inventario.delta,
+    item('(-) Aumento de Inventario (o + si disminuye)', opuesto(inventario.delta),
       inventario.presente && !inventario.completo ? 'falta-saldo' : null),
-    item('(-) Aumento de Cuentas por Cobrar (o + si disminuye)', cxC.delta == null ? null : -cxC.delta,
+    item('(-) Aumento de Cuentas por Cobrar (o + si disminuye)', opuesto(cxC.delta),
       cxC.presente && !cxC.completo ? 'falta-saldo' : null),
-    item('(-) Aumento de otros activos corrientes (o + si disminuye)', acOtros.delta == null ? null : -acOtros.delta,
+    item('(-) Aumento de otros activos corrientes (o + si disminuye)', opuesto(acOtros.delta),
       acOtros.presente && !acOtros.completo ? 'falta-saldo' : null),
     item('(+) Aumento de Cuentas por Pagar (o - si disminuye)', cxP.delta,
       cxP.presente && !cxP.completo ? 'falta-saldo' : null),
@@ -212,7 +190,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
   // --- Inversión ---
   const activosFijos = deltaTipo(activos, 'activosFijos');
   const inversionItems = [
-    item('(+) Venta o baja de activos fijos (o - si compra)', activosFijos.delta == null ? null : -activosFijos.delta,
+    item('(+) Venta o baja de activos fijos (o - si compra)', opuesto(activosFijos.delta),
       activosFijos.presente && !activosFijos.completo ? 'falta-saldo' : null)
   ];
   const CFI = totalDe(inversionItems);
@@ -243,7 +221,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     financiamientoItems.push(
       item('(+) Aportaciones de capital, reservas y otros patrimonios', aportaciones,
         aportaciones == null ? 'falta-saldo' : null),
-      item('(-) Dividendos y distribuciones de utilidades', dividendos == null ? null : -dividendos,
+      item('(-) Dividendos y distribuciones de utilidades', opuesto(dividendos),
         dividendos == null ? 'sin-dividendos' : null)
     );
     if (dividendos != null && dividendos < 0) {
@@ -254,7 +232,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     financiamientoItems.push(
       item('(+) Variación total del patrimonio', patrimonioCompleto ? patrimonioTotal : null,
         patrimonioCompleto ? null : 'falta-saldo'),
-      item('(-) Utilidad neta del periodo (ya incluida en Operación)', utilidadNeta == null ? null : -utilidadNeta,
+      item('(-) Utilidad neta del periodo (ya incluida en Operación)', opuesto(utilidadNeta),
         utilidadNeta == null ? 'sin-utilidad-neta' : null)
     );
   }
@@ -267,12 +245,16 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     ? efectivoFinal - efectivoInicial : null;
   const diferencia = totalFlujos !== null && variacionEfectivo !== null
     ? totalFlujos - variacionEfectivo : null;
-  const tolerancia = TOLERANCIA_EFE
-    + Number.EPSILON * Math.max(1, Math.abs(totalFlujos ?? 0), Math.abs(variacionEfectivo ?? 0));
+  const tolerancia = toleranciaComprobacion(totalFlujos, variacionEfectivo);
+  // Sin diferencia (algún flujo o el efectivo es N/D) no hay nada que comprobar:
+  // se informa como incompleta aunque ningún motivo puntual lo explique.
+  if (diferencia === null && motivos.length === 0) {
+    motivos.push('Faltan datos para calcular la diferencia entre los flujos y la variación de efectivo.');
+  }
   const motivosUnicos = [...new Set(motivos)];
   const estado = motivosUnicos.length > 0
     ? 'incompleta'
-    : (diferencia !== null && Math.abs(diferencia) <= tolerancia ? 'cuadra' : 'no-cuadra');
+    : (Math.abs(diferencia) <= tolerancia ? 'cuadra' : 'no-cuadra');
 
   const resultado = {
     periodos,
@@ -295,6 +277,30 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
   return resultado;
 }
 
+// Qué dicen los signos de los tres flujos (sin umbrales: solo si la operación
+// genera o consume efectivo, si alcanza para la inversión y de dónde viene o a
+// dónde va el financiamiento). Solo se llama con los tres totales presentes.
+function lecturaFlujos({ operacion, inversion, financiamiento }) {
+  const cfo = operacion.total;
+  const cfi = inversion.total;
+  const cff = financiamiento.total;
+  const frases = [cfo >= 0
+    ? `la operación generó ${formatCurrency(cfo)} de efectivo`
+    : `la operación consumió ${formatCurrency(Math.abs(cfo))} de efectivo`];
+  if (cfo + cfi < 0) {
+    frases.push(`no alcanzó a cubrir la inversión (faltaron ${formatCurrency(Math.abs(cfo + cfi))})`);
+  } else if (cfi < 0) {
+    frases.push('alcanzó para cubrir la inversión');
+  }
+  if (cff > 0) {
+    frases.push(`el financiamiento aportó ${formatCurrency(cff)}`);
+  } else if (cff < 0) {
+    frases.push(`el financiamiento devolvió o distribuyó ${formatCurrency(Math.abs(cff))}`);
+  }
+  const texto = frases.join('; ');
+  return `${texto.charAt(0).toUpperCase()}${texto.slice(1)}.`;
+}
+
 // Lectura breve del estado. Los motivos y advertencias pueden traer nombres de
 // cuenta del archivo importado: el llamador debe escaparlos antes de HTML.
 export function interpretarEFE(resultado) {
@@ -304,8 +310,9 @@ export function interpretarEFE(resultado) {
   }
   const fmt = valor => formatCurrency(valor);
   const partes = `Operación ${fmt(operacion.total)}, inversión ${fmt(inversion.total)} y financiamiento ${fmt(financiamiento.total)}`;
+  const lectura = lecturaFlujos(resultado);
   if (estado === 'cuadra') {
-    return `Los flujos suman ${fmt(totalFlujos)}, igual a la variación de efectivo entre ${resultado.periodos.inicial} y ${resultado.periodos.final}: el estado cuadra dentro de la tolerancia de ${fmt(resultado.tolerancia)}. (${partes}.)`;
+    return `Los flujos suman ${fmt(totalFlujos)}, igual a la variación de efectivo entre ${resultado.periodos.inicial} y ${resultado.periodos.final}: el estado cuadra dentro de la tolerancia de ${fmt(resultado.tolerancia)}. (${partes}.) ${lectura}`;
   }
-  return `Los flujos suman ${fmt(totalFlujos)} pero el efectivo varió ${fmt(variacionEfectivo)}: la diferencia es de ${fmt(Math.abs(diferencia))}. Revise las cuentas, las clasificaciones o los movimientos faltantes: el estado no ajusta cifras ni distribuye diferencias automáticamente. (${partes}.)`;
+  return `Los flujos suman ${fmt(totalFlujos)} pero el efectivo varió ${fmt(variacionEfectivo)}: la diferencia es de ${fmt(Math.abs(diferencia))}. Revise las cuentas, las clasificaciones o los movimientos faltantes: el estado no ajusta cifras ni distribuye diferencias automáticamente. (${partes}.) ${lectura}`;
 }

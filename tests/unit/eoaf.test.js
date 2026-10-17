@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
-  TOLERANCIA_EOAF, seleccionarPeriodoPar, clasificarMovimientoEOAF,
-  construirEOAF, interpretarEOAF
+  clasificarMovimientoEOAF, construirEOAF, interpretarEOAF
 } from '../../js/modules/analisis/eoaf-calculations.js';
+import { TOLERANCIA_COMPROBACION } from '../../js/modules/analisis/comprobacion-calculations.js';
 import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
 
 // Estados con cuentas de nombre propio y clasificación explícita, como los deja
@@ -92,31 +92,6 @@ describe('reglas de clasificación de movimientos', () => {
   });
 });
 
-describe('selección de periodos', () => {
-  it('compara el periodo final con el inmediatamente anterior, en orden cronológico', () => {
-    // Lista desordenada: se ordena por año antes de elegir el par.
-    expect(seleccionarPeriodoPar(['2025', '2023', '2024'])).toMatchObject({
-      periodoInicial: '2024', periodoFinal: '2025'
-    });
-    expect(seleccionarPeriodoPar(['2024', '2025'])).toMatchObject({
-      periodoInicial: '2024', periodoFinal: '2025'
-    });
-  });
-
-  it('con nombres sin año respeta el orden que dejó el usuario', () => {
-    expect(seleccionarPeriodoPar(['Marzo', 'Enero'])).toMatchObject({
-      periodoInicial: 'Marzo', periodoFinal: 'Enero'
-    });
-  });
-
-  it('sin dos periodos distintos informa qué falta', () => {
-    expect(seleccionarPeriodoPar([]).incompleto).toContain('al menos 2 periodos');
-    expect(seleccionarPeriodoPar(['2025']).incompleto).toContain('al menos 2 periodos');
-    expect(seleccionarPeriodoPar(['2024', '2024']).incompleto).toContain('no son distintos');
-    expect(seleccionarPeriodoPar(undefined).incompleto).toContain('al menos 2 periodos');
-  });
-});
-
 describe('estado de origen y aplicación', () => {
   // Caso resuelto a mano (2024 → 2025):
   //   Activos:  Efectivo 100 → 125 (+25 aplicación), Inventario 50 → 40 (−10 origen),
@@ -186,7 +161,7 @@ describe('estado de origen y aplicación', () => {
   });
 
   it('la tolerancia de la comprobación es de un centavo', () => {
-    expect(TOLERANCIA_EOAF).toBe(0.01);
+    expect(TOLERANCIA_COMPROBACION).toBe(0.01);
     // Efectivo 10.001 → 10.003 (+0.002 aplicación); el resto sin cambios.
     // Diferencia de 0.002 ≤ 0.01 → cuadra, sin ajustar cifras.
     const r = construir({
@@ -198,7 +173,7 @@ describe('estado de origen y aplicación', () => {
       patrimonio: { Capital: 'patrimonio' }
     });
     expect(Math.abs(r.resumen.diferencia)).toBeGreaterThan(0);
-    expect(Math.abs(r.resumen.diferencia)).toBeLessThanOrEqual(TOLERANCIA_EOAF);
+    expect(Math.abs(r.resumen.diferencia)).toBeLessThanOrEqual(TOLERANCIA_COMPROBACION);
     expect(r.resumen.estado).toBe('cuadra');
   });
 
@@ -354,10 +329,31 @@ describe('estado de origen y aplicación', () => {
     });
     expect(r.interpretacion).toContain('La comprobación está incompleta');
     expect(r.interpretacion).toContain('Complete los datos en Estados Financieros');
-    // Sin comprobación no se afirma que cuadre: solo Capital varió (+40 origen)
-    // y 'Cuenta nueva' no es clasificable sin su saldo inicial.
-    expect(r.resumen.totalOrigenes).toBe(40);
-    expect(r.resumen.totalAplicaciones).toBe(0);
+    // Con la comprobación incompleta los totales son N/D: sumar solo lo clasificable
+    // (Capital +40 origen) se leería como una cifra firme. El detalle sigue en las filas.
+    expect(filaDe(r, 'patrimonio', 'Capital')).toMatchObject({ clasificacion: 'Origen', origen: 40 });
+    expect(r.resumen.totalOrigenes).toBeNull();
+    expect(r.resumen.totalAplicaciones).toBeNull();
+    expect(r.resumen.diferencia).toBeNull();
+  });
+
+  it('un saldo que no es un número es un dato faltante y no se suma como texto', () => {
+    // El efectivo de 2025 llegó como texto ("cien"): fila con dato faltante,
+    // subtotal de activos en N/D y comprobación incompleta; nada se concatena.
+    const r = construir({
+      '2024': { activos: { Efectivo: 100, Inventario: 20 }, pasivos: {}, patrimonio: { Capital: 120 } },
+      '2025': { activos: { Efectivo: 'cien', Inventario: 20 }, pasivos: {}, patrimonio: { Capital: 120 } }
+    }, {
+      activos: { Efectivo: 'efectivo', Inventario: 'inventario' }, pasivos: {}, patrimonio: { Capital: 'patrimonio' }
+    });
+    expect(filaDe(r, 'activos', 'Efectivo')).toMatchObject({
+      saldoFinal: null, variacion: null, falta: 'falta-saldo', etiqueta: 'Dato faltante'
+    });
+    expect(seccionDe(r, 'activos').subtotal).toMatchObject({
+      saldoInicial: null, saldoFinal: null, variacion: null, completo: false
+    });
+    expect(r.resumen.estado).toBe('incompleta');
+    expect(r.resumen.motivos.join(' ')).toContain('Efectivo');
   });
 
   it('amortización acumulada sin tipo se reporta como clasificación desconocida', () => {
@@ -517,6 +513,51 @@ describe('pantalla de EOAF en Análisis', () => {
     );
     expect(bloque).toContain('&lt;img src=x onerror=alert(1)&gt;');
     expect(bloque).not.toContain('<img src=x');
+  });
+
+  it('con la comprobación incompleta los totales se muestran como N/D', async () => {
+    const { html } = await cargarAnalisis({
+      name: 'Incompleta',
+      periods: ['2024', '2025'],
+      balanceGeneral: {
+        '2024': { activos: { Efectivo: 100 }, pasivos: { 'Obligacion rara': 40 }, patrimonio: { Capital: 60 } },
+        '2025': { activos: { Efectivo: 120 }, pasivos: { 'Obligacion rara': 40 }, patrimonio: { Capital: 80 } }
+      },
+      estadoResultados: { '2024': { Ventas: 1 }, '2025': { Ventas: 2 } },
+      accountTypes: {
+        activos: { Efectivo: 'efectivo' }, pasivos: {}, patrimonio: { Capital: 'patrimonio' },
+        estadoResultados: { Ventas: 'ventas' }
+      }
+    });
+    const bloque = html.slice(
+      html.indexOf('Comparación de saldos'),
+      html.indexOf('Tolerancia de la comprobación')
+    );
+    expect(bloque).toContain('Obligacion rara');
+    expect(bloque).toContain('Comprobación incompleta');
+    // Efectivo +20 (aplicación) y Capital +20 (origen) son clasificables, pero con la
+    // comprobación incompleta los tres indicadores no muestran sumas parciales.
+    expect(bloque).toContain('N/D</div><div class="kpi-label">Total de orígenes');
+    expect(bloque).toContain('N/D</div><div class="kpi-label">Total de aplicaciones');
+    expect(bloque).toContain('N/D</div><div class="kpi-label">Diferencia');
+  });
+
+  it('un importe no numérico no deja vacía la pantalla de Análisis', async () => {
+    const { html } = await cargarAnalisis({
+      name: 'Importe de texto',
+      periods: ['2024', '2025'],
+      balanceGeneral: {
+        '2024': { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { Capital: 100 } },
+        '2025': { activos: { Efectivo: 'cien' }, pasivos: {}, patrimonio: { Capital: 100 } }
+      },
+      estadoResultados: { '2024': { Ventas: 1 }, '2025': { Ventas: 2 } },
+      accountTypes: {
+        activos: { Efectivo: 'efectivo' }, pasivos: {}, patrimonio: { Capital: 'patrimonio' },
+        estadoResultados: { Ventas: 'ventas' }
+      }
+    });
+    expect(html).toContain('Comparación de saldos');
+    expect(html).toContain('Dato faltante');
   });
 
   it('la demo MUNO MODA cuadra con C$ 97,775 de cada lado', async () => {
