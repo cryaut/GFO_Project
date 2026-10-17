@@ -236,6 +236,10 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 
 | Archivo | Funciones |
 |---|---|
+| `js/modules/estados/cuentas-identificador.js` | `obtenerCuenta(id)`, `listarCuentas({ grupo })`, `identificarCuenta(texto, { grupo, clasificacion, id })`, `montoCuenta(datos, periodo, id)`, `consultarMontoCuenta(datos, periodo, id)`, `resumenIdentificacion(datos)`, `resolverClasificacion(grupo, valor)`, `tipoCuentaLegada(grupo, nombre)`, `versionCatalogo` |
+| `js/modules/estados/cuentas-similitud.js` | `normalizarCuenta(texto)`, `distanciaDamerau(a, b)`, `similitudCuentas(texto, candidato)`, `sugerirCuentas(texto, cuentas)`, `UMBRALES_SIMILITUD` (nunca confirma) |
+| `js/modules/estados/cuentas-registro.js` | `registrarCuenta(datos, registroORegistros)` (alta común que devuelve datos normalizados) |
+| `js/modules/estados/cuentas-disponibilidad.js` | `aplicarDisponibilidadRazones(razones, ...totales)` (propaga N/D y motivos, sin fórmulas nuevas) |
 | `js/modules/estados/estados-calculations.js` | `ACCOUNT_TYPES`, `inferAccountType(grupo, nombre)`, `resolveAccountType(datos, grupo, nombre)` (tipo explícito o inferido), `computeFinancialTotals(datos, periodo)`, `validateFinancialData(datos)` (cuadre A = P + O por periodo) |
 | `js/modules/apalancamiento/apalancamiento-calculations.js` | `cuentasOperativas`, `sugerirComportamiento`, `normalizarComportamiento`, `resolverComportamiento`, `derivarPeriodo`, `calcularApalancamiento` |
 | `js/modules/estados/estados-normalize.js` | `normalizeFinancialData(entrada)`, `parseFinancialJSON(texto)`, `sortPeriods(periodos)` (siempre ordena; lo usa el importador), `ordenarPeriodos(periodos)` (ordena solo si todos empiezan con un año) |
