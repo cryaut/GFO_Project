@@ -97,6 +97,7 @@ export function loadDemo() {
 
 export function getSavedStates() {
   return {
+    ...store.get('estados'),
     name: store.get('estados.name') || 'Datos guardados',
     periods: store.get('estados.periods') || [],
     balanceGeneral: store.get('estados.balanceGeneral') || {},

@@ -98,7 +98,7 @@ flowchart LR
 ```
 
 - Importación: tabla ancha (`Estado`, `Grupo`, `Cuenta`, `Clasificacion` y una columna por periodo) o larga (`Periodo`, `Estado`, `Grupo`, `Cuenta`, `Clasificacion`, `Importe`). La columna `Cuenta` es obligatoria. En Excel, cada hoja puede ser un estado o un grupo.
-- Clasificación: si una fila no trae `Clasificacion`, el tipo se infiere por el nombre (`inferAccountType`). Si no se reconoce, la importación se detiene con un error que indica la fila. Los tipos válidos están en `dominio-financiero.md`.
+- Identificación: `cuentas-catalogo.js` contiene las definiciones y tipos; `cuentas-identificador.js` resuelve id, nombre, alias, contexto y similitud. `cuentas-registro.js` es el alta común para importación y captura manual. Las filas desconocidas se conservan para revisión, con sus montos; no detienen un archivo válido. Una clasificación contradictoria queda sugerida. Los errores estructurales, de importes, duplicados y claves peligrosas siguen rechazándose. D-029–D-034.
 - Importes: acepta separadores de miles, `C$`, paréntesis y signo al final como negativo. Una celda vacía omite la cuenta en ese periodo; no la convierte en 0. El separador decimal se elige (`auto`, `.` o `,`); en `auto` se deduce de toda la tabla con `inferDecimalStyle` y, si no hay evidencia, se usa el punto decimal y se avisa de los importes ambiguos (`45.000`). D-019.
 - Límites: 5,000 filas, 120 columnas y 20,000 importes por archivo; 100 periodos y 200 cuentas por grupo en cualquier formato.
 - Plantilla: botón "Descargar plantilla CSV" en Estados (`tabularTemplateCSV`). Ejemplos en `scripts/sample-estados.csv` y `scripts/sample-estados.json`.
@@ -124,6 +124,8 @@ Secciones de `defaultData` en `js/store.js`:
 | `theme` | `'light'` o `'dark'` |
 
 Forma de `estados`:
+
+Desde la colección, los importes mantienen las claves por nombre. `accountIdentities[grupo][nombre]` añade `{ idCuenta, estado, metodo, candidatos, origen }`, compartido entre periodos. `origen` distingue `legado` (conserva clasificación previa), `importacion` y `manual`. `reportedTotals[periodo][id] = { nombre, grupo, importe }` conserva los totales reportados sin tipo equivalente; `supplementaryAccounts[periodo][nombre]` guarda los datos suplementarios. Las filas sin grupo van a `pendingAccounts = [{ nombre, importes: { periodo: monto }, identificacion }]`. Todos estos campos pasan por `normalizeFinancialData`, se exportan en JSON y se guardan con la sección completa de Estados. Los consumidores conservan los campos nuevos al leer, sin migrar su cálculo a ids.
 
 ```js
 {

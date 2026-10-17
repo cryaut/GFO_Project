@@ -2,6 +2,43 @@
 
 Referencia completa de las funciones públicas de los módulos utilitarios.
 
+## Colección de cuentas (`js/modules/estados/cuentas-*.js`)
+
+`versionCatalogo = '2026-10-17.1'`. Catálogo de 72 definiciones; las 71 del PR #10 conservan ids, nombres canónicos, clasificación, rol y política de ausencia. La investigación y las variantes sin fuente están en [cuentas/investigacion.md](planificacion/cuentas/investigacion.md).
+
+#### `obtenerCuenta(id)` / `listarCuentas({ grupo } = {})`
+Devuelven una copia de la definición (`null` para id inexistente) o una lista en orden estable por id. Grupos: `activos`, `pasivos`, `patrimonio`, `estadoResultados`, `suplementario`. El llamador no puede modificar el catálogo mediante la copia.
+
+#### `identificarCuenta(texto, { grupo, clasificacion, id } = {})`
+Función pura. Devuelve `{ estado, id, metodo, candidatos, preseleccion }`; `estado` es `reconocida`, `sugerida` o `no_reconocida`. Solo una reconocida tiene `id`. Los candidatos incluyen id, nombre, grupo, tipo transitorio y puntuación. El orden es id explícito → nombre canónico → sinónimo → contexto → similitud. Un id inválido no cae a un nombre distinto. Grupo/clasificación contradictorios quedan sugeridos; los alias de cuentas ambiguas requieren confirmación. Ejemplo: `identificarCuenta('Efetivo', { grupo: 'activos' })` devuelve una sugerencia, nunca asigna id.
+
+#### `normalizarCuenta(texto)` / `distanciaDamerau(a, b)` / `similitudCuentas(texto, candidato)`
+Normalizan a minúsculas sin acentos, convierten signos a espacios, colapsan espacios y eliminan las palabras vacías del encargo. Los dígitos se conservan. La distancia devuelve un entero; la similitud devuelve 0–1: máximo entre Damerau–Levenshtein normalizada por longitud máxima y apoyo simétrico por palabras normalizado por longitud combinada. Dígitos diferentes dan similitud cero. Ejemplo: `similitudCuentas('Efetivo', 'Efectivo') = 14/15`; corto/largo no alcanza 0.92.
+
+#### `sugerirCuentas(texto, cuentas)` / `UMBRALES_SIMILITUD`
+Devuelve `{ candidatos, preseleccion }`. Filtra puntuaciones inferiores a 0.80, ordena puntuación descendente e id y conserva hasta cinco candidatos. Solo preselecciona con puntuación ≥0.92 y ventaja ≥0.05. La preselección requiere confirmación; nunca identifica automáticamente.
+
+#### `registrarCuenta(datos, registroORegistros)`
+Alta pura y atómica para importación y captura manual. Cada registro admite `{ nombre, grupo, periodo, importe, clasificacion?, id?, confirmado?, reemplazar?, origen? }`. Devuelve `normalizeFinancialData` de una copia; no modifica la entrada ni guarda en el store. `confirmado` registra `confirmacion_manual`, pero no vuelve válido un id/contexto inválido. El lote evita normalizaciones repetidas. Rechaza duplicados y nombres/periodos peligrosos; una cuenta sin id o grupo conserva el monto para revisión.
+
+#### `montoCuenta(datos, periodo, id)` / `consultarMontoCuenta(datos, periodo, id)`
+La primera devuelve `number | null`; la segunda `{ valor, motivo }`. Un dato explícito, incluido cero, se devuelve; los detalles con el mismo id suman sus saldos. Un total reportado exige un único dato publicado y nunca suma componentes. En ausencia, solo un detalle con `zero_if_not_reported` devuelve cero; `requires_data`, totales y periodos faltantes devuelven null. Candidatos sin confirmar usan `ambiguous_account_match`; desconocidas relevantes usan `unrecognized_imported_account`. Otros motivos: `missing_required_account_data`, `missing_required_period_balance`, `unknown_account_id`.
+
+#### `resumenIdentificacion(datos)`
+Cuenta las cuentas por estado, incluidas las pendientes de grupo; una cuenta compartida por varios periodos se cuenta una vez. Devuelve `{ reconocida, sugerida, no_reconocida }`.
+
+#### `resolverClasificacion(grupo, valor)` / `tipoCuentaLegada(grupo, nombre)`
+Adaptadores de los 19 tipos anteriores: devuelven un tipo o `''`. Los alias y las excepciones de compatibilidad están en el catálogo; no hay una segunda regla regex. El adaptador legado no confirma identificadores ni se usa para aplicar sugerencias nuevas.
+
+#### `aplicarDisponibilidadRazones(razones, ...totales)`
+Devuelve una copia de las razones con los campos afectados en `null` y `motivosNoDisponible[campo]`. Consume `notAvailableReasons` de los totales compartidos. Evita la coerción de null a cero en consumidores todavía sin migrar; no cambia fórmulas.
+
+#### `resolveGroup({ estado, grupo, clasif, name, id })` / `resolveClassification(grupo, tipo, nombre, id)`
+Adaptadores del importador: el primero devuelve un grupo o `''`; el segundo el resultado completo del identificador. Una cuenta no reconocida no lanza error. El lector sigue rechazando importes y estructuras inválidas, límites excedidos y duplicados. No cambian D-019 ni D-020.
+
+#### `selectorCuenta(contenedor, nombre, grupo, clasificacion?)` / `renderRevisionCuentas(contenedor, datos, cambiar, fallo)`
+Interfaz de selección compartida. La primera dibuja estado/candidatos o catálogo filtrable y devuelve la identificación; la segunda muestra resumen y formularios para confirmar pendientes mediante `registrarCuenta`. Escapan el texto procedente de archivos y no guardan en el store.
+
 ---
 
 ## calculate.js

@@ -4,6 +4,9 @@ import { escapeHTML as esc } from '../../utils/html.js';
 import { formatCurrency } from '../../utils/format.js';
 import { exportJSON, exportCSV } from '../../utils/export.js';
 import { importStatementFile, tableTextToFinancialData, TABULAR_TEMPLATE_ROWS } from './estados-import.js';
+import { identificarCuenta, resumenIdentificacion } from './cuentas-identificador.js';
+import { registrarCuenta } from './cuentas-registro.js';
+import { selectorCuenta, renderRevisionCuentas } from './cuentas-ui.js';
 
 const GROUPS = { activos: 'Activos', pasivos: 'Pasivos', patrimonio: 'Patrimonio', estadoResultados: 'Estado de Resultados' };
 const LABELS = {
@@ -30,8 +33,17 @@ export function estadosUI(page, { initial, demo, save }) {
   let numberFormat = 'auto';
   // Opciones de lectura de importes: formato elegido y lista donde se acumulan los avisos.
   const importOptions = () => ({ decimal: numberFormat, avisos: [] });
-  const avisoText = avisos => (avisos.length
-    ? ` Atención: ${avisos.length} importe(s) ambiguo(s). ${avisos[0]}` : '');
+  const avisoText = avisos => {
+    if (!avisos.length) return '';
+    const importes = avisos.filter(aviso => aviso.includes('se leyó como')).length;
+    const otros = avisos.length - importes;
+    return ` Atención: ${importes ? `${importes} importe(s) ambiguo(s)${otros ? `; ${otros} aviso(s) de lectura` : ''}`
+      : `${otros} aviso(s) de lectura`}. ${avisos[0]}`;
+  };
+  const resumenText = data => {
+    const resumen = resumenIdentificacion(data);
+    return ` ${resumen.reconocida} reconocidas; ${resumen.sugerida} sugeridas; ${resumen.no_reconocida} no reconocidas.`;
+  };
   const markDirty = () => { dirty = true; message('Borrador sin guardar.'); };
   const message = (text, error = false) => {
     const el = page.querySelector('#estadoMessage');
@@ -71,9 +83,9 @@ export function estadosUI(page, { initial, demo, save }) {
       <label class="form-label" for="companyName">Empresa</label><input class="form-input" id="companyName" maxlength="120" value="${esc(draft.name)}">
       <details class="mt-4"><summary>Formatos de importación admitidos y criterios</summary>
       <p><strong>Archivos:</strong> JSON (objeto con name, periods, balanceGeneral, estadoResultados y accountTypes, o {estados: …} exportado por Reportes), CSV/TSV delimitado y Excel .xlsx/.xls. La importación reemplaza el borrador, no combina periodos.</p>
-      <p><strong>Tabla CSV/Excel (ancha):</strong> una fila por cuenta y una columna por periodo. Cabecera obligatoria <code>Cuenta</code>; opcionales <code>Estado</code> (Balance|Resultados), <code>Grupo</code> (activos|pasivos|patrimonio) y <code>Clasificacion</code>. Descargue la plantilla para verlo.</p>
+      <p><strong>Tabla CSV/Excel (ancha):</strong> una fila por cuenta y una columna por periodo. Cabecera obligatoria <code>Cuenta</code>; opcionales <code>Estado</code> (Balance|Resultados), <code>Grupo</code> (activos|pasivos|patrimonio), <code>Clasificacion</code> e <code>id</code> del catálogo. Descargue la plantilla para verlo.</p>
       <p><strong>Tabla CSV (larga):</strong> columnas <code>Periodo</code>, <code>Estado</code>, <code>Grupo</code>, <code>Cuenta</code> e <code>Importe</code>. También puede pegar celdas copiadas de Excel con tabuladores.</p>
-      <p><strong>Importes:</strong> 45.000, 45,000, C$ 12.500,50, (500) o 500- se interpretan correctamente. Gastos positivos; depreciación acumulada negativa. Celdas en blanco omiten la cuenta en ese periodo; las cuentas desconocidas requieren clasificación explícita.</p>
+      <p><strong>Importes:</strong> 45.000, 45,000, C$ 12.500,50, (500) o 500- se interpretan correctamente. Gastos positivos; depreciación acumulada negativa. Celdas en blanco omiten la cuenta en ese periodo; las cuentas desconocidas se conservan para revisión.</p>
       <p>Los periodos se ordenan del más antiguo al más reciente. Moneda de presentación: C$. El equilibrio no garantiza exactitud; EFE y CNO son aproximaciones educativas.</p></details></div>
       <details class="card mb-4"><summary>Importar pegando celdas desde Excel</summary>
         <label class="form-label" for="pasteStates">Pegue la tabla incluyendo la fila de encabezados</label>
@@ -87,9 +99,10 @@ export function estadosUI(page, { initial, demo, save }) {
         <select class="form-select" id="currentPeriod">${draft.periods.map((p, i) => `<option value="${i}" ${p === selected ? 'selected' : ''}>${esc(p)}</option>`).join('')}</select>
         <form id="renamePeriod" class="flex-gap mt-4"><input class="form-input" name="period" aria-label="Nuevo nombre del periodo" required maxlength="40" value="${esc(selected)}"><button class="btn btn-secondary">Renombrar</button></form>
         <div class="flex-gap mt-4"><button class="btn btn-secondary" id="earlierPeriod">Mover antes</button><button class="btn btn-secondary" id="laterPeriod">Mover después</button><button class="btn btn-danger" id="deletePeriod">Eliminar periodo</button></div>` : '<p>No hay periodos. Añada uno para empezar, sin necesidad de cargar el ejemplo.</p>'}</div>
-      <div id="accountEditor"></div><div id="balanceCheck" aria-live="polite"></div>
+      <div id="accountReview"></div><div id="accountEditor"></div><div id="balanceCheck" aria-live="polite"></div>
       <h2 class="mt-4">Vista multiperiodo del borrador</h2><div id="statementPreview"></div>`;
     renderAccounts();
+    renderReview();
     guard(renderPreview);
     bind();
   }
@@ -107,12 +120,12 @@ export function estadosUI(page, { initial, demo, save }) {
         <div class="table-wrapper"><table><thead><tr><th>Cuenta</th><th>Importe</th><th>Clasificación</th><th>Acción</th></tr></thead><tbody>
         ${Object.entries(accounts).map(([name, value], i) => `<tr data-account="${i}"><td>${esc(name)}</td>
           <td><input class="form-input" data-amount type="number" step="any" required aria-label="Importe ${esc(name)}" value="${value}"></td>
-          <td><select class="form-select" data-type aria-label="Clasificación ${esc(name)}">${options(group, draft.accountTypes[group][name] || inferAccountType(group, name))}</select></td>
+          <td><select class="form-select" data-type aria-label="Clasificación ${esc(name)}"><option value="">Pendiente</option>${options(group, draft.accountTypes[group][name] ?? inferAccountType(group, name))}</select></td>
           <td><button class="btn btn-danger btn-sm" data-remove type="button" aria-label="Eliminar ${esc(name)}">Eliminar</button></td></tr>`).join('')}
         </tbody></table></div>
         <form class="addAccount flex-gap flex-wrap mt-4"><label>Cuenta nueva <input class="form-input" name="account" required maxlength="120"></label>
           <label>Importe <input class="form-input" name="amount" type="number" step="any" required value="0"></label>
-          <label>Clasificación <select class="form-select" name="type" required><option value="">Seleccionar…</option>${options(group)}</select></label>
+          <div data-resolution aria-live="polite">Escriba el nombre para identificar la cuenta.</div>
           <button class="btn btn-secondary">Añadir cuenta</button></form></section>`;
     }).join('');
     el.querySelectorAll('[data-group]').forEach(section => {
@@ -125,28 +138,43 @@ export function estadosUI(page, { initial, demo, save }) {
           guard(renderPreview);
         };
         row.querySelector('[data-type]').onchange = event => {
-          draft.accountTypes[group][name] = event.target.value;
-          markDirty(); guard(renderPreview);
+          guard(() => {
+            const registros = draft.periods.filter(periodo => Object.hasOwn(accountsFor(draft, periodo, group), name))
+              .map(periodo => ({ nombre: name, grupo: group, periodo, importe: accountsFor(draft, periodo, group)[name],
+                clasificacion: event.target.value, reemplazar: true }));
+            draft = registrarCuenta(draft, registros);
+            markDirty(); renderReview(); renderPreview();
+          });
         };
         row.querySelector('[data-remove]').onclick = () => {
           delete accountsFor(draft, selected, group)[name];
-          markDirty(); renderAccounts(); guard(renderPreview);
+          markDirty(); renderAccounts(); renderReview(); guard(renderPreview);
         };
       });
-      section.querySelector('form').onsubmit = event => {
+      const formulario = section.querySelector('form');
+      const entrada = formulario.querySelector('[name="account"]');
+      entrada.oninput = () => selectorCuenta(formulario.querySelector('[data-resolution]'), entrada.value, group);
+      formulario.onsubmit = event => {
         event.preventDefault();
         guard(() => {
           const fields = new FormData(event.target);
           const name = fields.get('account').trim();
           if (Object.hasOwn(accountsFor(draft, selected, group), name)) throw new Error('Esa cuenta ya existe en este periodo.');
-          const candidate = structuredClone(draft);
-          Object.defineProperty(accountsFor(candidate, selected, group), name, { value: fields.get('amount'), enumerable: true, configurable: true, writable: true });
-          Object.defineProperty(candidate.accountTypes[group], name, { value: fields.get('type'), enumerable: true, configurable: true, writable: true });
-          draft = normalizeFinancialData(candidate);
-          markDirty(); renderAccounts(); renderPreview();
+          const resultado = identificarCuenta(name, { grupo: group });
+          const id = resultado.id || fields.get('idCuenta');
+          if (!id) throw new Error('Seleccione una cuenta del catálogo para confirmar.');
+          draft = registrarCuenta(draft, { nombre: name, grupo: group, periodo: selected, importe: fields.get('amount'),
+            id, confirmado: resultado.estado !== 'reconocida' });
+          markDirty(); renderAccounts(); renderReview(); renderPreview();
         });
       };
     });
+  }
+
+  function renderReview() {
+    renderRevisionCuentas(page.querySelector('#accountReview'), draft, data => {
+      draft = data; markDirty(); renderAccounts(); renderReview(); guard(renderPreview);
+    }, text => message(text, true));
   }
 
   function bind() {
@@ -188,6 +216,12 @@ export function estadosUI(page, { initial, demo, save }) {
           statement[period] = statement[selected];
           delete statement[selected];
         }
+        for (const key of ['supplementaryAccounts', 'reportedTotals']) {
+          if (candidate[key]?.[selected]) { candidate[key][period] = candidate[key][selected]; delete candidate[key][selected]; }
+        }
+        for (const fila of candidate.pendingAccounts || []) {
+          if (Object.hasOwn(fila.importes, selected)) { fila.importes[period] = fila.importes[selected]; delete fila.importes[selected]; }
+        }
         if (draft.periods.includes(period) && period !== selected) throw new Error('Ese periodo ya existe.');
         draft = normalizeFinancialData(candidate);
         selected = period;
@@ -201,6 +235,9 @@ export function estadosUI(page, { initial, demo, save }) {
         candidate.periods = candidate.periods.filter(p => p !== selected);
         delete candidate.balanceGeneral[selected];
         delete candidate.estadoResultados[selected];
+        for (const key of ['supplementaryAccounts', 'reportedTotals']) if (candidate[key]) delete candidate[key][selected];
+        for (const fila of candidate.pendingAccounts || []) delete fila.importes[selected];
+        candidate.pendingAccounts = candidate.pendingAccounts?.filter(fila => Object.keys(fila.importes).length);
         draft = normalizeFinancialData(candidate);
         selected = draft.periods[0] || '';
         markDirty(); render();
@@ -226,7 +263,7 @@ export function estadosUI(page, { initial, demo, save }) {
       try {
         const options = importOptions();
         const imported = await importStatementFile(file, options);
-        replaceDraft(imported, `${file.name} importado al borrador. Revise el equilibrio y pulse Guardar.${avisoText(options.avisos)}`);
+        replaceDraft(imported, `${file.name} importado al borrador.${resumenText(imported)} Revise las cuentas y pulse Guardar.${avisoText(options.avisos)}`);
       } catch (error) {
         message(error.message, true);
       }
@@ -247,7 +284,7 @@ export function estadosUI(page, { initial, demo, save }) {
         const options = { ...importOptions(), name: 'Datos pegados' };
         const imported = tableTextToFinancialData(textarea.value, options);
         textarea.value = '';
-        replaceDraft(imported, `Tabla pegada importada al borrador. Revise el equilibrio y pulse Guardar.${avisoText(options.avisos)}`);
+        replaceDraft(imported, `Tabla pegada importada al borrador.${resumenText(imported)} Revise las cuentas y pulse Guardar.${avisoText(options.avisos)}`);
       } catch (error) {
         message(error.message, true);
       }
@@ -273,12 +310,20 @@ export function estadosUI(page, { initial, demo, save }) {
     check.textContent = 'Complete importes válidos para calcular el borrador.';
     const normalized = normalizeFinancialData(draft);
     const validation = validateFinancialData(normalized);
-    if (validation.length) check.innerHTML = validation.map(row => `<p class="${row.balanced ? 'text-success' : 'text-danger'}">${esc(row.period)}: ${row.balanced ? 'Balance equilibrado' : 'Balance descuadrado'} — Activos ${formatCurrency(row.totalActivos)}; Pasivos + Patrimonio ${formatCurrency(row.totalPasivos + row.totalPatrimonio)}; diferencia ${formatCurrency(row.difference)}</p>`).join('');
-    const table = (label, rows) => `<h3>${label}</h3><div class="table-wrapper mb-4"><table><thead><tr><th>Cuenta</th>${draft.periods.map(p => `<th>${esc(p)}</th>`).join('')}</tr></thead><tbody>${rows.map(([name, values]) => `<tr><td>${esc(name)}</td>${values.map(v => `<td>${formatCurrency(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    const mostrarMonto = valor => valor === null ? 'N/D' : formatCurrency(valor);
+    if (validation.length) check.innerHTML = validation.map(row => `<p class="${row.balanced ? 'text-success' : 'text-danger'}">${esc(row.period)}: ${row.difference === null ? 'Comprobación incompleta: revise las cuentas pendientes' : row.balanced ? 'Balance equilibrado' : 'Balance descuadrado'} — Activos ${mostrarMonto(row.totalActivos)}; Pasivos + Patrimonio ${mostrarMonto(row.totalPasivos === null || row.totalPatrimonio === null ? null : row.totalPasivos + row.totalPatrimonio)}; diferencia ${mostrarMonto(row.difference)}</p>`).join('');
+    const table = (label, rows) => `<h3>${label}</h3><div class="table-wrapper mb-4"><table><thead><tr><th>Cuenta</th>${draft.periods.map(p => `<th>${esc(p)}</th>`).join('')}</tr></thead><tbody>${rows.map(([name, values]) => `<tr><td>${esc(name)}</td>${values.map(v => `<td>${mostrarMonto(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
     preview.innerHTML = Object.entries(GROUPS).map(([group, label]) => {
       const names = [...new Set(draft.periods.flatMap(p => Object.keys(accountsFor(normalized, p, group))))];
-      return table(label, names.map(name => [name, draft.periods.map(p => accountsFor(normalized, p, group)[name] || 0)]));
-    }).join('') + table('Totales compartidos', [
+      return table(label, names.map(name => [name, draft.periods.map(p => accountsFor(normalized, p, group)[name] ?? null)]));
+    }).join('') + table('Totales reportados conservados', [...new Set(Object.values(normalized.reportedTotals || {}).flatMap(totales => Object.keys(totales)))].map(id => [
+      Object.values(normalized.reportedTotals).find(totales => totales[id])?.[id].nombre || id,
+      draft.periods.map(periodo => normalized.reportedTotals?.[periodo]?.[id]?.importe ?? null)
+    ])) + table('Datos suplementarios', [...new Set(Object.values(normalized.supplementaryAccounts || {}).flatMap(cuentas => Object.keys(cuentas)))].map(nombre => [
+      nombre, draft.periods.map(periodo => normalized.supplementaryAccounts?.[periodo]?.[nombre] ?? null)
+    ])) + table('Cuentas pendientes de grupo', (normalized.pendingAccounts || []).map(fila => [
+      fila.nombre, draft.periods.map(periodo => fila.importes[periodo] ?? null)
+    ])) + table('Totales compartidos', [
       ['Total activos', 'totalActivos'], ['Total pasivos', 'totalPasivos'],
       ['Total patrimonio', 'totalPatrimonio'], ['Utilidad bruta', 'utilidadBruta'], ['Utilidad neta', 'utilidadNeta']
     ].map(([label, key]) => [label, draft.periods.map(p => computeFinancialTotals(normalized, p)[key])]));

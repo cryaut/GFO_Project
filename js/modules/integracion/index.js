@@ -1,5 +1,5 @@
 import store from '../../store.js';
-import { formatCurrency, formatPercent } from '../../utils/format.js';
+import { formatCurrency, formatCurrencyND, formatPercent } from '../../utils/format.js';
 import { exportJSON, exportCSV, exportHTML, importJSON } from '../../utils/export.js';
 import { showToast } from '../../components/toast.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
@@ -13,6 +13,7 @@ function getNormalizedStates() {
   // imported/custom account names are summed instead of the fixed-name lookup.
   try {
     return normalizeFinancialData({
+      ...store.get('estados'),
       name: store.get('estados.name') || 'Datos guardados',
       periods: store.get('estados.periods') || [],
       balanceGeneral: store.get('estados.balanceGeneral') || {},
@@ -48,7 +49,7 @@ function computeDashboardKPIs() {
   const totalPasivos = shared ? shared.totalPasivos : sum(bg.pasivos);
   const totalPatrimonio = shared ? shared.totalPatrimonio : sum(bg.patrimonio);
   const ventas = shared ? shared.ventas : (er['Ventas'] || 0);
-  const utilidadNeta = shared && Number.isFinite(shared.utilidadNeta) ? shared.utilidadNeta
+  const utilidadNeta = shared ? shared.utilidadNeta
     : (er['Ventas'] || 0) - (er['Costo de Ventas'] || 0) - (er['Gastos de Administracion'] || 0) -
       (er['Gastos de Ventas'] || 0) + (er['Otros Ingresos'] || 0) - (er['Otros Gastos'] || 0);
 
@@ -127,11 +128,11 @@ function renderDashboard(page) {
 
   el.innerHTML = `
     <div class="kpi-grid mb-8">
-      <div class="kpi-card"><div class="kpi-value">${formatCurrency(kpis.totalActivos)}</div><div class="kpi-label">Total Activos</div></div>
-      <div class="kpi-card"><div class="kpi-value" style="color:var(--color-danger)">${formatCurrency(kpis.totalPasivos)}</div><div class="kpi-label">Total Pasivos</div></div>
-      <div class="kpi-card"><div class="kpi-value" style="color:var(--color-success)">${formatCurrency(kpis.totalPatrimonio)}</div><div class="kpi-label">Patrimonio</div></div>
-      <div class="kpi-card"><div class="kpi-value">${formatCurrency(kpis.ventas)}</div><div class="kpi-label">Ventas</div></div>
-      <div class="kpi-card"><div class="kpi-value ${kpis.utilidadNeta >= 0 ? '' : 'text-danger'}">${formatCurrency(kpis.utilidadNeta)}</div><div class="kpi-label">Utilidad Neta</div></div>
+      <div class="kpi-card"><div class="kpi-value">${formatCurrencyND(kpis.totalActivos)}</div><div class="kpi-label">Total Activos</div></div>
+      <div class="kpi-card"><div class="kpi-value" style="color:var(--color-danger)">${formatCurrencyND(kpis.totalPasivos)}</div><div class="kpi-label">Total Pasivos</div></div>
+      <div class="kpi-card"><div class="kpi-value" style="color:var(--color-success)">${formatCurrencyND(kpis.totalPatrimonio)}</div><div class="kpi-label">Patrimonio</div></div>
+      <div class="kpi-card"><div class="kpi-value">${formatCurrencyND(kpis.ventas)}</div><div class="kpi-label">Ventas</div></div>
+      <div class="kpi-card"><div class="kpi-value ${kpis.utilidadNeta >= 0 ? '' : 'text-danger'}">${formatCurrencyND(kpis.utilidadNeta)}</div><div class="kpi-label">Utilidad Neta</div></div>
       <div class="kpi-card"><div class="kpi-value">${kpis.endeudamiento == null ? 'N/D' : formatPercent(kpis.endeudamiento)}</div><div class="kpi-label">Endeudamiento</div></div>
       <div class="kpi-card"><div class="kpi-value">${kpis.roa == null ? 'N/D' : formatPercent(kpis.roa)}</div><div class="kpi-label">ROA</div></div>
     </div>

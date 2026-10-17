@@ -286,12 +286,12 @@ describe('normalizeFinancialData', () => {
     }
   });
 
-  it('rechaza cuentas personalizadas sin clasificación', () => {
-    expect(() => normalizeFinancialData({
+  it('conserva cuentas personalizadas sin clasificación y las marca para revisión', () => {
+    expect(normalizeFinancialData({
       periods: ['2024'],
       balanceGeneral: { '2024': { activos: { 'Goodwill': 50 }, pasivos: {}, patrimonio: {} } },
       estadoResultados: { '2024': {} }
-    })).toThrow(/sin clasificación/);
+    }).accountIdentities.activos.Goodwill.estado).toBe('no_reconocida');
   });
 
   it('acepta cuentas personalizadas con tipo explícito', () => {

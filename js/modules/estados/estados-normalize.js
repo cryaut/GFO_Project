@@ -1,4 +1,5 @@
 import { ACCOUNT_TYPES, inferAccountType } from './estados-calculations.js';
+import { identificarCuenta, obtenerCuenta } from './cuentas-identificador.js';
 
 const MAX_PERIODS = 100;
 const MAX_ACCOUNTS_PER_GROUP = 200;
@@ -20,10 +21,38 @@ function accountType(source, group, name) {
   const types = source.accountTypes?.[group] || {};
   const explicit = Object.hasOwn(types, name);
   const type = explicit ? types[name] : inferAccountType(group, name);
-  if (!ACCOUNT_TYPES[group].includes(type)) {
+  if (explicit && type !== '' && !ACCOUNT_TYPES[group].includes(type)) {
     throw new Error(`Cuenta sin clasificación válida en ${group}: ${name}`);
   }
-  return type;
+  return type || '';
+}
+
+function identidadCuenta(source, group, name) {
+  const guardada = source.accountIdentities?.[group]?.[name];
+  if (source.accountIdentities?.[group] && Object.hasOwn(source.accountIdentities[group], name)) {
+    assertPlainObject(guardada, 'identidad de cuenta');
+    if (!['reconocida', 'sugerida', 'no_reconocida'].includes(guardada.estado)
+      || !['legado', 'importacion', 'manual'].includes(guardada.origen)
+      || !Array.isArray(guardada.candidatos) || guardada.candidatos.length > 5) throw new Error('Identidad de cuenta inválida');
+    const candidatos = guardada.candidatos.map(candidato => {
+      const cuenta = obtenerCuenta(candidato.id);
+      if (!cuenta) throw new Error('Candidato de cuenta inválido');
+      return { id: cuenta.id, nombreCanonico: cuenta.nombreCanonico, grupo: cuenta.grupo,
+        tipoApp: cuenta.tipoApp, puntuacion: typeof candidato.puntuacion === 'number' && candidato.puntuacion >= 0 && candidato.puntuacion <= 1 ? candidato.puntuacion : 1 };
+    });
+    const cuenta = obtenerCuenta(guardada.idCuenta);
+    if (guardada.estado === 'reconocida' && (!cuenta || cuenta.grupo !== group)) throw new Error('Identificador de cuenta inválido');
+    const tipo = source.accountTypes?.[group]?.[name];
+    if (guardada.estado === 'reconocida' && tipo && cuenta.tipoApp && tipo !== cuenta.tipoApp) throw new Error('Clasificación incompatible con identificador');
+    if (guardada.estado !== 'reconocida' && guardada.idCuenta !== null) throw new Error('Identificador pendiente sin confirmar');
+    if ((typeof guardada.metodo !== 'string' && guardada.metodo !== null) || guardada.metodo?.length > 80) throw new Error('Método de identificación inválido');
+    if (guardada.estado === 'reconocida' && !['id', 'nombre_canonico', 'sinonimo', 'contexto', 'confirmacion_manual'].includes(guardada.metodo)) throw new Error('Una cuenta reconocida requiere un método de asignación válido');
+    return { idCuenta: cuenta?.id || null, estado: guardada.estado, metodo: guardada.metodo,
+      candidatos, origen: guardada.origen };
+  }
+  const resultado = identificarCuenta(name, { grupo: group, clasificacion: source.accountTypes?.[group]?.[name] || '' });
+  return { idCuenta: resultado.id, estado: resultado.estado, metodo: resultado.metodo,
+    candidatos: resultado.candidatos, origen: 'legado' };
 }
 
 function toAmount(value, label) {
@@ -92,6 +121,15 @@ export function normalizeFinancialData(input) {
   const balanceGeneral = {};
   const estadoResultados = {};
   const accountTypes = { activos: {}, pasivos: {}, patrimonio: {}, estadoResultados: {} };
+  const accountIdentities = { activos: {}, pasivos: {}, patrimonio: {}, estadoResultados: {}, suplementario: {} };
+  if (source.accountIdentities !== undefined) {
+    assertPlainObject(source.accountIdentities, 'accountIdentities');
+    for (const [group, accounts] of Object.entries(source.accountIdentities)) {
+      if (!Object.hasOwn(accountIdentities, group)) throw new Error('Grupo de identidad inválido');
+      assertPlainObject(accounts, `accountIdentities.${group}`);
+      if (Object.keys(accounts).length > MAX_ACCOUNTS_PER_GROUP * MAX_PERIODS) throw new Error('Demasiadas identidades de cuenta');
+    }
+  }
 
   for (const period of periods) {
     const periodBg = assertPlainObject(source.balanceGeneral[period] ?? {}, `balanceGeneral[${period}]`);
@@ -105,6 +143,7 @@ export function normalizeFinancialData(input) {
       for (const [name, value] of Object.entries(accounts)) {
         clean[name] = toAmount(value, `${group}[${period}].${name}`);
         accountTypes[group][name] = accountType(source, group, name);
+        accountIdentities[group][name] = identidadCuenta(source, group, name);
       }
       cleanBg[group] = clean;
     }
@@ -116,16 +155,62 @@ export function normalizeFinancialData(input) {
     for (const [name, value] of Object.entries(periodEr)) {
       cleanEr[name] = toAmount(value, `estadoResultados[${period}].${name}`);
       accountTypes.estadoResultados[name] = accountType(source, 'estadoResultados', name);
+      accountIdentities.estadoResultados[name] = identidadCuenta(source, 'estadoResultados', name);
     }
     estadoResultados[period] = cleanEr;
   }
 
+  const supplementaryAccounts = {};
+  const reportedTotals = {};
+  for (const [key, target] of [['supplementaryAccounts', supplementaryAccounts], ['reportedTotals', reportedTotals]]) {
+    if (source[key] === undefined) continue;
+    assertPlainObject(source[key], key);
+    for (const [period, entries] of Object.entries(source[key])) {
+      if (!periods.includes(period)) throw new Error('Periodo adicional inconsistente');
+      assertPlainObject(entries, key);
+      if (Object.keys(entries).length > MAX_ACCOUNTS_PER_GROUP) throw new Error('Demasiadas cuentas adicionales');
+      target[period] = {};
+      for (const [name, value] of Object.entries(entries)) {
+        if (key === 'reportedTotals') {
+          assertPlainObject(value, 'total reportado');
+          const cuenta = obtenerCuenta(name);
+          if (cuenta?.rol !== 'reported_total' || cuenta.tipoApp) throw new Error('Total reportado inválido');
+          if (typeof value.nombre !== 'string' || !value.nombre.trim() || value.nombre.length > 120) throw new Error('Nombre de cuenta inválido');
+          target[period][name] = { nombre: value.nombre, grupo: cuenta.grupo, importe: toAmount(value.importe, name) };
+          accountIdentities[cuenta.grupo][value.nombre] = source.accountIdentities?.[cuenta.grupo]?.[value.nombre]
+            ? identidadCuenta(source, cuenta.grupo, value.nombre)
+            : { idCuenta: cuenta.id, estado: 'reconocida', metodo: 'id', candidatos: [], origen: 'legado' };
+        } else {
+          if (!name.trim() || name.length > 120) throw new Error('Nombre de cuenta inválido');
+          target[period][name] = toAmount(value, name);
+          accountIdentities.suplementario[name] = identidadCuenta(source, 'suplementario', name);
+        }
+      }
+    }
+  }
+  const pendingAccounts = source.pendingAccounts ?? [];
+  if (!Array.isArray(pendingAccounts) || pendingAccounts.length > 5000) throw new Error('Filas pendientes inválidas');
+  const pendientes = pendingAccounts.map(fila => {
+    assertPlainObject(fila, 'fila pendiente');
+    if (typeof fila.nombre !== 'string' || !fila.nombre.trim() || fila.nombre.length > 120 || DANGEROUS_KEYS.has(fila.nombre)) throw new Error('Nombre de cuenta inválido');
+    assertPlainObject(fila.importes, 'importes pendientes');
+    const importes = Object.fromEntries(Object.entries(fila.importes).map(([periodo, valor]) => {
+      if (!periods.includes(periodo)) throw new Error('Periodo pendiente inconsistente');
+      return [periodo, toAmount(valor, fila.nombre)];
+    }));
+    const identificacion = identidadCuenta({ accountIdentities: { pendiente: { [fila.nombre]: fila.identificacion } } }, 'pendiente', fila.nombre);
+    if (identificacion.estado === 'reconocida') throw new Error('Una fila reconocida requiere grupo');
+    return { nombre: fila.nombre, importes, identificacion };
+  });
   return {
-    name: typeof raw.name === 'string' && raw.name.trim() ? raw.name.trim() : 'Datos importados',
+    name: typeof raw.name === 'string' && raw.name.trim() ? raw.name.trim() : typeof source.name === 'string' && source.name.trim() ? source.name.trim() : 'Datos importados',
     periods: ordenarPeriodos(periods),
     balanceGeneral,
     estadoResultados,
-    accountTypes
+    accountTypes, accountIdentities,
+    ...(Object.keys(supplementaryAccounts).length ? { supplementaryAccounts } : {}),
+    ...(Object.keys(reportedTotals).length ? { reportedTotals } : {}),
+    ...(pendientes.length ? { pendingAccounts: pendientes } : {})
   };
 }
 

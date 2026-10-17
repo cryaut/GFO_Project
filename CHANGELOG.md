@@ -7,6 +7,11 @@ Todos los cambios notables en GFO Toolkit.
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
 ### Módulo 2: Estados Financieros
+- Colección versionada de 72 cuentas: conserva las 71 definiciones de referencia del PR #10 y añade ingresos por intereses, con investigación y procedencia de cada alias.
+- Importación y alta manual comparten identificador y registro: reconocidas, sugeridas y no reconocidas; las sugerencias requieren confirmación y las filas pendientes conservan sus montos. Columna opcional `id` en las tablas existentes.
+- API por identificador (`montoCuenta`, `consultarMontoCuenta`): cero solo según política de ausencia, requeridos en N/D y totales reportados sin fabricar sumas. Claves por nombre y respaldo JSON compatibles con metadatos validados.
+- Corrección: los intereses ganados se incorporan como ingreso, en vez de restarse como gasto. Otros ingresos/gastos genéricos requieren confirmación fuera de la clasificación previa de la demo.
+- Protección transitoria aprobada para Análisis y Reportes: conservan metadatos, propagan N/D y motivos de cuentas pendientes y evitan presentar cero o sumar un total junto a sus componentes. Las fórmulas y las cifras de la demo se conservan; no se integra el motor JSON.
 - **Importes ambiguos (importación):** `parseAmountCell(valor, { decimal, onAmbiguous })` admite un formato explícito (`'.'` o `','` decimal) además de `'auto'`. En automático, el separador se deduce de toda la tabla (`inferDecimalStyle`): un `1.234.567` o un `12,50` aclaran cómo leer `45.000`. Sin evidencia se conserva la convención (punto decimal) y se **avisa** con el número de fila en lugar de leer 45 en silencio.
 - `0,500` ahora es 0.5 (antes 500) y `1.2.3` / `1,2,3` se rechazan (antes `1.2.3` se leía como 123). Los errores de importe indican fila, cuenta y periodo.
 - Selector **Formato de importes** en Estados (Automático, Punto decimal, Coma decimal) para archivos CSV, Excel y tabla pegada; tras importar se muestra cuántos importes eran ambiguos.

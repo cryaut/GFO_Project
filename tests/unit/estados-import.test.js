@@ -96,9 +96,9 @@ describe('tableTextToFinancialData', () => {
 
   it('explica los errores con el número de fila', () => {
     const sinGrupo = ['Cuenta,2024', 'Cuenta rara,100'].join('\n');
-    expect(() => tableTextToFinancialData(sinGrupo)).toThrow(/Fila 2:.*Cuenta rara/);
+    expect(tableTextToFinancialData(sinGrupo).pendingAccounts[0]).toMatchObject({ nombre: 'Cuenta rara', importes: { '2024': 100 } });
     const malaClasificacion = ['Cuenta,Grupo,Clasificacion,2024', 'Efectivo,Activos,ventas,100'].join('\n');
-    expect(() => tableTextToFinancialData(malaClasificacion)).toThrow(/no es válida para activos/);
+    expect(tableTextToFinancialData(malaClasificacion).accountIdentities.activos.Efectivo.estado).toBe('sugerida');
     const duplicada = ['Cuenta,Grupo,Clasificacion,2024', 'Efectivo,Activos,efectivo,100', 'Efectivo,Activos,efectivo,200'].join('\n');
     expect(() => tableTextToFinancialData(duplicada)).toThrow(/duplicada/);
     expect(() => tableTextToFinancialData('')).toThrow(/vacío/);

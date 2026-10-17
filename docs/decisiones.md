@@ -77,8 +77,16 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-025 | Dividendos desde las utilidades acumuladas, con respaldo en la variación de patrimonio | Vigente |
 | D-026 | Depreciación del periodo por variación de la depreciación acumulada, con advertencias | Vigente |
 | D-027 | Las comprobaciones del EOAF y del EFE comparten sus piezas y no muestran sumas parciales | Vigente |
+| D-029 | Identificadores como metadatos y claves por nombre | Vigente |
+| D-030 | Importar filas pendientes sin perder sus montos | Vigente |
+| D-031 | Otros ingresos y gastos genéricos requieren confirmación | Vigente |
+| D-032 | Los intereses ganados son ingresos | Vigente |
+| D-033 | Similitud calibrada como sugerencia confirmable | Vigente |
+| D-034 | Propagar N/D en consumidores sin migrar sus fórmulas | Vigente |
 
 ## Decisiones
+
+Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama del PR #10. Las entradas anteriores no se renumeran ni se modifican.
 
 ### D-001 — Año de 365 días
 
@@ -659,3 +667,129 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 **Para revertirla.** Restaurar las constantes y `seleccionarPeriodo*` en cada `*-calculations.js`, quitar `comprobacion-calculations.js` y `tests/unit/comprobacion.test.js`, y revertir los casos nuevos de `efe.test.js` y `eoaf.test.js`.
 
 **Referencias.** PR #13 (integración de #11 y #12), [ficha flujo-de-efectivo](planificacion/flujo-de-efectivo/README.md), [ficha origen-y-aplicacion](planificacion/origen-y-aplicacion/README.md), D-021, D-023, D-024, D-025, D-026.
+
+### D-029 — Identificadores como metadatos y claves por nombre
+
+- **Fecha**: 2026-10-17
+- **Estado**: Vigente
+- **Decidió**: Carlos, aprobación expresa de la recomendación 1 del encargo en el chat
+- **Área**: Estados, normalización y respaldos
+
+**Contexto.** Los módulos existentes leen montos con claves por nombre y tipos de cuenta. Sustituirlas por ids exigiría migrarlos junto a los datos guardados.
+
+**Opciones.**
+1. Mantener claves por nombre y añadir identidad — permite la transición sin migración masiva.
+2. Cambiar las claves por id — uniforma el modelo, pero rompe los lectores actuales.
+
+**Decisión.** Opción 1: `accountIdentities[grupo][nombre]` guarda id, estado, método, candidatos y origen. Un registro común atiende importación y alta manual, pasando siempre por la normalización. Totales sin tipo y suplementarios se conservan aparte.
+
+**Consecuencias.** Los JSON incluyen metadatos nuevos validados; los respaldos anteriores siguen aceptándose y conservan sus tipos. La API por id no fabrica totales. Los 19 tipos no crecen. La propiedad de las copias de los JSON del motor queda pendiente de ese motor.
+
+**Para revertirla.** Cambiar registro, normalización, API de montos y sus pruebas; para optar por ids, migrar antes los consumidores y respaldos.
+
+**Referencias.** [Ficha de cuentas](planificacion/cuentas/README.md), sección 10.1 del encargo.
+
+### D-030 — Importar filas pendientes sin perder sus montos
+
+- **Fecha**: 2026-10-17
+- **Estado**: Vigente
+- **Decidió**: Carlos, aprobación expresa de la recomendación 2 en el chat
+- **Área**: Importación, normalización y revisión de Estados
+
+**Contexto.** Antes una sola cuenta desconocida detenía la importación completa.
+
+**Opciones.**
+1. Conservar montos y marcar reconocida/sugerida/no reconocida — permite revisar después.
+2. Mantener el error por cuenta — impide trabajar con un archivo parcialmente conocido.
+
+**Decisión.** Opción 1. Una cuenta sin grupo se conserva en `pendingAccounts`. Una cuenta con grupo permanece en su sección. Las sugerencias nunca se aplican solas. El resumen cuenta cuentas únicas entre periodos; errores de estructura, importes, duplicados y claves peligrosas siguen deteniendo la operación de manera atómica.
+
+**Consecuencias.** Los tests que exigían error por cuenta sin tipo pasan a exigir conservación y estado pendiente. Los totales afectados quedan N/D, con `unrecognized_imported_account` o `ambiguous_account_match`. D-019 (importes) y D-020 (validación de respaldos) se conservan.
+
+**Para revertirla.** Volver a exigir clasificación en registro, importación y normalización; retirar revisión y actualizar las pruebas.
+
+**Referencias.** [Ficha de cuentas](planificacion/cuentas/README.md), D-034.
+
+### D-031 — Otros ingresos y gastos genéricos requieren confirmación
+
+- **Fecha**: 2026-10-17
+- **Estado**: Vigente
+- **Decidió**: Carlos, aprobación expresa de la recomendación 3 en el chat
+- **Área**: Identificador y compatibilidad de Estados
+
+**Contexto.** Los nombres genéricos no indican si el ingreso/gasto es operativo. MUNO MODA usa la clasificación no operativa previa.
+
+**Opciones.**
+1. Preservar el caso previo y preguntar en nuevas altas/importaciones — evita inventar el contexto.
+2. Aplicar no operativo siempre — cambia la interpretación de empresas distintas.
+
+**Decisión.** Opción 1. «Otros Ingresos» y «Otros Gastos» permanecen sugeridos hasta confirmar un id, incluso con su tipo transitorio; los datos legados mantienen su tipo explícito o adaptación conocida. Los nombres canónicos específicos e ids explícitos válidos sí se reconocen.
+
+**Consecuencias.** La demo mantiene sus cifras y las importaciones nuevas muestran candidatos operativos/no operativos. Los conceptos sin tipo equivalente siguen disponibles por id y dejan N/D en los cálculos anteriores que no los pueden representar.
+
+**Para revertirla.** Cambiar catálogo/identificador, adaptación legada y corpus; comprobar utilidad operativa y cobertura.
+
+**Referencias.** [Investigación](planificacion/cuentas/investigacion.md), sección 10.3 del encargo.
+
+### D-032 — Los intereses ganados son ingresos
+
+- **Fecha**: 2026-10-17
+- **Estado**: Vigente
+- **Decidió**: Carlos, aprobación expresa de la recomendación 4 en el chat
+- **Área**: Catálogo y adaptación al motor de totales
+
+**Contexto.** La expresión regular de intereses confundía «Ingresos por Intereses» e «Intereses ganados» con gastos financieros.
+
+**Opciones.**
+1. Añadir `is.interest_income` y adaptarlo a otros ingresos — corrige el signo sin ampliar los tipos.
+2. Dejarlo sin reconocer — evita la resta errónea, pero mantiene una brecha conocida.
+
+**Decisión.** Opción 1. El gasto identificado como `is.interest_expense` conserva su tipo `intereses`. Los ingresos ganados usan `otrosIngresos` durante la transición, sin modificar la fórmula de utilidad.
+
+**Consecuencias.** En un archivo con ventas 100, intereses ganados 20 y gasto por intereses 5, la utilidad es 115, antes 75 por la inferencia incorrecta. La demo no tiene esos ingresos y sus cifras no cambian. No se interpreta el rótulo genérico «Intereses» como ingreso en nuevas altas; requiere contexto/confirmación.
+
+**Para revertirla.** Retirar el nuevo id y sus alias; actualizar identificador y pruebas de signo.
+
+**Referencias.** [Investigación](planificacion/cuentas/investigacion.md), fuente oficial IFRS sobre presentación de ingresos por intereses abierta en esta sesión.
+
+### D-033 — Similitud calibrada como sugerencia confirmable
+
+- **Fecha**: 2026-10-17
+- **Estado**: Vigente
+- **Decidió**: Codex, calibración técnica autorizada en la sección 10.7; pendiente de revisión del PR
+- **Área**: `cuentas-similitud.js`
+
+**Contexto.** Con la medida principal propuesta, Efetivo/Efectivo da 1−1/8 = 0.875, incompatible por sí sola con el ejemplo ≥0.92. La medida por palabras permitía calibración.
+
+**Opciones.**
+1. Conservar la principal y normalizar el apoyo por longitud combinada — cumple el corpus de errores sin elegir ids.
+2. Bajar el umbral de preselección — facilita sugerir, pero pierde el margen propuesto.
+
+**Decisión.** Opción 1, con apoyo simétrico para penalizar palabras omitidas. Efetivo/Efectivo da 1−1/15 = 0.9333. Se conservan 0.80 mínimo, 0.92 preselección, ventaja 0.05 y hasta cinco candidatos. Dígitos diferentes dan cero. Un empate no se preselecciona.
+
+**Consecuencias.** Todos los resultados difusos son sugeridos y requieren confirmación. Las variantes sin acentos, signos o mayúsculas que normalizan al mismo texto se reconocen por la regla exacta de R1; no son coincidencias difusas. El corpus exige cero reconocimientos incorrectos.
+
+**Para revertirla.** Cambiar medida de apoyo/umbrales y recalibrar los corpus positivo y negativo.
+
+**Referencias.** `tests/unit/cuentas-identificador.test.js`, sección 8 del encargo.
+
+### D-034 — Propagar N/D en consumidores sin migrar sus fórmulas
+
+- **Fecha**: 2026-10-17
+- **Estado**: Vigente
+- **Decidió**: Carlos, aprobación expresa del ajuste mínimo adicional en el chat
+- **Área**: Totales compartidos, lectura de Análisis y Reportes
+
+**Contexto.** R1 exige N/D por cuentas pendientes, pero el alcance inicial excluía consumidores. Análisis y Reportes reconstruían los estados descartando metadatos; algunas operaciones convertían null en cero y Reportes reemplazaba utilidad N/D por un cálculo alternativo.
+
+**Opciones.**
+1. Preservar metadatos y propagar disponibilidad — cumple R1 sin migrar el motor.
+2. Documentar la limitación — seguirían apareciendo ceros o cifras parciales tras guardar.
+
+**Decisión.** Opción 1. Los lectores conservan el objeto completo; el adaptador puro `aplicarDisponibilidadRazones` anula los campos afectados y conserva motivos. Reportes muestra N/D y respeta la utilidad compartida. Un total junto a componentes del mismo tipo no se suma dos veces: el agregado anterior queda N/D con `overlapping_account_aggregation`; la API devuelve el total publicado.
+
+**Consecuencias.** Cambios mínimos en dos consumidores, aprobados como excepción al alcance inicial. Las fórmulas se conservan y no se migra ningún módulo a `montoCuenta`. La ambigüedad puede invalidar conservadoramente varias razones del mismo grupo, hasta que el motor pueda determinar dependencias por cuenta. Los importes originales quedan conservados. No se confirma un dato de dividendos.
+
+**Para revertirla.** Retirar la propagación de disponibilidad y el guardado de metadatos de los lectores; ello vuelve a dejar incompleto R1.
+
+**Referencias.** [Ficha de cuentas](planificacion/cuentas/README.md), D-029–D-033, `cuentas-consumidores.test.js`.

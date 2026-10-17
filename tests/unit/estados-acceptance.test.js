@@ -1,5 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import store from '../../js/store.js';
+import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
 
 // Boundary double, not a DOM parser. The real renderer and application handlers
 // run; browser layout, nested account forms and native validation are not tested.
@@ -87,12 +88,12 @@ it('imports external JSON through Estados, previews, saves once and reloads', as
   await page.querySelector('#saveStates').dispatchEvent({ type: 'click' });
   expect(setItem).toHaveBeenCalledTimes(1);
   expect(notify).toHaveBeenCalledTimes(1);
-  expect(store.get('estados')).toEqual(external);
-  expect(JSON.parse(storage.get('gfo-toolkit-data')).estados).toEqual(external);
+  expect(store.get('estados')).toEqual(normalizeFinancialData(external));
+  expect(JSON.parse(storage.get('gfo-toolkit-data')).estados).toEqual(normalizeFinancialData(external));
 
   store._data = null;
   initEstados();
-  expect(store.get('estados')).toEqual(external);
+  expect(store.get('estados')).toEqual(normalizeFinancialData(external));
   expect(page.querySelector('#statementPreview').innerHTML).toContain('Servicios profesionales');
   expect(page.querySelector('#estadoMessage').textContent).not.toContain('No se pudo');
 });
@@ -241,11 +242,11 @@ it('imports an external CSV through the Estados file input and publishes it', as
   initEstados();
 
   const csv = [
-    'Estado,Grupo,Cuenta,Clasificacion,2024',
-    'Balance,Activos,Banco regional,efectivo,150',
-    'Balance,Pasivos,Proveedor regional,cuentasPorPagar,50',
-    'Balance,Patrimonio,Aportes socios,patrimonio,100',
-    'Resultados,,Servicios profesionales,ventas,300'
+    'Estado,Grupo,Cuenta,Clasificacion,id,2024',
+    'Balance,Activos,Banco regional,efectivo,bs.cash_and_equivalents,150',
+    'Balance,Pasivos,Proveedor regional,cuentasPorPagar,bs.trade_payables,50',
+    'Balance,Patrimonio,Aportes socios,patrimonio,bs.share_capital,100',
+    'Resultados,,Servicios profesionales,ventas,is.service_revenue,300'
   ].join('\n');
   const input = page.querySelector('#statesFile');
   input.files = [{ name: 'externa.csv', contents: csv }];

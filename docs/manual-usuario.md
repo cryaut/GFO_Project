@@ -120,6 +120,16 @@ Con **Cargar ejemplo ficticio** (datos inventados, para no exponer información 
 
 ## 3. Módulo 2: Estados Financieros
 
+### Identificación de cuentas al importar o escribir
+
+El resumen distingue **reconocidas**, **sugeridas** y **no reconocidas**. Una cuenta reconocida guarda su identificador; una sugerida ofrece candidatos y requiere pulsar **Confirmar cuenta**. Si no se reconoce, filtre la lista del catálogo y elija la cuenta correcta. El nombre que escribió se conserva. En **Cuenta nueva** se usa el mismo identificador: los nombres exactos se reconocen al escribir y las sugerencias se confirman al añadir.
+
+Las filas pendientes se importan con sus importes, incluso si falta el grupo; aparecen en la revisión y en la vista del borrador. Puede guardar el conjunto y resolverlas después. Los cálculos que dependen de ellas muestran **N/D** con un motivo; no se sustituyen por cero. La clasificación previa de datos guardados se conserva para compatibilidad. Otros ingresos/gastos genéricos necesitan confirmación fuera del caso ya clasificado de la demostración.
+
+CSV y Excel admiten una columna opcional `id` (por ejemplo `bs.cash_and_equivalents`). Si es inválido o contradice grupo/clasificación, la cuenta queda pendiente. El lector busca la cabecera `Cuenta` entre las primeras 25 filas de una hoja y avisa si una hoja no tiene tabla de cuentas. No se añaden formatos de archivo.
+
+Los totales reportados sin tipo equivalente y los datos suplementarios aparecen aparte. La consulta por identificador devuelve el total publicado; no inventa una suma de componentes. Si un total y sus componentes se superponen en el motor anterior, su agregado queda N/D hasta resolver el desglose o usar el futuro motor. Los costos/gastos se capturan positivos y la depreciación acumulada negativa. Los intereses ganados son ingresos, no gastos.
+
 ### 3.1 Cargar datos: importar, editar o usar la demo
 
 La sección Estados Financieros (`#/estados`) es la puerta de entrada de la información. El flujo es siempre el mismo:
