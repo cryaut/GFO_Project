@@ -385,35 +385,6 @@ Calcula el efectivo de operaciones por método indirecto. Análisis ya no la con
 - **Fórmula**: `UtilidadNeta + Σ(ajustes)`
 - **Ejemplo**: `efeIndirecto(12000, [3000, -1000, 2000])` → `16000`
 
-#### EFE de Análisis (`js/modules/analisis/efe-calculations.js`)
-
-Lógica pura del Estado de Flujo de Efectivo por método indirecto (D-024). Recibe los estados normalizados (o crudos con `accountTypes`) y dos periodos; no toca DOM ni `store`.
-
-#### `TOLERANCIA_EFE`
-Constante: `0.01` (un centavo), la misma tolerancia del EOAF y de `validateFinancialData`. La comprobación suma además `Number.EPSILON` escalado a las magnitudes.
-
-#### `seleccionarPeriodoEFE(periodos)`
-Par de periodos a comparar: los dos más recientes con `ordenarPeriodos`; con nombres sin año ("Marzo") se respeta el orden del usuario.
-
-- **Retorno**: `{ periodoInicial, periodoFinal, periodos }` o `{ incompleto }` (menos de 2 periodos, o periodos no distintos)
-- **Ejemplo**: `seleccionarPeriodoEFE(['2025', '2023', '2024'])` → `{ periodoInicial: '2024', periodoFinal: '2025', periodos: [...] }`
-
-#### `esResultadoAcumulado(nombre)`
-`true` si el nombre corresponde a una cuenta de resultados acumuladas (utilidades/resultados acumuladas, utilidades retenidas, resultados del ejercicio…). Inferencia local por nombre: `ACCOUNT_TYPES` no tiene subtipos de patrimonio.
-
-#### `construirEFE(datos, periodoInicial, periodoFinal)`
-Arma el estado completo: operación (UN + depreciación + capital de trabajo), inversión (activos fijos), financiamiento (deuda, aportaciones y dividendos) y la comprobación.
-
-- **Retorno**: `{ periodos, incompleto?, utilidadNeta, operacion, inversion, financiamiento, totalFlujos, efectivoInicial, efectivoFinal, variacionEfectivo, diferencia, tolerancia, estado, motivos, advertencias, interpretacion }`
-  - Cada actividad: `{ items: [{ concepto, monto, falta }], total }`; `monto` es `null` (N/D) si falta un dato
-  - `estado`: `'cuadra'` (|diferencia| ≤ tolerancia), `'no-cuadra'` o `'incompleta'` (motivos: cuenta sin saldo o sin clasificar, sin ER del periodo final, sin efectivo)
-  - Sin balance de un periodo: `incompleto` y el resto en `null`
-- **Identidad**: CFO + CFI + CFF = efectivo final − efectivo inicial (D-024, D-025, D-026)
-- **Nota**: los nombres de cuenta de `motivos` y `advertencias` vienen del archivo: el llamador debe escaparlos con `escapeHTML`
-
-#### `interpretarEFE(resultado)`
-Lectura breve en una frase del estado (cuadra, no cuadra o incompleto). La calcula `construirEFE`; se expone para pruebas.
-
 ---
 
 ### Depreciación
@@ -764,16 +735,7 @@ Variables del paso 01 para un periodo, con sus grados, traza y faltantes.
 
 ## eoaf-calculations.js
 
-`js/modules/analisis/eoaf-calculations.js`. Lógica pura del Estado de Origen y Aplicación de Fondos (EOAF), sin DOM ni `store`. Recibe los estados normalizados (o en bruto) y arma el balance comparado de dos periodos. La interfaz está en `index.js` (`computeEOAF`, que devuelve el resultado completo, y `renderEOAFSection`).
-
-#### `TOLERANCIA_EOAF`
-Constante `0.01`: un centavo, más el epsilon de coma flotante escalado a los totales. No se redistribuyen diferencias.
-
-#### `seleccionarPeriodoPar(periodos)`
-El par de periodos a comparar: los dos más recientes en orden cronológico (`ordenarPeriodos`); con nombres sin año ("Marzo") se respeta el orden que dejó el usuario.
-
-- **Retorno**: `{ periodoInicial, periodoFinal, periodos }` o `{ incompleto }` si hay menos de dos periodos distintos
-- **Ejemplo**: `seleccionarPeriodoPar(['2025', '2023', '2024'])` → `{ periodoInicial: '2024', periodoFinal: '2025', periodos: ['2023', '2024', '2025'] }`
+`js/modules/analisis/eoaf-calculations.js`. Lógica pura del Estado de Origen y Aplicación de Fondos (EOAF), sin DOM ni `store`. Recibe los estados normalizados (o en bruto) y arma el balance comparado de dos periodos. La interfaz está en `index.js` (`computeEOAF`, que devuelve el resultado completo, y `renderEOAFSection`). La selección del par de periodos, la tolerancia y la advertencia de balance son comunes con el EFE: ver `comprobacion-calculations.js`.
 
 #### `clasificarMovimientoEOAF(grupo, tipo, saldoInicial, saldoFinal)`
 Clasifica la variación de una cuenta del balance con el grupo (`'activos'`, `'pasivos'`, `'patrimonio'`) y el tipo de `ACCOUNT_TYPES`.
@@ -794,15 +756,72 @@ Estado completo: secciones con filas y subtotales, resumen de la comprobación, 
 - **Retorno**: `{ periodos, incompleto?, secciones, resumen, advertencias, interpretacion }`
   - `secciones`: por grupo, `{ id, titulo, filas, subtotal }`; cada fila tiene `cuenta`, `tipo`, `saldoInicial`, `saldoFinal`, `variacion`, `clasificacion`, `origen`, `aplicacion`, `falta`, `etiqueta` y `mensaje`
   - `subtotal`: `{ saldoInicial, saldoFinal, variacion, completo }`; es `null` si falta algún saldo
-  - `resumen`: `{ totalOrigenes, totalAplicaciones, diferencia, estado, tolerancia, motivos }` con `estado` `'cuadra'`, `'no-cuadra'` o `'incompleta'` (hay motivos)
+  - `resumen`: `{ totalOrigenes, totalAplicaciones, diferencia, estado, tolerancia, motivos }` con `estado` `'cuadra'`, `'no-cuadra'` o `'incompleta'` (hay motivos). Con `'incompleta'`, `totalOrigenes`, `totalAplicaciones` y `diferencia` son `null` (N/D): una suma parcial se leería como cifra firme; el detalle sigue en las filas
   - `incompleto`: con menos de dos periodos o sin balance de uno de ellos; entonces `secciones: []` y `resumen: null`
-- **N/D**: los saldos faltantes se reportan como filas con `falta: 'falta-saldo'`, no como 0; los subtotales de esa sección quedan en `null`
+- **N/D**: los saldos faltantes (ausentes o que no son un número finito) se reportan como filas con `falta: 'falta-saldo'`, no como 0; los subtotales de esa sección quedan en `null`
 - **Ejemplo**: `construirEOAF(estados, '2023', '2024')` con la demo MUNO MODA → `{ resumen: { totalOrigenes: 97775, totalAplicaciones: 97775, diferencia: 0, estado: 'cuadra' } }`
 
 #### `interpretarEOAF(resultado)`
 Lectura breve del estado en una o dos frases (mayor fuente, mayor aplicación, o la diferencia exacta si no cuadra).
 
 - **Retorno**: `string`; los nombres de cuenta que aparecen pueden venir de un archivo importado: el llamador debe escaparlos (`escapeHTML`) antes de insertarlos en HTML
+
+---
+
+## efe-calculations.js
+
+`js/modules/analisis/efe-calculations.js`. Lógica pura del Estado de Flujo de Efectivo por método indirecto (D-024), sin DOM ni `store`. Recibe los estados normalizados (o crudos con `accountTypes`) y dos periodos. La interfaz está en `index.js` (`computeEFE(period)`, que compara `period` con el periodo inmediatamente anterior, y `renderEFESection`). Comparte con el EOAF la selección del par de periodos, la tolerancia y la advertencia de balance (`comprobacion-calculations.js`).
+
+#### `esResultadoAcumulado(nombre)`
+`true` si el nombre corresponde a una cuenta de resultados acumulados o del ejercicio: utilidad(es) o resultado(s) acumulado(s), retenida(s), del ejercicio o del periodo; ganancias acumuladas o retenidas; pérdidas acumuladas; resultados de ejercicios anteriores. Inferencia local por nombre: `ACCOUNT_TYPES` no tiene subtipos de patrimonio (D-025).
+
+- **Ejemplo**: `esResultadoAcumulado('Utilidad acumulada')` → `true`; `esResultadoAcumulado('Reserva legal')` → `false`
+
+#### `construirEFE(datos, periodoInicial, periodoFinal)`
+Arma el estado completo: operación (UN + depreciación + capital de trabajo), inversión (activos fijos), financiamiento (deuda, aportaciones y dividendos) y la comprobación.
+
+- **Retorno**: `{ periodos, incompleto?, utilidadNeta, operacion, inversion, financiamiento, totalFlujos, efectivoInicial, efectivoFinal, variacionEfectivo, diferencia, tolerancia, estado, motivos, advertencias, interpretacion }`
+  - Cada actividad: `{ items: [{ concepto, monto, falta }], total }`; `monto` es `null` (N/D) si falta un dato. Un cambio de 0 es `0`, nunca `-0`
+  - `estado`: `'cuadra'` (|diferencia| ≤ tolerancia), `'no-cuadra'` o `'incompleta'` (motivos: cuenta sin saldo, sin clasificar o con importe inválido, sin estado de resultados del periodo final, sin efectivo)
+  - Sin balance de un periodo: `incompleto` y el resto en `null`
+  - No lanza con importes que no son números: la cuenta o el estado de resultados quedan como motivo
+- **Identidad**: CFO + CFI + CFF = efectivo final − efectivo inicial (D-024, D-025, D-026)
+- **Advertencias**: balance que no cumple A = P + O por periodo, estado de resultados sin cuentas (la utilidad neta se toma como 0), depreciación, dividendos negativos y ausencia de cuentas de utilidades acumuladas
+- **Nota**: los nombres de cuenta de `motivos` y `advertencias` vienen del archivo: el llamador debe escaparlos con `escapeHTML`
+
+#### `interpretarEFE(resultado)`
+Lectura del estado: si cuadra o no, y qué dicen los signos de los flujos (la operación genera o consume efectivo, si alcanza para la inversión y si el financiamiento aportó o devolvió fondos). La calcula `construirEFE`; se expone para pruebas.
+
+---
+
+## comprobacion-calculations.js
+
+`js/modules/analisis/comprobacion-calculations.js`. Piezas comunes de las comprobaciones del EOAF y del EFE (D-027), sin DOM ni `store`.
+
+#### `TOLERANCIA_COMPROBACION`
+Constante `0.01`: un centavo, la misma tolerancia de `validateFinancialData`. No se redistribuyen diferencias.
+
+#### `toleranciaComprobacion(...totales)`
+Tolerancia efectiva: `TOLERANCIA_COMPROBACION` más `Number.EPSILON` escalado al mayor total en valor absoluto (mínimo 1). Los valores `null` o no finitos no cuentan.
+
+- **Ejemplo**: `toleranciaComprobacion(5, 3)` → `0.01 + Number.EPSILON * 5`
+
+#### `seleccionarPeriodoPar(periodos, periodoFinal?)`
+El par de periodos a comparar. Sin `periodoFinal`: los dos más recientes en orden cronológico (`ordenarPeriodos`); con nombres sin año ("Marzo") se respeta el orden que dejó el usuario. Con `periodoFinal` en la lista: ese cierre contra el inmediatamente anterior; si no está en la lista, los dos más recientes. Los periodos repetidos cuentan una vez.
+
+- **Retorno**: `{ periodoInicial, periodoFinal, periodos }` o `{ incompleto }` (menos de dos periodos, periodos no distintos o cierre sin periodo anterior)
+- **Ejemplo**: `seleccionarPeriodoPar(['2025', '2023', '2024'])` → `{ periodoInicial: '2024', periodoFinal: '2025', periodos: ['2023', '2024', '2025'] }`; `seleccionarPeriodoPar(['2023', '2024', '2025'], '2024')` → `{ periodoInicial: '2023', periodoFinal: '2024', … }`
+
+#### `variacionesDeCuentas(datos, grupo, periodoInicial, periodoFinal)`
+Variación de cada cuenta de un grupo del balance (`'activos'`, `'pasivos'` o `'patrimonio'`) entre dos periodos: primero las cuentas del periodo inicial y después las que solo aparecen en el final.
+
+- **Retorno**: `[{ cuenta, grupo, tipo, saldoInicial, saldoFinal, variacion }]`; `tipo` es `''` si la cuenta no se reconoce
+- **N/D**: un saldo ausente o que no es un número finito queda en `null` y la variación también; nunca se completa con 0 ni se suma como texto
+
+#### `advertenciasDeBalance(periodos, bgInicial, bgFinal)`
+Una advertencia por periodo cuyo balance no cumple A = P + O (más allá de la tolerancia), con la diferencia exacta. `periodos` es `{ inicial, final }`.
+
+- **Retorno**: `string[]`
 
 ---
 

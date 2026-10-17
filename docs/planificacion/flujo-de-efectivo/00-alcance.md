@@ -14,11 +14,11 @@ Auditar el EFE existente y rediseñarlo para que muestre las tres actividades de
 
 ## Decisiones
 
-- Nuevo módulo puro `js/modules/analisis/efe-calculations.js` (D-024): `TOLERANCIA_EFE`, `seleccionarPeriodoEFE`, `esResultadoAcumulado`, `construirEFE`, `interpretarEFE`.
+- Nuevo módulo puro `js/modules/analisis/efe-calculations.js` (D-024): `esResultadoAcumulado`, `construirEFE`, `interpretarEFE`. La tolerancia y la selección del par de periodos pasaron a `comprobacion-calculations.js`, compartido con el EOAF (D-027).
 - Operación: UN(ER del periodo final) + depreciación (Δ de la magnitud de la depreciación acumulada) − ΔInventario − ΔCxC − ΔACOtros + ΔCxP + ΔProvisiones.
 - Inversión: −Δ activos fijos brutos (el reembolso de una baja entra como positivo).
 - Financiamiento: +Δ pasivo largo plazo (incluye "Otros Pasivos" por inferencia), +Δ pasivo corto plazo; con cuentas de resultados acumuladas, aportaciones = ΔPatrimonio − ΔRE y dividendos = UN − ΔRE; sin ellas, ΔPatrimonio total con la UN descontada y advertencia (D-025). Ambas formas reconcilian exactamente.
-- Identidad comprobada: CFO + CFI + CFF = Δ efectivo, con tolerancia `TOLERANCIA_EFE` = 0.01 + epsilon escalado. Estados: `cuadra`, `no-cuadra` (diferencia exacta), `incompleta` (motivos: cuenta sin saldo, sin clasificar, sin ER, sin efectivo). Nunca se inventan datos ni se ajustan cifras.
+- Identidad comprobada: CFO + CFI + CFF = Δ efectivo, con tolerancia `TOLERANCIA_COMPROBACION` = 0.01 + epsilon escalado (en la primera versión `TOLERANCIA_EFE`). Estados: `cuadra`, `no-cuadra` (diferencia exacta), `incompleta` (motivos: cuenta sin saldo, sin clasificar, sin ER, sin efectivo). Nunca se inventan datos ni se ajustan cifras.
 - Intereses e impuestos quedan dentro de la UN (nota al usuario).
 - Tipo de cuenta ausente en la empresa → Δ = 0; tipo presente con saldo faltante → N/D y motivo.
 

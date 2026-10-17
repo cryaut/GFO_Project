@@ -3,7 +3,7 @@
 - **Estado**: En revisión
 - **Responsable**: Henry
 - **Rama**: `origen-y-aplicacion`
-- **Última actualización**: 2026-10-09
+- **Última actualización**: 2026-10-16
 
 ## Objetivo
 
@@ -23,12 +23,13 @@ Que la pestaña **EOAF** de `#/analisis` presente un Estado de Origen y Aplicaci
 - [D-021](../decisiones.md#d-021--el-eoaf-clasifica-cada-cuenta-del-balance-no-seis-agregados): clasificar cada cuenta del balance, no seis agregados con doble conteo.
 - [D-022](../decisiones.md#d-022--la-depreciación-acumulada-se-clasifica-por-su-magnitud-y-no-se-inventa-el-gasto): depreciación acumulada por variación de magnitud; no se inventa el gasto del periodo.
 - [D-023](../decisiones.md#d-023--la-comprobación-usa-tolerancia-de-c-001-y-no-redistribuye-diferencias): tolerancia de C$ 0.01, sin redistribuir diferencias; estados `cuadra`, `no-cuadra` e `incompleta`.
+- [D-027](../decisiones.md#d-027--las-comprobaciones-del-eoaf-y-del-efe-comparten-sus-piezas-y-no-muestran-sumas-parciales): selección de periodos, tolerancia y advertencia de balance compartidas con el EFE; con la comprobación incompleta los totales son N/D.
 
 ## Archivos que toca
 
 | Archivo | Qué |
 |---|---|
-| `js/modules/analisis/eoaf-calculations.js` | Nuevo: lógica pura (`construirEOAF`, `clasificarMovimientoEOAF`, `seleccionarPeriodoPar`, `interpretarEOAF`, `TOLERANCIA_EOAF`) |
+| `js/modules/analisis/eoaf-calculations.js` | Nuevo: lógica pura (`construirEOAF`, `clasificarMovimientoEOAF`, `interpretarEOAF`; la selección de periodos y la tolerancia están en `comprobacion-calculations.js`, D-027) |
 | `js/modules/analisis/index.js` | `computeEOAF` devuelve el estado completo; `renderEOAFSection` arma la tabla y la comprobación |
 | `tests/unit/eoaf.test.js` | Nuevo: 24 pruebas |
 | `CHANGELOG.md`, `docs/api.md`, `docs/contexto/dominio-financiero.md`, `docs/contexto/arquitectura.md`, `docs/decisiones.md`, `docs/manual-usuario.md` | Documentación |

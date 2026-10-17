@@ -413,7 +413,9 @@ En la pestaña **EOAF** de `#/analisis` se compara el balance de los dos periodo
 
 La depreciación acumulada creciente se presenta como origen (gasto no efectivo del periodo); una nota lo explica, porque el modelo no guarda ese gasto por separado y por eso no se distingue de un retiro de activos. Los subtotales de la tabla solo suman saldos: nunca generan movimientos.
 
-Al pie está la comprobación: **Total de orígenes** contra **Total de aplicaciones**. Si la diferencia es de un centavo o menos, el estado muestra **Cuadra**; si es mayor, muestra **No cuadra** con la cifra exacta. Si falta el saldo de una cuenta en un periodo o una cuenta no tiene clasificación, la comprobación queda **Comprobación incompleta** y la lista de motivos dice qué corregir.
+Al pie está la comprobación: **Total de orígenes** contra **Total de aplicaciones**. Si la diferencia es de un centavo o menos, el estado muestra **Cuadra**; si es mayor, muestra **No cuadra** con la cifra exacta. Si falta el saldo de una cuenta en un periodo o una cuenta no tiene clasificación, la comprobación queda **Comprobación incompleta**, la lista de motivos dice qué corregir y los totales se muestran como **N/D** hasta que los datos estén completos.
+
+**Qué significa «Cuadra»:** que los dos balances cierran (Activos = Pasivos + Patrimonio) y que sus variaciones se explican entre sí. No verifica que los importes capturados sean correctos; si un balance no cierra, una nota lo indica por periodo.
 
 **Ejemplo con la demo MUNO MODA (2023 → 2024):** orígenes y aplicaciones coinciden en C$ 97,775. La mayor fuente son las Utilidades Acumuladas (C$ 64,825) y la mayor aplicación el Pasivo Largo Plazo (C$ 35,000).
 
@@ -429,7 +431,7 @@ En la pestaña **EFE** de `#/analisis` se arma el estado de flujo de efectivo po
 - **Inversión:** compra (−) o baja (+) de activos fijos.
 - **Financiamiento:** variación de la deuda a largo y corto plazo, aportaciones de capital y dividendos.
 
-**Comprobación:** CFO + CFI + CFF debe ser igual a la variación de efectivo (efectivo final − efectivo inicial). La pestaña lo comprueba con una tolerancia de C$ 0.01 y muestra la insignia **Cuadra**, **No cuadra** (con la diferencia exacta) o **Comprobación incompleta** (con los motivos: cuenta sin saldo, sin clasificar, sin estado de resultados o sin efectivo). El estado no ajusta cifras ni distribuye diferencias: si no cuadra, hay que revisar los datos en Estados Financieros.
+**Comprobación:** CFO + CFI + CFF debe ser igual a la variación de efectivo (efectivo final − efectivo inicial). La pestaña lo comprueba con una tolerancia de C$ 0.01 y muestra la insignia **Cuadra**, **No cuadra** (con la diferencia exacta) o **Comprobación incompleta** (con los motivos: cuenta sin saldo, sin clasificar o con un importe que no es número, sin estado de resultados o sin efectivo). El estado no ajusta cifras ni distribuye diferencias: si no cuadra, hay que revisar los datos en Estados Financieros. «Cuadra» significa que los balances cierran y sus variaciones se explican entre sí; no valida los importes capturados. Debajo de las cifras, la **Interpretación** dice si la operación generó o consumió efectivo, si alcanzó para cubrir la inversión y si el financiamiento aportó o devolvió fondos.
 
 **Ejemplo con la demo MUNO MODA (2023 → 2024):**
 
@@ -441,7 +443,7 @@ En la pestaña **EFE** de `#/analisis` se arma el estado de flujo de efectivo po
 | **Total de flujos** | 97,775 + 0 − 90,775 | **C$ 7,000** |
 | Variación de efectivo | 52,000 − 45,000 | C$ 7,000 |
 
-La comprobación cuadra. Los dividendos (C$ 40,000) se derivan de la utilidad neta menos el aumento de las utilidades acumuladas. Los gastos por intereses y los impuestos ya están dentro de la utilidad neta.
+La comprobación cuadra. Los dividendos (C$ 40,000) se derivan de la utilidad neta menos el aumento de las utilidades acumuladas (se reconocen cuentas como «Utilidades acumuladas», «Utilidad retenida» o «Utilidad del ejercicio»; si el patrimonio no las tiene, se usa la variación total del patrimonio con una nota). Los gastos por intereses y los impuestos ya están dentro de la utilidad neta.
 
 ---
 

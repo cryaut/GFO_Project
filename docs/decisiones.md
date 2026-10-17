@@ -70,9 +70,13 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-018 | Presupuesto personal y Activos del hogar se separan de la empresa | Vigente |
 | D-019 | Importes con punto: formato elegible, deducción por archivo y aviso de ambigüedad | Vigente |
 | D-020 | El importador JSON de Reportes solo acepta respaldos validados | Vigente |
+| D-021 | El EOAF clasifica cada cuenta del balance, no seis agregados | Vigente |
+| D-022 | La depreciación acumulada se clasifica por su magnitud y no se inventa el gasto | Vigente |
+| D-023 | La comprobación usa tolerancia de C$ 0.01 y no redistribuye diferencias | Vigente |
 | D-024 | El EFE de Análisis deriva las tres actividades desde dos balances | Vigente |
 | D-025 | Dividendos desde las utilidades acumuladas, con respaldo en la variación de patrimonio | Vigente |
 | D-026 | Depreciación del periodo por variación de la depreciación acumulada, con advertencias | Vigente |
+| D-027 | Las comprobaciones del EOAF y del EFE comparten sus piezas y no muestran sumas parciales | Vigente |
 
 ## Decisiones
 
@@ -633,3 +637,25 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 **Para revertirla.** Quitar `deltaDepreciacion` y sus advertencias de `construirEFE`.
 
 **Referencias.** [ficha flujo-de-efectivo](planificacion/flujo-de-efectivo/README.md).
+
+### D-027 — Las comprobaciones del EOAF y del EFE comparten sus piezas y no muestran sumas parciales
+
+- **Fecha**: 2026-10-16
+- **Estado**: Vigente
+- **Decidió**: Carlos, con una IA, al integrar los PR #11 y #12 de Henry (rama `feat/integra-efe-eoaf`, PR #13); pendiente de revisión de Henry
+- **Área**: `js/modules/analisis/` (`comprobacion-calculations.js`, `eoaf-calculations.js`, `efe-calculations.js`, `index.js`)
+
+**Contexto.** Los dos PR se escribieron por separado y repitieron la selección del par de periodos, la tolerancia, la unión de cuentas entre periodos y el aviso de balance descuadrado. Al probarlos con casos límite aparecieron además cuatro problemas visibles: con un importe que no es número guardado, `computeEFE` lanzaba y toda la pantalla de Análisis quedaba vacía (en `main` se renderizaba); la demo mostraba `C$ -0.00` en la fila de activos fijos; el EOAF incompleto mostraba sumas parciales como si fueran totales; y las cuentas de utilidades en singular o del ejercicio repartían mal los dividendos.
+
+**Opciones.**
+1. Un módulo común `comprobacion-calculations.js` con una sola tolerancia y una sola selección de periodos, y los dos estados lo usan — una función por concepto, como pide `AGENTS.md` / renombra funciones públicas ya documentadas (`TOLERANCIA_EOAF`, `TOLERANCIA_EFE`, `seleccionarPeriodoEFE`).
+2. Dejar las copias y documentar que son iguales — sin renombres / se separan con el tiempo; `carga-modulos` no las detecta porque los nombres difieren.
+3. Que el EFE reutilice las funciones del EOAF — sin archivo nuevo / acopla un estado al nombre del otro.
+
+**Decisión.** Opción 1. Con la comprobación incompleta, los totales (orígenes, aplicaciones y diferencia del EOAF) son `null` (N/D) y no una suma parcial. El EFE no lanza con importes inválidos: los reporta como motivo. Un cambio de 0 se informa como `0`, nunca `-0`. `computeEFE(period)` usa `period` como cierre. `esResultadoAcumulado` reconoce el singular y las cuentas del resultado del ejercicio.
+
+**Consecuencias.** `TOLERANCIA_EOAF`, `TOLERANCIA_EFE` y `seleccionarPeriodoEFE` dejan de existir; `TOLERANCIA_COMPROBACION` y `seleccionarPeriodoPar` (ahora con `periodoFinal` opcional) viven en el módulo común. Lo que dicen D-021, D-023 y D-026 sobre esos nombres sigue siendo válido en el fondo (tolerancia de C$ 0.01, dos periodos más recientes) y no se reescribe. Para el usuario: la pantalla de Análisis ya no se vacía con un importe inválido, el EOAF incompleto muestra N/D en los tres indicadores, el EFE avisa si un balance no cierra y explica en una frase qué hicieron la operación, la inversión y el financiamiento, y el pie aclara que «Cuadra» confirma que los balances cierran, no que los importes capturados sean correctos.
+
+**Para revertirla.** Restaurar las constantes y `seleccionarPeriodo*` en cada `*-calculations.js`, quitar `comprobacion-calculations.js` y `tests/unit/comprobacion.test.js`, y revertir los casos nuevos de `efe.test.js` y `eoaf.test.js`.
+
+**Referencias.** PR #13 (integración de #11 y #12), [ficha flujo-de-efectivo](planificacion/flujo-de-efectivo/README.md), [ficha origen-y-aplicacion](planificacion/origen-y-aplicacion/README.md), D-021, D-023, D-024, D-025, D-026.
