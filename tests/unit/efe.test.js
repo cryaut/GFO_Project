@@ -380,10 +380,10 @@ describe('pantalla de EFE en Análisis', () => {
         estadoResultados: { Ventas: 'ventas' }
       }
     }), '2025');
-    const bloque = html.slice(
-      html.indexOf('Método indirecto desde dos balances'),
-      html.indexOf('Tolerancia de la comprobación')
-    );
+    // La pestaña EOAF también imprime «Tolerancia de la comprobación» y va antes
+    // que el EFE: el final del bloque se busca desde el inicio del bloque del EFE.
+    const inicio = html.indexOf('Método indirecto desde dos balances');
+    const bloque = html.slice(inicio, html.indexOf('Tolerancia de la comprobación', inicio));
     expect(bloque).toContain('&lt;img src=x onerror=alert(1)&gt;');
     expect(bloque).not.toContain('<img src=x');
   });
