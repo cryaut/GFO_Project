@@ -70,6 +70,13 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-018 | Presupuesto personal y Activos del hogar se separan de la empresa | Vigente |
 | D-019 | Importes con punto: formato elegible, deducción por archivo y aviso de ambigüedad | Vigente |
 | D-020 | El importador JSON de Reportes solo acepta respaldos validados | Vigente |
+| D-021 | El EOAF clasifica cada cuenta del balance, no seis agregados | Vigente |
+| D-022 | La depreciación acumulada se clasifica por su magnitud y no se inventa el gasto | Vigente |
+| D-023 | La comprobación usa tolerancia de C$ 0.01 y no redistribuye diferencias | Vigente |
+| D-024 | El EFE de Análisis deriva las tres actividades desde dos balances | Vigente |
+| D-025 | Dividendos desde las utilidades acumuladas, con respaldo en la variación de patrimonio | Vigente |
+| D-026 | Depreciación del periodo por variación de la depreciación acumulada, con advertencias | Vigente |
+| D-027 | Las comprobaciones del EOAF y del EFE comparten sus piezas y no muestran sumas parciales | Vigente |
 
 ## Decisiones
 
@@ -498,3 +505,157 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 **Para revertirla.** Volver al bucle `store.set` de `bindExportEvents` y eliminar `integracion-respaldo.js` con sus tests.
 
 **Referencias.** [ficha importación/exportación](planificacion/importacion-exportacion/README.md).
+
+### D-021 — El EOAF clasifica cada cuenta del balance, no seis agregados
+
+- **Fecha**: 2026-10-09
+- **Estado**: Vigente
+- **Decidido**: Henry (sesión con IA; pendiente de revisión del equipo)
+- **Área**: `js/modules/analisis/eoaf-calculations.js`, `js/modules/analisis/index.js`
+
+**Contexto.** La pestaña EOAF clasificaba seis agregados (Activos Corrientes, Activos Fijos, Pasivos Corrientes, Pasivos Largo Plazo, Patrimonio y Utilidades del periodo) y sumaba dos veces el mismo movimiento: el aumento de un activo contaba como aplicación del agregado *y* como origen cuando venía de financiarse, y no había comprobación. Un estado que no cuadra no se veía.
+
+**Opciones.**
+1. Balance comparado cuenta por cuenta, con el grupo y el tipo de `ACCOUNT_TYPES`, subtotales por sección y comprobación `Σ orígenes − Σ aplicaciones` — es el estado del libro y lo que el docente pidió / depende de que cada cuenta tenga tipo; las sin tipo se reportan.
+2. Seguir con agregados y solo corregir el doble conteo — cambio mínimo / no explica de dónde salen los fondos ni permite auditarlo.
+3. Método directo de efectivo (ya existe en `#/flujo`) — no duplica pantallas / responde otra pregunta y pide información que el balance no trae.
+
+**Decisión.** Opción 1. Los subtotales y la fila "Total Pasivos y Patrimonio" solo muestran saldos y nunca generan movimientos; los totales salen de las cuentas. La comparación usa los dos periodos más recientes (`seleccionarPeriodoPar`), el mismo criterio que el resto de Análisis.
+
+**Consecuencias.** El EOAF crece de seis renglones a una fila por cuenta y puede mostrar advertencias nuevas (descuadre de A = P + O, cuentas sin clasificar). Las cifras de orígenes y aplicaciones cambian por completo respecto de la versión anterior: antes eran agregados con doble conteo, ahora son variaciones reales.
+
+**Para revertirla.** Restaurar la versión anterior de `computeEOAF`/`renderEOAFSection` en `index.js` y eliminar `eoaf-calculations.js` con `tests/unit/eoaf.test.js`.
+
+**Referencias.** [ficha origen-y-aplicacion](planificacion/origen-y-aplicacion/README.md), CHANGELOG "Módulo 3", `docs/api.md` "eoaf-calculations.js".
+
+### D-022 — La depreciación acumulada se clasifica por su magnitud y no se inventa el gasto
+
+- **Fecha**: 2026-10-09
+- **Estado**: Vigente
+- **Decidido**: Henry (sesión con IA; pendiente de revisión del equipo)
+- **Área**: `js/modules/analisis/eoaf-calculations.js`
+
+**Contexto.** La depreciación acumulada es un contra-activo: en los libros baja el valor en libros sin que salga efectivo. El EOAF clásico la trata como un origen por el gasto del periodo, pero el modelo de datos de GFO no guarda ese gasto por separado y la cuenta puede estar guardada en positivo o en negativo.
+
+**Opciones.**
+1. Clasificar por la variación de la magnitud (magnitud creciente → Origen; decreciente → Aplicación) e informar la limitación con una nota — funciona con ambas convenciones de signo / no distingue gasto de retiro.
+2. Clasificar siempre como origen mientras la magnitud no baje a cero — más simple / convierte un retiro de activo en origen falso.
+3. No clasificar la depreciación acumulada hasta que el modelo traiga el gasto — estricto / el estado deja de cuadrar en cualquier empresa que depreció.
+
+**Decisión.** Opción 1. Si la cuenta cambia de signo con la misma magnitud no se clasifica: se reporta como dato a revisar. La nota explica que el gasto del periodo no está en el modelo y que por eso no se distingue del retiro o venta de activos.
+
+**Consecuencias.** Un retiro de activo (activos fijos y su depreciación que bajan a cero) cuadra sin duplicar el movimiento, pero la pantalla puede no distinguir "depreció" de "vendió"; el usuario debe leer la nota. Un signo positivo en la depreciación acumulada genera además una advertencia.
+
+**Para revertirla.** Cambiar la rama `depreciacionAcumulada` de `clasificarMovimientoEOAF` y sus advertencias, con sus pruebas.
+
+**Referencias.** [ficha origen-y-aplicacion](planificacion/origen-y-aplicacion/README.md), CHANGELOG "Módulo 3".
+
+### D-023 — La comprobación usa tolerancia de C$ 0.01 y no redistribuye diferencias
+
+- **Fecha**: 2026-10-09
+- **Estado**: Vigente
+- **Decidido**: Henry (sesión con IA; pendiente de revisión del equipo)
+- **Área**: `js/modules/analisis/eoaf-calculations.js`
+
+**Contexto.** `Σ orígenes − Σ aplicaciones` debe dar cero en un balance que cierra, pero los redondeos de coma flotante dejan centavos de diferencia, y un descuadre real del balance (A ≠ P + O) se refleja en el EOAF. Había que decidir qué se tolera y qué se hace con lo que sobra.
+
+**Opciones.**
+1. Tolerancia de C$ 0.01 más un epsilon escalado a los totales (la misma regla que `validateFinancialData`); si la diferencia la supera se muestra la cifra exacta — honesto / hay que explicar por qué "cuadra" con centavos.
+2. Tolerancia de 0 (cero exacto) — el más estricto / centavos de coma flotante marcarían "No cuadra" en balances que sí cierran.
+3. Ajustar la diferencia a una cuenta (por ejemplo Utilidades Acumuladas) — el estado siempre cuadra / inventa un movimiento que no ocurrió y oculta descuadres reales.
+
+**Decisión.** Opción 1, con tres estados: `cuadra`, `no-cuadra` (con la diferencia exacta en KPI e interpretación) e `incompleta` cuando hay saldos faltantes o cuentas sin clasificar. Tampoco se completa un saldo ausente con 0: la fila queda con "Dato faltante".
+
+**Consecuencias.** Un descuadre de C$ 20 en el balance aparece como "No cuadra" con la cifra exacta y una nota por periodo, en lugar de quedarse invisible. Una empresa con cuentas sin tipo nunca ve "Cuadra": ve "Comprobación incompleta" con la lista de motivos.
+
+**Para revertirla.** Cambiar `TOLERANCIA_EOAF` y la lógica de `estado` en `construirEOAF`, con sus pruebas.
+
+**Referencias.** [ficha origen-y-aplicacion](planificacion/origen-y-aplicacion/README.md), CHANGELOG "Módulo 3".
+
+### D-024 — El EFE de Análisis deriva las tres actividades desde dos balances
+
+- **Fecha**: 2026-10-09
+- **Estado**: Vigente
+- **Decidió**: Henry (propuesta 3 de `modulos-guia/02-valor-agregado.md`); sesión con IA
+- **Área**: `js/modules/analisis/` (`efe-calculations.js`, `index.js`), `tests/unit/efe.test.js`
+
+**Contexto.** `computeEFE` solo calculaba el flujo operativo con tres ajustes de capital de trabajo, sin depreciación, sin inversión ni financiamiento y sin comprobación. La guía pide flujos por actividad y D-012 dejó la derivación desde los estados "como mejora coordinada con Henry"; la propuesta 3 del plan de valor agregado la aprobó.
+
+**Opciones.**
+1. Reemplazar `computeEFE` por un EFE indirecto completo (tres actividades + comprobación CFO+CFI+CFF = Δ efectivo) — una sola cifra de operación y el tablero cumple la guía / cambia cifras que hoy ve el usuario.
+2. Agregar una pestaña nueva junto al EFE viejo — no cambia cifras existentes / conviven dos EFE con CFO distinto y el usuario no sabe cuál creer.
+3. Derivar el EFE con el método directo desde `#/flujo` — mismo enfoque que ese módulo / `#/flujo` es de captura manual, no deriva de los estados, y D-012 lo dejó separado.
+
+**Decisión.** Opción 1, en la rama `flujo-de-efectivo` y con la aprobación de Henry. El módulo `#/flujo` (D-012) no cambia.
+
+**Consecuencias.** La pestaña EFE muestra las tres actividades, KPIs CFO/CFI/CFF, la variación de efectivo y la comprobación con estados `cuadra`, `no-cuadra` o `incompleta` (tolerancia C$ 0.01, más epsilon escalado; nunca se ajustan cifras). Cambian las cifras de la demo: CFO C$ 97,775, CFF C$ −90,775 y Δ efectivo C$ 7,000 que sí cuadra. `efeIndirecto` de `calculate.js` sigue exportado (lo usan sus tests) pero Análisis ya no lo consume. Conflicto de merge esperado con `origen-y-aplicacion` en `analisis/index.js`.
+
+**Para revertirla.** Restaurar el `computeEFE` anterior en `index.js`, retirar `efe-calculations.js` y `tests/unit/efe.test.js`.
+
+**Referencias.** [02-valor-agregado propuesta 3](planificacion/modulos-guia/02-valor-agregado.md), [ficha flujo-de-efectivo](planificacion/flujo-de-efectivo/README.md), D-012.
+
+### D-025 — Dividendos desde las utilidades acumuladas, con respaldo en la variación de patrimonio
+
+- **Fecha**: 2026-10-09
+- **Estado**: Vigente
+- **Decidió**: Henry (sesión con IA; pendiente de revisión del equipo)
+- **Área**: `js/modules/analisis/efe-calculations.js`
+
+**Contexto.** El modelo no guarda una cuenta de dividendos: en Financiamiento hay que separar aportaciones de capital de dividendos usando solo los estados.
+
+**Opciones.**
+1. Si el patrimonio trae cuentas de resultados acumuladas: dividendos = UN − ΔRE y aportaciones = ΔPatrimonio − ΔRE; si no, ΔPatrimonio total con la UN descontada y advertencia — las dos formas reconcilian exactamente / depende del nombre de la cuenta RE.
+2. Siempre ΔPatrimonio − UN como "dividendos" — simple / mezcla aportaciones con dividendos y da dividendos negativos cuando hay aportaciones.
+3. No mostrar dividendos; solo ΔPatrimonio — sin inferencias / menos informativo y no coincide con la demo.
+
+**Decisión.** Opción 1. La detección de RE es un `esResultadoAcumulado` local por nombre, porque partir `ACCOUNT_TYPES` en subtipos de patrimonio cambiaría el patrimonio que consumen las razones.
+
+**Consecuencias.** Con la demo (Utilidades Acumuladas) los dividendos salen C$ −40,000 y las aportaciones 0; sin RE se muestra la variación de patrimonio con la UN en negativo y una advertencia. Ninguna variación inventa datos: si falta el saldo o la UN, el renglón queda N/D y la comprobación pasa a `incompleta`.
+
+**Para revertirla.** Quitar `esResultadoAcumulado` y el bloque condicional de Financiamiento en `construirEFE`.
+
+**Referencias.** [ficha flujo-de-efectivo](planificacion/flujo-de-efectivo/README.md).
+
+### D-026 — Depreciación del periodo por variación de la depreciación acumulada, con advertencias
+
+- **Fecha**: 2026-10-09
+- **Estado**: Vigente
+- **Decidió**: Henry (sesión con IA; pendiente de revisión del equipo)
+- **Área**: `js/modules/analisis/efe-calculations.js`
+
+**Contexto.** El modelo no guarda el gasto de depreciación del periodo; el balance solo trae la depreciación acumulada. Sin ese ajuste el CFO queda subestimado cuando los activos fijos cambian.
+
+**Opciones.**
+1. Depreciación = Δ de la magnitud de la depreciación acumulada (|final| − |inicial|), con advertencia si la cuenta está en signo positivo o si disminuye (posible baja de activos) — usa el dato disponible y avisa del límite / es una estimación, no el gasto del libro.
+2. No incluir depreciación — hereda el error del EFE anterior / la comprobación no cuadra cuando hay activos fijos.
+3. Pedir el gasto al usuario en una pantalla nueva — dato exacto / otra captura manual que mantener.
+
+**Decisión.** Opción 1. La tolerancia de la comprobación es `TOLERANCIA_EFE` = 0.01 (misma que el EOAF y `validateFinancialData`) más `Number.EPSILON` escalado a las magnitudes.
+
+**Consecuencias.** El CFO incluye la depreciación no efectiva. Una depreciación en signo positivo (captura equivocada) se advierte y la comprobación puede no cuadrar hasta corregir el signo; una depreciación que baja se advierte como posible baja de activos, cuyo reembolso va a Inversión. Intereses e impuestos quedan dentro de la UN, como en el método indirecto clásico.
+
+**Para revertirla.** Quitar `deltaDepreciacion` y sus advertencias de `construirEFE`.
+
+**Referencias.** [ficha flujo-de-efectivo](planificacion/flujo-de-efectivo/README.md).
+
+### D-027 — Las comprobaciones del EOAF y del EFE comparten sus piezas y no muestran sumas parciales
+
+- **Fecha**: 2026-10-16
+- **Estado**: Vigente
+- **Decidió**: Carlos, con una IA, al integrar los PR #11 y #12 de Henry (rama `feat/integra-efe-eoaf`, PR #13); pendiente de revisión de Henry
+- **Área**: `js/modules/analisis/` (`comprobacion-calculations.js`, `eoaf-calculations.js`, `efe-calculations.js`, `index.js`)
+
+**Contexto.** Los dos PR se escribieron por separado y repitieron la selección del par de periodos, la tolerancia, la unión de cuentas entre periodos y el aviso de balance descuadrado. Al probarlos con casos límite aparecieron además cuatro problemas visibles: con un importe que no es número guardado, `computeEFE` lanzaba y toda la pantalla de Análisis quedaba vacía (en `main` se renderizaba); la demo mostraba `C$ -0.00` en la fila de activos fijos; el EOAF incompleto mostraba sumas parciales como si fueran totales; y las cuentas de utilidades en singular o del ejercicio repartían mal los dividendos.
+
+**Opciones.**
+1. Un módulo común `comprobacion-calculations.js` con una sola tolerancia y una sola selección de periodos, y los dos estados lo usan — una función por concepto, como pide `AGENTS.md` / renombra funciones públicas ya documentadas (`TOLERANCIA_EOAF`, `TOLERANCIA_EFE`, `seleccionarPeriodoEFE`).
+2. Dejar las copias y documentar que son iguales — sin renombres / se separan con el tiempo; `carga-modulos` no las detecta porque los nombres difieren.
+3. Que el EFE reutilice las funciones del EOAF — sin archivo nuevo / acopla un estado al nombre del otro.
+
+**Decisión.** Opción 1. Con la comprobación incompleta, los totales (orígenes, aplicaciones y diferencia del EOAF) son `null` (N/D) y no una suma parcial. El EFE no lanza con importes inválidos: los reporta como motivo. Un cambio de 0 se informa como `0`, nunca `-0`. `computeEFE(period)` usa `period` como cierre. `esResultadoAcumulado` reconoce el singular y las cuentas del resultado del ejercicio.
+
+**Consecuencias.** `TOLERANCIA_EOAF`, `TOLERANCIA_EFE` y `seleccionarPeriodoEFE` dejan de existir; `TOLERANCIA_COMPROBACION` y `seleccionarPeriodoPar` (ahora con `periodoFinal` opcional) viven en el módulo común. Lo que dicen D-021, D-023 y D-026 sobre esos nombres sigue siendo válido en el fondo (tolerancia de C$ 0.01, dos periodos más recientes) y no se reescribe. Para el usuario: la pantalla de Análisis ya no se vacía con un importe inválido, el EOAF incompleto muestra N/D en los tres indicadores, el EFE avisa si un balance no cierra y explica en una frase qué hicieron la operación, la inversión y el financiamiento, y el pie aclara que «Cuadra» confirma que los balances cierran, no que los importes capturados sean correctos.
+
+**Para revertirla.** Restaurar las constantes y `seleccionarPeriodo*` en cada `*-calculations.js`, quitar `comprobacion-calculations.js` y `tests/unit/comprobacion.test.js`, y revertir los casos nuevos de `efe.test.js` y `eoaf.test.js`.
+
+**Referencias.** PR #13 (integración de #11 y #12), [ficha flujo-de-efectivo](planificacion/flujo-de-efectivo/README.md), [ficha origen-y-aplicacion](planificacion/origen-y-aplicacion/README.md), D-021, D-023, D-024, D-025, D-026.

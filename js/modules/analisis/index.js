@@ -6,7 +6,7 @@ import {
   ahDelta, ahPctDelta, av, ratioCorriente, ratioRapido,
   rotacionInventario, rotacionCxC, plazoCobro, endeudamiento,
   margenNeto, roa, dupont, capitalNetoTrabajo, capitalNetoOperativo,
-  eoaf, efeIndirecto, saldoPromedio,
+  saldoPromedio,
   pruebaDefensiva, rotacionActivos, rotacionCxP, plazoPago, edadInventario,
   cicloConversion, coberturaIntereses, deudaPatrimonio, apalancamiento,
   margenBruto, margenOperativo, roe,
@@ -14,6 +14,10 @@ import {
 } from '../../utils/calculate.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
 import { normalizeFinancialData, sortPeriods } from '../estados/estados-normalize.js';
+import { escapeHTML } from '../../utils/html.js';
+import { construirEOAF } from './eoaf-calculations.js';
+import { construirEFE } from './efe-calculations.js';
+import { seleccionarPeriodoPar, TOLERANCIA_COMPROBACION } from './comprobacion-calculations.js';
 
 export const UMBRALES = {
   ratioCorrienteMin: 1,
@@ -348,34 +352,23 @@ export function computeCNTCNO(period) {
   };
 }
 
+// El EFE es un estado de dos periodos: `period` es el cierre (la pestaña pasa el
+// último periodo) y se compara contra el inmediatamente anterior, con el mismo
+// criterio que el EOAF. Devuelve el estado completo o `incompleto` si falta un
+// periodo.
 export function computeEFE(period) {
-  const er = getERData(period);
-  const prev = getPrevPeriod(period);
-
-  if (!prev) {
+  const par = seleccionarPeriodoPar(getPeriods(), period);
+  if (par.incompleto) {
     return {
-      CFO: er.utilidadNeta, utilidadNeta: er.utilidadNeta,
-      ajustes: [], tieneVariaciones: false,
-      aviso: 'Se necesitan dos periodos para calcular las variaciones reales del método indirecto. Se muestra solo la Utilidad Neta.'
+      periodos: { inicial: null, final: period },
+      incompleto: par.incompleto,
+      utilidadNeta: null, operacion: null, inversion: null, financiamiento: null,
+      totalFlujos: null, efectivoInicial: null, efectivoFinal: null,
+      variacionEfectivo: null, diferencia: null, estado: 'incompleta',
+      motivos: [], advertencias: [], interpretacion: ''
     };
   }
-
-  const bgT1 = getBGData(prev);
-  const bgT2 = getBGData(period);
-
-  const dInv = bgT2.inventario - bgT1.inventario;
-  const dCxC = bgT2.cxC - bgT1.cxC;
-  const dPasOp = (bgT2.cuentasPorPagar + bgT2.provisiones) -
-    (bgT1.cuentasPorPagar + bgT1.provisiones);
-
-  const ajustes = [
-    { concepto: '(-) Aumento de Inventario', monto: -dInv },
-    { concepto: '(-) Aumento de Cuentas por Cobrar', monto: -dCxC },
-    { concepto: '(+) Aumento de Pasivos Operativos (CxP + Provisiones)', monto: dPasOp }
-  ];
-
-  const CFO = efeIndirecto(er.utilidadNeta, ajustes.map(a => a.monto));
-  return { CFO, utilidadNeta: er.utilidadNeta, ajustes, tieneVariaciones: true };
+  return construirEFE(estadosParaComprobacion(), par.periodoInicial, par.periodoFinal);
 }
 
 function interpretacion(razones) {
@@ -604,55 +597,197 @@ function renderCNTCNOSection(period) {
   </p>`;
 }
 
+// Estados que leen el EOAF y el EFE: los normalizados si la caché es válida; si
+// no, los guardados en bruto, porque las cuentas sin clasificar o con importes
+// inválidos se reportan en la comprobación en lugar de ignorarse.
+function estadosParaComprobacion() {
+  const estados = savedCache || refreshSavedStates();
+  return estados || {
+    balanceGeneral: store.get('estados.balanceGeneral') || {},
+    estadoResultados: store.get('estados.estadoResultados') || {},
+    accountTypes: store.get('estados.accountTypes')
+  };
+}
+
 export function computeEOAF(periods) {
-  if (periods.length < 2) return [];
-  const t1 = getBGData(periods[0]);
-  const t2 = getBGData(periods[1]);
-  const items = [
-    { cuenta: 'Activos Corrientes', cambio: t2.activosCorrientes - t1.activosCorrientes, tipo: 'activo' },
-    { cuenta: 'Inventario', cambio: t2.inventario - t1.inventario, tipo: 'activo' },
-    { cuenta: 'Total Activos', cambio: t2.totalActivos - t1.totalActivos, tipo: 'activo' },
-    { cuenta: 'Pasivos Corrientes', cambio: t2.pasivosCorrientes - t1.pasivosCorrientes, tipo: 'pasivo' },
-    { cuenta: 'Total Pasivos', cambio: t2.totalPasivos - t1.totalPasivos, tipo: 'pasivo' },
-    { cuenta: 'Patrimonio', cambio: t2.totalPatrimonio - t1.totalPatrimonio, tipo: 'pasivo' }
-  ];
-  return items.map(i => eoaf(i.cuenta, i.cambio, i.tipo)).filter(Boolean);
+  const par = seleccionarPeriodoPar(periods);
+  if (par.incompleto) {
+    return { periodos: null, incompleto: par.incompleto, secciones: [], resumen: null, advertencias: [], interpretacion: '' };
+  }
+  return construirEOAF(estadosParaComprobacion(), par.periodoInicial, par.periodoFinal);
+}
+
+// Piezas de interfaz que comparten las pestañas EOAF y EFE.
+const INSIGNIAS_COMPROBACION = {
+  cuadra: '<span class="badge badge-success">Cuadra</span>',
+  'no-cuadra': '<span class="badge badge-danger">No cuadra</span>',
+  incompleta: '<span class="badge badge-warning">Comprobación incompleta</span>'
+};
+
+function insigniaComprobacion(estado) {
+  return INSIGNIAS_COMPROBACION[estado] || INSIGNIAS_COMPROBACION.incompleta;
+}
+
+// Tarjeta con una lista de textos. Pueden traer nombres de cuenta de un archivo
+// importado, así que cada uno se escapa; `titulo` y `color` son literales.
+function tarjetaLista(titulo, textos, color) {
+  if (!textos || textos.length === 0) return '';
+  return `<div class="card mb-4" style="border-left:4px solid var(${color})">
+    <p class="font-bold mb-2">${titulo}</p>
+    <ul style="margin:0;padding-left:1.2em;font-size:var(--font-size-sm)">
+      ${textos.map(texto => `<li>${escapeHTML(texto)}</li>`).join('')}
+    </ul>
+  </div>`;
+}
+
+function tarjetaInterpretacion(texto) {
+  return `<div class="card mb-4" style="border-left:4px solid var(--color-primary)">
+    <p class="font-bold mb-2">Interpretación</p>
+    <p style="margin:0;font-size:var(--font-size-sm);color:var(--text-secondary)">${escapeHTML(texto)}</p>
+  </div>`;
+}
+
+function pieComprobacion() {
+  return `<p class="text-muted" style="font-size:var(--font-size-sm)">Tolerancia de la comprobación: ${formatCurrency(TOLERANCIA_COMPROBACION)} (un centavo), más el redondeo de coma flotante de los totales. «Cuadra» confirma que los dos balances cierran y que sus variaciones se explican entre sí; no verifica que los importes capturados sean correctos.</p>`;
 }
 
 function renderEOAFSection(periods) {
-  const items = computeEOAF(periods);
-  if (items.length === 0) return '<p class="text-muted">Se necesitan al menos 2 periodos.</p>';
-  return `<div class="table-wrapper"><table>
-    <thead><tr><th>Cuenta</th><th class="text-right">Cambio</th><th>Clasificación</th><th class="text-right">Monto</th></tr></thead>
-    <tbody>${items.map(r => `<tr>
-      <td>${r.cuenta}</td>
-      <td class="text-right font-mono ${r.cambio < 0 ? 'text-danger' : 'text-success'}">${formatCurrency(r.cambio)}</td>
-      <td><span class="badge ${r.clasificacion === 'Origen' ? 'badge-success' : 'badge-primary'}">${r.clasificacion}</span></td>
-      <td class="text-right font-mono">${formatCurrency(r.monto)}</td>
-    </tr>`).join('')}</tbody>
-  </table></div>`;
+  const estado = computeEOAF(periods);
+  if (estado.incompleto) {
+    return `<p class="text-muted">${escapeHTML(estado.incompleto)}</p>`;
+  }
+  const { periodos, secciones, resumen, advertencias, interpretacion } = estado;
+  // Los subtotales y totales solo muestran saldos: nunca suman movimientos.
+  const fmtSaldo = valor => valor == null ? 'N/D' : formatCurrency(valor);
+  const fmtMovimiento = valor => valor == null ? '—' : formatCurrency(valor);
+  const insignia = fila => {
+    if (fila.clasificacion === 'Origen') return '<span class="badge badge-success">Origen</span>';
+    if (fila.clasificacion === 'Aplicacion') return '<span class="badge badge-primary">Aplicación</span>';
+    if (fila.clasificacion === 'Sin movimiento') return '<span class="badge badge-info">Sin movimiento</span>';
+    return `<span class="badge badge-warning">${escapeHTML(fila.etiqueta || 'Dato faltante')}</span>`;
+  };
+  const celdaMovimiento = (valor, clase) =>
+    `<td class="text-right font-mono ${valor == null ? 'text-muted' : clase}">${fmtMovimiento(valor)}</td>`;
+
+  const filas = secciones.map(seccion => `
+    <tr>
+      <td colspan="7" class="font-bold" style="background:var(--bg-tertiary)">${escapeHTML(seccion.titulo)}</td>
+    </tr>
+    ${seccion.filas.map(fila => `<tr>
+      <td>${escapeHTML(fila.cuenta)}</td>
+      <td class="text-right font-mono">${fmtSaldo(fila.saldoInicial)}</td>
+      <td class="text-right font-mono">${fmtSaldo(fila.saldoFinal)}</td>
+      ${celdaMovimiento(fila.variacion, fila.variacion < 0 ? 'text-danger' : 'text-success')}
+      <td>${insignia(fila)}</td>
+      ${celdaMovimiento(fila.origen, '')}
+      ${celdaMovimiento(fila.aplicacion, '')}
+    </tr>`).join('')}
+    <tr class="font-bold" style="border-top:2px solid var(--border-color-strong)">
+      <td>Subtotal ${escapeHTML(seccion.titulo)}</td>
+      <td class="text-right font-mono">${fmtSaldo(seccion.subtotal.saldoInicial)}</td>
+      <td class="text-right font-mono">${fmtSaldo(seccion.subtotal.saldoFinal)}</td>
+      <td class="text-right font-mono">${fmtSaldo(seccion.subtotal.variacion)}</td>
+      <td class="text-muted">—</td>
+      <td class="text-right text-muted">—</td>
+      <td class="text-right text-muted">—</td>
+    </tr>`).join('');
+
+  const pasivos = secciones.find(seccion => seccion.id === 'pasivos');
+  const patrimonio = secciones.find(seccion => seccion.id === 'patrimonio');
+  const totalPasivosPatrimonio = pasivos.subtotal.completo && patrimonio.subtotal.completo
+    ? {
+      saldoInicial: pasivos.subtotal.saldoInicial + patrimonio.subtotal.saldoInicial,
+      saldoFinal: pasivos.subtotal.saldoFinal + patrimonio.subtotal.saldoFinal,
+      variacion: pasivos.subtotal.variacion + patrimonio.subtotal.variacion
+    }
+    : { saldoInicial: null, saldoFinal: null, variacion: null };
+
+  return `<p class="text-muted mb-4" style="font-size:var(--font-size-sm)">
+    Comparación de saldos: <strong>${escapeHTML(periodos.inicial)}</strong> (periodo inicial) → <strong>${escapeHTML(periodos.final)}</strong> (periodo final).
+    Reglas: aumento de activo = aplicación, disminución de activo = origen; aumento de pasivo o patrimonio = origen, disminución = aplicación;
+    sin variación = sin movimiento. Los subtotales y los totales solo muestran saldos y no generan movimientos.
+  </p>
+  <div class="table-wrapper mb-6"><table>
+    <thead><tr>
+      <th>Cuenta</th>
+      <th class="text-right">Saldo ${escapeHTML(periodos.inicial)}</th>
+      <th class="text-right">Saldo ${escapeHTML(periodos.final)}</th>
+      <th class="text-right">Variación</th>
+      <th>Clasificación</th>
+      <th class="text-right">Origen</th>
+      <th class="text-right">Aplicación</th>
+    </tr></thead>
+    <tbody>${filas}
+      <tr class="font-bold" style="border-top:2px solid var(--border-color-strong)">
+        <td>Total Pasivos y Patrimonio</td>
+        <td class="text-right font-mono">${fmtSaldo(totalPasivosPatrimonio.saldoInicial)}</td>
+        <td class="text-right font-mono">${fmtSaldo(totalPasivosPatrimonio.saldoFinal)}</td>
+        <td class="text-right font-mono">${fmtSaldo(totalPasivosPatrimonio.variacion)}</td>
+        <td class="text-muted">—</td>
+        <td class="text-right text-muted">—</td>
+        <td class="text-right text-muted">—</td>
+      </tr>
+    </tbody>
+  </table></div>
+  <div class="kpi-grid mb-4">
+    <div class="kpi-card"><div class="kpi-value">${fmtSaldo(resumen.totalOrigenes)}</div><div class="kpi-label">Total de orígenes</div></div>
+    <div class="kpi-card"><div class="kpi-value">${fmtSaldo(resumen.totalAplicaciones)}</div><div class="kpi-label">Total de aplicaciones</div></div>
+    <div class="kpi-card"><div class="kpi-value ${resumen.estado === 'no-cuadra' ? 'text-danger' : ''}">${fmtSaldo(resumen.diferencia)}</div><div class="kpi-label">Diferencia (orígenes − aplicaciones)</div></div>
+    <div class="kpi-card">${insigniaComprobacion(resumen.estado)}<div class="kpi-label font-bold" style="margin-top:var(--space-2)">Estado de la comprobación</div></div>
+  </div>
+  ${tarjetaLista('Comprobación incompleta', resumen.motivos, '--color-warning')}
+  ${tarjetaLista('Notas de la comprobación', advertencias, '--color-info')}
+  ${tarjetaInterpretacion(interpretacion)}
+  ${pieComprobacion()}`;
 }
 
 function renderEFESection(period) {
   const efe = computeEFE(period);
-  let filasAjustes = '';
-  if (efe.tieneVariaciones) {
-    filasAjustes = `<div class="table-wrapper mb-4"><table>
-      <thead><tr><th>Ajuste (variación real entre periodos)</th><th class="text-right">Monto</th></tr></thead>
-      <tbody>
-        <tr><td>Utilidad Neta</td><td class="text-right font-mono">${formatCurrency(efe.utilidadNeta)}</td></tr>
-        ${efe.ajustes.map(a => `<tr><td>${a.concepto}</td><td class="text-right font-mono ${a.monto < 0 ? 'text-danger' : 'text-success'}">${formatCurrency(a.monto)}</td></tr>`).join('')}
-        <tr><td><strong>Flujo de Efectivo Operativo</strong></td><td class="text-right font-mono"><strong>${formatCurrency(efe.CFO)}</strong></td></tr>
-      </tbody>
-    </table></div>`;
+  if (efe.incompleto) {
+    return `<p class="text-muted">${escapeHTML(efe.incompleto)}</p>`;
   }
-  return `${efe.aviso ? `<div class="card mb-4" style="border-left:4px solid var(--color-warning)"><p style="margin:0;font-size:var(--font-size-sm)">${efe.aviso}</p></div>` : ''}
+  const fmt = valor => valor == null ? 'N/D' : formatCurrency(valor);
+  const celda = valor => `<td class="text-right font-mono ${valor != null && valor < 0 ? 'text-danger' : ''}">${fmt(valor)}</td>`;
+  const filas = (seccion, titulo) => `
+    <tr>
+      <td colspan="2" class="font-bold" style="background:var(--bg-tertiary)">${titulo}</td>
+    </tr>
+    ${seccion.items.map(fila => `<tr>
+      <td>${escapeHTML(fila.concepto)}${fila.falta ? ' <span class="badge badge-warning">Revisar</span>' : ''}</td>
+      ${celda(fila.monto)}
+    </tr>`).join('')}
+    <tr class="font-bold" style="border-top:2px solid var(--border-color-strong)">
+      <td>Total de ${titulo.toLowerCase()}</td>
+      ${celda(seccion.total)}
+    </tr>`;
+  return `<p class="text-muted mb-4" style="font-size:var(--font-size-sm)">
+    Método indirecto desde dos balances: <strong>${escapeHTML(efe.periodos.inicial)}</strong> (inicial) → <strong>${escapeHTML(efe.periodos.final)}</strong> (final).
+    Operación = utilidad neta + depreciación + capital de trabajo; Inversión = activos fijos; Financiamiento = deuda, patrimonio y dividendos.
+    Los gastos por intereses e impuestos ya están dentro de la utilidad neta.
+  </p>
+  <div class="table-wrapper mb-4"><table>
+    <thead><tr><th>Concepto</th><th class="text-right">Monto</th></tr></thead>
+    <tbody>
+      ${filas(efe.operacion, 'Operación')}
+      ${filas(efe.inversion, 'Inversión')}
+      ${filas(efe.financiamiento, 'Financiamiento')}
+      <tr class="font-bold"><td>Efectivo al inicio</td>${celda(efe.efectivoInicial)}</tr>
+      <tr class="font-bold"><td>Efectivo al final</td>${celda(efe.efectivoFinal)}</tr>
+      <tr class="font-bold"><td>Variación de efectivo</td>${celda(efe.variacionEfectivo)}</tr>
+      <tr class="font-bold" style="border-top:2px solid var(--border-color-strong)"><td>Total de flujos (CFO + CFI + CFF)</td>${celda(efe.totalFlujos)}</tr>
+      <tr class="font-bold"><td>Diferencia (flujos − variación de efectivo)</td>${celda(efe.diferencia)}</tr>
+    </tbody>
+  </table></div>
   <div class="kpi-grid mb-4">
-    <div class="kpi-card"><div class="kpi-value">${formatCurrency(efe.CFO)}</div><div class="kpi-label">Flujo de Efectivo Operativo</div></div>
-    <div class="kpi-card"><div class="kpi-value">${formatCurrency(efe.utilidadNeta)}</div><div class="kpi-label">Utilidad Neta</div></div>
+    <div class="kpi-card"><div class="kpi-value">${fmt(efe.operacion.total)}</div><div class="kpi-label">Flujo de Efectivo Operativo (CFO)</div></div>
+    <div class="kpi-card"><div class="kpi-value">${fmt(efe.inversion.total)}</div><div class="kpi-label">Flujo de Efectivo de Inversión (CFI)</div></div>
+    <div class="kpi-card"><div class="kpi-value">${fmt(efe.financiamiento.total)}</div><div class="kpi-label">Flujo de Efectivo de Financiamiento (CFF)</div></div>
+    <div class="kpi-card">${insigniaComprobacion(efe.estado)}<div class="kpi-label font-bold" style="margin-top:var(--space-2)">Estado de la comprobación</div></div>
   </div>
-  ${filasAjustes}
-  <p class="text-muted" style="font-size:var(--font-size-sm)">Método indirecto: UN − aumentos de activos operativos (Inventario, CxC) + aumentos de pasivos operativos (CxP, Provisiones), usando variaciones reales entre el periodo actual y el anterior.</p>`;
+  ${tarjetaLista('Comprobación incompleta', efe.motivos, '--color-warning')}
+  ${tarjetaLista('Notas del EFE', efe.advertencias, '--color-info')}
+  ${tarjetaInterpretacion(efe.interpretacion)}
+  ${pieComprobacion()}`;
 }
 
 function renderDuPontSection(period) {

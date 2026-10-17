@@ -400,6 +400,51 @@ En la pestaña **Mercado** de `#/analisis`, ingresa por periodo las acciones com
 
 El mercado paga 14.88 veces la utilidad por acción y valora la acción a 2.68 veces su valor en libros. La pestaña también muestra los dividendos que explican el cambio del patrimonio (UN − ΔPatrimonio = C$ 40,000) para comprobar el dato.
 
+### 4.7 Origen y Aplicación de Fondos (EOAF)
+
+En la pestaña **EOAF** de `#/analisis` se compara el balance de los dos periodos más recientes y cada variación de cuenta se clasifica como **Origen** (la empresa obtiene fondos) o **Aplicación** (la empresa los pone en marcha).
+
+| Regla | Ejemplo |
+|---|---|
+| Activo que aumenta | Compra de inventario → Aplicación |
+| Activo que disminuye | Cobro de una cuenta por cobrar → Origen |
+| Pasivo que aumenta | Préstamo nuevo → Origen |
+| Pasivo o patrimonio que disminuye | Dividendos pagados → Aplicación |
+
+La depreciación acumulada creciente se presenta como origen (gasto no efectivo del periodo); una nota lo explica, porque el modelo no guarda ese gasto por separado y por eso no se distingue de un retiro de activos. Los subtotales de la tabla solo suman saldos: nunca generan movimientos.
+
+Al pie está la comprobación: **Total de orígenes** contra **Total de aplicaciones**. Si la diferencia es de un centavo o menos, el estado muestra **Cuadra**; si es mayor, muestra **No cuadra** con la cifra exacta. Si falta el saldo de una cuenta en un periodo o una cuenta no tiene clasificación, la comprobación queda **Comprobación incompleta**, la lista de motivos dice qué corregir y los totales se muestran como **N/D** hasta que los datos estén completos.
+
+**Qué significa «Cuadra»:** que los dos balances cierran (Activos = Pasivos + Patrimonio) y que sus variaciones se explican entre sí. No verifica que los importes capturados sean correctos; si un balance no cierra, una nota lo indica por periodo.
+
+**Ejemplo con la demo MUNO MODA (2023 → 2024):** orígenes y aplicaciones coinciden en C$ 97,775. La mayor fuente son las Utilidades Acumuladas (C$ 64,825) y la mayor aplicación el Pasivo Largo Plazo (C$ 35,000).
+
+> El estado no inventa cifras: una cuenta sin saldo en un periodo se marca "Dato faltante" y una sin clasificar "Sin clasificar". Corríjalas en Estados Financieros y vuelva a abrir Análisis.
+
+### 4.8 Estado de Flujo de Efectivo (EFE)
+
+En la pestaña **EFE** de `#/analisis` se arma el estado de flujo de efectivo por método indirecto a partir de dos balances guardados (el periodo anterior y el último). Con un solo periodo la pestaña explica qué falta.
+
+**Las tres actividades:**
+
+- **Operación:** utilidad neta del periodo final + depreciación y amortización del periodo − aumentos de inventario, cuentas por cobrar y otros activos corrientes + aumentos de cuentas por pagar y provisiones.
+- **Inversión:** compra (−) o baja (+) de activos fijos.
+- **Financiamiento:** variación de la deuda a largo y corto plazo, aportaciones de capital y dividendos.
+
+**Comprobación:** CFO + CFI + CFF debe ser igual a la variación de efectivo (efectivo final − efectivo inicial). La pestaña lo comprueba con una tolerancia de C$ 0.01 y muestra la insignia **Cuadra**, **No cuadra** (con la diferencia exacta) o **Comprobación incompleta** (con los motivos: cuenta sin saldo, sin clasificar o con un importe que no es número, sin estado de resultados o sin efectivo). El estado no ajusta cifras ni distribuye diferencias: si no cuadra, hay que revisar los datos en Estados Financieros. «Cuadra» significa que los balances cierran y sus variaciones se explican entre sí; no valida los importes capturados. Debajo de las cifras, la **Interpretación** dice si la operación generó o consumió efectivo, si alcanzó para cubrir la inversión y si el financiamiento aportó o devolvió fondos.
+
+**Ejemplo con la demo MUNO MODA (2023 → 2024):**
+
+| Actividad | Cálculo | Resultado |
+|---|---|---:|
+| Operación (CFO) | 104,825 + 17,950 − 15,000 − 15,000 − 5,000 + 7,000 + 3,000 | C$ 97,775 |
+| Inversión (CFI) | activos fijos sin cambio | C$ 0 |
+| Financiamiento (CFF) | −55,775 (deuda LP) + 5,000 (deuda CP) − 40,000 (dividendos) | C$ −90,775 |
+| **Total de flujos** | 97,775 + 0 − 90,775 | **C$ 7,000** |
+| Variación de efectivo | 52,000 − 45,000 | C$ 7,000 |
+
+La comprobación cuadra. Los dividendos (C$ 40,000) se derivan de la utilidad neta menos el aumento de las utilidades acumuladas (se reconocen cuentas como «Utilidades acumuladas», «Utilidad retenida» o «Utilidad del ejercicio»; si el patrimonio no las tiene, se usa la variación total del patrimonio con una nota). Los gastos por intereses y los impuestos ya están dentro de la utilidad neta.
+
 ---
 
 ## 5. Módulo 4: Activos del Hogar
