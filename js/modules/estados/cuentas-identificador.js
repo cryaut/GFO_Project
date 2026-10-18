@@ -94,10 +94,10 @@ export function consultarMontoCuenta(datos, periodo, id) {
     if (cuenta.rol === 'reported_total' && valores.length !== 1) return { valor: null, motivo: 'ambiguous_account_match' };
     return { valor: valores.reduce((suma, valor) => suma + valor, 0), motivo: null };
   }
-  const pendientes = identidades.filter(identidad => identidad.estado !== 'reconocida');
+  const pendientes = identidades.filter(identidad => identidad.estado !== 'reconocida' && identidad.valor !== 0);
   const afecta = pendientes.filter(identidad => identidad.candidatos.some(candidato => candidato.id === id)
     || identidad.estado === 'no_reconocida');
-  const sinGrupo = (datos.pendingAccounts || []).filter(fila => Object.hasOwn(fila.importes, periodo));
+  const sinGrupo = (datos.pendingAccounts || []).filter(fila => Object.hasOwn(fila.importes, periodo) && fila.importes[periodo] !== 0);
   if (afecta.length || sinGrupo.length) {
     return { valor: null, motivo: afecta.some(identidad => identidad.estado === 'sugerida')
       || sinGrupo.some(fila => fila.identificacion.estado === 'sugerida') ? 'ambiguous_account_match' : 'unrecognized_imported_account' };

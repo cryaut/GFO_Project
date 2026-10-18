@@ -1,6 +1,5 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import store from '../../js/store.js';
-import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
 
 // Boundary double, not a DOM parser. The real renderer and application handlers
 // run; browser layout, nested account forms and native validation are not tested.
@@ -88,12 +87,22 @@ it('imports external JSON through Estados, previews, saves once and reloads', as
   await page.querySelector('#saveStates').dispatchEvent({ type: 'click' });
   expect(setItem).toHaveBeenCalledTimes(1);
   expect(notify).toHaveBeenCalledTimes(1);
-  expect(store.get('estados')).toEqual(normalizeFinancialData(external));
-  expect(JSON.parse(storage.get('gfo-toolkit-data')).estados).toEqual(normalizeFinancialData(external));
+  // Comparación independiente con los datos originales, sin usar el propio
+  // normalizador como oráculo. Solo se añaden metadatos de identificación.
+  for (const guardados of [store.get('estados'), JSON.parse(storage.get('gfo-toolkit-data')).estados]) {
+    for (const campo of ['name', 'periods', 'balanceGeneral', 'estadoResultados', 'accountTypes']) {
+      expect(guardados[campo], campo).toEqual(external[campo]);
+    }
+    expect(guardados.accountIdentities.activos['Cuenta bancaria principal']).toMatchObject({
+      estado: 'reconocida', idCuenta: 'bs.cash_and_equivalents'
+    });
+  }
 
   store._data = null;
   initEstados();
-  expect(store.get('estados')).toEqual(normalizeFinancialData(external));
+  for (const campo of ['name', 'periods', 'balanceGeneral', 'estadoResultados', 'accountTypes']) {
+    expect(store.get('estados')[campo], campo).toEqual(external[campo]);
+  }
   expect(page.querySelector('#statementPreview').innerHTML).toContain('Servicios profesionales');
   expect(page.querySelector('#estadoMessage').textContent).not.toContain('No se pudo');
 });

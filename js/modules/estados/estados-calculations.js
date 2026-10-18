@@ -18,6 +18,55 @@ export function resolveAccountType(data, group, name) {
     ? explicit[name] : inferAccountType(group, name);
 }
 
+const CAMPOS_REPORTADOS = {
+  'bs.current_assets_total': ['activosCorrientes', 'totalActivos'],
+  'bs.fixed_assets_net_total': ['activosFijos', 'totalActivos'],
+  'bs.total_assets': ['totalActivos'],
+  'bs.current_liabilities_total': ['pasivosCorrientes', 'totalPasivos'],
+  'bs.total_liabilities': ['totalPasivos'],
+  'bs.total_equity': ['totalPatrimonio'],
+  'is.gross_profit_reported': ['utilidadBruta', 'utilidadNeta'],
+  'is.operating_profit_reported': ['utilidadNeta'],
+  'is.net_income_reported': ['utilidadNeta']
+};
+
+function camposDeTipos(group, tipos) {
+  const campos = new Set(tipos);
+  if (group === 'activos') {
+    campos.add('totalActivos');
+    if (tipos.some(tipo => ['efectivo', 'cxC', 'inventario', 'activosCorrientesOtros'].includes(tipo))) campos.add('activosCorrientes');
+    if (tipos.some(tipo => ['activosFijos', 'depreciacionAcumulada'].includes(tipo))) campos.add('activosFijos');
+  } else if (group === 'pasivos') {
+    campos.add('totalPasivos');
+    if (tipos.some(tipo => tipo !== 'pasivoLargoPlazo')) campos.add('pasivosCorrientes');
+  } else if (group === 'patrimonio') campos.add('totalPatrimonio');
+  else if (group === 'estadoResultados') {
+    campos.add('utilidadNeta');
+    if (tipos.some(tipo => ['ventas', 'costoVentas'].includes(tipo))) campos.add('utilidadBruta');
+  }
+  return [...campos];
+}
+
+// La clasificación explícita restringe posibilidades, pero no confirma la identidad.
+// Sin contexto se conservan todas las posibilidades dentro del grupo de la fila.
+function camposPendientes(data, group, name, id) {
+  const tipo = data.accountTypes?.[group]?.[name];
+  const identidad = data.accountIdentities?.[group]?.[name];
+  const explicitos = ACCOUNT_TYPES[group]?.includes(tipo) ? camposDeTipos(group, [tipo]) : [];
+  if (explicitos.length && identidad?.metodo !== 'conflicto_contexto') return explicitos;
+  const candidatas = (id ? [id] : identidad?.idCuenta ? [identidad.idCuenta]
+    : (identidad?.candidatos || []).map(c => c.id)).map(obtenerCuenta).filter(c => c?.grupo === group);
+  const campos = candidatas.flatMap(cuenta => {
+    if (CAMPOS_REPORTADOS[cuenta.id]) return CAMPOS_REPORTADOS[cuenta.id];
+    const tipos = cuenta.tipoApp ? [cuenta.tipoApp]
+      : cuenta.clasificacion === 'gasto_operativo' ? ['gastosAdmin', 'gastosVentas', 'otrosGastos']
+        : cuenta.clasificacion === 'ingreso' ? ['ventas', 'otrosIngresos']
+          : cuenta.clasificacion === 'deduccion_ingreso' ? ['ventas'] : ACCOUNT_TYPES[group];
+    return camposDeTipos(group, tipos);
+  });
+  return [...new Set(campos.length ? [...explicitos, ...campos] : explicitos.length ? explicitos : camposDeTipos(group, ACCOUNT_TYPES[group]))];
+}
+
 export function computeFinancialTotals(data, period) {
   const bg = data.balanceGeneral?.[period] || {};
   const er = data.estadoResultados?.[period] || {};
@@ -37,7 +86,7 @@ export function computeFinancialTotals(data, period) {
       }
       sums[group] += value;
       if (type) totals[type] += value;
-      else unclassified.push({ group, name });
+      else if (value !== 0) unclassified.push({ group, name });
     }
   }
   totals.totalActivos = sums.activos;
@@ -49,29 +98,18 @@ export function computeFinancialTotals(data, period) {
   totals.utilidadBruta = totals.ventas - totals.costoVentas;
   totals.utilidadNeta = totals.utilidadBruta - totals.gastosAdmin - totals.gastosVentas
     + totals.otrosIngresos - totals.otrosGastos - totals.intereses - totals.impuestos;
-  // Unknown income-statement accounts make profit indeterminate, not zero.
-  if (unclassified.some(account => account.group === 'estadoResultados')) {
-    totals.utilidadBruta = null;
-    totals.utilidadNeta = null;
-  }
   const reasons = [];
   const pendientes = [
-    ...unclassified.filter(({ group, name }) => data.accountIdentities?.[group]?.[name]?.origen !== 'legado'
-      && data.accountIdentities?.[group]?.[name]),
-    ...Object.values(data.reportedTotals?.[period] || {}).map(total => ({ group: total.grupo, name: total.nombre }))
+    ...unclassified,
+    ...Object.entries(data.reportedTotals?.[period] || {}).map(([id, total]) => ({ group: total.grupo, name: total.nombre, id }))
   ];
-  for (const { group, name } of pendientes) {
-    const identidad = data.accountIdentities?.[group]?.[name] || { estado: 'reconocida' };
+  for (const { group, name, id } of pendientes) {
+    const identidad = data.accountIdentities?.[group]?.[name] || { estado: id ? 'reconocida' : 'no_reconocida' };
     const motivo = identidad.estado === 'reconocida' ? 'missing_required_account_data'
       : identidad.estado === 'sugerida' ? 'ambiguous_account_match' : 'unrecognized_imported_account';
-    reasons.push({ group, name, motivo });
-    if (group === 'estadoResultados') {
-      for (const key of ACCOUNT_TYPES.estadoResultados) totals[key] = null;
-    } else {
-      for (const key of ACCOUNT_TYPES[group]) totals[key] = null;
-      for (const key of group === 'activos' ? ['totalActivos', 'activosCorrientes', 'activosFijos']
-        : group === 'pasivos' ? ['totalPasivos', 'pasivosCorrientes'] : ['totalPatrimonio']) totals[key] = null;
-    }
+    const campos = camposPendientes(data, group, name, id);
+    reasons.push({ group, name, motivo, campos });
+    for (const key of campos) totals[key] = null;
   }
   // El motor por identificadores elegirá total o componentes. Mientras tanto,
   // el motor anterior no publica una suma duplicada cuando ambos están presentes.
@@ -82,17 +120,16 @@ export function computeFinancialTotals(data, period) {
       .map(([, identidad]) => obtenerCuenta(identidad.idCuenta)).filter(Boolean);
     for (const total of presentes.filter(cuenta => cuenta.rol === 'reported_total' && cuenta.tipoApp)) {
       if (!presentes.some(cuenta => cuenta.id !== total.id && cuenta.tipoApp === total.tipoApp)) continue;
-      totals[total.tipoApp] = null;
-      if (group === 'activos') { totals.activosCorrientes = null; totals.totalActivos = null; }
-      if (group === 'estadoResultados') { totals.utilidadBruta = null; totals.utilidadNeta = null; }
-      reasons.push({ group, name: total.nombreCanonico, motivo: 'overlapping_account_aggregation' });
+      const campos = camposDeTipos(group, [total.tipoApp]);
+      for (const key of campos) totals[key] = null;
+      reasons.push({ group, name: total.nombreCanonico, motivo: 'overlapping_account_aggregation', campos });
     }
   }
-  const sinGrupo = data.pendingAccounts?.filter(fila => Object.hasOwn(fila.importes, period)) || [];
+  const sinGrupo = data.pendingAccounts?.filter(fila => Object.hasOwn(fila.importes, period) && fila.importes[period] !== 0) || [];
   if (sinGrupo.length) {
     for (const key of Object.keys(totals)) totals[key] = null;
     reasons.push({ group: '', name: '', motivo: sinGrupo.some(fila => fila.identificacion.estado === 'sugerida')
-      ? 'ambiguous_account_match' : 'unrecognized_imported_account' });
+      ? 'ambiguous_account_match' : 'unrecognized_imported_account', campos: Object.keys(totals) });
   }
   return { ...totals, unclassified, classificationComplete: unclassified.length === 0 && reasons.length === 0, notAvailableReasons: reasons };
 }

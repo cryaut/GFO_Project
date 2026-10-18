@@ -22,7 +22,7 @@ import {
 // resultado del ejercicio (utilidad del ejercicio o del periodo): si se
 // dejaran fuera, su cambio se leería como aportación de capital y los
 // dividendos saldrían distorsionados por la utilidad del año anterior.
-const RE_RESULTADOS = /\b(utilidad(es)? (acumuladas?|retenidas?|del (ejercicio|periodo))|resultados? (acumulados?|del (ejercicio|periodo)|de ejercicios anteriores)|ganancias? (acumuladas?|retenidas?)|perdidas? acumuladas?)\b/;
+const RE_RESULTADOS = /\b(utilidad(es)? (acumuladas?|retenidas?|del (ejercicio|periodo))|resultados? (acumulados?|del (ejercicio|periodo)|de ejercicios anteriores)|ganancias? (acumuladas?|retenidas?)|perdidas? (acumuladas?|del (ejercicio|periodo)))\b/;
 
 function normalizarNombre(nombre) {
   return String(nombre).normalize('NFD').replace(/[\u0300-\u036f]/g, '')
@@ -104,7 +104,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     if (fila.saldoInicial === null || fila.saldoFinal === null) {
       const faltante = fila.saldoInicial === null ? periodoInicial : periodoFinal;
       motivos.push(`La cuenta «${fila.cuenta}» no tiene saldo en el periodo ${faltante}; su variación no entra en el EFE.`);
-    } else if (!fila.tipo) {
+    } else if (!fila.tipo && !(fila.saldoInicial === 0 && fila.saldoFinal === 0)) {
       motivos.push(`La cuenta «${fila.cuenta}» no tiene clasificación; añada un tipo de cuenta en Estados Financieros para incluirla en el EFE.`);
     }
   }
@@ -208,6 +208,11 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
   const deltaRE = reAcumuladas.reduce(
     (suma, fila) => (fila.saldoInicial !== null && fila.saldoFinal !== null ? suma + fila.variacion : NaN), 0
   );
+  const reservas = patrimonio.filter(fila => /\breservas?\b/.test(normalizarNombre(fila.cuenta)));
+  if (reAcumuladas.some(resultado => reservas.some(reserva =>
+    resultado.variacion !== null && reserva.variacion !== null && resultado.variacion * reserva.variacion < 0))) {
+    advertencias.push('Las reservas y los resultados acumulados cambiaron en sentidos opuestos: puede haber transferencias internas que distorsionen la separación de aportaciones y dividendos derivados. Revise el estado de cambios en el patrimonio.');
+  }
 
   const financiamientoItems = [
     item('(+) Aumento de pasivo a largo plazo (o - si disminuye)', pasivoLargo.delta,
@@ -221,7 +226,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     financiamientoItems.push(
       item('(+) Aportaciones de capital, reservas y otros patrimonios', aportaciones,
         aportaciones == null ? 'falta-saldo' : null),
-      item('(-) Dividendos y distribuciones de utilidades', opuesto(dividendos),
+      item('(-) Dividendos y distribuciones de utilidades (derivados de las utilidades acumuladas)', opuesto(dividendos),
         dividendos == null ? 'sin-dividendos' : null)
     );
     if (dividendos != null && dividendos < 0) {
@@ -311,8 +316,9 @@ export function interpretarEFE(resultado) {
   const fmt = valor => formatCurrency(valor);
   const partes = `Operación ${fmt(operacion.total)}, inversión ${fmt(inversion.total)} y financiamiento ${fmt(financiamiento.total)}`;
   const lectura = lecturaFlujos(resultado);
+  const alcance = ' La conciliación no valida de forma independiente la utilidad neta: los dividendos se derivan de ella y de la variación del patrimonio; requieren confirmación con un dato independiente.';
   if (estado === 'cuadra') {
-    return `Los flujos suman ${fmt(totalFlujos)}, igual a la variación de efectivo entre ${resultado.periodos.inicial} y ${resultado.periodos.final}: el estado cuadra dentro de la tolerancia de ${fmt(resultado.tolerancia)}. (${partes}.) ${lectura}`;
+    return `Los flujos suman ${fmt(totalFlujos)}, igual a la variación de efectivo entre ${resultado.periodos.inicial} y ${resultado.periodos.final}: el estado cuadra dentro de la tolerancia de ${fmt(resultado.tolerancia)}. (${partes}.) ${lectura}${alcance}`;
   }
-  return `Los flujos suman ${fmt(totalFlujos)} pero el efectivo varió ${fmt(variacionEfectivo)}: la diferencia es de ${fmt(Math.abs(diferencia))}. Revise las cuentas, las clasificaciones o los movimientos faltantes: el estado no ajusta cifras ni distribuye diferencias automáticamente. (${partes}.) ${lectura}`;
+  return `Los flujos suman ${fmt(totalFlujos)} pero el efectivo varió ${fmt(variacionEfectivo)}: la diferencia es de ${fmt(Math.abs(diferencia))}. Revise las cuentas, las clasificaciones o los movimientos faltantes: el estado no ajusta cifras ni distribuye diferencias automáticamente. (${partes}.) ${lectura}${alcance}`;
 }
