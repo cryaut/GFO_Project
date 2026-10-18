@@ -7,6 +7,8 @@ Todos los cambios notables en GFO Toolkit.
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
 ### Módulo 2: Estados Financieros
+- Corrección de la revisión del PR #14: cuentas pendientes con cero no bloquean totales ni razones; con importe, N/D se limita a los subtotales posibles y al total de su grupo, también en datos legados. Las razones respetan entradas y periodos afectados.
+- Auditoría de las 29 cuentas antes verificadas: 23 conservan cita específica y 6 bajan a verificación parcial; catálogo `2026-10-18.1`. La sincronización con v8 del PR #10 continúa pendiente.
 - Colección versionada de 72 cuentas: conserva las 71 definiciones de referencia del PR #10 y añade ingresos por intereses, con investigación y procedencia de cada alias.
 - Importación y alta manual comparten identificador y registro: reconocidas, sugeridas y no reconocidas; las sugerencias requieren confirmación y las filas pendientes conservan sus montos. Columna opcional `id` en las tablas existentes.
 - API por identificador (`montoCuenta`, `consultarMontoCuenta`): cero solo según política de ausencia, requeridos en N/D y totales reportados sin fabricar sumas. Claves por nombre y respaldo JSON compatibles con metadatos validados.
@@ -30,6 +32,8 @@ Todos los cambios notables en GFO Toolkit.
 - Botón **Vista previa del reporte** (muestra el reporte en la página) y **Descargar reporte HTML**; antes el botón "Vista Previa HTML" descargaba el archivo.
 
 ### Módulo 3: Análisis Financiero
+- EFE/EOAF: una cuenta sin clasificar con saldo cero en ambos periodos no vuelve incompleta la comprobación. Un saldo ausente sigue siendo faltante.
+- EFE: reconoce «pérdida del ejercicio/periodo», advierte movimientos opuestos entre reservas y resultados y etiqueta los dividendos como derivados. La interpretación aclara que cuadrar no confirma independientemente la utilidad neta; la fórmula se conserva.
 - **EFE de tres actividades** (`efe-calculations.js`): el Estado de Flujo de Efectivo de la pestaña EFE se arma por método indirecto desde dos balances — Operación (utilidad neta + depreciación + capital de trabajo), Inversión (activos fijos) y Financiamiento (deuda, aportaciones y dividendos) — con la comprobación CFO + CFI + CFF = variación de efectivo (tolerancia C$ 0.01 + epsilon escalado). Antes `computeEFE` solo calculaba el CFO con tres ajustes y sin comprobación. (D-024)
 - Los dividendos se separan de las aportaciones con las cuentas de utilidades acumuladas (dividendos = UN − ΔRE); sin esas cuentas se usa la variación total del patrimonio con advertencia. (D-025)
 - La depreciación del periodo se estima con la variación de la depreciación acumulada, con advertencia si la cuenta está en signo positivo o si disminuye (posible baja de activos, cuyo reembolso entra en Inversión). (D-026)

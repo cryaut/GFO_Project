@@ -793,3 +793,25 @@ Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama de
 **Para revertirla.** Retirar la propagación de disponibilidad y el guardado de metadatos de los lectores; ello vuelve a dejar incompleto R1.
 
 **Referencias.** [Ficha de cuentas](planificacion/cuentas/README.md), D-029–D-033, `cuentas-consumidores.test.js`.
+
+
+### D-043 — Acotar N/D por importe, posibilidades y periodo
+
+- **Fecha**: 2026-10-18
+- **Estado**: Vigente en el borrador; pendiente de revisión humana
+- **Decidió**: Carlos autorizó proceder con las correcciones de las revisiones recibidas; los documentos atribuyen a Cris la aprobación previa de las reglas 1–3. Codex implementa y verifica, sin confirmar decisiones aún reservadas a Cris.
+- **Área**: Estados compartidos, disponibilidad de razones y comprobaciones EFE/EOAF
+
+**Contexto.** La protección conservadora de D-034 anulaba un grupo completo aunque la cuenta pendiente fuera cero o solo pudiera pertenecer a un subtotal. Un desconocido legado podía aumentar el total sin aviso. En EFE, los dividendos derivados comparten la utilidad de operación y su conciliación no la verifica independientemente.
+
+**Opciones.**
+1. Conservar el bloqueo por grupo y exigir revisión incluso con cero — oculta resultados completos y mantiene la inconsistencia legada.
+2. Omitir pendientes de importe cero y acotar la disponibilidad por posibilidades y entradas efectivas — conserva los importes y explica la incertidumbre restante.
+
+**Decisión.** Opción 2; precisa la propagación de D-034. Una cuenta pendiente con saldo numérico cero no aplica a los cálculos del periodo. Con importe, se anulan tipos/subtotales posibles y total del grupo, usando tipo explícito o candidatos; conflictos conservan ambas posibilidades y la falta de contexto considera todo su grupo. La regla incluye desconocidos legados, preservando las clasificaciones conocidas de la demo. Cada motivo enumera campos; las razones distinguen entradas actuales y promedios/compras del periodo anterior. EFE/EOAF solo omiten la falta de tipo si ambos saldos explícitos son cero. EFE reconoce pérdida del ejercicio/periodo y advierte reservas/resultados opuestos. Se aclara que los dividendos son derivados y cuadrar no comprueba UN de forma independiente, sin cambiar la fórmula.
+
+**Consecuencias.** Se conservan demo, importes, fórmulas y los 19 tipos. La identidad pendiente sigue en revisión. El dato independiente de dividendos y la retirada de nombres fijos siguen pendientes de Cris. La auditoría rebaja conservadoramente seis estados sin evidencia suficiente; v8 y la reconciliación con los JSON de PR #10 siguen pendientes. D-043 reserva la posición posterior al bloque acordado D-037–D-042; D-029–D-034 se renumerarán justo antes de integrar, después de PR #10, sin editar ahora D-001–D-027.
+
+**Para revertirla.** Retirar el alcance por campos y las excepciones cero de los consumidores, con sus pruebas; esto reintroduce los fallos documentados y requiere decisión nueva.
+
+**Referencias.** [Correcciones y pendientes](planificacion/cuentas/02-correcciones-revision.md), D-030, D-034; instrucciones_amigo_pr14.md y revision_pr13_para_carlos.md recibidos por Carlos.

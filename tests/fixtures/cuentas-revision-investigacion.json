@@ -1,0 +1,13 @@
+{
+  "fecha": "2026-10-18",
+  "referencia": "a87ef0af0954e00d3f95ed1476ec3154bc06d768",
+  "sincronizacionV8": "pendiente: aún no publicada en PR #10; no se modifican sus JSON",
+  "rebajasLocales": {
+    "bs.fixed_assets_net_total": "El enlace a IAS 16 no define este subtotal reportado ni su precedencia interna sobre componentes.",
+    "bs.intangible_assets": "IAS 38 define un activo no monetario. La definición heredada dice monetarios; requiere corrección coordinada con el dueño de los JSON.",
+    "is.cost_of_sales_reported": "IAS 2 explica el gasto por inventarios vendidos, pero no define este total reportado con precedencia interna.",
+    "is.merchandise_cost": "La fuente anterior describe inventarios en general, sin definir esta cuenta específica de mercaderías vendidas.",
+    "is.other_sales_revenue": "IFRS 15 describe ingresos de contratos, sin definir una cuenta residual de otras ventas.",
+    "is.product_cost": "La fuente anterior describe inventarios en general, sin definir específicamente el coste de producción de los productos vendidos."
+  }
+}

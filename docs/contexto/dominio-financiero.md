@@ -234,6 +234,8 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 
 ### Otros módulos con lógica reutilizable
 
+Disponibilidad de cuentas (revisión del PR #14, D-043): una cuenta pendiente con saldo cero no aplica al cálculo de ese periodo. Con importe distinto de cero se invalidan sus tipos/subtotales posibles y el total del grupo, incluidos datos legados sin tipo; se conservan los importes. Los motivos incluyen `campos` para propagar N/D según las entradas de cada razón, distinguiendo periodo actual y previo. EFE y EOAF solo omiten la falta de clasificación cuando **ambos saldos explícitos son cero**. El EFE deriva dividendos de UN y resultados acumulados: su conciliación no verifica UN independientemente; movimientos opuestos con reservas advierten posibles transferencias, sin cambiar la fórmula.
+
 | Archivo | Funciones |
 |---|---|
 | `js/modules/estados/cuentas-identificador.js` | `obtenerCuenta(id)`, `listarCuentas({ grupo })`, `identificarCuenta(texto, { grupo, clasificacion, id })`, `montoCuenta(datos, periodo, id)`, `consultarMontoCuenta(datos, periodo, id)`, `resumenIdentificacion(datos)`, `resolverClasificacion(grupo, valor)`, `tipoCuentaLegada(grupo, nombre)`, `versionCatalogo` |

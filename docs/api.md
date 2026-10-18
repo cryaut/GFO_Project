@@ -4,7 +4,7 @@ Referencia completa de las funciones públicas de los módulos utilitarios.
 
 ## Colección de cuentas (`js/modules/estados/cuentas-*.js`)
 
-`versionCatalogo = '2026-10-17.1'`. Catálogo de 72 definiciones; las 71 del PR #10 conservan ids, nombres canónicos, clasificación, rol y política de ausencia. La investigación y las variantes sin fuente están en [cuentas/investigacion.md](planificacion/cuentas/investigacion.md).
+`versionCatalogo = '2026-10-18.1'`. Catálogo de 72 definiciones; las 71 del PR #10 conservan ids, nombres canónicos, clasificación, rol y política de ausencia. La auditoría deja 23 `verified`, 44 `partially_verified` y 5 `ambiguous`: las verificadas incluyen cita y ubicación; seis rebajas locales conservadoras se documentan aparte de la sincronización v8 pendiente. La investigación y las variantes sin fuente están en [cuentas/investigacion.md](planificacion/cuentas/investigacion.md).
 
 #### `obtenerCuenta(id)` / `listarCuentas({ grupo } = {})`
 Devuelven una copia de la definición (`null` para id inexistente) o una lista en orden estable por id. Grupos: `activos`, `pasivos`, `patrimonio`, `estadoResultados`, `suplementario`. El llamador no puede modificar el catálogo mediante la copia.
@@ -24,6 +24,8 @@ Alta pura y atómica para importación y captura manual. Cada registro admite `{
 #### `montoCuenta(datos, periodo, id)` / `consultarMontoCuenta(datos, periodo, id)`
 La primera devuelve `number | null`; la segunda `{ valor, motivo }`. Un dato explícito, incluido cero, se devuelve; los detalles con el mismo id suman sus saldos. Un total reportado exige un único dato publicado y nunca suma componentes. En ausencia, solo un detalle con `zero_if_not_reported` devuelve cero; `requires_data`, totales y periodos faltantes devuelven null. Candidatos sin confirmar usan `ambiguous_account_match`; desconocidas relevantes usan `unrecognized_imported_account`. Otros motivos: `missing_required_account_data`, `missing_required_period_balance`, `unknown_account_id`.
 
+Una fila pendiente con importe numérico cero en ese periodo no bloquea la política de ausencia; esto también aplica a filas sin grupo. No confirma el id ni convierte un dato requerido ausente en cero.
+
 #### `resumenIdentificacion(datos)`
 Cuenta las cuentas por estado, incluidas las pendientes de grupo; una cuenta compartida por varios periodos se cuenta una vez. Devuelve `{ reconocida, sugerida, no_reconocida }`.
 
@@ -32,6 +34,8 @@ Adaptadores de los 19 tipos anteriores: devuelven un tipo o `''`. Los alias y la
 
 #### `aplicarDisponibilidadRazones(razones, ...totales)`
 Devuelve una copia de las razones con los campos afectados en `null` y `motivosNoDisponible[campo]`. Consume `notAvailableReasons` de los totales compartidos. Evita la coerción de null a cero en consumidores todavía sin migrar; no cambia fórmulas.
+
+El primer total corresponde al periodo actual; el segundo, al anterior. Usa `motivo.campos` y las entradas de cada razón: el anterior solo afecta promedios y compras. Conserva compatibilidad conservadora con motivos antiguos que solo indican grupo. Copia los denominadores y marca N/D en los afectados sin mutar la entrada.
 
 #### `resolveGroup({ estado, grupo, clasif, name, id })` / `resolveClassification(grupo, tipo, nombre, id)`
 Adaptadores del importador: el primero devuelve un grupo o `''`; el segundo el resultado completo del identificador. Una cuenta no reconocida no lanza error. El lector sigue rechazando importes y estructuras inválidas, límites excedidos y duplicados. No cambian D-019 ni D-020.
@@ -725,6 +729,13 @@ Cuerpo HTML del reporte (resumen, Balance General, Estado de Resultados y Totale
 
 ## estados-calculations.js (selección)
 
+#### `computeFinancialTotals(data, period)`
+Suma los tipos y calcula los agregados compartidos, preservando las fórmulas existentes. Devuelve totales, `unclassified`, `classificationComplete` y `notAvailableReasons: Array<{ group, name, motivo, campos }>`.
+
+Una cuenta sin tipo con importe cero no aplica al cálculo; permanece pendiente de identificación. Con importe distinto de cero, incluso de origen legado, se anulan sus tipos/subtotales posibles y el total del grupo. Se usa clasificación explícita o candidatos; si hay conflicto de contexto se conservan ambas posibilidades. Sin contexto se consideran todos los tipos de su grupo. Una fila sin grupo y con importe anula todos los totales. Los saldos ausentes no se completan con cero.
+
+- **Ejemplo**: cuenta pendiente de `activosCorrientesOtros` con 5000 → ese tipo, `activosCorrientes` y `totalActivos` son null; `activosFijos` conserva su valor.
+
 #### `resolveAccountType(data, group, name)`
 Tipo de una cuenta: el de `data.accountTypes[group][name]` si existe (solo propiedades propias); si no, `inferAccountType(group, name)`. Es la misma regla que aplica `computeFinancialTotals`.
 
@@ -782,6 +793,7 @@ Clasifica la variación de una cuenta del balance con el grupo (`'activos'`, `'p
   - `monto`: valor absoluto de la variación, o `null`
   - `motivo`: `'falta-saldo'` (un saldo no existe), `'sin-clasificar'` (cuenta sin tipo), `'signo-cambiado'` (depreciación que cambia de signo con la misma magnitud) o `null`
 - **Reglas**: activo que aumenta → `'Aplicacion'`; activo que disminuye → `'Origen'`; pasivo/patrimonio que aumenta → `'Origen'`; que disminuye → `'Aplicacion'`. En `depreciacionAcumulada` manda la magnitud (creciente → `'Origen'`).
+- Dos saldos numéricos cero devuelven `'Sin movimiento'` incluso sin tipo. Un saldo ausente o un saldo no clasificado distinto de cero sigue siendo incompleto.
 - **Ejemplo**: `clasificarMovimientoEOAF('activos', 'efectivo', 100, 130)` → `{ clasificacion: 'Aplicacion', monto: 30, motivo: null }`
 
 #### `etiquetaFalta(motivo)`
@@ -828,6 +840,8 @@ Arma el estado completo: operación (UN + depreciación + capital de trabajo), i
 
 #### `interpretarEFE(resultado)`
 Lectura del estado: si cuadra o no, y qué dicen los signos de los flujos (la operación genera o consume efectivo, si alcanza para la inversión y si el financiamiento aportó o devolvió fondos). La calcula `construirEFE`; se expone para pruebas.
+
+Identifica los dividendos como derivados de las utilidades acumuladas y aclara que cuadrar no valida independientemente la utilidad neta. Se conservan la fórmula y la falta de confirmación del dato de dividendos. `construirEFE` reconoce «pérdida del ejercicio/periodo», omite el motivo sin clasificación cuando ambos saldos son cero y advierte movimientos opuestos entre reservas y resultados, sin redistribuir importes.
 
 ---
 

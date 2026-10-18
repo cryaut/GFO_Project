@@ -126,6 +126,8 @@ El resumen distingue **reconocidas**, **sugeridas** y **no reconocidas**. Una cu
 
 Las filas pendientes se importan con sus importes, incluso si falta el grupo; aparecen en la revisión y en la vista del borrador. Puede guardar el conjunto y resolverlas después. Los cálculos que dependen de ellas muestran **N/D** con un motivo; no se sustituyen por cero. La clasificación previa de datos guardados se conserva para compatibilidad. Otros ingresos/gastos genéricos necesitan confirmación fuera del caso ya clasificado de la demostración.
 
+Una cuenta pendiente con importe cero no afecta los totales ni las razones de ese periodo, aunque siga en la lista de revisión. Si tiene importe, solo se bloquean los subtotales a los que podría pertenecer y el total de su grupo. Por ejemplo, una cuenta pendiente de activo corriente no bloquea activos fijos ni pasivos. Sin grupo, un importe pendiente afecta todos los totales. Esto también protege datos antiguos sin clasificación.
+
 CSV y Excel admiten una columna opcional `id` (por ejemplo `bs.cash_and_equivalents`). Si es inválido o contradice grupo/clasificación, la cuenta queda pendiente. El lector busca la cabecera `Cuenta` entre las primeras 25 filas de una hoja y avisa si una hoja no tiene tabla de cuentas. No se añaden formatos de archivo.
 
 Los totales reportados sin tipo equivalente y los datos suplementarios aparecen aparte. La consulta por identificador devuelve el total publicado; no inventa una suma de componentes. Si un total y sus componentes se superponen en el motor anterior, su agregado queda N/D hasta resolver el desglose o usar el futuro motor. Los costos/gastos se capturan positivos y la depreciación acumulada negativa. Los intereses ganados son ingresos, no gastos.
@@ -214,7 +216,7 @@ Activos  = C$ 825,525
 Pasivos + Patrimonio = C$ 243,085 + C$ 582,440 = C$ 825,525
 ```
 
-La ecuación contable **A = P + O** se cumple en 2023 (C$ 801,475) y en 2024. Las utilidades acumuladas pasan de C$ 137,615 a C$ 202,440: suben por la utilidad neta de 2024 (C$ 104,825) menos los dividendos pagados (C$ 40,000).
+La ecuación contable **A = P + O** se cumple en 2023 (C$ 801,475) y en 2024. Las utilidades acumuladas pasan de C$ 137,615 a C$ 202,440. La utilidad neta de 2024 (C$ 104,825) menos ese aumento da C$ 40,000 de distribuciones derivadas; su pago no está confirmado con un dato independiente.
 
 ### 3.4 Estado de Resultados
 
@@ -396,7 +398,7 @@ CNT = AC - PC = C$ 38,500 - C$ 25,000 = C$ 13,500
 
 En la pestaña **Mercado** de `#/analisis`, ingresa por periodo las acciones comunes en circulación, el precio de mercado por acción y los dividendos pagados, o pulsa **Cargar ejemplo de la demo**. La utilidad neta y el patrimonio salen de los estados guardados, y el DAP, de Apalancamiento.
 
-**Ejemplo con la demo MUNO MODA 2024** (30,000 acciones, precio C$ 52, dividendos C$ 40,000):
+**Ejemplo hipotético con la demo MUNO MODA 2024** (30,000 acciones, precio C$ 52, suponiendo dividendos C$ 40,000; ese pago sigue sin confirmar):
 
 | Razón | Cálculo | Resultado |
 |---|---|---:|
@@ -408,7 +410,7 @@ En la pestaña **Mercado** de `#/analisis`, ingresa por periodo las acciones com
 | Pago de dividendos | 1.33 / 3.49 | 38.16 % |
 | Rendimiento del dividendo | 1.33 / 52 | 2.56 % |
 
-El mercado paga 14.88 veces la utilidad por acción y valora la acción a 2.68 veces su valor en libros. La pestaña también muestra los dividendos que explican el cambio del patrimonio (UN − ΔPatrimonio = C$ 40,000) para comprobar el dato.
+En ese ejemplo, el mercado paga 14.88 veces la utilidad por acción y valora la acción a 2.68 veces su valor en libros. La cifra derivada del cambio del patrimonio (UN − ΔPatrimonio = C$ 40,000) sirve de referencia; no confirma independientemente el pago ni la utilidad.
 
 ### 4.7 Origen y Aplicación de Fondos (EOAF)
 
@@ -449,11 +451,13 @@ En la pestaña **EFE** de `#/analisis` se arma el estado de flujo de efectivo po
 |---|---|---:|
 | Operación (CFO) | 104,825 + 17,950 − 15,000 − 15,000 − 5,000 + 7,000 + 3,000 | C$ 97,775 |
 | Inversión (CFI) | activos fijos sin cambio | C$ 0 |
-| Financiamiento (CFF) | −55,775 (deuda LP) + 5,000 (deuda CP) − 40,000 (dividendos) | C$ −90,775 |
+| Financiamiento (CFF) | −55,775 (deuda LP) + 5,000 (deuda CP) − 40,000 (dividendos derivados) | C$ −90,775 |
 | **Total de flujos** | 97,775 + 0 − 90,775 | **C$ 7,000** |
 | Variación de efectivo | 52,000 − 45,000 | C$ 7,000 |
 
 La comprobación cuadra. Los dividendos (C$ 40,000) se derivan de la utilidad neta menos el aumento de las utilidades acumuladas (se reconocen cuentas como «Utilidades acumuladas», «Utilidad retenida» o «Utilidad del ejercicio»; si el patrimonio no las tiene, se usa la variación total del patrimonio con una nota). Los gastos por intereses y los impuestos ya están dentro de la utilidad neta.
+
+**Alcance de la comprobación:** cuadrar concilia los flujos con el efectivo; no valida de forma independiente la utilidad neta porque esta también se usa para derivar los dividendos. El pago de C$ 40,000 continúa sin confirmar. Si reservas y resultados cambian en sentidos opuestos, aparece una advertencia de posibles transferencias internas. También se reconoce «pérdida del ejercicio/periodo». Una cuenta sin clasificar con cero en ambos cierres no bloquea EFE ni EOAF; la falta de saldo en uno de ellos sí requiere completar el dato.
 
 ---
 

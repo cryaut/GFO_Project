@@ -1,5 +1,5 @@
 // Datos de la colección. Investigación y procedencia: docs/planificacion/cuentas/investigacion.md.
-export const versionCatalogo = '2026-10-17.1';
+export const versionCatalogo = '2026-10-18.1';
 export const TIPOS_APP = {
   'activos': [
     'efectivo',
@@ -221,6 +221,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '281',
+        'cita': 'Corrección de valor por la depreciación del inmovilizado material',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -268,8 +276,10 @@ export const CUENTAS_CATALOGO = [
       {
         'titulo': 'IAS 7 Statement of Cash Flows',
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-7-statement-of-cash-flows/',
-        'consulta': '2026-10-17',
-        'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+        'consulta': '2026-10-18',
+        'alcance': 'Fragmentos consecutivos que definen efectivo y equivalentes; las condiciones completas se consultan en la fuente. No verifica todos los alias.',
+        'ubicacion': 'About, IAS 7',
+        'cita': 'Cash comprises cash on hand and demand deposits. Cash equivalents are short-term, highly liquid investments'
       }
     ]
   },
@@ -352,6 +362,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-37-provisions-contingent-liabilities-and-contingent-assets/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '14 y 529',
+        'cita': 'provisiones cuya cancelación se prevea en el corto plazo',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -379,6 +397,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '129',
+        'cita': 'Resultado, positivo o negativo, del último ejercicio cerrado, pendiente de aplicación.',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -398,7 +424,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': null,
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 16 Property, Plant and Equipment',
@@ -406,7 +432,11 @@ export const CUENTAS_CATALOGO = [
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'El enlace a IAS 16 no define este subtotal reportado ni su precedencia interna sobre componentes.'
+    }
   },
   {
     'id': 'bs.intangible_assets',
@@ -425,7 +455,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'activosFijos',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 38 Intangible Assets',
@@ -433,7 +463,11 @@ export const CUENTAS_CATALOGO = [
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'IAS 38 define un activo no monetario. La definición heredada dice monetarios; requiere corrección coordinada con el dueño de los JSON.'
+    }
   },
   {
     'id': 'bs.inventory_finished_goods',
@@ -458,6 +492,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '35',
+        'cita': 'Los fabricados por la empresa y destinados al consumo final',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -486,6 +528,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '30',
+        'cita': 'destinados a la venta sin transformación',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -512,6 +562,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '31',
+        'cita': 'se destinan a formar parte de los productos fabricados',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -561,6 +619,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '33',
+        'cita': 'se encuentran en fase de formación o transformación',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -663,6 +729,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-37-provisions-contingent-liabilities-and-contingent-assets/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '14',
+        'cita': 'Obligaciones expresas o tácitas a largo plazo',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -838,6 +912,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '211',
+        'cita': 'Edificaciones en general',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -866,6 +948,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '216',
+        'cita': 'Mobiliario, material y equipos de oficina',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -891,6 +981,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '210',
+        'cita': 'Solares de naturaleza urbana, fincas rústicas',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -946,6 +1044,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '219',
+        'cita': 'inmovilizaciones materiales no incluidas en las demás cuentas',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -972,6 +1078,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '218',
+        'cita': 'Vehículos de todas clases utilizables para el transporte',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -1038,6 +1152,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-32-financial-instruments-presentation/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '100',
+        'cita': 'Capital escriturado en las sociedades',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -1085,6 +1207,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-7-statement-of-cash-flows/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '54',
+        'cita': 'con vencimiento no superior a un año',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -1111,6 +1241,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-12-income-taxes/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '475',
+        'cita': 'Tributos a favor de las Administraciones Públicas, pendientes de pago',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -1253,7 +1391,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'costoVentas',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 2 Inventories',
@@ -1261,7 +1399,11 @@ export const CUENTAS_CATALOGO = [
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'IAS 2 explica el gasto por inventarios vendidos, pero no define este total reportado con precedencia interna.'
+    }
   },
   {
     'id': 'is.gross_profit_reported',
@@ -1307,6 +1449,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-12-income-taxes/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '630 y 6300',
+        'cita': 'Importe del impuesto sobre beneficios devengado en el ejercicio',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -1336,6 +1486,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-23-borrowing-costs/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '662',
+        'cita': 'Importe de los intereses de los préstamos recibidos y otras deudas',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -1363,7 +1521,7 @@ export const CUENTAS_CATALOGO = [
         'titulo': 'IFRS: Presentation of interest revenue',
         'url': 'https://www.ifrs.org/projects/completed-projects/2018/presentation-of-interest-revenue-for-particular-financial-instruments-ifrs-9-and-ias-1/',
         'consulta': '2026-10-17',
-        'alcance': 'El tema oficial distingue ingresos por intereses. La traducción es del proyecto.'
+        'alcance': 'Título de proyecto; no define la cuenta. No respalda por sí solo su verificación.'
       }
     ]
   },
@@ -1383,7 +1541,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'costoVentas',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 2 Inventories',
@@ -1391,7 +1549,11 @@ export const CUENTAS_CATALOGO = [
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La fuente anterior describe inventarios en general, sin definir esta cuenta específica de mercaderías vendidas.'
+    }
   },
   {
     'id': 'is.net_income_reported',
@@ -1494,6 +1656,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-38-intangible-assets/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '680 (definición conjunta 680/681/682)',
+        'cita': 'Expresión de la depreciación sistemática anual efectiva',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -1519,6 +1689,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '681 (definición conjunta 680/681/682)',
+        'cita': 'Expresión de la depreciación sistemática anual efectiva',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -1595,7 +1773,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'ventas',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IFRS 15 Revenue from Contracts with Customers',
@@ -1603,7 +1781,11 @@ export const CUENTAS_CATALOGO = [
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'IFRS 15 describe ingresos de contratos, sin definir una cuenta residual de otras ventas.'
+    }
   },
   {
     'id': 'is.product_cost',
@@ -1621,7 +1803,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'costoVentas',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 2 Inventories',
@@ -1629,7 +1811,11 @@ export const CUENTAS_CATALOGO = [
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La fuente anterior describe inventarios en general, sin definir específicamente el coste de producción de los productos vendidos.'
+    }
   },
   {
     'id': 'is.product_sales',
@@ -1654,6 +1840,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '701 (definición conjunta 700/705)',
+        'cita': 'Transacciones, con salida o entrega de los bienes o servicios',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },
@@ -1794,6 +1988,14 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/',
         'consulta': '2026-10-17',
         'alcance': 'Respaldo conceptual; los alias españoles se documentan por separado en investigacion.md.'
+      },
+      {
+        'titulo': 'PGC de España, quinta parte: definiciones y relaciones contables',
+        'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
+        'consulta': '2026-10-18',
+        'ubicacion': '705 (definición conjunta 700/705)',
+        'cita': 'Transacciones, con salida o entrega de los bienes o servicios',
+        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
     ]
   },

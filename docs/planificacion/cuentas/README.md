@@ -3,7 +3,7 @@
 - **Estado**: En revisión
 - **Responsable**: Carlos, con Codex
 - **Rama**: `feat/cuentas-identificador`
-- **Última actualización**: 2026-10-17
+- **Última actualización**: 2026-10-18
 - **PR**: [#14 — borrador](https://github.com/cryaut/GFO_Project/pull/14)
 
 ## Objetivo
@@ -18,6 +18,7 @@ Unificar la identificación de cuentas de importación y alta manual mediante id
 | 3 | Registro común, normalización e importación sin pérdida de filas | Completado |
 | 4 | Alta manual y revisión de pendientes | Completado |
 | 5 | Regresión de la demo, tests, lint, navegador y PR | Completado |
+| 6 | Correcciones de las revisiones PR #14 y PR #13 | Implementadas y probadas; coordinación externa pendiente |
 
 ## Decisiones clave
 - Carlos aprobó expresamente las recomendaciones 1–4 de la sección 10 del encargo en el chat: claves por nombre con metadatos, continuar con filas pendientes, otros ingresos/gastos ambiguos salvo la demo, ingresos por intereses como ingreso.
@@ -36,6 +37,7 @@ Unificar la identificación de cuentas de importación y alta manual mediante id
 |---|---|---|
 | 00 | [Investigación y procedencia](investigacion.md) | Completado |
 | 01 | [Validación e informe de entrega](01-validacion.md) | Completado |
+| 02 | [Correcciones de revisión](02-correcciones-revision.md) | Implementadas; dependencias externas pendientes |
 
 ## Próximo paso
-Revisión humana del PR en borrador. Calidad: 509 pruebas en verde y lint sin errores (10 advertencias previas). Los resultados, la prueba del Excel FDL y los límites están en el informe de validación. El motor JSON, las fórmulas de razones y el rediseño visual quedan fuera del alcance.
+Revisión del borrador #14: **526 pruebas en 39 archivos pasan; lint sin errores y 10 advertencias previas**. El paso 01 registra la entrega inicial (509 pruebas); el paso 02 registra los resultados actuales y los pendientes. Antes de integrar: esperar v8 del PR #10, reconciliar sus estados de investigación (incluidas seis rebajas locales), integrar #10 primero y renumerar D-029–D-034 como D-037–D-042. D-043 registra esta corrección sin editar decisiones previas. La retirada de lecturas por nombres fijos y el dato independiente de dividendos siguen pendientes de Cris. No se integra ningún PR desde esta tarea.
