@@ -2,6 +2,8 @@
 
 Fecha: 2026-10-18. Rama: `feat/cuentas-identificador`. Base: `origin/main`, `2c11c4d`. Carlos autorizó proceder con las correcciones después de revisar los dos documentos recibidos. Los puntos que esos documentos reservan a Cris permanecen pendientes.
 
+**Cambio de alcance posterior:** Carlos indicó «la parte de las razones no la modifiques». El ajuste específico descrito en el punto 4 se retiró, junto con sus pruebas exclusivas; `analisis/index.js` se restauró a `main`. Este informe conserva la entrega previa de 526 pruebas; el estado vigente y la nueva validación están en [03-excluir-razones.md](03-excluir-razones.md). Las afirmaciones sobre propagación en Razones que siguen describen esa versión anterior, no el código entregado ahora.
+
 ## Correcciones aplicadas
 
 1. Cuenta pendiente con cero: conserva la identificación pendiente y los importes, pero no anula totales, políticas de ausencia ni razones de ese periodo. Dos saldos cero tampoco bloquean EFE/EOAF. Un saldo ausente sigue siendo N/D.

@@ -82,7 +82,9 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-031 | Otros ingresos y gastos genéricos requieren confirmación | Vigente |
 | D-032 | Los intereses ganados son ingresos | Vigente |
 | D-033 | Similitud calibrada como sugerencia confirmable | Vigente |
-| D-034 | Propagar N/D en consumidores sin migrar sus fórmulas | Vigente |
+| D-034 | Propagar N/D en consumidores sin migrar sus fórmulas | Vigente en Reportes; Razones reemplazada por D-044 |
+| D-043 | Acotar N/D por importe, posibilidades y periodo | Vigente en Estados/EFE/EOAF; Razones reemplazada por D-044 |
+| D-044 | Excluir razones financieras por instrucción de Carlos | Vigente |
 
 ## Decisiones
 
@@ -776,7 +778,7 @@ Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama de
 ### D-034 — Propagar N/D en consumidores sin migrar sus fórmulas
 
 - **Fecha**: 2026-10-17
-- **Estado**: Vigente
+- **Estado**: Vigente en Reportes; Razones reemplazada por D-044
 - **Decidió**: Carlos, aprobación expresa del ajuste mínimo adicional en el chat
 - **Área**: Totales compartidos, lectura de Análisis y Reportes
 
@@ -815,3 +817,25 @@ Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama de
 **Para revertirla.** Retirar el alcance por campos y las excepciones cero de los consumidores, con sus pruebas; esto reintroduce los fallos documentados y requiere decisión nueva.
 
 **Referencias.** [Correcciones y pendientes](planificacion/cuentas/02-correcciones-revision.md), D-030, D-034; instrucciones_amigo_pr14.md y revision_pr13_para_carlos.md recibidos por Carlos.
+
+
+### D-044 — Excluir razones financieras por instrucción de Carlos
+
+- **Fecha**: 2026-10-18
+- **Estado**: Vigente
+- **Decidió**: Carlos, indicación expresa posterior: «la parte de las razones no la modifiques»
+- **Área**: Alcance del PR #14 y reversión de los ajustes específicos de Razones
+
+**Contexto.** D-034 y parte de D-043 autorizaron adaptar disponibilidad en Razones. Después de publicarse la revisión, Carlos excluye esa parte del trabajo.
+
+**Opciones.**
+1. Retirar la integración específica de Razones y preservar el resto de la corrección — respeta el límite actualizado del usuario.
+2. Mantener el adaptador porque no cambia fórmulas — seguiría modificando su comportamiento y no cumple el límite.
+
+**Decisión.** Opción 1. Se restaura analisis/index.js completo a origin/main, se elimina cuentas-disponibilidad.js y sus pruebas exclusivas, y se retiran las afirmaciones de propagación específica en Razones de la documentación vigente. Se mantienen importación, catálogo, totales de Estados/Reportes y correcciones EFE/EOAF en sus archivos propios. Esta decisión reemplaza únicamente el alcance de Razones de D-034/D-043, sin reescribir sus motivos históricos.
+
+**Consecuencias.** Las fórmulas, código de razones, interfaz y pruebas originales quedan como en main. Los totales compartidos de Estados siguen alimentando esos módulos, de modo que corregir una cuenta puede modificar una entrada; no se garantiza aquí la adaptación de N/D/metadatos en Razones para pendientes. Esa adaptación, la retirada de nombres fijos y cualquier otra modificación de Razones quedan fuera de esta entrega. La reversión se registra en un commit nuevo, sin force push ni merge.
+
+**Para revertirla.** Obtener autorización expresa para una tarea de Razones y recuperar o rediseñar el adaptador con sus pruebas; no reintroducirlo como cambio incidental de importación.
+
+**Referencias.** [Exclusión de razones y validación vigente](planificacion/cuentas/03-excluir-razones.md), D-034, D-043, instrucción directa de Carlos en este chat.

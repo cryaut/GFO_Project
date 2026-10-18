@@ -32,11 +32,6 @@ Cuenta las cuentas por estado, incluidas las pendientes de grupo; una cuenta com
 #### `resolverClasificacion(grupo, valor)` / `tipoCuentaLegada(grupo, nombre)`
 Adaptadores de los 19 tipos anteriores: devuelven un tipo o `''`. Los alias y las excepciones de compatibilidad están en el catálogo; no hay una segunda regla regex. El adaptador legado no confirma identificadores ni se usa para aplicar sugerencias nuevas.
 
-#### `aplicarDisponibilidadRazones(razones, ...totales)`
-Devuelve una copia de las razones con los campos afectados en `null` y `motivosNoDisponible[campo]`. Consume `notAvailableReasons` de los totales compartidos. Evita la coerción de null a cero en consumidores todavía sin migrar; no cambia fórmulas.
-
-El primer total corresponde al periodo actual; el segundo, al anterior. Usa `motivo.campos` y las entradas de cada razón: el anterior solo afecta promedios y compras. Conserva compatibilidad conservadora con motivos antiguos que solo indican grupo. Copia los denominadores y marca N/D en los afectados sin mutar la entrada.
-
 #### `resolveGroup({ estado, grupo, clasif, name, id })` / `resolveClassification(grupo, tipo, nombre, id)`
 Adaptadores del importador: el primero devuelve un grupo o `''`; el segundo el resultado completo del identificador. Una cuenta no reconocida no lanza error. El lector sigue rechazando importes y estructuras inválidas, límites excedidos y duplicados. No cambian D-019 ni D-020.
 

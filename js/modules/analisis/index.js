@@ -13,7 +13,6 @@ import {
   rotacionActivosFijos, rotacionCapitalTrabajo, solvencia
 } from '../../utils/calculate.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
-import { aplicarDisponibilidadRazones } from '../estados/cuentas-disponibilidad.js';
 import { normalizeFinancialData, sortPeriods } from '../estados/estados-normalize.js';
 import { escapeHTML } from '../../utils/html.js';
 import { construirEOAF } from './eoaf-calculations.js';
@@ -37,7 +36,6 @@ export const UMBRALES = {
 function getSavedStates() {
   const accountTypes = store.get('estados.accountTypes');
   const data = {
-    ...store.get('estados'),
     name: store.get('estados.name') || 'Datos guardados',
     periods: store.get('estados.periods') || [],
     balanceGeneral: store.get('estados.balanceGeneral') || {},
@@ -297,7 +295,7 @@ export function computeRazones(period) {
     solvencia: solvencia(bg.totalActivos, bg.totalPasivos)
   };
 
-  return aplicarDisponibilidadRazones({
+  return {
     RC, RR, RotInv, RotCxC, PPC, endeudamiento: End, MN, ROA,
     ...extra,
     usaPromedios: hayDosPeriodos,
@@ -327,7 +325,7 @@ export function computeRazones(period) {
       rotacionCapitalTrabajo: bg.activosCorrientes - bg.pasivosCorrientes,
       solvencia: bg.totalPasivos
     }
-  }, totalsFor(period), prev ? totalsFor(prev) : null);
+  };
 }
 
 export function computeDuPont(period) {

@@ -1,14 +1,12 @@
 import { afterEach, expect, it, vi } from 'vitest';
-import store from '../../js/store.js';
 import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
 import { registrarCuenta } from '../../js/modules/estados/cuentas-registro.js';
 import { computeFinancialTotals } from '../../js/modules/estados/estados-calculations.js';
 import { consultarMontoCuenta } from '../../js/modules/estados/cuentas-identificador.js';
 import { construirEFE, esResultadoAcumulado } from '../../js/modules/analisis/efe-calculations.js';
 import { construirEOAF } from '../../js/modules/analisis/eoaf-calculations.js';
-import { aplicarDisponibilidadRazones } from '../../js/modules/estados/cuentas-disponibilidad.js';
 
-afterEach(() => { store._data = null; store._listeners = []; vi.unstubAllGlobals(); });
+afterEach(() => vi.unstubAllGlobals());
 
 async function demo() {
   vi.stubGlobal('document', { getElementById: () => null });
@@ -16,15 +14,7 @@ async function demo() {
   return normalizeFinancialData(structuredClone(DEMO_MUNOMODA));
 }
 
-async function razones(datos, periodo = '2024') {
-  vi.stubGlobal('localStorage', { getItem: () => null, setItem() {} });
-  store.setPersisted('estados', datos);
-  const { refreshSavedStates, computeRazones } = await import('../../js/modules/analisis/index.js');
-  refreshSavedStates();
-  return computeRazones(periodo);
-}
-
-it('la cuenta pendiente con cero en ambos años no cambia ningún total ni razón de MUNO MODA', async () => {
+it('la cuenta pendiente con cero en ambos años no cambia los totales ni EFE/EOAF de MUNO MODA', async () => {
   const original = await demo();
   const conCeros = registrarCuenta(original, ['2023', '2024'].map(periodo => ({
     nombre: 'Activo corriente extra', grupo: 'activos', periodo, importe: 0
@@ -32,7 +22,6 @@ it('la cuenta pendiente con cero en ambos años no cambia ningún total ni razó
   for (const periodo of original.periods) {
     expect(computeFinancialTotals(conCeros, periodo)).toEqual(computeFinancialTotals(original, periodo));
   }
-  expect(await razones(conCeros)).toEqual(await razones(original));
   expect(conCeros.accountIdentities.activos['Activo corriente extra'].estado).not.toBe('reconocida');
   expect(construirEFE(conCeros, '2023', '2024')).toEqual(construirEFE(original, '2023', '2024'));
   expect(construirEOAF(conCeros, '2023', '2024').resumen).toEqual(construirEOAF(original, '2023', '2024').resumen);
@@ -51,12 +40,6 @@ it('los 5000 pendientes corrientes solo anulan sus totales posibles y conservan 
   expect(total.notAvailableReasons).toEqual([expect.objectContaining({ name: 'Activo corriente extra',
     campos: expect.arrayContaining(['activosCorrientes', 'totalActivos']) })]);
   expect(computeFinancialTotals(datos, '2023')).toEqual(computeFinancialTotals(base, '2023'));
-  const r = await razones(datos);
-  expect(r.RC).toBeNull();
-  expect(r.ROA).toBeNull();
-  expect(r.rotacionActivosFijos).toBeCloseTo(300 / 150000, 8);
-  expect(r.pruebaDefensiva).toBe(2);
-  expect(r.MN).toBe(1);
 });
 
 it('una cuenta legada desconocida no aumenta silenciosamente el total de activos', async () => {
@@ -83,24 +66,11 @@ it('sin candidatos ni clasificación se anulan las posibilidades del grupo, cons
     activosCorrientes: null, totalPasivos: 243085, totalPatrimonio: 582440, utilidadNeta: 104825 });
 });
 
-it('un gasto pendiente con tipo conocido conserva ventas, utilidad bruta y razones ajenas', async () => {
+it('un gasto pendiente con tipo conocido conserva ventas y utilidad bruta', async () => {
   const datos = registrarCuenta(await demo(), { nombre: 'Otros Gastos', grupo: 'estadoResultados', periodo: '2024', importe: 100,
     clasificacion: 'otrosGastos', reemplazar: true });
   expect(computeFinancialTotals(datos, '2024')).toMatchObject({ utilidadBruta: 375000, utilidadNeta: null,
     ventas: 920000, costoVentas: 545000, otrosGastos: null });
-  const r = await razones(datos);
-  expect(r.MN).toBeNull();
-  expect(r.margenOperativo).toBeCloseTo((375000 - 130000 - 90000) / 920000, 8);
-  expect(r.margenBruto).toBeCloseTo(375000 / 920000, 8);
-  expect(r.RC).toBeCloseTo(412000 / 175000, 8);
-});
-
-it('una cuenta pendiente del periodo previo solo afecta las razones que usan esos saldos', () => {
-  const datos = { notAvailableReasons: [{ group: 'estadoResultados', motivo: 'ambiguous_account_match', campos: ['ventas', 'utilidadNeta'] }] };
-  const entrada = { MN: 0.2, ROA: 0.1, RotCxC: 3, RC: 2 };
-  expect(aplicarDisponibilidadRazones(entrada, {}, datos)).toMatchObject(entrada);
-  const previo = { notAvailableReasons: [{ group: 'activos', motivo: 'ambiguous_account_match', campos: ['cxC', 'activosCorrientes', 'totalActivos'] }] };
-  expect(aplicarDisponibilidadRazones(entrada, {}, previo)).toMatchObject({ MN: 0.2, ROA: null, RotCxC: null, RC: 2 });
 });
 
 it('Ingresos por Intereses 20 se suman a MUNO MODA: utilidad neta 104845', async () => {

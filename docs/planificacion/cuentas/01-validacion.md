@@ -6,6 +6,8 @@
 
 Este informe conserva la validación inicial del 2026-10-17. La corrección posterior, sus resultados y los pendientes actuales se registran en [02-correcciones-revision.md](02-correcciones-revision.md).
 
+La aprobación anterior de cambios mínimos en Razones fue retirada después por Carlos. El estado vigente se registra en [03-excluir-razones.md](03-excluir-razones.md); los resultados de este informe son históricos.
+
 ## Resultado implementado
 
 - Catálogo de 72 cuentas: 71 de los 20 JSON del PR #10, más `is.interest_income`. La instantánea fija el commit `a87ef0af0954e00d3f95ed1476ec3154bc06d768`; si se integran los JSON a main, las pruebas también contrastan sus copias vivas.
