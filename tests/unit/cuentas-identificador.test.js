@@ -88,7 +88,7 @@ it('solo preselecciona una sugerencia con ventaja y conserva el empate sin elecc
   expect(empate.candidatos.map(cuenta => cuenta.id)).toEqual(expect.arrayContaining(['bs.ppe_machinery', 'bs.ppe_furniture']));
 });
 
-it('conserva las 71 definiciones del PR #10 y no duplica ids', () => {
+it('conserva las 71 identidades del PR #10 y enumera cada diferencia de investigación y definición', () => {
   const referencia = JSON.parse(readFileSync(new URL('../fixtures/cuentas-pr10.json', import.meta.url), 'utf8'));
   expect(referencia.archivos).toHaveLength(20);
   expect(referencia.cuentas).toHaveLength(71);
@@ -98,12 +98,19 @@ it('conserva las 71 definiciones del PR #10 y no duplica ids', () => {
     nombreCanonico: cuenta.canonical_name, clasificacion: cuenta.classification,
     rol: cuenta.account_role, politicaAusencia: cuenta.absence_policy
   });
-  // Se hacen visibles las seis rebajas locales, sin fingir que los JSON ajenos
+  // Se hacen visibles todas las rebajas locales, sin fingir que los JSON ajenos
   // ya cambiaron. Toda diferencia nueva requiere documentarse y revisarse.
   const diferencias = referencia.cuentas.filter(cuenta => obtenerCuenta(cuenta.id).estadoInvestigacion !== cuenta.research.status);
   expect(diferencias.map(cuenta => cuenta.id).sort()).toEqual(Object.keys(auditoria.rebajasLocales).sort());
   for (const cuenta of referencia.cuentas) expect(obtenerCuenta(cuenta.id).estadoInvestigacion).toBe(
     Object.hasOwn(auditoria.rebajasLocales, cuenta.id) ? 'partially_verified' : cuenta.research.status);
+  const definicionesDistintas = referencia.cuentas.filter(cuenta => obtenerCuenta(cuenta.id).definicion !== cuenta.definition);
+  expect(definicionesDistintas.map(cuenta => cuenta.id).sort()).toEqual(Object.keys(auditoria.correccionesDefinicion).sort());
+  for (const cuenta of referencia.cuentas) {
+    const correccion = auditoria.correccionesDefinicion[cuenta.id];
+    if (correccion) expect(correccion).toMatchObject({ referencia: cuenta.definition, motivo: expect.any(String), decision: 'D-046' });
+    expect(obtenerCuenta(cuenta.id).definicion).toBe(correccion?.local ?? cuenta.definition);
+  }
   const cuentas = listarCuentas();
   expect(new Set(cuentas.map(cuenta => cuenta.id)).size).toBe(cuentas.length);
   expect(listarCuentas({ grupo: 'activos' }).every(cuenta => cuenta.grupo === 'activos')).toBe(true);
@@ -115,17 +122,45 @@ it('conserva las 71 definiciones del PR #10 y no duplica ids', () => {
   const documentos = Object.values(import.meta.glob('../../docs/razones_financieras/*.json', { eager: true, import: 'default' }));
   for (const documento of documentos) for (const cuenta of documento.cuentas) expect(obtenerCuenta(cuenta.id)).toMatchObject({
     nombreCanonico: cuenta.canonical_name, clasificacion: cuenta.classification,
-    rol: cuenta.account_role, politicaAusencia: cuenta.absence_policy, estadoInvestigacion: cuenta.research.status
+    rol: cuenta.account_role, politicaAusencia: cuenta.absence_policy, estadoInvestigacion: cuenta.research.status,
+    definicion: cuenta.definition
   });
 });
 
 it('cada cuenta verificada conserva una cita específica con ubicación y fuente consultable', () => {
   const verificadas = listarCuentas().filter(cuenta => cuenta.estadoInvestigacion === 'verified');
-  expect(verificadas).toHaveLength(23);
+  expect(verificadas.map(cuenta => cuenta.id)).toEqual(['bs.cash_and_equivalents']);
   for (const cuenta of verificadas) expect(cuenta.fuentes.some(fuente =>
     fuente.cita?.trim() && fuente.ubicacion?.trim() && fuente.url?.startsWith('https://')), cuenta.id).toBe(true);
   expect(obtenerCuenta('is.interest_income').estadoInvestigacion).toBe('partially_verified');
   expect(obtenerCuenta('is.interest_income').fuentes[0].alcance).toContain('no define la cuenta');
+});
+
+it('el PGC solo es referencia terminológica y no sostiene una cuenta verificada', () => {
+  for (const cuenta of listarCuentas().filter(cuenta => cuenta.estadoInvestigacion === 'verified')) {
+    expect(cuenta.fuentes.some(fuente => /PGC|boe\.es/i.test(`${fuente.titulo} ${fuente.url}`)), cuenta.id).toBe(false);
+  }
+});
+
+it('declara conjunta la cita de depreciación y retira su atribución a amortización', () => {
+  const depreciacion = obtenerCuenta('is.operating_depreciation');
+  expect(depreciacion.estadoInvestigacion).toBe('partially_verified');
+  expect(depreciacion.fuentes.find(fuente => /boe\.es/.test(fuente.url))).toMatchObject({
+    ubicacion: expect.stringContaining('conjunta'), alcance: expect.stringContaining('Definición conjunta de 680/681/682')
+  });
+  const amortizacion = obtenerCuenta('is.operating_amortization');
+  expect(amortizacion.estadoInvestigacion).toBe('partially_verified');
+  expect(amortizacion.fuentes.find(fuente => /boe\.es/.test(fuente.url))).toMatchObject({
+    alcance: expect.stringContaining('no define amortización')
+  });
+  expect(amortizacion.fuentes.find(fuente => /boe\.es/.test(fuente.url)).cita).toBeUndefined();
+});
+
+it('intangibles corrige no monetarios sin alterar su clasificación ni política de ausencia', () => {
+  expect(obtenerCuenta('bs.intangible_assets')).toMatchObject({
+    definicion: expect.stringContaining('Activos no monetarios'),
+    clasificacion: 'activo_no_corriente', politicaAusencia: 'zero_if_not_reported', tipoApp: 'activosFijos'
+  });
 });
 
 describe('montos por id y políticas de ausencia', () => {

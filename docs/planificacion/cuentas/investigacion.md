@@ -4,15 +4,40 @@ Fecha de consulta: 2026-10-17.
 
 Base: 71 definiciones distintas de los 20 JSON del PR #10, commit `a87ef0af0954e00d3f95ed1476ec3154bc06d768`. La instantánea completa está en `tests/fixtures/cuentas-pr10.json`; el test compara identidad, nombre, clasificación, rol y ausencia. No se integra el motor ni se modifican sus JSON. Se añade `is.interest_income` por aprobación de Carlos en el chat.
 
-## Auditoría de la revisión (2026-10-18)
+## Auditoría de la revisión (2026-10-18), rondas 2 y 3
 
-Se revisaron las 29 cuentas antes marcadas `verified`: 23 conservan ese estado con cita de su cuenta o subgrupo específico; 6 bajan a `partially_verified` por evidencia insuficiente o contradictoria. El catálogo queda en **23 verified, 44 partially_verified y 5 ambiguous** (72 cuentas, incluido el id nuevo de intereses). No se modifican definiciones, fórmulas ni JSON del motor.
+La primera auditoría revisó las 29 cuentas heredadas como `verified`: rebajó 6 y conservó 23 con citas locales. La regla aprobada en la ronda 3 (D-045) aclara que el PGC español solo es referencia terminológica y no sostiene `verified`. De esas 23, **22 dependían de una cita PGC**, no de una cita específica NIIF/NIC: se rebajan a `partially_verified`. Solo `bs.cash_and_equivalents` conserva `verified`, con la cita específica de IAS 7 ya documentada.
 
-Se abrió el [PGC publicado por el BOE](https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884), quinta parte (cuenta/subgrupo indicado en cada fuente). Es una referencia terminológica española, no una afirmación de normativa aplicable en Nicaragua. Las frases breves necesitan su contexto enlazado; no verifican alias ni las convenciones internas D3/D6/D13. También se reabrieron IAS 7, IAS 12, IAS 23, IAS 38 e IAS 2.
+El catálogo queda en **1 verified, 66 partially_verified y 5 ambiguous** (72 cuentas, incluido el id nuevo de intereses). Hay **28 rebajas locales** frente a la instantánea del PR #10: las 6 previas más estas 22. La fixture `tests/fixtures/cuentas-revision-investigacion.json` enumera todas sus causas; ninguna diferencia se oculta cambiando la instantánea original.
 
-La definición heredada de intangibles dice «monetarios», mientras [IAS 38](https://www.ifrs.org/issued-standards/list-of-standards/ias-38-intangible-assets/) define un activo no monetario. Se registra la contradicción sin editar unilateralmente los JSON de otro PR. Las otras cinco rebajas y sus motivos están en `tests/fixtures/cuentas-revision-investigacion.json`.
+Las cuatro cuentas señaladas expresamente son `bs.accumulated_depreciation`, `bs.current_year_result_equity`, `is.operating_amortization`, `is.operating_depreciation`. La prueba solicitada impide que cualquier cuenta `verified` tenga una cita PGC; exige aplicar el mismo criterio también a las otras **18 cuentas** sustentadas así:
 
-**Sincronización v8 pendiente.** El PR #10 sigue en `a87ef0a`; su orden v8 no se ha publicado. Las cuatro cuentas anunciadas se compararán y sincronizarán cuando aparezcan sus JSON, aunque ahora se haya añadido evidencia específica local. Las seis rebajas conservadoras locales ya no son igualdad de estados con la instantánea anterior: la prueba enumera esa diferencia deliberadamente y exige igualdad estricta con los JSON vivos cuando estén integrados. No se presenta esta auditoría como sincronización terminada.
+- `bs.current_provisions`.
+- `bs.inventory_finished_goods`.
+- `bs.inventory_merchandise`.
+- `bs.inventory_raw_materials`.
+- `bs.inventory_work_in_process`.
+- `bs.long_term_provisions`.
+- `bs.ppe_buildings`.
+- `bs.ppe_furniture`.
+- `bs.ppe_land`.
+- `bs.ppe_other`.
+- `bs.ppe_vehicles`.
+- `bs.share_capital`.
+- `bs.short_term_investments`.
+- `bs.taxes_payable`.
+- `is.income_tax_expense`.
+- `is.interest_expense`.
+- `is.product_sales`.
+- `is.service_revenue`.
+
+Se conserva el [PGC publicado por el BOE](https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884), quinta parte, solo como referencia terminológica española. No afirma normativa aplicable en Nicaragua ni verifica alias, signos o reglas internas. Los enlaces NIIF/NIC generales de esas 22 cuentas aportan contexto, sin una cita que defina la cuenta específica; no se inventa evidencia nueva para mantener su estado anterior.
+
+**Amortización y depreciación.** La frase atribuida a `is.operating_amortization` describe depreciación y no define amortización: se retira de su campo `cita` y se conserva la advertencia de alcance. La definición del PGC conservada para `is.operating_depreciation` es conjunta para las cuentas 680/681/682, no propia de depreciación operativa. Ambas quedan `partially_verified`.
+
+**Intangibles (D-046).** Se corrige la definición local de `bs.intangible_assets`: «monetarios» pasa a «no monetarios», conforme al texto de IAS 38 ya consultado. Se conservan clasificación, tipo y política de ausencia; no cambia un cálculo. La fixture declara la definición original del PR #10 y la local corregida, con su decisión y motivo. El JSON de aquel PR y su instantánea original permanecen sin modificar; la cuenta mantiene `partially_verified`.
+
+**Sincronización v8 pendiente.** El PR #10 sigue referenciado en `a87ef0a`; su orden v8 aún no se ha publicado. Las cuatro rebajas anunciadas ya se aplican localmente, pero no se presenta esto como una sincronización con JSON inexistentes. La prueba compara estados y definiciones con la instantánea, exige que toda diferencia local figure en la fixture y mantiene igualdad estricta con los JSON vivos cuando estén integrados: la reconciliación de las 28 rebajas y la corrección de intangibles sigue siendo un requisito previo a integrar.
 
 ## Fuentes abiertas en la ejecución inicial (2026-10-17)
 
@@ -46,8 +71,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `bs.accumulated_depreciation` — Depreciación acumulada
 
 - Grupo: `activos`; clasificación: `correctora_activo`; rol: `contra_account`; tipo transitorio: `depreciacionAcumulada`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (281); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IAS 16 Property, Plant and Equipment](https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/).
 - Sinónimo «Depreciación acumulada de activos fijos»: sin fuente externa literal; procedencia: JSON del PR #10.
 
@@ -98,8 +123,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `bs.current_provisions` — Provisiones corrientes
 
 - Grupo: `pasivos`; clasificación: `pasivo_corriente`; rol: `detail`; tipo transitorio: `provisiones`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (14 y 529); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IAS 37 Provisions, Contingent Liabilities and Contingent Assets](https://www.ifrs.org/issued-standards/list-of-standards/ias-37-provisions-contingent-liabilities-and-contingent-assets/).
 - Sinónimo «Provisiones de corto plazo»: sin fuente externa literal; procedencia: JSON del PR #10.
 - Sinónimo «Provisiones»: sin fuente externa literal; procedencia: variante del proyecto / corpus.
@@ -107,8 +132,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `bs.current_year_result_equity` — Resultado del período incluido en patrimonio
 
 - Grupo: `patrimonio`; clasificación: `patrimonio`; rol: `detail`; tipo transitorio: `patrimonio`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (129); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IAS 1 Presentation of Financial Statements](https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/).
 - Sinónimo «Utilidad del ejercicio»: sin fuente externa literal; procedencia: JSON del PR #10.
 - Sinónimo «pérdida del ejercicio»: sin fuente externa literal; procedencia: JSON del PR #10.
@@ -127,7 +152,7 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 
 - Grupo: `activos`; clasificación: `activo_no_corriente`; rol: `detail`; tipo transitorio: `activosFijos`.
 - Investigación: `partially_verified`.
-- Revisión 2026-10-18: IAS 38 define un activo no monetario. La definición heredada dice monetarios; requiere corrección coordinada con el dueño de los JSON.
+- Revisión 2026-10-18, D-046: La corrección autorizada D-046 cambia monetarios por no monetarios; se mantiene la rebaja conservadora local y se documenta aparte la diferencia de definición.
 - Respaldo conceptual: [IAS 38 Intangible Assets](https://www.ifrs.org/issued-standards/list-of-standards/ias-38-intangible-assets/).
 - Sinónimo «Intangibles»: sin fuente externa literal; procedencia: JSON del PR #10.
 - Sinónimo «software capitalizado»: sin fuente externa literal; procedencia: JSON del PR #10.
@@ -136,8 +161,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `bs.inventory_finished_goods` — Inventario de productos terminados
 
 - Grupo: `activos`; clasificación: `activo_corriente`; rol: `detail`; tipo transitorio: `inventario`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (35); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IAS 2 Inventories](https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/).
 - Sinónimo «Productos terminados»: sin fuente externa literal; procedencia: JSON del PR #10.
 - Sinónimo «bienes terminados»: sin fuente externa literal; procedencia: JSON del PR #10.
@@ -145,8 +170,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `bs.inventory_merchandise` — Inventario de mercaderías
 
 - Grupo: `activos`; clasificación: `activo_corriente`; rol: `detail`; tipo transitorio: `inventario`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (30); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IAS 2 Inventories](https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/).
 - Sinónimo «Mercaderías»: sin fuente externa literal; procedencia: JSON del PR #10.
 - Sinónimo «mercancías»: sin fuente externa literal; procedencia: JSON del PR #10.
@@ -156,8 +181,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `bs.inventory_raw_materials` — Inventario de materias primas
 
 - Grupo: `activos`; clasificación: `activo_corriente`; rol: `detail`; tipo transitorio: `inventario`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (31); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IAS 2 Inventories](https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/).
 - Sinónimo «Materias primas»: sin fuente externa literal; procedencia: JSON del PR #10.
 - Sinónimo «materiales en almacén para producción»: sin fuente externa literal; procedencia: JSON del PR #10.
@@ -176,8 +201,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `bs.inventory_work_in_process` — Inventario de productos en proceso
 
 - Grupo: `activos`; clasificación: `activo_corriente`; rol: `detail`; tipo transitorio: `inventario`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (33); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IAS 2 Inventories](https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/).
 - Sinónimo «Producción en proceso»: sin fuente externa literal; procedencia: JSON del PR #10.
 - Sinónimo «productos en proceso»: sin fuente externa literal; procedencia: JSON del PR #10.
@@ -213,8 +238,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `bs.long_term_provisions` — Provisiones de largo plazo
 
 - Grupo: `pasivos`; clasificación: `pasivo_no_corriente`; rol: `detail`; tipo transitorio: `pasivoLargoPlazo`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (14); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IAS 37 Provisions, Contingent Liabilities and Contingent Assets](https://www.ifrs.org/issued-standards/list-of-standards/ias-37-provisions-contingent-liabilities-and-contingent-assets/).
 - Sinónimo «Provisiones no corrientes»: sin fuente externa literal; procedencia: JSON del PR #10.
 - Sinónimo «Provisiones»: sin fuente externa literal; procedencia: variante del proyecto / corpus.
@@ -278,8 +303,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `bs.ppe_buildings` — Edificios e instalaciones
 
 - Grupo: `activos`; clasificación: `activo_fijo`; rol: `detail`; tipo transitorio: `activosFijos`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (211); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IAS 16 Property, Plant and Equipment](https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/).
 - Sinónimo «Edificios»: sin fuente externa literal; procedencia: JSON del PR #10.
 - Sinónimo «construcciones de uso operativo»: sin fuente externa literal; procedencia: JSON del PR #10.
@@ -287,8 +312,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `bs.ppe_furniture` — Mobiliario y equipo de oficina
 
 - Grupo: `activos`; clasificación: `activo_fijo`; rol: `detail`; tipo transitorio: `activosFijos`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (216); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IAS 16 Property, Plant and Equipment](https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/).
 - Sinónimo «Mobiliario»: sin fuente externa literal; procedencia: JSON del PR #10.
 - Sinónimo «muebles y enseres»: sin fuente externa literal; procedencia: JSON del PR #10.
@@ -298,8 +323,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `bs.ppe_land` — Terrenos
 
 - Grupo: `activos`; clasificación: `activo_fijo`; rol: `detail`; tipo transitorio: `activosFijos`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (210); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IAS 16 Property, Plant and Equipment](https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/).
 - Sinónimo «Terrenos de uso operativo»: sin fuente externa literal; procedencia: JSON del PR #10.
 
@@ -316,8 +341,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `bs.ppe_other` — Otros activos fijos tangibles
 
 - Grupo: `activos`; clasificación: `activo_fijo`; rol: `detail`; tipo transitorio: `activosFijos`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (219); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IAS 16 Property, Plant and Equipment](https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/).
 - Sinónimo «Propiedad, planta y equipo»: sin fuente externa literal; procedencia: JSON del PR #10.
 - Sinónimo «otros activos fijos tangibles»: sin fuente externa literal; procedencia: JSON del PR #10.
@@ -325,8 +350,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `bs.ppe_vehicles` — Vehículos
 
 - Grupo: `activos`; clasificación: `activo_fijo`; rol: `detail`; tipo transitorio: `activosFijos`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (218); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IAS 16 Property, Plant and Equipment](https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/).
 - Sinónimo «Equipo de transporte»: sin fuente externa literal; procedencia: JSON del PR #10.
 - Sinónimo «vehículos de uso operativo»: sin fuente externa literal; procedencia: JSON del PR #10.
@@ -351,8 +376,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `bs.share_capital` — Capital social
 
 - Grupo: `patrimonio`; clasificación: `patrimonio`; rol: `detail`; tipo transitorio: `patrimonio`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (100); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IAS 32 Financial Instruments: Presentation](https://www.ifrs.org/issued-standards/list-of-standards/ias-32-financial-instruments-presentation/).
 - Sinónimo «Capital emitido»: sin fuente externa literal; procedencia: JSON del PR #10.
 - Sinónimo «capital aportado»: sin fuente externa literal; procedencia: JSON del PR #10.
@@ -371,8 +396,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `bs.short_term_investments` — Inversiones de corto plazo
 
 - Grupo: `activos`; clasificación: `activo_corriente`; rol: `detail`; tipo transitorio: `activosCorrientesOtros`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (54); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IAS 7 Statement of Cash Flows](https://www.ifrs.org/issued-standards/list-of-standards/ias-7-statement-of-cash-flows/).
 - Sinónimo «Inversiones temporales»: sin fuente externa literal; procedencia: JSON del PR #10.
 - Sinónimo «valores negociables de corto plazo»: sin fuente externa literal; procedencia: JSON del PR #10.
@@ -380,8 +405,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `bs.taxes_payable` — Impuestos por pagar
 
 - Grupo: `pasivos`; clasificación: `pasivo_corriente`; rol: `detail`; tipo transitorio: `pasivoCortoPlazo`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (475); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IAS 12 Income Taxes](https://www.ifrs.org/issued-standards/list-of-standards/ias-12-income-taxes/).
 - Sinónimo «Tributos por pagar»: sin fuente externa literal; procedencia: JSON del PR #10.
 - Sinónimo «impuestos corrientes por pagar»: sin fuente externa literal; procedencia: JSON del PR #10.
@@ -463,8 +488,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `is.income_tax_expense` — Gasto por impuesto sobre la renta
 
 - Grupo: `estadoResultados`; clasificación: `impuesto`; rol: `detail`; tipo transitorio: `impuestos`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (630 y 6300); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IAS 12 Income Taxes](https://www.ifrs.org/issued-standards/list-of-standards/ias-12-income-taxes/).
 - Sinónimo «Impuesto sobre la renta»: sin fuente externa literal; procedencia: JSON del PR #10.
 - Sinónimo «impuesto a las ganancias del período»: sin fuente externa literal; procedencia: JSON del PR #10.
@@ -474,8 +499,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `is.interest_expense` — Gastos por intereses
 
 - Grupo: `estadoResultados`; clasificación: `financiero`; rol: `detail`; tipo transitorio: `intereses`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (662); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IAS 23 Borrowing Costs](https://www.ifrs.org/issued-standards/list-of-standards/ias-23-borrowing-costs/).
 - Sinónimo «Intereses pagados o devengados»: sin fuente externa literal; procedencia: JSON del PR #10.
 - Sinónimo «gastos financieros por intereses»: sin fuente externa literal; procedencia: JSON del PR #10.
@@ -539,16 +564,16 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `is.operating_amortization` — Amortización operativa
 
 - Grupo: `estadoResultados`; clasificación: `gasto_operativo`; rol: `detail`; tipo transitorio: `None`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La frase del PGC es conjunta para 680/681/682 y describe depreciación, no define amortización. Se retira como cita específica; las fuentes restantes solo aportan contexto conceptual.
 - Respaldo conceptual: [IAS 38 Intangible Assets](https://www.ifrs.org/issued-standards/list-of-standards/ias-38-intangible-assets/).
 - Sinónimo «Amortización de activos usados en operaciones, bajo la misma regla de no duplicación»: sin fuente externa literal; procedencia: JSON del PR #10.
 
 ### `is.operating_depreciation` — Depreciación operativa
 
 - Grupo: `estadoResultados`; clasificación: `gasto_operativo`; rol: `detail`; tipo transitorio: `None`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La definición del PGC es conjunta para 680/681/682, no propia de depreciación operativa. Solo es referencia terminológica; IAS 16 aporta contexto conceptual sin cita específica de esta cuenta.
 - Respaldo conceptual: [IAS 16 Property, Plant and Equipment](https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/).
 - Sinónimo «Depreciación de activos usados en operaciones, solo si no está incluida ya en otra cuenta agregada utilizada»: sin fuente externa literal; procedencia: JSON del PR #10.
 
@@ -597,8 +622,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `is.product_sales` — Ventas de productos
 
 - Grupo: `estadoResultados`; clasificación: `ingreso`; rol: `detail`; tipo transitorio: `ventas`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (701 (definición conjunta 700/705)); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IFRS 15 Revenue from Contracts with Customers](https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/).
 - Sinónimo «Ventas de mercaderías»: sin fuente externa literal; procedencia: JSON del PR #10.
 - Sinónimo «ventas de bienes»: sin fuente externa literal; procedencia: JSON del PR #10.
@@ -653,8 +678,8 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 ### `is.service_revenue` — Ingresos por servicios
 
 - Grupo: `estadoResultados`; clasificación: `ingreso`; rol: `detail`; tipo transitorio: `ventas`.
-- Investigación: `verified`.
-- Evidencia específica: cita literal y ubicación en `fuentes` de `cuentas-catalogo.js`, auditoría del 2026-10-18. La cita se conserva en un solo lugar.
+- Investigación: `partially_verified`.
+- Revisión 2026-10-18, D-045: La cita específica procede del PGC español (705 (definición conjunta 700/705)); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.
 - Respaldo conceptual: [IFRS 15 Revenue from Contracts with Customers](https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/).
 - Sinónimo «Ventas de servicios»: sin fuente externa literal; procedencia: JSON del PR #10.
 - Sinónimo «ingresos por servicios prestados»: sin fuente externa literal; procedencia: JSON del PR #10.

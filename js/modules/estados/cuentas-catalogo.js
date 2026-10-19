@@ -1,5 +1,5 @@
 // Datos de la colección. Investigación y procedencia: docs/planificacion/cuentas/investigacion.md.
-export const versionCatalogo = '2026-10-18.1';
+export const versionCatalogo = '2026-10-18.2';
 export const TIPOS_APP = {
   'activos': [
     'efectivo',
@@ -214,7 +214,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'depreciacionAcumulada',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 16 Property, Plant and Equipment',
@@ -230,7 +230,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'Corrección de valor por la depreciación del inmovilizado material',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (281); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'bs.additional_paid_in_capital',
@@ -355,7 +359,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'provisiones',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 37 Provisions, Contingent Liabilities and Contingent Assets',
@@ -371,7 +375,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'provisiones cuya cancelación se prevea en el corto plazo',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (14 y 529); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'bs.current_year_result_equity',
@@ -390,7 +398,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'patrimonio',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 1 Presentation of Financial Statements',
@@ -406,7 +414,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'Resultado, positivo o negativo, del último ejercicio cerrado, pendiente de aplicación.',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (129); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'bs.fixed_assets_net_total',
@@ -441,7 +453,7 @@ export const CUENTAS_CATALOGO = [
   {
     'id': 'bs.intangible_assets',
     'nombreCanonico': 'Activos intangibles',
-    'definicion': 'Activos monetarios no financieros identificables sin sustancia física (software, patentes); se amortizan. Si no se reportan, aportan cero a activos totales (D12).',
+    'definicion': 'Activos no monetarios no financieros identificables sin sustancia física (software, patentes); se amortizan. Si no se reportan, aportan cero a activos totales (D12).',
     'grupo': 'activos',
     'clasificacion': 'activo_no_corriente',
     'rol': 'detail',
@@ -466,7 +478,7 @@ export const CUENTAS_CATALOGO = [
     ],
     'revisionInvestigacion': {
       'fecha': '2026-10-18',
-      'motivo': 'IAS 38 define un activo no monetario. La definición heredada dice monetarios; requiere corrección coordinada con el dueño de los JSON.'
+      'motivo': 'La definición local cambia monetarios por no monetarios según la corrección autorizada D-046. Se mantiene parcialmente verificada y se declara la diferencia con los JSON del PR #10, aún sin modificar.'
     }
   },
   {
@@ -485,7 +497,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'inventario',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 2 Inventories',
@@ -501,7 +513,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'Los fabricados por la empresa y destinados al consumo final',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (35); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'bs.inventory_merchandise',
@@ -521,7 +537,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'inventario',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 2 Inventories',
@@ -537,7 +553,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'destinados a la venta sin transformación',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (30); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'bs.inventory_raw_materials',
@@ -555,7 +575,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'inventario',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 2 Inventories',
@@ -571,7 +591,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'se destinan a formar parte de los productos fabricados',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (31); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'bs.inventory_total',
@@ -612,7 +636,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'inventario',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 2 Inventories',
@@ -628,7 +652,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'se encuentran en fase de formación o transformación',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (33); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'bs.legal_reserve',
@@ -722,7 +750,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'pasivoLargoPlazo',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 37 Provisions, Contingent Liabilities and Contingent Assets',
@@ -738,7 +766,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'Obligaciones expresas o tácitas a largo plazo',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (14); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'bs.other_current_assets',
@@ -905,7 +937,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'activosFijos',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 16 Property, Plant and Equipment',
@@ -921,7 +953,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'Edificaciones en general',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (211); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'bs.ppe_furniture',
@@ -941,7 +977,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'activosFijos',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 16 Property, Plant and Equipment',
@@ -957,7 +993,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'Mobiliario, material y equipos de oficina',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (216); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'bs.ppe_land',
@@ -974,7 +1014,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'activosFijos',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 16 Property, Plant and Equipment',
@@ -990,7 +1030,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'Solares de naturaleza urbana, fincas rústicas',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (210); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'bs.ppe_machinery',
@@ -1037,7 +1081,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'activosFijos',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 16 Property, Plant and Equipment',
@@ -1053,7 +1097,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'inmovilizaciones materiales no incluidas en las demás cuentas',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (219); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'bs.ppe_vehicles',
@@ -1071,7 +1119,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'activosFijos',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 16 Property, Plant and Equipment',
@@ -1087,7 +1135,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'Vehículos de todas clases utilizables para el transporte',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (218); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'bs.prepaid_expenses',
@@ -1145,7 +1197,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'patrimonio',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 32 Financial Instruments: Presentation',
@@ -1161,7 +1213,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'Capital escriturado en las sociedades',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (100); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'bs.short_term_borrowings',
@@ -1200,7 +1256,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'activosCorrientesOtros',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 7 Statement of Cash Flows',
@@ -1216,7 +1272,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'con vencimiento no superior a un año',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (54); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'bs.taxes_payable',
@@ -1234,7 +1294,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'pasivoCortoPlazo',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 12 Income Taxes',
@@ -1250,7 +1310,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'Tributos a favor de las Administraciones Públicas, pendientes de pago',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (475); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'bs.total_assets',
@@ -1442,7 +1506,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'impuestos',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 12 Income Taxes',
@@ -1458,7 +1522,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'Importe del impuesto sobre beneficios devengado en el ejercicio',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (630 y 6300); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'is.interest_expense',
@@ -1479,7 +1547,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'intereses',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 23 Borrowing Costs',
@@ -1495,7 +1563,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'Importe de los intereses de los préstamos recibidos y otras deudas',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (662); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'is.interest_income',
@@ -1649,7 +1721,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': null,
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 38 Intangible Assets',
@@ -1662,10 +1734,13 @@ export const CUENTAS_CATALOGO = [
         'url': 'https://www.boe.es/buscar/act.php?id=BOE-A-2007-19884',
         'consulta': '2026-10-18',
         'ubicacion': '680 (definición conjunta 680/681/682)',
-        'cita': 'Expresión de la depreciación sistemática anual efectiva',
-        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
+        'alcance': 'Texto conjunto de 680/681/682: la frase sobre depreciación no define amortización y se retira como cita específica. Solo referencia terminológica; no sostiene verified ni verifica alias o convenciones internas.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La frase del PGC es conjunta para 680/681/682 y describe depreciación, no define amortización. Se retira como cita específica; las fuentes restantes solo aportan contexto conceptual.'
+    }
   },
   {
     'id': 'is.operating_depreciation',
@@ -1682,7 +1757,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': null,
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 16 Property, Plant and Equipment',
@@ -1696,9 +1771,13 @@ export const CUENTAS_CATALOGO = [
         'consulta': '2026-10-18',
         'ubicacion': '681 (definición conjunta 680/681/682)',
         'cita': 'Expresión de la depreciación sistemática anual efectiva',
-        'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
+        'alcance': 'Definición conjunta de 680/681/682, no propia de depreciación operativa. Solo referencia terminológica española; no sostiene verified ni verifica alias, signos o reglas internas.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La definición del PGC es conjunta para 680/681/682, no propia de depreciación operativa. Solo es referencia terminológica; IAS 16 aporta contexto conceptual sin cita específica de esta cuenta.'
+    }
   },
   {
     'id': 'is.operating_profit_reported',
@@ -1833,7 +1912,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'ventas',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IFRS 15 Revenue from Contracts with Customers',
@@ -1849,7 +1928,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'Transacciones, con salida o entrega de los bienes o servicios',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (701 (definición conjunta 700/705)); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'is.sales_allowances',
@@ -1981,7 +2064,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'ventas',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IFRS 15 Revenue from Contracts with Customers',
@@ -1997,7 +2080,11 @@ export const CUENTAS_CATALOGO = [
         'cita': 'Transacciones, con salida o entrega de los bienes o servicios',
         'alcance': 'Definición del concepto en su cuenta o subgrupo específico. Referencia terminológica; no impone normativa española en Nicaragua ni verifica alias, signos o reglas internas del proyecto.'
       }
-    ]
+    ],
+    'revisionInvestigacion': {
+      'fecha': '2026-10-18',
+      'motivo': 'La cita específica procede del PGC español (705 (definición conjunta 700/705)); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+    }
   },
   {
     'id': 'supp.credit_sales',
