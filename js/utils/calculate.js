@@ -2,26 +2,29 @@
 // Cambiarlo aquí actualiza plazoCobro, plazoPago, edadInventario y cicloConversion.
 export const DIAS_ANIO = 365;
 
+// N/D se comprueba antes de la aritmética: JavaScript convertiría null en cero.
+function hayDatoAusente(...valores) {
+  return valores.some(valor => valor === null || valor === undefined);
+}
+
 export function saldoPromedio(saldoInicial, saldoFinal) {
-  if (
-    (saldoInicial === undefined || saldoInicial === null) ||
-    (saldoFinal === undefined || saldoFinal === null)
-  ) {
-    return saldoFinal ?? saldoInicial ?? 0;
-  }
+  if (hayDatoAusente(saldoInicial, saldoFinal)) return null;
   return (saldoInicial + saldoFinal) / 2;
 }
 
 export function variacion(valorFinal, valorInicial) {
+  if (hayDatoAusente(valorFinal, valorInicial)) return null;
   return valorFinal - valorInicial;
 }
 
 export function ah(delta, valorT1) {
+  if (hayDatoAusente(delta, valorT1)) return null;
   if (valorT1 === 0 || valorT1 === undefined || valorT1 === null) return null;
   return delta / Math.abs(valorT1);
 }
 
 export function ahDelta(valorT2, valorT1) {
+  if (hayDatoAusente(valorT2, valorT1)) return null;
   return valorT2 - valorT1;
 }
 
@@ -31,6 +34,7 @@ export function ahPctDelta(valorT2, valorT1) {
 }
 
 export function av(cuenta, base) {
+  if (hayDatoAusente(cuenta, base)) return null;
   if (base === 0) return 0;
   return cuenta / base;
 }
@@ -38,16 +42,19 @@ export function av(cuenta, base) {
 // Denominador 0 o dato ausente => null (N/D), nunca 0: un 0 aquí sería un
 // resultado financiero falso (AGENTS.md regla 4).
 export function ratioCorriente(activosCorrientes, pasivosCorrientes) {
+  if (hayDatoAusente(activosCorrientes, pasivosCorrientes)) return null;
   if (!pasivosCorrientes) return null;
   return activosCorrientes / pasivosCorrientes;
 }
 
 export function ratioRapido(activosCorrientes, inventario, pasivosCorrientes) {
+  if (hayDatoAusente(activosCorrientes, inventario, pasivosCorrientes)) return null;
   if (!pasivosCorrientes) return null;
   return (activosCorrientes - inventario) / pasivosCorrientes;
 }
 
 export function rotacionInventario(costoVentas, inventarioPromedio) {
+  if (hayDatoAusente(costoVentas, inventarioPromedio)) return null;
   if (!inventarioPromedio) return null;
   return costoVentas / inventarioPromedio;
 }
@@ -66,6 +73,7 @@ export function plazoCobro(rotCxC) {
 }
 
 export function endeudamiento(pasivoTotal, totalActivo) {
+  if (hayDatoAusente(pasivoTotal, totalActivo)) return null;
   if (!totalActivo) return null;
   return pasivoTotal / totalActivo;
 }
@@ -84,7 +92,7 @@ export function roa(utilidadNeta, totalActivo) {
 
 export function dupont(UN, ventas, activoTotalProm, patrimonio) {
   const PM = margenNeto(UN, ventas);
-  const AT = !activoTotalProm ? null : ventas / activoTotalProm;
+  const AT = hayDatoAusente(ventas) || !activoTotalProm ? null : ventas / activoTotalProm;
   // El guard explícito de null evita que null / patrimonio se lea como 0.
   const EM = (activoTotalProm === null || activoTotalProm === undefined || !patrimonio)
     ? null : activoTotalProm / patrimonio;
@@ -95,15 +103,17 @@ export function dupont(UN, ventas, activoTotalProm, patrimonio) {
 }
 
 export function capitalNetoTrabajo(activosCorrientes, pasivosCorrientes) {
+  if (hayDatoAusente(activosCorrientes, pasivosCorrientes)) return null;
   return activosCorrientes - pasivosCorrientes;
 }
 
 export function capitalNetoOperativo(activosCorrientesOps, pasivosCorrientesOps) {
+  if (hayDatoAusente(activosCorrientesOps, pasivosCorrientesOps)) return null;
   return activosCorrientesOps - pasivosCorrientesOps;
 }
 
 export function eoaf(cuenta, cambio, tipo) {
-  if (cambio === 0) return null;
+  if (hayDatoAusente(cambio) || cambio === 0) return null;
   let clasificacion;
   if (tipo === 'activo') {
     clasificacion = cambio > 0 ? 'Aplicacion' : 'Origen';
@@ -114,6 +124,8 @@ export function eoaf(cuenta, cambio, tipo) {
 }
 
 export function efeIndirecto(utilidadNeta, ajustes) {
+  if (hayDatoAusente(utilidadNeta) || !Array.isArray(ajustes) ||
+      [...ajustes].some(ajuste => hayDatoAusente(ajuste))) return null;
   return ajustes.reduce((sum, a) => sum + a, utilidadNeta);
 }
 
@@ -121,11 +133,13 @@ export function efeIndirecto(utilidadNeta, ajustes) {
 // Todas las razones de este archivo devuelven null si su denominador es 0 o el
 // dato falta: N/D, no cero.
 export function pruebaDefensiva(efectivo, pasivosCorrientes) {
+  if (hayDatoAusente(efectivo, pasivosCorrientes)) return null;
   if (pasivosCorrientes === 0) return null;
   return efectivo / pasivosCorrientes;
 }
 
 export function rotacionActivos(ventas, activoTotalProm) {
+  if (hayDatoAusente(ventas, activoTotalProm)) return null;
   if (!activoTotalProm) return null;
   return ventas / activoTotalProm;
 }
@@ -161,70 +175,84 @@ export function cicloConversion(plazoCobroDias, rotInv, rotCxP) {
 }
 
 export function coberturaIntereses(utilidadOperativa, intereses) {
+  if (hayDatoAusente(utilidadOperativa, intereses)) return null;
   if (!intereses) return null;
   return utilidadOperativa / intereses;
 }
 
 export function deudaPatrimonio(pasivoTotal, patrimonio) {
+  if (hayDatoAusente(pasivoTotal, patrimonio)) return null;
   if (!patrimonio) return null;
   return pasivoTotal / patrimonio;
 }
 
 export function apalancamiento(activoTotalProm, patrimonioProm) {
+  if (hayDatoAusente(activoTotalProm, patrimonioProm)) return null;
   if (!patrimonioProm) return null;
   return activoTotalProm / patrimonioProm;
 }
 
 export function margenBruto(utilidadBruta, ventas) {
+  if (hayDatoAusente(utilidadBruta, ventas)) return null;
   if (!ventas) return null;
   return utilidadBruta / ventas;
 }
 
 export function margenOperativo(utilidadBruta, gastosAdmin, gastosVentas, ventas) {
+  if (hayDatoAusente(utilidadBruta, gastosAdmin, gastosVentas, ventas)) return null;
   if (!ventas) return null;
   return (utilidadBruta - gastosAdmin - gastosVentas) / ventas;
 }
 
 export function roe(utilidadNeta, patrimonioProm) {
+  if (hayDatoAusente(utilidadNeta, patrimonioProm)) return null;
   if (!patrimonioProm) return null;
   return utilidadNeta / patrimonioProm;
 }
 
 export function rotacionActivosFijos(ventas, activosFijosNetos) {
+  if (hayDatoAusente(ventas, activosFijosNetos)) return null;
   if (!activosFijosNetos) return null;
   return ventas / activosFijosNetos;
 }
 
 export function rotacionCapitalTrabajo(ventas, capitalNetoTrabajoValor) {
+  if (hayDatoAusente(ventas, capitalNetoTrabajoValor)) return null;
   if (!capitalNetoTrabajoValor) return null;
   return ventas / capitalNetoTrabajoValor;
 }
 
 export function solvencia(activoTotal, pasivoTotal) {
+  if (hayDatoAusente(activoTotal, pasivoTotal)) return null;
   if (!pasivoTotal) return null;
   return activoTotal / pasivoTotal;
 }
 
 export function depAnualLineaRecta(costoOriginal, valorResidual, vidaUtil) {
+  if (hayDatoAusente(costoOriginal, valorResidual, vidaUtil)) return null;
   if (vidaUtil <= 0) return 0;
   return (costoOriginal - valorResidual) / vidaUtil;
 }
 
 export function depAcumulada(depAnual, aniosConsumidos, vidaUtil) {
+  if (hayDatoAusente(depAnual, aniosConsumidos, vidaUtil)) return null;
   const maxDep = aniosConsumidos > vidaUtil ? vidaUtil : aniosConsumidos;
   return depAnual * maxDep;
 }
 
 export function valorEnLibros(costoOriginal, depAcum) {
+  if (hayDatoAusente(costoOriginal, depAcum)) return null;
   return costoOriginal - depAcum;
 }
 
 export function ahorroMensual(metaAhorro, mesesDisponibles) {
+  if (hayDatoAusente(metaAhorro, mesesDisponibles)) return null;
   if (mesesDisponibles <= 0) return metaAhorro;
   return metaAhorro / mesesDisponibles;
 }
 
-export function saldoSemanal(ingreso, gastos, ahorro, reserva) {
+export function saldoSemanal(ingreso, gastos, ahorro, reserva = 0) {
+  if (hayDatoAusente(ingreso, gastos, ahorro, reserva)) return null;
   return ingreso - gastos - ahorro - (reserva || 0);
 }
 
@@ -260,6 +288,7 @@ export function tasaEfectiva(ir, uai) {
 
 // T para el GAF: la efectiva si existe; si no, la tasa por defecto (si es válida).
 export function tasaImpuesto(ir, uai, tasaDefecto = TASA_IR_DEFECTO) {
+  if (hayDatoAusente(ir, uai)) return null;
   const efectiva = tasaEfectiva(ir, uai);
   if (efectiva !== null) return efectiva;
   return esTasaValida(tasaDefecto) ? tasaDefecto : null;

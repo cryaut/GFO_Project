@@ -130,7 +130,10 @@ export function derivarPeriodo(estados, periodo, config = {}, cuentasResueltas =
   // Sin cuenta de impuestos el IR es desconocido (null), no 0: se usa la tasa por defecto.
   const ir = cuentasIR.length ? totales.impuestos : null;
   const tasaDefecto = config.tasaDefecto ?? TASA_IR_DEFECTO;
-  const t = tasaImpuesto(ir, uai, tasaDefecto);
+  // D-005 elige una tasa configurada cuando no hay cuenta de IR. Esa selección
+  // pertenece al módulo; el helper no debe inferir una tasa desde un dato N/D.
+  const t = cuentasIR.length ? tasaImpuesto(ir, uai, tasaDefecto)
+    : esNumero(tasaDefecto) && tasaDefecto >= 0 && tasaDefecto < 1 ? tasaDefecto : null;
   const origenT = tasaEfectiva(ir, uai) !== null ? 'efectiva' : (t !== null ? 'defecto' : null);
   const un = totales.utilidadNeta;
 

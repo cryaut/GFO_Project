@@ -36,6 +36,7 @@ export const UMBRALES = {
 function getSavedStates() {
   const accountTypes = store.get('estados.accountTypes');
   const data = {
+    ...store.get('estados'),
     name: store.get('estados.name') || 'Datos guardados',
     periods: store.get('estados.periods') || [],
     balanceGeneral: store.get('estados.balanceGeneral') || {},
@@ -224,6 +225,16 @@ export function computeRazones(period) {
   const prev = getPrevPeriod(period);
   const bgPrev = prev ? getBGData(prev) : null;
   const hayDosPeriodos = !!bgPrev;
+  // Conservar el motivo original de las cuentas pendientes, también al guardar
+  // y volver a leer. Las operaciones previas añaden su campo y operandos faltantes.
+  const notAvailableReasons = [period, ...(prev ? [prev] : [])].flatMap(periodo =>
+    (totalsFor(periodo)?.notAvailableReasons || []).map(motivo => ({ ...motivo, periodo })));
+  const conDatos = (campo, operandos, calcular) => {
+    const faltantes = Object.keys(operandos).filter(nombre => operandos[nombre] === null || operandos[nombre] === undefined);
+    if (!faltantes.length) return calcular();
+    notAvailableReasons.push({ campo, periodo: period, motivo: 'missing_required_account_data', operandos: faltantes });
+    return null;
+  };
 
   // Resuelve el valor de una cuenta/tipo en un periodo: null si la cuenta no
   // existe (dato faltante, no un saldo de 0).
@@ -235,7 +246,7 @@ export function computeRazones(period) {
   // un solo periodo → saldo final (metodología documentada del proyecto).
   const promedio = (inicial, final) => {
     if (final === null) return null;
-    if (!hayDosPeriodos) return saldoPromedio(undefined, final);
+    if (!hayDosPeriodos) return final;
     if (inicial === null) return null;
     return saldoPromedio(inicial, final);
   };
@@ -269,14 +280,20 @@ export function computeRazones(period) {
   // documenta la metodología del proyecto; compras negativas son datos rotos.
   let compras = er.costoVentas;
   if (hayDosPeriodos && invActual !== null && invPrevio !== null) {
-    compras = er.costoVentas + invActual - invPrevio;
+    compras = conDatos('compras', { costoVentas: er.costoVentas, inventarioFinal: invActual, inventarioInicial: invPrevio },
+      () => er.costoVentas + invActual - invPrevio);
   }
-  const comprasValidas = compras >= 0 ? compras : null;
+  const comprasValidas = compras !== null && compras !== undefined && compras >= 0 ? compras : null;
   const RotCxP = rotacionCxP(comprasValidas, cxpProm);
   const usaComprasReales = hayDosPeriodos && invActual !== null && invPrevio !== null
-    && compras >= 0;
-  const utilidadOperativa = er.ventas - er.costoVentas - er.gastosAdmin - er.gastosVentas;
-  const hayVentas = er.ventas !== 0 || er.costoVentas !== 0;
+    && comprasValidas !== null;
+  const utilidadBruta = conDatos('utilidadBruta', { ventas: er.ventas, costoVentas: er.costoVentas },
+    () => er.ventas - er.costoVentas);
+  const utilidadOperativa = conDatos('utilidadOperativa', { ventas: er.ventas, costoVentas: er.costoVentas,
+    gastosAdmin: er.gastosAdmin, gastosVentas: er.gastosVentas },
+    () => er.ventas - er.costoVentas - er.gastosAdmin - er.gastosVentas);
+  const capitalTrabajo = conDatos('capitalNetoTrabajo', { activosCorrientes: bg.activosCorrientes,
+    pasivosCorrientes: bg.pasivosCorrientes }, () => capitalNetoTrabajo(bg.activosCorrientes, bg.pasivosCorrientes));
   const extra = {
     pruebaDefensiva: pruebaDefensiva(bg.efectivo, bg.pasivosCorrientes),
     rotacionActivos: rotacionActivos(er.ventas, activoProm),
@@ -287,11 +304,11 @@ export function computeRazones(period) {
     coberturaIntereses: coberturaIntereses(utilidadOperativa, er.intereses),
     deudaPatrimonio: deudaPatrimonio(bg.totalPasivos, bg.totalPatrimonio),
     apalancamiento: apalancamiento(activoProm, patrimonioProm),
-    margenBruto: margenBruto(hayVentas ? er.ventas - er.costoVentas : 0, er.ventas),
-    margenOperativo: margenOperativo(hayVentas ? er.ventas - er.costoVentas : 0, er.gastosAdmin, er.gastosVentas, er.ventas),
+    margenBruto: margenBruto(utilidadBruta, er.ventas),
+    margenOperativo: margenOperativo(utilidadBruta, er.gastosAdmin, er.gastosVentas, er.ventas),
     roe: roe(er.utilidadNeta, patrimonioProm),
     rotacionActivosFijos: rotacionActivosFijos(er.ventas, bg.activosFijos),
-    rotacionCapitalTrabajo: rotacionCapitalTrabajo(er.ventas, bg.activosCorrientes - bg.pasivosCorrientes),
+    rotacionCapitalTrabajo: rotacionCapitalTrabajo(er.ventas, capitalTrabajo),
     solvencia: solvencia(bg.totalActivos, bg.totalPasivos)
   };
 
@@ -301,6 +318,7 @@ export function computeRazones(period) {
     usaPromedios: hayDosPeriodos,
     usaComprasReales,
     invProm, cxcProm, activoProm, patrimonioProm,
+    notAvailableReasons,
     denominadores: {
       RC: bg.pasivosCorrientes,
       RR: bg.pasivosCorrientes,
@@ -322,7 +340,7 @@ export function computeRazones(period) {
       margenOperativo: er.ventas,
       roe: patrimonioProm,
       rotacionActivosFijos: bg.activosFijos,
-      rotacionCapitalTrabajo: bg.activosCorrientes - bg.pasivosCorrientes,
+      rotacionCapitalTrabajo: capitalTrabajo,
       solvencia: bg.totalPasivos
     }
   };

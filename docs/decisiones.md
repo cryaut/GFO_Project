@@ -84,7 +84,11 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-033 | Similitud calibrada como sugerencia confirmable | Vigente |
 | D-034 | Propagar N/D en consumidores sin migrar sus fórmulas | Vigente en Reportes; Razones reemplazada por D-044 |
 | D-043 | Acotar N/D por importe, posibilidades y periodo | Vigente en Estados/EFE/EOAF; Razones reemplazada por D-044 |
-| D-044 | Excluir razones financieras por instrucción de Carlos | Vigente |
+| D-044 | Excluir razones financieras por instrucción de Cris Lumbi | Vigente, con excepción D-047/D-048 |
+| D-045 | PGC solo como referencia terminológica | Vigente |
+| D-046 | Intangibles son activos no monetarios | Vigente |
+| D-047 | Propagar N/D en operandos numéricos obligatorios | Vigente |
+| D-048 | Proteger operaciones previas de Análisis | Vigente |
 
 ## Decisiones
 
@@ -819,11 +823,11 @@ Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama de
 **Referencias.** [Correcciones y pendientes](planificacion/cuentas/02-correcciones-revision.md), D-030, D-034; instrucciones_amigo_pr14.md y revision_pr13_para_carlos.md recibidos por Carlos.
 
 
-### D-044 — Excluir razones financieras por instrucción de Carlos
+### D-044 — Excluir razones financieras por instrucción de Cris Lumbi
 
 - **Fecha**: 2026-10-18
 - **Estado**: Vigente
-- **Decidió**: Carlos, indicación expresa posterior: «la parte de las razones no la modifiques»
+- **Decidió**: Cris Lumbi, instrucción comunicada por Carlos en el chat («la parte de las razones no la modifiques»); atribución aclarada en la ronda 3 y por Carlos al explicar que Cris trabajaba en Razones
 - **Área**: Alcance del PR #14 y reversión de los ajustes específicos de Razones
 
 **Contexto.** D-034 y parte de D-043 autorizaron adaptar disponibilidad en Razones. Después de publicarse la revisión, Carlos excluye esa parte del trabajo.
@@ -839,3 +843,91 @@ Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama de
 **Para revertirla.** Obtener autorización expresa para una tarea de Razones y recuperar o rediseñar el adaptador con sus pruebas; no reintroducirlo como cambio incidental de importación.
 
 **Referencias.** [Exclusión de razones y validación vigente](planificacion/cuentas/03-excluir-razones.md), D-034, D-043, instrucción directa de Carlos en este chat.
+
+
+### D-045 — PGC solo como referencia terminológica
+
+- **Fecha**: 2026-10-18
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, aprobación comunicada en las rondas 2 y 3; aplicada por Carlos
+- **Área**: Catálogo, investigación y pruebas de evidencia
+
+**Contexto.** Las citas específicas de 22 cuentas verificadas procedían del PGC español; no acreditan su verificación NIIF/NIC para el catálogo del proyecto. La ronda 2 señala cuatro y exige una guardia contra cualquier verified sustentado por PGC.
+
+**Opciones.**
+1. Mantener verified apoyado en PGC — conserva los estados previos, pero incumple el criterio acordado.
+2. Rebajar esas cuentas y conservar la fuente como referencia terminológica — deja visible el alcance real de la evidencia.
+
+**Decisión.** Opción 2. Las cuatro señaladas y las otras 18 en idéntica situación pasan a partially_verified. Se retira de amortización la cita que habla de depreciación; la de depreciación se identifica como conjunta de 680/681/682.
+
+**Consecuencias.** El catálogo queda en 1 verified, 66 partially_verified y 5 ambiguous. La fixture enumera 28 rebajas frente al PR #10 (6 anteriores y 22 actuales), sin modificar su instantánea original ni sus JSON. No cambia identificación, tipo, importe ni fórmula; la sincronización upstream sigue pendiente.
+
+**Para revertirla.** Obtener citas específicas válidas y registrar una decisión nueva antes de subir un estado; mantener la guardia de evidencia.
+
+**Referencias.** [Ronda 3 y validación](planificacion/cuentas/04-ronda3-nd.md); instrucciones_amigo_pr14_ronda2.md e instrucciones_carlos_pr14_ronda3.md recibidas por Carlos.
+
+
+### D-046 — Intangibles son activos no monetarios
+
+- **Fecha**: 2026-10-18
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, corrección aprobada en las rondas 2 y 3
+- **Área**: Definición del catálogo y contraste con PR #10
+
+**Contexto.** La definición heredada decía monetarios, en contradicción con la referencia IAS 38 ya documentada.
+
+**Opciones.**
+1. Esperar a modificar el JSON ajeno — conserva temporalmente una definición incorrecta local.
+2. Corregir el catálogo local y declarar la diferencia — cumple la corrección sin editar otro PR.
+
+**Decisión.** Opción 2. En bs.intangible_assets se cambia únicamente monetarios por no monetarios. La fixture conserva texto de referencia, texto local, motivo y decisión.
+
+**Consecuencias.** Se mantienen clasificación, tipo, signo, política de ausencia y estado parcialmente verificado. No cambia ningún cálculo ni JSON del PR #10. Su futura integración debe reconciliar la definición.
+
+**Para revertirla.** Registrar una decisión nueva y coordinar antes cualquier cambio conceptual; no modificar la instantánea para ocultar diferencias.
+
+**Referencias.** [Ronda 3 y validación](planificacion/cuentas/04-ronda3-nd.md); instrucciones_amigo_pr14_ronda2.md e instrucciones_carlos_pr14_ronda3.md recibidas por Carlos.
+
+
+### D-047 — Propagar N/D en operandos numéricos obligatorios
+
+- **Fecha**: 2026-10-18
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi aprobó 1a según ronda 3; Carlos adoptó la excepción limitada tras aclarar el origen de D-044 en este chat
+- **Área**: js/utils/calculate.js y contratos de consumidores
+
+**Contexto.** Null participa como cero en la aritmética de JavaScript. Los helpers antiguos podían devolver resultados numéricos o NaN al recibir importes ausentes; tasaImpuesto infería una tasa con IR ausente.
+
+**Opciones.**
+1. Proteger solo denominadores — no evita numeradores/restas falsos.
+2. Validar operandos obligatorios antes de operar — propaga N/D sin modificar las fórmulas.
+
+**Decisión.** Opción 2. Null/undefined de un operando obligatorio devuelve null. EFE valida utilidad, lista y elementos de ajustes (incluidos huecos); DuPont conserva su objeto con N/D en componentes afectados. Defaults opcionales declarados y tasas inactivas cuando DAP=0 mantienen su contrato. No se cambian casos numéricos completos ni convenciones legadas de cero.
+
+**Consecuencias.** SaldoPromedio exige dos saldos; Análisis aplica explícitamente la regla de saldo final de un periodo (D-048). TasaImpuesto exige IR/UAI informados; Apalancamiento conserva D-005 seleccionando explícitamente su tasa configurada válida solo cuando no existe cuenta IR, sin inventar IR ni cambiar esa política. Se ajustan pruebas de esos contratos y se mantienen las pruebas de integración de Apalancamiento/UI originales. Excepción limitada a D-044; el motor nuevo no se conecta.
+
+**Para revertirla.** Revertir guardas y sus pruebas reintroduciría los números falsos; para cambiar políticas, registrar otra decisión coordinada.
+
+**Referencias.** [Ronda 3 y validación](planificacion/cuentas/04-ronda3-nd.md); instrucciones_amigo_pr14_ronda2.md e instrucciones_carlos_pr14_ronda3.md recibidas por Carlos.
+
+
+### D-048 — Proteger operaciones previas de Análisis
+
+- **Fecha**: 2026-10-18
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi aprobó 1b según ronda 3; Carlos adoptó la excepción limitada en este chat
+- **Área**: computeRazones en js/modules/analisis/index.js
+
+**Contexto.** Aunque calculate.js sea estricto, una resta previa convierte null en cero y pierde la evidencia de ausencia antes de llamar al helper. Al releer los estados se descartaban metadatos de cuentas pendientes.
+
+**Opciones.**
+1. Proteger solo calculate.js — siguen apareciendo márgenes, compras y capital de trabajo falsos.
+2. Proteger también las operaciones previas y preservar metadatos — permite que el helper reciba N/D real.
+
+**Decisión.** Opción 2. Se validan operandos de utilidad bruta/operativa, compras y capital neto de trabajo; su N/D se conserva, incluido el denominador mostrado de rotación del capital de trabajo. Se releen metadatos y se conservan motivos originales por periodo, añadiendo campo/operandos de operaciones previas en notAvailableReasons. Un solo periodo selecciona saldo final explícitamente; la aproximación de compras sin inventario comparable permanece.
+
+**Consecuencias.** Se mantienen fórmulas, interfaz, cifras completas de MUNO MODA 2023/2024 y ceros válidos. No se reinstala el adaptador de anulación por grupos ni se conecta el motor. No se retiran nombres fijos: 1c y cualquier futura D-049 requieren confirmación aparte.
+
+**Para revertirla.** Retirar la protección previa volvería a permitir coerciones; revisar junto a D-047 y sus pruebas antes de otra modificación.
+
+**Referencias.** [Ronda 3 y validación](planificacion/cuentas/04-ronda3-nd.md); instrucciones_amigo_pr14_ronda2.md e instrucciones_carlos_pr14_ronda3.md recibidas por Carlos.

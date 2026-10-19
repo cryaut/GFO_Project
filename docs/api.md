@@ -4,7 +4,7 @@ Referencia completa de las funciones públicas de los módulos utilitarios.
 
 ## Colección de cuentas (`js/modules/estados/cuentas-*.js`)
 
-`versionCatalogo = '2026-10-18.1'`. Catálogo de 72 definiciones; las 71 del PR #10 conservan ids, nombres canónicos, clasificación, rol y política de ausencia. La auditoría deja 23 `verified`, 44 `partially_verified` y 5 `ambiguous`: las verificadas incluyen cita y ubicación; seis rebajas locales conservadoras se documentan aparte de la sincronización v8 pendiente. La investigación y las variantes sin fuente están en [cuentas/investigacion.md](planificacion/cuentas/investigacion.md).
+`versionCatalogo = '2026-10-18.2'`. Catálogo de 72 definiciones; las 71 del PR #10 conservan ids, nombres canónicos, clasificación, rol y política de ausencia. D-046 corrige únicamente la definición de intangibles a no monetarios. La auditoría D-045 deja 1 `verified`, 66 `partially_verified` y 5 `ambiguous`: PGC es referencia terminológica, no respaldo para `verified`. La fixture declara 28 rebajas de investigación y la diferencia de definición, aparte de la sincronización v8 pendiente. Véase [cuentas/investigacion.md](planificacion/cuentas/investigacion.md).
 
 #### `obtenerCuenta(id)` / `listarCuentas({ grupo } = {})`
 Devuelven una copia de la definición (`null` para id inexistente) o una lista en orden estable por id. Grupos: `activos`, `pasivos`, `patrimonio`, `estadoResultados`, `suplementario`. El llamador no puede modificar el catálogo mediante la copia.
@@ -44,7 +44,7 @@ Interfaz de selección compartida. La primera dibuja estado/candidatos o catálo
 
 Fórmulas financieras puras. Todas las funciones reciben números y retornan números (o objetos con resultados). Ninguna depende de DOM ni de estado global.
 
-Cuando falta un dato o el denominador es 0, las funciones agregadas después de la versión 1.0 devuelven `null` (la interfaz muestra "N/D"). Las funciones originales devuelven 0 en ese caso. Los plazos en días usan `DIAS_ANIO = 365`. El catálogo resumido está en `docs/contexto/dominio-financiero.md`.
+D-047: un operando numérico obligatorio `null` o `undefined` produce N/D antes de operar. Las fórmulas y convenciones con datos completos se conservan, incluidos casos especiales legados con denominador cero. Los parámetros opcionales mantienen sus defaults declarados; una tasa que no interviene con DAP cero no es un operando requerido. DuPont conserva su objeto y deja N/D en los componentes afectados. Los plazos usan `DIAS_ANIO = 365`. El catálogo resumido está en `docs/contexto/dominio-financiero.md`.
 
 ### Constante y funciones base
 
@@ -55,14 +55,14 @@ Días del año para plazos, edades y ciclos: `365`. Úsala en lugar de escribir 
 Saldo promedio de un periodo, para rotaciones, ROA, ROE y DuPont.
 
 - **Parámetros**: `saldoInicial` (number) — saldo del periodo anterior; `saldoFinal` (number) — saldo del periodo actual
-- **Retorno**: `number` — si falta uno de los dos, devuelve el otro; si faltan ambos, 0
+- **Retorno**: `number | null` — N/D si falta cualquiera de los dos saldos. El consumidor selecciona explícitamente saldo final cuando solo hay un periodo.
 - **Fórmula**: `(saldoInicial + saldoFinal) / 2`
-- **Ejemplo**: `saldoPromedio(10000, 20000)` → `15000`; `saldoPromedio(undefined, 20000)` → `20000`
+- **Ejemplo**: `saldoPromedio(10000, 20000)` → `15000`; `saldoPromedio(undefined, 20000)` → `null`
 
 #### `variacion(valorFinal, valorInicial)`
 Variación absoluta entre dos saldos (usada en el EFE indirecto).
 
-- **Retorno**: `number`
+- **Retorno**: `number | null`
 - **Fórmula**: `valorFinal - valorInicial`
 - **Ejemplo**: `variacion(25000, 20000)` → `5000`
 
@@ -80,7 +80,7 @@ Calcula el porcentaje de variación horizontal.
 Calcula la variación absoluta entre dos periodos.
 
 - **Parámetros**: `valorT2` (number) — valor actual; `valorT1` (number) — valor anterior
-- **Retorno**: `number` — diferencia absoluta
+- **Retorno**: `number | null` — diferencia absoluta
 - **Fórmula**: `valorT2 - valorT1`
 - **Ejemplo**: `ahDelta(12000, 10000)` → `2000`
 
@@ -100,7 +100,7 @@ Calcula la variación porcentual horizontal completa.
 Calcula el porcentaje que representa una cuenta sobre una base.
 
 - **Parámetros**: `cuenta` (number) — monto de la cuenta; `base` (number) — base de comparación (total activo, ventas, etc.)
-- **Retorno**: `number` — proporción decimal
+- **Retorno**: `number | null` — proporción decimal
 - **Fórmula**: `cuenta / base`
 - **Ejemplo**: `av(5000, 20000)` → `0.25` (25%)
 
@@ -303,11 +303,13 @@ Tasa efectiva de impuesto.
 - **Ejemplo**: `tasaEfectiva(30000, 100000)` → `0.3`; `tasaEfectiva(30000, 0)` → `null`
 
 #### `tasaImpuesto(ir, uai, tasaDefecto = TASA_IR_DEFECTO)`
-Tasa T para el GAF: la efectiva si existe; si no, la tasa por defecto.
+Tasa T para el GAF con IR y UAI informados: la efectiva si existe; si no es válida, la tasa por defecto.
 
 - **Parámetros**: `ir` (number | null) — `null` si el periodo no trae cuenta de impuestos; `0` es un IR informado; `uai` (number); `tasaDefecto` (number)
-- **Retorno**: `number | null` — `null` si no hay tasa efectiva y `tasaDefecto` está fuera de [0, 1)
-- **Ejemplo**: `tasaImpuesto(30000, 100000)` → `0.3`; `tasaImpuesto(null, 100000)` → `0.3`; `tasaImpuesto(0, 100000)` → `0`
+- **Retorno**: `number | null` — N/D si falta IR/UAI, o no hay tasa efectiva y `tasaDefecto` está fuera de [0, 1)
+- **Ejemplo**: `tasaImpuesto(30000, 100000)` → `0.3`; `tasaImpuesto(null, 100000)` → `null`; `tasaImpuesto(0, 100000)` → `0`
+
+El módulo Apalancamiento conserva D-005: si no existe cuenta de IR, mantiene IR N/D y selecciona directamente una tasa configurada válida, con origen `defecto`. No calcula una tasa efectiva a partir de un IR ausente. Si existe una cuenta de IR, usa este helper estricto.
 
 #### `denominadorGaf(uai, dap = 0, t = null)`
 Denominador del GAF y del GAT. Con DAP = 0 es la UAI y `t` no se valida.
@@ -384,7 +386,7 @@ Modelo DuPont de 3 pasos.
 Capital neto de trabajo.
 
 - **Parámetros**: `activosCorrientes` (number); `pasivosCorrientes` (number)
-- **Retorno**: `number`
+- **Retorno**: `number | null`
 - **Fórmula**: `AC - PC`
 - **Ejemplo**: `capitalNetoTrabajo(30000, 18000)` → `12000`
 
@@ -392,7 +394,7 @@ Capital neto de trabajo.
 Capital neto operativo.
 
 - **Parámetros**: `activosCorrientesOps` (number); `pasivosCorrientesOps` (number)
-- **Retorno**: `number`
+- **Retorno**: `number | null`
 - **Fórmula**: `AC operativos - PC operativos`
 - **Ejemplo**: `capitalNetoOperativo(25000, 16000)` → `9000`
 
@@ -417,7 +419,7 @@ Clasifica automáticamente un movimiento como Origen o Aplicación de Fondos.
 Calcula el efectivo de operaciones por método indirecto. Análisis ya no la consume en la pestaña EFE (usa `construirEFE`); sigue exportada para sus pruebas.
 
 - **Parámetros**: `utilidadNeta` (number); `ajustes` (number[]) — array de ajustes no efectivos
-- **Retorno**: `number` — efectivo neto de operaciones
+- **Retorno**: `number | null` — efectivo neto; N/D sin lanzar si falta la utilidad, la lista de ajustes o un elemento de esta
 - **Fórmula**: `UtilidadNeta + Σ(ajustes)`
 - **Ejemplo**: `efeIndirecto(12000, [3000, -1000, 2000])` → `16000`
 
@@ -429,7 +431,7 @@ Calcula el efectivo de operaciones por método indirecto. Análisis ya no la con
 Depreciación anual por método de línea recta.
 
 - **Parámetros**: `costoOriginal` (number); `valorResidual` (number); `vidaUtil` (number) — en años
-- **Retorno**: `number` — depreciación anual
+- **Retorno**: `number | null` — depreciación anual
 - **Fórmula**: `(CostoOriginal - ValorResidual) / VidaUtil`
 - **Ejemplo**: `depAnualLineaRecta(18000, 2400, 5)` → `3120`
 
@@ -437,7 +439,7 @@ Depreciación anual por método de línea recta.
 Depreciación acumulada con tope de vida útil.
 
 - **Parámetros**: `depAnual` (number); `aniosConsumidos` (number); `vidaUtil` (number)
-- **Retorno**: `number`
+- **Retorno**: `number | null`
 - **Fórmula**: `depAnual × min(aniosConsumidos, vidaUtil)`
 - **Ejemplo**: `depAcumulada(3120, 3, 5)` → `9360`
 
@@ -445,7 +447,7 @@ Depreciación acumulada con tope de vida útil.
 Valor contable de un activo.
 
 - **Parámetros**: `costoOriginal` (number); `depAcum` (number) — depreciación acumulada
-- **Retorno**: `number`
+- **Retorno**: `number | null`
 - **Fórmula**: `CostoOriginal - DepAcumulada`
 - **Ejemplo**: `valorEnLibros(18000, 9360)` → `8640`
 
@@ -457,7 +459,7 @@ Valor contable de un activo.
 Calcula cuánto ahorrar cada mes para alcanzar una meta.
 
 - **Parámetros**: `metaAhorro` (number); `mesesDisponibles` (number)
-- **Retorno**: `number` — ahorro mensual requerido
+- **Retorno**: `number | null` — ahorro mensual requerido
 - **Fórmula**: `MetaAhorro / MesesDisponibles`
 - **Ejemplo**: `ahorroMensual(3000, 12)` → `250`
 
@@ -465,7 +467,7 @@ Calcula cuánto ahorrar cada mes para alcanzar una meta.
 Calcula el saldo disponible al final de la semana.
 
 - **Parámetros**: `ingreso` (number); `gastos` (number); `ahorro` (number); `reserva` (number, opcional)
-- **Retorno**: `number`
+- **Retorno**: `number | null`
 - **Fórmula**: `Ingreso - Gastos - Ahorro - Reserva`
 - **Ejemplo**: `saldoSemanal(3000, 2200, 250, 100)` → `450`
 
@@ -719,6 +721,14 @@ Cuerpo HTML del reporte (resumen, Balance General, Estado de Resultados y Totale
 
 - **Parámetros**: `kpis` — resultado de `computeDashboardKPIs` o `null`; `estados` — datos normalizados o `null`
 - **Retorno**: `string` — HTML sin `<h1>` ni documento; `exportHTML` lo envuelve. Valores `null` se muestran N/D y cuentas ausentes en un periodo, "—".
+
+---
+
+## Operaciones previas de Análisis (D-048)
+
+`computeRazones(periodo)` conserva los metadatos de identificación al releer estados. Con operandos ausentes, utilidad bruta, utilidad operativa, compras y capital de trabajo permanecen N/D antes de llamar a `calculate.js`; el denominador de rotación de capital de trabajo usa ese mismo valor protegido. No cambia fórmulas ni presentación. El caso de un periodo elige su saldo final explícitamente; con inventario no comparable conserva la aproximación de compras anterior.
+
+Añade `notAvailableReasons`: motivos originales de los totales con `periodo`, más `{ campo, periodo, motivo: 'missing_required_account_data', operandos }` para las operaciones previas con datos faltantes. Los ceros explícitos son válidos. El respaldo por nombres fijos permanece sin modificar; no se conecta el motor nuevo.
 
 ---
 

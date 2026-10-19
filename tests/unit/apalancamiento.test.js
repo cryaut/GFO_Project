@@ -109,17 +109,17 @@ describe('Apalancamiento — tasa de impuesto', () => {
   it('usa la tasa por defecto si la efectiva no sirve', () => {
     expect(tasaImpuesto(5000, -10000)).toBe(0.3);  // UAI ≤ 0
     expect(tasaImpuesto(5000, 0)).toBe(0.3);
-    expect(tasaImpuesto(null, 100000)).toBe(0.3);  // sin cuenta de impuestos
+    expect(tasaImpuesto(null, 100000)).toBeNull(); // IR desconocido no permite inferir T
     expect(tasaImpuesto(120000, 100000)).toBe(0.3); // 1.2, fuera de [0, 1)
     expect(tasaImpuesto(-5000, 100000)).toBe(0.3); // −0.05, fuera de [0, 1)
-    expect(tasaImpuesto(null, 100000, 0.15)).toBe(0.15);
+    expect(tasaImpuesto(null, 100000, 0.15)).toBeNull();
   });
 
   it('da N/D si la tasa por defecto es inválida y no hay efectiva', () => {
-    expect(tasaImpuesto(null, 100000, 1.5)).toBeNull();
-    expect(tasaImpuesto(null, 100000, 1)).toBeNull();
-    expect(tasaImpuesto(null, 100000, -0.1)).toBeNull();
-    expect(tasaImpuesto(null, 100000, null)).toBeNull();
+    expect(tasaImpuesto(120000, 100000, 1.5)).toBeNull();
+    expect(tasaImpuesto(120000, 100000, 1)).toBeNull();
+    expect(tasaImpuesto(120000, 100000, -0.1)).toBeNull();
+    expect(tasaImpuesto(120000, 100000, null)).toBeNull();
     // Con tasa efectiva válida, la por defecto no se usa
     expect(tasaImpuesto(30000, 100000, 1.5)).toBeCloseTo(0.3, 6);
   });

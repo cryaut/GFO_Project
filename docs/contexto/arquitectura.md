@@ -188,7 +188,7 @@ No la corrijas dentro de otra tarea: abre una rama propia y avísalo al equipo.
 
 - `store.load()` y `store.reset()` copian `defaultData` de forma superficial, así que `reset()` puede no limpiar datos anidados.
 - La demo MUNO MODA ya cuadra y trae intereses e IR (antes el activo quedaba por debajo de pasivo + patrimonio por C$ 70,200 y C$ 46,150). Las pruebas que copian sus cifras antiguas (`estados-calculations`, `apalancamiento-*`) siguen usando su propia copia.
-- Las funciones originales de `calculate.js` devuelven 0 cuando el denominador es 0. La pestaña Análisis lo detecta con `computeRazones(...).denominadores`.
+- D-047 protege operandos ausentes en `calculate.js` sin cambiar fórmulas/casos completos. D-048 protege las operaciones previas de `computeRazones` y conserva metadatos/motivos; los lectores de respaldo por nombres fijos siguen pendientes (1c).
 - `package-lock.json` está en `.gitignore`, así que cada persona puede instalar versiones distintas de Vitest y ESLint.
 - `analisis/index.js` mezcla cálculo e interfaz en un solo archivo.
 - `npm run lint` reporta 11 advertencias por variables sin uso.

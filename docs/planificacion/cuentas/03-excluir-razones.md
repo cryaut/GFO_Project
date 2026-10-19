@@ -1,5 +1,7 @@
 # Excluir razones del alcance
 
+**Historial:** la ronda 3 autoriza después una excepción limitada a esta exclusión. La atribución de la restricción se aclara como instrucción de Cris comunicada por Carlos. La implementación y validación vigentes están en [04-ronda3-nd.md](04-ronda3-nd.md); las cifras de este paso corresponden a la reversión anterior.
+
 Fecha: 2026-10-18. Carlos indicó después de la entrega: «se me olvido decir que la parte de las razones no la modifiques». Esta instrucción reemplaza la autorización previa de adaptar N/D en Razones (D-034 y la parte correspondiente de D-043). Decisión vigente: D-044.
 
 ## Cambios retirados

@@ -17,8 +17,8 @@ describe('Metodología financiera — promedios (Auditoría #3)', () => {
     expect(rotacionCxC(200000, cxcProm)).toBeCloseTo(5, 4);
   });
 
-  it('sin periodo inicial se usa el saldo final como aproximación', () => {
-    expect(saldoPromedio(undefined, 20000)).toBe(20000);
+  it('el helper no infiere un saldo inicial ausente; Análisis resuelve un solo periodo', () => {
+    expect(saldoPromedio(undefined, 20000)).toBeNull();
   });
 });
 

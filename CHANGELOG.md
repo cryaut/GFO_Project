@@ -7,6 +7,7 @@ Todos los cambios notables en GFO Toolkit.
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
 ### Módulo 2: Estados Financieros
+- Ronda 3: el PGC queda como referencia terminológica, con 22 rebajas adicionales a verificación parcial (incluidas las 4 señaladas). Catálogo `2026-10-18.2`: 1 verificada, 66 parciales y 5 ambiguas. Se corrige intangibles a «no monetarios», sin cambiar su clasificación ni cálculo; diferencias con #10 declaradas en la fixture.
 - Alcance ajustado por Carlos: se retiran los cambios específicos de razones financieras y su adaptador de N/D; `analisis/index.js` vuelve a `main`. Se conservan importación, catálogo, totales de Estados y correcciones EFE/EOAF.
 - Corrección de la revisión del PR #14: cuentas pendientes con cero no bloquean totales; con importe, N/D se limita a los subtotales posibles y al total de su grupo, también en datos legados.
 - Auditoría de las 29 cuentas antes verificadas: 23 conservan cita específica y 6 bajan a verificación parcial; catálogo `2026-10-18.1`. La sincronización con v8 del PR #10 continúa pendiente.
@@ -33,6 +34,8 @@ Todos los cambios notables en GFO Toolkit.
 - Botón **Vista previa del reporte** (muestra el reporte en la página) y **Descargar reporte HTML**; antes el botón "Vista Previa HTML" descargaba el archivo.
 
 ### Módulo 3: Análisis Financiero
+- Excepción limitada D-047/D-048 autorizada: `calculate.js` conserva N/D antes de operar; Análisis protege las restas de márgenes, cobertura, compras y capital de trabajo, preserva metadatos/motivos y mantiene el saldo final con un solo periodo. Fórmulas, interfaz y MUNO MODA se conservan; no se conecta el motor ni se retiran nombres fijos.
+- Compatibilidad de Apalancamiento con D-047: la tasa por defecto sin cuenta de IR se selecciona explícitamente desde la configuración (D-005), conservando IR N/D y las cifras previas.
 - EFE/EOAF: una cuenta sin clasificar con saldo cero en ambos periodos no vuelve incompleta la comprobación. Un saldo ausente sigue siendo faltante.
 - EFE: reconoce «pérdida del ejercicio/periodo», advierte movimientos opuestos entre reservas y resultados y etiqueta los dividendos como derivados. La interpretación aclara que cuadrar no confirma independientemente la utilidad neta; la fórmula se conserva.
 - **EFE de tres actividades** (`efe-calculations.js`): el Estado de Flujo de Efectivo de la pestaña EFE se arma por método indirecto desde dos balances — Operación (utilidad neta + depreciación + capital de trabajo), Inversión (activos fijos) y Financiamiento (deuda, aportaciones y dividendos) — con la comprobación CFO + CFI + CFF = variación de efectivo (tolerancia C$ 0.01 + epsilon escalado). Antes `computeEFE` solo calculaba el CFO con tres ajustes y sin comprobación. (D-024)
