@@ -288,7 +288,6 @@ export function tasaEfectiva(ir, uai) {
 
 // T para el GAF: la efectiva si existe; si no, la tasa por defecto (si es válida).
 export function tasaImpuesto(ir, uai, tasaDefecto = TASA_IR_DEFECTO) {
-  if (hayDatoAusente(ir, uai)) return null;
   const efectiva = tasaEfectiva(ir, uai);
   if (efectiva !== null) return efectiva;
   return esTasaValida(tasaDefecto) ? tasaDefecto : null;

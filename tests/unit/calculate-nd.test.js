@@ -41,7 +41,6 @@ const casos = [
   ['ahorroMensual', [1200, 12], 100],
   ['saldoSemanal', [1000, 500, 200], 300],
   ['tasaEfectiva', [30, 100], 0.3],
-  ['tasaImpuesto', [30, 100], 0.3],
   ['denominadorGaf', [100], 100],
   ['gao', [200, 100], 2],
   ['gaf', [200, 100], 2],
@@ -146,12 +145,19 @@ describe('Parámetros opcionales y ceros explícitos', () => {
     }
   });
 
-  it('la tasa alternativa se usa solo con datos completos y efectiva inválida', () => {
+  it('D-005 usa la tasa alternativa válida si la efectiva no está disponible', () => {
     expect(calculos.tasaImpuesto(5, 0)).toBe(0.3);
     expect(calculos.tasaImpuesto(5, 0, 0.15)).toBe(0.15);
     expect(calculos.tasaImpuesto(5, 0, null)).toBeNull();
     expect(calculos.tasaImpuesto(30, 100, null)).toBe(0.3);
-    expect(calculos.tasaImpuesto(null, 100, 0.15)).toBeNull();
+    expect(calculos.tasaImpuesto(null, 100, 0.15)).toBe(0.15);
+  });
+
+  it.each([null, undefined])('D-005 conserva la tasa configurada con IR o UAI %s', ausente => {
+    expect(calculos.tasaImpuesto(ausente, 100)).toBe(0.3);
+    expect(calculos.tasaImpuesto(30, ausente, 0.15)).toBe(0.15);
+    expect(calculos.tasaImpuesto(ausente, ausente, 0)).toBe(0);
+    expect(calculos.tasaImpuesto(ausente, 100, null)).toBeNull();
   });
 
   it('un cero válido no se confunde con un dato ausente', () => {

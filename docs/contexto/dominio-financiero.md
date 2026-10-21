@@ -168,6 +168,8 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 | `gafVariacion(UAIIbase, UAII, UDACbase, UDAC)` | %ΔUDAC / %ΔUAII |
 | `gatVariacion(ventasBase, ventas, UDACbase, UDAC)` | %ΔUDAC / %ΔVentas |
 
+Ronda 6: `tasaImpuesto` conserva la política D-005 de `main`, incluida una tasa configurada válida con IR/UAI ausentes. Apalancamiento delega esa selección en el helper y mantiene IR N/D si no existe cuenta. Es la excepción aclarada en D-047; `saldoPromedio` y las demás guardas de N/D se conservan.
+
 **Flujos, activos y presupuesto**
 
 | Función | Qué calcula |

@@ -46,7 +46,7 @@ Interfaz de selección compartida. La primera dibuja estado/candidatos o catálo
 
 Fórmulas financieras puras. Todas las funciones reciben números y retornan números (o objetos con resultados). Ninguna depende de DOM ni de estado global.
 
-D-047: un operando numérico obligatorio `null` o `undefined` produce N/D antes de operar. Las fórmulas y convenciones con datos completos se conservan, incluidos casos especiales legados con denominador cero. Los parámetros opcionales mantienen sus defaults declarados; una tasa que no interviene con DAP cero no es un operando requerido. DuPont conserva su objeto y deja N/D en los componentes afectados. Los plazos usan `DIAS_ANIO = 365`. El catálogo resumido está en `docs/contexto/dominio-financiero.md`.
+D-047: un operando numérico obligatorio `null` o `undefined` produce N/D antes de operar. Las fórmulas y convenciones con datos completos se conservan, incluidos casos especiales legados con denominador cero. Los parámetros opcionales mantienen sus defaults declarados; una tasa que no interviene con DAP cero no es un operando requerido. La ronda 6 restaura la excepción D-005: `tasaImpuesto` puede seleccionar una tasa por defecto válida cuando IR/UAI no permiten una efectiva. DuPont conserva su objeto y deja N/D en los componentes afectados. Los plazos usan `DIAS_ANIO = 365`. El catálogo resumido está en `docs/contexto/dominio-financiero.md`.
 
 ### Constante y funciones base
 
@@ -305,13 +305,13 @@ Tasa efectiva de impuesto.
 - **Ejemplo**: `tasaEfectiva(30000, 100000)` → `0.3`; `tasaEfectiva(30000, 0)` → `null`
 
 #### `tasaImpuesto(ir, uai, tasaDefecto = TASA_IR_DEFECTO)`
-Tasa T para el GAF con IR y UAI informados: la efectiva si existe; si no es válida, la tasa por defecto.
+Tasa T para el GAF: la efectiva si existe; si no está disponible, la tasa por defecto válida (D-005, restaurada en la ronda 6).
 
 - **Parámetros**: `ir` (number | null) — `null` si el periodo no trae cuenta de impuestos; `0` es un IR informado; `uai` (number); `tasaDefecto` (number)
-- **Retorno**: `number | null` — N/D si falta IR/UAI, o no hay tasa efectiva y `tasaDefecto` está fuera de [0, 1)
-- **Ejemplo**: `tasaImpuesto(30000, 100000)` → `0.3`; `tasaImpuesto(null, 100000)` → `null`; `tasaImpuesto(0, 100000)` → `0`
+- **Retorno**: `number | null` — N/D si no hay tasa efectiva y `tasaDefecto` está fuera de [0, 1); IR/UAI ausentes permiten seleccionar una tasa por defecto válida
+- **Ejemplo**: `tasaImpuesto(30000, 100000)` → `0.3`; `tasaImpuesto(null, 100000, 0.15)` → `0.15`; `tasaImpuesto(0, 100000)` → `0`
 
-El módulo Apalancamiento conserva D-005: si no existe cuenta de IR, mantiene IR N/D y selecciona directamente una tasa configurada válida, con origen `defecto`. No calcula una tasa efectiva a partir de un IR ausente. Si existe una cuenta de IR, usa este helper estricto.
+El módulo Apalancamiento conserva IR N/D si no existe cuenta y llama a este helper como en `main`; la selección de la tasa configurada pertenece a `tasaImpuesto`, con origen `defecto` cuando no hay efectiva válida. No calcula una tasa efectiva a partir de un IR ausente. Esta es una excepción explícita al contrato general de operandos obligatorios de D-047.
 
 #### `denominadorGaf(uai, dap = 0, t = null)`
 Denominador del GAF y del GAT. Con DAP = 0 es la UAI y `t` no se valida.

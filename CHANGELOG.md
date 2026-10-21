@@ -75,6 +75,7 @@ Todos los cambios notables en GFO Toolkit.
 - Pruebas: `tests/unit/comprobacion.test.js` (módulo compartido) y casos nuevos en `efe.test.js` y `eoaf.test.js` que fallan con el código anterior (importe inválido, `-0`, totales N/D, dividendos con utilidad del ejercicio, `computeEFE(period)`).
 
 ### Apalancamiento (GAO, GAF y GAT)
+- Ronda 6: se restaura `tasaImpuesto` y su llamada en Apalancamiento a `main` (D-005), incluida la tasa configurada válida con IR ausente. Se recuperan las pruebas originales de Apalancamiento y se precisa la excepción en D-047; `saldoPromedio` se conserva.
 - Fórmulas en `calculate.js`: `gao`, `gaf` y `gat` (estructurales), `gaoVariacion`, `gafVariacion` y `gatVariacion` (entre dos periodos), `tasaEfectiva`, `tasaImpuesto`, `denominadorGaf` y la constante `TASA_IR_DEFECTO` (30 %). Devuelven N/D si falta un dato o el denominador es 0.
 - Derivación desde los estados guardados (`js/modules/apalancamiento/apalancamiento-calculations.js`): CV y CF según la clasificación de cada cuenta (variable, fija o mixta), UAI, T, DAP y UDAC, con traza por concepto y advertencias.
 - `store`: nueva sección `apalancamiento` (clasificación de costos, DAP por periodo y tasa por defecto). Estados exporta `resolveAccountType`.

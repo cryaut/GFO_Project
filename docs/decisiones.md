@@ -84,7 +84,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-033 | Similitud calibrada como sugerencia confirmable | Vigente |
 | D-034 | Propagar N/D en consumidores sin migrar sus fórmulas | Vigente en Reportes; Razones reemplazada por D-044 |
 | D-043 | Acotar N/D por importe, posibilidades y periodo | Vigente en Estados/EFE/EOAF; Razones reemplazada por D-044 |
-| D-044 | Excluir razones financieras por instrucción de Cris Lumbi | Vigente, con excepción D-047/D-048 |
+| D-044 | Excluir razones financieras por instrucción de Carlos | Vigente, con excepción D-047/D-048 |
 | D-045 | PGC solo como referencia terminológica | Vigente |
 | D-046 | Intangibles son activos no monetarios | Vigente |
 | D-047 | Propagar N/D en operandos numéricos obligatorios | Vigente |
@@ -825,11 +825,11 @@ Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama de
 **Referencias.** [Correcciones y pendientes](planificacion/cuentas/02-correcciones-revision.md), D-030, D-034; instrucciones_amigo_pr14.md y revision_pr13_para_carlos.md recibidos por Carlos.
 
 
-### D-044 — Excluir razones financieras por instrucción de Cris Lumbi
+### D-044 — Excluir razones financieras por instrucción de Carlos
 
 - **Fecha**: 2026-10-18
 - **Estado**: Vigente
-- **Decidió**: Cris Lumbi, instrucción comunicada por Carlos en el chat («la parte de las razones no la modifiques»); atribución aclarada en la ronda 3 y por Carlos al explicar que Cris trabajaba en Razones
+- **Decidió**: Carlos, indicación expresa posterior: «la parte de las razones no la modifiques»
 - **Área**: Alcance del PR #14 y reversión de los ajustes específicos de Razones
 
 **Contexto.** D-034 y parte de D-043 autorizaron adaptar disponibilidad en Razones. Después de publicarse la revisión, Carlos excluye esa parte del trabajo.
@@ -845,6 +845,8 @@ Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama de
 **Para revertirla.** Obtener autorización expresa para una tarea de Razones y recuperar o rediseñar el adaptador con sus pruebas; no reintroducirlo como cambio incidental de importación.
 
 **Referencias.** [Exclusión de razones y validación vigente](planificacion/cuentas/03-excluir-razones.md), D-034, D-043, instrucción directa de Carlos en este chat.
+
+Aclaración (18 de octubre de 2026): la decisión y la instrucción fueron de Cris Lumbi. Carlos la transmitió en el chat.
 
 
 ### D-045 — PGC solo como referencia terminológica
@@ -907,6 +909,8 @@ Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama de
 **Decisión.** Opción 2. Null/undefined de un operando obligatorio devuelve null. EFE valida utilidad, lista y elementos de ajustes (incluidos huecos); DuPont conserva su objeto con N/D en componentes afectados. Defaults opcionales declarados y tasas inactivas cuando DAP=0 mantienen su contrato. No se cambian casos numéricos completos ni convenciones legadas de cero.
 
 **Consecuencias.** SaldoPromedio exige dos saldos; Análisis aplica explícitamente la regla de saldo final de un periodo (D-048). TasaImpuesto exige IR/UAI informados; Apalancamiento conserva D-005 seleccionando explícitamente su tasa configurada válida solo cuando no existe cuenta IR, sin inventar IR ni cambiar esa política. Se ajustan pruebas de esos contratos y se mantienen las pruebas de integración de Apalancamiento/UI originales. Excepción limitada a D-044; el motor nuevo no se conecta.
+
+**Aclaración (20 de octubre de 2026, ronda 6).** Se restaura `tasaImpuesto` a `origin/main`: cuando la efectiva no está disponible, devuelve la tasa configurada válida según D-005, incluso con IR o UAI ausentes. Apalancamiento vuelve a llamar al helper como en `main`; sus pruebas originales se restauran. Esta precisión deja sin efecto la restricción de IR/UAI de la consecuencia anterior solo para `tasaImpuesto`. `saldoPromedio` y las demás guardas de D-047/D-048 se conservan. El texto histórico anterior no se borra.
 
 **Para revertirla.** Revertir guardas y sus pruebas reintroduciría los números falsos; para cambiar políticas, registrar otra decisión coordinada.
 
