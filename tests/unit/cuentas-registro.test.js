@@ -67,6 +67,7 @@ it('conserva los datos suplementarios requeridos y distingue cero de ausencia', 
 
 it('ingresos por intereses se suman y gastos por intereses se restan con las fórmulas vigentes', () => {
   const datos = tableTextToFinancialData('Cuenta,Estado,2024\nVentas,Resultados,100\nIngresos por intereses,Resultados,20\nGastos por intereses,Resultados,5');
+  expect(datos.accountTypes.estadoResultados['Ingresos por intereses']).toBe('otrosIngresos');
   // 100 + 20 - 5 = 115; antes el ingreso 20 se restaba y daba 75.
   expect(computeFinancialTotals(datos, '2024')).toMatchObject({ otrosIngresos: 20, intereses: 5, utilidadNeta: 115 });
 });

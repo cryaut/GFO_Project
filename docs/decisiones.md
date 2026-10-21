@@ -89,6 +89,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-046 | Intangibles son activos no monetarios | Vigente |
 | D-047 | Propagar N/D en operandos numéricos obligatorios | Vigente |
 | D-048 | Proteger operaciones previas de Análisis | Vigente |
+| D-051 | Intereses ganados como componente de ingresos no operativos | Vigente |
 
 ## Decisiones
 
@@ -931,3 +932,24 @@ Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama de
 **Para revertirla.** Retirar la protección previa volvería a permitir coerciones; revisar junto a D-047 y sus pruebas antes de otra modificación.
 
 **Referencias.** [Ronda 3 y validación](planificacion/cuentas/04-ronda3-nd.md); instrucciones_amigo_pr14_ronda2.md e instrucciones_carlos_pr14_ronda3.md recibidas por Carlos.
+
+### D-051 — Intereses ganados como componente de ingresos no operativos
+
+- **Fecha**: 2026-10-19
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi; aprobación comunicada por Carlos en instrucciones_carlos_pr14_ronda5.md
+- **Área**: Catálogo de cuentas y documentación del PR #14
+
+**Contexto.** La app ya suma intereses ganados e ingresos no operativos mediante `otrosIngresos`, pero el catálogo no expresaba la relación entre los dos ids. Un alias excluía cuentas específicas y contradecía la definición que incluye intereses ganados.
+
+**Opciones.**
+1. Añadir `agrupadoEn` a la entrada de intereses ganados — conserva la relación junto a su definición y las consultas públicas la exponen mediante copia.
+2. Exportar un mapa `COMPONENTES_DE` separado — permite declarar la misma relación, pero introduce otra estructura innecesaria porque el catálogo admite el campo opcional.
+
+**Decisión.** Los intereses ganados son componente de los ingresos no operativos al calcular la utilidad neta sin utilidad reportada. Aprobado por Cris Lumbi el 19 de octubre de 2026. Sin cambio de fórmulas en los JSON.
+
+**Consecuencias.** Implementado el 2026-10-20 como `is.interest_income.agrupadoEn = 'is.nonoperating_income'`. Ambas cuentas conservan `tipoApp: 'otrosIngresos'`; se actualiza la nota de intereses y se retira únicamente el alias contradictorio de ingresos no operativos, sin cambiar su definición. No cambia la utilidad que calcula la app. Este metadato no agrega componentes automáticamente en las consultas por id ni conecta el motor. La comparación con los JSON se documenta en lectura; la aceptación app/JSON pertenece al motor. D-049 (1c) y D-050 (opción C del motor) no se registran ni se implementan aquí.
+
+**Para revertirla.** Retirar el campo y ajustar la nota del catálogo, sus pruebas, API e investigación mediante una decisión posterior coordinada. No requiere cambiar fórmulas actuales.
+
+**Referencias.** [Ronda 5](planificacion/cuentas/05-ronda5-puente-intereses.md), [comparación de utilidad](planificacion/cuentas/06-comparacion-utilidad-json.md), [PR #14](https://github.com/cryaut/GFO_Project/pull/14), instrucciones_carlos_pr14_ronda5.md recibidas por Carlos.

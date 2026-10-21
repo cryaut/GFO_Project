@@ -4,10 +4,12 @@ Referencia completa de las funciones públicas de los módulos utilitarios.
 
 ## Colección de cuentas (`js/modules/estados/cuentas-*.js`)
 
-`versionCatalogo = '2026-10-18.2'`. Catálogo de 72 definiciones; las 71 del PR #10 conservan ids, nombres canónicos, clasificación, rol y política de ausencia. D-046 corrige únicamente la definición de intangibles a no monetarios. La auditoría D-045 deja 1 `verified`, 66 `partially_verified` y 5 `ambiguous`: PGC es referencia terminológica, no respaldo para `verified`. La fixture declara 28 rebajas de investigación y la diferencia de definición, aparte de la sincronización v8 pendiente. Véase [cuentas/investigacion.md](planificacion/cuentas/investigacion.md).
+`versionCatalogo = '2026-10-20.1'`. Catálogo de 72 definiciones; las 71 del PR #10 conservan ids, nombres canónicos, clasificación, rol y política de ausencia. D-046 corrige únicamente la definición de intangibles a no monetarios. La auditoría D-045 deja 1 `verified`, 66 `partially_verified` y 5 `ambiguous`: PGC es referencia terminológica, no respaldo para `verified`. La fixture declara 28 rebajas de investigación y la diferencia de definición, aparte de la sincronización v8 pendiente. Véase [cuentas/investigacion.md](planificacion/cuentas/investigacion.md).
 
 #### `obtenerCuenta(id)` / `listarCuentas({ grupo } = {})`
 Devuelven una copia de la definición (`null` para id inexistente) o una lista en orden estable por id. Grupos: `activos`, `pasivos`, `patrimonio`, `estadoResultados`, `suplementario`. El llamador no puede modificar el catálogo mediante la copia.
+
+La definición puede incluir `agrupadoEn`, id de la cuenta de la que es componente. D-051 declara `is.interest_income.agrupadoEn = 'is.nonoperating_income'`. Ambas conservan `tipoApp: 'otrosIngresos'`; este metadato no cambia la suma actual ni añade agregación automática a `montoCuenta`/`consultarMontoCuenta`. No demuestra que un futuro consumidor de los JSON ejecute el agrupamiento.
 
 #### `identificarCuenta(texto, { grupo, clasificacion, id } = {})`
 Función pura. Devuelve `{ estado, id, metodo, candidatos, preseleccion }`; `estado` es `reconocida`, `sugerida` o `no_reconocida`. Solo una reconocida tiene `id`. Los candidatos incluyen id, nombre, grupo, tipo transitorio y puntuación. El orden es id explícito → nombre canónico → sinónimo → contexto → similitud. Un id inválido no cae a un nombre distinto. Grupo/clasificación contradictorios quedan sugeridos; los alias de cuentas ambiguas requieren confirmación. Ejemplo: `identificarCuenta('Efetivo', { grupo: 'activos' })` devuelve una sugerencia, nunca asigna id.

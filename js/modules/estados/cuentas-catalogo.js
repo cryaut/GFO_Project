@@ -1,5 +1,5 @@
 // Datos de la colección. Investigación y procedencia: docs/planificacion/cuentas/investigacion.md.
-export const versionCatalogo = '2026-10-18.2';
+export const versionCatalogo = '2026-10-20.1';
 export const TIPOS_APP = {
   'activos': [
     'efectivo',
@@ -1584,8 +1584,9 @@ export const CUENTAS_CATALOGO = [
     ],
     'sinonimosDudosos': [],
     'tipoApp': 'otrosIngresos',
+    'agrupadoEn': 'is.nonoperating_income',
     'ambiguedades': [
-      'El motor actual lo incorpora como otros ingresos, fuera de ventas.'
+      'Se suma a is.nonoperating_income como componente de los ingresos no operativos al calcular la utilidad neta sin utilidad reportada, según D-051.'
     ],
     'estadoInvestigacion': 'partially_verified',
     'fuentes': [
@@ -1697,7 +1698,6 @@ export const CUENTAS_CATALOGO = [
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Otros ingresos no operativos',
-      'ingresos financieros no clasificados en otra cuenta específica',
       'Otros Ingresos'
     ],
     'sinonimosDudosos': [],

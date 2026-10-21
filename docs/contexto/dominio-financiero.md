@@ -234,6 +234,8 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 
 ### Otros módulos con lógica reutilizable
 
+D-051: los intereses ganados (`is.interest_income`) son componente de los ingresos no operativos (`is.nonoperating_income`) al calcular la utilidad neta sin utilidad reportada. El catálogo lo expresa mediante `agrupadoEn`; ambas cuentas conservan `tipoApp: 'otrosIngresos'`. Es una relación de catálogo: las consultas por id siguen devolviendo solo ese id y no agregan componentes automáticamente. Las fórmulas actuales y los JSON se conservan.
+
 Disponibilidad de cuentas (D-043 y excepción limitada D-047/D-048 a D-044): una cuenta pendiente con saldo cero no aplica al cálculo de ese periodo. Con importe distinto de cero se invalidan sus tipos/subtotales posibles y el total del grupo, incluidos datos legados sin tipo; se conservan los importes. Los motivos de Estados enumeran `campos`. Análisis preserva los metadatos y protege utilidad bruta/operativa, compras y capital de trabajo antes de llamar a los helpers; no se reinstala el adaptador que anulaba razones por grupo. El resultado incluye `notAvailableReasons`. Los nombres fijos de respaldo permanecen pendientes (1c). EFE/EOAF solo omiten la falta de clasificación cuando **ambos saldos explícitos son cero**. EFE deriva dividendos: conciliar no verifica UN independientemente.
 
 | Archivo | Funciones |

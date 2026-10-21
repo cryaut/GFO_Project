@@ -515,7 +515,7 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 - Respaldo conceptual: [IFRS: Presentation of interest revenue](https://www.ifrs.org/projects/completed-projects/2018/presentation-of-interest-revenue-for-particular-financial-instruments-ifrs-9-and-ias-1/).
 - Sinónimo «Intereses ganados»: sin fuente externa literal; procedencia: variante del proyecto / corpus.
 - Sinónimo «Intereses devengados a favor»: sin fuente externa literal; procedencia: variante del proyecto / corpus.
-- Ambigüedad heredada: El motor actual lo incorpora como otros ingresos, fuera de ventas.
+- Agrupación D-051, aprobada por Cris Lumbi el 2026-10-19: `agrupadoEn: 'is.nonoperating_income'`. Se suma a los ingresos no operativos como componente al calcular la utilidad neta sin utilidad reportada. Conserva `tipoApp: 'otrosIngresos'`; la relación no cambia la fórmula actual ni el estado de investigación.
 
 ### `is.merchandise_cost` — Costo de mercadería vendida
 
@@ -558,7 +558,7 @@ Los estados de investigación heredados describen el concepto. «Sin fuente exte
 - Investigación: `partially_verified`.
 - Sin fuente externa conceptual verificada en esta ejecución. Se conserva la definición propuesta del JSON.
 - Sinónimo «Otros ingresos no operativos»: sin fuente externa literal; procedencia: JSON del PR #10.
-- Sinónimo «ingresos financieros no clasificados en otra cuenta específica»: sin fuente externa literal; procedencia: JSON del PR #10.
+- Ronda 5/D-051: se retira «ingresos financieros no clasificados en otra cuenta específica», procedente del JSON del PR #10, por contradecir la inclusión de intereses ganados. La definición se conserva.
 - Sinónimo «Otros Ingresos»: sin fuente externa literal; procedencia: variante del proyecto / corpus.
 
 ### `is.operating_amortization` — Amortización operativa

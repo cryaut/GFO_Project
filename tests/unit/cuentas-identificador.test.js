@@ -163,6 +163,40 @@ it('intangibles corrige no monetarios sin alterar su clasificación ni política
   });
 });
 
+it('D-051 relaciona intereses ganados con ingresos no operativos sin cambiar sus tipos', () => {
+  expect(obtenerCuenta('is.interest_income')).toMatchObject({
+    agrupadoEn: 'is.nonoperating_income', tipoApp: 'otrosIngresos',
+    ambiguedades: [expect.stringContaining('D-051')]
+  });
+  const agregado = obtenerCuenta('is.nonoperating_income');
+  expect(agregado.tipoApp).toBe('otrosIngresos');
+  expect(agregado.sinonimos).not.toContain('ingresos financieros no clasificados en otra cuenta específica');
+});
+
+it('impide nuevos sinónimos compartidos y conserva las ocho colisiones normalizadas heredadas', () => {
+  // D-031 y el corpus conservan ambigüedades que requieren contexto/confirmación.
+  // Esta guardia no afirma unicidad absoluta ni cambia la identificación previa.
+  const idsPorSinonimo = new Map();
+  for (const cuenta of listarCuentas()) for (const sinonimo of cuenta.sinonimos) {
+    const normalizado = normalizarCuenta(sinonimo);
+    if (!idsPorSinonimo.has(normalizado)) idsPorSinonimo.set(normalizado, new Set());
+    idsPorSinonimo.get(normalizado).add(cuenta.id);
+  }
+  const compartidos = Object.fromEntries([...idsPorSinonimo]
+    .filter(([, ids]) => ids.size > 1)
+    .map(([sinonimo, ids]) => [sinonimo, [...ids].sort()]));
+  expect(compartidos).toEqual({
+    'costo bienes vendidos': ['is.cost_of_sales_reported', 'is.merchandise_cost'],
+    equipos: ['bs.ppe_furniture', 'bs.ppe_machinery'],
+    'otros gastos': ['is.noninterest_nonoperating_expenses', 'is.other_operating_expenses'],
+    'otros ingresos': ['is.nonoperating_income', 'is.other_operating_income'],
+    'pasivo corto plazo': ['bs.other_current_liabilities', 'bs.short_term_borrowings'],
+    provisiones: ['bs.current_provisions', 'bs.long_term_provisions'],
+    reservas: ['bs.legal_reserve', 'bs.other_reserves'],
+    'utilidad ejercicio': ['bs.current_year_result_equity', 'is.net_income_reported']
+  });
+});
+
 describe('montos por id y políticas de ausencia', () => {
   const datos = { periods: ['2024'], balanceGeneral: { '2024': { activos: { Efectivo: 12, Inventario: 0 }, pasivos: {}, patrimonio: {} } }, estadoResultados: { '2024': {} } };
   it('devuelve el dato, respeta cero y nunca suma componentes para fabricar un total', () => {
