@@ -16,7 +16,7 @@ Generar los 20 JSON deterministas de razones financieras que pide `instrucciones
 | 3 | Fase 2: consistencia de ids/nombres/signos, sin marcadores, botón de m1 e insignias | Completado |
 | 4 | `npm test` y `npm run lint` en verde | Completado |
 | 5 | PR aprobado e integrado a `main` | Pendiente |
-| 6 | Ronda 7: estados alineados, numeración y conflictos de main | Aplicado; pruebas y lint correctos; comprobación final del validador con árbol limpio pendiente |
+| 6 | Ronda 7: estados alineados, numeración y conflictos de main | Completado para los requisitos enumerados: 436 pruebas, lint sin errores y validador 18/18 |
 
 ## Decisiones clave
 - Los JSON van en `docs/razones_financieras/` (ruta relativa pedida por el documento de instrucciones, dentro del proyecto porque pide ejecutar las pruebas del proyecto): **D-028**.
@@ -32,7 +32,7 @@ Generar los 20 JSON deterministas de razones financieras que pide `instrucciones
 - Intangibles pasa a «no monetarios» en sus tres apariciones. No se cambian fórmulas ni otras definiciones. Las diferencias adicionales de alias y ambigüedades se reportan sin corregir.
 - La premisa de fuentes de la orden no coincide con `a87ef0a`: los JSON citan IFRS, no PGC, y amortización ya tiene una frase de IAS 38 sobre amortización. Se conserva esa cita; no se inventa una corrección de depreciación. Las fuentes anteriores no se presentan como reabiertas en esta ronda.
 - El adjunto completo `prompt_correccion_agente_razones_v8.md` no está disponible. Se aplican los requisitos enumerados en la ronda 7 y la sección 2 de la tarea maestra, sin certificar instrucciones adicionales de un documento no recibido.
-- Validación de código: **436 pruebas en 34 archivos**; lint **0 errores y 10 advertencias**. El primer validador pasó V1–V17 y falló V0 por árbol sucio durante la corrección; se repetirá después del commit. El [informe de entrega](ronda7-C-cierre-pr10.md) contiene las salidas completas y el resultado final.
+- Validación de código: **436 pruebas en 34 archivos**; lint **0 errores y 10 advertencias**. El primer validador pasó V1–V17 y falló V0 por árbol sucio durante la corrección; después del commit `1aa48fc`, con el árbol limpio, pasa **18/18**. El [informe de entrega](ronda7-C-cierre-pr10.md) contiene las salidas completas y el resultado final.
 
 ## Qué se hizo
 - Fases 0–3 completadas: `notas/00_control.md`, `01_decisiones.md` (D1–D14, R1–R5), `02_fuentes.md` (10 fuentes confirmadas), `03_registro_cuentas.md` (71 cuentas), `04_derivados.md`.
@@ -57,6 +57,7 @@ Generar los 20 JSON deterministas de razones financieras que pide `instrucciones
 | 01 | Fase 1 — 20 razones: nota, investigación, JSON y check | Completado |
 | 02 | Fase 2 — consistencia y validaciones globales | Completado |
 | 03 | Fase 3 — reporte final y PR | Completado |
+| 04 | [Ronda 7 — reconciliación y preparación del PR #10](ronda7-C-cierre-pr10.md) | Completado para los requisitos enumerados; adjunto v8 completo no recibido |
 
 ## Próximo paso
-Cerrar V0 con el árbol limpio y presentar los cambios enumerados para revisión del equipo en el PR #10, con las salidas completas en su descripción. No fusionar el PR ni iniciar el motor de razones. Cualquier requisito adicional del adjunto v8 no disponible debe contrastarse cuando se aporte.
+Presentar los cambios enumerados para revisión del equipo en el PR #10, con las salidas completas en su descripción. No fusionar el PR ni iniciar el motor de razones. Cualquier requisito adicional del adjunto v8 no disponible debe contrastarse cuando se aporte.
