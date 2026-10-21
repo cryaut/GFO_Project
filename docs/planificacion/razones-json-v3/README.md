@@ -1,9 +1,9 @@
 # JSON autónomos de razones financieras v3
 
 - **Estado**: En revisión
-- **Responsable**: Alejandro (con agente IA)
+- **Responsable**: Cris Lumbi (decisiones); Carlos con Codex (correcciones de ronda 7)
 - **Rama**: `feat/razones-json-v3`
-- **Última actualización**: 2026-10-14
+- **Última actualización**: 2026-10-20
 
 ## Objetivo
 Generar los 20 JSON deterministas de razones financieras que pide `instrucciones_agente_json_razones_financieras_v3.md` (fórmulas del profesor, semántica N/D, promedios y botón de cálculo directo de m1), autosuficientes en `docs/razones_financieras/`, con sus notas de trabajo y checks contra el caso MUNO MODA S.A.
@@ -16,13 +16,23 @@ Generar los 20 JSON deterministas de razones financieras que pide `instrucciones
 | 3 | Fase 2: consistencia de ids/nombres/signos, sin marcadores, botón de m1 e insignias | Completado |
 | 4 | `npm test` y `npm run lint` en verde | Completado |
 | 5 | PR aprobado e integrado a `main` | Pendiente |
+| 6 | Ronda 7: estados alineados, numeración y conflictos de main | Aplicado; pruebas y lint correctos; comprobación final del validador con árbol limpio pendiente |
 
 ## Decisiones clave
-- Los JSON van en `docs/razones_financieras/` (ruta relativa pedida por el documento de instrucciones, dentro del proyecto porque pide ejecutar las pruebas del proyecto): **D-021**.
+- Los JSON van en `docs/razones_financieras/` (ruta relativa pedida por el documento de instrucciones, dentro del proyecto porque pide ejecutar las pruebas del proyecto): **D-028**.
 - Cada archivo es autónomo: catálogo, conjuntos, derivados y reglas completos, aunque se repitan (instrucción explícita; prevalece sobre la especificación, que prefiere un `financial-rules.json` único).
-- Convenciones de implementación no resueltas por el documento (literales `{"value": 365}`, refs a otra razón `{"ref": "ratio.<id>", "period": "previous_current"}`, conjuntos `bs.fixed_assets_components` y `bs.noncurrent_liabilities_components`, `parent_group` siempre con su conjunto completo incluido, depreciación acumulada `requires_data`): **D-022**.
-- El botón de cálculo directo de m1 va en las 11 razones de flujo (7, 8, 12–20), no en 9: el paréntesis del documento enumera 11 y la columna "m1 off" (9 con valor / 11 N/D) confirma 11 razones de flujo: **D-023**.
-- El separador decimal del formato numérico no se fija: queda como `DECISION_PENDIENTE` en `metadata.display` de los 20 JSON hasta que el usuario lo confirme: **D-024** (única decisión abierta).
+- Convenciones de implementación no resueltas por el documento (literales `{"value": 365}`, refs a otra razón `{"ref": "ratio.<id>", "period": "previous_current"}`, conjuntos `bs.fixed_assets_components` y `bs.noncurrent_liabilities_components`, `parent_group` siempre con su conjunto completo incluido, depreciación acumulada `requires_data`): **D-029**.
+- El botón de cálculo directo de m1 va en las 11 razones de flujo (7, 8, 12–20), no en 9: el paréntesis del documento enumera 11 y la columna "m1 off" (9 con valor / 11 N/D) confirma 11 razones de flujo: **D-030**.
+- El separador decimal se dejó abierto originalmente en **D-031**; **D-033** cerró esa decisión con formato F1. El control por razón de **D-030** fue reemplazado por el control global de **D-032**. La numeración vigente de las ocho decisiones del PR #10 es D-028 a D-035; D-036 registra su atribución a Cris Lumbi.
+
+## Ronda 7 (2026-10-20)
+
+- Copia aislada de `a87ef0a`, con `origin/main` `2c11c4d` incorporado mediante merge. Se conservan intactas D-001 a D-027 de main; se añaden las ocho decisiones renumeradas y D-036. Las referencias activas cambian; las salidas históricas dentro de bloques de evidencia conservan su numeración original.
+- Los 71 ids de los JSON coinciden en estado con el catálogo del PR #14 en `7e71ad8`: **1 verified, 65 partially_verified y 5 ambiguous**. Son 28 cuentas rebajadas, con 157 apariciones. El catálogo tiene además `is.interest_income`, fuera de estos JSON; no se añade en esta ronda.
+- Intangibles pasa a «no monetarios» en sus tres apariciones. No se cambian fórmulas ni otras definiciones. Las diferencias adicionales de alias y ambigüedades se reportan sin corregir.
+- La premisa de fuentes de la orden no coincide con `a87ef0a`: los JSON citan IFRS, no PGC, y amortización ya tiene una frase de IAS 38 sobre amortización. Se conserva esa cita; no se inventa una corrección de depreciación. Las fuentes anteriores no se presentan como reabiertas en esta ronda.
+- El adjunto completo `prompt_correccion_agente_razones_v8.md` no está disponible. Se aplican los requisitos enumerados en la ronda 7 y la sección 2 de la tarea maestra, sin certificar instrucciones adicionales de un documento no recibido.
+- Validación de código: **436 pruebas en 34 archivos**; lint **0 errores y 10 advertencias**. El primer validador pasó V1–V17 y falló V0 por árbol sucio durante la corrección; se repetirá después del commit. El [informe de entrega](ronda7-C-cierre-pr10.md) contiene las salidas completas y el resultado final.
 
 ## Qué se hizo
 - Fases 0–3 completadas: `notas/00_control.md`, `01_decisiones.md` (D1–D14, R1–R5), `02_fuentes.md` (10 fuentes confirmadas), `03_registro_cuentas.md` (71 cuentas), `04_derivados.md`.
@@ -49,4 +59,4 @@ Generar los 20 JSON deterministas de razones financieras que pide `instrucciones
 | 03 | Fase 3 — reporte final y PR | Completado |
 
 ## Próximo paso
-Esperar la revisión del equipo en el PR (`docs/reglas/flujo-de-trabajo.md`). Cualquier cambio de convención que surja en la revisión se registra como entrada nueva en `docs/decisiones.md`.
+Cerrar V0 con el árbol limpio y presentar los cambios enumerados para revisión del equipo en el PR #10, con las salidas completas en su descripción. No fusionar el PR ni iniciar el motor de razones. Cualquier requisito adicional del adjunto v8 no disponible debe contrastarse cuando se aporte.

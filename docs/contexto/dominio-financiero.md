@@ -173,7 +173,8 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 | Función | Qué calcula |
 |---|---|
 | `eoaf(cuenta, cambio, tipo)` | Clasifica un cambio como `'Origen'` o `'Aplicacion'`; `null` si el cambio es 0 |
-| `efeIndirecto(UN, ajustes)` | UN + suma de ajustes |
+| `efeIndirecto(UN, ajustes)` | UN + suma de ajustes (pruebas; la pestaña EFE usa `construirEFE`) |
+| `construirEFE(datos, inicial, final)` | EFE indirecto: operación (UN + depreciación + capital de trabajo), inversión, financiamiento y comprobación CFO+CFI+CFF = Δ efectivo (tolerancia 0.01). Dividendos = UN − ΔRE si hay utilidades acumuladas; depreciación = Δ de la magnitud de la depreciación acumulada |
 | `depAnualLineaRecta(costo, residual, vidaUtil)` | (costo − residual) / vida útil; 0 si la vida útil es ≤ 0 |
 | `depAcumulada(depAnual, anios, vidaUtil)` | depAnual × mín(años, vida útil) |
 | `valorEnLibros(costo, depAcumulada)` | costo − depreciación acumulada |
@@ -181,6 +182,8 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 | `saldoSemanal(ingreso, gastos, ahorro, reserva)` | ingreso − gastos − ahorro − reserva |
 | `capacidadAhorro(ingresos, gastos)` | ingresos − gastos (presupuesto personal) |
 | `tasaAhorro(capacidad, ingresos)` | capacidad / ingresos; `null` si los ingresos no son positivos |
+
+**Estado de Origen y Aplicación de Fondos (EOAF).** Se arma en `js/modules/analisis/eoaf-calculations.js` con el balance comparado de dos periodos (los dos más recientes, como el resto de Análisis). Cada variación se clasifica con el grupo y el tipo de `ACCOUNT_TYPES`: activo que aumenta = aplicación, activo que disminuye = origen; pasivo o patrimonio que aumenta = origen y que disminuye = aplicación; sin variación no genera movimiento. La depreciación acumulada se clasifica por la variación de su magnitud (magnitud creciente = origen) porque el modelo no guarda el gasto del periodo por separado. Los subtotales y totales solo suman saldos y no generan movimientos; la comprobación es `Σ orígenes − Σ aplicaciones` con tolerancia de C$ 0.01, sin redistribuir diferencias.
 
 **Punto de equilibrio y C-V-U.** `null` si falta un dato o el margen de contribución no es positivo.
 
@@ -239,7 +242,10 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 | `js/modules/estados/estados-import.js` | `importStatementFile(archivo, { decimal, avisos })`, `tableTextToFinancialData(texto, { decimal, avisos })`, `sheetsToFinancialData(hojas, { decimal, avisos })`, `parseAmountCell(valor, { decimal, onAmbiguous })`, `inferDecimalStyle(valores)`, `FORMATOS_IMPORTE`, `tabularTemplateCSV()` |
 | `js/modules/integracion/integracion-respaldo.js` | `validarRespaldo(contenido, actuales)` → `{ modulos, omitidos }`, `MAX_RESPALDO_BYTES` |
 | `js/modules/integracion/integracion-reporte.js` | `construirReporteHTML({ kpis, estados })` |
-| `js/modules/analisis/index.js` | `computeRazones(periodo)`, `computeAH`, `computeAV`, `computeDuPont`, `computeCNTCNO`, `computeEOAF`, `computeEFE`, `UMBRALES`, `refreshSavedStates()` (relee los estados guardados antes de reutilizar `computeRazones` fuera de Análisis) |
+| `js/modules/analisis/index.js` | `computeRazones(periodo)`, `computeAH`, `computeAV`, `computeDuPont`, `computeCNTCNO`, `computeEOAF(periods)` (EOAF completo: compara el par de periodos más recientes), `computeEFE`, `UMBRALES`, `refreshSavedStates()` (relee los estados guardados antes de reutilizar `computeRazones` fuera de Análisis) |
+| `js/modules/analisis/comprobacion-calculations.js` | `TOLERANCIA_COMPROBACION`, `toleranciaComprobacion(...totales)`, `seleccionarPeriodoPar(periodos, periodoFinal?)`, `variacionesDeCuentas(datos, grupo, periodoInicial, periodoFinal)`, `advertenciasDeBalance(periodos, bgInicial, bgFinal)` (piezas comunes de las comprobaciones del EOAF y el EFE, D-027) |
+| `js/modules/analisis/eoaf-calculations.js` | `clasificarMovimientoEOAF(grupo, tipo, saldoInicial, saldoFinal)`, `etiquetaFalta(motivo)`, `construirEOAF(datos, periodoInicial, periodoFinal)` → `{ periodos, incompleto?, secciones, resumen, advertencias, interpretacion }`, `interpretarEOAF(resultado)` |
+| `js/modules/analisis/efe-calculations.js` | `esResultadoAcumulado`, `construirEFE`, `interpretarEFE` (EFE por método indirecto, sin DOM ni store) |
 | `js/utils/format.js` | `formatCurrency`, `formatNumber`, `formatPercent`, `formatPercentRaw`, `parseNumber`. Convierten `null` en 0: verifica `null` antes de formatear |
 | `js/utils/html.js` | `escapeHTML(valor)` |
 | `js/modules/inventario/inventario-calculations.js` | `calcularInventario`, `kardex`, `resumenProducto`, `validarMovimiento` y el resto en `docs/api.md` |

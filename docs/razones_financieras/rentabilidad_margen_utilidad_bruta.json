@@ -151,14 +151,14 @@
       "doubtful_synonyms": [],
       "ambiguities": [],
       "research": {
-        "status": "verified",
+        "status": "partially_verified",
         "sources": [
           {
             "title": "IFRS 15 Revenue from Contracts with Customers",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
             "source_type": "accounting_standard",
-            "supports": "\"recognises revenue to depict the transfer of promised goods or services to the customer\". Frase textual de IFRS 15 Revenue from Contracts with Customers, abierto el 2026-10-15; confirma la definición de «Ventas de productos» (is.product_sales) (D-028)."
+            "supports": "\"recognises revenue to depict the transfer of promised goods or services to the customer\". Frase textual de IFRS 15 Revenue from Contracts with Customers, abierto el 2026-10-15; confirma la definición de «Ventas de productos» (is.product_sales) (D-035)."
           }
         ]
       }
@@ -180,14 +180,14 @@
       "doubtful_synonyms": [],
       "ambiguities": [],
       "research": {
-        "status": "verified",
+        "status": "partially_verified",
         "sources": [
           {
             "title": "IFRS 15 Revenue from Contracts with Customers",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
             "source_type": "accounting_standard",
-            "supports": "\"recognises revenue to depict the transfer of promised goods or services to the customer\". Frase textual de IFRS 15 Revenue from Contracts with Customers, abierto el 2026-10-15; confirma la definición de «Ingresos por servicios» (is.service_revenue) (D-028)."
+            "supports": "\"recognises revenue to depict the transfer of promised goods or services to the customer\". Frase textual de IFRS 15 Revenue from Contracts with Customers, abierto el 2026-10-15; confirma la definición de «Ingresos por servicios» (is.service_revenue) (D-035)."
           }
         ]
       }
@@ -209,14 +209,14 @@
       "doubtful_synonyms": [],
       "ambiguities": [],
       "research": {
-        "status": "verified",
+        "status": "partially_verified",
         "sources": [
           {
             "title": "IFRS 15 Revenue from Contracts with Customers",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
             "source_type": "accounting_standard",
-            "supports": "\"recognises revenue to depict the transfer of promised goods or services to the customer\". Frase textual de IFRS 15 Revenue from Contracts with Customers, abierto el 2026-10-15; confirma la definición de «Otras ventas ordinarias» (is.other_sales_revenue) (D-028)."
+            "supports": "\"recognises revenue to depict the transfer of promised goods or services to the customer\". Frase textual de IFRS 15 Revenue from Contracts with Customers, abierto el 2026-10-15; confirma la definición de «Otras ventas ordinarias» (is.other_sales_revenue) (D-035)."
           }
         ]
       }
@@ -320,14 +320,14 @@
       "doubtful_synonyms": [],
       "ambiguities": [],
       "research": {
-        "status": "verified",
+        "status": "partially_verified",
         "sources": [
           {
             "title": "IAS 2 Inventories",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
             "source_type": "accounting_standard",
-            "supports": "\"the carrying amount of those inventories is recognised as an expense\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Costo de ventas reportado» (is.cost_of_sales_reported) (D-028)."
+            "supports": "\"the carrying amount of those inventories is recognised as an expense\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Costo de ventas reportado» (is.cost_of_sales_reported) (D-035)."
           }
         ]
       }
@@ -349,14 +349,14 @@
       "doubtful_synonyms": [],
       "ambiguities": [],
       "research": {
-        "status": "verified",
+        "status": "partially_verified",
         "sources": [
           {
             "title": "IAS 2 Inventories",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
             "source_type": "accounting_standard",
-            "supports": "\"the carrying amount of those inventories is recognised as an expense\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Costo de mercadería vendida» (is.merchandise_cost) (D-028)."
+            "supports": "\"the carrying amount of those inventories is recognised as an expense\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Costo de mercadería vendida» (is.merchandise_cost) (D-035)."
           }
         ]
       }
@@ -378,14 +378,14 @@
       "doubtful_synonyms": [],
       "ambiguities": [],
       "research": {
-        "status": "verified",
+        "status": "partially_verified",
         "sources": [
           {
             "title": "IAS 2 Inventories",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
             "source_type": "accounting_standard",
-            "supports": "\"The cost of inventories includes all costs of purchase, costs of conversion\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Costo de productos vendidos» (is.product_cost) (D-028)."
+            "supports": "\"The cost of inventories includes all costs of purchase, costs of conversion\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Costo de productos vendidos» (is.product_cost) (D-035)."
           }
         ]
       }

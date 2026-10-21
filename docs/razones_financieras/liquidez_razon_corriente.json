@@ -141,7 +141,7 @@
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-7-statement-of-cash-flows/",
             "source_type": "accounting_standard",
-            "supports": "\"Cash comprises cash on hand and demand deposits\". Frase textual de IAS 7 Statement of Cash Flows, abierto el 2026-10-15; confirma la definición de «Efectivo y equivalentes» (bs.cash_and_equivalents) (D-028)."
+            "supports": "\"Cash comprises cash on hand and demand deposits\". Frase textual de IAS 7 Statement of Cash Flows, abierto el 2026-10-15; confirma la definición de «Efectivo y equivalentes» (bs.cash_and_equivalents) (D-035)."
           }
         ]
       }
@@ -163,14 +163,14 @@
       "doubtful_synonyms": [],
       "ambiguities": [],
       "research": {
-        "status": "verified",
+        "status": "partially_verified",
         "sources": [
           {
             "title": "IAS 7 Statement of Cash Flows",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-7-statement-of-cash-flows/",
             "source_type": "accounting_standard",
-            "supports": "\"Cash equivalents are short-term, highly liquid investments\". Frase textual de IAS 7 Statement of Cash Flows, abierto el 2026-10-15; confirma la definición de «Inversiones de corto plazo» (bs.short_term_investments) (D-028)."
+            "supports": "\"Cash equivalents are short-term, highly liquid investments\". Frase textual de IAS 7 Statement of Cash Flows, abierto el 2026-10-15; confirma la definición de «Inversiones de corto plazo» (bs.short_term_investments) (D-035)."
           }
         ]
       }
@@ -260,14 +260,14 @@
       "doubtful_synonyms": [],
       "ambiguities": [],
       "research": {
-        "status": "verified",
+        "status": "partially_verified",
         "sources": [
           {
             "title": "IAS 2 Inventories",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
             "source_type": "accounting_standard",
-            "supports": "\"Inventories are measured at the lower of cost and net realisable value\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de mercaderías» (bs.inventory_merchandise) (D-028)."
+            "supports": "\"Inventories are measured at the lower of cost and net realisable value\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de mercaderías» (bs.inventory_merchandise) (D-035)."
           }
         ]
       }
@@ -289,14 +289,14 @@
       "doubtful_synonyms": [],
       "ambiguities": [],
       "research": {
-        "status": "verified",
+        "status": "partially_verified",
         "sources": [
           {
             "title": "IAS 2 Inventories",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
             "source_type": "accounting_standard",
-            "supports": "\"The cost of inventories includes all costs of purchase, costs of conversion\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de materias primas» (bs.inventory_raw_materials) (D-028)."
+            "supports": "\"The cost of inventories includes all costs of purchase, costs of conversion\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de materias primas» (bs.inventory_raw_materials) (D-035)."
           }
         ]
       }
@@ -318,14 +318,14 @@
       "doubtful_synonyms": [],
       "ambiguities": [],
       "research": {
-        "status": "verified",
+        "status": "partially_verified",
         "sources": [
           {
             "title": "IAS 2 Inventories",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
             "source_type": "accounting_standard",
-            "supports": "\"costs of conversion (direct labour and production overhead)\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de productos en proceso» (bs.inventory_work_in_process) (D-028)."
+            "supports": "\"costs of conversion (direct labour and production overhead)\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de productos en proceso» (bs.inventory_work_in_process) (D-035)."
           }
         ]
       }
@@ -347,14 +347,14 @@
       "doubtful_synonyms": [],
       "ambiguities": [],
       "research": {
-        "status": "verified",
+        "status": "partially_verified",
         "sources": [
           {
             "title": "IAS 2 Inventories",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
             "source_type": "accounting_standard",
-            "supports": "\"the carrying amount of those inventories is recognised as an expense\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de productos terminados» (bs.inventory_finished_goods) (D-028)."
+            "supports": "\"the carrying amount of those inventories is recognised as an expense\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de productos terminados» (bs.inventory_finished_goods) (D-035)."
           }
         ]
       }
@@ -501,14 +501,14 @@
       "doubtful_synonyms": [],
       "ambiguities": [],
       "research": {
-        "status": "verified",
+        "status": "partially_verified",
         "sources": [
           {
             "title": "IAS 12 Income Taxes",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-12-income-taxes/",
             "source_type": "accounting_standard",
-            "supports": "\"to the extent that it is unpaid, recognised as a liability\". Frase textual de IAS 12 Income Taxes, abierto el 2026-10-15; confirma la definición de «Impuestos por pagar» (bs.taxes_payable) (D-028)."
+            "supports": "\"to the extent that it is unpaid, recognised as a liability\". Frase textual de IAS 12 Income Taxes, abierto el 2026-10-15; confirma la definición de «Impuestos por pagar» (bs.taxes_payable) (D-035)."
           }
         ]
       }
@@ -550,14 +550,14 @@
       "doubtful_synonyms": [],
       "ambiguities": [],
       "research": {
-        "status": "verified",
+        "status": "partially_verified",
         "sources": [
           {
             "title": "IAS 37 Provisions, Contingent Liabilities and Contingent Assets",
             "organization_or_author": "IFRS Foundation",
             "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-37-provisions-contingent-liabilities-and-contingent-assets/",
             "source_type": "accounting_standard",
-            "supports": "\"A provision is a liability of uncertain timing or amount\". Frase textual de IAS 37 Provisions, Contingent Liabilities and Contingent Assets, abierto el 2026-10-15; confirma la definición de «Provisiones corrientes» (bs.current_provisions) (D-028)."
+            "supports": "\"A provision is a liability of uncertain timing or amount\". Frase textual de IAS 37 Provisions, Contingent Liabilities and Contingent Assets, abierto el 2026-10-15; confirma la definición de «Provisiones corrientes» (bs.current_provisions) (D-035)."
           }
         ]
       }

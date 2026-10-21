@@ -3,8 +3,8 @@
 Este archivo **reemplaza** al `01_decisiones.md` de la ronda v3 (su contenido quedó en el historial de
 git; el motivo del reemplazo: la orden v6 cambió la R1 —de control por razón a **control global**— y
 agrega R1b, R2b, R2d y F1). Fuente única de esta versión: `prompt_correccion_agente_razones_v6.md`
-(2026-10-15). Las decisiones del proyecto (D-021…D-024) viven en `docs/decisiones.md`; las correcciones
-de D-023 (H1) y D-024 (H2) se aplican allí en el bloque B4.
+(2026-10-15). Las decisiones del proyecto (D-028…D-031) viven en `docs/decisiones.md`; las correcciones
+de D-030 (H1) y D-031 (H2) se aplican allí en el bloque B4.
 
 ## Decisiones financieras
 
@@ -48,6 +48,6 @@ de D-023 (H1) y D-024 (H2) se aplican allí en el bloque B4.
 ## Notas
 
 - La R1 de este archivo es la de la orden v6 (**control global** en `modo_periodo.control_global`);
-  sustituye a la lectura v3 de "control por razón" que recogía la entrada D-023.
+  sustituye a la lectura v3 de "control por razón" que recogía la entrada D-030.
 - Discrepancias con la solución del profesor: van en `razon.notes` de cada JSON con el prefijo
   `DIFERENCIA_CONOCIDA_PROFESOR:` (razones 7, 8, 12, 13, 14, 15, 18, 19).

@@ -25,6 +25,11 @@ Todos los cambios notables en GFO Toolkit.
 - Botón **Vista previa del reporte** (muestra el reporte en la página) y **Descargar reporte HTML**; antes el botón "Vista Previa HTML" descargaba el archivo.
 
 ### Módulo 3: Análisis Financiero
+- **EFE de tres actividades** (`efe-calculations.js`): el Estado de Flujo de Efectivo de la pestaña EFE se arma por método indirecto desde dos balances — Operación (utilidad neta + depreciación + capital de trabajo), Inversión (activos fijos) y Financiamiento (deuda, aportaciones y dividendos) — con la comprobación CFO + CFI + CFF = variación de efectivo (tolerancia C$ 0.01 + epsilon escalado). Antes `computeEFE` solo calculaba el CFO con tres ajustes y sin comprobación. (D-024)
+- Los dividendos se separan de las aportaciones con las cuentas de utilidades acumuladas (dividendos = UN − ΔRE); sin esas cuentas se usa la variación total del patrimonio con advertencia. (D-025)
+- La depreciación del periodo se estima con la variación de la depreciación acumulada, con advertencia si la cuenta está en signo positivo o si disminuye (posible baja de activos, cuyo reembolso entra en Inversión). (D-026)
+- Estados de la comprobación: `cuadra`, `no-cuadra` (con la diferencia exacta) e `incompleta` (cuenta sin saldo o sin clasificar, sin estado de resultados, sin efectivo); nunca se ajustan cifras ni se inventan datos. Intereses e impuestos quedan dentro de la utilidad neta.
+- Pruebas del EFE (`tests/unit/efe.test.js`): demo MUNO MODA 2023→2024 cuadra (CFO C$ 97,775; CFI C$ 0; CFF C$ −90,775; Δ efectivo C$ 7,000), caso sintético con capex, préstamo y dividendos, no-cuadra con diferencia exacta, depreciación en signo positivo, baja de activos fijos, fallback sin utilidades acumuladas, datos faltantes y escape HTML.
 - Nuevas razones: rotación de activos fijos, rotación de capital de trabajo y solvencia (Activos ÷ Pasivos).
 - Las razones extendidas y los totales se calculan con el motor compartido, por lo que cuentas importadas con nombres propios se suman correctamente.
 - Integración de la rama de razones: rotación de cuentas por pagar (reemplaza a la "rotación de pasivos"), edad del inventario y grupo "Endeudamiento y Cobertura" en la pestaña Razones.
@@ -37,6 +42,22 @@ Todos los cambios notables en GFO Toolkit.
 - Interpretación sin conclusiones falsas: las razones N/D no generan hallazgos ni insignias; si nada es calculable muestra "No hay indicadores calculables (N/D)".
 - DuPont sin `Infinity` ni `NaN`: un componente N/D anula el ROE y las tarjetas muestran N/D; la evolución entre periodos marca N/D cuando una razón no se calcula.
 - Una sola función por concepto en `calculate.js`: se eliminaron 5 funciones repetidas que impedían cargar la app y 4 equivalentes con otro nombre.
+- **Estado de Origen y Aplicación de Fondos (EOAF)**, la pestaña EOAF de Análisis: la lógica pura vive en `js/modules/analisis/eoaf-calculations.js` (`construirEOAF`, `clasificarMovimientoEOAF`, `interpretarEOAF`); antes `computeEOAF` clasificaba solo 6 agregados y contaba dos veces el mismo movimiento.
+- Cada cuenta del balance comparado (dos periodos más recientes) se clasifica con su grupo y tipo de `ACCOUNT_TYPES`: activo que aumenta = aplicación, que disminuye = origen; pasivo o patrimonio que aumenta = origen, que disminuye = aplicación; sin variación no genera movimiento.
+- Comprobación `Σ orígenes − Σ aplicaciones` con tolerancia de C$ 0.01, sin redistribuir diferencias: si no cuadra se muestra la cifra exacta y la interpretación lo dice.
+- La depreciación acumulada se clasifica por la variación de su magnitud (creciente = origen) y se informa que el modelo no guarda el gasto del periodo por separado; el retiro de un activo no duplica el movimiento.
+- Cuentas con saldo faltante o sin clasificar se reportan como filas con etiqueta ("Dato faltante", "Sin clasificar") y la comprobación queda "incompleta" en lugar de adivinar el dato.
+- Interfaz nueva: tabla Excel-like con secciones y subtotales (solo saldos), fila "Total Pasivos y Patrimonio", KPI de comprobación, notas e interpretación; los nombres de cuenta se escapan con `escapeHTML`.
+- Pruebas: `tests/unit/eoaf.test.js` con 24 casos (clasificación por grupo, depreciación, retiros, saldos en cero y negativos, selección de períodos, datos faltantes, cuadre y descuadre, escape de HTML y cuadre de la demo MUNO MODA con C$ 97,775 de cada lado).
+- **Comprobaciones del EOAF y del EFE con piezas comunes** (`comprobacion-calculations.js`): una sola `TOLERANCIA_COMPROBACION`, una sola `seleccionarPeriodoPar(periodos, periodoFinal?)`, `variacionesDeCuentas` y `advertenciasDeBalance`; reemplazan `TOLERANCIA_EOAF`, `TOLERANCIA_EFE`, `seleccionarPeriodoEFE` y las copias de cada módulo. (D-027)
+- EFE: un importe que no es número (en el balance o en el estado de resultados) ya no lanza ni deja vacía la pantalla de Análisis; la comprobación queda incompleta con el motivo. Antes `computeEFE` lanzaba "Importe inválido".
+- EFE: un cambio de cero se muestra `C$ 0.00` y no `C$ -0.00` (la demo lo mostraba en la fila de activos fijos).
+- EFE: avisa si el balance de un periodo no cumple A = P + O y si el estado de resultados del periodo final no tiene cuentas (utilidad neta = 0); sin estado de resultados ya no culpa a "cuentas sin clasificar"; si no hay diferencia que comprobar el estado queda incompleto en lugar de "No cuadra".
+- EFE: `computeEFE(period)` compara el cierre indicado con el periodo inmediatamente anterior (antes ignoraba `period`); la interpretación dice si la operación genera o consume efectivo, si alcanza para la inversión y qué hizo el financiamiento.
+- EFE: `esResultadoAcumulado` reconoce el singular ("Utilidad acumulada", "Resultado acumulado", "Utilidad retenida") y las cuentas del resultado del ejercicio, para no repartir mal dividendos y aportaciones.
+- EOAF: con la comprobación incompleta los totales de orígenes, aplicaciones y diferencia son N/D (antes mostraban sumas parciales como cifras firmes); un saldo que no es número cuenta como dato faltante y ya no se concatena como texto en los subtotales.
+- Pestañas EOAF y EFE: insignia, tarjetas de motivos y notas, interpretación y pie comparten una sola implementación; el pie toma la tolerancia de la constante y aclara qué significa "Cuadra".
+- Pruebas: `tests/unit/comprobacion.test.js` (módulo compartido) y casos nuevos en `efe.test.js` y `eoaf.test.js` que fallan con el código anterior (importe inválido, `-0`, totales N/D, dividendos con utilidad del ejercicio, `computeEFE(period)`).
 
 ### Apalancamiento (GAO, GAF y GAT)
 - Fórmulas en `calculate.js`: `gao`, `gaf` y `gat` (estructurales), `gaoVariacion`, `gafVariacion` y `gatVariacion` (entre dos periodos), `tasaEfectiva`, `tasaImpuesto`, `denominadorGaf` y la constante `TASA_IR_DEFECTO` (30 %). Devuelven N/D si falta un dato o el denominador es 0.
@@ -110,7 +131,8 @@ Todos los cambios notables en GFO Toolkit.
 - `docs/contexto/` (arquitectura y dominio financiero) y `docs/reglas/` (flujo de trabajo, código, y pruebas y documentación).
 - Plantilla de Pull Request en `.github/` y planificación con una carpeta por feature en `docs/planificacion/`.
 - `docs/api.md` documenta las razones agregadas, `DIAS_ANIO`, `saldoPromedio`, `variacion` y `escapeHTML`.
-- `docs/razones_financieras/`: 20 JSON autónomos de razones financieras v3 (fórmulas del profesor, semántica N/D, promedios de saldos de cierre y botón de cálculo directo de m1) con sus notas `notas/` y `ratios/NN_*.md`; `notas/05_checks.md` valida 40/40 celdas del caso MUNO MODA S.A. y los conteos 9/11, 15/5 y 15/5. Decisiones D-021 a D-023 en `docs/decisiones.md`.
+- `docs/razones_financieras/`: 20 JSON autónomos de razones financieras v3 (fórmulas del profesor, semántica N/D, promedios de saldos de cierre y botón de cálculo directo de m1) con sus notas `notas/` y `ratios/NN_*.md`; `notas/05_checks.md` valida 40/40 celdas del caso MUNO MODA S.A. y los conteos 9/11, 15/5 y 15/5. Decisiones D-028 a D-030 en `docs/decisiones.md`.
+- Ronda 7 del PR #10: se alinean los estados de sus 71 cuentas con el catálogo `7e71ad8` (1 verificada, 65 parciales, 5 ambiguas), se corrige intangibles a no monetarios y se conservan las fórmulas. D-028–D-035 y D-036 resuelven numeración y atribución a Cris Lumbi; las decisiones D-001–D-027 de main permanecen intactas.
 
 ---
 

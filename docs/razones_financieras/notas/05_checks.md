@@ -90,10 +90,10 @@ RESULTADO: 3/3 validaciones sin fallos
 
 Aplica `modo_periodo.control_global` (mismo id en los 11 JSON de flujo, `null` en los 9 de punto) y
 completa `presentacion` con los separadores y decimales F1 en los 20 JSON. Corrige además
-`docs/decisiones.md`: D-023 (control global, se elimina la atribución «el equipo confirmó» — H7) y
-D-024 (de Abierta a Cerrada: separador decimal `.` y de miles `,` — H2).
+`docs/decisiones.md`: D-030 (control global, se elimina la atribución «el equipo confirmó» — H7) y
+D-031 (de Abierta a Cerrada: separador decimal `.` y de miles `,` — H2).
 
-**Ajuste de V12 documentado aquí (H8; desviación registrada, D-027).** La primera corrida de B4 falló con `marcador "dato
+**Ajuste de V12 documentado aquí (H8; desviación registrada, D-034).** La primera corrida de B4 falló con `marcador "dato
 faltante"` en los 20 archivos: la frase venía del bloque `reglas_generales` **verbatim** de la orden
 («Un dato faltante nunca se convierte en número: el resultado es not_available con motivo.»), que V8
 exige copiar sin cambios. El marcador que R3 prohíbe es el placeholder entre corchetes
@@ -101,7 +101,7 @@ exige copiar sin cambios. El marcador que R3 prohíbe es el placeholder entre co
 patrón de V12 a los marcadores reales de R3 (corchetes/mayúsculas + `TODO` mayúsculas + `pendiente`
 palabra completa + `DECISION_PENDIENTE` + `???`), no a los datos; el detalle está en la cabecera del
 script. Relajar V12 a mitad de bloque fue una desviación de la orden v6; la orden v7 la
-registra aquí y la remite a **D-027** (los marcadores se buscan como placeholder: entre corchetes o
+registra aquí y la remite a **D-034** (los marcadores se buscan como placeholder: entre corchetes o
 en mayúsculas; la prosa en minúscula de `reglas_generales` no cuenta).
 
 Comando: `node notas\validador_v6.mjs --solo V8,V9,V10,V12,V13,V17`
@@ -365,7 +365,7 @@ Por cada commit de la orden: `git diff --stat <padre> <hijo>` con su salida lite
 mapeo de cada archivo cambiado a su fila R-ID de `01_diferencias.md`. Revisión de alcance con
 `git diff --name-only <padre> <hijo>` por bloque: todos los cambios están en
 `docs/razones_financieras/` (JSON y `notas/`) salvo `docs/decisiones.md` en B4, la excepción
-permitida por la regla 6 de la orden (solo D-023 y D-024). Sin cambios fuera de alcance → nada que
+permitida por la regla 6 de la orden (solo D-030 y D-031). Sin cambios fuera de alcance → nada que
 revertir.
 
 Además, en esta fase se completó el inventario con **R-50** (nota por razón del bloque B5), fila que
@@ -520,9 +520,9 @@ Comando: `git diff --stat b0c9f0b 2fe3c5d`
 
 → **R-IDs:** R-25 (`modo_periodo` de flujo con un único `control_global`), R-26 (`control_global:
   null` en las 9 de saldo), R-29 (formato F1: `separador_decimal` `.`, `separador_miles` `,`), R-42
-  (H1: 20 JSON + D-023 corregida), R-43 (H2: D-024 marcada decidida), R-44 (H3: fuera
+  (H1: 20 JSON + D-030 corregida), R-43 (H2: D-031 marcada decidida), R-44 (H3: fuera
   `DECISION_PENDIENTE`), R-48 (H7: fuera la atribución «el equipo confirmó»).
-→ **Archivos:** 20 JSON + `docs/decisiones.md` (excepción de la regla 6: solo D-023 y D-024) +
+→ **Archivos:** 20 JSON + `docs/decisiones.md` (excepción de la regla 6: solo D-030 y D-031) +
   `notas/05_checks.md` + `notas/validador_v6.mjs` (ajuste de V12 documentado en la sección B4:
   marcadores-placeholder de R3, no debilitamiento; se reporta también en G5) = 23 (20 + 3 ✓).
 
@@ -594,8 +594,8 @@ vuelven a ejecutar aquí cuando el comando es corto.
    del `6ccf187`) y sección G4 (diff por bloque + R-IDs); línea base en `00_linea_base.md` (commit
    inicial `2a607c1`, SHA-256 de 20 JSON + 6 notas) e inventario R-01…R-50 en `01_diferencias.md`
    (commit `68f1a6a`).
-2. **H1 a H8 cerrados, cada uno con su evidencia.** H1 y H7 → sección B4 y filas R-42/R-48 (D-023
-   corregida en `docs/decisiones.md`); H2 → sección B4 y R-43 (D-024 cerrada, formato F1 en los 20);
+2. **H1 a H8 cerrados, cada uno con su evidencia.** H1 y H7 → sección B4 y filas R-42/R-48 (D-030
+   corregida en `docs/decisiones.md`); H2 → sección B4 y R-43 (D-031 cerrada, formato F1 en los 20);
    H3 → V12/V13 de la sección B4 y R-44; H4 → sección B2, `03_fuentes.md` y R-45; H5 → PR #10
    (punto 10 abajo); H6 → punto 11 abajo (git log); H8 → sección H8 de este archivo.
 3. **Los 20 archivos tienen la estructura de "Estructura".**
@@ -812,7 +812,7 @@ Comprobación de C1 (orden, punto 6): `Select-String docs\decisiones.md -Pattern
 `0 hit`; `Select-String docs\planificacion\razones-json-v3\README.md -Pattern "el equipo confirmó"` →
 `0 hit`; `Select-String docs\decisiones.md -Pattern "### D-02[5-8]"` → `4 hit`.
 
-### Tras C2 — commit `7abe351` (auditoría de fuentes, D-028)
+### Tras C2 — commit `7abe351` (auditoría de fuentes, D-035)
 
 Comando: `node notas\validador_v6.mjs` (desde `docs/razones_financieras`)
 
@@ -841,12 +841,12 @@ RESULTADO: 18/18 validaciones sin fallos
 exit=0
 ```
 
-Los conteos confirman el efecto de D-028: `verified` pasa de 62 a 29 y `partially_verified` de 4 a
+Los conteos confirman el efecto de D-035: `verified` pasa de 62 a 29 y `partially_verified` de 4 a
 37; las 5 `ambiguous` no cambian. El script de aplicación (fuera del repo) verificó además, archivo
 por archivo antes de escribir, que el SHA-256 canónico "sin `cuentas[].research`" era idéntico al de
 la línea base G0: `OK: 20 archivos escritos; KEEP=29 DROP=33; hash sin research intacto en los 20`.
 
-### Tras C3 — commit `ba3db23` (notas: punto 11, V14, V12/D-027, rutas)
+### Tras C3 — commit `ba3db23` (notas: punto 11, V14, V12/D-034, rutas)
 
 Comando: `node notas\validador_v6.mjs` (desde `docs/razones_financieras`)
 
@@ -975,7 +975,7 @@ state=open merged=false head=ba3db2305e2c24ab152a2f52468bef5e21e7d546 base=main
 body_len=8170 updated=2026-10-16T23:31:19Z
 ```
 
-El cuerpo nuevo describe los 4 commits de v7 (`e4432ec…ba3db23`), las decisiones D-023…D-028, el
+El cuerpo nuevo describe los 4 commits de v7 (`e4432ec…ba3db23`), las decisiones D-030…D-035, el
 conteo de fuentes (29 `verified` / 37 `partially_verified` / 5 `ambiguous`), el resultado de G3
 (18/18 en worktree, 0 diferencias) y las pruebas (375 tests; lint 0 errores). Sin frases sobre el
 motor, sin aprobaciones de nadie y sin "correcciones aplicadas" sin evidencia. Tras el push normal
@@ -1017,10 +1017,10 @@ homónimas de este archivo.
    `Select-String docs\decisiones.md -Pattern "el equipo confirmó"` → `0 hit`;
    `Select-String docs\planificacion\razones-json-v3\README.md -Pattern "el equipo confirmó"` → `0 hit`.
 
-7. **D-023 a D-028 presentes; D-023 y D-024 con su estado de reemplazo.** Comando:
+7. **D-030 a D-035 presentes; D-030 y D-031 con su estado de reemplazo.** Comando:
    `Select-String docs\decisiones.md -Pattern "### D-02[3-8]"` → `6 hit`; los estados en el cuerpo
-   y en la tabla son: D-023 `Reemplazada por D-025`, D-024 `Cerrada por D-026`, D-025/D-027/D-028
-   `Vigente`, D-026 `Cerrada`.
+   y en la tabla son: D-030 `Reemplazada por D-032`, D-031 `Cerrada por D-033`, D-032/D-034/D-035
+   `Vigente`, D-033 `Cerrada`.
 
 8. **`npm test` y `npm run lint`: conteo exacto.** Comandos y salidas (2026-10-15, tras los 4 commits
    de v7):
