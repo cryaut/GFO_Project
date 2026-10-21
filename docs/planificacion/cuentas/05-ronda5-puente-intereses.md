@@ -8,11 +8,11 @@ Se elige el campo opcional `agrupadoEn: 'is.nonoperating_income'` en `is.interes
 
 Catálogo `2026-10-20.1`: siguen siendo 72 cuentas, 1 verificada, 66 parciales y 5 ambiguas. La aprobación del agrupamiento no añade evidencia externa ni eleva estados de investigación. API, dominio e investigación documentan la relación. Las consultas por id siguen consultando ese id; el campo no ejecuta una agregación automática ni demuestra la aceptación de un motor futuro.
 
-## Sinónimos: conflicto detectado en el encargo
+## Sinónimos: criterio aprobado por Carlos (D-052)
 
-La exigencia «ningún sinónimo aparece en dos cuentas» contradice siete alias exactos compartidos ya existentes, que forman ocho colisiones al aplicar la normalización del identificador. Varias están probadas para exigir contexto o confirmación; eliminarlas cambiaría la identificación anterior y D-031. Se consultó a Carlos sobre conservar esos casos o ampliar la depuración. Mientras no se cierre esa elección, se conserva el comportamiento previo y se añade una guardia contra colisiones nuevas o cambios en las cuentas participantes.
+La exigencia «ningún sinónimo aparece en dos cuentas» contradice siete alias exactos compartidos ya existentes, que forman ocho colisiones al aplicar la normalización del identificador. Varias están probadas para exigir contexto o confirmación; eliminarlas cambiaría la identificación anterior y D-031. Se consultó a Carlos sobre conservar esos casos o ampliar la depuración. El 2026-10-20 aprobó expresamente «Conservar los ambiguos existentes y bloquear duplicados nuevos».
 
-La guardia **no equivale a unicidad absoluta**. No se da por cerrado ese requisito literal ni se eliminan aliases adicionales. La depuración completa sigue pendiente de decisión; no se atribuye su aprobación a Cris.
+Con D-052 se cierra este pendiente: se conservan los ocho cruces documentados y la prueba existente impide otros cruces o cambios en las cuentas participantes. La guardia **no equivale a unicidad absoluta**; ese requisito literal queda sustituido por el criterio aprobado por Carlos, sin atribuir esta decisión a Cris. La depuración completa de los casos heredados queda fuera del alcance acordado.
 
 | Sinónimo normalizado compartido | Cuentas existentes |
 |---|---|
@@ -48,6 +48,8 @@ Las pruebas nuevas comprueban la relación D-051, ambos tipos, la nota, la retir
 ```
 
 ## Comparación en lectura y límites
+
+El cierre de D-052 solo registra la aprobación en la documentación y el informe del PR; no modifica código ni pruebas. La validación de 754 casos anterior sigue correspondiendo al código vigente y no se presenta como una ejecución repetida por esta actualización documental.
 
 La [tabla de comparación de utilidad](06-comparacion-utilidad-json.md) fija referencias inmutables de la app y de `feat/razones-json-v3`, indica ids y líneas y clasifica diferencias sin proponer arreglos. Se revisan los 20 JSON; tres definen `derived.net_income`. No se ejecuta ni modifica el nuevo motor.
 

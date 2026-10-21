@@ -90,6 +90,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-047 | Propagar N/D en operandos numéricos obligatorios | Vigente |
 | D-048 | Proteger operaciones previas de Análisis | Vigente |
 | D-051 | Intereses ganados como componente de ingresos no operativos | Vigente |
+| D-052 | Conservar sinónimos ambiguos heredados y bloquear cruces nuevos | Vigente |
 
 ## Decisiones
 
@@ -953,3 +954,24 @@ Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama de
 **Para revertirla.** Retirar el campo y ajustar la nota del catálogo, sus pruebas, API e investigación mediante una decisión posterior coordinada. No requiere cambiar fórmulas actuales.
 
 **Referencias.** [Ronda 5](planificacion/cuentas/05-ronda5-puente-intereses.md), [comparación de utilidad](planificacion/cuentas/06-comparacion-utilidad-json.md), [PR #14](https://github.com/cryaut/GFO_Project/pull/14), instrucciones_carlos_pr14_ronda5.md recibidas por Carlos.
+
+### D-052 — Conservar sinónimos ambiguos heredados y bloquear cruces nuevos
+
+- **Fecha**: 2026-10-20
+- **Estado**: Vigente
+- **Decidió**: Carlos, elección expresa en el chat al aclarar el requisito de sinónimos de la ronda 5
+- **Área**: Criterio de validación del catálogo y documentación del PR #14
+
+**Contexto.** La ronda 5 pedía unicidad absoluta de sinónimos, pero el catálogo ya tenía siete alias exactos compartidos y ocho cruces tras normalizar. Eliminar todos esos casos cambiaría la identificación previa y las ambigüedades que D-031 y el corpus conservan para pedir contexto o confirmación.
+
+**Opciones.**
+1. Conservar los casos heredados documentados y bloquear cruces nuevos — mantiene la compatibilidad y hace visibles las excepciones.
+2. Ampliar el alcance para depurar los casos existentes — permitiría buscar unicidad absoluta, pero cambiaría la identificación y requeriría revisar cada caso.
+
+**Decisión.** Carlos aprueba «Conservar los ambiguos existentes y bloquear duplicados nuevos». Se mantienen los ocho cruces normalizados enumerados en el informe de ronda 5. La prueba existente compara ese conjunto y sus cuentas participantes para detectar otros cruces o cambios; este criterio sustituye la exigencia literal de unicidad absoluta para esta entrega.
+
+**Consecuencias.** Se cierra el pendiente de sinónimos sin modificar catálogo, identificador, fórmulas ni pruebas. No se afirma que todos los sinónimos sean únicos ni se autoriza depurar los casos heredados. D-031 y D-051 se conservan; esta elección se atribuye a Carlos, sin atribuirla a Cris.
+
+**Para revertirla.** Acordar la revisión de los casos heredados, registrar una decisión posterior y actualizar catálogo, corpus y guardia junto con las regresiones de identificación afectadas.
+
+**Referencias.** [Ronda 5 y lista de cruces](planificacion/cuentas/05-ronda5-puente-intereses.md), `tests/unit/cuentas-identificador.test.js`, [PR #14](https://github.com/cryaut/GFO_Project/pull/14), aprobación expresa de Carlos en el chat del 2026-10-20.
