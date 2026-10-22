@@ -166,11 +166,11 @@ Estado inicial auditado en `1481e79`. No se reemplazan las correcciones autoriza
 | R-71 | T3: ficha con separador fijado y sin decisión abierta | Cumplido tras T3, con referencia vigente D-033 | La ficha ya remite a D-033 cerrada; se hará explícita la frase de cierre conservando la numeración actual. |
 | R-72 | G0: línea base v8 en a87ef0a y 20 hashes canónicos | Cumplido | `00_linea_base_v8.md`, hashes leídos directamente de Git. |
 | R-73 | G1: filas R-66 en adelante, con estado y evidencia | Cumplido | Esta tabla. |
-| R-74 | G2: commits separados para tareas 1, 2 y 3 con V0–V17 | No cumplido | Se crearán commits normales y se registrará cada salida limpia en 05_checks. |
+| R-74 | G2: commits separados para tareas 1, 2 y 3 con V0–V17 | Cumplido: un commit por tarea y 18/18 tras cada uno | Se crearán commits normales y se registrará cada salida limpia en 05_checks. |
 | R-75 | G3: cero diferencias fuera de research contra a87ef0a | No cumplido por cambios heredados | Tres definiciones de intangibles fueron corregidas a no monetarios en `1aa48fc`; se conservarán por la orden de R8 de no reemplazar rondas anteriores. Se informará también la comparación incremental desde 1481e79. |
-| R-76 | G4: estadística por commit y correspondencia con IDs | No cumplido | Se registrará al finalizar. |
-| R-77 | G5: declarar listo únicamente si G0–G4 pasan | Aplicable | No se declarará G3=0 global ni listo para revisión mientras exista la diferencia heredada. |
+| R-76 | G4: estadística por commit y correspondencia con IDs | Cumplido: estadísticas por commit | Se registrará al finalizar. |
+| R-77 | G5: declarar listo únicamente si G0–G4 pasan | Cumplido: estado bloqueado en G3 estricto | No se declarará G3=0 global ni listo para revisión mientras exista la diferencia heredada. |
 | R-78 | R8 T3b: quitar línea en blanco extra antes de D-028 | Cumplido | El diff contra main muestra un salto adicional al final de D-027; se quitará sin alterar su contenido. |
-| R-79 | R8 T3c: salidas completas del commit final en el PR | No cumplido | Se adjuntarán npm test, lint y validador en la descripción y en el reporte. |
+| R-79 | R8 T3c: salidas completas del commit final en el PR | Salidas completas finales en reporte y descripción del PR | Se adjuntarán npm test, lint y validador en la descripción y en el reporte. |
 
 **G1 v8: pasa como inventario inicial; G3 literal continúa no cumplido y no se oculta.**

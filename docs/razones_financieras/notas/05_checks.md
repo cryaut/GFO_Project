@@ -1160,3 +1160,200 @@ OK   V17
 CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=0 partially=66 ambiguous=5 notas_DIFERENCIA=8
 RESULTADO: 18/18 validaciones sin fallos
 ```
+
+## Ronda 8 v8 — G2 tras R8 T3b, línea en blanco
+
+Commit comprobado: `9093623247c843a0e9bfd258b49540c330be761a`. Comando desde `docs/razones_financieras`: `node notas/validador_v6.mjs`. Árbol limpio al ejecutar; validador sin modificaciones. Esta salida pertenece a la secuencia definitiva, comprobada de nuevo después de este commit.
+
+```text
+validador_v6 | raiz=C:\Users\carlo\Desktop\02 - Proyectos\Programacion\GFO Project\revision-ronda8-pr10\docs\razones_financieras | archivos JSON=20 | 18 validaciones
+OK   V0
+OK   V1
+OK   V2
+OK   V3
+OK   V4
+OK   V5
+OK   V6
+OK   V7
+OK   V8
+OK   V9
+OK   V10
+OK   V11
+OK   V12
+OK   V13
+OK   V14
+OK   V15
+OK   V16
+OK   V17
+CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=0 partially=66 ambiguous=5 notas_DIFERENCIA=8
+RESULTADO: 18/18 validaciones sin fallos
+```
+
+## Ronda 8 v8 — secuencia definitiva y G2
+
+La primera secuencia de siete commits se preparó localmente y nunca se publicó. Se conserva íntegra en la rama local `audit/ronda8-pr10-primera-secuencia`, punta `aebe1a1aafca29e14f5d0493703bfcb4d9eca04a`. Antes de publicar se creó otra rama y otro worktree desde `1481e79`, sin amend, rebase, reset ni force. La entrega definitiva tiene exactamente un commit completo por tarea y se ejecutó de nuevo V0–V17 después de cada uno. Los logs anteriores no se presentan como logs de esta secuencia.
+
+| Etapa | Commit definitivo | IDs | Validación |
+|---|---|---|---|
+| g0 | `9274bf8ec47de309a4a6efcd124a77b36fc48e88` | R-72/R-73 | V0–V17: 18/18 |
+| t1 | `2b355dbda2e857ed5138bae608574628ea902bf4` | R-66…R-69 | V0–V17: 18/18 |
+| t2 | `33d0f087cdbac8cc1e8fd4faeed3a5fa3882dd71` | R-70 | V0–V17: 18/18 |
+| t3 | `6ee489e11e3370dd4326c0ae9453ec31649422c0` | R-71 | V0–V17: 18/18 |
+| blank | `9093623247c843a0e9bfd258b49540c330be761a` | R-78 | V0–V17: 18/18 |
+
+## Ronda 8 v8 — G3 en copia temporal
+
+Comandos y alcance:
+
+```text
+git worktree add --detach ../revision-ronda8-pr10-g3-final HEAD
+cd ../revision-ronda8-pr10-g3-final/docs/razones_financieras
+node notas/validador_v6.mjs
+python ../review-evidence/ronda8-pr10/close_final.py g3
+```
+
+La comparación canónica parsea los 20 JSON; retira exclusivamente `cuentas[].research`, ordena claves recursivamente, serializa UTF-8 con `ensure_ascii=False`, `sort_keys=True`, separadores `,` y `:`, preserva el orden de arreglos y calcula SHA-256. La línea base G0 contiene los 20 hashes de a87ef0a.
+
+Esta comprobación se repite en el commit documental final en esta copia temporal; el SHA y las salidas finales completas se entregan en `ronda8-T3-pr10.md` y en el PR. No se atribuye a un commit una ejecución anterior.
+
+```text
+validador_v6 | raiz=C:\Users\carlo\Desktop\02 - Proyectos\Programacion\GFO Project\revision-ronda8-pr10-g3-final\docs\razones_financieras | archivos JSON=20 | 18 validaciones
+OK   V0
+OK   V1
+OK   V2
+OK   V3
+OK   V4
+OK   V5
+OK   V6
+OK   V7
+OK   V8
+OK   V9
+OK   V10
+OK   V11
+OK   V12
+OK   V13
+OK   V14
+OK   V15
+OK   V16
+OK   V17
+CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=0 partially=66 ambiguous=5 notas_DIFERENCIA=8
+RESULTADO: 18/18 validaciones sin fallos
+```
+
+```text
+JSON comparados=20
+G3 estricto contra a87ef0a: archivos con diferencias fuera de research=3; campos=3
+Incremental contra 1481e79: archivos con diferencias fuera de research=0; campos=0
+```
+
+| Archivo | Ruta JSON | Cambio heredado de 1aa48fc |
+|---|---|---|
+| `actividad_rotacion_activos_totales.json` | `/cuentas/28/definition` | `bs.intangible_assets.definition`: monetarios → no monetarios |
+| `endeudamiento_razon_deuda_total.json` | `/cuentas/20/definition` | `bs.intangible_assets.definition`: monetarios → no monetarios |
+| `rentabilidad_roa.json` | `/cuentas/45/definition` | `bs.intangible_assets.definition`: monetarios → no monetarios |
+
+La orden de ronda 8 conserva las rondas 3–7. No se revierte la definición autorizada ni se normaliza o excluye ese campo del hash para fabricar cero. G3 literal **no cumplido**; la comparación incremental prueba que esta ronda no añade diferencias fuera de research.
+
+## Ronda 8 v8 — G4 y alcance
+
+
+```text
+commit 9274bf8
+Author: Carlos Castillo <carlosrenato05200@gmail.com>
+
+    docs: registra la línea base y auditoría v8 de ronda 8
+
+ docs/razones_financieras/notas/00_linea_base_v8.md | 35 ++++++++++++++++++++++
+ docs/razones_financieras/notas/01_diferencias.md   | 23 ++++++++++++++
+ 2 files changed, 58 insertions(+)
+```
+
+```text
+commit 2b355db
+Author: Carlos Castillo <carlosrenato05200@gmail.com>
+
+    fix: retira las cuatro fuentes no específicas de v8
+
+ .../actividad_rotacion_activos_fijos.json          | 10 +-------
+ .../actividad_rotacion_activos_totales.json        | 10 +-------
+ .../endeudamiento_cobertura_interes.json           | 20 ++-------------
+ .../endeudamiento_razon_deuda_patrimonio.json      | 10 +-------
+ .../endeudamiento_razon_deuda_total.json           | 10 +-------
+ docs/razones_financieras/notas/01_diferencias.md   | 12 ++++-----
+ docs/razones_financieras/notas/03_fuentes.md       | 12 ++++++---
+ docs/razones_financieras/notas/05_checks.md        | 28 ++++++++++++++++++++
+ .../rentabilidad_margen_utilidad_neta.json         | 20 ++-------------
+ .../rentabilidad_margen_utilidad_operativa.json    | 20 ++-------------
+ docs/razones_financieras/rentabilidad_roa.json     | 30 +++-------------------
+ docs/razones_financieras/rentabilidad_roe.json     | 30 +++-------------------
+ 12 files changed, 58 insertions(+), 154 deletions(-)
+```
+
+```text
+commit 33d0f08
+Author: Carlos Castillo <carlosrenato05200@gmail.com>
+
+    fix: rebaja efectivo al no poder abrir la norma en v8
+
+ .../actividad_rotacion_activos_totales.json        | 12 ++--------
+ .../endeudamiento_razon_deuda_total.json           | 12 ++--------
+ .../liquidez_capital_trabajo_neto.json             | 12 ++--------
+ .../razones_financieras/liquidez_prueba_acida.json | 12 ++--------
+ .../liquidez_razon_corriente.json                  | 12 ++--------
+ docs/razones_financieras/notas/01_diferencias.md   |  2 +-
+ docs/razones_financieras/notas/03_fuentes.md       | 12 +++++++++-
+ docs/razones_financieras/notas/05_checks.md        | 28 ++++++++++++++++++++++
+ docs/razones_financieras/rentabilidad_roa.json     | 12 ++--------
+ 9 files changed, 52 insertions(+), 62 deletions(-)
+```
+
+```text
+commit 6ee489e
+Author: Carlos Castillo <carlosrenato05200@gmail.com>
+
+    docs: explicita el cierre del separador de la ficha v8
+
+ docs/planificacion/razones-json-v3/README.md     |  2 +-
+ docs/razones_financieras/notas/01_diferencias.md |  2 +-
+ docs/razones_financieras/notas/05_checks.md      | 28 ++++++++++++++++++++++++
+ 3 files changed, 30 insertions(+), 2 deletions(-)
+```
+
+```text
+commit 9093623
+Author: Carlos Castillo <carlosrenato05200@gmail.com>
+
+    docs: retira el salto adicional antes de D-028
+
+ docs/decisiones.md                               |  1 -
+ docs/razones_financieras/notas/01_diferencias.md |  2 +-
+ docs/razones_financieras/notas/05_checks.md      | 28 ++++++++++++++++++++++++
+ 3 files changed, 29 insertions(+), 2 deletions(-)
+```
+
+Este commit documental solo cierra R-74…R-79 y las evidencias. Su estadística exacta también se entrega en el reporte final externo y en el PR.
+
+```json
+{
+  "counts": {
+    "partially_verified": 66,
+    "ambiguous": 5
+  },
+  "occurrences_checked": {
+    "bs.accumulated_depreciation": 4,
+    "bs.cash_and_equivalents": 6,
+    "is.operating_depreciation": 5,
+    "is.operating_amortization": 5,
+    "bs.current_year_result_equity": 2
+  },
+  "research_appearances_changed": 22,
+  "protected_occurrences_unchanged": 38,
+  "decisions_001_027_identical": true,
+  "app_and_tests_diff_main": 0,
+  "validator_unchanged": true
+}
+```
+
+Las 20 versiones finales de JSON coinciden íntegramente con `aebe1a1`: ninguna diferencia de bytes en sus blobs Git. Las cinco cuentas ambiguous (15 apariciones) y cuatro internas (23 apariciones) conservan todos sus campos. Se revisaron las 364 apariciones de 71 ids; solo cambian 22 objetos research de cinco ids.
+
+**Estado: bloqueado en G3 estricto.** G2 cumple la forma de un commit por tarea y sus validaciones. No hay fallos V0–V17, pero persisten las tres diferencias heredadas contra a87ef0a; el incremento desde 1481e79 es cero fuera de research. No se declara «listo para revisión» según la condición literal de v8. Se conserva el estado previo del PR y no se fusiona. Preguntas: ninguna; la diferencia se informa sin revertir las rondas aprobadas.
