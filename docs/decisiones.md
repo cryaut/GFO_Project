@@ -669,7 +669,6 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 **Para revertirla.** Restaurar las constantes y `seleccionarPeriodo*` en cada `*-calculations.js`, quitar `comprobacion-calculations.js` y `tests/unit/comprobacion.test.js`, y revertir los casos nuevos de `efe.test.js` y `eoaf.test.js`.
 
 **Referencias.** PR #13 (integración de #11 y #12), [ficha flujo-de-efectivo](planificacion/flujo-de-efectivo/README.md), [ficha origen-y-aplicacion](planificacion/origen-y-aplicacion/README.md), D-021, D-023, D-024, D-025, D-026.
-
 ### D-028 — Los 20 JSON de razones v3 van en `docs/razones_financieras/` dentro del proyecto
 
 - **Fecha**: 2026-10-14

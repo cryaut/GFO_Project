@@ -170,7 +170,7 @@ Estado inicial auditado en `1481e79`. No se reemplazan las correcciones autoriza
 | R-75 | G3: cero diferencias fuera de research contra a87ef0a | No cumplido por cambios heredados | Tres definiciones de intangibles fueron corregidas a no monetarios en `1aa48fc`; se conservarán por la orden de R8 de no reemplazar rondas anteriores. Se informará también la comparación incremental desde 1481e79. |
 | R-76 | G4: estadística por commit y correspondencia con IDs | No cumplido | Se registrará al finalizar. |
 | R-77 | G5: declarar listo únicamente si G0–G4 pasan | Aplicable | No se declarará G3=0 global ni listo para revisión mientras exista la diferencia heredada. |
-| R-78 | R8 T3b: quitar línea en blanco extra antes de D-028 | No cumplido | El diff contra main muestra un salto adicional al final de D-027; se quitará sin alterar su contenido. |
+| R-78 | R8 T3b: quitar línea en blanco extra antes de D-028 | Cumplido | El diff contra main muestra un salto adicional al final de D-027; se quitará sin alterar su contenido. |
 | R-79 | R8 T3c: salidas completas del commit final en el PR | No cumplido | Se adjuntarán npm test, lint y validador en la descripción y en el reporte. |
 
 **G1 v8: pasa como inventario inicial; G3 literal continúa no cumplido y no se oculta.**
