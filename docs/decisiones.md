@@ -912,6 +912,8 @@ Aclaración (18 de octubre de 2026): la decisión y la instrucción fueron de Cr
 
 **Aclaración (20 de octubre de 2026, ronda 6).** Se restaura `tasaImpuesto` a `origin/main`: cuando la efectiva no está disponible, devuelve la tasa configurada válida según D-005, incluso con IR o UAI ausentes. Apalancamiento vuelve a llamar al helper como en `main`; sus pruebas originales se restauran. Esta precisión deja sin efecto la restricción de IR/UAI de la consecuencia anterior solo para `tasaImpuesto`. `saldoPromedio` y las demás guardas de D-047/D-048 se conservan. El texto histórico anterior no se borra.
 
+Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento descrito arriba se revirtió en el commit 10dfa3a (ronda 4). Apalancamiento vuelve a usar la tasa configurada válida (D-005) cuando falta el IR.
+
 **Para revertirla.** Revertir guardas y sus pruebas reintroduciría los números falsos; para cambiar políticas, registrar otra decisión coordinada.
 
 **Referencias.** [Ronda 3 y validación](planificacion/cuentas/04-ronda3-nd.md); instrucciones_amigo_pr14_ronda2.md e instrucciones_carlos_pr14_ronda3.md recibidas por Carlos.

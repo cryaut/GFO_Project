@@ -7,6 +7,7 @@ Todos los cambios notables en GFO Toolkit.
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
 ### Módulo 2: Estados Financieros
+- Ronda 8: aclaración literal añadida a D-047, sin borrar su historial; se reproducen 753 pruebas, los ocho cruces normalizados de sinónimos y las 10 advertencias de main. Informe con la respuesta completa de ronda 6 y las dos incertidumbres de la comparación de utilidad, sin cambios de código.
 - D-052: Carlos aprueba conservar los ocho cruces de sinónimos heredados y bloquear duplicados nuevos con la prueba existente. Se cierra el pendiente de ronda 5 en la documentación, sin cambiar identificación ni cálculos.
 - Ronda 5/D-051: el catálogo `2026-10-20.1` declara los intereses ganados como componente de ingresos no operativos mediante `agrupadoEn`; se retira un alias contradictorio. Ambos tipos siguen en `otrosIngresos`, sin cambiar sumas ni fórmulas. Comparación de utilidad app/JSON documentada en la ficha de cuentas, solo en lectura.
 - Ronda 3: el PGC queda como referencia terminológica, con 22 rebajas adicionales a verificación parcial (incluidas las 4 señaladas). Catálogo `2026-10-18.2`: 1 verificada, 66 parciales y 5 ambiguas. Se corrige intangibles a «no monetarios», sin cambiar su clasificación ni cálculo; diferencias con #10 declaradas en la fixture.

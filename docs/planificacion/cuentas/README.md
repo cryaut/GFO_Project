@@ -3,7 +3,7 @@
 - **Estado**: En revisión
 - **Responsable**: Carlos, con Codex
 - **Rama**: `feat/cuentas-identificador`
-- **Última actualización**: 2026-10-20
+- **Última actualización**: 2026-10-21
 - **PR**: [#14 — borrador](https://github.com/cryaut/GFO_Project/pull/14)
 
 ## Objetivo
@@ -24,6 +24,7 @@ Unificar la identificación de cuentas de importación y alta manual mediante id
 | 9 | Ronda 5: puente de intereses y comparación en lectura | Completado; criterio de sinónimos aprobado por Carlos en D-052 |
 | 10 | Ronda 6: restaurar D-005, historial y evidencias | Completado; 753 pruebas; 1c confirmada solo para una ronda aparte |
 | 11 | Ronda 7 A/B: línea base e inventario | Informes independientes; sin implementar 1c |
+| 12 | Ronda 8 T1: aclaración D-047 y evidencia reproducida de PR #14 | 753 pruebas y mismas 10 advertencias de main; sin cambios de código |
 
 ## Decisiones clave
 - Carlos aprobó expresamente las recomendaciones 1–4 de la sección 10 del encargo en el chat: claves por nombre con metadatos, continuar con filas pendientes, otros ingresos/gastos ambiguos salvo la demo, ingresos por intereses como ingreso.
@@ -54,6 +55,7 @@ Unificar la identificación de cuentas de importación y alta manual mediante id
 | 07 | [Ronda 6: restauración y validación](07-ronda6-validacion.md) | 753 pruebas en 40 archivos; lint 0 errores/10 advertencias previas |
 | A | [Ronda 7: línea base de main](ronda7-A-linea-base-main.md) | 436 pruebas en 34 archivos; lint 0 errores/10 advertencias |
 | B | [Ronda 7: nombres fijos y operaciones](ronda7-B-inventario-nombres-fijos.md) | Inventario en lectura; no autoriza ni implementa 1c |
+| R8-T1 | [Ronda 8: pendientes de PR #14](ronda8-T1-pr14.md) | D-047 literal añadida; ocho cruces normalizados y trazabilidad de 754 → 753; incluye respuesta R6 completa |
 
 ## Próximo paso
 Revisión humana de las restauraciones de ronda 6 y los informes A/B. 1c está confirmada para una ronda aparte, con el contrato y las pruebas de datos no normalizables por definir; la decisión de sinónimos D-052 está cerrada. Validación vigente: **753 pruebas en 40 archivos, lint sin errores y 10 advertencias ya reproducidas en main**, con salidas completas en el paso 07 y el PR; los pasos anteriores conservan sus resultados históricos. Coordinar el cierre separado del PR #10 antes de integrar sus JSON y reconciliar sus estados/definición con el catálogo; integrar #10 primero y renumerar D-029–D-034 como D-037–D-042 justo antes de integrar #14. D-049 y D-050 no se implementan aquí. El dato independiente de dividendos sigue pendiente. No se integra ningún PR desde esta tarea.
