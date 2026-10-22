@@ -13,6 +13,7 @@ import { initPlaneacion } from './modules/planeacion/index.js';
 import { initProforma } from './modules/proforma/index.js';
 import { initInicio } from './modules/inicio/index.js';
 import { refreshChartsTheme } from './components/chart.js';
+import { iniciarMovimientoFondo } from './components/movimiento.js';
 
 const routes = {
   'home': { init: initInicio, label: 'Inicio' },
@@ -95,6 +96,7 @@ function init() {
   store.load();
   initThemeToggle();
   initMobileMenu();
+  iniciarMovimientoFondo();
   navigate(getRoute());
   window.addEventListener('hashchange', () => navigate(getRoute()));
 }

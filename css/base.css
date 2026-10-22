@@ -11,6 +11,8 @@ html {
 }
 
 body {
+  position: relative;
+  isolation: isolate;
   font-family: var(--font-sans);
   font-size: var(--font-size-base);
   line-height: 1.6;
@@ -21,6 +23,49 @@ body {
   display: flex;
   min-height: 100vh;
   transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+/* El contenedor recorta los halos para que el cursor no genere desborde horizontal. */
+.ambient-canvas { display: none; }
+
+body.ambient-motion > .ambient-canvas {
+  display: block;
+  position: fixed;
+  inset: 0;
+  overflow: clip;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.ambient-canvas::before,
+.ambient-canvas::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+
+.ambient-canvas::before {
+  inset: -12%;
+  background: var(--gradient-ambient);
+  animation: fondoFlotante 22s ease-in-out infinite alternate;
+}
+
+.ambient-canvas::after {
+  top: 0;
+  left: 0;
+  width: 760px;
+  height: 760px;
+  background: radial-gradient(circle, var(--ambient-spot), transparent 65%);
+  opacity: 0;
+  transform: translate3d(calc(var(--ambient-x, 70vw) - 380px), calc(var(--ambient-y, 20vh) - 380px), 0);
+  transition: opacity 600ms ease;
+}
+
+body.ambient-pointer > .ambient-canvas::after { opacity: 1; }
+
+@keyframes fondoFlotante {
+  from { transform: translate3d(-2%, -1%, 0) scale(1); }
+  to { transform: translate3d(3%, 2%, 0) scale(1.06); }
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -234,6 +279,18 @@ button:focus-visible,
 
 /* Quien pide menos movimiento en su sistema no ve la entrada de páginas ni transiciones. */
 @media (prefers-reduced-motion: reduce) {
+  body.ambient-motion > .ambient-canvas { display: none; }
+  /* Respaldo inmediato aunque el navegador demore el evento de matchMedia. */
+  .dash-kpi-value [data-estadistica] { display: none; }
+  .dash-kpi-value > .sr-only {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
