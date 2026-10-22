@@ -1048,3 +1048,31 @@ exit=0
 
 **G5: pasa. La corrección v7 queda "lista para revisión".**
 
+
+## Ronda 8 v8 — G2 tras G0/G1
+
+Commit comprobado: `9274bf8ec47de309a4a6efcd124a77b36fc48e88`. Comando desde `docs/razones_financieras`: `node notas/validador_v6.mjs`. Árbol limpio al ejecutar; validador sin modificaciones. Esta salida pertenece a la secuencia definitiva, comprobada de nuevo después de este commit.
+
+```text
+validador_v6 | raiz=C:\Users\carlo\Desktop\02 - Proyectos\Programacion\GFO Project\revision-ronda8-pr10\docs\razones_financieras | archivos JSON=20 | 18 validaciones
+OK   V0
+OK   V1
+OK   V2
+OK   V3
+OK   V4
+OK   V5
+OK   V6
+OK   V7
+OK   V8
+OK   V9
+OK   V10
+OK   V11
+OK   V12
+OK   V13
+OK   V14
+OK   V15
+OK   V16
+OK   V17
+CONTEOS: archivos=20 flujo=11 saldo=9 cuentas=71 verified=1 partially=65 ambiguous=5 notas_DIFERENCIA=8
+RESULTADO: 18/18 validaciones sin fallos
+```

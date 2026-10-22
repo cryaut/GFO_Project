@@ -909,15 +909,7 @@
       "ambiguities": [],
       "research": {
         "status": "partially_verified",
-        "sources": [
-          {
-            "title": "IAS 16 Property, Plant and Equipment",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
-            "source_type": "accounting_standard",
-            "supports": "\"measuring the depreciation charges and impairment losses to be recognised\". Frase textual de IAS 16 Property, Plant and Equipment, abierto el 2026-10-15; confirma la definición de «Depreciación acumulada» (bs.accumulated_depreciation) (D-035)."
-          }
-        ]
+        "sources": []
       }
     },
     {

@@ -40,14 +40,14 @@ defina alguna cuenta concreta de este caso: ninguna cuenta queda `verified` con 
 | Cuenta | Fuente | Afirmación que la respalda | Abierta en esta ejecución | Estado |
 |---|---|---|---|---|
 | `bs.accrued_expenses_payable` | — | (sin frase específica; la norma general no define esta cuenta, D-035) | — | `partially_verified` |
-| `bs.accumulated_depreciation` | IAS 16 Property, Plant and Equipment — https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/ | «measuring the depreciation charges and impairment losses to be recognised» (frase textual de la norma) | sí (2026-10-15) | `partially_verified` |
+| `bs.accumulated_depreciation` | — (`sources: []`) | La frase anterior describe el alcance de IAS 16; no define depreciación acumulada. Fuente retirada por v8 T1. | no se certifica apertura nueva | `partially_verified` |
 | `bs.additional_paid_in_capital` | — | (sin frase específica; la norma general no define esta cuenta, D-035) | — | `partially_verified` |
 | `bs.cash_and_equivalents` | IAS 7 Statement of Cash Flows — https://www.ifrs.org/issued-standards/list-of-standards/ias-7-statement-of-cash-flows/ | «Cash comprises cash on hand and demand deposits» (frase textual de la norma) | sí (2026-10-15) | `verified` |
 | `bs.current_assets_total` | — | (sin frase específica; la norma general no define esta cuenta, D-035) | — | `partially_verified` |
 | `bs.current_liabilities_total` | — | (sin frase específica; la norma general no define esta cuenta, D-035) | — | `partially_verified` |
 | `bs.current_portion_long_term_debt` | — | (sin frase específica; la norma general no define esta cuenta, D-035) | — | `partially_verified` |
 | `bs.current_provisions` | IAS 37 Provisions, Contingent Liabilities and Contingent Assets — https://www.ifrs.org/issued-standards/list-of-standards/ias-37-provisions-contingent-liabilities-and-contingent-assets/ | «A provision is a liability of uncertain timing or amount» (frase textual de la norma) | sí (2026-10-15) | `partially_verified` |
-| `bs.current_year_result_equity` | IAS 1 Presentation of Financial Statements — https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/ | «a statement of changes in equity for the period» (frase textual de la norma) | sí (2026-10-15) | `partially_verified` |
+| `bs.current_year_result_equity` | — (`sources: []`) | La frase anterior enumera un estado financiero; no define esta cuenta. Fuente retirada por v8 T1. | no se certifica apertura nueva | `partially_verified` |
 | `bs.fixed_assets_net_total` | IAS 16 Property, Plant and Equipment — https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/ | «Property, plant and equipment are tangible items» (frase textual de la norma) | sí (2026-10-15) | `partially_verified` |
 | `bs.intangible_assets` | IAS 38 Intangible Assets — https://www.ifrs.org/issued-standards/list-of-standards/ias-38-intangible-assets/ | «An intangible asset is an identifiable non-monetary asset without physical substance» (frase textual de la norma) | sí (2026-10-15) | `partially_verified` |
 | `bs.inventory_finished_goods` | IAS 2 Inventories — https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/ | «the carrying amount of those inventories is recognised as an expense» (frase textual de la norma) | sí (2026-10-15) | `partially_verified` |
@@ -93,8 +93,8 @@ defina alguna cuenta concreta de este caso: ninguna cuenta queda `verified` con 
 | `is.net_sales_reported` | — | (sin frase específica; la norma general no define esta cuenta, D-035) | — | `partially_verified` |
 | `is.noninterest_nonoperating_expenses` | — | (sin frase específica; la norma general no define esta cuenta, D-035) | — | `partially_verified` |
 | `is.nonoperating_income` | — | (sin frase específica; la norma general no define esta cuenta, D-035) | — | `partially_verified` |
-| `is.operating_amortization` | IAS 38 Intangible Assets — https://www.ifrs.org/issued-standards/list-of-standards/ias-38-intangible-assets/ | «An intangible asset with a finite useful life is amortised» (frase textual de la norma) | sí (2026-10-15) | `partially_verified` |
-| `is.operating_depreciation` | IAS 16 Property, Plant and Equipment — https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/ | «measuring the depreciation charges and impairment losses to be recognised» (frase textual de la norma) | sí (2026-10-15) | `partially_verified` |
+| `is.operating_amortization` | — (`sources: []`) | No se certifica la cita histórica como definición de la cuenta en una norma abierta en esta ejecución. Se conserva parcial y se retira la fuente por v8 T1. | no se certifica apertura nueva | `partially_verified` |
+| `is.operating_depreciation` | — (`sources: []`) | No se certifica una definición específica en una norma abierta en esta ejecución. Se conserva parcial y se retira la fuente histórica por v8 T1. | no se certifica apertura nueva | `partially_verified` |
 | `is.operating_profit_reported` | — | (sin frase específica; la norma general no define esta cuenta, D-035) | — | `partially_verified` |
 | `is.other_operating_expenses` | — | (sin frase específica; la norma general no define esta cuenta, D-035) | — | `partially_verified` |
 | `is.other_operating_income` | — | (sin frase específica; la norma general no define esta cuenta, D-035) | — | `partially_verified` |
@@ -112,3 +112,7 @@ defina alguna cuenta concreta de este caso: ninguna cuenta queda `verified` con 
 | `supp.supplier_payments` | — (cuenta interna del caso) | — (cuenta interna: se llena o se calcula desde los datos del caso; D-035 no aplica) | — | `partially_verified` |
 
 CONTEOS vigentes (2026-10-20): cuentas=71 verified=1 partially_verified=65 ambiguous=5
+
+## Ronda 8 v8 — Tarea 1 (2026-10-21)
+
+Las cuatro cuentas señaladas ya eran parciales en 1481e79, pero conservaban objetos de fuente. Se retiran esos objetos en todas sus apariciones y se mantiene `partially_verified` con `sources: []`. No se modifican definiciones, estados ambiguos ni cuentas internas. Las demás aperturas de 2026-10-15 continúan como historia y no se presentan como realizadas hoy.

@@ -533,15 +533,7 @@
       "ambiguities": [],
       "research": {
         "status": "partially_verified",
-        "sources": [
-          {
-            "title": "IAS 16 Property, Plant and Equipment",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
-            "source_type": "accounting_standard",
-            "supports": "\"measuring the depreciation charges and impairment losses to be recognised\". Frase textual de IAS 16 Property, Plant and Equipment, abierto el 2026-10-15; confirma la definición de «Depreciación operativa» (is.operating_depreciation) (D-035)."
-          }
-        ]
+        "sources": []
       }
     },
     {
@@ -561,15 +553,7 @@
       "ambiguities": [],
       "research": {
         "status": "partially_verified",
-        "sources": [
-          {
-            "title": "IAS 38 Intangible Assets",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-38-intangible-assets/",
-            "source_type": "accounting_standard",
-            "supports": "\"An intangible asset with a finite useful life is amortised\". Frase textual de IAS 38 Intangible Assets, abierto el 2026-10-15; confirma la definición de «Amortización operativa» (is.operating_amortization) (D-035)."
-          }
-        ]
+        "sources": []
       }
     },
     {
