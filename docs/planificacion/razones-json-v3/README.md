@@ -3,7 +3,7 @@
 - **Estado**: En revisión
 - **Responsable**: Cris Lumbi (decisiones); Carlos con Codex (correcciones de ronda 7)
 - **Rama**: `feat/razones-json-v3`
-- **Última actualización**: 2026-10-20
+- **Última actualización**: 2026-10-22
 
 ## Objetivo
 Generar los 20 JSON deterministas de razones financieras que pide `instrucciones_agente_json_razones_financieras_v3.md` (fórmulas del profesor, semántica N/D, promedios y botón de cálculo directo de m1), autosuficientes en `docs/razones_financieras/`, con sus notas de trabajo y checks contra el caso MUNO MODA S.A.
@@ -24,6 +24,13 @@ Generar los 20 JSON deterministas de razones financieras que pide `instrucciones
 - Convenciones de implementación no resueltas por el documento (literales `{"value": 365}`, refs a otra razón `{"ref": "ratio.<id>", "period": "previous_current"}`, conjuntos `bs.fixed_assets_components` y `bs.noncurrent_liabilities_components`, `parent_group` siempre con su conjunto completo incluido, depreciación acumulada `requires_data`): **D-029**.
 - El botón de cálculo directo de m1 va en las 11 razones de flujo (7, 8, 12–20), no en 9: el paréntesis del documento enumera 11 y la columna "m1 off" (9 con valor / 11 N/D) confirma 11 razones de flujo: **D-030**.
 - El separador decimal queda fijado en **D-033** (D-026 antes de la renumeración de ronda 7), con formato F1. El control por razón de **D-030** fue reemplazado por el control global de **D-032**. La numeración vigente de las ocho decisiones del PR #10 es D-028 a D-035; D-036 registra su atribución a Cris Lumbi.
+
+## Estado vigente — Ronda 10 A1 (2026-10-22)
+
+- Conteos actuales de los 71 ids: **0 verified, 66 partially_verified y 5 ambiguous**. La reconciliación de ronda 7 que aparece debajo es un registro histórico; su 1/65/5 no describe el estado actual. En ronda 8 se rebajó efectivo por no poder abrir la norma completa y se vaciaron las fuentes de las cuatro cuentas señaladas en v8.
+- La ronda 10 recibe `14eabd9fc147826407ed3b81a702e253a8193316` como base y conserva las tres correcciones de intangibles a «no monetarios» de ronda 7. El G3 estricto histórico contra a87ef0a conserva esas tres diferencias: no se declara cero ni se revierten cambios aprobados. A1 solo aclara documentación, sin cambiar los 20 JSON, fórmulas, código ni validador.
+- El conteo 67/0/4 del bloque B1 de `notas/05_checks.md` es una salida histórica interina, expresamente identificada como tal. Las salidas completas del commit final de A1 se entregan en la descripción del PR #10 y en el reporte de fase A.
+- A1 prepara el PR para la revisión humana necesaria antes de la integración de fase A. No integra el PR ni implementa el motor.
 
 ## Ronda 7 (2026-10-20)
 
@@ -60,4 +67,4 @@ Generar los 20 JSON deterministas de razones financieras que pide `instrucciones
 | 04 | [Ronda 7 — reconciliación y preparación del PR #10](ronda7-C-cierre-pr10.md) | Completado para los requisitos enumerados; adjunto v8 completo no recibido |
 
 ## Próximo paso
-Presentar los cambios enumerados para revisión del equipo en el PR #10, con las salidas completas en su descripción. No fusionar el PR ni iniciar el motor de razones. Cualquier requisito adicional del adjunto v8 no disponible debe contrastarse cuando se aporte.
+La ronda 10 sustituye el próximo paso operativo anterior: completar la revisión humana del PR #10 con las salidas finales de A1 en su descripción y comprobar las condiciones de integración de fase A. El motor se trabaja después en su propia rama; esta entrega A1 solo actualiza la documentación. El adjunto v8 ya fue contrastado en ronda 8, conservando el límite histórico de G3 explicado arriba.

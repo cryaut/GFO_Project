@@ -1,5 +1,7 @@
 # 05 — Checks de la orden v6
 
+**Aclaración de alcance (22 de octubre de 2026, ronda 10 A1).** La base recibida es `14eabd9fc147826407ed3b81a702e253a8193316`. Se conservan los 20 JSON y las tres correcciones autorizadas de intangibles de ronda 7. El G3 estricto histórico contra a87ef0a conserva tres diferencias; esta ronda no declara que sean cero ni vuelve a interpretar esa compuerta. Las salidas completas del commit final de A1 se publican en la descripción del PR #10 y en el reporte de fase A, después de ejecutar con árbol limpio.
+
 Este archivo reemplaza al de la ronda v3 (el contenido anterior —verificador de 12 reglas, 40 celdas
 del caso v3— quedó en el historial de git, commit `2a607c1`; motivo: la orden v6 exige H8, que registre
 el validador, el comando y la salida por bloque, y G3 con corrida completa).
@@ -39,6 +41,8 @@ RESULTADO: 4/4 validaciones sin fallos
 
 **B1: pasa (4/4).** El conteo `verified=67 / partially=0 / ambiguous=4` es el estado interino de la v3;
 se corrige en B2 (V14/V15).
+
+**Aclaración (22 de octubre de 2026, ronda 10 A1).** La salida B1 anterior, incluido `verified=67 partially=0 ambiguous=4`, es un **registro histórico interino**, no un conteo vigente. Se conserva íntegra como evidencia. El conteo actual de los 71 ids es **0 verified / 66 partially_verified / 5 ambiguous**, después de las correcciones de ronda 8.
 
 ## B2 — Fuentes y estados (bloque B2)
 

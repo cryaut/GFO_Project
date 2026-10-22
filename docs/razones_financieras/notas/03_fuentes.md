@@ -12,6 +12,8 @@ fecha del registro de aperturas de abajo (V14 solo compara la URL contra `REGIST
 
 ## Reconciliación del 2026-10-20
 
+**Aclaración (22 de octubre de 2026, ronda 10 A1).** Esta sección registra la reconciliación histórica de ronda 7. El conteo actual es **0 verified, 66 partially_verified y 5 ambiguous**; la rebaja posterior de efectivo y el retiro de las cuatro fuentes de v8 se describen en las secciones de ronda 8. El párrafo original se conserva sin reescribirlo.
+
 Los estados de las 71 cuentas se alinean con el catálogo del PR #14 en `7e71ad8`: **1 verified, 65 partially_verified y 5 ambiguous**. Se rebajan 28 cuentas, incluidas las cuatro señaladas por la tarea. Las fuentes y frases de esta tabla se conservan como registro de la ronda v7, sin otorgarles por ello verificación específica. No se añaden citas ni se afirma haber reabierto normas.
 
 La premisa de la instrucción no coincide con `a87ef0a`: los JSON citan IFRS, no PGC; la cita de `is.operating_amortization` ya habla de amortización en IAS 38, no de depreciación. Se conserva esa cita, sin simular una corrección inexistente. La definición de intangibles se corrige a no monetarios según la excepción expresa. Véase el [informe de ronda 7](../../planificacion/razones-json-v3/ronda7-C-cierre-pr10.md).
@@ -112,6 +114,8 @@ defina alguna cuenta concreta de este caso: ninguna cuenta queda `verified` con 
 | `supp.supplier_payments` | — (cuenta interna del caso) | — (cuenta interna: se llena o se calcula desde los datos del caso; D-035 no aplica) | — | `partially_verified` |
 
 CONTEOS vigentes (2026-10-20): cuentas=71 verified=1 partially_verified=65 ambiguous=5
+
+**Aclaración (22 de octubre de 2026, ronda 10 A1).** La etiqueta «vigentes» de la línea anterior corresponde al 20 de octubre y queda como registro histórico; desde la rebaja de efectivo en ronda 8 el conteo vigente es **cuentas=71 verified=0 partially_verified=66 ambiguous=5**. No se certifican aperturas nuevas ni se cambian fuentes o estados en A1.
 
 ## Ronda 8 v8 — Tarea 1 (2026-10-21)
 

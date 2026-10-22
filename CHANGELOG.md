@@ -126,6 +126,7 @@ Todos los cambios notables en GFO Toolkit.
 - Muestras para probar la importación en el navegador: `scripts/sample-estados.json` y `scripts/sample-estados.csv` (dos periodos, balance equilibrado).
 
 ### Documentación y trabajo en equipo
+- Ronda 10 A1 del PR #10 (2026-10-22): se aclaran los conteos actuales de los JSON (0 verificados, 66 parciales y 5 ambiguos), se identifican expresamente los conteos históricos de rondas anteriores y se conserva el límite histórico de G3 con las tres definiciones de intangibles aprobadas. Solo cambia documentación; los JSON, las fórmulas y el validador permanecen iguales.
 - `AGENTS.md` con las reglas que siguen las IAs del equipo; `CLAUDE.md` y `GEMINI.md` lo importan.
 - Una IA puede hacer el merge de un PR si se lo piden y otra persona del equipo ya lo aprobó (`docs/reglas/flujo-de-trabajo.md`).
 - `docs/contexto/` (arquitectura y dominio financiero) y `docs/reglas/` (flujo de trabajo, código, y pruebas y documentación).
