@@ -141,16 +141,8 @@
       "doubtful_synonyms": [],
       "ambiguities": [],
       "research": {
-        "status": "verified",
-        "sources": [
-          {
-            "title": "IAS 7 Statement of Cash Flows",
-            "organization_or_author": "IFRS Foundation",
-            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-7-statement-of-cash-flows/",
-            "source_type": "accounting_standard",
-            "supports": "\"Cash comprises cash on hand and demand deposits\". Frase textual de IAS 7 Statement of Cash Flows, abierto el 2026-10-15; confirma la definición de «Efectivo y equivalentes» (bs.cash_and_equivalents) (D-035)."
-          }
-        ]
+        "status": "partially_verified",
+        "sources": []
       }
     },
     {

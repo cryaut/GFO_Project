@@ -42,7 +42,7 @@ defina alguna cuenta concreta de este caso: ninguna cuenta queda `verified` con 
 | `bs.accrued_expenses_payable` | — | (sin frase específica; la norma general no define esta cuenta, D-035) | — | `partially_verified` |
 | `bs.accumulated_depreciation` | — (`sources: []`) | La frase anterior describe el alcance de IAS 16; no define depreciación acumulada. Fuente retirada por v8 T1. | no se certifica apertura nueva | `partially_verified` |
 | `bs.additional_paid_in_capital` | — | (sin frase específica; la norma general no define esta cuenta, D-035) | — | `partially_verified` |
-| `bs.cash_and_equivalents` | IAS 7 Statement of Cash Flows — https://www.ifrs.org/issued-standards/list-of-standards/ias-7-statement-of-cash-flows/ | «Cash comprises cash on hand and demand deposits» (frase textual de la norma) | sí (2026-10-15) | `verified` |
+| `bs.cash_and_equivalents` | — (`sources: []`) | La frase literal se confirmó en el resumen oficial de IAS 7, pero la norma PDF no pudo abrirse sin suscripción; se aplica la rebaja conservadora de v8 T2. | resumen sí; norma no | `partially_verified` |
 | `bs.current_assets_total` | — | (sin frase específica; la norma general no define esta cuenta, D-035) | — | `partially_verified` |
 | `bs.current_liabilities_total` | — | (sin frase específica; la norma general no define esta cuenta, D-035) | — | `partially_verified` |
 | `bs.current_portion_long_term_debt` | — | (sin frase específica; la norma general no define esta cuenta, D-035) | — | `partially_verified` |
@@ -116,3 +116,13 @@ CONTEOS vigentes (2026-10-20): cuentas=71 verified=1 partially_verified=65 ambig
 ## Ronda 8 v8 — Tarea 1 (2026-10-21)
 
 Las cuatro cuentas señaladas ya eran parciales en 1481e79, pero conservaban objetos de fuente. Se retiran esos objetos en todas sus apariciones y se mantiene `partially_verified` con `sources: []`. No se modifican definiciones, estados ambiguos ni cuentas internas. Las demás aperturas de 2026-10-15 continúan como historia y no se presentan como realizadas hoy.
+
+## Ronda 8 v8 — Tarea 2 y registro de acceso (2026-10-21)
+
+Solo `bs.cash_and_equivalents` seguía en verified. Se abrió [la página oficial de IAS 7](https://www.ifrs.org/issued-standards/list-of-standards/ias-7-statement-of-cash-flows/): su sección About contiene literalmente «Cash comprises cash on hand and demand deposits» (9 palabras). Esto verifica el texto del resumen, no constituye apertura de la norma completa.
+
+La búsqueda devolvió [el PDF oficial IAS 7, edición 2024](https://www.ifrs.org/content/dam/ifrs/publications/pdf-standards/english/2024/issued/part-a/ias-7-statement-of-cash-flows.pdf?bypass=on). Al abrirlo, la respuesta fue una página HTML redirigida a [IFRS Digital subscription required](https://www.ifrs.org/premium/). No se declara leído el PDF ni se usa el snippet indexado como norma abierta. Un intento anterior de URL de publicación devolvió inaccesible; tampoco se presenta como apertura.
+
+Por la regla expresa de v8 («si no puedes abrir la norma, la cuenta pasa a partially_verified»), efectivo pasa a parcial con sources vacío en todas sus apariciones. Ninguna cuenta se eleva a verified ni se certifican normas históricas como reabiertas.
+
+Conteos finales por id único: **0 verified / 66 partially_verified / 5 ambiguous (71 cuentas)**. No quedan cuentas verified cuya cita deba darse por comprobada; las cinco ambiguas y las cuatro cuentas internas se conservaron íntegras. La rebaja es de investigación documental, sin cambio de datos ni de cálculo.
