@@ -69,6 +69,26 @@ describe('razones de mercado por periodo', () => {
     expect(r23.dividendosImplicitos).toBeNull(); // no hay periodo anterior
   });
 
+  it('deja los dividendos implícitos en N/D si el patrimonio anterior es null', async () => {
+    const estados = demo();
+    estados.balanceGeneral['2024'].patrimonio = { 'Capital Social': 1000 };
+    estados.estadoResultados['2024'] = { Ventas: 100 };
+    const modulo = await import('../../js/modules/estados/estados-calculations.js');
+    const calcularOriginal = modulo.computeFinancialTotals;
+    // Simula solo el subtotal anterior N/D; main aún no lo produce directamente.
+    const spy = vi.spyOn(modulo, 'computeFinancialTotals').mockImplementation((datos, periodo) => {
+      const totales = calcularOriginal(datos, periodo);
+      return periodo === '2023' ? { ...totales, totalPatrimonio: null } : totales;
+    });
+    try {
+      const [, r24] = calcularRazonesMercado(estados, ejemploMercado(['2023', '2024']));
+      expect(r24).toMatchObject({ un: 100, patrimonio: 1000 });
+      expect(r24.dividendosImplicitos).toBeNull();
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
   it('resta el DAP de Apalancamiento y deja N/D lo que no tiene datos', () => {
     const [, r24] = calcularRazonesMercado(demo(), { periodos: { 2024: { acciones: 30000 } } }, { 2024: 4825 });
     expect(r24.udac).toBe(100000);

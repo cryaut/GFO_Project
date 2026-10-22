@@ -32,3 +32,13 @@ Aplicar las correcciones de la auditoría del módulo de Razones Financieras: si
 
 ## Próximo paso
 Pedir revisión del PR hacia `main`; bloqueado por los checkpoints 2 (tests/lint sin `node_modules` en este entorno) y 3 (aprobación de otra persona).
+
+## Ronda 9 — patrimonio anterior en Mercado
+
+- **Rama independiente**: `fix/mercado-patrimonio-anterior`, desde `origin/main` (`2c11c4d`).
+- **Alcance aprobado**: exigir que `anterior.totalPatrimonio` sea numérico antes de calcular dividendos implícitos. Con N/D se devuelve `null`; no cambian otras fórmulas ni datos de ejemplo.
+- **Archivos**: una guarda en `mercado-calculations.js`, una prueba de regresión en `razones-mercado.test.js`, esta ficha y la nota del changelog.
+- **Regresión**: el caso UN = 100, patrimonio actual = 1000 y patrimonio previo = `null` produce `-900` antes de la guarda y N/D después. Se simula solo el subtotal previo con un spy: el productor de `main` aún no devuelve ese subtotal N/D de forma natural.
+- **Esperados existentes**: no se modifican, incluido el periodo sin anterior y la nota «2024: C$ 40,000.00» del ejemplo.
+- **Validación**: 437 pruebas en verde (34 archivos); lint con 0 errores y las 10 advertencias heredadas. La prueba nueva falla antes de la guarda con `expected -900 to be null` y pasa después.
+- **Estado**: pendiente de revisión en su propio PR; no se fusiona y no toca los PR #14 ni #10, 1c ni el motor de razones.
