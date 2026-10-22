@@ -23,7 +23,7 @@ Generar los 20 JSON deterministas de razones financieras que pide `instrucciones
 - Cada archivo es autónomo: catálogo, conjuntos, derivados y reglas completos, aunque se repitan (instrucción explícita; prevalece sobre la especificación, que prefiere un `financial-rules.json` único).
 - Convenciones de implementación no resueltas por el documento (literales `{"value": 365}`, refs a otra razón `{"ref": "ratio.<id>", "period": "previous_current"}`, conjuntos `bs.fixed_assets_components` y `bs.noncurrent_liabilities_components`, `parent_group` siempre con su conjunto completo incluido, depreciación acumulada `requires_data`): **D-029**.
 - El botón de cálculo directo de m1 va en las 11 razones de flujo (7, 8, 12–20), no en 9: el paréntesis del documento enumera 11 y la columna "m1 off" (9 con valor / 11 N/D) confirma 11 razones de flujo: **D-030**.
-- El separador decimal se dejó abierto originalmente en **D-031**; **D-033** cerró esa decisión con formato F1. El control por razón de **D-030** fue reemplazado por el control global de **D-032**. La numeración vigente de las ocho decisiones del PR #10 es D-028 a D-035; D-036 registra su atribución a Cris Lumbi.
+- El separador decimal queda fijado en **D-033** (D-026 antes de la renumeración de ronda 7), con formato F1. El control por razón de **D-030** fue reemplazado por el control global de **D-032**. La numeración vigente de las ocho decisiones del PR #10 es D-028 a D-035; D-036 registra su atribución a Cris Lumbi.
 
 ## Ronda 7 (2026-10-20)
 

@@ -163,7 +163,7 @@ Estado inicial auditado en `1481e79`. No se reemplazan las correcciones autoriza
 | R-68 | T1: depreciación operativa con cita específica o parcial sin fuentes | Cumplido tras T1 | Ya parcial; no se confirma norma abierta para sostener la fuente y se retirará. |
 | R-69 | T1: amortización operativa con cita específica o parcial sin fuentes | Cumplido tras T1 | Ya parcial; no se certifica la cita histórica como norma abierta en esta ejecución y se retirará. |
 | R-70 | T2: toda cuenta verified con norma abierta y frase literal comprobada ahora | Cumplido tras T2 (rebaja por norma no abierta) | Solo efectivo es verified. La frase está en el resumen oficial, pero abrir el PDF oficial conduce a suscripción. Se aplicará la alternativa de v8: parcial sin fuentes. |
-| R-71 | T3: ficha con separador fijado y sin decisión abierta | Cumplido en contenido; literal antiguo no aplica | La ficha ya remite a D-033 cerrada; se hará explícita la frase de cierre conservando la numeración actual. |
+| R-71 | T3: ficha con separador fijado y sin decisión abierta | Cumplido tras T3, con referencia vigente D-033 | La ficha ya remite a D-033 cerrada; se hará explícita la frase de cierre conservando la numeración actual. |
 | R-72 | G0: línea base v8 en a87ef0a y 20 hashes canónicos | Cumplido | `00_linea_base_v8.md`, hashes leídos directamente de Git. |
 | R-73 | G1: filas R-66 en adelante, con estado y evidencia | Cumplido | Esta tabla. |
 | R-74 | G2: commits separados para tareas 1, 2 y 3 con V0–V17 | No cumplido | Se crearán commits normales y se registrará cada salida limpia en 05_checks. |
