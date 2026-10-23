@@ -73,6 +73,18 @@ describe('cargar ejemplos', () => {
 });
 
 describe('gráficas y cambio de tema', () => {
+  it('desactiva la animación de las gráficas cuando el sistema pide reducir movimiento', async () => {
+    stubNavegador();
+    window.matchMedia = () => ({ matches: true });
+    window.Chart = class {
+      static defaults = { font: {} };
+      constructor(canvas, config) { this.options = config.options; }
+    };
+    const { renderChart } = await import('../../js/components/chart.js');
+    const chart = renderChart('c1', { type: 'bar', data: {}, options: { animation: { duration: 700 } } });
+    expect(chart.options.animation).toBe(false);
+  });
+
   it('recolorea ejes y leyenda puestos por renderChart y respeta los del módulo', async () => {
     const { html } = stubNavegador({ tema: 'light' });
     class ChartFalso {

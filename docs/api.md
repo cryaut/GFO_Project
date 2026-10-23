@@ -840,6 +840,25 @@ Lógica pura en `js/modules/<modulo>/<modulo>-calculations.js` (sin DOM ni `stor
 
 Inicio reutiliza la recolección de la proforma: `proforma/index.js` exporta `reunirEntradas()`, y `inicio/index.js` exporta `initInicio()`, `cargarEjemploEmpresa()` y `cargarEjemploPersonal()` (solo llenan módulos vacíos; devuelven los nombres cargados). Activos exporta `calcularEstado(activo)` y `ejemploActivos()`. `js/components/chart.js` exporta `refreshChartsTheme()`, que recolorea ejes y leyendas de las gráficas abiertas al cambiar de tema.
 
+### Movimiento de la interfaz
+
+`js/components/movimiento.js`. Solo modifica la presentación: no calcula indicadores ni escribe en el `store`.
+
+#### `iniciarMovimientoFondo()`
+Añade una capa decorativa recortada al viewport y habilita luces flotantes y seguimiento suave del cursor en dispositivos con ratón. Se desactiva con movimiento reducido, puntero táctil o pestaña oculta. Las posiciones se actualizan con un único cuadro pendiente; el bucle termina al alcanzar el cursor.
+
+- **Retorno**: función de limpieza (eventos, cuadro pendiente y capa) o `undefined` si el navegador no permite el efecto.
+- **Ejemplo**: `const limpiar = iniciarMovimientoFondo(); limpiar?.();`
+
+#### `animarEstadisticas(page, formatos)`
+Anima la entrada de tarjetas de Inicio al entrar en vista y sus cifras durante 650 ms. Los elementos numéricos declaran `data-estadistica`, `data-valor` y `data-formato`; los valores N/D no participan. La cifra final permanece accesible para lectores de pantalla y se restaura exactamente al terminar o cancelar.
+
+- **Parámetros**: `page`, contenedor de Inicio; `formatos`, funciones de presentación por nombre (`monto`, `pct`, `veces`, `unidades`).
+- **Retorno**: función de limpieza o `undefined` cuando el movimiento no procede. Una segunda llamada sobre la misma página cancela la anterior. Sin `IntersectionObserver`, anima las tarjetas disponibles.
+- **Ejemplo**: `animarEstadisticas(page, { monto: formatCurrencyND });`
+
+`renderChart` también desactiva las animaciones de Chart.js cuando el sistema solicita reducir movimiento al crear una gráfica.
+
 Códigos de `avisos` del presupuesto maestro: `financiamiento`, `sin-compras`, `bajo-stock-minimo`, `perdida`, `bajo-equilibrio` y `sin-margen`.
 
 Utilidades: `js/utils/form.js` (`leerNumero(texto)` → `{ vacio, valor }`, `nuevoId(prefijo)`, `fechaHoy()`), `js/utils/estados-guardados.js` (`estadosGuardados(estados)`, `totalesPeriodo(estados, periodo)`). `js/modules/analisis/index.js` exporta ahora `refreshSavedStates()` para que el reporte integrado no use estados en caché.

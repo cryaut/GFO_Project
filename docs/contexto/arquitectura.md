@@ -17,7 +17,7 @@ css/                       variables.css, base.css, components.css, pages.css
 js/
 ├── app.js                 Router, tema claro/oscuro, menú móvil, página de inicio y glosario
 ├── store.js               Estado global y persistencia
-├── components/            chart.js, modal.js, tabla.js, toast.js
+├── components/            chart.js, modal.js, tabla.js, toast.js, movimiento.js
 ├── utils/
 │   ├── calculate.js       Fórmulas financieras puras (catálogo en dominio-financiero.md)
 │   ├── format.js          formatCurrency, formatNumber, formatPercent, formatPercentRaw, parseNumber
@@ -169,6 +169,7 @@ Un módulo nuevo que guarde datos necesita su sección en `defaultData`, porque 
 | `components/modal.js` | `showModal(titulo, bodyHTML, footerHTML = '')` |
 | `components/chart.js` | `renderChart(idCanvas, configChartJs)`, `destroyChart(id)` |
 | `components/tabla.js` | `createTable(encabezados, filas, opciones = {})` |
+| `components/movimiento.js` | `iniciarMovimientoFondo()`, `animarEstadisticas(page, formatos)`; efectos de presentación con limpieza, sin datos persistidos |
 
 `toast.js` y `modal.js` buscan sus contenedores en el DOM al cargarse. Por eso la lógica que se prueba en Node no debe importarlos: mantenla en archivos sin DOM.
 

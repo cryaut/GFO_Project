@@ -93,6 +93,8 @@ Todos los cambios notables en GFO Toolkit.
 - El CSV exportado incluye `Estado`, `Grupo`, `Cuenta` y `Clasificacion`, y puede reimportarse en Estados sin edición manual.
 
 ### Inicio y apariencia
+- Fondo con luces difusas animadas y respuesta suave al cursor; entrada escalonada de estadísticas y contadores de Inicio que conservan los valores finales y N/D. Sin seguimiento en pantallas táctiles; fondo, contadores y gráficas respetan el movimiento reducido del sistema.
+- Fondo general más cálido y neutro en claro, con iluminación azul difusa; ajuste equivalente en oscuro. Se conserva la pantalla actual, sus tarjetas, navegación y contenido.
 - `#/home` es ahora un **panorama general** de la empresa (`js/modules/inicio/`): salud general, KPIs con variación contra el periodo anterior, gráfica de ventas y utilidad, alertas prioritarias, puntos clave con interpretación por área (liquidez, rentabilidad, endeudamiento, apalancamiento, equilibrio, flujo, presupuesto maestro, inventario y activos) y accesos a los módulos. Sin datos muestra "Cómo empezar".
 - Las cifras salen de las mismas funciones que cada módulo: la proforma exporta `reunirEntradas()` y `razon()`, y Activos exporta `calcularEstado()`. `initHome` sale de `app.js`.
 - Tema oscuro: los fondos `--color-*-light` pasan a tintes translúcidos. Corrige los iconos de Inicio, las insignias y el hover de las tablas, que quedaban como manchas claras con texto claro.
