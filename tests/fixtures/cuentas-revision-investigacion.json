@@ -30,7 +30,8 @@
     "is.other_sales_revenue": "IFRS 15 describe ingresos de contratos, sin definir una cuenta residual de otras ventas.",
     "is.product_cost": "La fuente anterior describe inventarios en general, sin definir específicamente el coste de producción de los productos vendidos.",
     "is.product_sales": "La cita específica procede del PGC español (701 (definición conjunta 700/705)); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
-    "is.service_revenue": "La cita específica procede del PGC español (705 (definición conjunta 700/705)); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica."
+    "is.service_revenue": "La cita específica procede del PGC español (705 (definición conjunta 700/705)); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "bs.cash_and_equivalents": "Ronda 12: D-035 exige cita literal específica confirmada en norma abierta; PR #10 dejó efectivo parcial al no poder abrir la norma completa. Se conservan definición y fuentes del catálogo."
   },
   "correccionesDefinicion": {
     "bs.intangible_assets": {
@@ -39,5 +40,6 @@
       "motivo": "Corrección conceptual aprobada en la ronda 3; IAS 38 describe un activo no monetario. La instantánea original permanece inmutable.",
       "decision": "D-046"
     }
-  }
+  },
+  "aclaracionRonda12": "2026-10-22: la referencia a87ef0a y las notas originales son históricas; los JSON de main ya están alineados. Efectivo pasa a parcial por D-035; se conserva el snapshot."
 }

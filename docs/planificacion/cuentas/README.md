@@ -3,7 +3,7 @@
 - **Estado**: En revisión
 - **Responsable**: Carlos, con Codex
 - **Rama**: `feat/cuentas-identificador`
-- **Última actualización**: 2026-10-21
+- **Última actualización**: 2026-10-22
 - **PR**: [#14 — borrador](https://github.com/cryaut/GFO_Project/pull/14)
 
 ## Objetivo
@@ -57,5 +57,15 @@ Unificar la identificación de cuentas de importación y alta manual mediante id
 | B | [Ronda 7: nombres fijos y operaciones](ronda7-B-inventario-nombres-fijos.md) | Inventario en lectura; no autoriza ni implementa 1c |
 | R8-T1 | [Ronda 8: pendientes de PR #14](ronda8-T1-pr14.md) | D-047 literal añadida; ocho cruces normalizados y trazabilidad de 754 → 753; incluye respuesta R6 completa |
 
+## Ronda 12 (22 de octubre de 2026)
+
+- Main f197530 incorporado por merge; se conservan D-001–D-036 y se renumeran las decisiones propias como D-037–D-042. Los informes previos son históricos; sus referencias antiguas se leen con este mapa: D-029→D-037, D-030→D-038, D-031→D-039, D-032→D-040, D-033→D-041, D-034→D-042.
+- Aclaración del conteo histórico 1/66/5: el catálogo actual de 72 ids tiene **0 verified / 67 partially_verified / 5 ambiguous**. Los 71 compartidos con los JSON tienen **0/66/5**. Solo cambia el estado de efectivo; se conservan sus fuentes y definición.
+- D-051 recibe la opción A de Cris Lumbi; esta rama solo documenta el contrato, sin implementar fórmulas del motor ni modificar computeRazones.
+- IAS 16 aporta contexto conceptual para depreciación acumulada: no se certifica una cita específica. PGC 281 sigue siendo referencia terminológica.
+- El snapshot a87ef0a se conserva byte a byte, con nota de lectura en tests/fixtures/README.md. No hay referencias activas D-028 en el catálogo ni D-027/V12 que renumerar en el head recibido.
+- No se ejecutó ronda 11 en esta sesión. Ronda 12 usa la preparación de inventario de ronda 10; las entregas anteriores no se editan.
+
 ## Próximo paso
-Revisión humana de las restauraciones de ronda 6 y los informes A/B. 1c está confirmada para una ronda aparte, con el contrato y las pruebas de datos no normalizables por definir; la decisión de sinónimos D-052 está cerrada. Validación vigente: **753 pruebas en 40 archivos, lint sin errores y 10 advertencias ya reproducidas en main**, con salidas completas en el paso 07 y el PR; los pasos anteriores conservan sus resultados históricos. Coordinar el cierre separado del PR #10 antes de integrar sus JSON y reconciliar sus estados/definición con el catálogo; integrar #10 primero y renumerar D-029–D-034 como D-037–D-042 justo antes de integrar #14. D-049 y D-050 no se implementan aquí. El dato independiente de dividendos sigue pendiente. No se integra ningún PR desde esta tarea.
+
+Completar la validación final de ronda 12 y presentar PR #14 para revisión humana, sin fusionarlo. El motor se prepara en su rama desde f197530 más el head final de este PR, sin conectarlo a Análisis. 1c y D-049 permanecen fuera de alcance. Los resultados históricos anteriores se conservan; las salidas actuales completas se entregan en ronda12-R1-pr14.md y en la descripción del PR.

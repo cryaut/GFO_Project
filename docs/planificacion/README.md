@@ -15,6 +15,7 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 | Importación y exportación: importes, respaldo JSON y reporte HTML | Carlos | En revisión | [importacion-exportacion](importacion-exportacion/README.md) |
 | Origen y Aplicación de Fondos (EOAF) | Henry | En revisión | [origen-y-aplicacion](origen-y-aplicacion/README.md) |
 | Flujo de efectivo desde los estados (EFE de Análisis) | Henry | En revisión | [flujo-de-efectivo](flujo-de-efectivo/README.md) |
+| JSON autónomos de razones financieras v3 | Cris Lumbi | En revisión | [razones-json-v3](razones-json-v3/README.md) |
 
 Agrega una fila cuando empieces una feature y actualiza el estado cuando cambie.
 

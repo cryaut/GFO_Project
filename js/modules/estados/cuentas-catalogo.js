@@ -233,7 +233,7 @@ export const CUENTAS_CATALOGO = [
     ],
     'revisionInvestigacion': {
       'fecha': '2026-10-18',
-      'motivo': 'La cita específica procede del PGC español (281); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
+      'motivo': 'IAS 16 aporta contexto conceptual; no se ha confirmado una cita específica que verifique depreciación acumulada. El JSON de PR #10 mantiene la cuenta parcialmente verificada y sin fuentes específicas. El PGC español (281) es solo referencia terminológica conforme a D-045.'
     }
   },
   {
@@ -275,7 +275,7 @@ export const CUENTAS_CATALOGO = [
     'sinonimosDudosos': [],
     'tipoApp': 'efectivo',
     'ambiguedades': [],
-    'estadoInvestigacion': 'verified',
+    'estadoInvestigacion': 'partially_verified',
     'fuentes': [
       {
         'titulo': 'IAS 7 Statement of Cash Flows',

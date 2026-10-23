@@ -7,6 +7,7 @@ Todos los cambios notables en GFO Toolkit.
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
 ### Módulo 2: Estados Financieros
+- Ronda 12: catálogo alineado en estados con los 71 ids JSON (0 verificadas, 66 parciales, 5 ambiguas); decisiones propias renumeradas D-037–D-042 y opción A de intereses aclarada en D-051. Snapshot histórico conservado y respaldo conceptual de depreciación distinguido de verificación específica.
 - Ronda 8: aclaración literal añadida a D-047, sin borrar su historial; se reproducen 753 pruebas, los ocho cruces normalizados de sinónimos y las 10 advertencias de main. Informe con la respuesta completa de ronda 6 y las dos incertidumbres de la comparación de utilidad, sin cambios de código.
 - D-052: Carlos aprueba conservar los ocho cruces de sinónimos heredados y bloquear duplicados nuevos con la prueba existente. Se cierra el pendiente de ronda 5 en la documentación, sin cambiar identificación ni cálculos.
 - Ronda 5/D-051: el catálogo `2026-10-20.1` declara los intereses ganados como componente de ingresos no operativos mediante `agrupadoEn`; se retira un alias contradictorio. Ambos tipos siguen en `otrosIngresos`, sin cambiar sumas ni fórmulas. Comparación de utilidad app/JSON documentada en la ficha de cuentas, solo en lectura.
@@ -41,6 +42,7 @@ Todos los cambios notables en GFO Toolkit.
 - Compatibilidad de Apalancamiento con D-047: la tasa por defecto sin cuenta de IR se selecciona explícitamente desde la configuración (D-005), conservando IR N/D y las cifras previas.
 - EFE/EOAF: una cuenta sin clasificar con saldo cero en ambos periodos no vuelve incompleta la comprobación. Un saldo ausente sigue siendo faltante.
 - EFE: reconoce «pérdida del ejercicio/periodo», advierte movimientos opuestos entre reservas y resultados y etiqueta los dividendos como derivados. La interpretación aclara que cuadrar no confirma independientemente la utilidad neta; la fórmula se conserva.
+- Mercado: los dividendos implícitos quedan N/D cuando el patrimonio del periodo anterior es N/D; se evita que `null` se reste como cero. Se conservan la demo de 2024 y las demás fórmulas.
 - **EFE de tres actividades** (`efe-calculations.js`): el Estado de Flujo de Efectivo de la pestaña EFE se arma por método indirecto desde dos balances — Operación (utilidad neta + depreciación + capital de trabajo), Inversión (activos fijos) y Financiamiento (deuda, aportaciones y dividendos) — con la comprobación CFO + CFI + CFF = variación de efectivo (tolerancia C$ 0.01 + epsilon escalado). Antes `computeEFE` solo calculaba el CFO con tres ajustes y sin comprobación. (D-024)
 - Los dividendos se separan de las aportaciones con las cuentas de utilidades acumuladas (dividendos = UN − ΔRE); sin esas cuentas se usa la variación total del patrimonio con advertencia. (D-025)
 - La depreciación del periodo se estima con la variación de la depreciación acumulada, con advertencia si la cuenta está en signo positivo o si disminuye (posible baja de activos, cuyo reembolso entra en Inversión). (D-026)
@@ -143,11 +145,14 @@ Todos los cambios notables en GFO Toolkit.
 - Muestras para probar la importación en el navegador: `scripts/sample-estados.json` y `scripts/sample-estados.csv` (dos periodos, balance equilibrado).
 
 ### Documentación y trabajo en equipo
+- Ronda 10 A1 del PR #10 (2026-10-22): se aclaran los conteos actuales de los JSON (0 verificados, 66 parciales y 5 ambiguos), se identifican expresamente los conteos históricos de rondas anteriores y se conserva el límite histórico de G3 con las tres definiciones de intangibles aprobadas. Solo cambia documentación; los JSON, las fórmulas y el validador permanecen iguales.
 - `AGENTS.md` con las reglas que siguen las IAs del equipo; `CLAUDE.md` y `GEMINI.md` lo importan.
 - Una IA puede hacer el merge de un PR si se lo piden y otra persona del equipo ya lo aprobó (`docs/reglas/flujo-de-trabajo.md`).
 - `docs/contexto/` (arquitectura y dominio financiero) y `docs/reglas/` (flujo de trabajo, código, y pruebas y documentación).
 - Plantilla de Pull Request en `.github/` y planificación con una carpeta por feature en `docs/planificacion/`.
 - `docs/api.md` documenta las razones agregadas, `DIAS_ANIO`, `saldoPromedio`, `variacion` y `escapeHTML`.
+- `docs/razones_financieras/`: 20 JSON autónomos de razones financieras v3 (fórmulas del profesor, semántica N/D, promedios de saldos de cierre y botón de cálculo directo de m1) con sus notas `notas/` y `ratios/NN_*.md`; `notas/05_checks.md` valida 40/40 celdas del caso MUNO MODA S.A. y los conteos 9/11, 15/5 y 15/5. Decisiones D-028 a D-030 en `docs/decisiones.md`.
+- Ronda 7 del PR #10: se alinean los estados de sus 71 cuentas con el catálogo `7e71ad8` (1 verificada, 65 parciales, 5 ambiguas), se corrige intangibles a no monetarios y se conservan las fórmulas. D-028–D-035 y D-036 resuelven numeración y atribución a Cris Lumbi; las decisiones D-001–D-027 de main permanecen intactas.
 
 ---
 

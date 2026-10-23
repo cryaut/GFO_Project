@@ -66,7 +66,7 @@ export function calcularRazonesMercado(estados, datos, dap = {}) {
     const dpa = dividendoPorAccion(v.dividendos, v.acciones);
     // Dividendos que explican el cambio del patrimonio si no hubo aportes ni retiros de capital.
     const anterior = k > 0 ? totales(estados, estados.periods[k - 1]) : null;
-    const dividendosImplicitos = un !== null && anterior && esNumero(patrimonio)
+    const dividendosImplicitos = un !== null && anterior && esNumero(patrimonio) && esNumero(anterior.totalPatrimonio)
       ? un - (patrimonio - anterior.totalPatrimonio) : null;
     return {
       periodo, un, dap: dapPeriodo, udac, patrimonio, ...v,

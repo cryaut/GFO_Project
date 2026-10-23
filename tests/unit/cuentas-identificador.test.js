@@ -129,7 +129,8 @@ it('conserva las 71 identidades del PR #10 y enumera cada diferencia de investig
 
 it('cada cuenta verificada conserva una cita específica con ubicación y fuente consultable', () => {
   const verificadas = listarCuentas().filter(cuenta => cuenta.estadoInvestigacion === 'verified');
-  expect(verificadas.map(cuenta => cuenta.id)).toEqual(['bs.cash_and_equivalents']);
+  expect(verificadas.map(cuenta => cuenta.id)).toEqual([]);
+  expect(obtenerCuenta('bs.cash_and_equivalents').estadoInvestigacion).toBe('partially_verified');
   for (const cuenta of verificadas) expect(cuenta.fuentes.some(fuente =>
     fuente.cita?.trim() && fuente.ubicacion?.trim() && fuente.url?.startsWith('https://')), cuenta.id).toBe(true);
   expect(obtenerCuenta('is.interest_income').estadoInvestigacion).toBe('partially_verified');
@@ -174,7 +175,7 @@ it('D-051 relaciona intereses ganados con ingresos no operativos sin cambiar sus
 });
 
 it('impide nuevos sinónimos compartidos y conserva las ocho colisiones normalizadas heredadas', () => {
-  // D-031 y el corpus conservan ambigüedades que requieren contexto/confirmación.
+  // D-039 y el corpus conservan ambigüedades que requieren contexto/confirmación.
   // Esta guardia no afirma unicidad absoluta ni cambia la identificación previa.
   const idsPorSinonimo = new Map();
   for (const cuenta of listarCuentas()) for (const sinonimo of cuenta.sinonimos) {

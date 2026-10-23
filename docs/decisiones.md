@@ -77,12 +77,23 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-025 | Dividendos desde las utilidades acumuladas, con respaldo en la variación de patrimonio | Vigente |
 | D-026 | Depreciación del periodo por variación de la depreciación acumulada, con advertencias | Vigente |
 | D-027 | Las comprobaciones del EOAF y del EFE comparten sus piezas y no muestran sumas parciales | Vigente |
-| D-029 | Identificadores como metadatos y claves por nombre | Vigente |
-| D-030 | Importar filas pendientes sin perder sus montos | Vigente |
-| D-031 | Otros ingresos y gastos genéricos requieren confirmación | Vigente |
-| D-032 | Los intereses ganados son ingresos | Vigente |
-| D-033 | Similitud calibrada como sugerencia confirmable | Vigente |
-| D-034 | Propagar N/D en consumidores sin migrar sus fórmulas | Vigente en Reportes; Razones reemplazada por D-044 |
+
+| D-028 | Los 20 JSON de razones v3 van en `docs/razones_financieras/` dentro del proyecto | Vigente |
+| D-029 | Convenciones por defecto de los JSON: operandos, periodos, conjuntos y `parent_group` | Vigente |
+| D-030 | El botón de cálculo directo de m1 va en las 11 razones de flujo, no en 9 | Reemplazada por D-032 |
+| D-031 | El separador decimal del formato numérico queda abierto en `metadata.display` | Cerrada por D-033 |
+| D-032 | El control de cálculo directo es único y global en las 11 razones de flujo (reemplaza a D-030) | Vigente |
+| D-033 | Formato numérico F1 fijo en los 20 JSON (cierra D-031) | Cerrada |
+| D-034 | V12 busca los marcadores prohibidos como placeholder: entre corchetes o en mayúsculas | Vigente |
+| D-035 | Una cuenta solo es `verified` con una frase de una norma abierta que respalde su definición concreta | Vigente |
+| D-036 | Atribución y numeración de las decisiones del PR #10 | Vigente |
+
+| D-037 | Identificadores como metadatos y claves por nombre | Vigente |
+| D-038 | Importar filas pendientes sin perder sus montos | Vigente |
+| D-039 | Otros ingresos y gastos genéricos requieren confirmación | Vigente |
+| D-040 | Los intereses ganados son ingresos | Vigente |
+| D-041 | Similitud calibrada como sugerencia confirmable | Vigente |
+| D-042 | Propagar N/D en consumidores sin migrar sus fórmulas | Vigente en Reportes; Razones reemplazada por D-044 |
 | D-043 | Acotar N/D por importe, posibilidades y periodo | Vigente en Estados/EFE/EOAF; Razones reemplazada por D-044 |
 | D-044 | Excluir razones financieras por instrucción de Carlos | Vigente, con excepción D-047/D-048 |
 | D-045 | PGC solo como referencia terminológica | Vigente |
@@ -94,7 +105,10 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 
 ## Decisiones
 
+
 Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama del PR #10. Las entradas anteriores no se renumeran ni se modifican.
+
+**Aclaración de numeración (22 de octubre de 2026).** El párrafo anterior corresponde al estado histórico de PR #14. Main conserva D-001 a D-036; las seis decisiones propias de cuentas pasan de D-029–D-034 a D-037–D-042. D-028 histórica de la regla de verificación de PR #10 equivale a D-035, y D-027 histórica de V12 equivale a D-034; D-027 del EOAF/EFE no cambia. Los textos históricos y snapshots se conservan. En el contexto histórico de D-043, el rango D-029–D-034 debe leerse hoy como D-037–D-042.
 
 ### D-001 — Año de 365 días
 
@@ -675,8 +689,196 @@ Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama de
 **Para revertirla.** Restaurar las constantes y `seleccionarPeriodo*` en cada `*-calculations.js`, quitar `comprobacion-calculations.js` y `tests/unit/comprobacion.test.js`, y revertir los casos nuevos de `efe.test.js` y `eoaf.test.js`.
 
 **Referencias.** PR #13 (integración de #11 y #12), [ficha flujo-de-efectivo](planificacion/flujo-de-efectivo/README.md), [ficha origen-y-aplicacion](planificacion/origen-y-aplicacion/README.md), D-021, D-023, D-024, D-025, D-026.
+### D-028 — Los 20 JSON de razones v3 van en `docs/razones_financieras/` dentro del proyecto
 
-### D-029 — Identificadores como metadatos y claves por nombre
+- **Fecha**: 2026-10-14
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi (con agente IA)
+- **Área**: `docs/razones_financieras/` (nuevo), `docs/planificacion/razones-json-v3/`
+
+**Contexto.** El documento de instrucciones pide 20 archivos JSON con una ruta relativa `razones_financieras/...` sin decir desde dónde se mide, y a la vez pide ejecutar las pruebas del proyecto. Medida desde el propio documento (`J_formulas/`), la carpeta quedaría fuera del repo y no pasaría por PR.
+
+**Opciones.**
+1. Dentro del proyecto, en `GFO_Project/docs/razones_financieras/` — se versiona, se revisa en PR y convive con el mapa de documentación / una extracción posterior solo mueve la carpeta sin tocar su contenido.
+2. Junto al documento de instrucciones, en `J_formulas/razones_financieras/` — literal al pie de la letra / fuera del repo: sin revisión del equipo ni historial de cambios.
+
+**Decisión.** Opción 1. El documento pide ejecutar las pruebas del proyecto, así que su raíz de trabajo es el proyecto; `AGENTS.md` exige además que todo lo entregable entre por PR.
+
+**Consecuencias.** Los archivos entran al repo en la rama `feat/razones-json-v3` y se revisan con el resto de la documentación. Ningún módulo del repo lee todavía estos JSON (son assets autónomos de documentación), así que no hay riesgo de código.
+
+**Para revertirla.** Mover la carpeta a `J_formulas/razones_financieras/`, marcar esta entrada como reemplazada por una nueva y corregir la ficha y el índice de `docs/planificacion/`.
+
+**Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `J_formulas/instrucciones_agente_json_razones_financieras_v3.md`.
+
+### D-029 — Convenciones por defecto de los JSON: operandos, periodos, conjuntos y `parent_group`
+
+- **Fecha**: 2026-10-14
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi (con agente IA)
+- **Área**: `docs/razones_financieras/*.json` (20 archivos)
+
+**Contexto.** El documento fija los nombres de campo y la semántica N/D, pero no resuelve la forma de los operandos literales, la sintaxis de las referencias a otra razón, el nombre de los conjuntos de cuentas con padre, si `parent_group` arrastra su conjunto al archivo ni qué hacer cuando falta la depreciación acumulada.
+
+**Opciones.**
+1. Operandos como `{"ref": ...}` y `{"value": 365}`; refs cruzadas `{"ref": "ratio.<id>", "period": "previous_current"}`; conjuntos propios `bs.fixed_assets_components` y `bs.noncurrent_liabilities_components`; `parent_group` siempre con el conjunto completo incluido; depreciación acumulada `requires_data` — cada JSON se evalúa por separado, sin contexto externo / repite maquinaria en varios archivos.
+2. `op` explícito en todos los operandos y periodos crudos `m1`/`m2` — más uniforme / se aparta de los ejemplos de la sección 10 de la especificación y obliga a resolver tokens en cada referencia.
+3. `parent_group` contextual (solo el conjunto que corresponde al periodo) y depreciación ausente en 0 — menos cuentas por archivo / no se evalúa sin saber el periodo y aproxima un importe que la especificación exige conservar.
+
+**Decisión.** Opción 1. El documento de instrucciones manda sobre la especificación en los detalles de presentación, y es la única opción que permite evaluar cada JSON de forma autónoma.
+
+**Consecuencias.** No cambia ninguna cifra visible. Si falta la depreciación acumulada, las razones que la necesitan quedan en `N/D` con motivo `missing_required_account_data` en lugar de inflar el activo neto.
+
+**Para revertirla.** Regenerar los 20 JSON con otra sintaxis y crear la entrada que reemplace a esta.
+
+**Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/01_decisiones.md`.
+
+### D-030 — El botón de cálculo directo de m1 va en las 11 razones de flujo, no en 9
+
+- **Fecha**: 2026-10-14
+- **Estado**: Reemplazada por D-032
+- **Decidió**: Cris Lumbi (con agente IA)
+- **Área**: `docs/razones_financieras/*.json` (`ratio.presentation.first_period_toggle`)
+
+**Contexto.** El punto 8 del documento habla de "9 razones de flujo (7, 8, 12–20)" y pide el botón de cálculo directo solo en ellas. El paréntesis enumera 11 razones y la tabla de valores esperados confirma 11: la columna "m1 off" muestra 9 con valor y 11 `N/D`, y las 9 con valor son exactamente las razones de punto.
+
+**Opciones.**
+1. Botón en las 11 razones de flujo (7, 8, 12–20) — el paréntesis y los conteos del documento cuadran; el botón es presentación, por defecto apagado, y no altera ningún valor / el número "9" queda interpretado como desliz.
+2. Botón en "9" razones — sigue el número escrito / la enumeración del paréntesis tiene 11 ítems, habría que adivinar cuáles quedan fuera y los conteos de la tabla no quedarían justificados.
+3. Botón solo donde el caso concreto usa un promedio — depende de los datos y no de la fórmula / el mismo JSON cambiaría de presentación según los datos cargados.
+
+**Decisión.** Opción 1. Con el botón encendido o apagado, las razones de flujo sin datos completos (14, 15, 16, 17, 20 con el caso MUNO MODA) siguen en `N/D`: primero por `missing_required_account_data` o `missing_required_period_balance`, según el estado, así que tener el botón presente en las 11 no cambia ninguna celda de la tabla esperada.
+
+**Consecuencias.** Los 11 JSON de flujo traen `first_period_toggle` con `default: false` (y `period_rules.first_period.toggle.default: false`); los 9 de punto lo traen en `null`. Si el profesor confirma otra lectura, se ajusta la presentación sin mover ninguna cifra.
+
+**Para revertirla.** Quitar el toggle de las razones señaladas y crear la entrada que reemplace a esta.
+
+**Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/05_checks.md`.
+
+Corrección 2026-10-15: no hubo confirmación del equipo; la frase se retiró.
+
+### D-031 — El separador decimal del formato numérico queda abierto en `metadata.display`
+
+- **Fecha**: 2026-10-14
+- **Estado**: Cerrada por D-033
+- **Decidió**: Cris Lumbi (con agente IA)
+- **Área**: `docs/razones_financieras/*.json` (`metadata.display.decimal_separator`)
+
+**Contexto.** El reporte inicial de la entrega presentó los valores con formato `en-US` (punto decimal, coma de millares) como formato por defecto. En la revisión se pidió no fijar el separador decimal hasta que el usuario lo confirme, y dejar esa única decisión abierta de forma explícita dentro de los JSON.
+
+**Opciones.**
+1. `metadata.display.decimal_separator` con el marcador `DECISION_PENDIENTE` en los 20 JSON — la decisión queda visible para quien revise o consuma el archivo / el que formatea debe leer el campo antes de imprimir.
+2. Fijar `en-US` (o `es-VE`) desde ahora — formato determinado / podría cambiar cifras que ve el usuario sin acuerdo del equipo.
+
+**Decisión.** Opción 1, abierta: no se fija el separador decimal; cada JSON lo declara en `metadata.display` como `DECISION_PENDIENTE: separador decimal (punto o coma) por confirmar con el usuario`. Es la única decisión abierta de la entrega: las 8 diferencias conocidas con la solución del profesor no son decisiones abiertas y por eso pasaron a `DIFERENCIA_CONOCIDA_PROFESOR` dentro de `metadata.research_notes`.
+
+**Consecuencias.** Las tablas de las notas muestran importes con coma de millares solo como texto de documentación; ningún JSON fija el formato. Cuando el usuario confirme, se reemplaza el valor en los 20 archivos y esta entrada se marca como reemplazada por una nueva.
+
+**Para revertirla.** Confirmar el separador, actualizar los 20 JSON y crear la entrada que reemplace a esta.
+
+**Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/02_fuentes.md`.
+
+### D-032 — El control de cálculo directo es único y global en las 11 razones de flujo (reemplaza a D-030)
+
+- **Fecha**: 2026-10-15
+- **Estado**: Vigente (reemplaza a D-030)
+- **Decidió**: Cris Lumbi
+- **Área**: `docs/razones_financieras/*.json` (`modo_periodo.control_global`)
+
+**Contexto.** D-030 quedó reemplazada: su texto mezclaba el planteamiento original con una atribución de confirmación al equipo que no existía. La orden de corrección v7 pide una entrada nueva (AGENTS.md regla 13) que fije lo decidido sin atribuciones.
+
+**Opciones.**
+1. Un solo control global en las 11 razones de flujo, apagado por defecto / un control por razón o "9 razones": la enumeración del documento tiene 11 ítems y los conteos de su tabla confirman 11.
+
+**Decisión.** Un solo control de cálculo directo, global, apagado por defecto, en las 11 razones de flujo. Solo afecta al primer periodo de cada serie. No hay un control por razón ni hay 9 razones.
+
+**Consecuencias.** Igual que D-030: los 11 JSON de flujo traen `modo_periodo.control_global` (`default: false`) y los 9 de punto lo traen en `null`. Ninguna celda de la tabla esperada cambia.
+
+**Para revertirla.** Cambiar el alcance del control en los 20 JSON y crear la entrada que reemplace a esta.
+
+**Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/05_checks.md`.
+
+### D-033 — Formato numérico F1 fijo en los 20 JSON (cierra D-031)
+
+- **Fecha**: 2026-10-15
+- **Estado**: Cerrada (cierra D-031)
+- **Decidió**: Cris Lumbi
+- **Área**: `docs/razones_financieras/*.json` (`presentacion`)
+
+**Contexto.** D-031 dejó el separador decimal como única decisión abierta de la entrega v3, con el marcador en `metadata.display`. En la revisión del PR #10 se pidió fijar el formato.
+
+**Opciones.**
+1. Formato F1: punto decimal, coma de miles, sufijo ` %`, decimales 0 en moneda y 2 en el resto / mantener el marcador abierto (las decisiones abiertas se reportan en el chat, no en los archivos).
+
+**Decisión.** Formato numérico F1: separador decimal `.`, separador de miles `,`, sufijo de porcentaje ` %`, decimales: moneda 0, el resto 2.
+
+**Consecuencias.** Los 20 JSON declaran el formato en `presentacion`; el marcador de D-031 desaparece de los archivos (lo comprueba V12/V17). Solo cambia cómo se imprime el valor, no el valor.
+
+**Para revertirla.** Cambiar `presentacion` en los 20 JSON y crear la entrada que reemplace a esta.
+
+**Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/05_checks.md`.
+
+### D-034 — V12 busca los marcadores prohibidos como placeholder: entre corchetes o en mayúsculas
+
+- **Fecha**: 2026-10-15
+- **Estado**: Vigente
+- **Decidió**: agente, ratificado por Cris Lumbi (con dos condiciones)
+- **Área**: `docs/razones_financieras/notas/validador_v6.mjs` (V12)
+
+**Contexto.** La primera corrida de B4 hizo fallar V12 con `marcador "dato…"` dentro de la prosa de `reglas_generales`, que cita los marcadores que prohíbe. Relajar V12 a mitad de bloque fue una desviación de la orden v6, que pide registrarla.
+
+**Opciones.**
+1. Buscar los marcadores como placeholder: entre corchetes o en mayúsculas (la prosa en minúscula de `reglas_generales` no cuenta) / dejar V12 como estaba (marcaría la cita legítima de la regla) / borrar la cita de `reglas_generales` (pierde la explicación del límite).
+
+**Decisión.** Los marcadores prohibidos se buscan como placeholder: entre corchetes o en mayúsculas. La prosa en minúscula de `reglas_generales` no cuenta.
+
+**Consecuencias.** V12 sigue detectando marcadores reales en los campos (R3); la desviación queda registrada en `notas/05_checks.md` (condiciones de la ratificación: esta orden fija la regla y la desviación se registra allí).
+
+**Para revertirla.** Restaurar el patrón original de V12 y crear la entrada que reemplace a esta.
+
+**Referencias.** `docs/razones_financieras/notas/05_checks.md`, orden `prompt_correccion_agente_razones_v7.md`.
+
+### D-035 — Una cuenta solo es `verified` con una frase de una norma abierta que respalde su definición concreta
+
+- **Fecha**: 2026-10-15
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi
+- **Área**: `docs/razones_financieras/*.json` (`cuentas[].research`), `docs/razones_financieras/notas/03_fuentes.md`
+
+**Contexto.** El audit de fuentes del PR #10 mostró la misma justificación genérica ("NIC 1 exige presentar un juego completo de estados financieros…") repetida en 29 cuentas, también para cuentas de resultado como `is.merchandise_cost` o `is.service_cost`, que una norma general no define.
+
+**Opciones.**
+1. `verified` solo con una frase textual de menos de 15 palabras de una norma abierta en la misma ejecución que confirme la definición concreta de la cuenta, con la frase registrada en `03_fuentes.md` / aceptar la justificación genérica repetida (aprueba cuentas que la norma no nombra).
+
+**Decisión.** Una cuenta es `verified` solo si una norma abierta en esta ejecución respalda su definición concreta. Una justificación genérica repetida en varias cuentas no basta. Sin frase específica, la cuenta pasa a `partially_verified`.
+
+**Consecuencias.** En los 20 JSON solo cambian `cuentas[].research.status` y `cuentas[].research.sources`. Las clasificaciones, las 5 `ambiguous` y las cuentas internas del caso no cambian.
+
+**Para revertirla.** Abrir una norma que respalde la cuenta, actualizar la frase en `03_fuentes.md` y crear la entrada que reemplace a esta.
+
+**Referencias.** [ficha razones-json-v3](planificacion/razones-json-v3/README.md), `docs/razones_financieras/notas/03_fuentes.md`, `docs/razones_financieras/notas/05_checks.md`.
+
+### D-036 — Atribución y numeración de las decisiones del PR #10
+
+- **Fecha**: 2026-10-20
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi; instrucción comunicada por Carlos mediante la tarea maestra y la ronda 7
+- **Área**: Decisiones y referencias de los JSON autónomos del PR #10
+
+**Contexto.** La rama del PR #10 usaba D-021 a D-028, mientras `main` ya ocupaba D-001 a D-027. Las entradas del PR #10 atribuían las decisiones a Alejandro, nombre que la instrucción recibida corrige a Cris Lumbi.
+
+**Opciones.**
+1. Conservar D-001 a D-027 de `main` y trasladar las ocho entradas del PR #10 a D-028 a D-035 — conserva ambas series sin colisión.
+2. Mantener los números duplicados — haría ambiguas las referencias y confundiría decisiones distintas.
+
+**Decisión.** Se adopta la opción 1 y se atribuyen las decisiones trasladadas a Cris Lumbi. D-021→D-028, D-022→D-029, D-023→D-030, D-024→D-031, D-025→D-032, D-026→D-033, D-027→D-034 y D-028→D-035. Se actualizan las referencias activas. Las salidas históricas y mensajes de commits dentro de bloques de evidencia se conservan literalmente con su numeración original.
+
+**Consecuencias.** D-001 a D-027 de `main` permanecen intactas. Se conservan las ocho decisiones del PR #10 y sus estados de reemplazo/cierre; cambia su identificación y atribución, sin cambiar fórmulas ni resultados. La ficha y el informe explican el mapeo para leer la evidencia histórica. No se renumeran decisiones del PR #14.
+
+**Para revertirla.** Registrar una decisión posterior de numeración y actualizar de forma coordinada todas las referencias; no reutilizar números ocupados ni borrar las decisiones preservadas.
+
+**Referencias.** [Ficha razones-json-v3](planificacion/razones-json-v3/README.md), [informe de ronda 7](planificacion/razones-json-v3/ronda7-C-cierre-pr10.md), `instrucciones_carlos_ronda7.md` y sección 2 de `tarea_maestra_motor_razones.md` recibidas por Carlos.
+
+### D-037 — Identificadores como metadatos y claves por nombre
 
 - **Fecha**: 2026-10-17
 - **Estado**: Vigente
@@ -697,7 +899,7 @@ Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama de
 
 **Referencias.** [Ficha de cuentas](planificacion/cuentas/README.md), sección 10.1 del encargo.
 
-### D-030 — Importar filas pendientes sin perder sus montos
+### D-038 — Importar filas pendientes sin perder sus montos
 
 - **Fecha**: 2026-10-17
 - **Estado**: Vigente
@@ -716,9 +918,9 @@ Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama de
 
 **Para revertirla.** Volver a exigir clasificación en registro, importación y normalización; retirar revisión y actualizar las pruebas.
 
-**Referencias.** [Ficha de cuentas](planificacion/cuentas/README.md), D-034.
+**Referencias.** [Ficha de cuentas](planificacion/cuentas/README.md), D-042.
 
-### D-031 — Otros ingresos y gastos genéricos requieren confirmación
+### D-039 — Otros ingresos y gastos genéricos requieren confirmación
 
 - **Fecha**: 2026-10-17
 - **Estado**: Vigente
@@ -739,7 +941,7 @@ Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama de
 
 **Referencias.** [Investigación](planificacion/cuentas/investigacion.md), sección 10.3 del encargo.
 
-### D-032 — Los intereses ganados son ingresos
+### D-040 — Los intereses ganados son ingresos
 
 - **Fecha**: 2026-10-17
 - **Estado**: Vigente
@@ -760,7 +962,7 @@ Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama de
 
 **Referencias.** [Investigación](planificacion/cuentas/investigacion.md), fuente oficial IFRS sobre presentación de ingresos por intereses abierta en esta sesión.
 
-### D-033 — Similitud calibrada como sugerencia confirmable
+### D-041 — Similitud calibrada como sugerencia confirmable
 
 - **Fecha**: 2026-10-17
 - **Estado**: Vigente
@@ -781,7 +983,7 @@ Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama de
 
 **Referencias.** `tests/unit/cuentas-identificador.test.js`, sección 8 del encargo.
 
-### D-034 — Propagar N/D en consumidores sin migrar sus fórmulas
+### D-042 — Propagar N/D en consumidores sin migrar sus fórmulas
 
 - **Fecha**: 2026-10-17
 - **Estado**: Vigente en Reportes; Razones reemplazada por D-044
@@ -800,7 +1002,7 @@ Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama de
 
 **Para revertirla.** Retirar la propagación de disponibilidad y el guardado de metadatos de los lectores; ello vuelve a dejar incompleto R1.
 
-**Referencias.** [Ficha de cuentas](planificacion/cuentas/README.md), D-029–D-033, `cuentas-consumidores.test.js`.
+**Referencias.** [Ficha de cuentas](planificacion/cuentas/README.md), D-037–D-041, `cuentas-consumidores.test.js`.
 
 
 ### D-043 — Acotar N/D por importe, posibilidades y periodo
@@ -810,19 +1012,19 @@ Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama de
 - **Decidió**: Carlos autorizó proceder con las correcciones de las revisiones recibidas; los documentos atribuyen a Cris la aprobación previa de las reglas 1–3. Codex implementa y verifica, sin confirmar decisiones aún reservadas a Cris.
 - **Área**: Estados compartidos, disponibilidad de razones y comprobaciones EFE/EOAF
 
-**Contexto.** La protección conservadora de D-034 anulaba un grupo completo aunque la cuenta pendiente fuera cero o solo pudiera pertenecer a un subtotal. Un desconocido legado podía aumentar el total sin aviso. En EFE, los dividendos derivados comparten la utilidad de operación y su conciliación no la verifica independientemente.
+**Contexto.** La protección conservadora de D-042 anulaba un grupo completo aunque la cuenta pendiente fuera cero o solo pudiera pertenecer a un subtotal. Un desconocido legado podía aumentar el total sin aviso. En EFE, los dividendos derivados comparten la utilidad de operación y su conciliación no la verifica independientemente.
 
 **Opciones.**
 1. Conservar el bloqueo por grupo y exigir revisión incluso con cero — oculta resultados completos y mantiene la inconsistencia legada.
 2. Omitir pendientes de importe cero y acotar la disponibilidad por posibilidades y entradas efectivas — conserva los importes y explica la incertidumbre restante.
 
-**Decisión.** Opción 2; precisa la propagación de D-034. Una cuenta pendiente con saldo numérico cero no aplica a los cálculos del periodo. Con importe, se anulan tipos/subtotales posibles y total del grupo, usando tipo explícito o candidatos; conflictos conservan ambas posibilidades y la falta de contexto considera todo su grupo. La regla incluye desconocidos legados, preservando las clasificaciones conocidas de la demo. Cada motivo enumera campos; las razones distinguen entradas actuales y promedios/compras del periodo anterior. EFE/EOAF solo omiten la falta de tipo si ambos saldos explícitos son cero. EFE reconoce pérdida del ejercicio/periodo y advierte reservas/resultados opuestos. Se aclara que los dividendos son derivados y cuadrar no comprueba UN de forma independiente, sin cambiar la fórmula.
+**Decisión.** Opción 2; precisa la propagación de D-042. Una cuenta pendiente con saldo numérico cero no aplica a los cálculos del periodo. Con importe, se anulan tipos/subtotales posibles y total del grupo, usando tipo explícito o candidatos; conflictos conservan ambas posibilidades y la falta de contexto considera todo su grupo. La regla incluye desconocidos legados, preservando las clasificaciones conocidas de la demo. Cada motivo enumera campos; las razones distinguen entradas actuales y promedios/compras del periodo anterior. EFE/EOAF solo omiten la falta de tipo si ambos saldos explícitos son cero. EFE reconoce pérdida del ejercicio/periodo y advierte reservas/resultados opuestos. Se aclara que los dividendos son derivados y cuadrar no comprueba UN de forma independiente, sin cambiar la fórmula.
 
 **Consecuencias.** Se conservan demo, importes, fórmulas y los 19 tipos. La identidad pendiente sigue en revisión. El dato independiente de dividendos y la retirada de nombres fijos siguen pendientes de Cris. La auditoría rebaja conservadoramente seis estados sin evidencia suficiente; v8 y la reconciliación con los JSON de PR #10 siguen pendientes. D-043 reserva la posición posterior al bloque acordado D-037–D-042; D-029–D-034 se renumerarán justo antes de integrar, después de PR #10, sin editar ahora D-001–D-027.
 
 **Para revertirla.** Retirar el alcance por campos y las excepciones cero de los consumidores, con sus pruebas; esto reintroduce los fallos documentados y requiere decisión nueva.
 
-**Referencias.** [Correcciones y pendientes](planificacion/cuentas/02-correcciones-revision.md), D-030, D-034; instrucciones_amigo_pr14.md y revision_pr13_para_carlos.md recibidos por Carlos.
+**Referencias.** [Correcciones y pendientes](planificacion/cuentas/02-correcciones-revision.md), D-038, D-042; instrucciones_amigo_pr14.md y revision_pr13_para_carlos.md recibidos por Carlos.
 
 
 ### D-044 — Excluir razones financieras por instrucción de Carlos
@@ -832,19 +1034,19 @@ Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama de
 - **Decidió**: Carlos, indicación expresa posterior: «la parte de las razones no la modifiques»
 - **Área**: Alcance del PR #14 y reversión de los ajustes específicos de Razones
 
-**Contexto.** D-034 y parte de D-043 autorizaron adaptar disponibilidad en Razones. Después de publicarse la revisión, Carlos excluye esa parte del trabajo.
+**Contexto.** D-042 y parte de D-043 autorizaron adaptar disponibilidad en Razones. Después de publicarse la revisión, Carlos excluye esa parte del trabajo.
 
 **Opciones.**
 1. Retirar la integración específica de Razones y preservar el resto de la corrección — respeta el límite actualizado del usuario.
 2. Mantener el adaptador porque no cambia fórmulas — seguiría modificando su comportamiento y no cumple el límite.
 
-**Decisión.** Opción 1. Se restaura analisis/index.js completo a origin/main, se elimina cuentas-disponibilidad.js y sus pruebas exclusivas, y se retiran las afirmaciones de propagación específica en Razones de la documentación vigente. Se mantienen importación, catálogo, totales de Estados/Reportes y correcciones EFE/EOAF en sus archivos propios. Esta decisión reemplaza únicamente el alcance de Razones de D-034/D-043, sin reescribir sus motivos históricos.
+**Decisión.** Opción 1. Se restaura analisis/index.js completo a origin/main, se elimina cuentas-disponibilidad.js y sus pruebas exclusivas, y se retiran las afirmaciones de propagación específica en Razones de la documentación vigente. Se mantienen importación, catálogo, totales de Estados/Reportes y correcciones EFE/EOAF en sus archivos propios. Esta decisión reemplaza únicamente el alcance de Razones de D-042/D-043, sin reescribir sus motivos históricos.
 
 **Consecuencias.** Las fórmulas, código de razones, interfaz y pruebas originales quedan como en main. Los totales compartidos de Estados siguen alimentando esos módulos, de modo que corregir una cuenta puede modificar una entrada; no se garantiza aquí la adaptación de N/D/metadatos en Razones para pendientes. Esa adaptación, la retirada de nombres fijos y cualquier otra modificación de Razones quedan fuera de esta entrega. La reversión se registra en un commit nuevo, sin force push ni merge.
 
 **Para revertirla.** Obtener autorización expresa para una tarea de Razones y recuperar o rediseñar el adaptador con sus pruebas; no reintroducirlo como cambio incidental de importación.
 
-**Referencias.** [Exclusión de razones y validación vigente](planificacion/cuentas/03-excluir-razones.md), D-034, D-043, instrucción directa de Carlos en este chat.
+**Referencias.** [Exclusión de razones y validación vigente](planificacion/cuentas/03-excluir-razones.md), D-042, D-043, instrucción directa de Carlos en este chat.
 
 Aclaración (18 de octubre de 2026): la decisión y la instrucción fueron de Cris Lumbi. Carlos la transmitió en el chat.
 
@@ -961,6 +1163,8 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 
 **Referencias.** [Ronda 5](planificacion/cuentas/05-ronda5-puente-intereses.md), [comparación de utilidad](planificacion/cuentas/06-comparacion-utilidad-json.md), [PR #14](https://github.com/cryaut/GFO_Project/pull/14), instrucciones_carlos_pr14_ronda5.md recibidas por Carlos.
 
+**Aclaración (22 de octubre de 2026), decidida por Cris Lumbi: opción A.** Los intereses ganados se suman como línea propia dentro de los ingresos no operativos. La línea de entrada de otros ingresos excluye intereses; ambas líneas alimentan una sola vez el agregado inclusivo que consume el JSON. Si el importe de otros ingresos ya contiene intereses, es un error de entrada: detener y reportar, sin aplicar la opción B. La composición debe declararse o acreditarse en el origen; no se deduce de nombres ni de importes. Si la utilidad neta del motor difiere de la app, detener y reportar para aceptación de Cris Lumbi. Esta aclaración no cambia las fórmulas de la app ni implementa el motor en PR #14.
+
 ### D-052 — Conservar sinónimos ambiguos heredados y bloquear cruces nuevos
 
 - **Fecha**: 2026-10-20
@@ -968,7 +1172,7 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 - **Decidió**: Carlos, elección expresa en el chat al aclarar el requisito de sinónimos de la ronda 5
 - **Área**: Criterio de validación del catálogo y documentación del PR #14
 
-**Contexto.** La ronda 5 pedía unicidad absoluta de sinónimos, pero el catálogo ya tenía siete alias exactos compartidos y ocho cruces tras normalizar. Eliminar todos esos casos cambiaría la identificación previa y las ambigüedades que D-031 y el corpus conservan para pedir contexto o confirmación.
+**Contexto.** La ronda 5 pedía unicidad absoluta de sinónimos, pero el catálogo ya tenía siete alias exactos compartidos y ocho cruces tras normalizar. Eliminar todos esos casos cambiaría la identificación previa y las ambigüedades que D-039 y el corpus conservan para pedir contexto o confirmación.
 
 **Opciones.**
 1. Conservar los casos heredados documentados y bloquear cruces nuevos — mantiene la compatibilidad y hace visibles las excepciones.
@@ -976,7 +1180,7 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 
 **Decisión.** Carlos aprueba «Conservar los ambiguos existentes y bloquear duplicados nuevos». Se mantienen los ocho cruces normalizados enumerados en el informe de ronda 5. La prueba existente compara ese conjunto y sus cuentas participantes para detectar otros cruces o cambios; este criterio sustituye la exigencia literal de unicidad absoluta para esta entrega.
 
-**Consecuencias.** Se cierra el pendiente de sinónimos sin modificar catálogo, identificador, fórmulas ni pruebas. No se afirma que todos los sinónimos sean únicos ni se autoriza depurar los casos heredados. D-031 y D-051 se conservan; esta elección se atribuye a Carlos, sin atribuirla a Cris.
+**Consecuencias.** Se cierra el pendiente de sinónimos sin modificar catálogo, identificador, fórmulas ni pruebas. No se afirma que todos los sinónimos sean únicos ni se autoriza depurar los casos heredados. D-039 y D-051 se conservan; esta elección se atribuye a Carlos, sin atribuirla a Cris.
 
 **Para revertirla.** Acordar la revisión de los casos heredados, registrar una decisión posterior y actualizar catálogo, corpus y guardia junto con las regresiones de identificación afectadas.
 
