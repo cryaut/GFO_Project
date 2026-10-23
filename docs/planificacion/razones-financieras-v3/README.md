@@ -45,7 +45,7 @@ Pedir revisión del PR hacia `main`; bloqueado por los checkpoints 2 (tests/lint
 
 ## Motor de razones — ronda 12 (22 de octubre de 2026)
 
-- **Rama de trabajo**: feat/motor-razones, creada desde main f197530 y con PR #14 incorporado en 73f56130c4f6500b5f56de0ab49bc5a3333ab5bb. Esta rama no tiene PR mientras cuentas no esté fusionado.
+- **Rama de trabajo**: feat/motor-razones, creada desde main f197530 y con PR #14 incorporado en 6e7fc58b8d07a5f1872dd9de34e335d138ef41ea (head final, después de la ficha de revisión). Esta rama no tiene PR mientras cuentas no esté fusionado.
 - **Arquitectura**: D-050, opción C; JSON originales intactos → generador Node sin dependencias nuevas → especificacion-razones.js → intérprete puro sin DOM ni store. No se conecta a computeRazones. Las secciones anteriores son el registro de la auditoría y Mercado, no el estado actual del motor.
 - **Generación**: conserva las nueve claves y research completo. Emite literales JS con comillas simples; pasa ESLint sin exclusiones. La huella incluye nombres y contenido JSON con LF normalizado para evitar diferencias CRLF entre sistemas. No incluye fechas. El módulo generado no se edita a mano.
 - **Flujo**: cambiar JSON, ejecutar node scripts/generar-especificacion-razones.mjs y confirmar ambos en el mismo commit; npm test comprueba sincronía real y los dos errores sintéticos.

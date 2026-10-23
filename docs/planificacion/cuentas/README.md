@@ -4,7 +4,7 @@
 - **Responsable**: Carlos, con Codex
 - **Rama**: `feat/cuentas-identificador`
 - **Última actualización**: 2026-10-22
-- **PR**: [#14 — borrador](https://github.com/cryaut/GFO_Project/pull/14)
+- **PR**: [#14 — listo para revisión](https://github.com/cryaut/GFO_Project/pull/14)
 
 ## Objetivo
 Unificar la identificación de cuentas de importación y alta manual mediante identificadores estables, investigación trazable y sugerencias que requieren confirmación. Conservar las claves por nombre y los estados guardados existentes.
@@ -68,4 +68,4 @@ Unificar la identificación de cuentas de importación y alta manual mediante id
 
 ## Próximo paso
 
-Completar la validación final de ronda 12 y presentar PR #14 para revisión humana, sin fusionarlo. El motor se prepara en su rama desde f197530 más el head final de este PR, sin conectarlo a Análisis. 1c y D-049 permanecen fuera de alcance. Los resultados históricos anteriores se conservan; las salidas actuales completas se entregan en ronda12-R1-pr14.md y en la descripción del PR.
+Revisión humana de PR #14, sin fusionarlo desde esta tarea. Validación de ronda 12 completada: 754 pruebas en 40 archivos, lint sin errores y las 10 advertencias previas, y validador V0–V17 18/18. El motor se prepara en su rama desde f197530 más el head final de este PR, sin conectarlo a Análisis. 1c y D-049 permanecen fuera de alcance. Los resultados históricos anteriores se conservan; las salidas actuales completas se entregan en ronda12-R1-pr14.md y en la descripción del PR.
