@@ -182,8 +182,8 @@ function leerCuenta(id, periodo, ctx) {
   if (ctx.agregados.has(clave)) return ctx.agregados.get(clave);
   const filas = ctx.entrada.cuentas.filter(c => c.estado === 'reconocida' && c.id === id && Object.hasOwn(c, periodo));
   const composicion = ctx.entrada.composicionIngresos?.[periodo];
-  if (filas.some(c => numero(c[periodo]) && c[periodo] !== 0)) {
-    if (composicion === 'incluye_intereses') throw new Error(`${id}: entrada inválida; otros ingresos ya incluye intereses (D-051 opción A).`);
+  if (filas.length && composicion === 'incluye_intereses') throw new Error(`${id}: entrada inválida; otros ingresos ya incluye intereses (D-051 opción A).`);
+  if (filas.some(c => numero(c[periodo]))) {
     if (composicion !== 'excluye_intereses') throw new Error(`${id}: falta declarar composición excluye_intereses para ${periodo}; no se infiere de nombres ni importes.`);
   }
   // D-051: formación trazable del agregado de entrada, sin alterar el árbol

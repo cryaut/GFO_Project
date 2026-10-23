@@ -174,6 +174,13 @@ describe('opción A y adaptación por identificadores', () => {
     entrada.composicionIngresos.current = undefined;
     expect(() => calcularRazon('rentabilidad_margen_utilidad_neta',entrada)).toThrow('falta declarar composición');
   });
+  it('un agregado cero también exige composición y rechaza intereses ya incluidos', () => {
+    const entrada = crearEntradaRazones(datos(),'2024',{ composicionIngresos:{ current:'incluye_intereses' } });
+    expect(campo(entrada,'is.nonoperating_income').current).toBe(0);
+    expect(() => calcularRazon('rentabilidad_margen_utilidad_neta',entrada)).toThrow('entrada inválida');
+    entrada.composicionIngresos.current = undefined;
+    expect(() => calcularRazon('rentabilidad_margen_utilidad_neta',entrada)).toThrow('falta declarar composición');
+  });
   it('el adaptador conserva una fila sin identidad como pendiente, sin omitirla', () => {
     const entrada = crearEntradaRazones({ periods:['2024'], balanceGeneral:{ '2024':{ activos:{ 'rótulo externo':100 } } } }, '2024');
     expect(entrada.cuentas).toHaveLength(1);

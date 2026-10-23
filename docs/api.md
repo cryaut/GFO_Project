@@ -908,7 +908,7 @@ Módulos puros js/modules/razones/razones-motor.js y razones-presentacion.js. No
 
 ### crearEntradaRazones(datos, periodo, opciones = {})
 
-Adapta datos normalizados de PR #14 a `{ cuentas, periodos, composicionIngresos }`. Cada cuenta conserva id, estado, origen, grupo/tipo, candidatos y valores current/previous que existan. Las claves originales solo enlazan metadatos; no se buscan nombres financieros. Una fila sin identidad se conserva para revisión. `periodos` contiene actual, anterior (null si no existe), cantidad e indice. `opciones.composicionIngresos` declara por token current/previous si otros ingresos excluye intereses; una declaración incluye_intereses provoca error de entrada al consumir el agregado, igual que una composición no declarada para un importe no nulo. Los importes por sí solos no acreditan composición.
+Adapta datos normalizados de PR #14 a `{ cuentas, periodos, composicionIngresos }`. Cada cuenta conserva id, estado, origen, grupo/tipo, candidatos y valores current/previous que existan. Las claves originales solo enlazan metadatos; no se buscan nombres financieros. Una fila sin identidad se conserva para revisión. `periodos` contiene actual, anterior (null si no existe), cantidad e indice. `opciones.composicionIngresos` declara por token current/previous si otros ingresos excluye intereses; una declaración incluye_intereses provoca error de entrada al consumir el agregado. La composición se exige para cualquier importe numérico explícito, incluido cero; los importes por sí solos no acreditan composición. La ausencia de esa línea conserva su política declarada de ausencia, sin fabricarla desde un monto null.
 
 ### calcularRazon(id, entrada, opciones = {}, especificacion = ESPECIFICACION_RAZONES)
 
