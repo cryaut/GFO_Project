@@ -268,7 +268,10 @@ function evaluar(nodo, periodo, doc, ctx, ruta) {
       if (!numero(reportado.valor)) return hijo(nodo.calculation, 'calculation');
       const calculado = hijo(nodo.calculation, 'calculation');
       const tolerancia = doc.reglas_generales.total_reportado_y_componentes.tolerancia;
-      if (numero(calculado.valor)) {
+      const componentes = ctx.influencias.get(nodo.reported) || new Set();
+      const comparable = ctx.entrada.cuentas.some(c => c.estado === 'reconocida' && c.id !== nodo.reported
+        && componentes.has(c.id) && Object.hasOwn(c, p) && numero(c[p]));
+      if (numero(calculado.valor) && comparable) {
         // Misma convención de precisión de las comprobaciones existentes:
         // un centavo exacto no supera el umbral por representación binaria.
         const margen = Number.EPSILON * Math.max(1, Math.abs(reportado.valor), Math.abs(calculado.valor));

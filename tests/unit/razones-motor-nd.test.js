@@ -42,6 +42,11 @@ describe('N/D y cuentas pendientes', () => {
       expect.objectContaining({ codigo:'reported_subtotal_mismatch', reportado:900, calculado:950 })
     ]) });
   });
+  it('un total sin desglose no genera una discrepancia contra componentes no reportados', () => {
+    const resultado = calcularRazon('actividad_rotacion_inventarios',entradaManual());
+    expect(resultado.valor).toBe(1);
+    expect(resultado.motivos).toEqual([]);
+  });
   it('la tolerancia de conciliación incluye exactamente un centavo', () => {
     const entrada = entradaManual();
     entrada.cuentas = [fila('bs.cash_and_equivalents',1),fila('bs.current_assets_total',1.01),fila('bs.trade_payables',1),fila('bs.current_liabilities_total',1)];
