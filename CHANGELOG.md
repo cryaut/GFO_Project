@@ -25,6 +25,7 @@ Todos los cambios notables en GFO Toolkit.
 - Botón **Vista previa del reporte** (muestra el reporte en la página) y **Descargar reporte HTML**; antes el botón "Vista Previa HTML" descargaba el archivo.
 
 ### Módulo 3: Análisis Financiero
+- Mercado: los dividendos implícitos quedan N/D cuando el patrimonio del periodo anterior es N/D; se evita que `null` se reste como cero. Se conservan la demo de 2024 y las demás fórmulas.
 - **EFE de tres actividades** (`efe-calculations.js`): el Estado de Flujo de Efectivo de la pestaña EFE se arma por método indirecto desde dos balances — Operación (utilidad neta + depreciación + capital de trabajo), Inversión (activos fijos) y Financiamiento (deuda, aportaciones y dividendos) — con la comprobación CFO + CFI + CFF = variación de efectivo (tolerancia C$ 0.01 + epsilon escalado). Antes `computeEFE` solo calculaba el CFO con tres ajustes y sin comprobación. (D-024)
 - Los dividendos se separan de las aportaciones con las cuentas de utilidades acumuladas (dividendos = UN − ΔRE); sin esas cuentas se usa la variación total del patrimonio con advertencia. (D-025)
 - La depreciación del periodo se estima con la variación de la depreciación acumulada, con advertencia si la cuenta está en signo positivo o si disminuye (posible baja de activos, cuyo reembolso entra en Inversión). (D-026)
