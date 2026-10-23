@@ -1,0 +1,1075 @@
+{
+  "schema_version": "2.0",
+  "razon": {
+    "id": "actividad_rotacion_activos_totales",
+    "name": "Rotación de activos totales",
+    "category": "actividad",
+    "formula_as_provided": "Ventas netas / Activos totales promedio",
+    "unit": "veces",
+    "period_mode": "flow_with_average_balance",
+    "formula": {
+      "op": "divide",
+      "numerator": {
+        "op": "derived",
+        "id": "derived.net_sales"
+      },
+      "denominator": {
+        "op": "average",
+        "of": {
+          "op": "derived",
+          "id": "derived.total_assets"
+        }
+      }
+    },
+    "notes": [
+      "DIFERENCIA_CONOCIDA_PROFESOR: Rotación de activos totales 2024 — profesor: 1.11; este trabajo: 1.13 — motivo: D1: promedio."
+    ]
+  },
+  "razones_dependientes": [],
+  "derivados": [
+    {
+      "id": "derived.gross_sales",
+      "kind": "flow",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "is.sales_total",
+        "calculation": {
+          "op": "sum_accounts",
+          "account_set": "gross_sales_components"
+        }
+      }
+    },
+    {
+      "id": "derived.sales_deductions",
+      "kind": "flow",
+      "formula": {
+        "op": "sum_accounts",
+        "account_set": "sales_deduction_components"
+      }
+    },
+    {
+      "id": "derived.net_sales",
+      "kind": "flow",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "is.net_sales_reported",
+        "calculation": {
+          "op": "subtract",
+          "left": {
+            "op": "derived",
+            "id": "derived.gross_sales"
+          },
+          "right": {
+            "op": "derived",
+            "id": "derived.sales_deductions"
+          }
+        }
+      }
+    },
+    {
+      "id": "derived.inventory_total",
+      "kind": "balance",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "bs.inventory_total",
+        "calculation": {
+          "op": "sum_accounts",
+          "account_set": "inventory_components"
+        }
+      }
+    },
+    {
+      "id": "derived.current_assets",
+      "kind": "balance",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "bs.current_assets_total",
+        "calculation": {
+          "op": "add",
+          "operands": [
+            {
+              "op": "sum_accounts",
+              "account_set": "current_assets_excluding_inventory"
+            },
+            {
+              "op": "derived",
+              "id": "derived.inventory_total"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "derived.fixed_assets_net",
+      "kind": "balance",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "bs.fixed_assets_net_total",
+        "calculation": {
+          "op": "add",
+          "operands": [
+            {
+              "op": "sum_accounts",
+              "account_set": "ppe_components"
+            },
+            {
+              "op": "account",
+              "id": "bs.accumulated_depreciation"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "derived.total_assets",
+      "kind": "balance",
+      "formula": {
+        "op": "reported_or_calculate",
+        "reported": "bs.total_assets",
+        "calculation": {
+          "op": "add",
+          "operands": [
+            {
+              "op": "derived",
+              "id": "derived.current_assets"
+            },
+            {
+              "op": "derived",
+              "id": "derived.fixed_assets_net"
+            },
+            {
+              "op": "account",
+              "id": "bs.intangible_assets"
+            },
+            {
+              "op": "sum_accounts",
+              "account_set": "other_noncurrent_assets_components"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "conjuntos": {
+    "gross_sales_components": [
+      "is.product_sales",
+      "is.service_revenue",
+      "is.other_sales_revenue"
+    ],
+    "sales_deduction_components": [
+      "is.sales_returns",
+      "is.sales_discounts",
+      "is.sales_allowances"
+    ],
+    "current_assets_excluding_inventory": [
+      "bs.cash_and_equivalents",
+      "bs.short_term_investments",
+      "bs.trade_receivables",
+      "bs.other_current_receivables",
+      "bs.prepaid_expenses",
+      "bs.other_current_assets"
+    ],
+    "inventory_components": [
+      "bs.inventory_merchandise",
+      "bs.inventory_raw_materials",
+      "bs.inventory_work_in_process",
+      "bs.inventory_finished_goods"
+    ],
+    "ppe_components": [
+      "bs.ppe_land",
+      "bs.ppe_buildings",
+      "bs.ppe_machinery",
+      "bs.ppe_vehicles",
+      "bs.ppe_furniture",
+      "bs.ppe_other"
+    ],
+    "other_noncurrent_assets_components": [
+      "bs.long_term_investments",
+      "bs.other_noncurrent_assets"
+    ]
+  },
+  "cuentas": [
+    {
+      "id": "is.sales_total",
+      "canonical_name": "Ventas totales",
+      "definition": "Total de ingresos por ventas sin desglose de componentes (R5); se reconoce al entregar los bienes o prestar los servicios.",
+      "statement": "estado_resultados",
+      "classification": "ingreso",
+      "account_role": "reported_total",
+      "normal_balance": "acreedor",
+      "value_semantics": "revenue",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Ventas",
+        "ventas ordinarias totales"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [
+        "Cuenta interna del caso (R5): total de ventas reportado por el caso; se usa como ingreso bruto de ventas sin desglose (D7 y D11). No es una cuenta de un catálogo normativo."
+      ],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "is.product_sales",
+      "canonical_name": "Ventas de productos",
+      "definition": "Ingresos por venta de bienes; contribuyen a ventas brutas cuando no existe total reportado.",
+      "statement": "estado_resultados",
+      "classification": "ingreso",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "revenue",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Ventas de mercaderías",
+        "ventas de bienes"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": [
+          {
+            "title": "IFRS 15 Revenue from Contracts with Customers",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "\"recognises revenue to depict the transfer of promised goods or services to the customer\". Frase textual de IFRS 15 Revenue from Contracts with Customers, abierto el 2026-10-15; confirma la definición de «Ventas de productos» (is.product_sales) (D-035)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.service_revenue",
+      "canonical_name": "Ingresos por servicios",
+      "definition": "Ingresos por servicios prestados; contribuyen a ventas brutas cuando no existe total reportado.",
+      "statement": "estado_resultados",
+      "classification": "ingreso",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "revenue",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Ventas de servicios",
+        "ingresos por servicios prestados"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": [
+          {
+            "title": "IFRS 15 Revenue from Contracts with Customers",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "\"recognises revenue to depict the transfer of promised goods or services to the customer\". Frase textual de IFRS 15 Revenue from Contracts with Customers, abierto el 2026-10-15; confirma la definición de «Ingresos por servicios» (is.service_revenue) (D-035)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.other_sales_revenue",
+      "canonical_name": "Otras ventas ordinarias",
+      "definition": "Ventas operativas menores sin cuenta específica; solo si efectivamente son ventas.",
+      "statement": "estado_resultados",
+      "classification": "ingreso",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "revenue",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Otras ventas",
+        "otras ventas operativas si efectivamente son ventas"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": [
+          {
+            "title": "IFRS 15 Revenue from Contracts with Customers",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
+            "source_type": "accounting_standard",
+            "supports": "\"recognises revenue to depict the transfer of promised goods or services to the customer\". Frase textual de IFRS 15 Revenue from Contracts with Customers, abierto el 2026-10-15; confirma la definición de «Otras ventas ordinarias» (is.other_sales_revenue) (D-035)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "is.sales_returns",
+      "canonical_name": "Devoluciones sobre ventas",
+      "definition": "Contra-ingreso por bienes devueltos por clientes; se suma con signo positivo en deducciones y se resta de ventas brutas (D7).",
+      "statement": "estado_resultados",
+      "classification": "deduccion_ingreso",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "other",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Devoluciones de ventas",
+        "ventas devueltas"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "is.sales_discounts",
+      "canonical_name": "Descuentos sobre ventas",
+      "definition": "Contra-ingreso por descuentos concedidos; se suma con signo positivo en deducciones y se resta de ventas brutas (D7).",
+      "statement": "estado_resultados",
+      "classification": "deduccion_ingreso",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "other",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Descuentos concedidos sobre ventas"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "is.sales_allowances",
+      "canonical_name": "Rebajas sobre ventas",
+      "definition": "Contra-ingreso por rebajas y bonificaciones; se suma con signo positivo en deducciones y se resta de ventas brutas (D7).",
+      "statement": "estado_resultados",
+      "classification": "deduccion_ingreso",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "other",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Rebajas y bonificaciones sobre ventas"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "is.net_sales_reported",
+      "canonical_name": "Ventas netas reportadas",
+      "definition": "Ventas netas de devoluciones, descuentos y rebajas, reportadas directamente por el ejercicio.",
+      "statement": "estado_resultados",
+      "classification": "ingreso",
+      "account_role": "reported_total",
+      "normal_balance": "acreedor",
+      "value_semantics": "revenue",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Ventas netas",
+        "ventas netas totales"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.current_assets_total",
+      "canonical_name": "Total de activos corrientes",
+      "definition": "Subtotal de activos corrientes reportado por el ejercicio; si existe, sustituye a la suma de componentes (regla del subtotal).",
+      "statement": "balance_general",
+      "classification": "total",
+      "account_role": "reported_total",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Total activo corriente",
+        "total activo circulante"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.cash_and_equivalents",
+      "canonical_name": "Efectivo y equivalentes",
+      "definition": "Medios de pago disponibles y equivalentes de efectivo; su saldo crece con cobros y disminuye con pagos.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Efectivo",
+        "caja",
+        "bancos",
+        "caja y bancos"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.short_term_investments",
+      "canonical_name": "Inversiones de corto plazo",
+      "definition": "Valores negociables u otros instrumentos con vencimiento o disponibilidad dentro del corto plazo.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Inversiones temporales",
+        "valores negociables de corto plazo"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": [
+          {
+            "title": "IAS 7 Statement of Cash Flows",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-7-statement-of-cash-flows/",
+            "source_type": "accounting_standard",
+            "supports": "\"Cash equivalents are short-term, highly liquid investments\". Frase textual de IAS 7 Statement of Cash Flows, abierto el 2026-10-15; confirma la definición de «Inversiones de corto plazo» (bs.short_term_investments) (D-035)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.trade_receivables",
+      "canonical_name": "Cuentas por cobrar comerciales",
+      "definition": "Derechos de cobro generados por ventas o servicios a crédito; nacen al entregar el bien o prestar el servicio.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "CxC",
+        "clientes",
+        "cuentas por cobrar a clientes",
+        "deudores comerciales"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.other_current_receivables",
+      "canonical_name": "Otras cuentas por cobrar corrientes",
+      "definition": "Cobros distintos de las ventas comerciales con recuperación dentro del corto plazo (anticipos, deudores varios).",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Deudores varios corrientes",
+        "otras cuentas por cobrar de corto plazo"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.inventory_total",
+      "canonical_name": "Inventario total",
+      "definition": "Total de inventarios sin desglose de componentes (R5). El inventario se reconoce a coste y se expensa como costo de ventas cuando se vende.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "reported_total",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Inventario",
+        "existencias totales"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [
+        "Cuenta interna del caso (R5): el caso reporta un total de inventario sin desglose; la definición viene de la construcción del caso, no de una norma. Se usa el total reportado primero y los componentes solo si el total falta."
+      ],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.inventory_merchandise",
+      "canonical_name": "Inventario de mercaderías",
+      "definition": "Bienes adquiridos para revender sin transformación; mide su coste de adquisición.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Mercaderías",
+        "mercancías",
+        "inventario para la venta"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": [
+          {
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "\"Inventories are measured at the lower of cost and net realisable value\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de mercaderías» (bs.inventory_merchandise) (D-035)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.inventory_raw_materials",
+      "canonical_name": "Inventario de materias primas",
+      "definition": "Materiales adquiridos para la producción que aún no se han transformado.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Materias primas",
+        "materiales en almacén para producción"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": [
+          {
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "\"The cost of inventories includes all costs of purchase, costs of conversion\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de materias primas» (bs.inventory_raw_materials) (D-035)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.inventory_work_in_process",
+      "canonical_name": "Inventario de productos en proceso",
+      "definition": "Producto con transformación iniciada pero sin terminar; acumula materiales, mano de obra y costes indirectos.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Producción en proceso",
+        "productos en proceso"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": [
+          {
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "\"costs of conversion (direct labour and production overhead)\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de productos en proceso» (bs.inventory_work_in_process) (D-035)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.inventory_finished_goods",
+      "canonical_name": "Inventario de productos terminados",
+      "definition": "Producto terminado listo para la venta; se lleva a costo de ventas al venderse.",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Productos terminados",
+        "bienes terminados"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": [
+          {
+            "title": "IAS 2 Inventories",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
+            "source_type": "accounting_standard",
+            "supports": "\"the carrying amount of those inventories is recognised as an expense\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de productos terminados» (bs.inventory_finished_goods) (D-035)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.prepaid_expenses",
+      "canonical_name": "Gastos pagados por anticipado",
+      "definition": "Pagos realizados por adelantado que se consumen como gasto en periodos futuros (seguros, rentas).",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Pagos anticipados",
+        "seguros pagados por anticipado"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.other_current_assets",
+      "canonical_name": "Otros activos corrientes",
+      "definition": "Activos corrientes que no tienen una cuenta específica (anticipos, impuestos a favor de corto plazo).",
+      "statement": "balance_general",
+      "classification": "activo_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Otros activos circulantes"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.fixed_assets_net_total",
+      "canonical_name": "Total de activos fijos netos",
+      "definition": "Subtotal neto de activos fijos reportado por el ejercicio; si existe, sustituye a la suma de componentes con depreciación (D3).",
+      "statement": "balance_general",
+      "classification": "activo_fijo",
+      "account_role": "reported_total",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Activo fijo neto",
+        "propiedad planta y equipo neto"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": [
+          {
+            "title": "IAS 16 Property, Plant and Equipment",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
+            "source_type": "accounting_standard",
+            "supports": "\"Property, plant and equipment are tangible items\". Frase textual de IAS 16 Property, Plant and Equipment, abierto el 2026-10-15; confirma la definición de «Total de activos fijos netos» (bs.fixed_assets_net_total) (D-035)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.ppe_land",
+      "canonical_name": "Terrenos",
+      "definition": "Terrenos ocupados o destinados a la operación; no se deprecian.",
+      "statement": "balance_general",
+      "classification": "activo_fijo",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Terrenos de uso operativo"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": [
+          {
+            "title": "IAS 16 Property, Plant and Equipment",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
+            "source_type": "accounting_standard",
+            "supports": "\"Property, plant and equipment are tangible items\". Frase textual de IAS 16 Property, Plant and Equipment, abierto el 2026-10-15; confirma la definición de «Terrenos» (bs.ppe_land) (D-035)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.ppe_buildings",
+      "canonical_name": "Edificios e instalaciones",
+      "definition": "Construcciones usadas en la operación; su coste se deprecia a lo largo de su vida útil.",
+      "statement": "balance_general",
+      "classification": "activo_fijo",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Edificios",
+        "construcciones de uso operativo"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": [
+          {
+            "title": "IAS 16 Property, Plant and Equipment",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
+            "source_type": "accounting_standard",
+            "supports": "\"Property, plant and equipment are tangible items\". Frase textual de IAS 16 Property, Plant and Equipment, abierto el 2026-10-15; confirma la definición de «Edificios e instalaciones» (bs.ppe_buildings) (D-035)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.ppe_machinery",
+      "canonical_name": "Maquinaria y equipo",
+      "definition": "Maquinaria y equipo utilizados en la producción o la operación; se deprecian por uso o por tiempo.",
+      "statement": "balance_general",
+      "classification": "activo_fijo",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Maquinaria",
+        "equipo productivo"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [
+        "Nombre genérico del caso «Equipos»: el detalle de la cuenta es incierto, pero su clasificación en activo fijo es segura y el detalle no altera ningún resultado (tabla de mapeo, F1)."
+      ],
+      "research": {
+        "status": "ambiguous",
+        "sources": [
+          {
+            "title": "IAS 16 Property, Plant and Equipment",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
+            "source_type": "accounting_standard",
+            "supports": "NIC 16 trata elementos tangibles mantenidos para usarlos en la producción o suministro de bienes o servicios y exige reconocerlos como activo por su costo. Confirma la definición de «Maquinaria y equipo» (bs.ppe_machinery)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.ppe_vehicles",
+      "canonical_name": "Vehículos",
+      "definition": "Vehículos usados en la operación; se deprecian a lo largo de su vida útil.",
+      "statement": "balance_general",
+      "classification": "activo_fijo",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Equipo de transporte",
+        "vehículos de uso operativo"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": [
+          {
+            "title": "IAS 16 Property, Plant and Equipment",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
+            "source_type": "accounting_standard",
+            "supports": "\"Property, plant and equipment are tangible items\". Frase textual de IAS 16 Property, Plant and Equipment, abierto el 2026-10-15; confirma la definición de «Vehículos» (bs.ppe_vehicles) (D-035)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.ppe_furniture",
+      "canonical_name": "Mobiliario y equipo de oficina",
+      "definition": "Mobiliario y equipo de oficina en servicio; se deprecian por su vida útil.",
+      "statement": "balance_general",
+      "classification": "activo_fijo",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Mobiliario",
+        "muebles y enseres",
+        "equipo de oficina"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": [
+          {
+            "title": "IAS 16 Property, Plant and Equipment",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
+            "source_type": "accounting_standard",
+            "supports": "\"Property, plant and equipment are tangible items\". Frase textual de IAS 16 Property, Plant and Equipment, abierto el 2026-10-15; confirma la definición de «Mobiliario y equipo de oficina» (bs.ppe_furniture) (D-035)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.ppe_other",
+      "canonical_name": "Otros activos fijos tangibles",
+      "definition": "Bienes tangibles de la operación sin una cuenta específica; se deprecian según su vida útil.",
+      "statement": "balance_general",
+      "classification": "activo_fijo",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Propiedad, planta y equipo",
+        "otros activos fijos tangibles"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": [
+          {
+            "title": "IAS 16 Property, Plant and Equipment",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
+            "source_type": "accounting_standard",
+            "supports": "\"Property, plant and equipment are tangible items\". Frase textual de IAS 16 Property, Plant and Equipment, abierto el 2026-10-15; confirma la definición de «Otros activos fijos tangibles» (bs.ppe_other) (D-035)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.accumulated_depreciation",
+      "canonical_name": "Depreciación acumulada",
+      "definition": "Cuenta correctora que acumula el desgaste reconocido de los activos fijos; llega negativa y se suma con su signo (D13).",
+      "statement": "balance_general",
+      "classification": "correctora_activo",
+      "account_role": "contra_account",
+      "normal_balance": "acreedor",
+      "value_semantics": "contra_asset",
+      "absence_policy": "requires_data",
+      "synonyms": [
+        "Depreciación acumulada de activos fijos"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.intangible_assets",
+      "canonical_name": "Activos intangibles",
+      "definition": "Activos no monetarios no financieros identificables sin sustancia física (software, patentes); se amortizan. Si no se reportan, aportan cero a activos totales (D12).",
+      "statement": "balance_general",
+      "classification": "activo_no_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Intangibles",
+        "software capitalizado",
+        "patentes"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": [
+          {
+            "title": "IAS 38 Intangible Assets",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-38-intangible-assets/",
+            "source_type": "accounting_standard",
+            "supports": "\"An intangible asset is an identifiable non-monetary asset without physical substance\". Frase textual de IAS 38 Intangible Assets, abierto el 2026-10-15; confirma la definición de «Activos intangibles» (bs.intangible_assets) (D-035)."
+          }
+        ]
+      }
+    },
+    {
+      "id": "bs.long_term_investments",
+      "canonical_name": "Inversiones de largo plazo",
+      "definition": "Inversiones con disponibilidad o recuperación más allá del corto plazo.",
+      "statement": "balance_general",
+      "classification": "activo_no_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Inversiones permanentes",
+        "inversiones no corrientes"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.other_noncurrent_assets",
+      "canonical_name": "Otros activos no corrientes",
+      "definition": "Activos no corrientes sin cuenta específica (derechos a largo plazo, anticipos a largo plazo).",
+      "statement": "balance_general",
+      "classification": "activo_no_corriente",
+      "account_role": "detail",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Otros activos a largo plazo"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    },
+    {
+      "id": "bs.total_assets",
+      "canonical_name": "Total de activos",
+      "definition": "Total de activos reportado por el ejercicio; si existe, sustituye al cálculo activo corriente + activos fijos netos + intangibles (D4).",
+      "statement": "balance_general",
+      "classification": "total",
+      "account_role": "reported_total",
+      "normal_balance": "deudor",
+      "value_semantics": "positive_magnitude",
+      "absence_policy": "not_applicable",
+      "synonyms": [
+        "Total activo",
+        "activo total",
+        "total de recursos"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [],
+      "research": {
+        "status": "partially_verified",
+        "sources": []
+      }
+    }
+  ],
+  "modo_periodo": {
+    "name": "flow_with_average_balance",
+    "average": "(cierre del periodo anterior + cierre del periodo actual) / 2",
+    "flow_period": "current",
+    "politica_sin_periodo_anterior": {
+      "por_defecto": "not_available",
+      "un_solo_periodo_en_el_estado": "direct_closing",
+      "primer_periodo_con_control_activo": "direct_closing"
+    },
+    "control_global": {
+      "id": "mostrar_calculo_directo_primer_periodo",
+      "label": "Mostrar cálculo directo del primer periodo",
+      "default": false,
+      "alcance": "Un solo control para todas las razones de flujo. Solo afecta al primer periodo de cada serie. No existe un control por razón."
+    }
+  },
+  "presentacion": {
+    "marca_directa": "Saldo directo, sin promedio",
+    "marca_promedio": "Promedio {periodo_anterior}–{periodo_actual}",
+    "nota_directa": "Cálculo con saldos de cierre del periodo {periodo}, sin promedio.",
+    "separador_decimal": ".",
+    "separador_miles": ",",
+    "sufijo_porcentaje": " %",
+    "decimales": {
+      "veces": 2,
+      "dias": 2,
+      "porcentaje": 2,
+      "moneda": 0
+    }
+  },
+  "reglas_generales": {
+    "principios": [
+      "Las fórmulas están en este archivo. No hay fórmulas en código.",
+      "Un dato faltante nunca se convierte en número: el resultado es not_available con motivo.",
+      "Ninguna decisión de fórmula se toma durante el cálculo."
+    ],
+    "normalizacion": {
+      "nombres": "minúsculas, sin tildes, espacios simples para comparar; el nombre original se conserva.",
+      "montos": "se conserva el monto original y el monto normalizado.",
+      "signos": "gastos y costos son magnitudes positivas que se restan explícitamente; la depreciación acumulada es negativa y se suma con su signo; una pérdida conserva su signo negativo."
+    },
+    "orden_de_identificacion": [
+      "id explícito válido",
+      "nombre canónico exacto",
+      "sinónimo exacto",
+      "regla contextual definida",
+      "revisión si hay más de un candidato o ninguno"
+    ],
+    "cuenta_no_reconocida": "se marca para revisión. Nunca se convierte en cero.",
+    "cuenta_ausente": {
+      "zero_if_not_reported": "vale cero dentro de la suma.",
+      "requires_data": "el resultado es not_available con motivo missing_required_account_data."
+    },
+    "total_reportado_y_componentes": {
+      "seleccion": "si el total reportado existe con valor numérico, se usa. Sus componentes no se suman en esa agregación.",
+      "conciliacion": "si el total y sus componentes son comparables, se comparan. Si la diferencia supera la tolerancia, se registra reported_subtotal_mismatch. Se usa el total reportado.",
+      "tolerancia": 0.01,
+      "cero_explicito": "un total reportado de cero es un valor válido, no una ausencia."
+    },
+    "total_sin_desglose": "R5: el total de categoría se usa y sus componentes quedan en cero en esa agregación.",
+    "denominador_cero": "not_available con motivo zero_denominator.",
+    "motivos_permitidos": [
+      "missing_required_account_data",
+      "missing_required_period_balance",
+      "zero_denominator",
+      "unrecognized_imported_account",
+      "ambiguous_account_match",
+      "reported_subtotal_mismatch",
+      "overlapping_account_aggregation",
+      "assumption_applied"
+    ],
+    "supuestos": "toda aproximación se declara con el motivo assumption_applied. En este proyecto no hay aproximaciones activas: D8 y D10 no las usan.",
+    "metodo_resultado": "cada resultado indica su método: average, direct_closing o not_applicable. Si el resultado es N/D, el método es not_applicable."
+  }
+}

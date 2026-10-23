@@ -127,11 +127,14 @@ Todos los cambios notables en GFO Toolkit.
 - Muestras para probar la importación en el navegador: `scripts/sample-estados.json` y `scripts/sample-estados.csv` (dos periodos, balance equilibrado).
 
 ### Documentación y trabajo en equipo
+- Ronda 10 A1 del PR #10 (2026-10-22): se aclaran los conteos actuales de los JSON (0 verificados, 66 parciales y 5 ambiguos), se identifican expresamente los conteos históricos de rondas anteriores y se conserva el límite histórico de G3 con las tres definiciones de intangibles aprobadas. Solo cambia documentación; los JSON, las fórmulas y el validador permanecen iguales.
 - `AGENTS.md` con las reglas que siguen las IAs del equipo; `CLAUDE.md` y `GEMINI.md` lo importan.
 - Una IA puede hacer el merge de un PR si se lo piden y otra persona del equipo ya lo aprobó (`docs/reglas/flujo-de-trabajo.md`).
 - `docs/contexto/` (arquitectura y dominio financiero) y `docs/reglas/` (flujo de trabajo, código, y pruebas y documentación).
 - Plantilla de Pull Request en `.github/` y planificación con una carpeta por feature en `docs/planificacion/`.
 - `docs/api.md` documenta las razones agregadas, `DIAS_ANIO`, `saldoPromedio`, `variacion` y `escapeHTML`.
+- `docs/razones_financieras/`: 20 JSON autónomos de razones financieras v3 (fórmulas del profesor, semántica N/D, promedios de saldos de cierre y botón de cálculo directo de m1) con sus notas `notas/` y `ratios/NN_*.md`; `notas/05_checks.md` valida 40/40 celdas del caso MUNO MODA S.A. y los conteos 9/11, 15/5 y 15/5. Decisiones D-028 a D-030 en `docs/decisiones.md`.
+- Ronda 7 del PR #10: se alinean los estados de sus 71 cuentas con el catálogo `7e71ad8` (1 verificada, 65 parciales, 5 ambiguas), se corrige intangibles a no monetarios y se conservan las fórmulas. D-028–D-035 y D-036 resuelven numeración y atribución a Cris Lumbi; las decisiones D-001–D-027 de main permanecen intactas.
 
 ---
 
