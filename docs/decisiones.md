@@ -100,6 +100,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-046 | Intangibles son activos no monetarios | Vigente |
 | D-047 | Propagar N/D en operandos numéricos obligatorios | Vigente |
 | D-048 | Proteger operaciones previas de Análisis | Vigente |
+| D-050 | Motor de razones desde JSON, módulo generado e intérprete puro (opción C) | Vigente en rama de trabajo, sin conexión con Análisis |
 | D-051 | Intereses ganados como componente de ingresos no operativos | Vigente |
 | D-052 | Conservar sinónimos ambiguos heredados y bloquear cruces nuevos | Vigente |
 
@@ -1141,6 +1142,27 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 **Para revertirla.** Retirar la protección previa volvería a permitir coerciones; revisar junto a D-047 y sus pruebas antes de otra modificación.
 
 **Referencias.** [Ronda 3 y validación](planificacion/cuentas/04-ronda3-nd.md); instrucciones_amigo_pr14_ronda2.md e instrucciones_carlos_pr14_ronda3.md recibidas por Carlos.
+
+### D-050 — Motor de razones desde JSON, módulo generado e intérprete puro (opción C)
+
+- **Fecha**: 2026-10-22
+- **Estado**: Vigente en la rama de trabajo feat/motor-razones; sin conexión con Análisis
+- **Decidió**: Cris Lumbi, opción C de la tarea maestra y ronda 12; ejecución autorizada por Carlos después de la revisión
+- **Área**: scripts/generar-especificacion-razones.mjs; js/modules/razones/; pruebas del motor
+
+**Contexto.** Las 20 especificaciones schema 2.0 están integradas en main. Mantener fórmulas adicionales escritas a mano duplicaría las decisiones de los JSON. La opción C contradice la regla 3 vigente de AGENTS.md, que sitúa las fórmulas financieras en calculate.js; esta excepción está expresamente autorizada para el motor y no cambia esa regla durante esta ronda.
+
+**Opciones.**
+1. Generar un módulo ES desde los 20 JSON y ejecutar sus árboles mediante un intérprete puro — una fuente revisable de fórmulas y prueba obligatoria de sincronía / exige regenerar al cambiar los JSON.
+2. Reescribir cada fórmula en JavaScript — menor módulo generado / duplica la especificación y permite divergencias.
+
+**Decisión.** Opción C. Los árboles de los JSON son la única fuente de fórmulas de este motor; el generador usa solo módulos de Node y conserva research completo. El navegador recibe un módulo ES estático sin lectura de archivos. Una prueba compara la generación determinista con el módulo y distingue huella distinta de contenido alterado con la misma huella. El intérprete implementa las 11 operaciones del esquema, valida dependencias y ciclos y centraliza N/D. Su entrada incluye ids, estados, origen, valores por periodo, candidatos, contexto y control global. La formación trazable del agregado de intereses sigue D-051 opción A y exige composición declarada, sin alterar árboles. Un total numérico reportado, incluido cero, tiene prioridad; componentes no utilizados no propagan N/D. La conciliación usa la tolerancia del JSON con margen de representación binaria, como la convención de D-023.
+
+**Consecuencias.** El motor guarda precisión completa y solo el formateador aplica presentacion. Se conserva el código actual de Análisis; no se conecta computeRazones ni se implementa 1c. El PR del motor se abrirá únicamente después de integrar PR #14 para no incluir cambios ajenos. Esta rama incorpora el head final de #14 y queda como trabajo, sin fusión. La regla 3 nueva se propone en R2 y no se aplica a AGENTS.md.
+
+**Para revertirla.** Registrar la decisión que la reemplace y retirar el intérprete, el generador, el módulo generado, el formateador y sus pruebas en su propia rama, conservando los JSON y las decisiones previas.
+
+**Referencias.** Tarea maestra del motor, ronda 12 y revisión autorizada por Carlos; docs/planificacion/razones-financieras-v3/README.md; reporte ronda12-R2-motor.md.
 
 ### D-051 — Intereses ganados como componente de ingresos no operativos
 

@@ -264,3 +264,7 @@ Disponibilidad de cuentas (D-043 y excepción limitada D-047/D-048 a D-044): una
 | `js/modules/proforma/proforma-calculations.js` | `construirReporte`, `resultadosReales`, `resultadosProforma`, `alertasIntegradas` |
 | `js/utils/form.js`, `js/utils/estados-guardados.js` | `leerNumero`, `nuevoId`, `fechaHoy`; `estadosGuardados`, `totalesPeriodo` |
 | `js/utils/format.js` (N/D) | `formatCurrencyND`, `formatNumberND`, `formatPercentND`: muestran "N/D" en lugar de 0 |
+
+## Intérprete de razones (D-050, ronda 12)
+
+La rama feat/motor-razones añade un intérprete genérico, todavía sin conexión con Análisis. Sus fórmulas provienen exclusivamente de docs/razones_financieras/*.json mediante el módulo generado. No duplica las funciones de calculate.js. calcularRazon y evaluarDerivado interpretan operaciones; crearEntradaRazones conserva identidades normalizadas; calcularRazonConTraza registra agregados D-051; calcularRazones y revisarEntradaRazones entregan resultados y revisión. formatearResultadoRazon aplica solo presentación. Firmas y contratos completos en docs/api.md. La excepción a la regla 3 se registra en D-050 y no modifica AGENTS.md durante esta ronda.
