@@ -103,6 +103,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-050 | Motor de razones desde JSON, módulo generado e intérprete puro (opción C) | Vigente en rama de trabajo, sin conexión con Análisis |
 | D-051 | Intereses ganados como componente de ingresos no operativos | Vigente |
 | D-052 | Conservar sinónimos ambiguos heredados y bloquear cruces nuevos | Vigente |
+| D-055 | Celda vacía es dato faltante (N/D), salvo intereses ganados | Vigente en el motor; catálogo de Estados sin cambios |
 
 ## Decisiones
 
@@ -1213,3 +1214,26 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 **Para revertirla.** Acordar la revisión de los casos heredados, registrar una decisión posterior y actualizar catálogo, corpus y guardia junto con las regresiones de identificación afectadas.
 
 **Referencias.** [Ronda 5 y lista de cruces](planificacion/cuentas/05-ronda5-puente-intereses.md), `tests/unit/cuentas-identificador.test.js`, [PR #14](https://github.com/cryaut/GFO_Project/pull/14), aprobación expresa de Carlos en el chat del 2026-10-20.
+
+### D-055 — Celda vacía es dato faltante (N/D), salvo intereses ganados
+
+- **Fecha**: 2026-10-24
+- **Estado**: Vigente en el motor de razones; catálogo de Estados sin cambios
+- **Decidió**: Cris Lumbi, siguiendo la recomendación; ejecución y ajustes de pruebas autorizados por Carlos
+- **Área**: 20 JSON de razones, nota de cuentas maestras, especificación generada y pruebas del motor
+
+**Contexto.** Cincuenta y cinco cuentas de las razones tenían política `zero_if_not_reported`. Así, una cuenta sin importe podía aportar cero y ocultar el dato faltante, en contradicción con la regla de N/D. La comparación de Gamma mostró cinco diferencias al omitir los vacíos de la entrada, frente a representarlos como importes desconocidos. El catálogo de Estados conserva su contrato actual y queda fuera de esta decisión.
+
+**Opciones.**
+1. Exigir datos en las 55 cuentas y conservar únicamente la excepción de intereses ganados — distingue cero explícito de un importe faltante en ambas lecturas.
+2. Mantener las políticas anteriores y depender de la adaptación de vacíos a `null` — conserva resultados distintos según cómo se construya la entrada.
+
+**Decisión.** Se adopta la primera opción, aprobada por Cris Lumbi el 24 de octubre de 2026, siguiendo la recomendación. Una cuenta consumida por el cálculo y sin valor produce N/D con motivo `missing_required_account_data`; cero solo si el dato contiene 0. Única excepción de ausencia en los JSON: `is.interest_income`, según D-051. Se respeta la prioridad vigente de un total reportado numérico: los componentes sustituidos por ese total no son datos obligatorios de ese resultado.
+
+**Alcance.** Cambia `absence_policy` de `zero_if_not_reported` a `requires_data` para las 55 cuentas del anexo de ronda 17 en los 20 JSON y en la nota 02. Se añade a esa nota `is.interest_income`, sin alterar su política ni su investigación. La especificación se regenera desde los JSON. El catálogo y el identificador de Estados, Análisis y Reportes no se modifican; su eventual sincronización requiere otra decisión.
+
+**Consecuencias.** Una cuenta no aplicable debe tener cero explícito. Las pruebas antiguas completan sus entradas ficticias no aplicables con ceros explícitos y ajustan la comprobación de la divergencia documentada con el catálogo, conforme a la autorización de Carlos; no cambian sus resultados financieros esperados. No se implementa 1c ni se conecta el motor con Análisis. No cambian las fórmulas, los datos del ejemplo v3 ni los valores esperados de los ejercicios v2.
+
+**Para revertirla.** Registrar la decisión que la reemplace y modificar de forma coordinada las políticas de los JSON, nota maestra, generado y pruebas, conservando la evidencia y los datos de referencia.
+
+**Referencias.** `instrucciones_carlos_ronda17.md`, anexo de 55 cuentas; ejercicios ficticios v2; autorización expresa de Carlos en este chat; `tests/unit/razones-motor-vacias.test.js`; PR #18.

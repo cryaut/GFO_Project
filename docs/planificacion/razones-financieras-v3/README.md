@@ -1,5 +1,13 @@
 # Corrección de razones financieras (auditoría)
 
+## Política de datos faltantes — ronda 17, 24 de octubre de 2026
+
+- **D-055**: 55 cuentas pasan a `requires_data` en los 20 JSON y la nota maestra. Solo `is.interest_income` conserva `zero_if_not_reported` como excepción D-051; se añade esa cuenta a la nota, que pasa de 71 a 72. El generado se obtiene del generador existente.
+- **Entrada**: cero explícito es un dato; ausencia o importe no numérico producen N/D cuando el cálculo necesita la cuenta. Un total reportado numérico conserva su prioridad y puede sustituir componentes ausentes.
+- **Pruebas autorizadas**: se completan entradas ficticias de pruebas antiguas con ceros explícitos y se comprueba la divergencia intencionada de políticas entre los JSON del motor y el catálogo de Estados, sin cambiar resultados financieros esperados. Las pruebas nuevas recorren las dependencias efectivas de las 55 cuentas y respetan totales reportados.
+- **Referencia de ejercicios**: ZIP ficticio v2, con composición declarada en Entradas!D4/E4; reemplaza al v1. Lectura real sin fabricar `null` y lectura declarada documentadas en `ronda17-R1-motor.md`. El ejemplo v3 aprobado sigue intacto.
+- **Alcance**: no cambian Estados, Análisis, Reportes, validador ni AGENTS.md. Se actualiza PR #18 sin abrir otro PR ni fusionarlo. Las secciones anteriores de rondas 15 y 16 se conservan como registro.
+
 ## Cierre técnico del motor — ronda 16, 23 de octubre de 2026
 
 - **Decisión**: se añade a D-051 la aprobación de Cris Lumbi: sin línea de intereses ganados, `is.interest_income` vale cero por `zero_if_not_reported`; si hay línea con valor, se usa ese valor. La aclaración se limita a esta cuenta y conserva las políticas ya existentes de las demás.
