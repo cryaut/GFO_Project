@@ -3,7 +3,7 @@ import { ESPECIFICACION_RAZONES } from '../../js/modules/razones/especificacion-
 import { calcularRazon, calcularRazonConTraza, calcularRazones, crearEntradaRazones, evaluarDerivado } from '../../js/modules/razones/razones-motor.js';
 import { registrarCuenta } from '../../js/modules/estados/cuentas-registro.js';
 import { computeFinancialTotals } from '../../js/modules/estados/estados-calculations.js';
-import { entradaManual } from '../fixtures/razones-casos.js';
+import { entradaManual } from './fixtures/razones-casos.js';
 
 const fila = (id,current,extra = {}) => ({ id, current, estado:'reconocida', origen:'importacion', ...extra });
 const campo = (entrada,id) => entrada.cuentas.find(c => c.id === id);
@@ -157,15 +157,16 @@ describe('opción A y adaptación por identificadores', () => {
       ['is.sales_total',100], ['is.cost_of_sales_reported',0], ['is.nonoperating_income',0], ['is.interest_income',20], ['is.interest_expense',5]
     ].map(([id,importe],i) => ({ id,importe,nombre:`fila propia ${i}`,periodo:'2024',grupo:'estadoResultados',origen:'importacion' })));
   }
-  it('la utilidad de 100 + 20 - 5 es 115 en motor y app, con nombres propios', () => {
+  it('ingresos ilustrativos: 100 + 20 − 5 = 115', () => {
     const normalizados = datos();
     const entrada = crearEntradaRazones(normalizados,'2024',{ composicionIngresos:{ current:'excluye_intereses' } });
     expect(evaluarDerivado('rentabilidad_margen_utilidad_neta','derived.net_income',entrada).valor).toBe(115);
     expect(computeFinancialTotals(normalizados,'2024').utilidadNeta).toBe(115);
-    const traza = calcularRazonConTraza('rentabilidad_margen_utilidad_neta',entrada).agregaciones;
-    expect(traza).toEqual([expect.objectContaining({ valor:20, componentes:[
-      { id:'is.nonoperating_income', valor:0, periodo:'current' }, { id:'is.interest_income', valor:20, periodo:'current' }
-    ] })]);
+    const traza = calcularRazonConTraza('rentabilidad_margen_utilidad_neta',entrada);
+    expect(traza.agregaciones).toEqual([]);
+    expect(traza.lecturas).toEqual(expect.arrayContaining([
+      { clave:'is.nonoperating_income:current', valor:0 }, { clave:'is.interest_income:current', valor:20 }
+    ]));
   });
   it('rechaza otros ingresos que ya incluyen intereses, sin aplicar opción B', () => {
     const entrada = crearEntradaRazones(datos(),'2024',{ composicionIngresos:{ current:'incluye_intereses' } });

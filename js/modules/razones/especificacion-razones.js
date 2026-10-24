@@ -1,5 +1,5 @@
 // GENERADO: no editar a mano.
-// SHA-256: 9b3e07df1c6b7ee55ccc448975405099411a49629518fecb3726990d6fcaec6c
+// SHA-256: a4a41838ae1acb720150e3fb9a2f9c47e71196c8dfea55b19e625607ee058d36
 // Fuente: 20 JSON de docs/razones_financieras; LF normalizado en la huella.
 export const ESPECIFICACION_RAZONES = {
   'actividad_ciclo_conversion_efectivo': {
@@ -8970,6 +8970,10 @@ export const ESPECIFICACION_RAZONES = {
                 {
                   'op': 'account',
                   'id': 'is.nonoperating_income'
+                },
+                {
+                  'op': 'account',
+                  'id': 'is.interest_income'
                 }
               ]
             },
@@ -9501,6 +9505,38 @@ export const ESPECIFICACION_RAZONES = {
         'research': {
           'status': 'partially_verified',
           'sources': []
+        }
+      },
+      {
+        'id': 'is.interest_income',
+        'canonical_name': 'Ingresos por intereses',
+        'definition': 'Ingreso financiero por intereses ganados; no es un gasto por financiación.',
+        'statement': 'estado_resultados',
+        'classification': 'ingreso_financiero',
+        'account_role': 'detail',
+        'normal_balance': 'acreedor',
+        'value_semantics': 'revenue',
+        'absence_policy': 'zero_if_not_reported',
+        'synonyms': [
+          'Intereses ganados',
+          'Intereses devengados a favor'
+        ],
+        'doubtful_synonyms': [],
+        'ambiguities': [
+          'Se suma a is.nonoperating_income como componente de los ingresos no operativos al calcular la utilidad neta sin utilidad reportada, según D-051.'
+        ],
+        'research': {
+          'status': 'partially_verified',
+          'sources': [
+            {
+              'title': 'IFRS: Presentation of interest revenue',
+              'organization_or_author': 'IFRS Foundation',
+              'url': 'https://www.ifrs.org/projects/completed-projects/2018/presentation-of-interest-revenue-for-particular-financial-instruments-ifrs-9-and-ias-1/',
+              'source_type': 'project_page',
+              'supports': 'Título de proyecto; no define la cuenta. No respalda por sí solo su verificación.',
+              'consulted_on': '2026-10-17'
+            }
+          ]
         }
       },
       {
@@ -10506,6 +10542,10 @@ export const ESPECIFICACION_RAZONES = {
                 {
                   'op': 'account',
                   'id': 'is.nonoperating_income'
+                },
+                {
+                  'op': 'account',
+                  'id': 'is.interest_income'
                 }
               ]
             },
@@ -11146,6 +11186,38 @@ export const ESPECIFICACION_RAZONES = {
         'research': {
           'status': 'partially_verified',
           'sources': []
+        }
+      },
+      {
+        'id': 'is.interest_income',
+        'canonical_name': 'Ingresos por intereses',
+        'definition': 'Ingreso financiero por intereses ganados; no es un gasto por financiación.',
+        'statement': 'estado_resultados',
+        'classification': 'ingreso_financiero',
+        'account_role': 'detail',
+        'normal_balance': 'acreedor',
+        'value_semantics': 'revenue',
+        'absence_policy': 'zero_if_not_reported',
+        'synonyms': [
+          'Intereses ganados',
+          'Intereses devengados a favor'
+        ],
+        'doubtful_synonyms': [],
+        'ambiguities': [
+          'Se suma a is.nonoperating_income como componente de los ingresos no operativos al calcular la utilidad neta sin utilidad reportada, según D-051.'
+        ],
+        'research': {
+          'status': 'partially_verified',
+          'sources': [
+            {
+              'title': 'IFRS: Presentation of interest revenue',
+              'organization_or_author': 'IFRS Foundation',
+              'url': 'https://www.ifrs.org/projects/completed-projects/2018/presentation-of-interest-revenue-for-particular-financial-instruments-ifrs-9-and-ias-1/',
+              'source_type': 'project_page',
+              'supports': 'Título de proyecto; no define la cuenta. No respalda por sí solo su verificación.',
+              'consulted_on': '2026-10-17'
+            }
+          ]
         }
       },
       {
@@ -12094,6 +12166,10 @@ export const ESPECIFICACION_RAZONES = {
                 {
                   'op': 'account',
                   'id': 'is.nonoperating_income'
+                },
+                {
+                  'op': 'account',
+                  'id': 'is.interest_income'
                 }
               ]
             },
@@ -12646,6 +12722,38 @@ export const ESPECIFICACION_RAZONES = {
         'research': {
           'status': 'partially_verified',
           'sources': []
+        }
+      },
+      {
+        'id': 'is.interest_income',
+        'canonical_name': 'Ingresos por intereses',
+        'definition': 'Ingreso financiero por intereses ganados; no es un gasto por financiación.',
+        'statement': 'estado_resultados',
+        'classification': 'ingreso_financiero',
+        'account_role': 'detail',
+        'normal_balance': 'acreedor',
+        'value_semantics': 'revenue',
+        'absence_policy': 'zero_if_not_reported',
+        'synonyms': [
+          'Intereses ganados',
+          'Intereses devengados a favor'
+        ],
+        'doubtful_synonyms': [],
+        'ambiguities': [
+          'Se suma a is.nonoperating_income como componente de los ingresos no operativos al calcular la utilidad neta sin utilidad reportada, según D-051.'
+        ],
+        'research': {
+          'status': 'partially_verified',
+          'sources': [
+            {
+              'title': 'IFRS: Presentation of interest revenue',
+              'organization_or_author': 'IFRS Foundation',
+              'url': 'https://www.ifrs.org/projects/completed-projects/2018/presentation-of-interest-revenue-for-particular-financial-instruments-ifrs-9-and-ias-1/',
+              'source_type': 'project_page',
+              'supports': 'Título de proyecto; no define la cuenta. No respalda por sí solo su verificación.',
+              'consulted_on': '2026-10-17'
+            }
+          ]
         }
       },
       {

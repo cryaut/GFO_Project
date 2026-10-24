@@ -99,7 +99,7 @@ function contexto(entrada, opciones, especificacion, id) {
   const controlId = 'mostrar_calculo_directo_primer_periodo';
   const control = opciones[controlId] ?? false;
   if (typeof control !== 'boolean') throw new Error(`${controlId} debe ser booleano.`);
-  const ctx = { entrada, documentos, cuentas, control, memo:new Map(), resolviendo:new Set(), agregados:new Map() };
+  const ctx = { entrada, documentos, cuentas, control, memo:new Map(), resolviendo:new Set(), lecturas:new Map() };
   // Una cuenta pendiente que pudiera ser un subtotal afecta también a las
   // cuentas que alimentan ese subtotal. El alcance sale de los árboles JSON.
   ctx.influencias = new Map();
@@ -176,22 +176,20 @@ function leerBase(id, periodo, ctx) {
 }
 
 function leerCuenta(id, periodo, ctx) {
-  const fuentes = CUENTAS_CATALOGO.filter(c => c.agrupadoEn === id);
-  if (!fuentes.length) return leerBase(id, periodo, ctx);
   const clave = `${id}:${periodo}`;
-  if (ctx.agregados.has(clave)) return ctx.agregados.get(clave);
-  const filas = ctx.entrada.cuentas.filter(c => c.estado === 'reconocida' && c.id === id && Object.hasOwn(c, periodo));
-  const composicion = ctx.entrada.composicionIngresos?.[periodo];
-  if (filas.length && composicion === 'incluye_intereses') throw new Error(`${id}: entrada inválida; otros ingresos ya incluye intereses (D-051 opción A).`);
-  if (filas.some(c => numero(c[periodo]))) {
-    if (composicion !== 'excluye_intereses') throw new Error(`${id}: falta declarar composición excluye_intereses para ${periodo}; no se infiere de nombres ni importes.`);
+  if (ctx.lecturas.has(clave)) return ctx.lecturas.get(clave);
+  if (id === 'is.nonoperating_income') {
+    const filas = ctx.entrada.cuentas.filter(c => c.estado === 'reconocida' && c.id === id && Object.hasOwn(c, periodo));
+    const composicion = ctx.entrada.composicionIngresos?.[periodo];
+    if (filas.length && composicion === 'incluye_intereses') throw new Error(`${id}: entrada inválida; otros ingresos ya incluye intereses (D-051 opción A).`);
+    if (filas.some(c => numero(c[periodo])) && composicion !== 'excluye_intereses') {
+      throw new Error(`${id}: falta declarar composición excluye_intereses para ${periodo}; no se infiere de nombres ni importes.`);
+    }
   }
-  // D-051: formación trazable del agregado de entrada, sin alterar el árbol
-  // financiero que consume ese agregado. Cada fila participa una sola vez.
-  const componentes = [id, ...fuentes.map(c => c.id)].map(cuenta => ({ id:cuenta, ...leerBase(cuenta, periodo, ctx) }));
-  const resultado = combinar(componentes, valores => valores.reduce((s,v) => s+v, 0));
-  resultado.traza = componentes.map(c => ({ id:c.id, valor:c.valor, periodo }));
-  ctx.agregados.set(clave, resultado);
+  // La suma financiera está en el JSON. La lectura por id nunca incorpora
+  // cuentas relacionadas mediante agrupadoEn y se reutiliza por periodo.
+  const resultado = leerBase(id, periodo, ctx);
+  ctx.lecturas.set(clave, resultado);
   return resultado;
 }
 
@@ -292,7 +290,7 @@ export function calcularRazon(id, entrada, opciones = {}, especificacion = ESPEC
 export function calcularRazonConTraza(id, entrada, opciones = {}, especificacion = ESPECIFICACION_RAZONES) {
   const ctx = contexto(entrada, opciones, especificacion, id);
   const resultado = evaluarRazon(id, ctx);
-  return { resultado, agregaciones:[...ctx.agregados].map(([clave,datos]) => ({ clave, valor:datos.valor, componentes:datos.traza })) };
+  return { resultado, agregaciones:[], lecturas:[...ctx.lecturas].map(([clave,datos]) => ({ clave, valor:datos.valor })) };
 }
 
 export function evaluarDerivado(idRazon, idDerivado, entrada, opciones = {}, especificacion = ESPECIFICACION_RAZONES) {

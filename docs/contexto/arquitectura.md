@@ -194,7 +194,3 @@ No la corrijas dentro de otra tarea: abre una rama propia y avísalo al equipo.
 - `npm run lint` reporta 11 advertencias por variables sin uso.
 - Conviven dos flujos de efectivo: el EFE de Análisis (indirecto, tres actividades derivadas de dos balances con comprobación; D-024) y el módulo Flujo de Efectivo (directo, movimientos capturados a mano). Sus cifras pueden diferir porque no comparten captura.
 - `apalancamiento-ui.js` tiene su propio lector de números; `js/utils/form.js` (`leerNumero`) hace lo mismo para los módulos nuevos.
-
-## Motor de razones en rama de trabajo (ronda 12 / D-050)
-
-scripts/generar-especificacion-razones.mjs usa solo módulos de Node para generar js/modules/razones/especificacion-razones.js desde los 20 JSON, incluido research. El módulo generado es ES estático y se comprueba por sincronía; no hay lectura de archivos JSON ni dependencias Node en el navegador. razones-motor.js importa la especificación y los metadatos del catálogo, sin DOM/store. razones-presentacion.js formatea resultados sin alterar su precisión. El contrato de entrada y control de periodos está en docs/api.md. Esta arquitectura aún no se conecta a computeRazones, no cambia las rutas ni el esquema persistido y no implementa 1c. El PR del motor queda pendiente de la integración de cuentas.

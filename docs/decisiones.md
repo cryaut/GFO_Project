@@ -1164,6 +1164,8 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 
 **Referencias.** Tarea maestra del motor, ronda 12 y revisión autorizada por Carlos; docs/planificacion/razones-financieras-v3/README.md; reporte ronda12-R2-motor.md.
 
+**Aclaración (23 de octubre de 2026), decidida por Cris Lumbi — ronda 15.** Los intereses ganados se añaden explícitamente como operando `is.interest_income` en `derived.net_income` de margen neto, ROA y ROE. El intérprete lee cada id por separado, sin sumar relaciones `agrupadoEn`; conserva la validación de composición. El ejemplo ficticio v3 sustituye a MUNO como referencia de las pruebas de razones. PR #14 ya está en `main`; se autoriza abrir el PR del motor, sin fusionarlo ni conectarlo con Análisis.
+
 ### D-051 — Intereses ganados como componente de ingresos no operativos
 
 - **Fecha**: 2026-10-19
@@ -1186,6 +1188,8 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 **Referencias.** [Ronda 5](planificacion/cuentas/05-ronda5-puente-intereses.md), [comparación de utilidad](planificacion/cuentas/06-comparacion-utilidad-json.md), [PR #14](https://github.com/cryaut/GFO_Project/pull/14), instrucciones_carlos_pr14_ronda5.md recibidas por Carlos.
 
 **Aclaración (22 de octubre de 2026), decidida por Cris Lumbi: opción A.** Los intereses ganados se suman como línea propia dentro de los ingresos no operativos. La línea de entrada de otros ingresos excluye intereses; ambas líneas alimentan una sola vez el agregado inclusivo que consume el JSON. Si el importe de otros ingresos ya contiene intereses, es un error de entrada: detener y reportar, sin aplicar la opción B. La composición debe declararse o acreditarse en el origen; no se deduce de nombres ni de importes. Si la utilidad neta del motor difiere de la app, detener y reportar para aceptación de Cris Lumbi. Esta aclaración no cambia las fórmulas de la app ni implementa el motor en PR #14.
+
+**Aclaración (23 de octubre de 2026), decidida por Cris Lumbi — ronda 15.** La opción A se expresa en el JSON: `is.nonoperating_income` excluye intereses y `is.interest_income` se suma inmediatamente después, una sola vez, dentro de `derived.net_income` de los tres JSON de rentabilidad. El metadato del catálogo no provoca sumas automáticas en el motor. Una composición no declarada para una línea numérica explícita, incluido cero, o declarada `incluye_intereses` es error de entrada. Esta aclaración reemplaza únicamente la formación del agregado de entrada de la aclaración del 22 de octubre; conserva su texto histórico y no implementa 1c.
 
 ### D-052 — Conservar sinónimos ambiguos heredados y bloquear cruces nuevos
 

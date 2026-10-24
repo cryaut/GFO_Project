@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 import { calcularRazon } from '../../js/modules/razones/razones-motor.js';
-import { entradaManual } from '../fixtures/razones-casos.js';
+import { entradaManual } from './fixtures/razones-casos.js';
 
 // Caso resuelto a mano: AC=950, PC=200, AF=500, AT=1450, pasivo=500,
 // patrimonio=950; anteriores AC=600, AF=400, AT=1000, patrimonio=650.

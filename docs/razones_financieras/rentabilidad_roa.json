@@ -151,6 +151,10 @@
               {
                 "op": "account",
                 "id": "is.nonoperating_income"
+              },
+              {
+                "op": "account",
+                "id": "is.interest_income"
               }
             ]
           },
@@ -791,6 +795,38 @@
       "research": {
         "status": "partially_verified",
         "sources": []
+      }
+    },
+    {
+      "id": "is.interest_income",
+      "canonical_name": "Ingresos por intereses",
+      "definition": "Ingreso financiero por intereses ganados; no es un gasto por financiación.",
+      "statement": "estado_resultados",
+      "classification": "ingreso_financiero",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "revenue",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Intereses ganados",
+        "Intereses devengados a favor"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [
+        "Se suma a is.nonoperating_income como componente de los ingresos no operativos al calcular la utilidad neta sin utilidad reportada, según D-051."
+      ],
+      "research": {
+        "status": "partially_verified",
+        "sources": [
+          {
+            "title": "IFRS: Presentation of interest revenue",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/projects/completed-projects/2018/presentation-of-interest-revenue-for-particular-financial-instruments-ifrs-9-and-ias-1/",
+            "source_type": "project_page",
+            "supports": "Título de proyecto; no define la cuenta. No respalda por sí solo su verificación.",
+            "consulted_on": "2026-10-17"
+          }
+        ]
       }
     },
     {

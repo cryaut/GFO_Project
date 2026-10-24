@@ -1,20 +1,20 @@
 import { expect, it } from 'vitest';
 import { calcularRazon } from '../../js/modules/razones/razones-motor.js';
 import { formatearResultadoRazon } from '../../js/modules/razones/razones-presentacion.js';
-import { entradaPiloto } from '../fixtures/razones-piloto.js';
+import { ejemploV3, entradaEjemplo, valorEnUnidadHoja } from './fixtures/razones-ejemplo.js';
 
-// Sustituciones a mano: CNT=AC-PC; corriente=AC/PC; ácida=(AC-I)/PC.
-const casos = [
-  ['liquidez_capital_trabajo_neto',210000,237000,'210,000','237,000'],
-  ['liquidez_razon_corriente',370000/160000,412000/175000,'2.31','2.35'],
-  ['liquidez_prueba_acida',190000/160000,217000/175000,'1.19','1.24']
-].flatMap(([id,anterior,actual,textoAnterior,textoActual]) => [
-  [id,0,false,anterior,textoAnterior], [id,0,true,anterior,textoAnterior], [id,1,false,actual,textoActual]
-]);
+// Los nueve valores vienen de Esperados!D16:F18 del ejemplo v3.
+const casos = ejemploV3.esperados.filter(celda => celda.id.startsWith('liquidez_'));
+const textos = {
+  liquidez_capital_trabajo_neto:{ '2023':'92,000', '2024':'127,000' },
+  liquidez_prueba_acida:{ '2023':'1.01', '2024':'1.15' },
+  liquidez_razon_corriente:{ '2023':'1.67', '2024':'1.88' }
+};
 
-it.each(casos)('piloto B5: %s, índice %s, control %s', (id,indice,control,valor,texto) => {
-  const resultado = calcularRazon(id, entradaPiloto(indice), { mostrar_calculo_directo_primer_periodo:control });
-  expect(resultado.valor).toBeCloseTo(valor, 8);
-  expect(formatearResultadoRazon(id, resultado)).toBe(texto);
+it.each(casos)('piloto ejemplo v3: Esperados!$celda, $id, control $control', referencia => {
+  const indice = ejemploV3.periodos.indexOf(referencia.periodo);
+  const resultado = calcularRazon(referencia.id, entradaEjemplo(indice), { mostrar_calculo_directo_primer_periodo:referencia.control });
+  expect(valorEnUnidadHoja(referencia, resultado)).toBeCloseTo(referencia.valor, 6);
+  expect(formatearResultadoRazon(referencia.id, resultado)).toBe(textos[referencia.id][referencia.periodo]);
   expect(resultado.metodo).toBe('direct_closing');
 });

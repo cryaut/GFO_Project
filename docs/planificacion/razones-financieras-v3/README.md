@@ -1,5 +1,14 @@
 # Corrección de razones financieras (auditoría)
 
+## Estado vigente del motor — ronda 15, 23 de octubre de 2026
+
+- **Rama**: `feat/motor-razones`, sincronizada mediante merge con `origin/main` = `7a78d38`, que ya contiene PR #14. Las secciones de auditoría y ronda 12 más abajo conservan su contexto histórico.
+- **Intereses**: margen neto, ROA y ROE incorporan `is.interest_income` explícitamente después de `is.nonoperating_income` en el mismo `derived.net_income`. Se conserva `partially_verified`, su fuente conceptual y `zero_if_not_reported` del catálogo. El intérprete lee cada id independientemente, sin sumar relaciones `agrupadoEn`, y exige composición válida para otros ingresos.
+- **Referencia**: [ejemplo ficticio v3](../../razones_financieras/ejemplo/), íntegro e inmutable. Sustituye a MUNO en piloto y pruebas de aceptación del motor; las 20 sustituciones manuales independientes conservan sus valores.
+- **Aceptación**: 40 celdas con control apagado y 20 de 2023 con control encendido contra Esperados, con precisión de seis decimales y N/D con motivo. La presentación usa los decimales del JSON. Las salidas completas y el detalle de las 60 celdas se entregan en `ronda15-R1-motor.md` y en el PR.
+- **Contratos y alcance**: [API](../../razones_financieras/motor-api.md), [arquitectura](../../razones_financieras/motor-arquitectura.md), [dominio](../../razones_financieras/motor-dominio.md). Los apéndices antes incluidos en documentación compartida se reubican bajo la ruta autorizada de razones. Las fixtures del motor están en `tests/unit/fixtures/`.
+- **Revisión**: se abre PR listo para revisión por otra persona del equipo; no se fusiona. La propuesta de regla 3 figura en R1; `AGENTS.md` no cambia. No se implementan 1c ni la conexión con Análisis.
+
 - **Estado**: En revisión
 - **Responsable**: Equipo GFO
 - **Rama**: `razones-financieras-v3`
