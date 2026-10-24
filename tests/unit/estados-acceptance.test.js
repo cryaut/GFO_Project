@@ -87,12 +87,22 @@ it('imports external JSON through Estados, previews, saves once and reloads', as
   await page.querySelector('#saveStates').dispatchEvent({ type: 'click' });
   expect(setItem).toHaveBeenCalledTimes(1);
   expect(notify).toHaveBeenCalledTimes(1);
-  expect(store.get('estados')).toEqual(external);
-  expect(JSON.parse(storage.get('gfo-toolkit-data')).estados).toEqual(external);
+  // Comparación independiente con los datos originales, sin usar el propio
+  // normalizador como oráculo. Solo se añaden metadatos de identificación.
+  for (const guardados of [store.get('estados'), JSON.parse(storage.get('gfo-toolkit-data')).estados]) {
+    for (const campo of ['name', 'periods', 'balanceGeneral', 'estadoResultados', 'accountTypes']) {
+      expect(guardados[campo], campo).toEqual(external[campo]);
+    }
+    expect(guardados.accountIdentities.activos['Cuenta bancaria principal']).toMatchObject({
+      estado: 'reconocida', idCuenta: 'bs.cash_and_equivalents'
+    });
+  }
 
   store._data = null;
   initEstados();
-  expect(store.get('estados')).toEqual(external);
+  for (const campo of ['name', 'periods', 'balanceGeneral', 'estadoResultados', 'accountTypes']) {
+    expect(store.get('estados')[campo], campo).toEqual(external[campo]);
+  }
   expect(page.querySelector('#statementPreview').innerHTML).toContain('Servicios profesionales');
   expect(page.querySelector('#estadoMessage').textContent).not.toContain('No se pudo');
 });
@@ -241,11 +251,11 @@ it('imports an external CSV through the Estados file input and publishes it', as
   initEstados();
 
   const csv = [
-    'Estado,Grupo,Cuenta,Clasificacion,2024',
-    'Balance,Activos,Banco regional,efectivo,150',
-    'Balance,Pasivos,Proveedor regional,cuentasPorPagar,50',
-    'Balance,Patrimonio,Aportes socios,patrimonio,100',
-    'Resultados,,Servicios profesionales,ventas,300'
+    'Estado,Grupo,Cuenta,Clasificacion,id,2024',
+    'Balance,Activos,Banco regional,efectivo,bs.cash_and_equivalents,150',
+    'Balance,Pasivos,Proveedor regional,cuentasPorPagar,bs.trade_payables,50',
+    'Balance,Patrimonio,Aportes socios,patrimonio,bs.share_capital,100',
+    'Resultados,,Servicios profesionales,ventas,is.service_revenue,300'
   ].join('\n');
   const input = page.querySelector('#statesFile');
   input.files = [{ name: 'externa.csv', contents: csv }];

@@ -1,58 +1,70 @@
-export const ACCOUNT_TYPES = {
-  activos: ['efectivo', 'cxC', 'inventario', 'activosCorrientesOtros', 'activosFijos', 'depreciacionAcumulada'],
-  pasivos: ['cuentasPorPagar', 'pasivoCortoPlazo', 'provisiones', 'pasivoLargoPlazo'],
-  patrimonio: ['patrimonio'],
-  estadoResultados: ['ventas', 'costoVentas', 'gastosAdmin', 'gastosVentas', 'otrosIngresos', 'otrosGastos', 'intereses', 'impuestos']
-};
-
-function normalizeName(name) {
-  return String(name).normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-}
+import { TIPOS_APP } from './cuentas-catalogo.js';
+import { tipoCuentaLegada, obtenerCuenta } from './cuentas-identificador.js';
+export const ACCOUNT_TYPES = TIPOS_APP;
 
 // Explicit mappings take precedence. Unrecognized names are never silently
 // treated as current assets, debt or expenses: callers must request a mapping.
 export function inferAccountType(group, name) {
-  const key = normalizeName(name);
-  if (!key) return '';
-  const rules = {
-    activos: [
-      ['depreciacionAcumulada', /\bdepreciacion acumulada\b/],
-      ['efectivo', /\b(efectivo|caja|bancos?|equivalentes de efectivo)\b/],
-      ['cxC', /\b(cuentas por cobrar|clientes|deudores comerciales)\b/],
-      ['inventario', /\b(inventarios?|existencias|mercaderias|mercancias)\b/],
-      ['activosCorrientesOtros', /\b(activos corrientes otros|otros activos corrientes)\b/],
-      ['activosFijos', /\b(terrenos|edificios|equipos|vehiculos|maquinaria|mobiliario|activos fijos|propiedad planta)\b/]
-    ],
-    pasivos: [
-      ['cuentasPorPagar', /\b(cuentas por pagar|proveedores|acreedores comerciales)\b/],
-      ['provisiones', /\bprovisiones\b/],
-      ['pasivoCortoPlazo', /\b(corto plazo|pasivos corrientes|pasivo corriente)\b/],
-      ['pasivoLargoPlazo', /\b(largo plazo|no corrientes|no corriente|otros pasivos)\b/]
-    ],
-    estadoResultados: [
-      ['costoVentas', /\b(costos? de ventas|costos? de lo vendido)\b/],
-      ['gastosVentas', /\b(gastos de ventas|gastos comerciales)\b/],
-      ['gastosAdmin', /\b(gastos de administracion|gastos administrativos)\b/],
-      ['otrosIngresos', /\botros ingresos\b/],
-      ['otrosGastos', /\botros gastos\b/],
-      ['intereses', /\b(gastos financieros|gastos de intereses|intereses pagados|intereses)\b/],
-      ['impuestos', /\b(impuestos?|impuesto sobre la renta)\b/],
-      ['ventas', /\b(ventas|ingresos operacionales|ingresos por servicios)\b/]
-    ]
-  };
-  if (group === 'patrimonio') return 'patrimonio';
-  // Non-current liabilities must not match the shorter 'pasivo corriente'.
-  if (group === 'pasivos' && /\bno corrientes?\b/.test(key)) return 'pasivoLargoPlazo';
-  return rules[group]?.find(([, pattern]) => pattern.test(key))?.[0] || '';
+  return tipoCuentaLegada(group, name);
 }
 
 // Tipo de una cuenta: el explícito de accountTypes o, si no hay, el inferido por el nombre.
 // Misma regla que usa computeFinancialTotals; devuelve '' si no se reconoce.
 export function resolveAccountType(data, group, name) {
   const explicit = data?.accountTypes?.[group];
+  const identidad = data?.accountIdentities?.[group]?.[name];
+  if (identidad && identidad.origen !== 'legado' && identidad.estado !== 'reconocida') return '';
   return explicit && Object.hasOwn(explicit, name)
     ? explicit[name] : inferAccountType(group, name);
+}
+
+const CAMPOS_REPORTADOS = {
+  'bs.current_assets_total': ['activosCorrientes', 'totalActivos'],
+  'bs.fixed_assets_net_total': ['activosFijos', 'totalActivos'],
+  'bs.total_assets': ['totalActivos'],
+  'bs.current_liabilities_total': ['pasivosCorrientes', 'totalPasivos'],
+  'bs.total_liabilities': ['totalPasivos'],
+  'bs.total_equity': ['totalPatrimonio'],
+  'is.gross_profit_reported': ['utilidadBruta', 'utilidadNeta'],
+  'is.operating_profit_reported': ['utilidadNeta'],
+  'is.net_income_reported': ['utilidadNeta']
+};
+
+function camposDeTipos(group, tipos) {
+  const campos = new Set(tipos);
+  if (group === 'activos') {
+    campos.add('totalActivos');
+    if (tipos.some(tipo => ['efectivo', 'cxC', 'inventario', 'activosCorrientesOtros'].includes(tipo))) campos.add('activosCorrientes');
+    if (tipos.some(tipo => ['activosFijos', 'depreciacionAcumulada'].includes(tipo))) campos.add('activosFijos');
+  } else if (group === 'pasivos') {
+    campos.add('totalPasivos');
+    if (tipos.some(tipo => tipo !== 'pasivoLargoPlazo')) campos.add('pasivosCorrientes');
+  } else if (group === 'patrimonio') campos.add('totalPatrimonio');
+  else if (group === 'estadoResultados') {
+    campos.add('utilidadNeta');
+    if (tipos.some(tipo => ['ventas', 'costoVentas'].includes(tipo))) campos.add('utilidadBruta');
+  }
+  return [...campos];
+}
+
+// La clasificación explícita restringe posibilidades, pero no confirma la identidad.
+// Sin contexto se conservan todas las posibilidades dentro del grupo de la fila.
+function camposPendientes(data, group, name, id) {
+  const tipo = data.accountTypes?.[group]?.[name];
+  const identidad = data.accountIdentities?.[group]?.[name];
+  const explicitos = ACCOUNT_TYPES[group]?.includes(tipo) ? camposDeTipos(group, [tipo]) : [];
+  if (explicitos.length && identidad?.metodo !== 'conflicto_contexto') return explicitos;
+  const candidatas = (id ? [id] : identidad?.idCuenta ? [identidad.idCuenta]
+    : (identidad?.candidatos || []).map(c => c.id)).map(obtenerCuenta).filter(c => c?.grupo === group);
+  const campos = candidatas.flatMap(cuenta => {
+    if (CAMPOS_REPORTADOS[cuenta.id]) return CAMPOS_REPORTADOS[cuenta.id];
+    const tipos = cuenta.tipoApp ? [cuenta.tipoApp]
+      : cuenta.clasificacion === 'gasto_operativo' ? ['gastosAdmin', 'gastosVentas', 'otrosGastos']
+        : cuenta.clasificacion === 'ingreso' ? ['ventas', 'otrosIngresos']
+          : cuenta.clasificacion === 'deduccion_ingreso' ? ['ventas'] : ACCOUNT_TYPES[group];
+    return camposDeTipos(group, tipos);
+  });
+  return [...new Set(campos.length ? [...explicitos, ...campos] : explicitos.length ? explicitos : camposDeTipos(group, ACCOUNT_TYPES[group]))];
 }
 
 export function computeFinancialTotals(data, period) {
@@ -68,15 +80,13 @@ export function computeFinancialTotals(data, period) {
       if (typeof value !== 'number' || !Number.isFinite(value)) {
         throw new Error(`Importe inválido: ${period} / ${name}`);
       }
-      const explicit = data.accountTypes?.[group];
-      const type = explicit && Object.hasOwn(explicit, name)
-        ? explicit[name] : inferAccountType(group, name);
+      const type = resolveAccountType(data, group, name);
       if (type && !ACCOUNT_TYPES[group].includes(type)) {
         throw new Error(`Clasificación inválida: ${group} / ${name}`);
       }
       sums[group] += value;
       if (type) totals[type] += value;
-      else unclassified.push({ group, name });
+      else if (value !== 0) unclassified.push({ group, name });
     }
   }
   totals.totalActivos = sums.activos;
@@ -88,21 +98,50 @@ export function computeFinancialTotals(data, period) {
   totals.utilidadBruta = totals.ventas - totals.costoVentas;
   totals.utilidadNeta = totals.utilidadBruta - totals.gastosAdmin - totals.gastosVentas
     + totals.otrosIngresos - totals.otrosGastos - totals.intereses - totals.impuestos;
-  // Unknown income-statement accounts make profit indeterminate, not zero.
-  if (unclassified.some(account => account.group === 'estadoResultados')) {
-    totals.utilidadBruta = null;
-    totals.utilidadNeta = null;
+  const reasons = [];
+  const pendientes = [
+    ...unclassified,
+    ...Object.entries(data.reportedTotals?.[period] || {}).map(([id, total]) => ({ group: total.grupo, name: total.nombre, id }))
+  ];
+  for (const { group, name, id } of pendientes) {
+    const identidad = data.accountIdentities?.[group]?.[name] || { estado: id ? 'reconocida' : 'no_reconocida' };
+    const motivo = identidad.estado === 'reconocida' ? 'missing_required_account_data'
+      : identidad.estado === 'sugerida' ? 'ambiguous_account_match' : 'unrecognized_imported_account';
+    const campos = camposPendientes(data, group, name, id);
+    reasons.push({ group, name, motivo, campos });
+    for (const key of campos) totals[key] = null;
   }
-  return { ...totals, unclassified, classificationComplete: unclassified.length === 0 };
+  // El motor por identificadores elegirá total o componentes. Mientras tanto,
+  // el motor anterior no publica una suma duplicada cuando ambos están presentes.
+  for (const [group, accounts] of Object.entries(data.accountIdentities || {})) {
+    const valores = group === 'estadoResultados' ? er : bg[group] || {};
+    const presentes = Object.entries(accounts).filter(([name, identidad]) => Object.hasOwn(valores, name)
+      && identidad.origen !== 'legado' && identidad.estado === 'reconocida')
+      .map(([, identidad]) => obtenerCuenta(identidad.idCuenta)).filter(Boolean);
+    for (const total of presentes.filter(cuenta => cuenta.rol === 'reported_total' && cuenta.tipoApp)) {
+      if (!presentes.some(cuenta => cuenta.id !== total.id && cuenta.tipoApp === total.tipoApp)) continue;
+      const campos = camposDeTipos(group, [total.tipoApp]);
+      for (const key of campos) totals[key] = null;
+      reasons.push({ group, name: total.nombreCanonico, motivo: 'overlapping_account_aggregation', campos });
+    }
+  }
+  const sinGrupo = data.pendingAccounts?.filter(fila => Object.hasOwn(fila.importes, period) && fila.importes[period] !== 0) || [];
+  if (sinGrupo.length) {
+    for (const key of Object.keys(totals)) totals[key] = null;
+    reasons.push({ group: '', name: '', motivo: sinGrupo.some(fila => fila.identificacion.estado === 'sugerida')
+      ? 'ambiguous_account_match' : 'unrecognized_imported_account', campos: Object.keys(totals) });
+  }
+  return { ...totals, unclassified, classificationComplete: unclassified.length === 0 && reasons.length === 0, notAvailableReasons: reasons };
 }
 
 export function validateFinancialData(data) {
   return (data.periods || []).map(period => {
     const { totalActivos, totalPasivos, totalPatrimonio } = computeFinancialTotals(data, period);
-    const difference = totalActivos - totalPasivos - totalPatrimonio;
+    const complete = [totalActivos, totalPasivos, totalPatrimonio].every(value => value !== null);
+    const difference = complete ? totalActivos - totalPasivos - totalPatrimonio : null;
     return {
       period, totalActivos, totalPasivos, totalPatrimonio, difference,
-      balanced: Math.abs(difference) <= 0.01 + Number.EPSILON * Math.max(1, Math.abs(totalActivos))
+      balanced: complete && Math.abs(difference) <= 0.01 + Number.EPSILON * Math.max(1, Math.abs(totalActivos))
     };
   });
 }

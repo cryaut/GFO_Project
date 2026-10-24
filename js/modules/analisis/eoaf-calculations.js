@@ -37,7 +37,7 @@ export function clasificarMovimientoEOAF(grupo, tipo, saldoInicial, saldoFinal) 
   if (!Number.isFinite(saldoInicial) || !Number.isFinite(saldoFinal)) {
     return { clasificacion: null, monto: null, motivo: 'falta-saldo' };
   }
-  if (!tipo) return { clasificacion: null, monto: null, motivo: 'sin-clasificar' };
+  if (!tipo && !(saldoInicial === 0 && saldoFinal === 0)) return { clasificacion: null, monto: null, motivo: 'sin-clasificar' };
   const variacion = saldoFinal - saldoInicial;
   if (variacion === 0) return { clasificacion: 'Sin movimiento', monto: null, motivo: null };
   if (tipo === CONTRA_ACTIVO) {

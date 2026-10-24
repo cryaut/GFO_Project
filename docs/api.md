@@ -2,13 +2,51 @@
 
 Referencia completa de las funciones públicas de los módulos utilitarios.
 
+## Colección de cuentas (`js/modules/estados/cuentas-*.js`)
+
+`versionCatalogo = '2026-10-20.1'`. Catálogo de 72 definiciones; las 71 del PR #10 conservan ids, nombres canónicos, clasificación, rol y política de ausencia. D-046 corrige únicamente la definición de intangibles a no monetarios. La auditoría D-045 deja 1 `verified`, 66 `partially_verified` y 5 `ambiguous`: PGC es referencia terminológica, no respaldo para `verified`. La fixture declara 28 rebajas de investigación y la diferencia de definición, aparte de la sincronización v8 pendiente. Véase [cuentas/investigacion.md](planificacion/cuentas/investigacion.md).
+
+#### `obtenerCuenta(id)` / `listarCuentas({ grupo } = {})`
+Devuelven una copia de la definición (`null` para id inexistente) o una lista en orden estable por id. Grupos: `activos`, `pasivos`, `patrimonio`, `estadoResultados`, `suplementario`. El llamador no puede modificar el catálogo mediante la copia.
+
+La definición puede incluir `agrupadoEn`, id de la cuenta de la que es componente. D-051 declara `is.interest_income.agrupadoEn = 'is.nonoperating_income'`. Ambas conservan `tipoApp: 'otrosIngresos'`; este metadato no cambia la suma actual ni añade agregación automática a `montoCuenta`/`consultarMontoCuenta`. No demuestra que un futuro consumidor de los JSON ejecute el agrupamiento.
+
+#### `identificarCuenta(texto, { grupo, clasificacion, id } = {})`
+Función pura. Devuelve `{ estado, id, metodo, candidatos, preseleccion }`; `estado` es `reconocida`, `sugerida` o `no_reconocida`. Solo una reconocida tiene `id`. Los candidatos incluyen id, nombre, grupo, tipo transitorio y puntuación. El orden es id explícito → nombre canónico → sinónimo → contexto → similitud. Un id inválido no cae a un nombre distinto. Grupo/clasificación contradictorios quedan sugeridos; los alias de cuentas ambiguas requieren confirmación. Ejemplo: `identificarCuenta('Efetivo', { grupo: 'activos' })` devuelve una sugerencia, nunca asigna id.
+
+#### `normalizarCuenta(texto)` / `distanciaDamerau(a, b)` / `similitudCuentas(texto, candidato)`
+Normalizan a minúsculas sin acentos, convierten signos a espacios, colapsan espacios y eliminan las palabras vacías del encargo. Los dígitos se conservan. La distancia devuelve un entero; la similitud devuelve 0–1: máximo entre Damerau–Levenshtein normalizada por longitud máxima y apoyo simétrico por palabras normalizado por longitud combinada. Dígitos diferentes dan similitud cero. Ejemplo: `similitudCuentas('Efetivo', 'Efectivo') = 14/15`; corto/largo no alcanza 0.92.
+
+#### `sugerirCuentas(texto, cuentas)` / `UMBRALES_SIMILITUD`
+Devuelve `{ candidatos, preseleccion }`. Filtra puntuaciones inferiores a 0.80, ordena puntuación descendente e id y conserva hasta cinco candidatos. Solo preselecciona con puntuación ≥0.92 y ventaja ≥0.05. La preselección requiere confirmación; nunca identifica automáticamente.
+
+#### `registrarCuenta(datos, registroORegistros)`
+Alta pura y atómica para importación y captura manual. Cada registro admite `{ nombre, grupo, periodo, importe, clasificacion?, id?, confirmado?, reemplazar?, origen? }`. Devuelve `normalizeFinancialData` de una copia; no modifica la entrada ni guarda en el store. `confirmado` registra `confirmacion_manual`, pero no vuelve válido un id/contexto inválido. El lote evita normalizaciones repetidas. Rechaza duplicados y nombres/periodos peligrosos; una cuenta sin id o grupo conserva el monto para revisión.
+
+#### `montoCuenta(datos, periodo, id)` / `consultarMontoCuenta(datos, periodo, id)`
+La primera devuelve `number | null`; la segunda `{ valor, motivo }`. Un dato explícito, incluido cero, se devuelve; los detalles con el mismo id suman sus saldos. Un total reportado exige un único dato publicado y nunca suma componentes. En ausencia, solo un detalle con `zero_if_not_reported` devuelve cero; `requires_data`, totales y periodos faltantes devuelven null. Candidatos sin confirmar usan `ambiguous_account_match`; desconocidas relevantes usan `unrecognized_imported_account`. Otros motivos: `missing_required_account_data`, `missing_required_period_balance`, `unknown_account_id`.
+
+Una fila pendiente con importe numérico cero en ese periodo no bloquea la política de ausencia; esto también aplica a filas sin grupo. No confirma el id ni convierte un dato requerido ausente en cero.
+
+#### `resumenIdentificacion(datos)`
+Cuenta las cuentas por estado, incluidas las pendientes de grupo; una cuenta compartida por varios periodos se cuenta una vez. Devuelve `{ reconocida, sugerida, no_reconocida }`.
+
+#### `resolverClasificacion(grupo, valor)` / `tipoCuentaLegada(grupo, nombre)`
+Adaptadores de los 19 tipos anteriores: devuelven un tipo o `''`. Los alias y las excepciones de compatibilidad están en el catálogo; no hay una segunda regla regex. El adaptador legado no confirma identificadores ni se usa para aplicar sugerencias nuevas.
+
+#### `resolveGroup({ estado, grupo, clasif, name, id })` / `resolveClassification(grupo, tipo, nombre, id)`
+Adaptadores del importador: el primero devuelve un grupo o `''`; el segundo el resultado completo del identificador. Una cuenta no reconocida no lanza error. El lector sigue rechazando importes y estructuras inválidas, límites excedidos y duplicados. No cambian D-019 ni D-020.
+
+#### `selectorCuenta(contenedor, nombre, grupo, clasificacion?)` / `renderRevisionCuentas(contenedor, datos, cambiar, fallo)`
+Interfaz de selección compartida. La primera dibuja estado/candidatos o catálogo filtrable y devuelve la identificación; la segunda muestra resumen y formularios para confirmar pendientes mediante `registrarCuenta`. Escapan el texto procedente de archivos y no guardan en el store.
+
 ---
 
 ## calculate.js
 
 Fórmulas financieras puras. Todas las funciones reciben números y retornan números (o objetos con resultados). Ninguna depende de DOM ni de estado global.
 
-Cuando falta un dato o el denominador es 0, las funciones agregadas después de la versión 1.0 devuelven `null` (la interfaz muestra "N/D"). Las funciones originales devuelven 0 en ese caso. Los plazos en días usan `DIAS_ANIO = 365`. El catálogo resumido está en `docs/contexto/dominio-financiero.md`.
+D-047: un operando numérico obligatorio `null` o `undefined` produce N/D antes de operar. Las fórmulas y convenciones con datos completos se conservan, incluidos casos especiales legados con denominador cero. Los parámetros opcionales mantienen sus defaults declarados; una tasa que no interviene con DAP cero no es un operando requerido. La ronda 6 restaura la excepción D-005: `tasaImpuesto` puede seleccionar una tasa por defecto válida cuando IR/UAI no permiten una efectiva. DuPont conserva su objeto y deja N/D en los componentes afectados. Los plazos usan `DIAS_ANIO = 365`. El catálogo resumido está en `docs/contexto/dominio-financiero.md`.
 
 ### Constante y funciones base
 
@@ -19,14 +57,14 @@ Días del año para plazos, edades y ciclos: `365`. Úsala en lugar de escribir 
 Saldo promedio de un periodo, para rotaciones, ROA, ROE y DuPont.
 
 - **Parámetros**: `saldoInicial` (number) — saldo del periodo anterior; `saldoFinal` (number) — saldo del periodo actual
-- **Retorno**: `number` — si falta uno de los dos, devuelve el otro; si faltan ambos, 0
+- **Retorno**: `number | null` — N/D si falta cualquiera de los dos saldos. El consumidor selecciona explícitamente saldo final cuando solo hay un periodo.
 - **Fórmula**: `(saldoInicial + saldoFinal) / 2`
-- **Ejemplo**: `saldoPromedio(10000, 20000)` → `15000`; `saldoPromedio(undefined, 20000)` → `20000`
+- **Ejemplo**: `saldoPromedio(10000, 20000)` → `15000`; `saldoPromedio(undefined, 20000)` → `null`
 
 #### `variacion(valorFinal, valorInicial)`
 Variación absoluta entre dos saldos (usada en el EFE indirecto).
 
-- **Retorno**: `number`
+- **Retorno**: `number | null`
 - **Fórmula**: `valorFinal - valorInicial`
 - **Ejemplo**: `variacion(25000, 20000)` → `5000`
 
@@ -44,7 +82,7 @@ Calcula el porcentaje de variación horizontal.
 Calcula la variación absoluta entre dos periodos.
 
 - **Parámetros**: `valorT2` (number) — valor actual; `valorT1` (number) — valor anterior
-- **Retorno**: `number` — diferencia absoluta
+- **Retorno**: `number | null` — diferencia absoluta
 - **Fórmula**: `valorT2 - valorT1`
 - **Ejemplo**: `ahDelta(12000, 10000)` → `2000`
 
@@ -64,7 +102,7 @@ Calcula la variación porcentual horizontal completa.
 Calcula el porcentaje que representa una cuenta sobre una base.
 
 - **Parámetros**: `cuenta` (number) — monto de la cuenta; `base` (number) — base de comparación (total activo, ventas, etc.)
-- **Retorno**: `number` — proporción decimal
+- **Retorno**: `number | null` — proporción decimal
 - **Fórmula**: `cuenta / base`
 - **Ejemplo**: `av(5000, 20000)` → `0.25` (25%)
 
@@ -267,11 +305,13 @@ Tasa efectiva de impuesto.
 - **Ejemplo**: `tasaEfectiva(30000, 100000)` → `0.3`; `tasaEfectiva(30000, 0)` → `null`
 
 #### `tasaImpuesto(ir, uai, tasaDefecto = TASA_IR_DEFECTO)`
-Tasa T para el GAF: la efectiva si existe; si no, la tasa por defecto.
+Tasa T para el GAF: la efectiva si existe; si no está disponible, la tasa por defecto válida (D-005, restaurada en la ronda 6).
 
 - **Parámetros**: `ir` (number | null) — `null` si el periodo no trae cuenta de impuestos; `0` es un IR informado; `uai` (number); `tasaDefecto` (number)
-- **Retorno**: `number | null` — `null` si no hay tasa efectiva y `tasaDefecto` está fuera de [0, 1)
-- **Ejemplo**: `tasaImpuesto(30000, 100000)` → `0.3`; `tasaImpuesto(null, 100000)` → `0.3`; `tasaImpuesto(0, 100000)` → `0`
+- **Retorno**: `number | null` — N/D si no hay tasa efectiva y `tasaDefecto` está fuera de [0, 1); IR/UAI ausentes permiten seleccionar una tasa por defecto válida
+- **Ejemplo**: `tasaImpuesto(30000, 100000)` → `0.3`; `tasaImpuesto(null, 100000, 0.15)` → `0.15`; `tasaImpuesto(0, 100000)` → `0`
+
+El módulo Apalancamiento conserva IR N/D si no existe cuenta y llama a este helper como en `main`; la selección de la tasa configurada pertenece a `tasaImpuesto`, con origen `defecto` cuando no hay efectiva válida. No calcula una tasa efectiva a partir de un IR ausente. Esta es una excepción explícita al contrato general de operandos obligatorios de D-047.
 
 #### `denominadorGaf(uai, dap = 0, t = null)`
 Denominador del GAF y del GAT. Con DAP = 0 es la UAI y `t` no se valida.
@@ -348,7 +388,7 @@ Modelo DuPont de 3 pasos.
 Capital neto de trabajo.
 
 - **Parámetros**: `activosCorrientes` (number); `pasivosCorrientes` (number)
-- **Retorno**: `number`
+- **Retorno**: `number | null`
 - **Fórmula**: `AC - PC`
 - **Ejemplo**: `capitalNetoTrabajo(30000, 18000)` → `12000`
 
@@ -356,7 +396,7 @@ Capital neto de trabajo.
 Capital neto operativo.
 
 - **Parámetros**: `activosCorrientesOps` (number); `pasivosCorrientesOps` (number)
-- **Retorno**: `number`
+- **Retorno**: `number | null`
 - **Fórmula**: `AC operativos - PC operativos`
 - **Ejemplo**: `capitalNetoOperativo(25000, 16000)` → `9000`
 
@@ -381,7 +421,7 @@ Clasifica automáticamente un movimiento como Origen o Aplicación de Fondos.
 Calcula el efectivo de operaciones por método indirecto. Análisis ya no la consume en la pestaña EFE (usa `construirEFE`); sigue exportada para sus pruebas.
 
 - **Parámetros**: `utilidadNeta` (number); `ajustes` (number[]) — array de ajustes no efectivos
-- **Retorno**: `number` — efectivo neto de operaciones
+- **Retorno**: `number | null` — efectivo neto; N/D sin lanzar si falta la utilidad, la lista de ajustes o un elemento de esta
 - **Fórmula**: `UtilidadNeta + Σ(ajustes)`
 - **Ejemplo**: `efeIndirecto(12000, [3000, -1000, 2000])` → `16000`
 
@@ -393,7 +433,7 @@ Calcula el efectivo de operaciones por método indirecto. Análisis ya no la con
 Depreciación anual por método de línea recta.
 
 - **Parámetros**: `costoOriginal` (number); `valorResidual` (number); `vidaUtil` (number) — en años
-- **Retorno**: `number` — depreciación anual
+- **Retorno**: `number | null` — depreciación anual
 - **Fórmula**: `(CostoOriginal - ValorResidual) / VidaUtil`
 - **Ejemplo**: `depAnualLineaRecta(18000, 2400, 5)` → `3120`
 
@@ -401,7 +441,7 @@ Depreciación anual por método de línea recta.
 Depreciación acumulada con tope de vida útil.
 
 - **Parámetros**: `depAnual` (number); `aniosConsumidos` (number); `vidaUtil` (number)
-- **Retorno**: `number`
+- **Retorno**: `number | null`
 - **Fórmula**: `depAnual × min(aniosConsumidos, vidaUtil)`
 - **Ejemplo**: `depAcumulada(3120, 3, 5)` → `9360`
 
@@ -409,7 +449,7 @@ Depreciación acumulada con tope de vida útil.
 Valor contable de un activo.
 
 - **Parámetros**: `costoOriginal` (number); `depAcum` (number) — depreciación acumulada
-- **Retorno**: `number`
+- **Retorno**: `number | null`
 - **Fórmula**: `CostoOriginal - DepAcumulada`
 - **Ejemplo**: `valorEnLibros(18000, 9360)` → `8640`
 
@@ -421,7 +461,7 @@ Valor contable de un activo.
 Calcula cuánto ahorrar cada mes para alcanzar una meta.
 
 - **Parámetros**: `metaAhorro` (number); `mesesDisponibles` (number)
-- **Retorno**: `number` — ahorro mensual requerido
+- **Retorno**: `number | null` — ahorro mensual requerido
 - **Fórmula**: `MetaAhorro / MesesDisponibles`
 - **Ejemplo**: `ahorroMensual(3000, 12)` → `250`
 
@@ -429,7 +469,7 @@ Calcula cuánto ahorrar cada mes para alcanzar una meta.
 Calcula el saldo disponible al final de la semana.
 
 - **Parámetros**: `ingreso` (number); `gastos` (number); `ahorro` (number); `reserva` (number, opcional)
-- **Retorno**: `number`
+- **Retorno**: `number | null`
 - **Fórmula**: `Ingreso - Gastos - Ahorro - Reserva`
 - **Ejemplo**: `saldoSemanal(3000, 2200, 250, 100)` → `450`
 
@@ -686,7 +726,22 @@ Cuerpo HTML del reporte (resumen, Balance General, Estado de Resultados y Totale
 
 ---
 
+## Operaciones previas de Análisis (D-048)
+
+`computeRazones(periodo)` conserva los metadatos de identificación al releer estados. Con operandos ausentes, utilidad bruta, utilidad operativa, compras y capital de trabajo permanecen N/D antes de llamar a `calculate.js`; el denominador de rotación de capital de trabajo usa ese mismo valor protegido. No cambia fórmulas ni presentación. El caso de un periodo elige su saldo final explícitamente; con inventario no comparable conserva la aproximación de compras anterior.
+
+Añade `notAvailableReasons`: motivos originales de los totales con `periodo`, más `{ campo, periodo, motivo: 'missing_required_account_data', operandos }` para las operaciones previas con datos faltantes. Los ceros explícitos son válidos. El respaldo por nombres fijos permanece sin modificar; no se conecta el motor nuevo.
+
+---
+
 ## estados-calculations.js (selección)
+
+#### `computeFinancialTotals(data, period)`
+Suma los tipos y calcula los agregados compartidos, preservando las fórmulas existentes. Devuelve totales, `unclassified`, `classificationComplete` y `notAvailableReasons: Array<{ group, name, motivo, campos }>`.
+
+Una cuenta sin tipo con importe cero no aplica al cálculo; permanece pendiente de identificación. Con importe distinto de cero, incluso de origen legado, se anulan sus tipos/subtotales posibles y el total del grupo. Se usa clasificación explícita o candidatos; si hay conflicto de contexto se conservan ambas posibilidades. Sin contexto se consideran todos los tipos de su grupo. Una fila sin grupo y con importe anula todos los totales. Los saldos ausentes no se completan con cero.
+
+- **Ejemplo**: cuenta pendiente de `activosCorrientesOtros` con 5000 → ese tipo, `activosCorrientes` y `totalActivos` son null; `activosFijos` conserva su valor.
 
 #### `resolveAccountType(data, group, name)`
 Tipo de una cuenta: el de `data.accountTypes[group][name]` si existe (solo propiedades propias); si no, `inferAccountType(group, name)`. Es la misma regla que aplica `computeFinancialTotals`.
@@ -745,6 +800,7 @@ Clasifica la variación de una cuenta del balance con el grupo (`'activos'`, `'p
   - `monto`: valor absoluto de la variación, o `null`
   - `motivo`: `'falta-saldo'` (un saldo no existe), `'sin-clasificar'` (cuenta sin tipo), `'signo-cambiado'` (depreciación que cambia de signo con la misma magnitud) o `null`
 - **Reglas**: activo que aumenta → `'Aplicacion'`; activo que disminuye → `'Origen'`; pasivo/patrimonio que aumenta → `'Origen'`; que disminuye → `'Aplicacion'`. En `depreciacionAcumulada` manda la magnitud (creciente → `'Origen'`).
+- Dos saldos numéricos cero devuelven `'Sin movimiento'` incluso sin tipo. Un saldo ausente o un saldo no clasificado distinto de cero sigue siendo incompleto.
 - **Ejemplo**: `clasificarMovimientoEOAF('activos', 'efectivo', 100, 130)` → `{ clasificacion: 'Aplicacion', monto: 30, motivo: null }`
 
 #### `etiquetaFalta(motivo)`
@@ -791,6 +847,8 @@ Arma el estado completo: operación (UN + depreciación + capital de trabajo), i
 
 #### `interpretarEFE(resultado)`
 Lectura del estado: si cuadra o no, y qué dicen los signos de los flujos (la operación genera o consume efectivo, si alcanza para la inversión y si el financiamiento aportó o devolvió fondos). La calcula `construirEFE`; se expone para pruebas.
+
+Identifica los dividendos como derivados de las utilidades acumuladas y aclara que cuadrar no valida independientemente la utilidad neta. Se conservan la fórmula y la falta de confirmación del dato de dividendos. `construirEFE` reconoce «pérdida del ejercicio/periodo», omite el motivo sin clasificación cuando ambos saldos son cero y advierte movimientos opuestos entre reservas y resultados, sin redistribuir importes.
 
 ---
 

@@ -1,5 +1,6 @@
-import { ACCOUNT_TYPES, inferAccountType } from './estados-calculations.js';
-import { normalizeFinancialData, sortPeriods } from './estados-normalize.js';
+import { identificarCuenta, obtenerCuenta, resolverClasificacion } from './cuentas-identificador.js';
+import { registrarCuenta } from './cuentas-registro.js';
+import { normalizeFinancialData } from './estados-normalize.js';
 
 // Tabular import for external financial statements.
 //
@@ -17,35 +18,14 @@ const MAX_ROWS = 5000;
 const MAX_COLUMNS = 120;
 const MAX_VALUES = 20000;
 
-const META_HEADERS = new Set(['estado', 'grupo', 'cuenta', 'clasificacion', 'tipo', 'periodo', 'importe', 'moneda', 'nota']);
+const META_HEADERS = new Set(['estado', 'grupo', 'cuenta', 'clasificacion', 'tipo', 'periodo', 'importe', 'moneda', 'nota', 'id']);
 
 const GROUP_ALIASES = {
   activos: ['activo', 'activos', 'balance activos'],
   pasivos: ['pasivo', 'pasivos'],
   patrimonio: ['patrimonio', 'capital contable', 'patrimonio neto'],
+  suplementario: ['suplementario', 'datos suplementarios'],
   estadoResultados: ['resultado', 'resultados', 'estado resultados', 'estado de resultados', 'er', 'perdidas y ganancias']
-};
-
-const TYPE_ALIASES = {
-  efectivo: ['efectivo', 'caja', 'bancos', 'banco', 'equivalentes de efectivo'],
-  cxC: ['cxc', 'cuentas por cobrar', 'clientes', 'deudores comerciales'],
-  inventario: ['inventario', 'inventarios', 'existencias', 'mercaderia', 'mercaderias'],
-  activosCorrientesOtros: ['activos corrientes otros', 'otros activos corrientes'],
-  activosFijos: ['activos fijos', 'no corriente', 'propiedad planta y equipo', 'ppe', 'inmuebles'],
-  depreciacionAcumulada: ['depreciacion acumulada', 'depreciacion'],
-  cuentasPorPagar: ['cuentas por pagar', 'proveedores', 'acreedores comerciales'],
-  pasivoCortoPlazo: ['pasivo corto plazo', 'pasivos corrientes', 'deuda financiera corriente'],
-  provisiones: ['provisiones'],
-  pasivoLargoPlazo: ['pasivo largo plazo', 'pasivos no corrientes'],
-  patrimonio: ['patrimonio', 'capital', 'capital social'],
-  ventas: ['ventas', 'ingresos', 'ingresos operacionales', 'ingresos por servicios'],
-  costoVentas: ['costo de ventas', 'costos de ventas', 'costo de lo vendido'],
-  gastosAdmin: ['gastos administrativos', 'gastos de administracion', 'administracion'],
-  gastosVentas: ['gastos de ventas', 'gastos comerciales', 'ventas y mercadeo'],
-  otrosIngresos: ['otros ingresos'],
-  otrosGastos: ['otros gastos'],
-  intereses: ['gastos financieros', 'intereses', 'gastos de intereses'],
-  impuestos: ['impuestos', 'impuesto sobre la renta', 'ir']
 };
 
 export const TABULAR_TEMPLATE_ROWS = [
@@ -258,49 +238,19 @@ function matchGroup(raw) {
   return '';
 }
 
-function findGroupByType(raw) {
-  const key = normalizeHeader(raw);
-  if (!key) return '';
-  for (const group of ['activos', 'pasivos', 'patrimonio']) {
-    if (resolveType(group, key)) return group;
-  }
-  return '';
-}
-
-function resolveType(group, raw) {
-  const key = normalizeHeader(raw);
-  if (!key) return '';
-  const direct = ACCOUNT_TYPES[group].find(type => normalizeHeader(type) === key);
-  if (direct) return direct;
-  for (const [type, aliases] of Object.entries(TYPE_ALIASES)) {
-    if (ACCOUNT_TYPES[group].includes(type) && aliases.includes(key)) return type;
-  }
-  return '';
-}
-
-function resolveGroup({ estado, grupo, clasif, name, rowNumber }) {
+export function resolveGroup({ estado, grupo, clasif, name, id = '' }) {
   const explicit = matchGroup(grupo);
   if (explicit && explicit !== 'balance') return explicit;
   if (matchGroup(estado) === 'estadoResultados') return 'estadoResultados';
-  const byType = findGroupByType(clasif);
-  if (byType) return byType;
-  if (!normalizeHeader(grupo) && !normalizeHeader(estado)) {
-    throw new Error(`Fila ${rowNumber}: indique Grupo (activos/pasivos/patrimonio) o Estado (Balance/Resultados) para "${name}".`);
+  for (const group of ['activos', 'pasivos', 'patrimonio', 'estadoResultados']) {
+    if (resolverClasificacion(group, clasif)) return group;
   }
-  throw new Error(`Fila ${rowNumber}: no se pudo ubicar "${name}". Indique Grupo = activos, pasivos o patrimonio.`);
+  return obtenerCuenta(identificarCuenta(name, { id }).id)?.grupo || '';
 }
 
-function resolveClassification(group, typeRaw, name, rowNumber) {
-  const explicit = resolveType(group, typeRaw);
-  if (explicit) return explicit;
-  if (String(typeRaw || '').trim()) {
-    throw new Error(`Fila ${rowNumber}: la clasificación "${typeRaw}" no es válida para ${group}. Valores: ${ACCOUNT_TYPES[group].join(', ')}.`);
-  }
-  const inferred = inferAccountType(group, name);
-  if (inferred) return inferred;
-  throw new Error(`Fila ${rowNumber}: la cuenta "${name}" no se reconoce. Añada una Clasificación (ej.: ${ACCOUNT_TYPES[group][0]}).`);
+export function resolveClassification(group, typeRaw, name, id = '') {
+  return identificarCuenta(name, { grupo: group, clasificacion: typeRaw, id });
 }
-
 
 const MAX_AVISOS = 100;
 
@@ -308,19 +258,12 @@ const MAX_AVISOS = 100;
 // acumulan las advertencias (importes ambiguos) sin detener la importación.
 function createBuilder({ decimal = 'auto', avisos = [] } = {}) {
   if (!FORMATOS_IMPORTE.includes(decimal)) throw new Error(`Formato de importes no válido: ${decimal}`);
-  return {
-    decimal, avisos,
-    periods: [], seen: new Set(), values: 0,
-    balanceGeneral: {},
-    estadoResultados: {},
-    accountTypes: { activos: {}, pasivos: {}, patrimonio: {}, estadoResultados: {} }
-  };
+  return { decimal, avisos, registros: [], seen: new Set(), values: 0 };
 }
 
-function ensurePeriod(builder, period) {
-  if (!builder.seen.has(period)) { builder.seen.add(period); builder.periods.push(period); }
-  if (!builder.balanceGeneral[period]) builder.balanceGeneral[period] = { activos: {}, pasivos: {}, patrimonio: {} };
-  if (!builder.estadoResultados[period]) builder.estadoResultados[period] = {};
+function finishBuilder(builder, name) {
+  if (!builder.values) throw new Error('La tabla no contiene importes numéricos.');
+  return registrarCuenta({ name, periods: [], balanceGeneral: {}, estadoResultados: {} }, builder.registros);
 }
 
 function ingestTable(builder, rows, defaults = {}) {
@@ -329,6 +272,7 @@ function ingestTable(builder, rows, defaults = {}) {
   if (!header.includes('cuenta')) {
     throw new Error("La tabla debe tener una columna 'Cuenta' en la cabecera.");
   }
+  if (new Set(header.filter(Boolean)).size !== header.filter(Boolean).length) throw new Error('Encabezados duplicados.');
   const at = key => header.indexOf(key);
   const has = key => at(key) !== -1;
   const hasClasif = has('clasificacion') || has('tipo');
@@ -336,7 +280,9 @@ function ingestTable(builder, rows, defaults = {}) {
   const long = has('periodo') && has('importe');
   const periodColumns = long ? [] : columns
     .map((cell, index) => ({ label: String(cell).trim(), index }))
-    .filter(({ label }) => !META_HEADERS.has(normalizeHeader(label)));
+    .filter(({ label }) => label && !META_HEADERS.has(normalizeHeader(label)));
+  if (has('periodo') !== has('importe')) throw new Error('El formato largo requiere Periodo e Importe.');
+  if (!long && periodColumns.some(({ label }) => !/^\d{4}(?:[- /].+)?$/.test(label))) throw new Error('Columna de periodo inválida.');
   if (!long && periodColumns.length === 0) {
     throw new Error("No se encontraron columnas de periodo. Añada una columna por periodo (2019, 2020, …) o use el formato largo con 'Periodo' e 'Importe'.");
   }
@@ -357,8 +303,12 @@ function ingestTable(builder, rows, defaults = {}) {
     const estado = has('estado') ? cell(row, at('estado')) : (defaults.estado || '');
     const grupo = has('grupo') ? cell(row, at('grupo')) : (defaults.grupo || '');
     const clasif = hasClasif ? cell(row, clasifAt) : (defaults.clasificacion || '');
-    const group = resolveGroup({ estado, grupo, clasif, name, rowNumber });
-    const type = resolveClassification(group, clasif, name, rowNumber);
+    const id = String(cell(row, at('id'))).trim();
+    const group = resolveGroup({ estado, grupo, clasif, name, id });
+    if (String(grupo).trim() && !matchGroup(grupo)) throw new Error(`Fila ${rowNumber}: grupo inválido.`);
+    if (matchGroup(estado) === 'estadoResultados' && group && group !== 'estadoResultados') throw new Error(`Fila ${rowNumber}: Estado y Grupo contradictorios.`);
+    if (matchGroup(estado) === 'balance' && group === 'estadoResultados') throw new Error(`Fila ${rowNumber}: Estado y Grupo contradictorios.`);
+    if (row.length > columns.length && row.slice(columns.length).some(value => String(value ?? '').trim())) throw new Error(`Fila ${rowNumber}: valores fuera del encabezado.`);
 
     const assign = (period, raw) => {
       if (!period) throw new Error(`Fila ${rowNumber}: falta el periodo.`);
@@ -375,14 +325,10 @@ function ingestTable(builder, rows, defaults = {}) {
         throw new Error(`Fila ${rowNumber}, cuenta "${name}", periodo ${period}: ${error.message}`);
       }
       if (amount === null) return;
-      ensurePeriod(builder, period);
-      const target = group === 'estadoResultados'
-        ? builder.estadoResultados[period] : builder.balanceGeneral[period][group];
-      if (Object.hasOwn(target, name)) {
-        throw new Error(`Fila ${rowNumber}: la cuenta "${name}" está duplicada en ${period}.`);
-      }
-      target[name] = amount;
-      builder.accountTypes[group][name] = type;
+      const key = `${group}:${name}:${period}`;
+      if (builder.seen.has(key)) throw new Error(`Fila ${rowNumber}: la cuenta "${name}" está duplicada en ${period}.`);
+      builder.seen.add(key);
+      builder.registros.push({ nombre: name, grupo: group, clasificacion: clasif, id, periodo: period, importe: amount, origen: 'importacion' });
       builder.values += 1;
       if (builder.values > MAX_VALUES) throw new Error('La tabla contiene demasiados importes.');
     };
@@ -396,17 +342,10 @@ export function rowsToFinancialData(rows, { name = 'Datos importados', decimal, 
   if (!Array.isArray(rows) || rows.length === 0) throw new Error('La tabla está vacía.');
   if (rows.length > MAX_ROWS) throw new Error('La tabla excede el límite de filas.');
   if (!Array.isArray(rows[0])) throw new Error('Formato de tabla inválido.');
-  if (rows[0].length > MAX_COLUMNS) throw new Error('La tabla tiene demasiadas columnas.');
+  if (rows.some(row => !Array.isArray(row) || row.length > MAX_COLUMNS)) throw new Error('La tabla tiene demasiadas columnas.');
   const builder = createBuilder({ decimal, avisos });
   ingestTable(builder, rows);
-  if (!builder.periods.length) throw new Error('La tabla no contiene importes numéricos.');
-  return {
-    name,
-    periods: sortPeriods(builder.periods),
-    balanceGeneral: builder.balanceGeneral,
-    estadoResultados: builder.estadoResultados,
-    accountTypes: builder.accountTypes
-  };
+  return finishBuilder(builder, name);
 }
 
 export function tableTextToFinancialData(text, { name = 'Datos importados', decimal, avisos } = {}) {
@@ -427,21 +366,21 @@ function defaultsFromSheetName(sheetName) {
 export function sheetsToFinancialData(sheets, { name = 'Datos importados', decimal, avisos } = {}) {
   const builder = createBuilder({ decimal, avisos });
   let used = 0;
+  let count = 0;
   for (const sheet of sheets) {
     const rows = (sheet.rows || []).filter(row => row.some(value => String(value).trim() !== ''));
-    if (rows.length < 2 || !rows[0].map(normalizeHeader).includes('cuenta')) continue;
-    ingestTable(builder, rows, defaultsFromSheetName(sheet.name));
+    count += rows.length;
+    if (count > MAX_ROWS || rows.some(row => row.length > MAX_COLUMNS)) throw new Error('El libro excede el límite de filas o columnas.');
+    const header = rows.slice(0, 25).findIndex(row => row.map(normalizeHeader).includes('cuenta'));
+    if (header < 0 || rows.length < header + 2) {
+      if (builder.avisos.length < MAX_AVISOS) builder.avisos.push(`${sheet.name}: hoja sin tabla de cuentas; revise su contenido.`);
+      continue;
+    }
+    ingestTable(builder, rows.slice(header), defaultsFromSheetName(sheet.name));
     used += 1;
   }
   if (!used) throw new Error("Ninguna hoja contiene una tabla con una columna 'Cuenta'.");
-  if (!builder.periods.length) throw new Error('Las hojas no contienen importes numéricos.');
-  return normalizeFinancialData({
-    name,
-    periods: sortPeriods(builder.periods),
-    balanceGeneral: builder.balanceGeneral,
-    estadoResultados: builder.estadoResultados,
-    accountTypes: builder.accountTypes
-  });
+  return finishBuilder(builder, name);
 }
 
 function readFile(file, as) {

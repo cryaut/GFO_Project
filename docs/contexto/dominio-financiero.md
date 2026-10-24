@@ -51,12 +51,12 @@ Otros ingresos y otros gastos son no operativos: quedan fuera de la UAII.
 
 ## Convenciones de cálculo
 
-1. **N/D es `null`.** Las funciones nuevas devuelven `null` si falta un dato o el denominador es 0, y la interfaz muestra "N/D". Las funciones originales de `main` (marcadas "legado" en el catálogo) devuelven 0; no cambies ese comportamiento sin acuerdo, porque la pestaña Análisis depende de él.
+1. **N/D es `null`.** D-047 exige N/D antes de operar cuando falta un operando obligatorio (`null` o `undefined`), incluidas funciones legadas. Los defaults opcionales y tasas que no intervienen mantienen su contrato. No se cambian fórmulas ni casos completos, incluidas las convenciones legadas para denominadores cero. D-048 protege también las operaciones previas de Análisis y conserva sus motivos.
 2. **Compara solo números.** En JavaScript `null < 2` es `true`. Antes de comparar una razón con un umbral, verifica `typeof v === 'number' && Number.isFinite(v)` (ver `hayDato` en `analisis/index.js`).
 3. **Año de 365 días.** Plazos, edades y ciclos usan `DIAS_ANIO` (`calculate.js`).
 4. **Saldos promedio.** Rotaciones, ROA, ROE y DuPont usan `(saldo inicial + saldo final) / 2` con `saldoPromedio`. Con un solo periodo se usa el saldo final.
 5. **Signos.** En el estado de resultados, costos y gastos se guardan en positivo y se restan. La depreciación acumulada se guarda en negativo dentro de activos.
-6. **Totales por tipo, nunca por nombre.** `computeFinancialTotals(datos, periodo)` suma las cuentas según su tipo. Si una cuenta del estado de resultados no tiene tipo, la utilidad bruta y la neta salen `null` y la cuenta aparece en `unclassified`.
+6. **Totales por tipo, nunca por nombre.** `computeFinancialTotals(datos, periodo)` suma las cuentas según su tipo. Una cuenta pendiente con importe anula sus totales posibles y deja motivo en `notAvailableReasons`; una sin tipo y distinta de cero aparece en `unclassified`. El alcance depende de clasificación/candidatos; un gasto pendiente puede afectar utilidad neta sin anular utilidad bruta.
 7. **Umbrales de interpretación.** Están en `UMBRALES` (`analisis/index.js`) y son referencias educativas: ratio corriente ≥ 1, prueba ácida ≥ 0.5, endeudamiento ≤ 60 %, deuda/patrimonio ≤ 1, cobertura de intereses ≥ 2, margen bruto ≥ 30 %, margen operativo ≥ 10 %, margen neto ≥ 5 %, ROA ≥ 5 %, ROE ≥ 10 % y ciclo de conversión ≤ 60 días. Se cambian ahí, no dentro de las fórmulas.
 8. **Moneda.** Córdobas (`C$`) con formato `es-NI` mediante `formatCurrency`.
 
@@ -95,14 +95,14 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 
 ### `js/utils/calculate.js`
 
-"Legado" indica que la función devuelve 0 en lugar de `null` cuando el denominador es 0.
+"Legado" identifica convenciones históricas; D-047 unifica el manejo de operandos ausentes, sin modificar casos completos ni sus excepciones con cero.
 
 **Base**
 
 | Función | Qué calcula |
 |---|---|
 | `DIAS_ANIO` | Constante: 365 |
-| `saldoPromedio(inicial, final)` | (inicial + final) / 2; si falta uno, usa el otro; si faltan ambos, 0 |
+| `saldoPromedio(inicial, final)` | (inicial + final) / 2; N/D si falta un saldo. Análisis selecciona saldo final explícitamente con un solo periodo. |
 | `variacion(final, inicial)`, `ahDelta(t2, t1)` | Diferencia absoluta |
 | `ah(delta, t1)`, `ahPctDelta(t2, t1)` | Variación relativa; `null` si t1 es 0 |
 | `av(cuenta, base)` | cuenta / base (legado) |
@@ -167,6 +167,8 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 | `gaoVariacion(ventasBase, ventas, UAIIbase, UAII)` | %ΔUAII / %ΔVentas |
 | `gafVariacion(UAIIbase, UAII, UDACbase, UDAC)` | %ΔUDAC / %ΔUAII |
 | `gatVariacion(ventasBase, ventas, UDACbase, UDAC)` | %ΔUDAC / %ΔVentas |
+
+Ronda 6: `tasaImpuesto` conserva la política D-005 de `main`, incluida una tasa configurada válida con IR/UAI ausentes. Apalancamiento delega esa selección en el helper y mantiene IR N/D si no existe cuenta. Es la excepción aclarada en D-047; `saldoPromedio` y las demás guardas de N/D se conservan.
 
 **Flujos, activos y presupuesto**
 
@@ -234,8 +236,15 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 
 ### Otros módulos con lógica reutilizable
 
+D-051: los intereses ganados (`is.interest_income`) son componente de los ingresos no operativos (`is.nonoperating_income`) al calcular la utilidad neta sin utilidad reportada. El catálogo lo expresa mediante `agrupadoEn`; ambas cuentas conservan `tipoApp: 'otrosIngresos'`. Es una relación de catálogo: las consultas por id siguen devolviendo solo ese id y no agregan componentes automáticamente. Las fórmulas actuales y los JSON se conservan.
+
+Disponibilidad de cuentas (D-043 y excepción limitada D-047/D-048 a D-044): una cuenta pendiente con saldo cero no aplica al cálculo de ese periodo. Con importe distinto de cero se invalidan sus tipos/subtotales posibles y el total del grupo, incluidos datos legados sin tipo; se conservan los importes. Los motivos de Estados enumeran `campos`. Análisis preserva los metadatos y protege utilidad bruta/operativa, compras y capital de trabajo antes de llamar a los helpers; no se reinstala el adaptador que anulaba razones por grupo. El resultado incluye `notAvailableReasons`. Los nombres fijos de respaldo permanecen pendientes (1c). EFE/EOAF solo omiten la falta de clasificación cuando **ambos saldos explícitos son cero**. EFE deriva dividendos: conciliar no verifica UN independientemente.
+
 | Archivo | Funciones |
 |---|---|
+| `js/modules/estados/cuentas-identificador.js` | `obtenerCuenta(id)`, `listarCuentas({ grupo })`, `identificarCuenta(texto, { grupo, clasificacion, id })`, `montoCuenta(datos, periodo, id)`, `consultarMontoCuenta(datos, periodo, id)`, `resumenIdentificacion(datos)`, `resolverClasificacion(grupo, valor)`, `tipoCuentaLegada(grupo, nombre)`, `versionCatalogo` |
+| `js/modules/estados/cuentas-similitud.js` | `normalizarCuenta(texto)`, `distanciaDamerau(a, b)`, `similitudCuentas(texto, candidato)`, `sugerirCuentas(texto, cuentas)`, `UMBRALES_SIMILITUD` (nunca confirma) |
+| `js/modules/estados/cuentas-registro.js` | `registrarCuenta(datos, registroORegistros)` (alta común que devuelve datos normalizados) |
 | `js/modules/estados/estados-calculations.js` | `ACCOUNT_TYPES`, `inferAccountType(grupo, nombre)`, `resolveAccountType(datos, grupo, nombre)` (tipo explícito o inferido), `computeFinancialTotals(datos, periodo)`, `validateFinancialData(datos)` (cuadre A = P + O por periodo) |
 | `js/modules/apalancamiento/apalancamiento-calculations.js` | `cuentasOperativas`, `sugerirComportamiento`, `normalizarComportamiento`, `resolverComportamiento`, `derivarPeriodo`, `calcularApalancamiento` |
 | `js/modules/estados/estados-normalize.js` | `normalizeFinancialData(entrada)`, `parseFinancialJSON(texto)`, `sortPeriods(periodos)` (siempre ordena; lo usa el importador), `ordenarPeriodos(periodos)` (ordena solo si todos empiezan con un año) |

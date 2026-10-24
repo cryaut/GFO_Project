@@ -1,0 +1,81 @@
+diff --git a/js/utils/calculate.js b/js/utils/calculate.js
+index e30e7ae..7374087 100644
+--- a/js/utils/calculate.js
++++ b/js/utils/calculate.js
+@@ -4,0 +5,5 @@ export const DIAS_ANIO = 365;
++// N/D se comprueba antes de la aritmética: JavaScript convertiría null en cero.
++function hayDatoAusente(...valores) {
++  return valores.some(valor => valor === null || valor === undefined);
++}
++
+@@ -6,6 +11 @@ export function saldoPromedio(saldoInicial, saldoFinal) {
+-  if (
+-    (saldoInicial === undefined || saldoInicial === null) ||
+-    (saldoFinal === undefined || saldoFinal === null)
+-  ) {
+-    return saldoFinal ?? saldoInicial ?? 0;
+-  }
++  if (hayDatoAusente(saldoInicial, saldoFinal)) return null;
+@@ -15,0 +16 @@ export function variacion(valorFinal, valorInicial) {
++  if (hayDatoAusente(valorFinal, valorInicial)) return null;
+@@ -19,0 +21 @@ export function ah(delta, valorT1) {
++  if (hayDatoAusente(delta, valorT1)) return null;
+@@ -24,0 +27 @@ export function ahDelta(valorT2, valorT1) {
++  if (hayDatoAusente(valorT2, valorT1)) return null;
+@@ -33,0 +37 @@ export function av(cuenta, base) {
++  if (hayDatoAusente(cuenta, base)) return null;
+@@ -40,0 +45 @@ export function ratioCorriente(activosCorrientes, pasivosCorrientes) {
++  if (hayDatoAusente(activosCorrientes, pasivosCorrientes)) return null;
+@@ -45,0 +51 @@ export function ratioRapido(activosCorrientes, inventario, pasivosCorrientes) {
++  if (hayDatoAusente(activosCorrientes, inventario, pasivosCorrientes)) return null;
+@@ -50,0 +57 @@ export function rotacionInventario(costoVentas, inventarioPromedio) {
++  if (hayDatoAusente(costoVentas, inventarioPromedio)) return null;
+@@ -68,0 +76 @@ export function endeudamiento(pasivoTotal, totalActivo) {
++  if (hayDatoAusente(pasivoTotal, totalActivo)) return null;
+@@ -87 +95 @@ export function dupont(UN, ventas, activoTotalProm, patrimonio) {
+-  const AT = !activoTotalProm ? null : ventas / activoTotalProm;
++  const AT = hayDatoAusente(ventas) || !activoTotalProm ? null : ventas / activoTotalProm;
+@@ -97,0 +106 @@ export function capitalNetoTrabajo(activosCorrientes, pasivosCorrientes) {
++  if (hayDatoAusente(activosCorrientes, pasivosCorrientes)) return null;
+@@ -101,0 +111 @@ export function capitalNetoOperativo(activosCorrientesOps, pasivosCorrientesOps)
++  if (hayDatoAusente(activosCorrientesOps, pasivosCorrientesOps)) return null;
+@@ -106 +116 @@ export function eoaf(cuenta, cambio, tipo) {
+-  if (cambio === 0) return null;
++  if (hayDatoAusente(cambio) || cambio === 0) return null;
+@@ -116,0 +127,2 @@ export function efeIndirecto(utilidadNeta, ajustes) {
++  if (hayDatoAusente(utilidadNeta) || !Array.isArray(ajustes) ||
++      [...ajustes].some(ajuste => hayDatoAusente(ajuste))) return null;
+@@ -123,0 +136 @@ export function pruebaDefensiva(efectivo, pasivosCorrientes) {
++  if (hayDatoAusente(efectivo, pasivosCorrientes)) return null;
+@@ -128,0 +142 @@ export function rotacionActivos(ventas, activoTotalProm) {
++  if (hayDatoAusente(ventas, activoTotalProm)) return null;
+@@ -163,0 +178 @@ export function coberturaIntereses(utilidadOperativa, intereses) {
++  if (hayDatoAusente(utilidadOperativa, intereses)) return null;
+@@ -168,0 +184 @@ export function deudaPatrimonio(pasivoTotal, patrimonio) {
++  if (hayDatoAusente(pasivoTotal, patrimonio)) return null;
+@@ -173,0 +190 @@ export function apalancamiento(activoTotalProm, patrimonioProm) {
++  if (hayDatoAusente(activoTotalProm, patrimonioProm)) return null;
+@@ -178,0 +196 @@ export function margenBruto(utilidadBruta, ventas) {
++  if (hayDatoAusente(utilidadBruta, ventas)) return null;
+@@ -183,0 +202 @@ export function margenOperativo(utilidadBruta, gastosAdmin, gastosVentas, ventas
++  if (hayDatoAusente(utilidadBruta, gastosAdmin, gastosVentas, ventas)) return null;
+@@ -188,0 +208 @@ export function roe(utilidadNeta, patrimonioProm) {
++  if (hayDatoAusente(utilidadNeta, patrimonioProm)) return null;
+@@ -193,0 +214 @@ export function rotacionActivosFijos(ventas, activosFijosNetos) {
++  if (hayDatoAusente(ventas, activosFijosNetos)) return null;
+@@ -198,0 +220 @@ export function rotacionCapitalTrabajo(ventas, capitalNetoTrabajoValor) {
++  if (hayDatoAusente(ventas, capitalNetoTrabajoValor)) return null;
+@@ -203,0 +226 @@ export function solvencia(activoTotal, pasivoTotal) {
++  if (hayDatoAusente(activoTotal, pasivoTotal)) return null;
+@@ -208,0 +232 @@ export function depAnualLineaRecta(costoOriginal, valorResidual, vidaUtil) {
++  if (hayDatoAusente(costoOriginal, valorResidual, vidaUtil)) return null;
+@@ -213,0 +238 @@ export function depAcumulada(depAnual, aniosConsumidos, vidaUtil) {
++  if (hayDatoAusente(depAnual, aniosConsumidos, vidaUtil)) return null;
+@@ -218,0 +244 @@ export function valorEnLibros(costoOriginal, depAcum) {
++  if (hayDatoAusente(costoOriginal, depAcum)) return null;
+@@ -222,0 +249 @@ export function ahorroMensual(metaAhorro, mesesDisponibles) {
++  if (hayDatoAusente(metaAhorro, mesesDisponibles)) return null;
+@@ -227 +254,2 @@ export function ahorroMensual(metaAhorro, mesesDisponibles) {
+-export function saldoSemanal(ingreso, gastos, ahorro, reserva) {
++export function saldoSemanal(ingreso, gastos, ahorro, reserva = 0) {
++  if (hayDatoAusente(ingreso, gastos, ahorro, reserva)) return null;

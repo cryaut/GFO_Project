@@ -7,6 +7,19 @@ Todos los cambios notables en GFO Toolkit.
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
 ### Módulo 2: Estados Financieros
+- Ronda 12: catálogo alineado en estados con los 71 ids JSON (0 verificadas, 66 parciales, 5 ambiguas); decisiones propias renumeradas D-037–D-042 y opción A de intereses aclarada en D-051. Snapshot histórico conservado y respaldo conceptual de depreciación distinguido de verificación específica.
+- Ronda 8: aclaración literal añadida a D-047, sin borrar su historial; se reproducen 753 pruebas, los ocho cruces normalizados de sinónimos y las 10 advertencias de main. Informe con la respuesta completa de ronda 6 y las dos incertidumbres de la comparación de utilidad, sin cambios de código.
+- D-052: Carlos aprueba conservar los ocho cruces de sinónimos heredados y bloquear duplicados nuevos con la prueba existente. Se cierra el pendiente de ronda 5 en la documentación, sin cambiar identificación ni cálculos.
+- Ronda 5/D-051: el catálogo `2026-10-20.1` declara los intereses ganados como componente de ingresos no operativos mediante `agrupadoEn`; se retira un alias contradictorio. Ambos tipos siguen en `otrosIngresos`, sin cambiar sumas ni fórmulas. Comparación de utilidad app/JSON documentada en la ficha de cuentas, solo en lectura.
+- Ronda 3: el PGC queda como referencia terminológica, con 22 rebajas adicionales a verificación parcial (incluidas las 4 señaladas). Catálogo `2026-10-18.2`: 1 verificada, 66 parciales y 5 ambiguas. Se corrige intangibles a «no monetarios», sin cambiar su clasificación ni cálculo; diferencias con #10 declaradas en la fixture.
+- Alcance ajustado por Carlos: se retiran los cambios específicos de razones financieras y su adaptador de N/D; `analisis/index.js` vuelve a `main`. Se conservan importación, catálogo, totales de Estados y correcciones EFE/EOAF.
+- Corrección de la revisión del PR #14: cuentas pendientes con cero no bloquean totales; con importe, N/D se limita a los subtotales posibles y al total de su grupo, también en datos legados.
+- Auditoría de las 29 cuentas antes verificadas: 23 conservan cita específica y 6 bajan a verificación parcial; catálogo `2026-10-18.1`. La sincronización con v8 del PR #10 continúa pendiente.
+- Colección versionada de 72 cuentas: conserva las 71 definiciones de referencia del PR #10 y añade ingresos por intereses, con investigación y procedencia de cada alias.
+- Importación y alta manual comparten identificador y registro: reconocidas, sugeridas y no reconocidas; las sugerencias requieren confirmación y las filas pendientes conservan sus montos. Columna opcional `id` en las tablas existentes.
+- API por identificador (`montoCuenta`, `consultarMontoCuenta`): cero solo según política de ausencia, requeridos en N/D y totales reportados sin fabricar sumas. Claves por nombre y respaldo JSON compatibles con metadatos validados.
+- Corrección: los intereses ganados se incorporan como ingreso, en vez de restarse como gasto. Otros ingresos/gastos genéricos requieren confirmación fuera de la clasificación previa de la demo.
+- Reportes conserva metadatos y respeta N/D en los totales de Estados. Se evita sumar un total junto a sus componentes. Las fórmulas y las cifras de la demo se conservan; las razones financieras y el motor JSON quedan fuera del alcance.
 - **Importes ambiguos (importación):** `parseAmountCell(valor, { decimal, onAmbiguous })` admite un formato explícito (`'.'` o `','` decimal) además de `'auto'`. En automático, el separador se deduce de toda la tabla (`inferDecimalStyle`): un `1.234.567` o un `12,50` aclaran cómo leer `45.000`. Sin evidencia se conserva la convención (punto decimal) y se **avisa** con el número de fila en lugar de leer 45 en silencio.
 - `0,500` ahora es 0.5 (antes 500) y `1.2.3` / `1,2,3` se rechazan (antes `1.2.3` se leía como 123). Los errores de importe indican fila, cuenta y periodo.
 - Selector **Formato de importes** en Estados (Automático, Punto decimal, Coma decimal) para archivos CSV, Excel y tabla pegada; tras importar se muestra cuántos importes eran ambiguos.
@@ -25,6 +38,10 @@ Todos los cambios notables en GFO Toolkit.
 - Botón **Vista previa del reporte** (muestra el reporte en la página) y **Descargar reporte HTML**; antes el botón "Vista Previa HTML" descargaba el archivo.
 
 ### Módulo 3: Análisis Financiero
+- Excepción limitada D-047/D-048 autorizada: `calculate.js` conserva N/D antes de operar; Análisis protege las restas de márgenes, cobertura, compras y capital de trabajo, preserva metadatos/motivos y mantiene el saldo final con un solo periodo. Fórmulas, interfaz y MUNO MODA se conservan; no se conecta el motor ni se retiran nombres fijos.
+- Compatibilidad de Apalancamiento con D-047: la tasa por defecto sin cuenta de IR se selecciona explícitamente desde la configuración (D-005), conservando IR N/D y las cifras previas.
+- EFE/EOAF: una cuenta sin clasificar con saldo cero en ambos periodos no vuelve incompleta la comprobación. Un saldo ausente sigue siendo faltante.
+- EFE: reconoce «pérdida del ejercicio/periodo», advierte movimientos opuestos entre reservas y resultados y etiqueta los dividendos como derivados. La interpretación aclara que cuadrar no confirma independientemente la utilidad neta; la fórmula se conserva.
 - Mercado: los dividendos implícitos quedan N/D cuando el patrimonio del periodo anterior es N/D; se evita que `null` se reste como cero. Se conservan la demo de 2024 y las demás fórmulas.
 - **EFE de tres actividades** (`efe-calculations.js`): el Estado de Flujo de Efectivo de la pestaña EFE se arma por método indirecto desde dos balances — Operación (utilidad neta + depreciación + capital de trabajo), Inversión (activos fijos) y Financiamiento (deuda, aportaciones y dividendos) — con la comprobación CFO + CFI + CFF = variación de efectivo (tolerancia C$ 0.01 + epsilon escalado). Antes `computeEFE` solo calculaba el CFO con tres ajustes y sin comprobación. (D-024)
 - Los dividendos se separan de las aportaciones con las cuentas de utilidades acumuladas (dividendos = UN − ΔRE); sin esas cuentas se usa la variación total del patrimonio con advertencia. (D-025)
@@ -61,6 +78,7 @@ Todos los cambios notables en GFO Toolkit.
 - Pruebas: `tests/unit/comprobacion.test.js` (módulo compartido) y casos nuevos en `efe.test.js` y `eoaf.test.js` que fallan con el código anterior (importe inválido, `-0`, totales N/D, dividendos con utilidad del ejercicio, `computeEFE(period)`).
 
 ### Apalancamiento (GAO, GAF y GAT)
+- Ronda 6: se restaura `tasaImpuesto` y su llamada en Apalancamiento a `main` (D-005), incluida la tasa configurada válida con IR ausente. Se recuperan las pruebas originales de Apalancamiento y se precisa la excepción en D-047; `saldoPromedio` se conserva.
 - Fórmulas en `calculate.js`: `gao`, `gaf` y `gat` (estructurales), `gaoVariacion`, `gafVariacion` y `gatVariacion` (entre dos periodos), `tasaEfectiva`, `tasaImpuesto`, `denominadorGaf` y la constante `TASA_IR_DEFECTO` (30 %). Devuelven N/D si falta un dato o el denominador es 0.
 - Derivación desde los estados guardados (`js/modules/apalancamiento/apalancamiento-calculations.js`): CV y CF según la clasificación de cada cuenta (variable, fija o mixta), UAI, T, DAP y UDAC, con traza por concepto y advertencias.
 - `store`: nueva sección `apalancamiento` (clasificación de costos, DAP por periodo y tasa por defecto). Estados exporta `resolveAccountType`.

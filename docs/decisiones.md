@@ -88,7 +88,27 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-035 | Una cuenta solo es `verified` con una frase de una norma abierta que respalde su definición concreta | Vigente |
 | D-036 | Atribución y numeración de las decisiones del PR #10 | Vigente |
 
+| D-037 | Identificadores como metadatos y claves por nombre | Vigente |
+| D-038 | Importar filas pendientes sin perder sus montos | Vigente |
+| D-039 | Otros ingresos y gastos genéricos requieren confirmación | Vigente |
+| D-040 | Los intereses ganados son ingresos | Vigente |
+| D-041 | Similitud calibrada como sugerencia confirmable | Vigente |
+| D-042 | Propagar N/D en consumidores sin migrar sus fórmulas | Vigente en Reportes; Razones reemplazada por D-044 |
+| D-043 | Acotar N/D por importe, posibilidades y periodo | Vigente en Estados/EFE/EOAF; Razones reemplazada por D-044 |
+| D-044 | Excluir razones financieras por instrucción de Carlos | Vigente, con excepción D-047/D-048 |
+| D-045 | PGC solo como referencia terminológica | Vigente |
+| D-046 | Intangibles son activos no monetarios | Vigente |
+| D-047 | Propagar N/D en operandos numéricos obligatorios | Vigente |
+| D-048 | Proteger operaciones previas de Análisis | Vigente |
+| D-051 | Intereses ganados como componente de ingresos no operativos | Vigente |
+| D-052 | Conservar sinónimos ambiguos heredados y bloquear cruces nuevos | Vigente |
+
 ## Decisiones
+
+
+Los números nuevos empiezan en D-029 porque D-028 está reservado en la rama del PR #10. Las entradas anteriores no se renumeran ni se modifican.
+
+**Aclaración de numeración (22 de octubre de 2026).** El párrafo anterior corresponde al estado histórico de PR #14. Main conserva D-001 a D-036; las seis decisiones propias de cuentas pasan de D-029–D-034 a D-037–D-042. D-028 histórica de la regla de verificación de PR #10 equivale a D-035, y D-027 histórica de V12 equivale a D-034; D-027 del EOAF/EFE no cambia. Los textos históricos y snapshots se conservan. En el contexto histórico de D-043, el rango D-029–D-034 debe leerse hoy como D-037–D-042.
 
 ### D-001 — Año de 365 días
 
@@ -857,3 +877,311 @@ Corrección 2026-10-15: no hubo confirmación del equipo; la frase se retiró.
 **Para revertirla.** Registrar una decisión posterior de numeración y actualizar de forma coordinada todas las referencias; no reutilizar números ocupados ni borrar las decisiones preservadas.
 
 **Referencias.** [Ficha razones-json-v3](planificacion/razones-json-v3/README.md), [informe de ronda 7](planificacion/razones-json-v3/ronda7-C-cierre-pr10.md), `instrucciones_carlos_ronda7.md` y sección 2 de `tarea_maestra_motor_razones.md` recibidas por Carlos.
+
+### D-037 — Identificadores como metadatos y claves por nombre
+
+- **Fecha**: 2026-10-17
+- **Estado**: Vigente
+- **Decidió**: Carlos, aprobación expresa de la recomendación 1 del encargo en el chat
+- **Área**: Estados, normalización y respaldos
+
+**Contexto.** Los módulos existentes leen montos con claves por nombre y tipos de cuenta. Sustituirlas por ids exigiría migrarlos junto a los datos guardados.
+
+**Opciones.**
+1. Mantener claves por nombre y añadir identidad — permite la transición sin migración masiva.
+2. Cambiar las claves por id — uniforma el modelo, pero rompe los lectores actuales.
+
+**Decisión.** Opción 1: `accountIdentities[grupo][nombre]` guarda id, estado, método, candidatos y origen. Un registro común atiende importación y alta manual, pasando siempre por la normalización. Totales sin tipo y suplementarios se conservan aparte.
+
+**Consecuencias.** Los JSON incluyen metadatos nuevos validados; los respaldos anteriores siguen aceptándose y conservan sus tipos. La API por id no fabrica totales. Los 19 tipos no crecen. La propiedad de las copias de los JSON del motor queda pendiente de ese motor.
+
+**Para revertirla.** Cambiar registro, normalización, API de montos y sus pruebas; para optar por ids, migrar antes los consumidores y respaldos.
+
+**Referencias.** [Ficha de cuentas](planificacion/cuentas/README.md), sección 10.1 del encargo.
+
+### D-038 — Importar filas pendientes sin perder sus montos
+
+- **Fecha**: 2026-10-17
+- **Estado**: Vigente
+- **Decidió**: Carlos, aprobación expresa de la recomendación 2 en el chat
+- **Área**: Importación, normalización y revisión de Estados
+
+**Contexto.** Antes una sola cuenta desconocida detenía la importación completa.
+
+**Opciones.**
+1. Conservar montos y marcar reconocida/sugerida/no reconocida — permite revisar después.
+2. Mantener el error por cuenta — impide trabajar con un archivo parcialmente conocido.
+
+**Decisión.** Opción 1. Una cuenta sin grupo se conserva en `pendingAccounts`. Una cuenta con grupo permanece en su sección. Las sugerencias nunca se aplican solas. El resumen cuenta cuentas únicas entre periodos; errores de estructura, importes, duplicados y claves peligrosas siguen deteniendo la operación de manera atómica.
+
+**Consecuencias.** Los tests que exigían error por cuenta sin tipo pasan a exigir conservación y estado pendiente. Los totales afectados quedan N/D, con `unrecognized_imported_account` o `ambiguous_account_match`. D-019 (importes) y D-020 (validación de respaldos) se conservan.
+
+**Para revertirla.** Volver a exigir clasificación en registro, importación y normalización; retirar revisión y actualizar las pruebas.
+
+**Referencias.** [Ficha de cuentas](planificacion/cuentas/README.md), D-042.
+
+### D-039 — Otros ingresos y gastos genéricos requieren confirmación
+
+- **Fecha**: 2026-10-17
+- **Estado**: Vigente
+- **Decidió**: Carlos, aprobación expresa de la recomendación 3 en el chat
+- **Área**: Identificador y compatibilidad de Estados
+
+**Contexto.** Los nombres genéricos no indican si el ingreso/gasto es operativo. MUNO MODA usa la clasificación no operativa previa.
+
+**Opciones.**
+1. Preservar el caso previo y preguntar en nuevas altas/importaciones — evita inventar el contexto.
+2. Aplicar no operativo siempre — cambia la interpretación de empresas distintas.
+
+**Decisión.** Opción 1. «Otros Ingresos» y «Otros Gastos» permanecen sugeridos hasta confirmar un id, incluso con su tipo transitorio; los datos legados mantienen su tipo explícito o adaptación conocida. Los nombres canónicos específicos e ids explícitos válidos sí se reconocen.
+
+**Consecuencias.** La demo mantiene sus cifras y las importaciones nuevas muestran candidatos operativos/no operativos. Los conceptos sin tipo equivalente siguen disponibles por id y dejan N/D en los cálculos anteriores que no los pueden representar.
+
+**Para revertirla.** Cambiar catálogo/identificador, adaptación legada y corpus; comprobar utilidad operativa y cobertura.
+
+**Referencias.** [Investigación](planificacion/cuentas/investigacion.md), sección 10.3 del encargo.
+
+### D-040 — Los intereses ganados son ingresos
+
+- **Fecha**: 2026-10-17
+- **Estado**: Vigente
+- **Decidió**: Carlos, aprobación expresa de la recomendación 4 en el chat
+- **Área**: Catálogo y adaptación al motor de totales
+
+**Contexto.** La expresión regular de intereses confundía «Ingresos por Intereses» e «Intereses ganados» con gastos financieros.
+
+**Opciones.**
+1. Añadir `is.interest_income` y adaptarlo a otros ingresos — corrige el signo sin ampliar los tipos.
+2. Dejarlo sin reconocer — evita la resta errónea, pero mantiene una brecha conocida.
+
+**Decisión.** Opción 1. El gasto identificado como `is.interest_expense` conserva su tipo `intereses`. Los ingresos ganados usan `otrosIngresos` durante la transición, sin modificar la fórmula de utilidad.
+
+**Consecuencias.** En un archivo con ventas 100, intereses ganados 20 y gasto por intereses 5, la utilidad es 115, antes 75 por la inferencia incorrecta. La demo no tiene esos ingresos y sus cifras no cambian. No se interpreta el rótulo genérico «Intereses» como ingreso en nuevas altas; requiere contexto/confirmación.
+
+**Para revertirla.** Retirar el nuevo id y sus alias; actualizar identificador y pruebas de signo.
+
+**Referencias.** [Investigación](planificacion/cuentas/investigacion.md), fuente oficial IFRS sobre presentación de ingresos por intereses abierta en esta sesión.
+
+### D-041 — Similitud calibrada como sugerencia confirmable
+
+- **Fecha**: 2026-10-17
+- **Estado**: Vigente
+- **Decidió**: Codex, calibración técnica autorizada en la sección 10.7; pendiente de revisión del PR
+- **Área**: `cuentas-similitud.js`
+
+**Contexto.** Con la medida principal propuesta, Efetivo/Efectivo da 1−1/8 = 0.875, incompatible por sí sola con el ejemplo ≥0.92. La medida por palabras permitía calibración.
+
+**Opciones.**
+1. Conservar la principal y normalizar el apoyo por longitud combinada — cumple el corpus de errores sin elegir ids.
+2. Bajar el umbral de preselección — facilita sugerir, pero pierde el margen propuesto.
+
+**Decisión.** Opción 1, con apoyo simétrico para penalizar palabras omitidas. Efetivo/Efectivo da 1−1/15 = 0.9333. Se conservan 0.80 mínimo, 0.92 preselección, ventaja 0.05 y hasta cinco candidatos. Dígitos diferentes dan cero. Un empate no se preselecciona.
+
+**Consecuencias.** Todos los resultados difusos son sugeridos y requieren confirmación. Las variantes sin acentos, signos o mayúsculas que normalizan al mismo texto se reconocen por la regla exacta de R1; no son coincidencias difusas. El corpus exige cero reconocimientos incorrectos.
+
+**Para revertirla.** Cambiar medida de apoyo/umbrales y recalibrar los corpus positivo y negativo.
+
+**Referencias.** `tests/unit/cuentas-identificador.test.js`, sección 8 del encargo.
+
+### D-042 — Propagar N/D en consumidores sin migrar sus fórmulas
+
+- **Fecha**: 2026-10-17
+- **Estado**: Vigente en Reportes; Razones reemplazada por D-044
+- **Decidió**: Carlos, aprobación expresa del ajuste mínimo adicional en el chat
+- **Área**: Totales compartidos, lectura de Análisis y Reportes
+
+**Contexto.** R1 exige N/D por cuentas pendientes, pero el alcance inicial excluía consumidores. Análisis y Reportes reconstruían los estados descartando metadatos; algunas operaciones convertían null en cero y Reportes reemplazaba utilidad N/D por un cálculo alternativo.
+
+**Opciones.**
+1. Preservar metadatos y propagar disponibilidad — cumple R1 sin migrar el motor.
+2. Documentar la limitación — seguirían apareciendo ceros o cifras parciales tras guardar.
+
+**Decisión.** Opción 1. Los lectores conservan el objeto completo; el adaptador puro `aplicarDisponibilidadRazones` anula los campos afectados y conserva motivos. Reportes muestra N/D y respeta la utilidad compartida. Un total junto a componentes del mismo tipo no se suma dos veces: el agregado anterior queda N/D con `overlapping_account_aggregation`; la API devuelve el total publicado.
+
+**Consecuencias.** Cambios mínimos en dos consumidores, aprobados como excepción al alcance inicial. Las fórmulas se conservan y no se migra ningún módulo a `montoCuenta`. La ambigüedad puede invalidar conservadoramente varias razones del mismo grupo, hasta que el motor pueda determinar dependencias por cuenta. Los importes originales quedan conservados. No se confirma un dato de dividendos.
+
+**Para revertirla.** Retirar la propagación de disponibilidad y el guardado de metadatos de los lectores; ello vuelve a dejar incompleto R1.
+
+**Referencias.** [Ficha de cuentas](planificacion/cuentas/README.md), D-037–D-041, `cuentas-consumidores.test.js`.
+
+
+### D-043 — Acotar N/D por importe, posibilidades y periodo
+
+- **Fecha**: 2026-10-18
+- **Estado**: Vigente en el borrador; pendiente de revisión humana
+- **Decidió**: Carlos autorizó proceder con las correcciones de las revisiones recibidas; los documentos atribuyen a Cris la aprobación previa de las reglas 1–3. Codex implementa y verifica, sin confirmar decisiones aún reservadas a Cris.
+- **Área**: Estados compartidos, disponibilidad de razones y comprobaciones EFE/EOAF
+
+**Contexto.** La protección conservadora de D-042 anulaba un grupo completo aunque la cuenta pendiente fuera cero o solo pudiera pertenecer a un subtotal. Un desconocido legado podía aumentar el total sin aviso. En EFE, los dividendos derivados comparten la utilidad de operación y su conciliación no la verifica independientemente.
+
+**Opciones.**
+1. Conservar el bloqueo por grupo y exigir revisión incluso con cero — oculta resultados completos y mantiene la inconsistencia legada.
+2. Omitir pendientes de importe cero y acotar la disponibilidad por posibilidades y entradas efectivas — conserva los importes y explica la incertidumbre restante.
+
+**Decisión.** Opción 2; precisa la propagación de D-042. Una cuenta pendiente con saldo numérico cero no aplica a los cálculos del periodo. Con importe, se anulan tipos/subtotales posibles y total del grupo, usando tipo explícito o candidatos; conflictos conservan ambas posibilidades y la falta de contexto considera todo su grupo. La regla incluye desconocidos legados, preservando las clasificaciones conocidas de la demo. Cada motivo enumera campos; las razones distinguen entradas actuales y promedios/compras del periodo anterior. EFE/EOAF solo omiten la falta de tipo si ambos saldos explícitos son cero. EFE reconoce pérdida del ejercicio/periodo y advierte reservas/resultados opuestos. Se aclara que los dividendos son derivados y cuadrar no comprueba UN de forma independiente, sin cambiar la fórmula.
+
+**Consecuencias.** Se conservan demo, importes, fórmulas y los 19 tipos. La identidad pendiente sigue en revisión. El dato independiente de dividendos y la retirada de nombres fijos siguen pendientes de Cris. La auditoría rebaja conservadoramente seis estados sin evidencia suficiente; v8 y la reconciliación con los JSON de PR #10 siguen pendientes. D-043 reserva la posición posterior al bloque acordado D-037–D-042; D-029–D-034 se renumerarán justo antes de integrar, después de PR #10, sin editar ahora D-001–D-027.
+
+**Para revertirla.** Retirar el alcance por campos y las excepciones cero de los consumidores, con sus pruebas; esto reintroduce los fallos documentados y requiere decisión nueva.
+
+**Referencias.** [Correcciones y pendientes](planificacion/cuentas/02-correcciones-revision.md), D-038, D-042; instrucciones_amigo_pr14.md y revision_pr13_para_carlos.md recibidos por Carlos.
+
+
+### D-044 — Excluir razones financieras por instrucción de Carlos
+
+- **Fecha**: 2026-10-18
+- **Estado**: Vigente
+- **Decidió**: Carlos, indicación expresa posterior: «la parte de las razones no la modifiques»
+- **Área**: Alcance del PR #14 y reversión de los ajustes específicos de Razones
+
+**Contexto.** D-042 y parte de D-043 autorizaron adaptar disponibilidad en Razones. Después de publicarse la revisión, Carlos excluye esa parte del trabajo.
+
+**Opciones.**
+1. Retirar la integración específica de Razones y preservar el resto de la corrección — respeta el límite actualizado del usuario.
+2. Mantener el adaptador porque no cambia fórmulas — seguiría modificando su comportamiento y no cumple el límite.
+
+**Decisión.** Opción 1. Se restaura analisis/index.js completo a origin/main, se elimina cuentas-disponibilidad.js y sus pruebas exclusivas, y se retiran las afirmaciones de propagación específica en Razones de la documentación vigente. Se mantienen importación, catálogo, totales de Estados/Reportes y correcciones EFE/EOAF en sus archivos propios. Esta decisión reemplaza únicamente el alcance de Razones de D-042/D-043, sin reescribir sus motivos históricos.
+
+**Consecuencias.** Las fórmulas, código de razones, interfaz y pruebas originales quedan como en main. Los totales compartidos de Estados siguen alimentando esos módulos, de modo que corregir una cuenta puede modificar una entrada; no se garantiza aquí la adaptación de N/D/metadatos en Razones para pendientes. Esa adaptación, la retirada de nombres fijos y cualquier otra modificación de Razones quedan fuera de esta entrega. La reversión se registra en un commit nuevo, sin force push ni merge.
+
+**Para revertirla.** Obtener autorización expresa para una tarea de Razones y recuperar o rediseñar el adaptador con sus pruebas; no reintroducirlo como cambio incidental de importación.
+
+**Referencias.** [Exclusión de razones y validación vigente](planificacion/cuentas/03-excluir-razones.md), D-042, D-043, instrucción directa de Carlos en este chat.
+
+Aclaración (18 de octubre de 2026): la decisión y la instrucción fueron de Cris Lumbi. Carlos la transmitió en el chat.
+
+
+### D-045 — PGC solo como referencia terminológica
+
+- **Fecha**: 2026-10-18
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, aprobación comunicada en las rondas 2 y 3; aplicada por Carlos
+- **Área**: Catálogo, investigación y pruebas de evidencia
+
+**Contexto.** Las citas específicas de 22 cuentas verificadas procedían del PGC español; no acreditan su verificación NIIF/NIC para el catálogo del proyecto. La ronda 2 señala cuatro y exige una guardia contra cualquier verified sustentado por PGC.
+
+**Opciones.**
+1. Mantener verified apoyado en PGC — conserva los estados previos, pero incumple el criterio acordado.
+2. Rebajar esas cuentas y conservar la fuente como referencia terminológica — deja visible el alcance real de la evidencia.
+
+**Decisión.** Opción 2. Las cuatro señaladas y las otras 18 en idéntica situación pasan a partially_verified. Se retira de amortización la cita que habla de depreciación; la de depreciación se identifica como conjunta de 680/681/682.
+
+**Consecuencias.** El catálogo queda en 1 verified, 66 partially_verified y 5 ambiguous. La fixture enumera 28 rebajas frente al PR #10 (6 anteriores y 22 actuales), sin modificar su instantánea original ni sus JSON. No cambia identificación, tipo, importe ni fórmula; la sincronización upstream sigue pendiente.
+
+**Para revertirla.** Obtener citas específicas válidas y registrar una decisión nueva antes de subir un estado; mantener la guardia de evidencia.
+
+**Referencias.** [Ronda 3 y validación](planificacion/cuentas/04-ronda3-nd.md); instrucciones_amigo_pr14_ronda2.md e instrucciones_carlos_pr14_ronda3.md recibidas por Carlos.
+
+
+### D-046 — Intangibles son activos no monetarios
+
+- **Fecha**: 2026-10-18
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, corrección aprobada en las rondas 2 y 3
+- **Área**: Definición del catálogo y contraste con PR #10
+
+**Contexto.** La definición heredada decía monetarios, en contradicción con la referencia IAS 38 ya documentada.
+
+**Opciones.**
+1. Esperar a modificar el JSON ajeno — conserva temporalmente una definición incorrecta local.
+2. Corregir el catálogo local y declarar la diferencia — cumple la corrección sin editar otro PR.
+
+**Decisión.** Opción 2. En bs.intangible_assets se cambia únicamente monetarios por no monetarios. La fixture conserva texto de referencia, texto local, motivo y decisión.
+
+**Consecuencias.** Se mantienen clasificación, tipo, signo, política de ausencia y estado parcialmente verificado. No cambia ningún cálculo ni JSON del PR #10. Su futura integración debe reconciliar la definición.
+
+**Para revertirla.** Registrar una decisión nueva y coordinar antes cualquier cambio conceptual; no modificar la instantánea para ocultar diferencias.
+
+**Referencias.** [Ronda 3 y validación](planificacion/cuentas/04-ronda3-nd.md); instrucciones_amigo_pr14_ronda2.md e instrucciones_carlos_pr14_ronda3.md recibidas por Carlos.
+
+
+### D-047 — Propagar N/D en operandos numéricos obligatorios
+
+- **Fecha**: 2026-10-18
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi aprobó 1a según ronda 3; Carlos adoptó la excepción limitada tras aclarar el origen de D-044 en este chat
+- **Área**: js/utils/calculate.js y contratos de consumidores
+
+**Contexto.** Null participa como cero en la aritmética de JavaScript. Los helpers antiguos podían devolver resultados numéricos o NaN al recibir importes ausentes; tasaImpuesto infería una tasa con IR ausente.
+
+**Opciones.**
+1. Proteger solo denominadores — no evita numeradores/restas falsos.
+2. Validar operandos obligatorios antes de operar — propaga N/D sin modificar las fórmulas.
+
+**Decisión.** Opción 2. Null/undefined de un operando obligatorio devuelve null. EFE valida utilidad, lista y elementos de ajustes (incluidos huecos); DuPont conserva su objeto con N/D en componentes afectados. Defaults opcionales declarados y tasas inactivas cuando DAP=0 mantienen su contrato. No se cambian casos numéricos completos ni convenciones legadas de cero.
+
+**Consecuencias.** SaldoPromedio exige dos saldos; Análisis aplica explícitamente la regla de saldo final de un periodo (D-048). TasaImpuesto exige IR/UAI informados; Apalancamiento conserva D-005 seleccionando explícitamente su tasa configurada válida solo cuando no existe cuenta IR, sin inventar IR ni cambiar esa política. Se ajustan pruebas de esos contratos y se mantienen las pruebas de integración de Apalancamiento/UI originales. Excepción limitada a D-044; el motor nuevo no se conecta.
+
+**Aclaración (20 de octubre de 2026, ronda 6).** Se restaura `tasaImpuesto` a `origin/main`: cuando la efectiva no está disponible, devuelve la tasa configurada válida según D-005, incluso con IR o UAI ausentes. Apalancamiento vuelve a llamar al helper como en `main`; sus pruebas originales se restauran. Esta precisión deja sin efecto la restricción de IR/UAI de la consecuencia anterior solo para `tasaImpuesto`. `saldoPromedio` y las demás guardas de D-047/D-048 se conservan. El texto histórico anterior no se borra.
+
+Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento descrito arriba se revirtió en el commit 10dfa3a (ronda 4). Apalancamiento vuelve a usar la tasa configurada válida (D-005) cuando falta el IR.
+
+**Para revertirla.** Revertir guardas y sus pruebas reintroduciría los números falsos; para cambiar políticas, registrar otra decisión coordinada.
+
+**Referencias.** [Ronda 3 y validación](planificacion/cuentas/04-ronda3-nd.md); instrucciones_amigo_pr14_ronda2.md e instrucciones_carlos_pr14_ronda3.md recibidas por Carlos.
+
+
+### D-048 — Proteger operaciones previas de Análisis
+
+- **Fecha**: 2026-10-18
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi aprobó 1b según ronda 3; Carlos adoptó la excepción limitada en este chat
+- **Área**: computeRazones en js/modules/analisis/index.js
+
+**Contexto.** Aunque calculate.js sea estricto, una resta previa convierte null en cero y pierde la evidencia de ausencia antes de llamar al helper. Al releer los estados se descartaban metadatos de cuentas pendientes.
+
+**Opciones.**
+1. Proteger solo calculate.js — siguen apareciendo márgenes, compras y capital de trabajo falsos.
+2. Proteger también las operaciones previas y preservar metadatos — permite que el helper reciba N/D real.
+
+**Decisión.** Opción 2. Se validan operandos de utilidad bruta/operativa, compras y capital neto de trabajo; su N/D se conserva, incluido el denominador mostrado de rotación del capital de trabajo. Se releen metadatos y se conservan motivos originales por periodo, añadiendo campo/operandos de operaciones previas en notAvailableReasons. Un solo periodo selecciona saldo final explícitamente; la aproximación de compras sin inventario comparable permanece.
+
+**Consecuencias.** Se mantienen fórmulas, interfaz, cifras completas de MUNO MODA 2023/2024 y ceros válidos. No se reinstala el adaptador de anulación por grupos ni se conecta el motor. No se retiran nombres fijos: 1c y cualquier futura D-049 requieren confirmación aparte.
+
+**Para revertirla.** Retirar la protección previa volvería a permitir coerciones; revisar junto a D-047 y sus pruebas antes de otra modificación.
+
+**Referencias.** [Ronda 3 y validación](planificacion/cuentas/04-ronda3-nd.md); instrucciones_amigo_pr14_ronda2.md e instrucciones_carlos_pr14_ronda3.md recibidas por Carlos.
+
+### D-051 — Intereses ganados como componente de ingresos no operativos
+
+- **Fecha**: 2026-10-19
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi; aprobación comunicada por Carlos en instrucciones_carlos_pr14_ronda5.md
+- **Área**: Catálogo de cuentas y documentación del PR #14
+
+**Contexto.** La app ya suma intereses ganados e ingresos no operativos mediante `otrosIngresos`, pero el catálogo no expresaba la relación entre los dos ids. Un alias excluía cuentas específicas y contradecía la definición que incluye intereses ganados.
+
+**Opciones.**
+1. Añadir `agrupadoEn` a la entrada de intereses ganados — conserva la relación junto a su definición y las consultas públicas la exponen mediante copia.
+2. Exportar un mapa `COMPONENTES_DE` separado — permite declarar la misma relación, pero introduce otra estructura innecesaria porque el catálogo admite el campo opcional.
+
+**Decisión.** Los intereses ganados son componente de los ingresos no operativos al calcular la utilidad neta sin utilidad reportada. Aprobado por Cris Lumbi el 19 de octubre de 2026. Sin cambio de fórmulas en los JSON.
+
+**Consecuencias.** Implementado el 2026-10-20 como `is.interest_income.agrupadoEn = 'is.nonoperating_income'`. Ambas cuentas conservan `tipoApp: 'otrosIngresos'`; se actualiza la nota de intereses y se retira únicamente el alias contradictorio de ingresos no operativos, sin cambiar su definición. No cambia la utilidad que calcula la app. Este metadato no agrega componentes automáticamente en las consultas por id ni conecta el motor. La comparación con los JSON se documenta en lectura; la aceptación app/JSON pertenece al motor. D-049 (1c) y D-050 (opción C del motor) no se registran ni se implementan aquí.
+
+**Para revertirla.** Retirar el campo y ajustar la nota del catálogo, sus pruebas, API e investigación mediante una decisión posterior coordinada. No requiere cambiar fórmulas actuales.
+
+**Referencias.** [Ronda 5](planificacion/cuentas/05-ronda5-puente-intereses.md), [comparación de utilidad](planificacion/cuentas/06-comparacion-utilidad-json.md), [PR #14](https://github.com/cryaut/GFO_Project/pull/14), instrucciones_carlos_pr14_ronda5.md recibidas por Carlos.
+
+**Aclaración (22 de octubre de 2026), decidida por Cris Lumbi: opción A.** Los intereses ganados se suman como línea propia dentro de los ingresos no operativos. La línea de entrada de otros ingresos excluye intereses; ambas líneas alimentan una sola vez el agregado inclusivo que consume el JSON. Si el importe de otros ingresos ya contiene intereses, es un error de entrada: detener y reportar, sin aplicar la opción B. La composición debe declararse o acreditarse en el origen; no se deduce de nombres ni de importes. Si la utilidad neta del motor difiere de la app, detener y reportar para aceptación de Cris Lumbi. Esta aclaración no cambia las fórmulas de la app ni implementa el motor en PR #14.
+
+### D-052 — Conservar sinónimos ambiguos heredados y bloquear cruces nuevos
+
+- **Fecha**: 2026-10-20
+- **Estado**: Vigente
+- **Decidió**: Carlos, elección expresa en el chat al aclarar el requisito de sinónimos de la ronda 5
+- **Área**: Criterio de validación del catálogo y documentación del PR #14
+
+**Contexto.** La ronda 5 pedía unicidad absoluta de sinónimos, pero el catálogo ya tenía siete alias exactos compartidos y ocho cruces tras normalizar. Eliminar todos esos casos cambiaría la identificación previa y las ambigüedades que D-039 y el corpus conservan para pedir contexto o confirmación.
+
+**Opciones.**
+1. Conservar los casos heredados documentados y bloquear cruces nuevos — mantiene la compatibilidad y hace visibles las excepciones.
+2. Ampliar el alcance para depurar los casos existentes — permitiría buscar unicidad absoluta, pero cambiaría la identificación y requeriría revisar cada caso.
+
+**Decisión.** Carlos aprueba «Conservar los ambiguos existentes y bloquear duplicados nuevos». Se mantienen los ocho cruces normalizados enumerados en el informe de ronda 5. La prueba existente compara ese conjunto y sus cuentas participantes para detectar otros cruces o cambios; este criterio sustituye la exigencia literal de unicidad absoluta para esta entrega.
+
+**Consecuencias.** Se cierra el pendiente de sinónimos sin modificar catálogo, identificador, fórmulas ni pruebas. No se afirma que todos los sinónimos sean únicos ni se autoriza depurar los casos heredados. D-039 y D-051 se conservan; esta elección se atribuye a Carlos, sin atribuirla a Cris.
+
+**Para revertirla.** Acordar la revisión de los casos heredados, registrar una decisión posterior y actualizar catálogo, corpus y guardia junto con las regresiones de identificación afectadas.
+
+**Referencias.** [Ronda 5 y lista de cruces](planificacion/cuentas/05-ronda5-puente-intereses.md), `tests/unit/cuentas-identificador.test.js`, [PR #14](https://github.com/cryaut/GFO_Project/pull/14), aprobación expresa de Carlos en el chat del 2026-10-20.

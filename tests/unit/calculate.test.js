@@ -30,7 +30,7 @@ describe('AH - Análisis Horizontal', () => {
 
   it('saldoPromedio calcula promedio entre dos periodos', () => {
     expect(saldoPromedio(10000, 20000)).toBe(15000);
-    expect(saldoPromedio(undefined, 20000)).toBe(20000);
+    expect(saldoPromedio(undefined, 20000)).toBeNull();
     expect(saldoPromedio(0, 0)).toBe(0);
   });
 

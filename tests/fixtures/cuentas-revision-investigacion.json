@@ -1,0 +1,45 @@
+{
+  "fecha": "2026-10-18",
+  "referencia": "a87ef0af0954e00d3f95ed1476ec3154bc06d768",
+  "sincronizacionV8": "pendiente: aún no publicada en PR #10; no se modifican sus JSON",
+  "rebajasLocales": {
+    "bs.accumulated_depreciation": "La cita específica procede del PGC español (281); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "bs.current_provisions": "La cita específica procede del PGC español (14 y 529); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "bs.current_year_result_equity": "La cita específica procede del PGC español (129); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "bs.fixed_assets_net_total": "El enlace a IAS 16 no define este subtotal reportado ni su precedencia interna sobre componentes.",
+    "bs.intangible_assets": "La corrección autorizada D-046 cambia monetarios por no monetarios; se mantiene la rebaja conservadora local y se documenta aparte la diferencia de definición.",
+    "bs.inventory_finished_goods": "La cita específica procede del PGC español (35); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "bs.inventory_merchandise": "La cita específica procede del PGC español (30); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "bs.inventory_raw_materials": "La cita específica procede del PGC español (31); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "bs.inventory_work_in_process": "La cita específica procede del PGC español (33); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "bs.long_term_provisions": "La cita específica procede del PGC español (14); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "bs.ppe_buildings": "La cita específica procede del PGC español (211); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "bs.ppe_furniture": "La cita específica procede del PGC español (216); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "bs.ppe_land": "La cita específica procede del PGC español (210); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "bs.ppe_other": "La cita específica procede del PGC español (219); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "bs.ppe_vehicles": "La cita específica procede del PGC español (218); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "bs.share_capital": "La cita específica procede del PGC español (100); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "bs.short_term_investments": "La cita específica procede del PGC español (54); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "bs.taxes_payable": "La cita específica procede del PGC español (475); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "is.cost_of_sales_reported": "IAS 2 explica el gasto por inventarios vendidos, pero no define este total reportado con precedencia interna.",
+    "is.income_tax_expense": "La cita específica procede del PGC español (630 y 6300); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "is.interest_expense": "La cita específica procede del PGC español (662); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "is.merchandise_cost": "La fuente anterior describe inventarios en general, sin definir esta cuenta específica de mercaderías vendidas.",
+    "is.operating_amortization": "La frase del PGC es conjunta para 680/681/682 y describe depreciación, no define amortización. Se retira como cita específica; las fuentes restantes solo aportan contexto conceptual.",
+    "is.operating_depreciation": "La definición del PGC es conjunta para 680/681/682, no propia de depreciación operativa. Solo es referencia terminológica; IAS 16 aporta contexto conceptual sin cita específica de esta cuenta.",
+    "is.other_sales_revenue": "IFRS 15 describe ingresos de contratos, sin definir una cuenta residual de otras ventas.",
+    "is.product_cost": "La fuente anterior describe inventarios en general, sin definir específicamente el coste de producción de los productos vendidos.",
+    "is.product_sales": "La cita específica procede del PGC español (701 (definición conjunta 700/705)); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "is.service_revenue": "La cita específica procede del PGC español (705 (definición conjunta 700/705)); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.",
+    "bs.cash_and_equivalents": "Ronda 12: D-035 exige cita literal específica confirmada en norma abierta; PR #10 dejó efectivo parcial al no poder abrir la norma completa. Se conservan definición y fuentes del catálogo."
+  },
+  "correccionesDefinicion": {
+    "bs.intangible_assets": {
+      "referencia": "Activos monetarios no financieros identificables sin sustancia física (software, patentes); se amortizan. Si no se reportan, aportan cero a activos totales (D12).",
+      "local": "Activos no monetarios no financieros identificables sin sustancia física (software, patentes); se amortizan. Si no se reportan, aportan cero a activos totales (D12).",
+      "motivo": "Corrección conceptual aprobada en la ronda 3; IAS 38 describe un activo no monetario. La instantánea original permanece inmutable.",
+      "decision": "D-046"
+    }
+  },
+  "aclaracionRonda12": "2026-10-22: la referencia a87ef0a y las notas originales son históricas; los JSON de main ya están alineados. Efectivo pasa a parcial por D-035; se conserva el snapshot."
+}
