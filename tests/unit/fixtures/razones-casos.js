@@ -7,7 +7,23 @@ const manual = [
   ['is.administrative_expenses',60,80], ['is.selling_expenses',30,40],
   ['is.nonoperating_income',10,20], ['is.noninterest_nonoperating_expenses',5,10],
   ['is.interest_expense',5,10], ['is.income_tax_expense',10,20],
-  ['supp.credit_sales',500,700], ['supp.supplier_payments',250,300]
+  ['supp.credit_sales',500,700], ['supp.supplier_payments',250,300],
+  // D-055: cuentas no aplicables declaradas en cero, en ambos periodos.
+  // Los desgloses de inventario, ventas y costo no se declaran: se usan sus totales reportados.
+  ['bs.short_term_investments',0,0], ['bs.other_current_receivables',0,0],
+  ['bs.prepaid_expenses',0,0], ['bs.other_current_assets',0,0],
+  ['bs.ppe_buildings',0,0], ['bs.ppe_machinery',0,0], ['bs.ppe_vehicles',0,0],
+  ['bs.ppe_furniture',0,0], ['bs.ppe_other',0,0], ['bs.intangible_assets',0,0],
+  ['bs.long_term_investments',0,0], ['bs.other_noncurrent_assets',0,0],
+  ['bs.current_portion_long_term_debt',0,0], ['bs.taxes_payable',0,0],
+  ['bs.accrued_expenses_payable',0,0], ['bs.current_provisions',0,0],
+  ['bs.other_current_liabilities',0,0], ['bs.long_term_provisions',0,0],
+  ['bs.other_noncurrent_liabilities',0,0], ['bs.additional_paid_in_capital',0,0],
+  ['bs.legal_reserve',0,0], ['bs.other_reserves',0,0],
+  ['bs.current_year_result_equity',0,0], ['bs.other_equity_components',0,0],
+  ['is.sales_returns',0,0], ['is.sales_discounts',0,0], ['is.sales_allowances',0,0],
+  ['is.operating_depreciation',0,0], ['is.operating_amortization',0,0],
+  ['is.other_operating_expenses',0,0], ['is.other_operating_income',0,0]
 ];
 
 export function entradaDesdeFilas(filas, indice = 1) {

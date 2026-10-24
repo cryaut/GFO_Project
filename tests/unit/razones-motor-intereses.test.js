@@ -10,7 +10,11 @@ const cuentas = [
   ['is.nonoperating_income',61,61],
   ['is.noninterest_nonoperating_expenses',37,37],
   ['is.interest_expense',43,43],
-  ['is.income_tax_expense',79,79]
+  ['is.income_tax_expense',79,79],
+  // D-055: las cuentas no aplicables de este caso se reportan con cero explícito.
+  ['is.sales_returns',0,0], ['is.sales_discounts',0,0], ['is.sales_allowances',0,0],
+  ['is.operating_depreciation',0,0], ['is.operating_amortization',0,0],
+  ['is.other_operating_expenses',0,0], ['is.other_operating_income',0,0]
 ];
 
 it('sin línea de intereses ganados calcula utilidad neta sin intereses y sin N/D', () => {

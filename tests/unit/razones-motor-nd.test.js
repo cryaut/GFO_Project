@@ -49,7 +49,16 @@ describe('N/D y cuentas pendientes', () => {
   });
   it('la tolerancia de conciliación incluye exactamente un centavo', () => {
     const entrada = entradaManual();
-    entrada.cuentas = [fila('bs.cash_and_equivalents',1),fila('bs.current_assets_total',1.01),fila('bs.trade_payables',1),fila('bs.current_liabilities_total',1)];
+    entrada.cuentas = [
+      fila('bs.cash_and_equivalents',1), fila('bs.current_assets_total',1.01),
+      fila('bs.trade_payables',1), fila('bs.current_liabilities_total',1),
+      fila('bs.short_term_investments',0), fila('bs.trade_receivables',0),
+      fila('bs.other_current_receivables',0), fila('bs.prepaid_expenses',0),
+      fila('bs.other_current_assets',0), fila('bs.inventory_total',0),
+      fila('bs.short_term_borrowings',0), fila('bs.current_portion_long_term_debt',0),
+      fila('bs.taxes_payable',0), fila('bs.accrued_expenses_payable',0),
+      fila('bs.current_provisions',0), fila('bs.other_current_liabilities',0)
+    ];
     expect(corriente(entrada).motivos.some(m => m.codigo === 'reported_subtotal_mismatch')).toBe(false);
     campo(entrada,'bs.current_assets_total').current = 1.0101;
     expect(corriente(entrada).motivos.some(m => m.codigo === 'reported_subtotal_mismatch')).toBe(true);
@@ -62,9 +71,9 @@ describe('N/D y cuentas pendientes', () => {
       expect.objectContaining({ codigo:'missing_required_account_data', id:'supp.credit_sales' })
     ]) });
   });
-  it('cuenta ausente zero_if_not_reported vale cero dentro de la suma', () => {
+  it('cuenta con cero explícito aporta cero dentro de la suma (D-055)', () => {
     const entrada = entradaManual();
-    entrada.cuentas = entrada.cuentas.filter(c => c.id !== 'bs.cash_and_equivalents');
+    campo(entrada,'bs.cash_and_equivalents').current = 0;
     expect(corriente(entrada).valor).toBe(4);
   });
   it('una cuenta desconocida con cero conserva revisión y no bloquea', () => {
@@ -154,7 +163,12 @@ describe('periodos y operaciones del intérprete', () => {
 describe('opción A y adaptación por identificadores', () => {
   function datos() {
     return registrarCuenta({ name:'Caso opción A', periods:['2024'], balanceGeneral:{ '2024':{ activos:{}, pasivos:{}, patrimonio:{} } }, estadoResultados:{ '2024':{} } }, [
-      ['is.sales_total',100], ['is.cost_of_sales_reported',0], ['is.nonoperating_income',0], ['is.interest_income',20], ['is.interest_expense',5]
+      ['is.sales_total',100], ['is.cost_of_sales_reported',0], ['is.nonoperating_income',0], ['is.interest_income',20], ['is.interest_expense',5],
+      ['is.administrative_expenses',0], ['is.selling_expenses',0], ['is.income_tax_expense',0],
+      ['is.noninterest_nonoperating_expenses',0],
+      ['is.sales_returns',0], ['is.sales_discounts',0], ['is.sales_allowances',0],
+      ['is.operating_depreciation',0], ['is.operating_amortization',0],
+      ['is.other_operating_expenses',0], ['is.other_operating_income',0]
     ].map(([id,importe],i) => ({ id,importe,nombre:`fila propia ${i}`,periodo:'2024',grupo:'estadoResultados',origen:'importacion' })));
   }
   it('ingresos ilustrativos: 100 + 20 − 5 = 115', () => {
