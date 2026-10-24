@@ -127,7 +127,7 @@ RESULTADO: 6/6 validaciones sin fallos
 
 Escribe las 20 notas de razón en `notas/ratios/NN_<stem>.md` (con su árbol, derivados, conjuntos,
 cuentas, dependencias y notas), elimina el directorio antiguo `ratios/` de la ronda v3 (contenido en
-el historial de git) y calcula el caso provisional completo (60 celdas).
+el historial de git). El caso provisional de 60 celdas se retiró en la ronda 15; ver docs/razones_financieras/ejemplo/.
 
 Comando: `node notas\validador_v6.mjs --solo V2,V3,V4,V5,V16,V9`
 
