@@ -151,6 +151,10 @@
               {
                 "op": "account",
                 "id": "is.nonoperating_income"
+              },
+              {
+                "op": "account",
+                "id": "is.interest_income"
               }
             ]
           },
@@ -253,7 +257,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "revenue",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Ventas de mercaderías",
         "ventas de bienes"
@@ -282,7 +286,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "revenue",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Ventas de servicios",
         "ingresos por servicios prestados"
@@ -311,7 +315,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "revenue",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Otras ventas",
         "otras ventas operativas si efectivamente son ventas"
@@ -340,7 +344,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "other",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Devoluciones de ventas",
         "ventas devueltas"
@@ -361,7 +365,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "other",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Descuentos concedidos sobre ventas"
       ],
@@ -381,7 +385,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "other",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Rebajas y bonificaciones sobre ventas"
       ],
@@ -451,7 +455,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Costo de ventas de mercaderías",
         "costo de bienes vendidos"
@@ -480,7 +484,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Costo de producción vendido",
         "costo de productos vendidos"
@@ -509,7 +513,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Costos de servicios prestados"
       ],
@@ -550,7 +554,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Gastos comerciales",
         "gastos de distribución si el criterio de clase los clasifica como operativos"
@@ -571,7 +575,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Gastos de administración",
         "gastos generales y administrativos"
@@ -592,7 +596,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Depreciación de activos usados en operaciones, solo si no está incluida ya en otra cuenta agregada utilizada"
       ],
@@ -612,7 +616,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Amortización de activos usados en operaciones, bajo la misma regla de no duplicación"
       ],
@@ -632,7 +636,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Otros gastos de operación"
       ],
@@ -652,7 +656,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "revenue",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Otros ingresos de operación si pertenecen a la actividad operativa"
       ],
@@ -693,7 +697,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "revenue",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Otros ingresos no operativos",
         "ingresos financieros no clasificados en otra cuenta específica"
@@ -706,6 +710,38 @@
       }
     },
     {
+      "id": "is.interest_income",
+      "canonical_name": "Ingresos por intereses",
+      "definition": "Ingreso financiero por intereses ganados; no es un gasto por financiación.",
+      "statement": "estado_resultados",
+      "classification": "ingreso_financiero",
+      "account_role": "detail",
+      "normal_balance": "acreedor",
+      "value_semantics": "revenue",
+      "absence_policy": "zero_if_not_reported",
+      "synonyms": [
+        "Intereses ganados",
+        "Intereses devengados a favor"
+      ],
+      "doubtful_synonyms": [],
+      "ambiguities": [
+        "Se suma a is.nonoperating_income como componente de los ingresos no operativos al calcular la utilidad neta sin utilidad reportada, según D-051."
+      ],
+      "research": {
+        "status": "partially_verified",
+        "sources": [
+          {
+            "title": "IFRS: Presentation of interest revenue",
+            "organization_or_author": "IFRS Foundation",
+            "url": "https://www.ifrs.org/projects/completed-projects/2018/presentation-of-interest-revenue-for-particular-financial-instruments-ifrs-9-and-ias-1/",
+            "source_type": "project_page",
+            "supports": "Título de proyecto; no define la cuenta. No respalda por sí solo su verificación.",
+            "consulted_on": "2026-10-17"
+          }
+        ]
+      }
+    },
+    {
       "id": "is.noninterest_nonoperating_expenses",
       "canonical_name": "Gastos no operativos distintos de intereses",
       "definition": "Gastos ajenos a la operación que no son intereses; entran en utilidad neta, no en la operativa (D5).",
@@ -714,7 +750,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Otros gastos no operativos",
         "gastos no operacionales excluyendo intereses identificados por separado"
@@ -735,7 +771,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Intereses pagados o devengados",
         "gastos financieros por intereses"
@@ -764,7 +800,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Impuesto sobre la renta",
         "impuesto a las ganancias del período"
@@ -837,7 +873,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Capital emitido",
         "capital aportado",
@@ -867,7 +903,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Prima en emisión",
         "aportes adicionales"
@@ -888,7 +924,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Reserva legal acumulada"
       ],
@@ -910,7 +946,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Reservas",
         "otras reservas de capital o patrimonio"
@@ -941,7 +977,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Resultados acumulados",
         "utilidades acumuladas"
@@ -962,7 +998,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Utilidad del ejercicio",
         "pérdida del ejercicio",
@@ -984,7 +1020,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Otras cuentas patrimoniales que no tengan un identificador más específico"
       ],
