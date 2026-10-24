@@ -155,3 +155,61 @@ describe('Reportes: reporte HTML', () => {
     expect(html).not.toContain('Capital <b>');
   });
 });
+
+describe('Reportes: utilidad neta y periodo solicitado (ronda 15)', () => {
+  const estadosConIntereses = () => ({
+    name: 'Servicios del Lago', periods: ['2023'],
+    balanceGeneral: { '2023': {
+      activos: { Banco: 1000 }, pasivos: { Prestamo: 300 }, patrimonio: { Aportes: 700 }
+    } },
+    estadoResultados: { '2023': {
+      Servicios: 1000, Insumos: 400, Administracion: 100, Publicidad: 50,
+      'Intereses ganados': 30, 'Gasto extraordinario': 10,
+      'Intereses pagados': 20, 'Renta del ejercicio': 90
+    } },
+    accountTypes: {
+      activos: { Banco: 'efectivo' }, pasivos: { Prestamo: 'pasivoLargoPlazo' },
+      patrimonio: { Aportes: 'patrimonio' },
+      estadoResultados: {
+        Servicios: 'ventas', Insumos: 'costoVentas', Administracion: 'gastosAdmin',
+        Publicidad: 'gastosVentas', 'Intereses ganados': 'otrosIngresos',
+        'Gasto extraordinario': 'otrosGastos', 'Intereses pagados': 'intereses',
+        'Renta del ejercicio': 'impuestos'
+      }
+    }
+  });
+
+  it('usa la utilidad neta de Análisis con intereses e impuestos, sin caché guardada', async () => {
+    const { page, store } = await montar({ guardado: { estados: estadosConIntereses() } });
+    const { getSavedTotals } = await import('../../js/modules/integracion/index.js');
+    const { computeRazones, refreshSavedStates } = await import('../../js/modules/analisis/index.js');
+    refreshSavedStates();
+    // 1000 - 400 - 100 - 50 + 30 - 10 - 20 - 90 = 360.
+    expect(getSavedTotals('2023').utilidadNeta).toBe(360);
+    expect(computeRazones('2023').MN * 1000).toBeCloseTo(360, 6);
+    expect(store.get('analisis.resultados')).toEqual({});
+    expect(page.querySelector('#dashboardContent').innerHTML).toMatch(/360\.00[\s\S]*?Utilidad Neta/);
+  });
+
+  it('un periodo inexistente da N/D sin sustituirlo por el disponible', async () => {
+    const { page, store } = await montar({ guardado: { estados: estadosConIntereses() } });
+    const { getSavedTotals } = await import('../../js/modules/integracion/index.js');
+    const { formatCurrencyND } = await import('../../js/utils/format.js');
+    expect(getSavedTotals('2023').utilidadNeta).toBe(360);
+    expect(getSavedTotals('2024')).toBeNull();
+    expect(formatCurrencyND(getSavedTotals('2024')?.utilidadNeta ?? null)).toBe('N/D');
+    expect(store.get('estados.periods')).toEqual(['2023']);
+    expect(getSavedTotals('2023').utilidadNeta).toBe(360);
+    expect(page.innerHTML).not.toContain('<select');
+  });
+
+  it('sin estados normalizables muestra N/D y no la fórmula de seis términos', async () => {
+    const estados = estadosConIntereses();
+    estados.estadoResultados['2023'] = { Ventas: 1000, 'Costo de Ventas': 400 };
+    estados.accountTypes.estadoResultados = { Ventas: 'tipo_invalido', 'Costo de Ventas': 'costoVentas' };
+    const { page } = await montar({ guardado: { estados } });
+    const html = page.querySelector('#dashboardContent').innerHTML;
+    expect(html).toMatch(/N\/D<\/div><div class="kpi-label">Utilidad Neta/);
+    expect(html).not.toMatch(/600\.00<\/div><div class="kpi-label">Utilidad Neta/);
+  });
+});

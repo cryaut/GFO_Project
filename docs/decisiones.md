@@ -102,6 +102,8 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-048 | Proteger operaciones previas de Análisis | Vigente |
 | D-051 | Intereses ganados como componente de ingresos no operativos | Vigente |
 | D-052 | Conservar sinónimos ambiguos heredados y bloquear cruces nuevos | Vigente |
+| D-053 | Utilidad neta de Reportes igual a Análisis | Vigente |
+| D-054 | Periodo no disponible da N/D sin cambiar de periodo | Vigente |
 
 ## Decisiones
 
@@ -1185,3 +1187,46 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 **Para revertirla.** Acordar la revisión de los casos heredados, registrar una decisión posterior y actualizar catálogo, corpus y guardia junto con las regresiones de identificación afectadas.
 
 **Referencias.** [Ronda 5 y lista de cruces](planificacion/cuentas/05-ronda5-puente-intereses.md), `tests/unit/cuentas-identificador.test.js`, [PR #14](https://github.com/cryaut/GFO_Project/pull/14), aprobación expresa de Carlos en el chat del 2026-10-20.
+
+### D-053 — Utilidad neta de Reportes igual a Análisis
+
+- **Fecha**: 2026-10-23
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi
+- **Área**: Reportes e Integración (`js/modules/integracion/index.js`)
+
+**Contexto.** El dashboard de Reportes reutilizaba los totales compartidos cuando podía normalizar los estados, pero conservaba una fórmula de respaldo de seis términos que omitía intereses e impuestos. Esa alternativa podía mostrar una utilidad numérica sin datos válidos para el cálculo compartido.
+
+**Opciones.**
+1. Usar únicamente `computeFinancialTotals(...).utilidadNeta` — conserva una sola función y la cascada con intereses e impuestos; sin estados normalizables, N/D.
+2. Mantener otra fórmula de respaldo — permite cifras con datos que no se pudieron normalizar, pero duplica la lógica y puede discrepar de Análisis.
+
+**Decisión.** Se adopta la primera opción, aprobada por Cris Lumbi el 23 de octubre de 2026. El dashboard consulta el helper existente `getSavedTotals(period)` y toma su utilidad neta; si no hay totales válidos, muestra N/D. No se escribe otra fórmula ni se modifica Análisis.
+
+**Consecuencias.** Reportes incluye los mismos intereses e impuestos que la función de Análisis. La ruta sin datos normalizables deja de fabricar una utilidad de seis términos. La demo válida conserva C$ 89,180.00 en 2023 y C$ 104,825.00 en 2024. No se implementan las decisiones pendientes de 1c.
+
+**Para revertirla.** Registrar otra decisión y revisar la lectura de utilidad neta en `js/modules/integracion/index.js`, sus pruebas de Reportes y la documentación, sin duplicar fórmulas financieras.
+
+**Referencias.** Ronda 15, decisión aprobada 2 y puntos B1/B2; `tests/unit/integracion-ui.test.js`; [ficha de importación y exportación](planificacion/importacion-exportacion/README.md).
+
+### D-054 — Periodo no disponible da N/D sin cambiar de periodo
+
+- **Fecha**: 2026-10-23
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi
+- **Área**: Consulta de totales de Reportes (`getSavedTotals(period)`)
+
+**Contexto.** Al consultar un periodo inexistente, sustituirlo por otro disponible podría presentar cifras que no corresponden a lo pedido. Reportes ya disponía de una consulta que devolvía `null` cuando el periodo no estaba en los estados normalizados.
+
+**Opciones.**
+1. Conservar N/D para el periodo solicitado — deja explícita la ausencia y no cambia la solicitud.
+2. Sustituirlo por un periodo disponible — muestra cifras, pero de otro periodo.
+3. Agregar un selector — cambia la interfaz y queda fuera de esta ronda.
+
+**Decisión.** Se conserva la primera opción, aprobada por Cris Lumbi el 23 de octubre de 2026. `getSavedTotals(period)` devuelve `null` cuando el periodo no existe; su contrato se verifica con datos de 2023 y una consulta de 2024. Se expone el helper existente sin alterar su lógica ni añadir selector.
+
+**Consecuencias.** El resultado ausente se representa como N/D, nunca como cero ni como cifras del último periodo. La consulta no modifica los periodos guardados. El dashboard conserva su comportamiento de resumen del último periodo, al no tener una solicitud explícita de otro periodo.
+
+**Para revertirla.** Registrar otra decisión y revisar la validación de periodo de `getSavedTotals`, su prueba y su contrato documentado.
+
+**Referencias.** Ronda 15, decisión aprobada 3 y punto B3; `tests/unit/integracion-ui.test.js`; [API de Reportes](api.md).
