@@ -124,7 +124,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Efectivo",
         "caja",
@@ -147,7 +147,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Inversiones temporales",
         "valores negociables de corto plazo"
@@ -176,7 +176,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "CxC",
         "clientes",
@@ -199,7 +199,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Deudores varios corrientes",
         "otras cuentas por cobrar de corto plazo"
@@ -243,7 +243,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Mercaderías",
         "mercancías",
@@ -273,7 +273,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Materias primas",
         "materiales en almacén para producción"
@@ -302,7 +302,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Producción en proceso",
         "productos en proceso"
@@ -331,7 +331,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Productos terminados",
         "bienes terminados"
@@ -360,7 +360,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Pagos anticipados",
         "seguros pagados por anticipado"
@@ -381,7 +381,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Otros activos circulantes"
       ],
@@ -422,7 +422,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "CxP",
         "proveedores",
@@ -444,7 +444,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Deudas bancarias de corto plazo",
         "obligaciones financieras corrientes"
@@ -465,7 +465,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Vencimientos corrientes de deuda a largo plazo"
       ],
@@ -485,7 +485,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Tributos por pagar",
         "impuestos corrientes por pagar"
@@ -514,7 +514,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Gastos devengados por pagar",
         "obligaciones acumuladas"
@@ -535,7 +535,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Provisiones de corto plazo"
       ],
@@ -563,7 +563,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Otros pasivos circulantes"
       ],

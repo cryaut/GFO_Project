@@ -1,5 +1,29 @@
 # Corrección de razones financieras (auditoría)
 
+## Política de datos faltantes — ronda 17, 24 de octubre de 2026
+
+- **D-055**: 55 cuentas pasan a `requires_data` en los 20 JSON y la nota maestra. Solo `is.interest_income` conserva `zero_if_not_reported` como excepción D-051; se añade esa cuenta a la nota, que pasa de 71 a 72. El generado se obtiene del generador existente.
+- **Entrada**: cero explícito es un dato; ausencia o importe no numérico producen N/D cuando el cálculo necesita la cuenta. Un total reportado numérico conserva su prioridad y puede sustituir componentes ausentes.
+- **Pruebas autorizadas**: se completan entradas ficticias de pruebas antiguas con ceros explícitos y se comprueba la divergencia intencionada de políticas entre los JSON del motor y el catálogo de Estados, sin cambiar resultados financieros esperados. Las pruebas nuevas recorren las dependencias efectivas de las 55 cuentas y respetan totales reportados.
+- **Referencia de ejercicios**: ZIP ficticio v2, con composición declarada en Entradas!D4/E4; reemplaza al v1. Lectura real sin fabricar `null` y lectura declarada documentadas en `ronda17-R1-motor.md`. El ejemplo v3 aprobado sigue intacto.
+- **Alcance**: no cambian Estados, Análisis, Reportes, validador ni AGENTS.md. Se actualiza PR #18 sin abrir otro PR ni fusionarlo. Las secciones anteriores de rondas 15 y 16 se conservan como registro.
+
+## Cierre técnico del motor — ronda 16, 23 de octubre de 2026
+
+- **Decisión**: se añade a D-051 la aprobación de Cris Lumbi: sin línea de intereses ganados, `is.interest_income` vale cero por `zero_if_not_reported`; si hay línea con valor, se usa ese valor. La aclaración se limita a esta cuenta y conserva las políticas ya existentes de las demás.
+- **Comprobación**: dos pruebas independientes en `razones-motor-intereses.test.js`, con cifras ficticias nuevas y el mismo contrato de entrada por id. No se cambian fórmulas, intérprete ni datos del ejemplo v3.
+- **Alcance**: actualización del PR #18 mediante tres commits (decisión, pruebas y nota histórica). No se modifica PR #17 ni se fusiona ningún PR. Las referencias previas de Mercado quedan fuera del motor y se conservan.
+- **Entrega**: `ronda16-R1-motor.md` contiene los SHA y las salidas finales completas; la revisión de PR #18 corresponde a otra persona del equipo.
+
+## Estado vigente del motor — ronda 15, 23 de octubre de 2026
+
+- **Rama**: `feat/motor-razones`, sincronizada mediante merge con `origin/main` = `7a78d38`, que ya contiene PR #14. Las secciones de auditoría y ronda 12 más abajo conservan su contexto histórico.
+- **Intereses**: margen neto, ROA y ROE incorporan `is.interest_income` explícitamente después de `is.nonoperating_income` en el mismo `derived.net_income`. Se conserva `partially_verified`, su fuente conceptual y `zero_if_not_reported` del catálogo. El intérprete lee cada id independientemente, sin sumar relaciones `agrupadoEn`, y exige composición válida para otros ingresos.
+- **Referencia**: [ejemplo ficticio v3](../../razones_financieras/ejemplo/), íntegro e inmutable. Sustituye a MUNO en piloto y pruebas de aceptación del motor; las 20 sustituciones manuales independientes conservan sus valores.
+- **Aceptación**: 40 celdas con control apagado y 20 de 2023 con control encendido contra Esperados, con precisión de seis decimales y N/D con motivo. La presentación usa los decimales del JSON. Las salidas completas y el detalle de las 60 celdas se entregan en `ronda15-R1-motor.md` y en el PR.
+- **Contratos y alcance**: [API](../../razones_financieras/motor-api.md), [arquitectura](../../razones_financieras/motor-arquitectura.md), [dominio](../../razones_financieras/motor-dominio.md). Los apéndices antes incluidos en documentación compartida se reubican bajo la ruta autorizada de razones. Las fixtures del motor están en `tests/unit/fixtures/`.
+- **Revisión**: se abre PR listo para revisión por otra persona del equipo; no se fusiona. La propuesta de regla 3 figura en R1; `AGENTS.md` no cambia. No se implementan 1c ni la conexión con Análisis.
+
 - **Estado**: En revisión
 - **Responsable**: Equipo GFO
 - **Rama**: `razones-financieras-v3`
@@ -42,3 +66,20 @@ Pedir revisión del PR hacia `main`; bloqueado por los checkpoints 2 (tests/lint
 - **Esperados existentes**: no se modifican, incluido el periodo sin anterior y la nota «2024: C$ 40,000.00» del ejemplo.
 - **Validación**: 437 pruebas en verde (34 archivos); lint con 0 errores y las 10 advertencias heredadas. La prueba nueva falla antes de la guarda con `expected -900 to be null` y pasa después.
 - **Estado**: pendiente de revisión en su propio PR; no se fusiona y no toca los PR #14 ni #10, 1c ni el motor de razones.
+
+## Motor de razones — ronda 12 (22 de octubre de 2026)
+
+- **Rama de trabajo**: feat/motor-razones, creada desde main f197530 y con PR #14 incorporado en 6e7fc58b8d07a5f1872dd9de34e335d138ef41ea (head final, después de la ficha de revisión). Esta rama no tiene PR mientras cuentas no esté fusionado.
+- **Arquitectura**: D-050, opción C; JSON originales intactos → generador Node sin dependencias nuevas → especificacion-razones.js → intérprete puro sin DOM ni store. No se conecta a computeRazones. Las secciones anteriores son el registro de la auditoría y Mercado, no el estado actual del motor.
+- **Generación**: conserva las nueve claves y research completo. Emite literales JS con comillas simples; pasa ESLint sin exclusiones. La huella incluye nombres y contenido JSON con LF normalizado para evitar diferencias CRLF entre sistemas. No incluye fechas. El módulo generado no se edita a mano.
+- **Flujo**: cambiar JSON, ejecutar node scripts/generar-especificacion-razones.mjs y confirmar ambos en el mismo commit; npm test comprueba sincronía real y los dos errores sintéticos.
+- **Contrato**: crearEntradaRazones enlaza filas con accountIdentities por su clave estructural; nunca identifica por nombres fijos. Conserva pendientes, candidatos y valores current/previous. Recibe composición por token: excluye_intereses. Un subtotal de entrada que ya contenga intereses o no acredite composición se rechaza al consumirlo. calcularRazonConTraza muestra la formación de cada agregado de D-051 desde sus líneas.
+- **Periodos**: control mostrar_calculo_directo_primer_periodo apagado por defecto; un solo periodo admite cierre directo según el JSON. Con varios periodos, el primero es N/D salvo control; siguientes usan promedio. Una referencia explícita al saldo anterior nunca se sustituye por cierre actual.
+- **Precisión**: el motor guarda el valor completo. Solo formatearResultadoRazon aplica los decimales, separadores y sufijo del bloque presentacion, conforme D-033. N/D nunca se muestra como cero.
+- **Aceptación**: piloto 9/9; 20 casos a mano; 60/60 celdas de B5 y regresiones de activos/UN comparadas con la app. Ningún árbol usa dividendos: cero celdas bloqueadas por ese dato, sin inventar dependencias desde el texto de una definición. La prueba independiente de intereses separados da 115 tanto en motor como en app.
+- **Validación**: 878 pruebas en 45 archivos, incluidas 124 comprobaciones nuevas del motor/generador; lint 0 errores y las 10 advertencias previas; validador V0–V17 18/18. Se verifica también el generador con ESLint de forma explícita, sin exclusión del archivo generado. La composición de otros ingresos también se exige cuando su importe explícito es cero; una declaración que ya incluya intereses se rechaza sin inferir composición desde el monto.
+- **Pendiente**: revisión del equipo e integración de PR #14 por otra persona antes de abrir el PR del motor. La propuesta de regla 3 de AGENTS.md figura en R2; el archivo de reglas no cambia. No se abre ni fusiona PR del motor en esta ronda mientras #14 siga abierto.
+
+### Archivos y comprobaciones del motor
+
+scripts/generar-especificacion-razones.mjs; js/modules/razones/especificacion-razones.js (generado); razones-motor.js; razones-presentacion.js; fixtures de casos por id; pruebas de sincronía, piloto, 20 razones, MUNO MODA y N/D. Las salidas completas finales y las 60 celdas se entregan en ronda12-R2-motor.md.

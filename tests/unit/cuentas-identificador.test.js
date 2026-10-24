@@ -120,11 +120,46 @@ it('conserva las 71 identidades del PR #10 y enumera cada diferencia de investig
   // Al integrarse el PR #10 también se contrastan los JSON vivos, sin sustituir
   // la referencia fijada usada mientras todavía viven en otra rama.
   const documentos = Object.values(import.meta.glob('../../docs/razones_financieras/*.json', { eager: true, import: 'default' }));
-  for (const documento of documentos) for (const cuenta of documento.cuentas) expect(obtenerCuenta(cuenta.id)).toMatchObject({
-    nombreCanonico: cuenta.canonical_name, clasificacion: cuenta.classification,
-    rol: cuenta.account_role, politicaAusencia: cuenta.absence_policy, estadoInvestigacion: cuenta.research.status,
-    definicion: cuenta.definition
-  });
+  const politicasMotor = new Map();
+  for (const documento of documentos) for (const cuenta of documento.cuentas) {
+    expect(obtenerCuenta(cuenta.id)).toMatchObject({
+      nombreCanonico: cuenta.canonical_name, clasificacion: cuenta.classification,
+      rol: cuenta.account_role, estadoInvestigacion: cuenta.research.status,
+      definicion: cuenta.definition
+    });
+    if (politicasMotor.has(cuenta.id)) expect(cuenta.absence_policy).toBe(politicasMotor.get(cuenta.id));
+    politicasMotor.set(cuenta.id, cuenta.absence_policy);
+  }
+  // D-055 cambia solo el motor. Se permite esta divergencia exacta, sin relajar el catálogo de Estados.
+  const divergenciasD055 = [
+    'bs.accrued_expenses_payable', 'bs.additional_paid_in_capital', 'bs.cash_and_equivalents',
+    'bs.current_portion_long_term_debt', 'bs.current_provisions', 'bs.current_year_result_equity',
+    'bs.intangible_assets', 'bs.inventory_finished_goods', 'bs.inventory_merchandise',
+    'bs.inventory_raw_materials', 'bs.inventory_work_in_process', 'bs.legal_reserve',
+    'bs.long_term_borrowings', 'bs.long_term_investments', 'bs.long_term_provisions',
+    'bs.other_current_assets', 'bs.other_current_liabilities', 'bs.other_current_receivables',
+    'bs.other_equity_components', 'bs.other_noncurrent_assets', 'bs.other_noncurrent_liabilities',
+    'bs.other_reserves', 'bs.ppe_buildings', 'bs.ppe_furniture', 'bs.ppe_land',
+    'bs.ppe_machinery', 'bs.ppe_other', 'bs.ppe_vehicles', 'bs.prepaid_expenses',
+    'bs.retained_earnings', 'bs.share_capital', 'bs.short_term_borrowings',
+    'bs.short_term_investments', 'bs.taxes_payable', 'bs.trade_payables', 'bs.trade_receivables',
+    'is.administrative_expenses', 'is.income_tax_expense', 'is.interest_expense',
+    'is.merchandise_cost', 'is.noninterest_nonoperating_expenses', 'is.nonoperating_income',
+    'is.operating_amortization', 'is.operating_depreciation', 'is.other_operating_expenses',
+    'is.other_operating_income', 'is.other_sales_revenue', 'is.product_cost', 'is.product_sales',
+    'is.sales_allowances', 'is.sales_discounts', 'is.sales_returns', 'is.selling_expenses',
+    'is.service_cost', 'is.service_revenue'
+  ];
+  const diferenciasPolitica = [...politicasMotor].filter(([id, politica]) => obtenerCuenta(id).politicaAusencia !== politica);
+  expect(divergenciasD055).toHaveLength(55);
+  expect(politicasMotor.size).toBe(72);
+  expect(diferenciasPolitica.map(([id]) => id).sort()).toEqual([...divergenciasD055].sort());
+  for (const id of divergenciasD055) {
+    expect(politicasMotor.get(id), id).toBe('requires_data');
+    expect(obtenerCuenta(id).politicaAusencia, id).toBe('zero_if_not_reported');
+  }
+  expect(politicasMotor.get('is.interest_income')).toBe('zero_if_not_reported');
+  expect(obtenerCuenta('is.interest_income').politicaAusencia).toBe('zero_if_not_reported');
 });
 
 it('cada cuenta verificada conserva una cita específica con ubicación y fuente consultable', () => {
