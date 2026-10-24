@@ -1191,6 +1191,8 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 
 **Aclaración (23 de octubre de 2026), decidida por Cris Lumbi — ronda 15.** La opción A se expresa en el JSON: `is.nonoperating_income` excluye intereses y `is.interest_income` se suma inmediatamente después, una sola vez, dentro de `derived.net_income` de los tres JSON de rentabilidad. El metadato del catálogo no provoca sumas automáticas en el motor. Una composición no declarada para una línea numérica explícita, incluido cero, o declarada `incluye_intereses` es error de entrada. Esta aclaración reemplaza únicamente la formación del agregado de entrada de la aclaración del 22 de octubre; conserva su texto histórico y no implementa 1c.
 
+**Aclaración (23 de octubre de 2026), decidida por Cris Lumbi — ronda 16.** Si el estado no tiene línea de intereses ganados, `is.interest_income` vale cero, por la política `zero_if_not_reported` del catálogo. Es una excepción a la regla de dato faltante (N/D) y solo aplica a esta cuenta. Si hay línea con valor, se usa ese valor.
+
 ### D-052 — Conservar sinónimos ambiguos heredados y bloquear cruces nuevos
 
 - **Fecha**: 2026-10-20

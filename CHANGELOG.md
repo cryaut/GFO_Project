@@ -38,6 +38,7 @@ Todos los cambios notables en GFO Toolkit.
 - Botón **Vista previa del reporte** (muestra el reporte en la página) y **Descargar reporte HTML**; antes el botón "Vista Previa HTML" descargaba el archivo.
 
 ### Módulo 3: Análisis Financiero
+- Ronda 16 / D-051: se registra y prueba que la ausencia de línea de intereses ganados vale cero según su política; una línea presente se suma una sola vez desde el JSON. Se conservan las políticas de las demás cuentas y el ejemplo v3.
 - Ronda 15 / motor independiente: intereses ganados como operando explícito de utilidad neta en los tres JSON; lectura por id sin sumas automáticas. El ejemplo ficticio v3 reemplaza MUNO en las pruebas de razones, con comparación de 60 celdas y N/D con motivo. Se prepara el PR para revisión tras integrar #14, sin conexión con Análisis.
 - Ronda 12 / D-050: motor de razones independiente basado en los 20 JSON, con generación determinista, sincronía y manejo central de N/D. Incluye las 11 operaciones, control de periodos, trazabilidad de intereses y presentación separada; piloto, casos a mano y MUNO MODA comprobados. Queda en rama de trabajo sin conexión con Análisis ni PR hasta integrar cuentas.
 - Excepción limitada D-047/D-048 autorizada: `calculate.js` conserva N/D antes de operar; Análisis protege las restas de márgenes, cobertura, compras y capital de trabajo, preserva metadatos/motivos y mantiene el saldo final con un solo periodo. Fórmulas, interfaz y MUNO MODA se conservan; no se conecta el motor ni se retiran nombres fijos.

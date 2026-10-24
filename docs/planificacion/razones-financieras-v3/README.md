@@ -1,5 +1,12 @@
 # Corrección de razones financieras (auditoría)
 
+## Cierre técnico del motor — ronda 16, 23 de octubre de 2026
+
+- **Decisión**: se añade a D-051 la aprobación de Cris Lumbi: sin línea de intereses ganados, `is.interest_income` vale cero por `zero_if_not_reported`; si hay línea con valor, se usa ese valor. La aclaración se limita a esta cuenta y conserva las políticas ya existentes de las demás.
+- **Comprobación**: dos pruebas independientes en `razones-motor-intereses.test.js`, con cifras ficticias nuevas y el mismo contrato de entrada por id. No se cambian fórmulas, intérprete ni datos del ejemplo v3.
+- **Alcance**: actualización del PR #18 mediante tres commits (decisión, pruebas y nota histórica). No se modifica PR #17 ni se fusiona ningún PR. Las referencias previas de Mercado quedan fuera del motor y se conservan.
+- **Entrega**: `ronda16-R1-motor.md` contiene los SHA y las salidas finales completas; la revisión de PR #18 corresponde a otra persona del equipo.
+
 ## Estado vigente del motor — ronda 15, 23 de octubre de 2026
 
 - **Rama**: `feat/motor-razones`, sincronizada mediante merge con `origin/main` = `7a78d38`, que ya contiene PR #14. Las secciones de auditoría y ronda 12 más abajo conservan su contexto histórico.
