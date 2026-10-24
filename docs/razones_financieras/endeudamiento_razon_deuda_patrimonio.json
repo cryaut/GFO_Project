@@ -132,7 +132,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "CxP",
         "proveedores",
@@ -154,7 +154,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Deudas bancarias de corto plazo",
         "obligaciones financieras corrientes"
@@ -175,7 +175,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Vencimientos corrientes de deuda a largo plazo"
       ],
@@ -195,7 +195,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Tributos por pagar",
         "impuestos corrientes por pagar"
@@ -224,7 +224,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Gastos devengados por pagar",
         "obligaciones acumuladas"
@@ -245,7 +245,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Provisiones de corto plazo"
       ],
@@ -273,7 +273,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Otros pasivos circulantes"
       ],
@@ -303,7 +303,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Préstamos a largo plazo",
         "obligaciones financieras no corrientes"
@@ -341,7 +341,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Provisiones no corrientes"
       ],
@@ -369,7 +369,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Otros pasivos a largo plazo"
       ],
@@ -432,7 +432,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Capital emitido",
         "capital aportado",
@@ -462,7 +462,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Prima en emisión",
         "aportes adicionales"
@@ -483,7 +483,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Reserva legal acumulada"
       ],
@@ -505,7 +505,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Reservas",
         "otras reservas de capital o patrimonio"
@@ -536,7 +536,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Resultados acumulados",
         "utilidades acumuladas"
@@ -557,7 +557,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Utilidad del ejercicio",
         "pérdida del ejercicio",
@@ -579,7 +579,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Otras cuentas patrimoniales que no tengan un identificador más específico"
       ],

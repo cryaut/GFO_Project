@@ -84,7 +84,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "CxP",
         "proveedores",

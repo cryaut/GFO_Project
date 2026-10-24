@@ -1,5 +1,5 @@
 // GENERADO: no editar a mano.
-// SHA-256: a4a41838ae1acb720150e3fb9a2f9c47e71196c8dfea55b19e625607ee058d36
+// SHA-256: 467f6ae671855897125bb1965efa935b2ff89636e790aa8729d95db27c6d7b75
 // Fuente: 20 JSON de docs/razones_financieras; LF normalizado en la huella.
 export const ESPECIFICACION_RAZONES = {
   'actividad_ciclo_conversion_efectivo': {
@@ -268,7 +268,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costo de ventas de mercaderías',
           'costo de bienes vendidos'
@@ -297,7 +297,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costo de producción vendido',
           'costo de productos vendidos'
@@ -326,7 +326,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costos de servicios prestados'
         ],
@@ -346,7 +346,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'CxC',
           'clientes',
@@ -392,7 +392,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Mercaderías',
           'mercancías',
@@ -422,7 +422,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Materias primas',
           'materiales en almacén para producción'
@@ -451,7 +451,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Producción en proceso',
           'productos en proceso'
@@ -480,7 +480,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Productos terminados',
           'bienes terminados'
@@ -509,7 +509,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'CxP',
           'proveedores',
@@ -769,7 +769,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costo de ventas de mercaderías',
           'costo de bienes vendidos'
@@ -798,7 +798,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costo de producción vendido',
           'costo de productos vendidos'
@@ -827,7 +827,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costos de servicios prestados'
         ],
@@ -870,7 +870,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Mercaderías',
           'mercancías',
@@ -900,7 +900,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Materias primas',
           'materiales en almacén para producción'
@@ -929,7 +929,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Producción en proceso',
           'productos en proceso'
@@ -958,7 +958,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Productos terminados',
           'bienes terminados'
@@ -1115,7 +1115,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'CxC',
           'clientes',
@@ -1313,7 +1313,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'CxP',
           'proveedores',
@@ -1567,7 +1567,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Ventas de mercaderías',
           'ventas de bienes'
@@ -1596,7 +1596,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Ventas de servicios',
           'ingresos por servicios prestados'
@@ -1625,7 +1625,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otras ventas',
           'otras ventas operativas si efectivamente son ventas'
@@ -1654,7 +1654,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Devoluciones de ventas',
           'ventas devueltas'
@@ -1675,7 +1675,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Descuentos concedidos sobre ventas'
         ],
@@ -1695,7 +1695,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Rebajas y bonificaciones sobre ventas'
         ],
@@ -1765,7 +1765,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Terrenos de uso operativo'
         ],
@@ -1793,7 +1793,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Edificios',
           'construcciones de uso operativo'
@@ -1822,7 +1822,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Maquinaria',
           'equipo productivo'
@@ -1853,7 +1853,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Equipo de transporte',
           'vehículos de uso operativo'
@@ -1882,7 +1882,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Mobiliario',
           'muebles y enseres',
@@ -1912,7 +1912,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Propiedad, planta y equipo',
           'otros activos fijos tangibles'
@@ -2251,7 +2251,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Ventas de mercaderías',
           'ventas de bienes'
@@ -2280,7 +2280,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Ventas de servicios',
           'ingresos por servicios prestados'
@@ -2309,7 +2309,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otras ventas',
           'otras ventas operativas si efectivamente son ventas'
@@ -2338,7 +2338,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Devoluciones de ventas',
           'ventas devueltas'
@@ -2359,7 +2359,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Descuentos concedidos sobre ventas'
         ],
@@ -2379,7 +2379,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Rebajas y bonificaciones sobre ventas'
         ],
@@ -2441,7 +2441,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Efectivo',
           'caja',
@@ -2464,7 +2464,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Inversiones temporales',
           'valores negociables de corto plazo'
@@ -2493,7 +2493,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'CxC',
           'clientes',
@@ -2516,7 +2516,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Deudores varios corrientes',
           'otras cuentas por cobrar de corto plazo'
@@ -2560,7 +2560,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Mercaderías',
           'mercancías',
@@ -2590,7 +2590,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Materias primas',
           'materiales en almacén para producción'
@@ -2619,7 +2619,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Producción en proceso',
           'productos en proceso'
@@ -2648,7 +2648,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Productos terminados',
           'bienes terminados'
@@ -2677,7 +2677,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Pagos anticipados',
           'seguros pagados por anticipado'
@@ -2698,7 +2698,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros activos circulantes'
         ],
@@ -2747,7 +2747,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Terrenos de uso operativo'
         ],
@@ -2775,7 +2775,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Edificios',
           'construcciones de uso operativo'
@@ -2804,7 +2804,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Maquinaria',
           'equipo productivo'
@@ -2835,7 +2835,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Equipo de transporte',
           'vehículos de uso operativo'
@@ -2864,7 +2864,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Mobiliario',
           'muebles y enseres',
@@ -2894,7 +2894,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Propiedad, planta y equipo',
           'otros activos fijos tangibles'
@@ -2943,7 +2943,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Intangibles',
           'software capitalizado',
@@ -2973,7 +2973,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Inversiones permanentes',
           'inversiones no corrientes'
@@ -2994,7 +2994,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros activos a largo plazo'
         ],
@@ -3143,7 +3143,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'CxC',
           'clientes',
@@ -3320,7 +3320,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'CxP',
           'proveedores',
@@ -3537,7 +3537,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costo de ventas de mercaderías',
           'costo de bienes vendidos'
@@ -3566,7 +3566,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costo de producción vendido',
           'costo de productos vendidos'
@@ -3595,7 +3595,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costos de servicios prestados'
         ],
@@ -3638,7 +3638,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Mercaderías',
           'mercancías',
@@ -3668,7 +3668,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Materias primas',
           'materiales en almacén para producción'
@@ -3697,7 +3697,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Producción en proceso',
           'productos en proceso'
@@ -3726,7 +3726,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Productos terminados',
           'bienes terminados'
@@ -4010,7 +4010,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Ventas de mercaderías',
           'ventas de bienes'
@@ -4039,7 +4039,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Ventas de servicios',
           'ingresos por servicios prestados'
@@ -4068,7 +4068,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otras ventas',
           'otras ventas operativas si efectivamente son ventas'
@@ -4097,7 +4097,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Devoluciones de ventas',
           'ventas devueltas'
@@ -4118,7 +4118,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Descuentos concedidos sobre ventas'
         ],
@@ -4138,7 +4138,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Rebajas y bonificaciones sobre ventas'
         ],
@@ -4208,7 +4208,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costo de ventas de mercaderías',
           'costo de bienes vendidos'
@@ -4237,7 +4237,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costo de producción vendido',
           'costo de productos vendidos'
@@ -4266,7 +4266,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costos de servicios prestados'
         ],
@@ -4307,7 +4307,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Gastos comerciales',
           'gastos de distribución si el criterio de clase los clasifica como operativos'
@@ -4328,7 +4328,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Gastos de administración',
           'gastos generales y administrativos'
@@ -4349,7 +4349,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Depreciación de activos usados en operaciones, solo si no está incluida ya en otra cuenta agregada utilizada'
         ],
@@ -4369,7 +4369,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Amortización de activos usados en operaciones, bajo la misma regla de no duplicación'
         ],
@@ -4389,7 +4389,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros gastos de operación'
         ],
@@ -4409,7 +4409,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros ingresos de operación si pertenecen a la actividad operativa'
         ],
@@ -4450,7 +4450,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Intereses pagados o devengados',
           'gastos financieros por intereses'
@@ -4669,7 +4669,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'CxP',
           'proveedores',
@@ -4691,7 +4691,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Deudas bancarias de corto plazo',
           'obligaciones financieras corrientes'
@@ -4712,7 +4712,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Vencimientos corrientes de deuda a largo plazo'
         ],
@@ -4732,7 +4732,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Tributos por pagar',
           'impuestos corrientes por pagar'
@@ -4761,7 +4761,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Gastos devengados por pagar',
           'obligaciones acumuladas'
@@ -4782,7 +4782,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Provisiones de corto plazo'
         ],
@@ -4810,7 +4810,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros pasivos circulantes'
         ],
@@ -4840,7 +4840,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Préstamos a largo plazo',
           'obligaciones financieras no corrientes'
@@ -4878,7 +4878,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Provisiones no corrientes'
         ],
@@ -4906,7 +4906,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros pasivos a largo plazo'
         ],
@@ -4969,7 +4969,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Capital emitido',
           'capital aportado',
@@ -4999,7 +4999,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Prima en emisión',
           'aportes adicionales'
@@ -5020,7 +5020,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Reserva legal acumulada'
         ],
@@ -5042,7 +5042,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Reservas',
           'otras reservas de capital o patrimonio'
@@ -5073,7 +5073,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Resultados acumulados',
           'utilidades acumuladas'
@@ -5094,7 +5094,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Utilidad del ejercicio',
           'pérdida del ejercicio',
@@ -5116,7 +5116,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otras cuentas patrimoniales que no tengan un identificador más específico'
         ],
@@ -5414,7 +5414,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Efectivo',
           'caja',
@@ -5437,7 +5437,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Inversiones temporales',
           'valores negociables de corto plazo'
@@ -5466,7 +5466,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'CxC',
           'clientes',
@@ -5489,7 +5489,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Deudores varios corrientes',
           'otras cuentas por cobrar de corto plazo'
@@ -5533,7 +5533,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Mercaderías',
           'mercancías',
@@ -5563,7 +5563,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Materias primas',
           'materiales en almacén para producción'
@@ -5592,7 +5592,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Producción en proceso',
           'productos en proceso'
@@ -5621,7 +5621,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Productos terminados',
           'bienes terminados'
@@ -5650,7 +5650,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Pagos anticipados',
           'seguros pagados por anticipado'
@@ -5671,7 +5671,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros activos circulantes'
         ],
@@ -5720,7 +5720,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Terrenos de uso operativo'
         ],
@@ -5748,7 +5748,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Edificios',
           'construcciones de uso operativo'
@@ -5777,7 +5777,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Maquinaria',
           'equipo productivo'
@@ -5808,7 +5808,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Equipo de transporte',
           'vehículos de uso operativo'
@@ -5837,7 +5837,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Mobiliario',
           'muebles y enseres',
@@ -5867,7 +5867,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Propiedad, planta y equipo',
           'otros activos fijos tangibles'
@@ -5916,7 +5916,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Intangibles',
           'software capitalizado',
@@ -5946,7 +5946,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Inversiones permanentes',
           'inversiones no corrientes'
@@ -5967,7 +5967,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros activos a largo plazo'
         ],
@@ -6030,7 +6030,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'CxP',
           'proveedores',
@@ -6052,7 +6052,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Deudas bancarias de corto plazo',
           'obligaciones financieras corrientes'
@@ -6073,7 +6073,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Vencimientos corrientes de deuda a largo plazo'
         ],
@@ -6093,7 +6093,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Tributos por pagar',
           'impuestos corrientes por pagar'
@@ -6122,7 +6122,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Gastos devengados por pagar',
           'obligaciones acumuladas'
@@ -6143,7 +6143,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Provisiones de corto plazo'
         ],
@@ -6171,7 +6171,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros pasivos circulantes'
         ],
@@ -6201,7 +6201,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Préstamos a largo plazo',
           'obligaciones financieras no corrientes'
@@ -6239,7 +6239,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Provisiones no corrientes'
         ],
@@ -6267,7 +6267,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros pasivos a largo plazo'
         ],
@@ -6490,7 +6490,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Efectivo',
           'caja',
@@ -6513,7 +6513,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Inversiones temporales',
           'valores negociables de corto plazo'
@@ -6542,7 +6542,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'CxC',
           'clientes',
@@ -6565,7 +6565,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Deudores varios corrientes',
           'otras cuentas por cobrar de corto plazo'
@@ -6609,7 +6609,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Mercaderías',
           'mercancías',
@@ -6639,7 +6639,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Materias primas',
           'materiales en almacén para producción'
@@ -6668,7 +6668,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Producción en proceso',
           'productos en proceso'
@@ -6697,7 +6697,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Productos terminados',
           'bienes terminados'
@@ -6726,7 +6726,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Pagos anticipados',
           'seguros pagados por anticipado'
@@ -6747,7 +6747,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros activos circulantes'
         ],
@@ -6788,7 +6788,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'CxP',
           'proveedores',
@@ -6810,7 +6810,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Deudas bancarias de corto plazo',
           'obligaciones financieras corrientes'
@@ -6831,7 +6831,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Vencimientos corrientes de deuda a largo plazo'
         ],
@@ -6851,7 +6851,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Tributos por pagar',
           'impuestos corrientes por pagar'
@@ -6880,7 +6880,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Gastos devengados por pagar',
           'obligaciones acumuladas'
@@ -6901,7 +6901,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Provisiones de corto plazo'
         ],
@@ -6929,7 +6929,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros pasivos circulantes'
         ],
@@ -7148,7 +7148,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Efectivo',
           'caja',
@@ -7171,7 +7171,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Inversiones temporales',
           'valores negociables de corto plazo'
@@ -7200,7 +7200,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'CxC',
           'clientes',
@@ -7223,7 +7223,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Deudores varios corrientes',
           'otras cuentas por cobrar de corto plazo'
@@ -7267,7 +7267,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Mercaderías',
           'mercancías',
@@ -7297,7 +7297,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Materias primas',
           'materiales en almacén para producción'
@@ -7326,7 +7326,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Producción en proceso',
           'productos en proceso'
@@ -7355,7 +7355,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Productos terminados',
           'bienes terminados'
@@ -7384,7 +7384,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Pagos anticipados',
           'seguros pagados por anticipado'
@@ -7405,7 +7405,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros activos circulantes'
         ],
@@ -7446,7 +7446,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'CxP',
           'proveedores',
@@ -7468,7 +7468,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Deudas bancarias de corto plazo',
           'obligaciones financieras corrientes'
@@ -7489,7 +7489,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Vencimientos corrientes de deuda a largo plazo'
         ],
@@ -7509,7 +7509,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Tributos por pagar',
           'impuestos corrientes por pagar'
@@ -7538,7 +7538,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Gastos devengados por pagar',
           'obligaciones acumuladas'
@@ -7559,7 +7559,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Provisiones de corto plazo'
         ],
@@ -7587,7 +7587,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros pasivos circulantes'
         ],
@@ -7799,7 +7799,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Efectivo',
           'caja',
@@ -7822,7 +7822,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Inversiones temporales',
           'valores negociables de corto plazo'
@@ -7851,7 +7851,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'CxC',
           'clientes',
@@ -7874,7 +7874,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Deudores varios corrientes',
           'otras cuentas por cobrar de corto plazo'
@@ -7918,7 +7918,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Mercaderías',
           'mercancías',
@@ -7948,7 +7948,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Materias primas',
           'materiales en almacén para producción'
@@ -7977,7 +7977,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Producción en proceso',
           'productos en proceso'
@@ -8006,7 +8006,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Productos terminados',
           'bienes terminados'
@@ -8035,7 +8035,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Pagos anticipados',
           'seguros pagados por anticipado'
@@ -8056,7 +8056,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros activos circulantes'
         ],
@@ -8097,7 +8097,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'CxP',
           'proveedores',
@@ -8119,7 +8119,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Deudas bancarias de corto plazo',
           'obligaciones financieras corrientes'
@@ -8140,7 +8140,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Vencimientos corrientes de deuda a largo plazo'
         ],
@@ -8160,7 +8160,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Tributos por pagar',
           'impuestos corrientes por pagar'
@@ -8189,7 +8189,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Gastos devengados por pagar',
           'obligaciones acumuladas'
@@ -8210,7 +8210,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Provisiones de corto plazo'
         ],
@@ -8238,7 +8238,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros pasivos circulantes'
         ],
@@ -8469,7 +8469,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Ventas de mercaderías',
           'ventas de bienes'
@@ -8498,7 +8498,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Ventas de servicios',
           'ingresos por servicios prestados'
@@ -8527,7 +8527,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otras ventas',
           'otras ventas operativas si efectivamente son ventas'
@@ -8556,7 +8556,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Devoluciones de ventas',
           'ventas devueltas'
@@ -8577,7 +8577,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Descuentos concedidos sobre ventas'
         ],
@@ -8597,7 +8597,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Rebajas y bonificaciones sobre ventas'
         ],
@@ -8667,7 +8667,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costo de ventas de mercaderías',
           'costo de bienes vendidos'
@@ -8696,7 +8696,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costo de producción vendido',
           'costo de productos vendidos'
@@ -8725,7 +8725,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costos de servicios prestados'
         ],
@@ -9055,7 +9055,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Ventas de mercaderías',
           'ventas de bienes'
@@ -9084,7 +9084,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Ventas de servicios',
           'ingresos por servicios prestados'
@@ -9113,7 +9113,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otras ventas',
           'otras ventas operativas si efectivamente son ventas'
@@ -9142,7 +9142,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Devoluciones de ventas',
           'ventas devueltas'
@@ -9163,7 +9163,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Descuentos concedidos sobre ventas'
         ],
@@ -9183,7 +9183,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Rebajas y bonificaciones sobre ventas'
         ],
@@ -9253,7 +9253,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costo de ventas de mercaderías',
           'costo de bienes vendidos'
@@ -9282,7 +9282,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costo de producción vendido',
           'costo de productos vendidos'
@@ -9311,7 +9311,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costos de servicios prestados'
         ],
@@ -9352,7 +9352,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Gastos comerciales',
           'gastos de distribución si el criterio de clase los clasifica como operativos'
@@ -9373,7 +9373,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Gastos de administración',
           'gastos generales y administrativos'
@@ -9394,7 +9394,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Depreciación de activos usados en operaciones, solo si no está incluida ya en otra cuenta agregada utilizada'
         ],
@@ -9414,7 +9414,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Amortización de activos usados en operaciones, bajo la misma regla de no duplicación'
         ],
@@ -9434,7 +9434,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros gastos de operación'
         ],
@@ -9454,7 +9454,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros ingresos de operación si pertenecen a la actividad operativa'
         ],
@@ -9495,7 +9495,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros ingresos no operativos',
           'ingresos financieros no clasificados en otra cuenta específica'
@@ -9548,7 +9548,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros gastos no operativos',
           'gastos no operacionales excluyendo intereses identificados por separado'
@@ -9569,7 +9569,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Intereses pagados o devengados',
           'gastos financieros por intereses'
@@ -9598,7 +9598,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Impuesto sobre la renta',
           'impuesto a las ganancias del período'
@@ -9893,7 +9893,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Ventas de mercaderías',
           'ventas de bienes'
@@ -9922,7 +9922,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Ventas de servicios',
           'ingresos por servicios prestados'
@@ -9951,7 +9951,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otras ventas',
           'otras ventas operativas si efectivamente son ventas'
@@ -9980,7 +9980,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Devoluciones de ventas',
           'ventas devueltas'
@@ -10001,7 +10001,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Descuentos concedidos sobre ventas'
         ],
@@ -10021,7 +10021,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Rebajas y bonificaciones sobre ventas'
         ],
@@ -10091,7 +10091,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costo de ventas de mercaderías',
           'costo de bienes vendidos'
@@ -10120,7 +10120,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costo de producción vendido',
           'costo de productos vendidos'
@@ -10149,7 +10149,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costos de servicios prestados'
         ],
@@ -10190,7 +10190,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Gastos comerciales',
           'gastos de distribución si el criterio de clase los clasifica como operativos'
@@ -10211,7 +10211,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Gastos de administración',
           'gastos generales y administrativos'
@@ -10232,7 +10232,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Depreciación de activos usados en operaciones, solo si no está incluida ya en otra cuenta agregada utilizada'
         ],
@@ -10252,7 +10252,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Amortización de activos usados en operaciones, bajo la misma regla de no duplicación'
         ],
@@ -10272,7 +10272,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros gastos de operación'
         ],
@@ -10292,7 +10292,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros ingresos de operación si pertenecen a la actividad operativa'
         ],
@@ -10736,7 +10736,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Ventas de mercaderías',
           'ventas de bienes'
@@ -10765,7 +10765,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Ventas de servicios',
           'ingresos por servicios prestados'
@@ -10794,7 +10794,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otras ventas',
           'otras ventas operativas si efectivamente son ventas'
@@ -10823,7 +10823,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Devoluciones de ventas',
           'ventas devueltas'
@@ -10844,7 +10844,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Descuentos concedidos sobre ventas'
         ],
@@ -10864,7 +10864,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Rebajas y bonificaciones sobre ventas'
         ],
@@ -10934,7 +10934,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costo de ventas de mercaderías',
           'costo de bienes vendidos'
@@ -10963,7 +10963,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costo de producción vendido',
           'costo de productos vendidos'
@@ -10992,7 +10992,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costos de servicios prestados'
         ],
@@ -11033,7 +11033,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Gastos comerciales',
           'gastos de distribución si el criterio de clase los clasifica como operativos'
@@ -11054,7 +11054,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Gastos de administración',
           'gastos generales y administrativos'
@@ -11075,7 +11075,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Depreciación de activos usados en operaciones, solo si no está incluida ya en otra cuenta agregada utilizada'
         ],
@@ -11095,7 +11095,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Amortización de activos usados en operaciones, bajo la misma regla de no duplicación'
         ],
@@ -11115,7 +11115,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros gastos de operación'
         ],
@@ -11135,7 +11135,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros ingresos de operación si pertenecen a la actividad operativa'
         ],
@@ -11176,7 +11176,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros ingresos no operativos',
           'ingresos financieros no clasificados en otra cuenta específica'
@@ -11229,7 +11229,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros gastos no operativos',
           'gastos no operacionales excluyendo intereses identificados por separado'
@@ -11250,7 +11250,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Intereses pagados o devengados',
           'gastos financieros por intereses'
@@ -11279,7 +11279,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Impuesto sobre la renta',
           'impuesto a las ganancias del período'
@@ -11351,7 +11351,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Efectivo',
           'caja',
@@ -11374,7 +11374,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Inversiones temporales',
           'valores negociables de corto plazo'
@@ -11403,7 +11403,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'CxC',
           'clientes',
@@ -11426,7 +11426,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Deudores varios corrientes',
           'otras cuentas por cobrar de corto plazo'
@@ -11470,7 +11470,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Mercaderías',
           'mercancías',
@@ -11500,7 +11500,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Materias primas',
           'materiales en almacén para producción'
@@ -11529,7 +11529,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Producción en proceso',
           'productos en proceso'
@@ -11558,7 +11558,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Productos terminados',
           'bienes terminados'
@@ -11587,7 +11587,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Pagos anticipados',
           'seguros pagados por anticipado'
@@ -11608,7 +11608,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros activos circulantes'
         ],
@@ -11657,7 +11657,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Terrenos de uso operativo'
         ],
@@ -11685,7 +11685,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Edificios',
           'construcciones de uso operativo'
@@ -11714,7 +11714,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Maquinaria',
           'equipo productivo'
@@ -11745,7 +11745,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Equipo de transporte',
           'vehículos de uso operativo'
@@ -11774,7 +11774,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Mobiliario',
           'muebles y enseres',
@@ -11804,7 +11804,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Propiedad, planta y equipo',
           'otros activos fijos tangibles'
@@ -11853,7 +11853,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Intangibles',
           'software capitalizado',
@@ -11883,7 +11883,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Inversiones permanentes',
           'inversiones no corrientes'
@@ -11904,7 +11904,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros activos a largo plazo'
         ],
@@ -12272,7 +12272,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Ventas de mercaderías',
           'ventas de bienes'
@@ -12301,7 +12301,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Ventas de servicios',
           'ingresos por servicios prestados'
@@ -12330,7 +12330,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otras ventas',
           'otras ventas operativas si efectivamente son ventas'
@@ -12359,7 +12359,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Devoluciones de ventas',
           'ventas devueltas'
@@ -12380,7 +12380,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Descuentos concedidos sobre ventas'
         ],
@@ -12400,7 +12400,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'other',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Rebajas y bonificaciones sobre ventas'
         ],
@@ -12470,7 +12470,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costo de ventas de mercaderías',
           'costo de bienes vendidos'
@@ -12499,7 +12499,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costo de producción vendido',
           'costo de productos vendidos'
@@ -12528,7 +12528,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Costos de servicios prestados'
         ],
@@ -12569,7 +12569,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Gastos comerciales',
           'gastos de distribución si el criterio de clase los clasifica como operativos'
@@ -12590,7 +12590,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Gastos de administración',
           'gastos generales y administrativos'
@@ -12611,7 +12611,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Depreciación de activos usados en operaciones, solo si no está incluida ya en otra cuenta agregada utilizada'
         ],
@@ -12631,7 +12631,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Amortización de activos usados en operaciones, bajo la misma regla de no duplicación'
         ],
@@ -12651,7 +12651,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros gastos de operación'
         ],
@@ -12671,7 +12671,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros ingresos de operación si pertenecen a la actividad operativa'
         ],
@@ -12712,7 +12712,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'revenue',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros ingresos no operativos',
           'ingresos financieros no clasificados en otra cuenta específica'
@@ -12765,7 +12765,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otros gastos no operativos',
           'gastos no operacionales excluyendo intereses identificados por separado'
@@ -12786,7 +12786,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Intereses pagados o devengados',
           'gastos financieros por intereses'
@@ -12815,7 +12815,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'deudor',
         'value_semantics': 'expense',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Impuesto sobre la renta',
           'impuesto a las ganancias del período'
@@ -12888,7 +12888,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Capital emitido',
           'capital aportado',
@@ -12918,7 +12918,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Prima en emisión',
           'aportes adicionales'
@@ -12939,7 +12939,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Reserva legal acumulada'
         ],
@@ -12961,7 +12961,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Reservas',
           'otras reservas de capital o patrimonio'
@@ -12992,7 +12992,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Resultados acumulados',
           'utilidades acumuladas'
@@ -13013,7 +13013,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Utilidad del ejercicio',
           'pérdida del ejercicio',
@@ -13035,7 +13035,7 @@ export const ESPECIFICACION_RAZONES = {
         'account_role': 'detail',
         'normal_balance': 'acreedor',
         'value_semantics': 'positive_magnitude',
-        'absence_policy': 'zero_if_not_reported',
+        'absence_policy': 'requires_data',
         'synonyms': [
           'Otras cuentas patrimoniales que no tengan un identificador más específico'
         ],

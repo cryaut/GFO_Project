@@ -125,7 +125,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Costo de ventas de mercaderías",
         "costo de bienes vendidos"
@@ -154,7 +154,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Costo de producción vendido",
         "costo de productos vendidos"
@@ -183,7 +183,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Costos de servicios prestados"
       ],
@@ -226,7 +226,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Mercaderías",
         "mercancías",
@@ -256,7 +256,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Materias primas",
         "materiales en almacén para producción"
@@ -285,7 +285,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Producción en proceso",
         "productos en proceso"
@@ -314,7 +314,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Productos terminados",
         "bienes terminados"
