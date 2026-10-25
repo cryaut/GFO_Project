@@ -25,7 +25,7 @@ function getNormalizedStates() {
   }
 }
 
-function getSavedTotals(period) {
+export function getSavedTotals(period) {
   const states = getNormalizedStates();
   return states && states.periods.includes(period) ? computeFinancialTotals(states, period) : null;
 }
@@ -49,9 +49,7 @@ function computeDashboardKPIs() {
   const totalPasivos = shared ? shared.totalPasivos : sum(bg.pasivos);
   const totalPatrimonio = shared ? shared.totalPatrimonio : sum(bg.patrimonio);
   const ventas = shared ? shared.ventas : (er['Ventas'] || 0);
-  const utilidadNeta = shared ? shared.utilidadNeta
-    : (er['Ventas'] || 0) - (er['Costo de Ventas'] || 0) - (er['Gastos de Administracion'] || 0) -
-      (er['Gastos de Ventas'] || 0) + (er['Otros Ingresos'] || 0) - (er['Otros Gastos'] || 0);
+  const utilidadNeta = shared ? shared.utilidadNeta : null;
 
   refreshSavedStates();
   const razones = computeRazones(lastP);

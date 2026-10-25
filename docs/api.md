@@ -710,6 +710,13 @@ Deduce el separador decimal de un conjunto de celdas.
 
 Lógica pura de Reportes (sin DOM ni `store`); el `index.js` del módulo lee el `store` y guarda con `setPersisted`.
 
+#### `getSavedTotals(period)` — `js/modules/integracion/index.js`
+Consulta los totales de los estados guardados mediante `computeFinancialTotals`, la misma función usada por Análisis. La utilidad neta incluye intereses e impuestos y conserva N/D.
+
+- **Parámetros**: `period` (`string`) — periodo solicitado explícitamente.
+- **Retorno**: objeto de totales o `null` si los estados no pueden normalizarse o el periodo no existe. No sustituye el periodo solicitado por el último disponible.
+- **Ejemplo**: con datos guardados solo de 2023, `getSavedTotals('2024')` → `null` (N/D).
+
 #### `validarRespaldo(contenido, actuales)`
 Valida un respaldo JSON ya parseado antes de tocar el `store`.
 
