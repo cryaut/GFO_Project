@@ -112,6 +112,14 @@ export function normalizeFinancialData(input) {
     if (typeof period !== 'string' || !period.trim() || period !== period.trim()
       || period.length > 40 || DANGEROUS_KEYS.has(period)) throw new Error('Periodo inválido');
   }
+  const composicionIngresos = {};
+  const composiciones = source.composicionIngresos === undefined ? {} : assertPlainObject(source.composicionIngresos, 'composicionIngresos');
+  if (Object.keys(composiciones).some(period => !periods.includes(period))) throw new Error('Periodo de composición inconsistente');
+  for (const period of periods) {
+    const composicion = Object.hasOwn(composiciones, period) ? composiciones[period] : 'sin_declarar';
+    if (!['sin_declarar', 'excluye_intereses', 'incluye_intereses'].includes(composicion)) throw new Error('Composición de ingresos inválida');
+    composicionIngresos[period] = composicion;
+  }
   for (const statement of [source.balanceGeneral, source.estadoResultados]) {
     if (Object.keys(statement).length !== periods.length
       || periods.some(period => !Object.hasOwn(statement, period))) {
@@ -207,7 +215,7 @@ export function normalizeFinancialData(input) {
     periods: ordenarPeriodos(periods),
     balanceGeneral,
     estadoResultados,
-    accountTypes, accountIdentities,
+    accountTypes, accountIdentities, composicionIngresos,
     ...(Object.keys(supplementaryAccounts).length ? { supplementaryAccounts } : {}),
     ...(Object.keys(reportedTotals).length ? { reportedTotals } : {}),
     ...(pendientes.length ? { pendingAccounts: pendientes } : {})

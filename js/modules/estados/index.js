@@ -96,13 +96,18 @@ export function loadDemo() {
 }
 
 export function getSavedStates() {
+  const composicionIngresos = store.get('estados.composicionIngresos');
+  const periods = store.get('estados.periods') || [];
   return {
     ...store.get('estados'),
     name: store.get('estados.name') || 'Datos guardados',
-    periods: store.get('estados.periods') || [],
+    periods,
     balanceGeneral: store.get('estados.balanceGeneral') || {},
     estadoResultados: store.get('estados.estadoResultados') || {},
-    accountTypes: store.get('estados.accountTypes')
+    accountTypes: store.get('estados.accountTypes'),
+    composicionIngresos: composicionIngresos === undefined
+      ? Object.fromEntries((Array.isArray(periods) ? periods : []).map(period => [period, 'sin_declarar']))
+      : composicionIngresos
   };
 }
 
