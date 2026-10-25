@@ -32,7 +32,7 @@ En Windows PowerShell, si `npm` o `npx` fallan por la política de ejecución, u
 
 1. **Nada directo a `main`.** Todo entra por Pull Request desde una rama. Nunca `git push --force` sobre una rama que otra persona usa.
 2. **Busca antes de crear.** Antes de escribir una función, búscala con `git grep -n "export function <nombre>"` y en el catálogo de `docs/contexto/dominio-financiero.md`. Si ya existe, úsala. Cada concepto financiero tiene una sola función.
-3. **Fórmulas puras en su lugar.** Las fórmulas financieras van en `js/utils/calculate.js`, sin DOM, `window` ni `store`. La lógica propia de un módulo va en `js/modules/<modulo>/<modulo>-calculations.js`; la interfaz, en `index.js` o `<modulo>-ui.js`.
+3. **Fórmulas puras en su lugar.** Las fórmulas financieras van en `js/utils/calculate.js`, sin DOM, `window` ni `store`, con una excepción: las razones de los 20 JSON se calculan con el motor de `js/modules/razones/` (D-050, D-056, D-058). Las fórmulas de apalancamiento, solvencia y rotación de capital de trabajo siguen en su archivo actual, con la misma regla de N/D. La lógica propia de un módulo va en `js/modules/<modulo>/<modulo>-calculations.js`; la interfaz, en `index.js` o `<modulo>-ui.js`.
 4. **`null` significa N/D.** Una función nueva devuelve `null` si falta un dato o el denominador es 0, nunca `0`. La interfaz muestra "N/D".
 5. **Año de 365 días.** Usa la constante `DIAS_ANIO` de `calculate.js`; no escribas 360 ni 365 a mano.
 6. **No leas cuentas por nombre fijo** como `er['Ventas']`. Los archivos importados traen nombres propios: usa `computeFinancialTotals` y los tipos de `ACCOUNT_TYPES` en `js/modules/estados/estados-calculations.js`.
