@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { identificarCuenta, listarCuentas, obtenerCuenta, montoCuenta, consultarMontoCuenta } from '../../js/modules/estados/cuentas-identificador.js';
 import { normalizarCuenta, similitudCuentas } from '../../js/modules/estados/cuentas-similitud.js';
+import { registrarCuenta } from '../../js/modules/estados/cuentas-registro.js';
 
 it('normaliza acentos, signos y palabras vacías en el orden especificado y conserva dígitos', () => {
   expect(normalizarCuenta('  CUÉNTAS,  por COBRAR del año 2024! ')).toBe('cuentas cobrar ano 2024');
@@ -94,9 +95,10 @@ it('conserva las 71 identidades del PR #10 y enumera cada diferencia de investig
   expect(referencia.cuentas).toHaveLength(71);
   const auditoria = JSON.parse(readFileSync(new URL('../fixtures/cuentas-revision-investigacion.json', import.meta.url), 'utf8'));
   expect(auditoria.referencia).toBe(referencia.commit);
+  // Las identidades históricas se conservan; la política vigente de D-057 se compara abajo con los JSON actuales.
   for (const cuenta of referencia.cuentas) expect(obtenerCuenta(cuenta.id)).toMatchObject({
     nombreCanonico: cuenta.canonical_name, clasificacion: cuenta.classification,
-    rol: cuenta.account_role, politicaAusencia: cuenta.absence_policy
+    rol: cuenta.account_role
   });
   // Se hacen visibles todas las rebajas locales, sin fingir que los JSON ajenos
   // ya cambiaron. Toda diferencia nueva requiere documentarse y revisarse.
@@ -120,45 +122,14 @@ it('conserva las 71 identidades del PR #10 y enumera cada diferencia de investig
   // Al integrarse el PR #10 también se contrastan los JSON vivos, sin sustituir
   // la referencia fijada usada mientras todavía viven en otra rama.
   const documentos = Object.values(import.meta.glob('../../docs/razones_financieras/*.json', { eager: true, import: 'default' }));
-  const politicasMotor = new Map();
+  expect(new Set(documentos.flatMap(documento => documento.cuentas.map(cuenta => cuenta.id))).size).toBe(72);
   for (const documento of documentos) for (const cuenta of documento.cuentas) {
     expect(obtenerCuenta(cuenta.id)).toMatchObject({
       nombreCanonico: cuenta.canonical_name, clasificacion: cuenta.classification,
-      rol: cuenta.account_role, estadoInvestigacion: cuenta.research.status,
+      rol: cuenta.account_role, politicaAusencia: cuenta.absence_policy, estadoInvestigacion: cuenta.research.status,
       definicion: cuenta.definition
     });
-    if (politicasMotor.has(cuenta.id)) expect(cuenta.absence_policy).toBe(politicasMotor.get(cuenta.id));
-    politicasMotor.set(cuenta.id, cuenta.absence_policy);
   }
-  // D-055 cambia solo el motor. Se permite esta divergencia exacta, sin relajar el catálogo de Estados.
-  const divergenciasD055 = [
-    'bs.accrued_expenses_payable', 'bs.additional_paid_in_capital', 'bs.cash_and_equivalents',
-    'bs.current_portion_long_term_debt', 'bs.current_provisions', 'bs.current_year_result_equity',
-    'bs.intangible_assets', 'bs.inventory_finished_goods', 'bs.inventory_merchandise',
-    'bs.inventory_raw_materials', 'bs.inventory_work_in_process', 'bs.legal_reserve',
-    'bs.long_term_borrowings', 'bs.long_term_investments', 'bs.long_term_provisions',
-    'bs.other_current_assets', 'bs.other_current_liabilities', 'bs.other_current_receivables',
-    'bs.other_equity_components', 'bs.other_noncurrent_assets', 'bs.other_noncurrent_liabilities',
-    'bs.other_reserves', 'bs.ppe_buildings', 'bs.ppe_furniture', 'bs.ppe_land',
-    'bs.ppe_machinery', 'bs.ppe_other', 'bs.ppe_vehicles', 'bs.prepaid_expenses',
-    'bs.retained_earnings', 'bs.share_capital', 'bs.short_term_borrowings',
-    'bs.short_term_investments', 'bs.taxes_payable', 'bs.trade_payables', 'bs.trade_receivables',
-    'is.administrative_expenses', 'is.income_tax_expense', 'is.interest_expense',
-    'is.merchandise_cost', 'is.noninterest_nonoperating_expenses', 'is.nonoperating_income',
-    'is.operating_amortization', 'is.operating_depreciation', 'is.other_operating_expenses',
-    'is.other_operating_income', 'is.other_sales_revenue', 'is.product_cost', 'is.product_sales',
-    'is.sales_allowances', 'is.sales_discounts', 'is.sales_returns', 'is.selling_expenses',
-    'is.service_cost', 'is.service_revenue'
-  ];
-  const diferenciasPolitica = [...politicasMotor].filter(([id, politica]) => obtenerCuenta(id).politicaAusencia !== politica);
-  expect(divergenciasD055).toHaveLength(55);
-  expect(politicasMotor.size).toBe(72);
-  expect(diferenciasPolitica.map(([id]) => id).sort()).toEqual([...divergenciasD055].sort());
-  for (const id of divergenciasD055) {
-    expect(politicasMotor.get(id), id).toBe('requires_data');
-    expect(obtenerCuenta(id).politicaAusencia, id).toBe('zero_if_not_reported');
-  }
-  expect(politicasMotor.get('is.interest_income')).toBe('zero_if_not_reported');
   expect(obtenerCuenta('is.interest_income').politicaAusencia).toBe('zero_if_not_reported');
 });
 
@@ -192,10 +163,10 @@ it('declara conjunta la cita de depreciación y retira su atribución a amortiza
   expect(amortizacion.fuentes.find(fuente => /boe\.es/.test(fuente.url)).cita).toBeUndefined();
 });
 
-it('intangibles corrige no monetarios sin alterar su clasificación ni política de ausencia', () => {
+it('intangibles conserva no monetarios y su clasificación con política requerida (D-057)', () => {
   expect(obtenerCuenta('bs.intangible_assets')).toMatchObject({
     definicion: expect.stringContaining('Activos no monetarios'),
-    clasificacion: 'activo_no_corriente', politicaAusencia: 'zero_if_not_reported', tipoApp: 'activosFijos'
+    clasificacion: 'activo_no_corriente', politicaAusencia: 'requires_data', tipoApp: 'activosFijos'
   });
 });
 
@@ -239,7 +210,7 @@ describe('montos por id y políticas de ausencia', () => {
     expect(montoCuenta(datos, '2024', 'bs.cash_and_equivalents')).toBe(12);
     expect(montoCuenta(datos, '2024', 'bs.inventory_total')).toBe(0);
     expect(montoCuenta(datos, '2024', 'bs.total_assets')).toBeNull();
-    expect(montoCuenta(datos, '2024', 'bs.trade_payables')).toBe(0);
+    expect(montoCuenta(datos, '2024', 'bs.trade_payables')).toBeNull();
     expect(montoCuenta(datos, '2024', 'bs.accumulated_depreciation')).toBeNull();
     expect(montoCuenta(datos, '2024', 'supp.credit_sales')).toBeNull();
     expect(montoCuenta(datos, '2023', 'bs.cash_and_equivalents')).toBeNull();
@@ -251,5 +222,20 @@ describe('montos por id y políticas de ausencia', () => {
   it('una cuenta ambigua legada no se convierte en ausencia y cero', () => {
     const legado = { ...datos, balanceGeneral: { '2024': { patrimonio: { Reservas: 100 } } } };
     expect(consultarMontoCuenta(legado, '2024', 'bs.legal_reserve')).toEqual({ valor: null, motivo: 'ambiguous_account_match' });
+  });
+  it('solo intereses ganados conserva cero por ausencia tras D-057', () => {
+    expect(listarCuentas().filter(cuenta => cuenta.politicaAusencia === 'zero_if_not_reported').map(cuenta => cuenta.id)).toEqual(['is.interest_income']);
+    expect(listarCuentas().filter(cuenta => cuenta.politicaAusencia === 'requires_data')).toHaveLength(58);
+    expect(consultarMontoCuenta(datos, '2024', 'is.interest_income')).toEqual({ valor:0, motivo:null });
+  });
+  it.each(listarCuentas().filter(cuenta => cuenta.politicaAusencia === 'requires_data').map(cuenta => cuenta.id))('D-057: %s ausente da N/D con motivo y con cero explícito conserva cero', id => {
+    const periodo = '2031';
+    const vacio = { name:'Ejercicio propio', periods:[periodo], balanceGeneral:{ [periodo]:{ activos:{}, pasivos:{}, patrimonio:{} } }, estadoResultados:{ [periodo]:{} } };
+    expect(consultarMontoCuenta(vacio, periodo, id)).toEqual({ valor:null, motivo:'missing_required_account_data' });
+    expect(montoCuenta(vacio, periodo, id)).toBeNull();
+    const cuenta = obtenerCuenta(id);
+    const conCero = registrarCuenta(vacio, { id, nombre:'Fila acreditada', grupo:cuenta.grupo, periodo, importe:0, origen:'manual' });
+    expect(consultarMontoCuenta(conCero, periodo, id)).toEqual({ valor:0, motivo:null });
+    expect(montoCuenta(conCero, periodo, id)).toBe(0);
   });
 });
