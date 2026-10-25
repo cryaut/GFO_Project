@@ -733,11 +733,13 @@ Cuerpo HTML del reporte (resumen, Balance General, Estado de Resultados y Totale
 
 ---
 
-## Operaciones previas de Análisis (D-048)
+## Razones de la app (D-049, D-056)
 
-`computeRazones(periodo)` conserva los metadatos de identificación al releer estados. Con operandos ausentes, utilidad bruta, utilidad operativa, compras y capital de trabajo permanecen N/D antes de llamar a `calculate.js`; el denominador de rotación de capital de trabajo usa ese mismo valor protegido. No cambia fórmulas ni presentación. El caso de un periodo elige su saldo final explícitamente; con inventario no comparable conserva la aproximación de compras anterior.
+`computeRazones(periodo, opciones = {})` conserva las claves que usan Análisis, Integración, Proforma y Reportes; añade `capitalNetoTrabajo` para exponer el vigésimo resultado JSON sin retirar ninguna clave anterior. Las 20 razones provienen del motor por id y los cuatro indicadores complementarios usan sus funciones actuales con la misma entrada. `opciones.mostrar_calculo_directo_primer_periodo` se admite para el harness; la app lo deja apagado.
 
-Añade `notAvailableReasons`: motivos originales de los totales con `periodo`, más `{ campo, periodo, motivo: 'missing_required_account_data', operandos }` para las operaciones previas con datos faltantes. Los ceros explícitos son válidos. El respaldo por nombres fijos permanece sin modificar; no se conecta el motor nuevo.
+Devuelve razones numéricas o `null`, `usaPromedios`, `usaComprasReales`, `invProm`, `cxcProm`, `activoProm`, `patrimonioProm`, `denominadores` y `notAvailableReasons`. Este último mantiene `{ campo, periodo, motivo, operandos }`; conserva los motivos del motor y distingue `documento_no_normalizable`, identidad no acreditada, `composicion_no_declarada`, `composicion_incluye_intereses`, datos requeridos ausentes y denominadores cero. Un periodo inexistente no se sustituye por otro. No hay respaldo por nombres fijos.
+
+`computarRazonesDesdeDatos(datos, periodo, opciones = {})`, en `js/modules/razones/razones-app-adapter.js`, adapta un documento guardado conservando sus metadatos de identidad y devuelve ese mismo contrato sin leer store ni DOM. `obtenerUtilidadNetaMotor(datos, periodo)` devuelve `{ valor, metodo, motivos }` para `derived.net_income` de `rentabilidad_margen_utilidad_neta`, sin duplicar la fórmula.
 
 ---
 

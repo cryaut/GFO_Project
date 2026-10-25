@@ -194,3 +194,7 @@ No la corrijas dentro de otra tarea: abre una rama propia y avísalo al equipo.
 - `npm run lint` reporta 11 advertencias por variables sin uso.
 - Conviven dos flujos de efectivo: el EFE de Análisis (indirecto, tres actividades derivadas de dos balances con comprobación; D-024) y el módulo Flujo de Efectivo (directo, movimientos capturados a mano). Sus cifras pueden diferir porque no comparten captura.
 - `apalancamiento-ui.js` tiene su propio lector de números; `js/utils/form.js` (`leerNumero`) hace lo mismo para los módulos nuevos.
+
+## Conexión de razones — ronda 18
+
+Estados persiste `composicionIngresos[periodo]` con `sin_declarar`, `excluye_intereses` o `incluye_intereses`; los datos previos sin el campo se leen como `sin_declarar`, sin migrar importes. Se conservan `accountIdentities`, `accountTypes`, `pendingAccounts`, `reportedTotals` y `supplementaryAccounts` al guardar y normalizar. El adaptador enlaza por identidad acreditada y construye la entrada de ambos periodos desde el mismo documento. Un documento no normalizable no aporta cifras; un concepto sin identidad afecta a sus consumidores. Análisis, Integración y Proforma comparten las razones del motor y el derivado de utilidad neta. La lectura global mantiene los motivos y la UI conserva su contrato. Los JSON y el generado no cambian en esta conexión.

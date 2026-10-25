@@ -100,13 +100,17 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-046 | Intangibles son activos no monetarios | Vigente |
 | D-047 | Propagar N/D en operandos numéricos obligatorios | Vigente |
 | D-048 | Proteger operaciones previas de Análisis | Vigente |
+| D-049 | 1c: datos no normalizables y nombres fijos | Vigente |
 | D-050 | Motor de razones desde JSON, módulo generado e intérprete puro (opción C) | Vigente en rama de trabajo, sin conexión con Análisis |
 | D-051 | Intereses ganados como componente de ingresos no operativos | Vigente |
 | D-052 | Conservar sinónimos ambiguos heredados y bloquear cruces nuevos | Vigente |
 | D-053 | Utilidad neta de Reportes igual a Análisis | Vigente |
 | D-054 | Periodo no disponible da N/D sin cambiar de periodo | Vigente |
-| D-055 | Celda vacía es dato faltante (N/D), salvo intereses ganados | Vigente en el motor; catálogo de Estados sin cambios |
+| D-055 | Celda vacía es dato faltante (N/D), salvo intereses ganados | Vigente; catálogo sincronizado por D-057 |
 
+| D-056 | Razones de la app leen el motor | Vigente |
+| D-057 | Catálogo de Estados sincronizado con D-055 | Vigente |
+| D-058 | Regla 3: excepción del motor | Vigente |
 ## Decisiones
 
 
@@ -1282,3 +1286,95 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 **Para revertirla.** Registrar la decisión que la reemplace y modificar de forma coordinada las políticas de los JSON, nota maestra, generado y pruebas, conservando la evidencia y los datos de referencia.
 
 **Referencias.** `instrucciones_carlos_ronda17.md`, anexo de 55 cuentas; ejercicios ficticios v2; autorización expresa de Carlos en este chat; `tests/unit/razones-motor-vacias.test.js`; PR #18.
+
+### D-049 — 1c: datos no normalizables y nombres fijos
+
+- **Fecha**: 2026-10-24
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, siguiendo la recomendación; ejecución autorizada por Carlos
+- **Área**: Lectura de estados, identidad acreditada y consumidores de razones
+
+**Contexto.** La ronda 18 conecta las razones aprobadas con la app y cierra los pendientes de datos no disponibles, identidad y sincronización documental sin modificar los JSON ni el módulo generado.
+
+**Opciones.**
+1. Aplicar la decisión aprobada y conservar una fuente única de cálculo, con motivos de N/D trazables.
+2. Mantener los caminos anteriores y sus diferencias de lectura entre módulos.
+
+**Decisión.** Un documento que no se puede normalizar no alimenta ningún resultado. Sus cifras se descartan, y las razones que las usan dan N/D con motivo `documento_no_normalizable` (P-GLOBAL). Un importe sin identidad acreditada se trata como no disponible para su concepto (P-IDENTIDAD). La indisponibilidad afecta solo a los resultados que dependen del dato, no al resto del documento (P-CONSUMIDORES). Se retiran las 22 lecturas por nombre fijo del inventario de ronda 7, B.
+
+**Consecuencias.** Se conserva el texto de las decisiones anteriores como registro. La implementación se limita a las tareas T1–T11; los cambios de resultados se documentan por las causas autorizadas y las referencias del ejemplo v3 y ejercicios v2 permanecen intactas.
+
+**Para revertirla.** Registrar la decisión que la reemplace y revisar conjuntamente entrada, consumidores y pruebas de aceptación, conservando las fuentes de referencia.
+
+**Referencias.** `instrucciones_carlos_ronda18.md`, tareas T1–T11; reporte `ronda18-R1-razones-final.md`; D-050 a D-055.
+
+### D-056 — Razones de la app leen el motor
+
+- **Fecha**: 2026-10-24
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, siguiendo la recomendación; ejecución autorizada por Carlos
+- **Área**: Análisis, Integración, Reportes y Proforma
+
+**Contexto.** La ronda 18 conecta las razones aprobadas con la app y cierra los pendientes de datos no disponibles, identidad y sincronización documental sin modificar los JSON ni el módulo generado.
+
+**Opciones.**
+1. Aplicar la decisión aprobada y conservar una fuente única de cálculo, con motivos de N/D trazables.
+2. Mantener los caminos anteriores y sus diferencias de lectura entre módulos.
+
+**Decisión.** Análisis (`computeRazones`), Integración (KPIs del dashboard y reporte) y Proforma leen las 20 razones del motor. Las tres razones que no están en los 20 JSON (apalancamiento, solvencia y rotación de capital de trabajo) conservan su fórmula actual, alimentada por las mismas entradas del motor, con la regla de dato faltante: N/D, nunca cero.
+
+La composición de ingresos la declara el usuario por periodo en Estados, con valores `excluye_intereses` o `incluye_intereses`. Valor inicial: `sin_declarar`. No se infiere de etiquetas ni de importes.
+
+El motor lanza error en dos casos: composición no declarada con otros ingresos numéricos, y composición `incluye_intereses`. El adaptador los convierte en N/D con motivo `composicion_no_declarada` o `composicion_incluye_intereses`. No los silencia.
+
+Se retira el respaldo por nombres fijos. Si los datos guardados no tienen clasificación válida, las razones dan N/D con motivo `documento_no_normalizable`.
+
+La utilidad neta de Reportes y de Análisis sale del derivado del motor. Esto reemplaza en su fuente a D-053, que la tomaba de `computeFinancialTotals`.
+
+**Consecuencias.** Se conserva el texto de las decisiones anteriores como registro. La implementación se limita a las tareas T1–T11; los cambios de resultados se documentan por las causas autorizadas y las referencias del ejemplo v3 y ejercicios v2 permanecen intactas.
+
+**Para revertirla.** Registrar la decisión que la reemplace y revisar conjuntamente entrada, consumidores y pruebas de aceptación, conservando las fuentes de referencia.
+
+**Referencias.** `instrucciones_carlos_ronda18.md`, tareas T1–T11; reporte `ronda18-R1-razones-final.md`; D-050 a D-055.
+
+### D-057 — Catálogo de Estados sincronizado con D-055
+
+- **Fecha**: 2026-10-24
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, siguiendo la recomendación; ejecución autorizada por Carlos
+- **Área**: Catálogo e identificador de Estados
+
+**Contexto.** La ronda 18 conecta las razones aprobadas con la app y cierra los pendientes de datos no disponibles, identidad y sincronización documental sin modificar los JSON ni el módulo generado.
+
+**Opciones.**
+1. Aplicar la decisión aprobada y conservar una fuente única de cálculo, con motivos de N/D trazables.
+2. Mantener los caminos anteriores y sus diferencias de lectura entre módulos.
+
+**Decisión.** Las 55 cuentas del anexo de ronda 17 pasan a `requires_data` en `js/modules/estados/cuentas-catalogo.js`. `montoCuenta` y `consultarMontoCuenta` devuelven `null` con motivo `missing_required_account_data` para una cuenta requerida sin valor. `is.interest_income` conserva `zero_if_not_reported` (D-051). Se retira la lista temporal de `tests/unit/cuentas-identificador.test.js`; la prueba vuelve a comparar catálogo y JSON sin excepciones.
+
+**Consecuencias.** Se conserva el texto de las decisiones anteriores como registro. La implementación se limita a las tareas T1–T11; los cambios de resultados se documentan por las causas autorizadas y las referencias del ejemplo v3 y ejercicios v2 permanecen intactas.
+
+**Para revertirla.** Registrar la decisión que la reemplace y revisar conjuntamente entrada, consumidores y pruebas de aceptación, conservando las fuentes de referencia.
+
+**Referencias.** `instrucciones_carlos_ronda18.md`, tareas T1–T11; reporte `ronda18-R1-razones-final.md`; D-050 a D-055.
+
+### D-058 — Regla 3 de AGENTS.md: excepción del motor
+
+- **Fecha**: 2026-10-24
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, siguiendo la recomendación; ejecución autorizada por Carlos
+- **Área**: Regla 3 de AGENTS.md
+
+**Contexto.** La ronda 18 conecta las razones aprobadas con la app y cierra los pendientes de datos no disponibles, identidad y sincronización documental sin modificar los JSON ni el módulo generado.
+
+**Opciones.**
+1. Aplicar la decisión aprobada y conservar una fuente única de cálculo, con motivos de N/D trazables.
+2. Mantener los caminos anteriores y sus diferencias de lectura entre módulos.
+
+**Decisión.** La regla 3 pasa a decir que las razones de los 20 JSON se calculan con el motor de `js/modules/razones/` (D-050, D-056). Las demás fórmulas financieras siguen en `js/utils/calculate.js` o en su archivo actual.
+
+**Consecuencias.** Se conserva el texto de las decisiones anteriores como registro. La implementación se limita a las tareas T1–T11; los cambios de resultados se documentan por las causas autorizadas y las referencias del ejemplo v3 y ejercicios v2 permanecen intactas.
+
+**Para revertirla.** Registrar la decisión que la reemplace y revisar conjuntamente entrada, consumidores y pruebas de aceptación, conservando las fuentes de referencia.
+
+**Referencias.** `instrucciones_carlos_ronda18.md`, tareas T1–T11; reporte `ronda18-R1-razones-final.md`; D-050 a D-055.

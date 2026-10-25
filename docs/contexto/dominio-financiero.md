@@ -265,3 +265,7 @@ Disponibilidad de cuentas (D-043 y excepción limitada D-047/D-048 a D-044): una
 | `js/modules/proforma/proforma-calculations.js` | `construirReporte`, `resultadosReales`, `resultadosProforma`, `alertasIntegradas` |
 | `js/utils/form.js`, `js/utils/estados-guardados.js` | `leerNumero`, `nuevoId`, `fechaHoy`; `estadosGuardados`, `totalesPeriodo` |
 | `js/utils/format.js` (N/D) | `formatCurrencyND`, `formatNumberND`, `formatPercentND`: muestran "N/D" en lugar de 0 |
+
+## Razones de la app — D-049 y D-056
+
+`js/modules/razones/razones-app-entrada.js` prepara el documento acreditado y su contexto de periodos; `razones-app-adapter.js` exporta `computarRazonesDesdeDatos(datos, periodo, opciones)` y `obtenerUtilidadNetaMotor(datos, periodo)`. Análisis ofrece `computeRazones`; Integración y Proforma reutilizan esa salida. La composición se declara en Estados, sin inferirla de nombres. Las fórmulas de las 20 razones siguen exclusivamente en los JSON; los indicadores complementarios conservan sus funciones actuales. Los contratos y motivos N/D están en `docs/api.md`.
