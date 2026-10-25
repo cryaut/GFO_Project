@@ -1,82 +1,85 @@
-# 02 — Cuentas maestras (71)
+# 02 — Cuentas maestras (72)
 
 Fuente única de verdad de los objetos `cuenta`. Cada cuenta se define aquí antes de copiarse
 a los archivos (el generador escribe esta nota primero y luego los 20 JSON desde el mismo dato).
 Formato compacto: `id — clasificación — rol — política de ausencia`.
+
+**Alcance de D-055 (24 de octubre de 2026).** Las políticas de esta nota corresponden al motor de razones. El catálogo de Estados conserva sus políticas anteriores; su eventual sincronización requiere otra decisión.
 
 ## Tabla compacta
 
 | id | clasificación | rol | política de ausencia | nota de la lista |
 |---|---|---|---|---|
 | `is.sales_total` | ingreso | reported_total | not_applicable | R5, interna |
-| `is.product_sales` | ingreso | detail | zero_if_not_reported |  |
-| `is.service_revenue` | ingreso | detail | zero_if_not_reported |  |
-| `is.other_sales_revenue` | ingreso | detail | zero_if_not_reported |  |
-| `is.sales_returns` | deduccion_ingreso | detail | zero_if_not_reported |  |
-| `is.sales_discounts` | deduccion_ingreso | detail | zero_if_not_reported |  |
-| `is.sales_allowances` | deduccion_ingreso | detail | zero_if_not_reported |  |
+| `is.product_sales` | ingreso | detail | requires_data |  |
+| `is.service_revenue` | ingreso | detail | requires_data |  |
+| `is.other_sales_revenue` | ingreso | detail | requires_data |  |
+| `is.sales_returns` | deduccion_ingreso | detail | requires_data |  |
+| `is.sales_discounts` | deduccion_ingreso | detail | requires_data |  |
+| `is.sales_allowances` | deduccion_ingreso | detail | requires_data |  |
 | `is.net_sales_reported` | ingreso | reported_total | not_applicable |  |
 | `is.cost_of_sales_reported` | costo | reported_total | not_applicable |  |
-| `is.merchandise_cost` | costo | detail | zero_if_not_reported |  |
-| `is.product_cost` | costo | detail | zero_if_not_reported |  |
-| `is.service_cost` | costo | detail | zero_if_not_reported |  |
+| `is.merchandise_cost` | costo | detail | requires_data |  |
+| `is.product_cost` | costo | detail | requires_data |  |
+| `is.service_cost` | costo | detail | requires_data |  |
 | `is.gross_profit_reported` | resultado | reported_total | not_applicable |  |
-| `is.selling_expenses` | gasto_operativo | detail | zero_if_not_reported |  |
-| `is.administrative_expenses` | gasto_operativo | detail | zero_if_not_reported |  |
-| `is.operating_depreciation` | gasto_operativo | detail | zero_if_not_reported |  |
-| `is.operating_amortization` | gasto_operativo | detail | zero_if_not_reported |  |
-| `is.other_operating_expenses` | gasto_operativo | detail | zero_if_not_reported |  |
-| `is.other_operating_income` | ingreso | detail | zero_if_not_reported |  |
+| `is.selling_expenses` | gasto_operativo | detail | requires_data |  |
+| `is.administrative_expenses` | gasto_operativo | detail | requires_data |  |
+| `is.operating_depreciation` | gasto_operativo | detail | requires_data |  |
+| `is.operating_amortization` | gasto_operativo | detail | requires_data |  |
+| `is.other_operating_expenses` | gasto_operativo | detail | requires_data |  |
+| `is.other_operating_income` | ingreso | detail | requires_data |  |
 | `is.operating_profit_reported` | resultado | reported_total | not_applicable |  |
-| `is.nonoperating_income` | no_operativo | detail | zero_if_not_reported |  |
-| `is.noninterest_nonoperating_expenses` | no_operativo | detail | zero_if_not_reported |  |
-| `is.interest_expense` | financiero | detail | zero_if_not_reported |  |
-| `is.income_tax_expense` | impuesto | detail | zero_if_not_reported |  |
+| `is.nonoperating_income` | no_operativo | detail | requires_data |  |
+| `is.interest_income` | ingreso_financiero | detail | zero_if_not_reported | excepción D-051 |
+| `is.noninterest_nonoperating_expenses` | no_operativo | detail | requires_data |  |
+| `is.interest_expense` | financiero | detail | requires_data |  |
+| `is.income_tax_expense` | impuesto | detail | requires_data |  |
 | `is.net_income_reported` | resultado | reported_total | not_applicable |  |
 | `bs.current_assets_total` | total | reported_total | not_applicable |  |
-| `bs.cash_and_equivalents` | activo_corriente | detail | zero_if_not_reported |  |
-| `bs.short_term_investments` | activo_corriente | detail | zero_if_not_reported |  |
-| `bs.trade_receivables` | activo_corriente | detail | zero_if_not_reported |  |
-| `bs.other_current_receivables` | activo_corriente | detail | zero_if_not_reported |  |
+| `bs.cash_and_equivalents` | activo_corriente | detail | requires_data |  |
+| `bs.short_term_investments` | activo_corriente | detail | requires_data |  |
+| `bs.trade_receivables` | activo_corriente | detail | requires_data |  |
+| `bs.other_current_receivables` | activo_corriente | detail | requires_data |  |
 | `bs.inventory_total` | activo_corriente | reported_total | not_applicable | R5, interna |
-| `bs.inventory_merchandise` | activo_corriente | detail | zero_if_not_reported |  |
-| `bs.inventory_raw_materials` | activo_corriente | detail | zero_if_not_reported |  |
-| `bs.inventory_work_in_process` | activo_corriente | detail | zero_if_not_reported |  |
-| `bs.inventory_finished_goods` | activo_corriente | detail | zero_if_not_reported |  |
-| `bs.prepaid_expenses` | activo_corriente | detail | zero_if_not_reported |  |
-| `bs.other_current_assets` | activo_corriente | detail | zero_if_not_reported |  |
+| `bs.inventory_merchandise` | activo_corriente | detail | requires_data |  |
+| `bs.inventory_raw_materials` | activo_corriente | detail | requires_data |  |
+| `bs.inventory_work_in_process` | activo_corriente | detail | requires_data |  |
+| `bs.inventory_finished_goods` | activo_corriente | detail | requires_data |  |
+| `bs.prepaid_expenses` | activo_corriente | detail | requires_data |  |
+| `bs.other_current_assets` | activo_corriente | detail | requires_data |  |
 | `bs.fixed_assets_net_total` | activo_fijo | reported_total | not_applicable |  |
-| `bs.ppe_land` | activo_fijo | detail | zero_if_not_reported |  |
-| `bs.ppe_buildings` | activo_fijo | detail | zero_if_not_reported |  |
-| `bs.ppe_machinery` | activo_fijo | detail | zero_if_not_reported | ambigua en el caso (Equipos) |
-| `bs.ppe_vehicles` | activo_fijo | detail | zero_if_not_reported |  |
-| `bs.ppe_furniture` | activo_fijo | detail | zero_if_not_reported |  |
-| `bs.ppe_other` | activo_fijo | detail | zero_if_not_reported |  |
+| `bs.ppe_land` | activo_fijo | detail | requires_data |  |
+| `bs.ppe_buildings` | activo_fijo | detail | requires_data |  |
+| `bs.ppe_machinery` | activo_fijo | detail | requires_data | ambigua en el caso (Equipos) |
+| `bs.ppe_vehicles` | activo_fijo | detail | requires_data |  |
+| `bs.ppe_furniture` | activo_fijo | detail | requires_data |  |
+| `bs.ppe_other` | activo_fijo | detail | requires_data |  |
 | `bs.accumulated_depreciation` | correctora_activo | contra_account | requires_data |  |
-| `bs.intangible_assets` | activo_no_corriente | detail | zero_if_not_reported |  |
-| `bs.long_term_investments` | activo_no_corriente | detail | zero_if_not_reported |  |
-| `bs.other_noncurrent_assets` | activo_no_corriente | detail | zero_if_not_reported |  |
+| `bs.intangible_assets` | activo_no_corriente | detail | requires_data |  |
+| `bs.long_term_investments` | activo_no_corriente | detail | requires_data |  |
+| `bs.other_noncurrent_assets` | activo_no_corriente | detail | requires_data |  |
 | `bs.total_assets` | total | reported_total | not_applicable |  |
 | `bs.current_liabilities_total` | total | reported_total | not_applicable |  |
-| `bs.trade_payables` | pasivo_corriente | detail | zero_if_not_reported |  |
-| `bs.short_term_borrowings` | pasivo_corriente | detail | zero_if_not_reported |  |
-| `bs.current_portion_long_term_debt` | pasivo_corriente | detail | zero_if_not_reported |  |
-| `bs.taxes_payable` | pasivo_corriente | detail | zero_if_not_reported |  |
-| `bs.accrued_expenses_payable` | pasivo_corriente | detail | zero_if_not_reported |  |
-| `bs.current_provisions` | pasivo_corriente | detail | zero_if_not_reported |  |
-| `bs.other_current_liabilities` | pasivo_corriente | detail | zero_if_not_reported | ambigua en el caso (Pasivo Corto Plazo) |
-| `bs.long_term_borrowings` | pasivo_no_corriente | detail | zero_if_not_reported | ambigua en el caso (Pasivo Largo Plazo) |
-| `bs.long_term_provisions` | pasivo_no_corriente | detail | zero_if_not_reported |  |
-| `bs.other_noncurrent_liabilities` | pasivo_no_corriente | detail | zero_if_not_reported |  |
+| `bs.trade_payables` | pasivo_corriente | detail | requires_data |  |
+| `bs.short_term_borrowings` | pasivo_corriente | detail | requires_data |  |
+| `bs.current_portion_long_term_debt` | pasivo_corriente | detail | requires_data |  |
+| `bs.taxes_payable` | pasivo_corriente | detail | requires_data |  |
+| `bs.accrued_expenses_payable` | pasivo_corriente | detail | requires_data |  |
+| `bs.current_provisions` | pasivo_corriente | detail | requires_data |  |
+| `bs.other_current_liabilities` | pasivo_corriente | detail | requires_data | ambigua en el caso (Pasivo Corto Plazo) |
+| `bs.long_term_borrowings` | pasivo_no_corriente | detail | requires_data | ambigua en el caso (Pasivo Largo Plazo) |
+| `bs.long_term_provisions` | pasivo_no_corriente | detail | requires_data |  |
+| `bs.other_noncurrent_liabilities` | pasivo_no_corriente | detail | requires_data |  |
 | `bs.total_liabilities` | total | reported_total | not_applicable |  |
 | `bs.total_equity` | total | reported_total | not_applicable |  |
-| `bs.share_capital` | patrimonio | detail | zero_if_not_reported |  |
-| `bs.additional_paid_in_capital` | patrimonio | detail | zero_if_not_reported |  |
-| `bs.legal_reserve` | patrimonio | detail | zero_if_not_reported |  |
-| `bs.other_reserves` | patrimonio | detail | zero_if_not_reported | ambigua en el caso (Reservas) |
-| `bs.retained_earnings` | patrimonio | detail | zero_if_not_reported |  |
-| `bs.current_year_result_equity` | patrimonio | detail | zero_if_not_reported |  |
-| `bs.other_equity_components` | patrimonio | detail | zero_if_not_reported |  |
+| `bs.share_capital` | patrimonio | detail | requires_data |  |
+| `bs.additional_paid_in_capital` | patrimonio | detail | requires_data |  |
+| `bs.legal_reserve` | patrimonio | detail | requires_data |  |
+| `bs.other_reserves` | patrimonio | detail | requires_data | ambigua en el caso (Reservas) |
+| `bs.retained_earnings` | patrimonio | detail | requires_data |  |
+| `bs.current_year_result_equity` | patrimonio | detail | requires_data |  |
+| `bs.other_equity_components` | patrimonio | detail | requires_data |  |
 | `supp.credit_sales` | suplementario | detail | requires_data | interna |
 | `supp.supplier_payments` | suplementario | detail | requires_data | interna |
 
@@ -114,7 +117,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### is.product_sales
 
-`is.product_sales` — ingreso — detail — zero_if_not_reported
+`is.product_sales` — ingreso — detail — requires_data
 
 ```json
 {
@@ -126,7 +129,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "revenue",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Ventas de mercaderías",
     "ventas de bienes"
@@ -150,7 +153,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### is.service_revenue
 
-`is.service_revenue` — ingreso — detail — zero_if_not_reported
+`is.service_revenue` — ingreso — detail — requires_data
 
 ```json
 {
@@ -162,7 +165,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "revenue",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Ventas de servicios",
     "ingresos por servicios prestados"
@@ -186,7 +189,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### is.other_sales_revenue
 
-`is.other_sales_revenue` — ingreso — detail — zero_if_not_reported
+`is.other_sales_revenue` — ingreso — detail — requires_data
 
 ```json
 {
@@ -198,7 +201,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "revenue",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Otras ventas",
     "otras ventas operativas si efectivamente son ventas"
@@ -222,7 +225,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### is.sales_returns
 
-`is.sales_returns` — deduccion_ingreso — detail — zero_if_not_reported
+`is.sales_returns` — deduccion_ingreso — detail — requires_data
 
 ```json
 {
@@ -234,7 +237,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "other",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Devoluciones de ventas",
     "ventas devueltas"
@@ -258,7 +261,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### is.sales_discounts
 
-`is.sales_discounts` — deduccion_ingreso — detail — zero_if_not_reported
+`is.sales_discounts` — deduccion_ingreso — detail — requires_data
 
 ```json
 {
@@ -270,7 +273,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "other",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Descuentos concedidos sobre ventas"
   ],
@@ -293,7 +296,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### is.sales_allowances
 
-`is.sales_allowances` — deduccion_ingreso — detail — zero_if_not_reported
+`is.sales_allowances` — deduccion_ingreso — detail — requires_data
 
 ```json
 {
@@ -305,7 +308,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "other",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Rebajas y bonificaciones sobre ventas"
   ],
@@ -414,7 +417,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### is.merchandise_cost
 
-`is.merchandise_cost` — costo — detail — zero_if_not_reported
+`is.merchandise_cost` — costo — detail — requires_data
 
 ```json
 {
@@ -426,7 +429,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "expense",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Costo de ventas de mercaderías",
     "costo de bienes vendidos"
@@ -457,7 +460,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### is.product_cost
 
-`is.product_cost` — costo — detail — zero_if_not_reported
+`is.product_cost` — costo — detail — requires_data
 
 ```json
 {
@@ -469,7 +472,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "expense",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Costo de producción vendido",
     "costo de productos vendidos"
@@ -500,7 +503,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### is.service_cost
 
-`is.service_cost` — costo — detail — zero_if_not_reported
+`is.service_cost` — costo — detail — requires_data
 
 ```json
 {
@@ -512,7 +515,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "expense",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Costos de servicios prestados"
   ],
@@ -578,7 +581,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### is.selling_expenses
 
-`is.selling_expenses` — gasto_operativo — detail — zero_if_not_reported
+`is.selling_expenses` — gasto_operativo — detail — requires_data
 
 ```json
 {
@@ -590,7 +593,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "expense",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Gastos comerciales",
     "gastos de distribución si el criterio de clase los clasifica como operativos"
@@ -614,7 +617,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### is.administrative_expenses
 
-`is.administrative_expenses` — gasto_operativo — detail — zero_if_not_reported
+`is.administrative_expenses` — gasto_operativo — detail — requires_data
 
 ```json
 {
@@ -626,7 +629,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "expense",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Gastos de administración",
     "gastos generales y administrativos"
@@ -650,7 +653,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### is.operating_depreciation
 
-`is.operating_depreciation` — gasto_operativo — detail — zero_if_not_reported
+`is.operating_depreciation` — gasto_operativo — detail — requires_data
 
 ```json
 {
@@ -662,7 +665,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "expense",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Depreciación de activos usados en operaciones, solo si no está incluida ya en otra cuenta agregada utilizada"
   ],
@@ -692,7 +695,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### is.operating_amortization
 
-`is.operating_amortization` — gasto_operativo — detail — zero_if_not_reported
+`is.operating_amortization` — gasto_operativo — detail — requires_data
 
 ```json
 {
@@ -704,7 +707,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "expense",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Amortización de activos usados en operaciones, bajo la misma regla de no duplicación"
   ],
@@ -734,7 +737,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### is.other_operating_expenses
 
-`is.other_operating_expenses` — gasto_operativo — detail — zero_if_not_reported
+`is.other_operating_expenses` — gasto_operativo — detail — requires_data
 
 ```json
 {
@@ -746,7 +749,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "expense",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Otros gastos de operación"
   ],
@@ -769,7 +772,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### is.other_operating_income
 
-`is.other_operating_income` — ingreso — detail — zero_if_not_reported
+`is.other_operating_income` — ingreso — detail — requires_data
 
 ```json
 {
@@ -781,7 +784,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "revenue",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Otros ingresos de operación si pertenecen a la actividad operativa"
   ],
@@ -840,7 +843,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### is.nonoperating_income
 
-`is.nonoperating_income` — no_operativo — detail — zero_if_not_reported
+`is.nonoperating_income` — no_operativo — detail — requires_data
 
 ```json
 {
@@ -852,7 +855,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "revenue",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Otros ingresos no operativos",
     "ingresos financieros no clasificados en otra cuenta específica"
@@ -876,7 +879,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### is.noninterest_nonoperating_expenses
 
-`is.noninterest_nonoperating_expenses` — no_operativo — detail — zero_if_not_reported
+`is.noninterest_nonoperating_expenses` — no_operativo — detail — requires_data
 
 ```json
 {
@@ -888,7 +891,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "expense",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Otros gastos no operativos",
     "gastos no operacionales excluyendo intereses identificados por separado"
@@ -912,7 +915,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### is.interest_expense
 
-`is.interest_expense` — financiero — detail — zero_if_not_reported
+`is.interest_expense` — financiero — detail — requires_data
 
 ```json
 {
@@ -924,7 +927,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "expense",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Intereses pagados o devengados",
     "gastos financieros por intereses"
@@ -955,7 +958,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### is.income_tax_expense
 
-`is.income_tax_expense` — impuesto — detail — zero_if_not_reported
+`is.income_tax_expense` — impuesto — detail — requires_data
 
 ```json
 {
@@ -967,7 +970,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "expense",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Impuesto sobre la renta",
     "impuesto a las ganancias del período"
@@ -1064,7 +1067,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.cash_and_equivalents
 
-`bs.cash_and_equivalents` — activo_corriente — detail — zero_if_not_reported
+`bs.cash_and_equivalents` — activo_corriente — detail — requires_data
 
 ```json
 {
@@ -1076,7 +1079,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Efectivo",
     "caja",
@@ -1109,7 +1112,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.short_term_investments
 
-`bs.short_term_investments` — activo_corriente — detail — zero_if_not_reported
+`bs.short_term_investments` — activo_corriente — detail — requires_data
 
 ```json
 {
@@ -1121,7 +1124,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Inversiones temporales",
     "valores negociables de corto plazo"
@@ -1152,7 +1155,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.trade_receivables
 
-`bs.trade_receivables` — activo_corriente — detail — zero_if_not_reported
+`bs.trade_receivables` — activo_corriente — detail — requires_data
 
 ```json
 {
@@ -1164,7 +1167,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "CxC",
     "clientes",
@@ -1197,7 +1200,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.other_current_receivables
 
-`bs.other_current_receivables` — activo_corriente — detail — zero_if_not_reported
+`bs.other_current_receivables` — activo_corriente — detail — requires_data
 
 ```json
 {
@@ -1209,7 +1212,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Deudores varios corrientes",
     "otras cuentas por cobrar de corto plazo"
@@ -1270,7 +1273,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.inventory_merchandise
 
-`bs.inventory_merchandise` — activo_corriente — detail — zero_if_not_reported
+`bs.inventory_merchandise` — activo_corriente — detail — requires_data
 
 ```json
 {
@@ -1282,7 +1285,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Mercaderías",
     "mercancías",
@@ -1307,7 +1310,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.inventory_raw_materials
 
-`bs.inventory_raw_materials` — activo_corriente — detail — zero_if_not_reported
+`bs.inventory_raw_materials` — activo_corriente — detail — requires_data
 
 ```json
 {
@@ -1319,7 +1322,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Materias primas",
     "materiales en almacén para producción"
@@ -1343,7 +1346,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.inventory_work_in_process
 
-`bs.inventory_work_in_process` — activo_corriente — detail — zero_if_not_reported
+`bs.inventory_work_in_process` — activo_corriente — detail — requires_data
 
 ```json
 {
@@ -1355,7 +1358,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Producción en proceso",
     "productos en proceso"
@@ -1379,7 +1382,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.inventory_finished_goods
 
-`bs.inventory_finished_goods` — activo_corriente — detail — zero_if_not_reported
+`bs.inventory_finished_goods` — activo_corriente — detail — requires_data
 
 ```json
 {
@@ -1391,7 +1394,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Productos terminados",
     "bienes terminados"
@@ -1415,7 +1418,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.prepaid_expenses
 
-`bs.prepaid_expenses` — activo_corriente — detail — zero_if_not_reported
+`bs.prepaid_expenses` — activo_corriente — detail — requires_data
 
 ```json
 {
@@ -1427,7 +1430,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Pagos anticipados",
     "seguros pagados por anticipado"
@@ -1451,7 +1454,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.other_current_assets
 
-`bs.other_current_assets` — activo_corriente — detail — zero_if_not_reported
+`bs.other_current_assets` — activo_corriente — detail — requires_data
 
 ```json
 {
@@ -1463,7 +1466,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Otros activos circulantes"
   ],
@@ -1529,7 +1532,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.ppe_land
 
-`bs.ppe_land` — activo_fijo — detail — zero_if_not_reported
+`bs.ppe_land` — activo_fijo — detail — requires_data
 
 ```json
 {
@@ -1541,7 +1544,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Terrenos de uso operativo"
   ],
@@ -1564,7 +1567,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.ppe_buildings
 
-`bs.ppe_buildings` — activo_fijo — detail — zero_if_not_reported
+`bs.ppe_buildings` — activo_fijo — detail — requires_data
 
 ```json
 {
@@ -1576,7 +1579,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Edificios",
     "construcciones de uso operativo"
@@ -1600,7 +1603,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.ppe_machinery
 
-`bs.ppe_machinery` — activo_fijo — detail — zero_if_not_reported — ambigua en el caso (Equipos)
+`bs.ppe_machinery` — activo_fijo — detail — requires_data — ambigua en el caso (Equipos)
 
 ```json
 {
@@ -1612,7 +1615,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Maquinaria",
     "equipo productivo"
@@ -1638,7 +1641,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.ppe_vehicles
 
-`bs.ppe_vehicles` — activo_fijo — detail — zero_if_not_reported
+`bs.ppe_vehicles` — activo_fijo — detail — requires_data
 
 ```json
 {
@@ -1650,7 +1653,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Equipo de transporte",
     "vehículos de uso operativo"
@@ -1674,7 +1677,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.ppe_furniture
 
-`bs.ppe_furniture` — activo_fijo — detail — zero_if_not_reported
+`bs.ppe_furniture` — activo_fijo — detail — requires_data
 
 ```json
 {
@@ -1686,7 +1689,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Mobiliario",
     "muebles y enseres",
@@ -1711,7 +1714,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.ppe_other
 
-`bs.ppe_other` — activo_fijo — detail — zero_if_not_reported
+`bs.ppe_other` — activo_fijo — detail — requires_data
 
 ```json
 {
@@ -1723,7 +1726,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Propiedad, planta y equipo",
     "otros activos fijos tangibles"
@@ -1782,7 +1785,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.intangible_assets
 
-`bs.intangible_assets` — activo_no_corriente — detail — zero_if_not_reported
+`bs.intangible_assets` — activo_no_corriente — detail — requires_data
 
 ```json
 {
@@ -1794,7 +1797,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Intangibles",
     "software capitalizado",
@@ -1819,7 +1822,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.long_term_investments
 
-`bs.long_term_investments` — activo_no_corriente — detail — zero_if_not_reported
+`bs.long_term_investments` — activo_no_corriente — detail — requires_data
 
 ```json
 {
@@ -1831,7 +1834,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Inversiones permanentes",
     "inversiones no corrientes"
@@ -1862,7 +1865,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.other_noncurrent_assets
 
-`bs.other_noncurrent_assets` — activo_no_corriente — detail — zero_if_not_reported
+`bs.other_noncurrent_assets` — activo_no_corriente — detail — requires_data
 
 ```json
 {
@@ -1874,7 +1877,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "deudor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Otros activos a largo plazo"
   ],
@@ -1977,7 +1980,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.trade_payables
 
-`bs.trade_payables` — pasivo_corriente — detail — zero_if_not_reported
+`bs.trade_payables` — pasivo_corriente — detail — requires_data
 
 ```json
 {
@@ -1989,7 +1992,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "CxP",
     "proveedores",
@@ -2021,7 +2024,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.short_term_borrowings
 
-`bs.short_term_borrowings` — pasivo_corriente — detail — zero_if_not_reported
+`bs.short_term_borrowings` — pasivo_corriente — detail — requires_data
 
 ```json
 {
@@ -2033,7 +2036,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Deudas bancarias de corto plazo",
     "obligaciones financieras corrientes"
@@ -2064,7 +2067,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.current_portion_long_term_debt
 
-`bs.current_portion_long_term_debt` — pasivo_corriente — detail — zero_if_not_reported
+`bs.current_portion_long_term_debt` — pasivo_corriente — detail — requires_data
 
 ```json
 {
@@ -2076,7 +2079,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Vencimientos corrientes de deuda a largo plazo"
   ],
@@ -2106,7 +2109,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.taxes_payable
 
-`bs.taxes_payable` — pasivo_corriente — detail — zero_if_not_reported
+`bs.taxes_payable` — pasivo_corriente — detail — requires_data
 
 ```json
 {
@@ -2118,7 +2121,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Tributos por pagar",
     "impuestos corrientes por pagar"
@@ -2142,7 +2145,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.accrued_expenses_payable
 
-`bs.accrued_expenses_payable` — pasivo_corriente — detail — zero_if_not_reported
+`bs.accrued_expenses_payable` — pasivo_corriente — detail — requires_data
 
 ```json
 {
@@ -2154,7 +2157,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Gastos devengados por pagar",
     "obligaciones acumuladas"
@@ -2185,7 +2188,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.current_provisions
 
-`bs.current_provisions` — pasivo_corriente — detail — zero_if_not_reported
+`bs.current_provisions` — pasivo_corriente — detail — requires_data
 
 ```json
 {
@@ -2197,7 +2200,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Provisiones de corto plazo"
   ],
@@ -2220,7 +2223,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.other_current_liabilities
 
-`bs.other_current_liabilities` — pasivo_corriente — detail — zero_if_not_reported — ambigua en el caso (Pasivo Corto Plazo)
+`bs.other_current_liabilities` — pasivo_corriente — detail — requires_data — ambigua en el caso (Pasivo Corto Plazo)
 
 ```json
 {
@@ -2232,7 +2235,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Otros pasivos circulantes"
   ],
@@ -2257,7 +2260,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.long_term_borrowings
 
-`bs.long_term_borrowings` — pasivo_no_corriente — detail — zero_if_not_reported — ambigua en el caso (Pasivo Largo Plazo)
+`bs.long_term_borrowings` — pasivo_no_corriente — detail — requires_data — ambigua en el caso (Pasivo Largo Plazo)
 
 ```json
 {
@@ -2269,7 +2272,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Préstamos a largo plazo",
     "obligaciones financieras no corrientes"
@@ -2302,7 +2305,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.long_term_provisions
 
-`bs.long_term_provisions` — pasivo_no_corriente — detail — zero_if_not_reported
+`bs.long_term_provisions` — pasivo_no_corriente — detail — requires_data
 
 ```json
 {
@@ -2314,7 +2317,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Provisiones no corrientes"
   ],
@@ -2337,7 +2340,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.other_noncurrent_liabilities
 
-`bs.other_noncurrent_liabilities` — pasivo_no_corriente — detail — zero_if_not_reported
+`bs.other_noncurrent_liabilities` — pasivo_no_corriente — detail — requires_data
 
 ```json
 {
@@ -2349,7 +2352,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Otros pasivos a largo plazo"
   ],
@@ -2445,7 +2448,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.share_capital
 
-`bs.share_capital` — patrimonio — detail — zero_if_not_reported
+`bs.share_capital` — patrimonio — detail — requires_data
 
 ```json
 {
@@ -2457,7 +2460,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Capital emitido",
     "capital aportado",
@@ -2489,7 +2492,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.additional_paid_in_capital
 
-`bs.additional_paid_in_capital` — patrimonio — detail — zero_if_not_reported
+`bs.additional_paid_in_capital` — patrimonio — detail — requires_data
 
 ```json
 {
@@ -2501,7 +2504,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Prima en emisión",
     "aportes adicionales"
@@ -2532,7 +2535,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.legal_reserve
 
-`bs.legal_reserve` — patrimonio — detail — zero_if_not_reported
+`bs.legal_reserve` — patrimonio — detail — requires_data
 
 ```json
 {
@@ -2544,7 +2547,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Reserva legal acumulada"
   ],
@@ -2561,7 +2564,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.other_reserves
 
-`bs.other_reserves` — patrimonio — detail — zero_if_not_reported — ambigua en el caso (Reservas)
+`bs.other_reserves` — patrimonio — detail — requires_data — ambigua en el caso (Reservas)
 
 ```json
 {
@@ -2573,7 +2576,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Reservas",
     "otras reservas de capital o patrimonio"
@@ -2599,7 +2602,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.retained_earnings
 
-`bs.retained_earnings` — patrimonio — detail — zero_if_not_reported
+`bs.retained_earnings` — patrimonio — detail — requires_data
 
 ```json
 {
@@ -2611,7 +2614,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Resultados acumulados",
     "utilidades acumuladas"
@@ -2635,7 +2638,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.current_year_result_equity
 
-`bs.current_year_result_equity` — patrimonio — detail — zero_if_not_reported
+`bs.current_year_result_equity` — patrimonio — detail — requires_data
 
 ```json
 {
@@ -2647,7 +2650,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Utilidad del ejercicio",
     "pérdida del ejercicio",
@@ -2672,7 +2675,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 
 ### bs.other_equity_components
 
-`bs.other_equity_components` — patrimonio — detail — zero_if_not_reported
+`bs.other_equity_components` — patrimonio — detail — requires_data
 
 ```json
 {
@@ -2684,7 +2687,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "account_role": "detail",
   "normal_balance": "acreedor",
   "value_semantics": "positive_magnitude",
-  "absence_policy": "zero_if_not_reported",
+  "absence_policy": "requires_data",
   "synonyms": [
     "Otras cuentas patrimoniales que no tengan un identificador más específico"
   ],
@@ -2763,3 +2766,41 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 }
 ```
 
+### is.interest_income
+
+`is.interest_income` — ingreso_financiero — detail — zero_if_not_reported — excepción D-051
+
+```json
+{
+  "id": "is.interest_income",
+  "canonical_name": "Ingresos por intereses",
+  "definition": "Ingreso financiero por intereses ganados; no es un gasto por financiación.",
+  "statement": "estado_resultados",
+  "classification": "ingreso_financiero",
+  "account_role": "detail",
+  "normal_balance": "acreedor",
+  "value_semantics": "revenue",
+  "absence_policy": "zero_if_not_reported",
+  "synonyms": [
+    "Intereses ganados",
+    "Intereses devengados a favor"
+  ],
+  "doubtful_synonyms": [],
+  "ambiguities": [
+    "Se suma a is.nonoperating_income como componente de los ingresos no operativos al calcular la utilidad neta sin utilidad reportada, según D-051."
+  ],
+  "research": {
+    "status": "partially_verified",
+    "sources": [
+      {
+        "title": "IFRS: Presentation of interest revenue",
+        "organization_or_author": "IFRS Foundation",
+        "url": "https://www.ifrs.org/projects/completed-projects/2018/presentation-of-interest-revenue-for-particular-financial-instruments-ifrs-9-and-ias-1/",
+        "source_type": "project_page",
+        "supports": "Título de proyecto; no define la cuenta. No respalda por sí solo su verificación.",
+        "consulted_on": "2026-10-17"
+      }
+    ]
+  }
+}
+```

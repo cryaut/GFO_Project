@@ -143,7 +143,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "revenue",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Ventas de mercaderías",
         "ventas de bienes"
@@ -172,7 +172,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "revenue",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Ventas de servicios",
         "ingresos por servicios prestados"
@@ -201,7 +201,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "revenue",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Otras ventas",
         "otras ventas operativas si efectivamente son ventas"
@@ -230,7 +230,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "other",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Devoluciones de ventas",
         "ventas devueltas"
@@ -251,7 +251,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "other",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Descuentos concedidos sobre ventas"
       ],
@@ -271,7 +271,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "other",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Rebajas y bonificaciones sobre ventas"
       ],
@@ -341,7 +341,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Costo de ventas de mercaderías",
         "costo de bienes vendidos"
@@ -370,7 +370,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Costo de producción vendido",
         "costo de productos vendidos"
@@ -399,7 +399,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "expense",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Costos de servicios prestados"
       ],

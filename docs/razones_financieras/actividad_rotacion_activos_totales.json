@@ -221,7 +221,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "revenue",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Ventas de mercaderías",
         "ventas de bienes"
@@ -250,7 +250,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "revenue",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Ventas de servicios",
         "ingresos por servicios prestados"
@@ -279,7 +279,7 @@
       "account_role": "detail",
       "normal_balance": "acreedor",
       "value_semantics": "revenue",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Otras ventas",
         "otras ventas operativas si efectivamente son ventas"
@@ -308,7 +308,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "other",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Devoluciones de ventas",
         "ventas devueltas"
@@ -329,7 +329,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "other",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Descuentos concedidos sobre ventas"
       ],
@@ -349,7 +349,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "other",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Rebajas y bonificaciones sobre ventas"
       ],
@@ -411,7 +411,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Efectivo",
         "caja",
@@ -434,7 +434,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Inversiones temporales",
         "valores negociables de corto plazo"
@@ -463,7 +463,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "CxC",
         "clientes",
@@ -486,7 +486,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Deudores varios corrientes",
         "otras cuentas por cobrar de corto plazo"
@@ -530,7 +530,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Mercaderías",
         "mercancías",
@@ -560,7 +560,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Materias primas",
         "materiales en almacén para producción"
@@ -589,7 +589,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Producción en proceso",
         "productos en proceso"
@@ -618,7 +618,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Productos terminados",
         "bienes terminados"
@@ -647,7 +647,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Pagos anticipados",
         "seguros pagados por anticipado"
@@ -668,7 +668,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Otros activos circulantes"
       ],
@@ -717,7 +717,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Terrenos de uso operativo"
       ],
@@ -745,7 +745,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Edificios",
         "construcciones de uso operativo"
@@ -774,7 +774,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Maquinaria",
         "equipo productivo"
@@ -805,7 +805,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Equipo de transporte",
         "vehículos de uso operativo"
@@ -834,7 +834,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Mobiliario",
         "muebles y enseres",
@@ -864,7 +864,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Propiedad, planta y equipo",
         "otros activos fijos tangibles"
@@ -913,7 +913,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Intangibles",
         "software capitalizado",
@@ -943,7 +943,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Inversiones permanentes",
         "inversiones no corrientes"
@@ -964,7 +964,7 @@
       "account_role": "detail",
       "normal_balance": "deudor",
       "value_semantics": "positive_magnitude",
-      "absence_policy": "zero_if_not_reported",
+      "absence_policy": "requires_data",
       "synonyms": [
         "Otros activos a largo plazo"
       ],
