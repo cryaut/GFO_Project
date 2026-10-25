@@ -2,15 +2,9 @@ import store from '../../store.js';
 import { mercadoUI } from './mercado-ui.js';
 import { estadosGuardados } from '../../utils/estados-guardados.js';
 import { formatCurrency, formatPercent, formatNumber } from '../../utils/format.js';
+import { computarRazonesDesdeDatos } from '../razones/razones-app-adapter.js';
 import {
-  ahDelta, ahPctDelta, av, ratioCorriente, ratioRapido,
-  rotacionInventario, rotacionCxC, plazoCobro, endeudamiento,
-  margenNeto, roa, dupont, capitalNetoTrabajo, capitalNetoOperativo,
-  saldoPromedio,
-  pruebaDefensiva, rotacionActivos, rotacionCxP, plazoPago, edadInventario,
-  cicloConversion, coberturaIntereses, deudaPatrimonio, apalancamiento,
-  margenBruto, margenOperativo, roe,
-  rotacionActivosFijos, rotacionCapitalTrabajo, solvencia
+  ahDelta, ahPctDelta, av, dupont, capitalNetoTrabajo, capitalNetoOperativo
 } from '../../utils/calculate.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
 import { normalizeFinancialData, sortPeriods } from '../estados/estados-normalize.js';
@@ -219,131 +213,10 @@ export function computeAV(period) {
   };
 }
 
-export function computeRazones(period) {
-  const bg = getBGData(period);
-  const er = getERData(period);
-  const prev = getPrevPeriod(period);
-  const bgPrev = prev ? getBGData(prev) : null;
-  const hayDosPeriodos = !!bgPrev;
-  // Conservar el motivo original de las cuentas pendientes, también al guardar
-  // y volver a leer. Las operaciones previas añaden su campo y operandos faltantes.
-  const notAvailableReasons = [period, ...(prev ? [prev] : [])].flatMap(periodo =>
-    (totalsFor(periodo)?.notAvailableReasons || []).map(motivo => ({ ...motivo, periodo })));
-  const conDatos = (campo, operandos, calcular) => {
-    const faltantes = Object.keys(operandos).filter(nombre => operandos[nombre] === null || operandos[nombre] === undefined);
-    if (!faltantes.length) return calcular();
-    notAvailableReasons.push({ campo, periodo: period, motivo: 'missing_required_account_data', operandos: faltantes });
-    return null;
-  };
-
-  // Resuelve el valor de una cuenta/tipo en un periodo: null si la cuenta no
-  // existe (dato faltante, no un saldo de 0).
-  const resolve = (p, data, campo, group, tipo) => {
-    const presente = tipo ? cuentaPresente(p, group, tipo) : grupoPresente(p, group);
-    return presente ? data[campo] : null;
-  };
-  // Promedio de dos periodos. Reglas: dato ausente en cualquier lado → null;
-  // un solo periodo → saldo final (metodología documentada del proyecto).
-  const promedio = (inicial, final) => {
-    if (final === null) return null;
-    if (!hayDosPeriodos) return final;
-    if (inicial === null) return null;
-    return saldoPromedio(inicial, final);
-  };
-  const prom = (campo, group, tipo) => promedio(
-    hayDosPeriodos ? resolve(prev, bgPrev, campo, group, tipo) : undefined,
-    resolve(period, bg, campo, group, tipo)
-  );
-
-  const invActual = resolve(period, bg, 'inventario', 'activos', 'inventario');
-  const invPrevio = hayDosPeriodos
-    ? resolve(prev, bgPrev, 'inventario', 'activos', 'inventario')
-    : undefined;
-  const invProm = promedio(invPrevio, invActual);
-  const cxcProm = prom('cxC', 'activos', 'cxC');
-  const activoProm = prom('totalActivos', 'activos');
-  const patrimonioProm = prom('totalPatrimonio', 'patrimonio');
-  const cxpProm = prom('cuentasPorPagar', 'pasivos', 'cuentasPorPagar');
-
-  const RC = ratioCorriente(bg.activosCorrientes, bg.pasivosCorrientes);
-  const RR = ratioRapido(bg.activosCorrientes, bg.inventario, bg.pasivosCorrientes);
-  const RotInv = rotacionInventario(er.costoVentas, invProm);
-  // El modelo de datos no separa las ventas a crédito: se usan las ventas totales, como el
-  // plazo de cobro de Gitman (CxC / ventas diarias). Con ventas a crédito sería más preciso.
-  const RotCxC = rotacionCxC(er.ventas, cxcProm);
-  const PPC = plazoCobro(RotCxC);
-  const End = endeudamiento(bg.totalPasivos, bg.totalActivos);
-  const MN = margenNeto(er.utilidadNeta, er.ventas);
-  const ROA = roa(er.utilidadNeta, activoProm);
-  // Compras = Costo de Ventas + Inventario Final − Inventario Inicial (periodo
-  // previo). Sin inventario comparable se aproxima con el costo de ventas, como
-  // documenta la metodología del proyecto; compras negativas son datos rotos.
-  let compras = er.costoVentas;
-  if (hayDosPeriodos && invActual !== null && invPrevio !== null) {
-    compras = conDatos('compras', { costoVentas: er.costoVentas, inventarioFinal: invActual, inventarioInicial: invPrevio },
-      () => er.costoVentas + invActual - invPrevio);
-  }
-  const comprasValidas = compras !== null && compras !== undefined && compras >= 0 ? compras : null;
-  const RotCxP = rotacionCxP(comprasValidas, cxpProm);
-  const usaComprasReales = hayDosPeriodos && invActual !== null && invPrevio !== null
-    && comprasValidas !== null;
-  const utilidadBruta = conDatos('utilidadBruta', { ventas: er.ventas, costoVentas: er.costoVentas },
-    () => er.ventas - er.costoVentas);
-  const utilidadOperativa = conDatos('utilidadOperativa', { ventas: er.ventas, costoVentas: er.costoVentas,
-    gastosAdmin: er.gastosAdmin, gastosVentas: er.gastosVentas },
-    () => er.ventas - er.costoVentas - er.gastosAdmin - er.gastosVentas);
-  const capitalTrabajo = conDatos('capitalNetoTrabajo', { activosCorrientes: bg.activosCorrientes,
-    pasivosCorrientes: bg.pasivosCorrientes }, () => capitalNetoTrabajo(bg.activosCorrientes, bg.pasivosCorrientes));
-  const extra = {
-    pruebaDefensiva: pruebaDefensiva(bg.efectivo, bg.pasivosCorrientes),
-    rotacionActivos: rotacionActivos(er.ventas, activoProm),
-    rotacionCxP: RotCxP,
-    plazoPago: plazoPago(RotCxP),
-    edadInventario: edadInventario(RotInv),
-    cicloConversion: cicloConversion(PPC, RotInv, RotCxP),
-    coberturaIntereses: coberturaIntereses(utilidadOperativa, er.intereses),
-    deudaPatrimonio: deudaPatrimonio(bg.totalPasivos, bg.totalPatrimonio),
-    apalancamiento: apalancamiento(activoProm, patrimonioProm),
-    margenBruto: margenBruto(utilidadBruta, er.ventas),
-    margenOperativo: margenOperativo(utilidadBruta, er.gastosAdmin, er.gastosVentas, er.ventas),
-    roe: roe(er.utilidadNeta, patrimonioProm),
-    rotacionActivosFijos: rotacionActivosFijos(er.ventas, bg.activosFijos),
-    rotacionCapitalTrabajo: rotacionCapitalTrabajo(er.ventas, capitalTrabajo),
-    solvencia: solvencia(bg.totalActivos, bg.totalPasivos)
-  };
-
-  return {
-    RC, RR, RotInv, RotCxC, PPC, endeudamiento: End, MN, ROA,
-    ...extra,
-    usaPromedios: hayDosPeriodos,
-    usaComprasReales,
-    invProm, cxcProm, activoProm, patrimonioProm,
-    notAvailableReasons,
-    denominadores: {
-      RC: bg.pasivosCorrientes,
-      RR: bg.pasivosCorrientes,
-      RotInv: invProm,
-      RotCxC: cxcProm,
-      End: bg.totalActivos,
-      MN: er.ventas,
-      ROA: activoProm,
-      pruebaDefensiva: bg.pasivosCorrientes,
-      rotacionActivos: activoProm,
-      rotacionCxP: cxpProm,
-      plazoPago: RotCxP,
-      edadInventario: RotInv,
-      cicloConversion: 1,
-      coberturaIntereses: er.intereses,
-      deudaPatrimonio: bg.totalPatrimonio,
-      apalancamiento: patrimonioProm,
-      margenBruto: er.ventas,
-      margenOperativo: er.ventas,
-      roe: patrimonioProm,
-      rotacionActivosFijos: bg.activosFijos,
-      rotacionCapitalTrabajo: capitalTrabajo,
-      solvencia: bg.totalPasivos
-    }
-  };
+export function computeRazones(period, opciones = {}) {
+  // Una sola lectura del documento completo; el bridge conserva identidades,
+  // composición y ambos periodos. La app mantiene el control apagado por defecto.
+  return computarRazonesDesdeDatos(store.get('estados'), period, opciones);
 }
 
 export function computeDuPont(period) {
