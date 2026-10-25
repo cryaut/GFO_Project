@@ -111,6 +111,8 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-056 | Razones de la app leen el motor | Vigente |
 | D-057 | Catálogo de Estados sincronizado con D-055 | Vigente |
 | D-058 | Regla 3: excepción del motor | Vigente |
+| D-059 | Rotaciones de cuentas por cobrar y por pagar exigen datos reales | Vigente |
+| D-060 | Cambios permitidos en pruebas antiguas al conectar el motor | Vigente |
 ## Decisiones
 
 
@@ -1378,3 +1380,50 @@ La utilidad neta de Reportes y de Análisis sale del derivado del motor. Esto re
 **Para revertirla.** Registrar la decisión que la reemplace y revisar conjuntamente entrada, consumidores y pruebas de aceptación, conservando las fuentes de referencia.
 
 **Referencias.** `instrucciones_carlos_ronda18.md`, tareas T1–T11; reporte `ronda18-R1-razones-final.md`; D-050 a D-055.
+
+### D-059 — Rotaciones de cuentas por cobrar y por pagar exigen datos reales
+
+- **Fecha**: 2026-10-24
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación, 24 de octubre de 2026
+- **Área**: Razones de la app y captura suplementaria en Estados
+
+**Contexto.** El motor exige ventas a crédito y pagos a proveedores, mientras que las pruebas antiguas usaban aproximaciones de ventas totales y costo más variación de inventario.
+
+**Opciones.**
+1. Exigir datos reales capturados — conserva las fórmulas aprobadas en los JSON y hace visible su ausencia.
+2. Conservar las aproximaciones antiguas — produciría resultados sin los datos exigidos por los JSON.
+
+**Decisión.** Las rotaciones de cuentas por cobrar y por pagar, sus plazos en días y el ciclo de conversión usan solo ventas a crédito (`supp.credit_sales`) y pagos a proveedores (`supp.supplier_payments`), capturados por el usuario. Sin esos datos, dan N/D con motivo `missing_required_account_data`. No se usan ventas totales ni costo de ventas más variación de inventario como aproximación.
+
+**Consecuencias.** La nota de planificación que decía que Análisis usa ventas totales queda reemplazada en este punto. Estados debe permitir capturar esas dos cuentas por periodo. Sus políticas en el catálogo deben coincidir con los JSON (`requires_data`).
+
+**Para revertirla.** Coordinar una decisión posterior con Cris Lumbi antes de cambiar contratos, fórmulas, captura o pruebas. Los JSON y el generado no cambian en esta ronda.
+
+**Referencias.** instrucciones_carlos_ronda19.md, R1/R3/R4; D-049, D-055 y D-057; reporte ronda19-R1-razones-final.md.
+
+### D-060 — Cambios permitidos en pruebas antiguas al conectar el motor
+
+- **Fecha**: 2026-10-24
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación, 24 de octubre de 2026
+- **Área**: Pruebas de integración de razones en la app
+
+**Contexto.** Conectar el motor reveló entradas incompletas y una regresión histórica de demo sin identidades acreditadas. La ronda 18 se detuvo sin cambiar esperados para ocultar esas diferencias.
+
+**Opciones.**
+1. Completar entradas acreditadas y limitar cambios de esperados a D-059 — conserva referencias numéricas y explica cada modificación.
+2. Reescribir esperados para adaptarlos a cualquier salida actual — ocultaría diferencias sin una causa aprobada.
+
+**Decisión.** Al conectar la app con el motor, una prueba existente puede cambiar de tres formas. Cada cambio se lista en el reporte con su valor antes y después, y su causa:
+1. Completar entradas con ceros explícitos o con identidades acreditadas. El esperado no cambia.
+2. Agregar datos que el JSON exige ahora (pagos a proveedores, ventas a crédito, depreciación acumulada). El esperado no cambia. Si el dato se elige para reproducir el esperado anterior, el reporte debe decirlo.
+3. Cambiar un esperado a N/D con motivo, solo cuando la causa es D-059.
+
+Se retira la prueba histórica de regresión de la demo (caso de ejemplo cargado en la app), en `tests/unit/analisis-nd.test.js`. Sus datos no tienen identidades acreditadas. La referencia de razones es el ejemplo v3.
+
+**Consecuencias.** La matriz R4 de la ronda 19 concreta los cambios autorizados, incluida la entrada construida de pagos a proveedores 430. Cualquier esperado distinto sin esa autorización obliga a detenerse y reportarlo; no se modifican Esperados de los libros ni las fórmulas.
+
+**Para revertirla.** Registrar una decisión posterior y aportar identidades/evidencia antes de restituir la regresión retirada o autorizar otros cambios de esperados.
+
+**Referencias.** instrucciones_carlos_ronda19.md, R1/R4; D-059; reporte ronda19-R1-razones-final.md.
