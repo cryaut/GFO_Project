@@ -63,6 +63,12 @@ it('conserva los datos suplementarios requeridos y distingue cero de ausencia', 
   const datos = tableTextToFinancialData('Cuenta,Grupo,id,2024\nVentas a crédito,suplementario,supp.credit_sales,0');
   expect(montoCuenta(datos, '2024', 'supp.credit_sales')).toBe(0);
   expect(montoCuenta(datos, '2024', 'supp.supplier_payments')).toBeNull();
+  expect(consultarMontoCuenta(datos, '2024', 'supp.supplier_payments'))
+    .toEqual({ valor: null, motivo: 'missing_required_account_data' });
+  const sinVentasCredito = structuredClone(datos);
+  delete sinVentasCredito.supplementaryAccounts['2024']['Ventas a crédito'];
+  expect(consultarMontoCuenta(sinVentasCredito, '2024', 'supp.credit_sales'))
+    .toEqual({ valor: null, motivo: 'missing_required_account_data' });
 });
 
 it('ingresos por intereses se suman y gastos por intereses se restan con las fórmulas vigentes', () => {

@@ -4,11 +4,15 @@ import { escapeHTML as esc } from '../../utils/html.js';
 import { formatCurrency } from '../../utils/format.js';
 import { exportJSON, exportCSV } from '../../utils/export.js';
 import { importStatementFile, tableTextToFinancialData, TABULAR_TEMPLATE_ROWS } from './estados-import.js';
-import { identificarCuenta, resumenIdentificacion } from './cuentas-identificador.js';
+import { identificarCuenta, resumenIdentificacion, obtenerCuenta, consultarMontoCuenta } from './cuentas-identificador.js';
 import { registrarCuenta } from './cuentas-registro.js';
 import { selectorCuenta, renderRevisionCuentas } from './cuentas-ui.js';
 
 const GROUPS = { activos: 'Activos', pasivos: 'Pasivos', patrimonio: 'Patrimonio', estadoResultados: 'Estado de Resultados' };
+const SUPLEMENTARIOS_ROTACION = [
+  { id: 'supp.credit_sales', campo: 'ventasCredito' },
+  { id: 'supp.supplier_payments', campo: 'pagosProveedores' }
+];
 const LABELS = {
   efectivo: 'Efectivo', cxC: 'Cuentas por cobrar', inventario: 'Inventario',
   activosCorrientesOtros: 'Otros activos corrientes', activosFijos: 'Activos no corrientes',
@@ -103,6 +107,11 @@ export function estadosUI(page, { initial, demo, save }) {
           <option value="excluye_intereses" ${draft.composicionIngresos[selected] === 'excluye_intereses' ? 'selected' : ''}>Excluyen los intereses ganados</option>
           <option value="incluye_intereses" ${draft.composicionIngresos[selected] === 'incluye_intereses' ? 'selected' : ''}>Incluyen los intereses ganados</option>
         </select>
+        <fieldset class="mt-4"><legend>Datos para las rotaciones — ${esc(selected)}</legend>
+          <p>Declare las ventas a crédito y los pagos a proveedores reales de este periodo. Deje vacío lo que no tenga: las razones que lo necesitan mostrarán N/D. Un cero declarado se conserva como cero.</p>
+          ${SUPLEMENTARIOS_ROTACION.map(({ id, campo }) => `<label class="form-label" for="${campo}">${esc(obtenerCuenta(id).nombreCanonico)}</label>
+            <input class="form-input" id="${campo}" type="number" step="any" value="${consultarMontoCuenta(draft, selected, id).valor ?? ''}">`).join('')}
+        </fieldset>
         <form id="renamePeriod" class="flex-gap mt-4"><input class="form-input" name="period" aria-label="Nuevo nombre del periodo" required maxlength="40" value="${esc(selected)}"><button class="btn btn-secondary">Renombrar</button></form>
         <div class="flex-gap mt-4"><button class="btn btn-secondary" id="earlierPeriod">Mover antes</button><button class="btn btn-secondary" id="laterPeriod">Mover después</button><button class="btn btn-danger" id="deletePeriod">Eliminar periodo</button></div>` : '<p>No hay periodos. Añada uno para empezar, sin necesidad de cargar el ejemplo.</p>'}</div>
       <div id="accountReview"></div><div id="accountEditor"></div><div id="balanceCheck" aria-live="polite"></div>
@@ -258,6 +267,21 @@ export function estadosUI(page, { initial, demo, save }) {
       draft.composicionIngresos[selected] = event.target.value;
       markDirty();
     };
+    for (const { id, campo } of SUPLEMENTARIOS_ROTACION) {
+      const entrada = page.querySelector(`#${campo}`);
+      if (entrada) entrada.onchange = event => guard(() => {
+        const candidato = structuredClone(draft);
+        const nombres = Object.keys(candidato.supplementaryAccounts?.[selected] || {}).filter(nombre =>
+          candidato.accountIdentities.suplementario[nombre]?.estado === 'reconocida'
+          && candidato.accountIdentities.suplementario[nombre]?.idCuenta === id);
+        for (const nombre of nombres) delete candidato.supplementaryAccounts[selected][nombre];
+        draft = event.target.value === '' ? normalizeFinancialData(candidato)
+          : registrarCuenta(candidato, { nombre: nombres[0] || obtenerCuenta(id).nombreCanonico,
+            grupo: 'suplementario', periodo: selected, importe: event.target.value, id,
+            confirmado: true, reemplazar: true });
+        markDirty(); guard(renderPreview);
+      });
+    }
     page.querySelector('#newStates').onclick = () => replaceDraft(emptyData(), 'Borrador nuevo.');
     const formatSelect = page.querySelector('#numberFormat');
     if (formatSelect) formatSelect.onchange = event => { numberFormat = event.target.value || 'auto'; };

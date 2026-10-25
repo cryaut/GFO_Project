@@ -1,5 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
+import { consultarMontoCuenta, obtenerCuenta } from '../../js/modules/estados/cuentas-identificador.js';
 import { element } from './helpers/dom-falso.js';
 
 const datos = () => ({
@@ -108,4 +109,69 @@ it('renombrar y borrar un periodo mantiene la composición asociada a ese period
 
 it.each([null, [], { '2031':'inventado' }, { '2039':'excluye_intereses' }])('rechaza una declaración inválida sin inventar composición: %j', composicionIngresos => {
   expect(() => normalizeFinancialData({ ...datos(), composicionIngresos })).toThrow();
+});
+
+it.each([
+  ['supp.credit_sales', 'ventasCredito', 145],
+  ['supp.supplier_payments', 'pagosProveedores', 89],
+  ['supp.credit_sales', 'ventasCredito', 0],
+  ['supp.supplier_payments', 'pagosProveedores', 0]
+])('D-059 guarda y recarga %s declarado como %s en el periodo editado', async (id, campo, valor) => {
+  const { page, store, initEstados, getSavedStates, setItem } = await montar(datos());
+  const entrada = page.querySelector(`#${campo}`);
+  entrada.value = String(valor);
+  entrada.onchange({ target:entrada });
+  expect(setItem).not.toHaveBeenCalled();
+  page.querySelector('#saveStates').onclick();
+  expect(setItem).toHaveBeenCalledTimes(1);
+  store._data = null;
+  initEstados();
+  const recargado = getSavedStates();
+  expect(consultarMontoCuenta(recargado, '2031', id)).toEqual({ valor, motivo:null });
+  expect(consultarMontoCuenta(recargado, '2032', id)).toEqual({ valor:null, motivo:'missing_required_account_data' });
+  expect(recargado.accountIdentities.suplementario[obtenerCuenta(id).nombreCanonico]).toMatchObject({
+    idCuenta:id, estado:'reconocida', metodo:'confirmacion_manual'
+  });
+  expect(page.innerHTML).toContain(`id="${campo}" type="number" step="any" value="${valor}"`);
+});
+
+it('D-059 los datos legados sin suplementarios se muestran vacíos y dan N/D con motivo', async () => {
+  const { page, getSavedStates } = await montar(datos());
+  for (const [id, campo] of [['supp.credit_sales', 'ventasCredito'], ['supp.supplier_payments', 'pagosProveedores']]) {
+    expect(obtenerCuenta(id).politicaAusencia).toBe('requires_data');
+    expect(page.innerHTML).toContain(`id="${campo}" type="number" step="any" value=""`);
+    expect(consultarMontoCuenta(getSavedStates(), '2031', id)).toEqual({ valor:null, motivo:'missing_required_account_data' });
+  }
+});
+
+it('D-059 vaciar un dato declarado vuelve a ausencia sin convertirlo en cero', async () => {
+  const { page, store, initEstados, getSavedStates } = await montar(datos());
+  const entrada = page.querySelector('#ventasCredito');
+  entrada.value = '145';
+  entrada.onchange({ target:entrada });
+  page.querySelector('#saveStates').onclick();
+  entrada.value = '';
+  entrada.onchange({ target:entrada });
+  page.querySelector('#saveStates').onclick();
+  store._data = null;
+  initEstados();
+  expect(consultarMontoCuenta(getSavedStates(), '2031', 'supp.credit_sales'))
+    .toEqual({ valor:null, motivo:'missing_required_account_data' });
+});
+
+it('editar un suplementario importado por identidad reemplaza su importe sin duplicarlo ni cambiar otro periodo', async () => {
+  const original = datos();
+  original.supplementaryAccounts = { '2031':{ 'Crédito propio':63 }, '2032':{ 'Crédito propio':77 } };
+  original.accountIdentities.suplementario['Crédito propio'] = {
+    idCuenta:'supp.credit_sales', estado:'reconocida', metodo:'id', candidatos:[], origen:'importacion'
+  };
+  const { page, store, initEstados, getSavedStates } = await montar(original);
+  expect(page.innerHTML).toContain('id="ventasCredito" type="number" step="any" value="63"');
+  const entrada = page.querySelector('#ventasCredito');
+  entrada.value = '145';
+  entrada.onchange({ target:entrada });
+  page.querySelector('#saveStates').onclick();
+  store._data = null;
+  initEstados();
+  expect(getSavedStates().supplementaryAccounts).toEqual({ '2031':{ 'Crédito propio':145 }, '2032':{ 'Crédito propio':77 } });
 });
