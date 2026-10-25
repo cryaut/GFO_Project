@@ -137,14 +137,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IFRS 15 Revenue from Contracts with Customers",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
         "source_type": "accounting_standard",
-        "supports": "NIIF 15 exige reconocer ingresos de actividades ordinarias por contratos con clientes siguiendo cinco pasos, entre ellos fijar el precio de la transacción (la contraprestación que la entidad espera recibir). Confirma la definición de «Ventas de productos» (is.product_sales)."
+        "supports": "\"recognises revenue to depict the transfer of promised goods or services to the customer\". Frase textual de IFRS 15 Revenue from Contracts with Customers, abierto el 2026-10-15; confirma la definición de «Ventas de productos» (is.product_sales) (D-035)."
       }
     ]
   }
@@ -173,14 +173,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IFRS 15 Revenue from Contracts with Customers",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
         "source_type": "accounting_standard",
-        "supports": "NIIF 15 exige reconocer ingresos de actividades ordinarias por contratos con clientes siguiendo cinco pasos, entre ellos fijar el precio de la transacción (la contraprestación que la entidad espera recibir). Confirma la definición de «Ingresos por servicios» (is.service_revenue)."
+        "supports": "\"recognises revenue to depict the transfer of promised goods or services to the customer\". Frase textual de IFRS 15 Revenue from Contracts with Customers, abierto el 2026-10-15; confirma la definición de «Ingresos por servicios» (is.service_revenue) (D-035)."
       }
     ]
   }
@@ -209,14 +209,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IFRS 15 Revenue from Contracts with Customers",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
         "source_type": "accounting_standard",
-        "supports": "NIIF 15 exige reconocer ingresos de actividades ordinarias por contratos con clientes siguiendo cinco pasos, entre ellos fijar el precio de la transacción (la contraprestación que la entidad espera recibir). Confirma la definición de «Otras ventas ordinarias» (is.other_sales_revenue)."
+        "supports": "\"recognises revenue to depict the transfer of promised goods or services to the customer\". Frase textual de IFRS 15 Revenue from Contracts with Customers, abierto el 2026-10-15; confirma la definición de «Otras ventas ordinarias» (is.other_sales_revenue) (D-035)."
       }
     ]
   }
@@ -245,16 +245,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IFRS 15 Revenue from Contracts with Customers",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
-        "source_type": "accounting_standard",
-        "supports": "NIIF 15 trata la contraprestación del contrato con clientes; las devoluciones, descuentos y rebajas reducen ese ingreso. Confirma la definición de «Devoluciones sobre ventas» (is.sales_returns)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -280,16 +272,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IFRS 15 Revenue from Contracts with Customers",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
-        "source_type": "accounting_standard",
-        "supports": "NIIF 15 trata la contraprestación del contrato con clientes; las devoluciones, descuentos y rebajas reducen ese ingreso. Confirma la definición de «Descuentos sobre ventas» (is.sales_discounts)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -315,16 +299,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IFRS 15 Revenue from Contracts with Customers",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
-        "source_type": "accounting_standard",
-        "supports": "NIIF 15 trata la contraprestación del contrato con clientes; las devoluciones, descuentos y rebajas reducen ese ingreso. Confirma la definición de «Rebajas sobre ventas» (is.sales_allowances)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -351,23 +327,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Ventas netas reportadas» (is.net_sales_reported)."
-      },
-      {
-        "title": "IFRS 15 Revenue from Contracts with Customers",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-15-revenue-from-contracts-with-customers/",
-        "source_type": "accounting_standard",
-        "supports": "NIIF 15 exige reconocer ingresos de actividades ordinarias por contratos con clientes siguiendo cinco pasos, entre ellos fijar el precio de la transacción (la contraprestación que la entidad espera recibir). Confirma la definición de «Ventas netas reportadas» (is.net_sales_reported)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -394,21 +355,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 2 Inventories",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
         "source_type": "accounting_standard",
-        "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Costo de ventas reportado» (is.cost_of_sales_reported)."
-      },
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Costo de ventas reportado» (is.cost_of_sales_reported)."
+        "supports": "\"the carrying amount of those inventories is recognised as an expense\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Costo de ventas reportado» (is.cost_of_sales_reported) (D-035)."
       }
     ]
   }
@@ -437,21 +391,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 2 Inventories",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
         "source_type": "accounting_standard",
-        "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Costo de mercadería vendida» (is.merchandise_cost)."
-      },
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Costo de mercadería vendida» (is.merchandise_cost)."
+        "supports": "\"the carrying amount of those inventories is recognised as an expense\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Costo de mercadería vendida» (is.merchandise_cost) (D-035)."
       }
     ]
   }
@@ -480,21 +427,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 2 Inventories",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
         "source_type": "accounting_standard",
-        "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Costo de productos vendidos» (is.product_cost)."
-      },
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Costo de productos vendidos» (is.product_cost)."
+        "supports": "\"The cost of inventories includes all costs of purchase, costs of conversion\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Costo de productos vendidos» (is.product_cost) (D-035)."
       }
     ]
   }
@@ -522,23 +462,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 2 Inventories",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Costo de servicios» (is.service_cost)."
-      },
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Costo de servicios» (is.service_cost)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -565,16 +490,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Utilidad bruta reportada» (is.gross_profit_reported)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -601,16 +518,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Gastos de ventas» (is.selling_expenses)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -637,16 +546,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Gastos administrativos» (is.administrative_expenses)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -672,23 +573,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Depreciación operativa» (is.operating_depreciation)."
-      },
-      {
-        "title": "IAS 16 Property, Plant and Equipment",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 16 trata la depreciación: el importe depreciable se reconoce como gasto de forma sistemática durante la vida útil de los activos fijos. Confirma la definición de «Depreciación operativa» (is.operating_depreciation)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -714,23 +600,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Amortización operativa» (is.operating_amortization)."
-      },
-      {
-        "title": "IAS 38 Intangible Assets",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-38-intangible-assets/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 38 trata la amortización del costo de los activos intangibles de vida útil finita. Confirma la definición de «Amortización operativa» (is.operating_amortization)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -756,16 +627,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Otros gastos operativos» (is.other_operating_expenses)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -791,16 +654,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Otros ingresos operativos» (is.other_operating_income)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -827,16 +682,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Utilidad operativa reportada» (is.operating_profit_reported)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -863,16 +710,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Ingresos no operativos» (is.nonoperating_income)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -899,16 +738,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Gastos no operativos distintos de intereses» (is.noninterest_nonoperating_expenses)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -935,21 +766,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 23 Borrowing Costs",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-23-borrowing-costs/",
         "source_type": "accounting_standard",
-        "supports": "NIC 23 define los costos por préstamos como los intereses y otros costos incurridos y exige reconocerlos como gasto del periodo. Confirma la definición de «Gastos por intereses» (is.interest_expense)."
-      },
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Gastos por intereses» (is.interest_expense)."
+        "supports": "\"Borrowing costs are interest and other costs that an entity incurs\". Frase textual de IAS 23 Borrowing Costs, abierto el 2026-10-15; confirma la definición de «Gastos por intereses» (is.interest_expense) (D-035)."
       }
     ]
   }
@@ -978,14 +802,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 12 Income Taxes",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-12-income-taxes/",
         "source_type": "accounting_standard",
-        "supports": "NIC 12 exige reconocer como pasivo el impuesto corriente no pagado del periodo y regula los impuestos corrientes y diferidos sobre la renta. Confirma la definición de «Gasto por impuesto sobre la renta» (is.income_tax_expense)."
+        "supports": "\"Income taxes include all domestic and foreign taxes that are based on taxable profits\". Frase textual de IAS 12 Income Taxes, abierto el 2026-10-15; confirma la definición de «Gasto por impuesto sobre la renta» (is.income_tax_expense) (D-035)."
       }
     ]
   }
@@ -1015,16 +839,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Utilidad neta reportada» (is.net_income_reported)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -1051,16 +867,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Total de activos corrientes» (bs.current_assets_total)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -1089,23 +897,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 7 Statement of Cash Flows",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-7-statement-of-cash-flows/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 7 define el efectivo (efectivo en mano y depósitos a la vista) y los equivalentes de efectivo como inversiones a corto plazo, altamente líquidas, de conversión casi inmediata y con riesgo menor de cambio de valor. Confirma la definición de «Efectivo y equivalentes» (bs.cash_and_equivalents)."
-      },
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 fija los requisitos generales de presentación, las pautas de estructura y el contenido mínimo de los estados financieros, y rige la clasificación corriente y no corriente (doce meses para los pasivos); la norma adoptó la presentación de activos y pasivos corrientes. Confirma la definición de «Efectivo y equivalentes» (bs.cash_and_equivalents)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -1132,21 +925,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 7 Statement of Cash Flows",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-7-statement-of-cash-flows/",
         "source_type": "accounting_standard",
-        "supports": "NIC 7 define el efectivo (efectivo en mano y depósitos a la vista) y los equivalentes de efectivo como inversiones a corto plazo, altamente líquidas, de conversión casi inmediata y con riesgo menor de cambio de valor. Confirma la definición de «Inversiones de corto plazo» (bs.short_term_investments)."
-      },
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 fija los requisitos generales de presentación, las pautas de estructura y el contenido mínimo de los estados financieros, y rige la clasificación corriente y no corriente (doce meses para los pasivos); la norma adoptó la presentación de activos y pasivos corrientes. Confirma la definición de «Inversiones de corto plazo» (bs.short_term_investments)."
+        "supports": "\"Cash equivalents are short-term, highly liquid investments\". Frase textual de IAS 7 Statement of Cash Flows, abierto el 2026-10-15; confirma la definición de «Inversiones de corto plazo» (bs.short_term_investments) (D-035)."
       }
     ]
   }
@@ -1177,23 +963,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IFRS 9 Financial Instruments",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/",
-        "source_type": "accounting_standard",
-        "supports": "NIIF 9 clasifica los activos financieros según el modelo de negocio y las características de los flujos de efectivo contractuales (por ejemplo, costo amortizado) y establece cuándo se reconoce un activo financiero. Confirma la definición de «Cuentas por cobrar comerciales» (bs.trade_receivables)."
-      },
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 fija los requisitos generales de presentación, las pautas de estructura y el contenido mínimo de los estados financieros, y rige la clasificación corriente y no corriente (doce meses para los pasivos); la norma adoptó la presentación de activos y pasivos corrientes. Confirma la definición de «Cuentas por cobrar comerciales» (bs.trade_receivables)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -1220,23 +991,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IFRS 9 Financial Instruments",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/",
-        "source_type": "accounting_standard",
-        "supports": "NIIF 9 clasifica los activos financieros según el modelo de negocio y las características de los flujos de efectivo contractuales (por ejemplo, costo amortizado) y establece cuándo se reconoce un activo financiero. Confirma la definición de «Otras cuentas por cobrar corrientes» (bs.other_current_receivables)."
-      },
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 fija los requisitos generales de presentación, las pautas de estructura y el contenido mínimo de los estados financieros, y rige la clasificación corriente y no corriente (doce meses para los pasivos); la norma adoptó la presentación de activos y pasivos corrientes. Confirma la definición de «Otras cuentas por cobrar corrientes» (bs.other_current_receivables)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -1294,14 +1050,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 2 Inventories",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
         "source_type": "accounting_standard",
-        "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Inventario de mercaderías» (bs.inventory_merchandise)."
+        "supports": "\"Inventories are measured at the lower of cost and net realisable value\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de mercaderías» (bs.inventory_merchandise) (D-035)."
       }
     ]
   }
@@ -1330,14 +1086,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 2 Inventories",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
         "source_type": "accounting_standard",
-        "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Inventario de materias primas» (bs.inventory_raw_materials)."
+        "supports": "\"The cost of inventories includes all costs of purchase, costs of conversion\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de materias primas» (bs.inventory_raw_materials) (D-035)."
       }
     ]
   }
@@ -1366,14 +1122,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 2 Inventories",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
         "source_type": "accounting_standard",
-        "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Inventario de productos en proceso» (bs.inventory_work_in_process)."
+        "supports": "\"costs of conversion (direct labour and production overhead)\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de productos en proceso» (bs.inventory_work_in_process) (D-035)."
       }
     ]
   }
@@ -1402,14 +1158,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 2 Inventories",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-2-inventories/",
         "source_type": "accounting_standard",
-        "supports": "NIC 2 exige medir los inventarios al menor entre costo y valor neto realizable, fija cómo se asigna el costo a los inventarios y cuándo ese costo se reconoce como gasto. Confirma la definición de «Inventario de productos terminados» (bs.inventory_finished_goods)."
+        "supports": "\"the carrying amount of those inventories is recognised as an expense\". Frase textual de IAS 2 Inventories, abierto el 2026-10-15; confirma la definición de «Inventario de productos terminados» (bs.inventory_finished_goods) (D-035)."
       }
     ]
   }
@@ -1438,16 +1194,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 fija los requisitos generales de presentación, las pautas de estructura y el contenido mínimo de los estados financieros, y rige la clasificación corriente y no corriente (doce meses para los pasivos); la norma adoptó la presentación de activos y pasivos corrientes. Confirma la definición de «Gastos pagados por anticipado» (bs.prepaid_expenses)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -1473,16 +1221,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 fija los requisitos generales de presentación, las pautas de estructura y el contenido mínimo de los estados financieros, y rige la clasificación corriente y no corriente (doce meses para los pasivos); la norma adoptó la presentación de activos y pasivos corrientes. Confirma la definición de «Otros activos corrientes» (bs.other_current_assets)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -1509,21 +1249,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Total de activos fijos netos» (bs.fixed_assets_net_total)."
-      },
       {
         "title": "IAS 16 Property, Plant and Equipment",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
         "source_type": "accounting_standard",
-        "supports": "NIC 16 trata elementos tangibles mantenidos para usarlos en la producción o suministro de bienes o servicios y exige reconocerlos como activo por su costo. Confirma la definición de «Total de activos fijos netos» (bs.fixed_assets_net_total)."
+        "supports": "\"Property, plant and equipment are tangible items\". Frase textual de IAS 16 Property, Plant and Equipment, abierto el 2026-10-15; confirma la definición de «Total de activos fijos netos» (bs.fixed_assets_net_total) (D-035)."
       }
     ]
   }
@@ -1551,14 +1284,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 16 Property, Plant and Equipment",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
         "source_type": "accounting_standard",
-        "supports": "NIC 16 trata elementos tangibles mantenidos para usarlos en la producción o suministro de bienes o servicios y exige reconocerlos como activo por su costo. Confirma la definición de «Terrenos» (bs.ppe_land)."
+        "supports": "\"Property, plant and equipment are tangible items\". Frase textual de IAS 16 Property, Plant and Equipment, abierto el 2026-10-15; confirma la definición de «Terrenos» (bs.ppe_land) (D-035)."
       }
     ]
   }
@@ -1587,14 +1320,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 16 Property, Plant and Equipment",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
         "source_type": "accounting_standard",
-        "supports": "NIC 16 trata elementos tangibles mantenidos para usarlos en la producción o suministro de bienes o servicios y exige reconocerlos como activo por su costo. Confirma la definición de «Edificios e instalaciones» (bs.ppe_buildings)."
+        "supports": "\"Property, plant and equipment are tangible items\". Frase textual de IAS 16 Property, Plant and Equipment, abierto el 2026-10-15; confirma la definición de «Edificios e instalaciones» (bs.ppe_buildings) (D-035)."
       }
     ]
   }
@@ -1661,14 +1394,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 16 Property, Plant and Equipment",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
         "source_type": "accounting_standard",
-        "supports": "NIC 16 trata elementos tangibles mantenidos para usarlos en la producción o suministro de bienes o servicios y exige reconocerlos como activo por su costo. Confirma la definición de «Vehículos» (bs.ppe_vehicles)."
+        "supports": "\"Property, plant and equipment are tangible items\". Frase textual de IAS 16 Property, Plant and Equipment, abierto el 2026-10-15; confirma la definición de «Vehículos» (bs.ppe_vehicles) (D-035)."
       }
     ]
   }
@@ -1698,14 +1431,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 16 Property, Plant and Equipment",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
         "source_type": "accounting_standard",
-        "supports": "NIC 16 trata elementos tangibles mantenidos para usarlos en la producción o suministro de bienes o servicios y exige reconocerlos como activo por su costo. Confirma la definición de «Mobiliario y equipo de oficina» (bs.ppe_furniture)."
+        "supports": "\"Property, plant and equipment are tangible items\". Frase textual de IAS 16 Property, Plant and Equipment, abierto el 2026-10-15; confirma la definición de «Mobiliario y equipo de oficina» (bs.ppe_furniture) (D-035)."
       }
     ]
   }
@@ -1734,14 +1467,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 16 Property, Plant and Equipment",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
         "source_type": "accounting_standard",
-        "supports": "NIC 16 trata elementos tangibles mantenidos para usarlos en la producción o suministro de bienes o servicios y exige reconocerlos como activo por su costo. Confirma la definición de «Otros activos fijos tangibles» (bs.ppe_other)."
+        "supports": "\"Property, plant and equipment are tangible items\". Frase textual de IAS 16 Property, Plant and Equipment, abierto el 2026-10-15; confirma la definición de «Otros activos fijos tangibles» (bs.ppe_other) (D-035)."
       }
     ]
   }
@@ -1769,16 +1502,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 16 Property, Plant and Equipment",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-16-property-plant-and-equipment/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 16 trata la depreciación: el importe depreciable se reconoce como gasto de forma sistemática durante la vida útil de los activos fijos. Confirma la definición de «Depreciación acumulada» (bs.accumulated_depreciation)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -1791,7 +1516,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 {
   "id": "bs.intangible_assets",
   "canonical_name": "Activos intangibles",
-  "definition": "Activos monetarios no financieros identificables sin sustancia física (software, patentes); se amortizan. Si no se reportan, aportan cero a activos totales (D12).",
+  "definition": "Activos no monetarios no financieros identificables sin sustancia física (software, patentes); se amortizan. Si no se reportan, aportan cero a activos totales (D12).",
   "statement": "balance_general",
   "classification": "activo_no_corriente",
   "account_role": "detail",
@@ -1806,14 +1531,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 38 Intangible Assets",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-38-intangible-assets/",
         "source_type": "accounting_standard",
-        "supports": "NIC 38 define un activo intangible como un activo identificable no monetario sin sustancia física. Confirma la definición de «Activos intangibles» (bs.intangible_assets)."
+        "supports": "\"An intangible asset is an identifiable non-monetary asset without physical substance\". Frase textual de IAS 38 Intangible Assets, abierto el 2026-10-15; confirma la definición de «Activos intangibles» (bs.intangible_assets) (D-035)."
       }
     ]
   }
@@ -1842,23 +1567,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 fija los requisitos generales de presentación, las pautas de estructura y el contenido mínimo de los estados financieros, y rige la clasificación corriente y no corriente (doce meses para los pasivos); la norma adoptó la presentación de activos y pasivos corrientes. Confirma la definición de «Inversiones de largo plazo» (bs.long_term_investments)."
-      },
-      {
-        "title": "IFRS 9 Financial Instruments",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/",
-        "source_type": "accounting_standard",
-        "supports": "NIIF 9 clasifica los activos financieros según el modelo de negocio y las características de los flujos de efectivo contractuales (por ejemplo, costo amortizado) y establece cuándo se reconoce un activo financiero. Confirma la definición de «Inversiones de largo plazo» (bs.long_term_investments)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -1884,23 +1594,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 fija los requisitos generales de presentación, las pautas de estructura y el contenido mínimo de los estados financieros, y rige la clasificación corriente y no corriente (doce meses para los pasivos); la norma adoptó la presentación de activos y pasivos corrientes. Confirma la definición de «Otros activos no corrientes» (bs.other_noncurrent_assets)."
-      },
-      {
-        "title": "IFRS 9 Financial Instruments",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/",
-        "source_type": "accounting_standard",
-        "supports": "NIIF 9 clasifica los activos financieros según el modelo de negocio y las características de los flujos de efectivo contractuales (por ejemplo, costo amortizado) y establece cuándo se reconoce un activo financiero. Confirma la definición de «Otros activos no corrientes» (bs.other_noncurrent_assets)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -1928,16 +1623,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Total de activos» (bs.total_assets)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -1964,16 +1651,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Total de pasivos corrientes» (bs.current_liabilities_total)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -2001,23 +1680,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IFRS 9 Financial Instruments",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/",
-        "source_type": "accounting_standard",
-        "supports": "NIIF 9 clasifica los activos financieros según el modelo de negocio y las características de los flujos de efectivo contractuales (por ejemplo, costo amortizado) y establece cuándo se reconoce un activo financiero. Confirma la definición de «Cuentas por pagar comerciales» (bs.trade_payables)."
-      },
-      {
-        "title": "IAS 32 Financial Instruments: Presentation",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-32-financial-instruments-presentation/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 32 clasifica los instrumentos financieros en activos, pasivos e instrumentos de patrimonio; la distinción entre pasivo financiero y patrimonio depende de la obligación de entregar. Confirma la definición de «Cuentas por pagar comerciales» (bs.trade_payables)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -2044,23 +1708,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IFRS 9 Financial Instruments",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/",
-        "source_type": "accounting_standard",
-        "supports": "NIIF 9 clasifica los activos financieros según el modelo de negocio y las características de los flujos de efectivo contractuales (por ejemplo, costo amortizado) y establece cuándo se reconoce un activo financiero. Confirma la definición de «Préstamos de corto plazo» (bs.short_term_borrowings)."
-      },
-      {
-        "title": "IAS 32 Financial Instruments: Presentation",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-32-financial-instruments-presentation/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 32 clasifica los instrumentos financieros en activos, pasivos e instrumentos de patrimonio; la distinción entre pasivo financiero y patrimonio depende de la obligación de entregar. Confirma la definición de «Préstamos de corto plazo» (bs.short_term_borrowings)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -2086,23 +1735,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IFRS 9 Financial Instruments",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ifrs-9-financial-instruments/",
-        "source_type": "accounting_standard",
-        "supports": "NIIF 9 clasifica los activos financieros según el modelo de negocio y las características de los flujos de efectivo contractuales (por ejemplo, costo amortizado) y establece cuándo se reconoce un activo financiero. Confirma la definición de «Porción corriente de deuda de largo plazo» (bs.current_portion_long_term_debt)."
-      },
-      {
-        "title": "IAS 32 Financial Instruments: Presentation",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-32-financial-instruments-presentation/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 32 clasifica los instrumentos financieros en activos, pasivos e instrumentos de patrimonio; la distinción entre pasivo financiero y patrimonio depende de la obligación de entregar. Confirma la definición de «Porción corriente de deuda de largo plazo» (bs.current_portion_long_term_debt)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -2129,14 +1763,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 12 Income Taxes",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-12-income-taxes/",
         "source_type": "accounting_standard",
-        "supports": "NIC 12 exige reconocer como pasivo el impuesto corriente no pagado del periodo y regula los impuestos corrientes y diferidos sobre la renta. Confirma la definición de «Impuestos por pagar» (bs.taxes_payable)."
+        "supports": "\"to the extent that it is unpaid, recognised as a liability\". Frase textual de IAS 12 Income Taxes, abierto el 2026-10-15; confirma la definición de «Impuestos por pagar» (bs.taxes_payable) (D-035)."
       }
     ]
   }
@@ -2165,23 +1799,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 fija los requisitos generales de presentación, las pautas de estructura y el contenido mínimo de los estados financieros, y rige la clasificación corriente y no corriente (doce meses para los pasivos); la norma adoptó la presentación de activos y pasivos corrientes. Confirma la definición de «Gastos acumulados por pagar» (bs.accrued_expenses_payable)."
-      },
-      {
-        "title": "IAS 37 Provisions, Contingent Liabilities and Contingent Assets",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-37-provisions-contingent-liabilities-and-contingent-assets/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 37 trata la obligación presente y las obligaciones de fecha o importe incierto; respalda que un gasto ya incurrido que no se ha pagado genera una obligación presente. Confirma la definición de «Gastos acumulados por pagar» (bs.accrued_expenses_payable)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -2207,14 +1826,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 37 Provisions, Contingent Liabilities and Contingent Assets",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-37-provisions-contingent-liabilities-and-contingent-assets/",
         "source_type": "accounting_standard",
-        "supports": "NIC 37 define una provisión como una obligación presente de fecha o importe incierto y la distingue de las cuentas por pagar, que sí tienen fecha e importe ciertos. Confirma la definición de «Provisiones corrientes» (bs.current_provisions)."
+        "supports": "\"A provision is a liability of uncertain timing or amount\". Frase textual de IAS 37 Provisions, Contingent Liabilities and Contingent Assets, abierto el 2026-10-15; confirma la definición de «Provisiones corrientes» (bs.current_provisions) (D-035)."
       }
     ]
   }
@@ -2324,14 +1943,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 37 Provisions, Contingent Liabilities and Contingent Assets",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-37-provisions-contingent-liabilities-and-contingent-assets/",
         "source_type": "accounting_standard",
-        "supports": "NIC 37 define una provisión como una obligación presente de fecha o importe incierto y la distingue de las cuentas por pagar, que sí tienen fecha e importe ciertos. Confirma la definición de «Provisiones de largo plazo» (bs.long_term_provisions)."
+        "supports": "\"A provision is a liability of uncertain timing or amount\". Frase textual de IAS 37 Provisions, Contingent Liabilities and Contingent Assets, abierto el 2026-10-15; confirma la definición de «Provisiones de largo plazo» (bs.long_term_provisions) (D-035)."
       }
     ]
   }
@@ -2359,16 +1978,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 fija los requisitos generales de presentación, las pautas de estructura y el contenido mínimo de los estados financieros, y rige la clasificación corriente y no corriente (doce meses para los pasivos); la norma adoptó la presentación de activos y pasivos corrientes. Confirma la definición de «Otros pasivos no corrientes» (bs.other_noncurrent_liabilities)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -2395,16 +2006,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Total de pasivos» (bs.total_liabilities)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -2432,16 +2035,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Total patrimonio» (bs.total_equity)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -2469,21 +2064,14 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
+    "status": "partially_verified",
     "sources": [
       {
         "title": "IAS 32 Financial Instruments: Presentation",
         "organization_or_author": "IFRS Foundation",
         "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-32-financial-instruments-presentation/",
         "source_type": "accounting_standard",
-        "supports": "NIC 32 clasifica los instrumentos financieros en activos, pasivos e instrumentos de patrimonio; la distinción entre pasivo financiero y patrimonio depende de la obligación de entregar. Confirma la definición de «Capital social» (bs.share_capital)."
-      },
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Capital social» (bs.share_capital)."
+        "supports": "\"financial instruments are classified into financial assets, financial liabilities and equity instruments\". Frase textual de IAS 32 Financial Instruments: Presentation, abierto el 2026-10-15; confirma la definición de «Capital social» (bs.share_capital) (D-035)."
       }
     ]
   }
@@ -2512,23 +2100,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 32 Financial Instruments: Presentation",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-32-financial-instruments-presentation/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 32 clasifica los instrumentos financieros en activos, pasivos e instrumentos de patrimonio; la distinción entre pasivo financiero y patrimonio depende de la obligación de entregar. Confirma la definición de «Aportes adicionales de capital» (bs.additional_paid_in_capital)."
-      },
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Aportes adicionales de capital» (bs.additional_paid_in_capital)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -2622,16 +2195,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Utilidades retenidas» (bs.retained_earnings)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -2659,16 +2224,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Resultado del período incluido en patrimonio» (bs.current_year_result_equity)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
@@ -2694,16 +2251,8 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
   "doubtful_synonyms": [],
   "ambiguities": [],
   "research": {
-    "status": "verified",
-    "sources": [
-      {
-        "title": "IAS 1 Presentation of Financial Statements",
-        "organization_or_author": "IFRS Foundation",
-        "url": "https://www.ifrs.org/issued-standards/list-of-standards/ias-1-presentation-of-financial-statements/",
-        "source_type": "accounting_standard",
-        "supports": "NIC 1 exige presentar un juego completo de estados financieros con pautas de estructura y requisitos mínimos de contenido; es el marco de las partidas y subtotales de cada estado. Confirma la definición de «Otros componentes del patrimonio» (bs.other_equity_components)."
-      }
-    ]
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```
