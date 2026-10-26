@@ -69,18 +69,19 @@ Al preparar este contexto, el árbol contenía cambios sin commit en:
 
 Los ajustes de R4 y los harnesses se publican como trabajo pendiente para preservar el estado, no como pruebas aprobadas ni como cierre de tareas. No se ha realizado una ejecución de pruebas nueva para esta publicación.
 
-Para preservar el corte se crearon estos commits locales, todavía pendientes de subir al remoto al redactar este documento:
+Para preservar el corte se crearon estos commits de checkpoint y se subieron a `origin/feat/razones-app-final` con un `git push` normal el 25 de octubre de 2026:
 
 | SHA | Contenido | Estado de verificación |
 |---|---|---|
-| `d6ccad1` | Fixtures de R4 en los dos tests antiguos de Análisis. | La última ejecución focalizada tuvo 5 fallos y 7 aciertos; detenerse según R19. |
-| `98358a0` | Fixtures y harnesses de aceptación 1c / comparación app. | No ejecutados en esta ronda. |
+| `d6ccad1` | Fixtures de R4 en los dos tests antiguos de Análisis. | Subido; la última ejecución focalizada tuvo 5 fallos y 7 aciertos; detenerse según R19. |
+| `98358a0` | Fixtures y harnesses de aceptación 1c / comparación app. | Subido; no ejecutados en esta ronda. |
+| `7123765` | Este contexto maestro. | Subido. |
 
 La comparación R8 de 60/240 celdas **no se ejecutó**. La aceptación 1c tampoco se ejecutó. No se ha retirado todavía ninguna de las 22 lecturas fijas: R5 está pendiente.
 
 ## Publicación y límites de sincronización
 
-Al preparar el checkpoint, `HEAD` y la referencia conocida `origin/feat/razones-app-final` coincidían en `1628a6fa68b2a2f2b5a5598af17ef29b562cc2fd`; las diferencias eran los archivos locales enumerados arriba. El `git fetch origin` de esta sesión falló por una limitación de red/DNS del entorno. Se intentará subir con `git push` normal, nunca force push; si el servidor rechaza el push porque la rama remota avanzó, traer y revisar esos cambios antes de continuar.
+Al preparar el checkpoint, `HEAD` y la referencia conocida `origin/feat/razones-app-final` coincidían en `1628a6fa68b2a2f2b5a5598af17ef29b562cc2fd`; las diferencias eran los archivos locales enumerados arriba. El `git fetch origin` falló por una limitación de red/DNS del entorno, pero el push normal se completó: `origin/feat/razones-app-final` avanzó de `1628a6f` a `7123765`. No hubo force push. Al registrar la actualización de este documento, el árbol de trabajo estaba limpio y no hay PR nuevo abierto.
 
 El reporte detallado de la ejecución anterior está en el espacio de trabajo, fuera del repositorio: `../ronda19-R1-razones-final.md`. Este archivo maestro sí forma parte del repositorio.
 
