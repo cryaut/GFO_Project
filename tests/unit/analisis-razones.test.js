@@ -1,4 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { registrarCuenta } from '../../js/modules/estados/cuentas-registro.js';
+import { obtenerCuenta } from '../../js/modules/estados/cuentas-identificador.js';
+
+const identidad = idCuenta => ({ idCuenta, estado: 'reconocida', metodo: 'id',
+  candidatos: [], origen: 'manual' });
 
 // Un periodo con cuentas de nombre propio y clasificación explícita, como las deja
 // el importador. Utilidad operativa = 1000 − 400 − 200 − 100 = 300.
@@ -21,7 +26,7 @@ function estados(interesesBancarios) {
     estadoResultados['Intereses bancarios'] = interesesBancarios;
     tiposER['Intereses bancarios'] = 'intereses';
   }
-  return {
+  const datos = {
     name: 'Prueba razones', periods: ['2025'],
     balanceGeneral: { '2025': {
       activos: { 'Banco': 300, 'Clientes': 100, 'Mercadería': 100 },
@@ -29,6 +34,19 @@ function estados(interesesBancarios) {
       patrimonio: { 'Capital': 300 }
     } },
     estadoResultados: { '2025': estadoResultados },
+    accountIdentities: {
+      activos: { Banco: identidad('bs.cash_and_equivalents'), Clientes: identidad('bs.trade_receivables'),
+        Mercadería: identidad('bs.inventory_merchandise') },
+      pasivos: { Proveedores: identidad('bs.trade_payables'), 'Préstamo bancario': identidad('bs.long_term_borrowings') },
+      patrimonio: { Capital: identidad('bs.share_capital') },
+      estadoResultados: {
+        'Ingresos por ventas': identidad('is.sales_total'), 'Costo de lo vendido': identidad('is.cost_of_sales_reported'),
+        'Sueldos administrativos': identidad('is.administrative_expenses'), Publicidad: identidad('is.selling_expenses'),
+        'Impuesto sobre la renta': identidad('is.income_tax_expense'),
+        ...(interesesBancarios === undefined ? {} : { 'Intereses bancarios': identidad('is.interest_expense') })
+      }, suplementario: {}
+    },
+    composicionIngresos: { '2025': 'excluye_intereses' },
     accountTypes: {
       activos: { 'Banco': 'efectivo', 'Clientes': 'cxC', 'Mercadería': 'inventario' },
       pasivos: { 'Proveedores': 'cuentasPorPagar', 'Préstamo bancario': 'pasivoLargoPlazo' },
@@ -36,6 +54,14 @@ function estados(interesesBancarios) {
       estadoResultados: tiposER
     }
   };
+  // D-055/D-060: componentes explícitamente sin movimiento de este fixture ficticio.
+  const ceros = ['is.sales_returns', 'is.sales_discounts', 'is.sales_allowances',
+    'is.operating_depreciation', 'is.operating_amortization', 'is.other_operating_expenses',
+    'is.other_operating_income', 'is.nonoperating_income', 'is.noninterest_nonoperating_expenses',
+    'bs.inventory_raw_materials', 'bs.inventory_work_in_process', 'bs.inventory_finished_goods'];
+  return registrarCuenta(datos, ceros.map(id => ({ id,
+    nombre: `Componente sin movimiento ${id}`, grupo: obtenerCuenta(id).grupo,
+    periodo: '2025', importe: 0, confirmado: true })));
 }
 
 // Módulos nuevos en cada caso: el análisis guarda en caché los estados leídos.
@@ -82,11 +108,14 @@ describe('cobertura de intereses', () => {
 });
 
 describe('plazos en días (año de 365)', () => {
-  it('edad del inventario, plazos y ciclo de conversión (CxC con ventas totales)', async () => {
-    const { razones, html } = await cargarAnalisis(estados(60));
+  it('edad del inventario, plazos y ciclo de conversión (CxC con ventas a crédito declaradas)', async () => {
+    const datos = registrarCuenta(estados(60), { id: 'supp.credit_sales',
+      nombre: 'Ventas a crédito declaradas', grupo: 'suplementario', periodo: '2025',
+      importe: 1000, confirmado: true });
+    const { razones, html } = await cargarAnalisis(datos);
     expect(razones.RotInv).toBe(4); // 400 / 100
     expect(razones.edadInventario).toBeCloseTo(91.25, 6);
-    // El modelo no separa ventas a crédito: la rotación de CxC usa las ventas totales.
+    // D-059: el fixture declara ventas a crédito iguales a sus ventas totales.
     expect(razones.RotCxC).toBe(10); // 1000 / 100
     expect(razones.PPC).toBeCloseTo(36.5, 6); // 365 / 10
     // Compras = 400 + inventario (no hay periodo previo): se aproxima con costo de ventas.
@@ -107,8 +136,13 @@ describe('plazos en días (año de 365)', () => {
     dosPeriodos.balanceGeneral['2024'].activos['Mercadería'] = 60; // inventario inicial
     dosPeriodos.balanceGeneral['2024'].pasivos['Proveedores'] = 40;
     dosPeriodos.estadoResultados['2024'] = structuredClone(base.estadoResultados['2025']);
-    const { razones } = await cargarAnalisis(dosPeriodos);
-    // Compras = 400 (CV) + 100 (inv final) − 60 (inv inicial) = 440; CxP prom = (40+50)/2 = 45
+    dosPeriodos.composicionIngresos['2024'] = 'excluye_intereses';
+    // D-060: 430 es construido para reproducir el esperado anterior, no un dato real.
+    const completos = registrarCuenta(dosPeriodos, { id: 'supp.supplier_payments',
+      nombre: 'Pagos declarados del periodo', grupo: 'suplementario', periodo: '2025',
+      importe: 430, confirmado: true });
+    const { razones } = await cargarAnalisis(completos);
+    // Compras a crédito = pagos 430 + (CxP final 50 − inicial 40) = 440; CxP prom = 45.
     expect(razones.rotacionCxP).toBeCloseTo(440 / 45, 6);
     expect(razones.usaComprasReales).toBe(true);
     // Promedio de inventario con ambos periodos presentes: (60 + 100) / 2 = 80
