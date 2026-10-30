@@ -64,6 +64,21 @@ function toAmount(value, label) {
   return number;
 }
 
+// La convención del catálogo se aplica a las cuentas reconocidas. El número de
+// fila solo existe en la importación tabular; en JSON o datos guardados es 0.
+function validarSigno(group, name, value, period, identidad, filas) {
+  if (identidad.estado !== 'reconocida' || !identidad.idCuenta) return;
+  const convencion = obtenerCuenta(identidad.idCuenta)?.convencionSigno;
+  if (!convencion || convencion === 'conservar') return;
+  const fila = filas[`${group}:${name}:${period}`] ?? 0;
+  if (convencion === 'positivo' && value < 0) {
+    throw new Error(`Fila ${fila}, cuenta «${name}», periodo ${period}: esta cuenta se captura en positivo. Quite el signo negativo o los paréntesis. Si es una devolución o un descuento, use su cuenta de deducción.`);
+  }
+  if (convencion === 'negativo' && value > 0) {
+    throw new Error(`Fila ${fila}, cuenta «${name}», periodo ${period}: la depreciación acumulada se captura en negativo.`);
+  }
+}
+
 // Orden cronológico único para todas las vías de entrada (importación, JSON,
 // alta manual y datos existentes): sin él, getPrevPeriod y el "último periodo"
 // dependen del orden de llegada. No muta la entrada.
@@ -83,7 +98,7 @@ export function ordenarPeriodos(periods) {
 
 // Accepts the store shape { balanceGeneral, estadoResultados, periods, ... }
 // or a wrapper { estados: { ... } } such as a full-toolkit export.
-export function normalizeFinancialData(input) {
+export function normalizeFinancialData(input, { filas = {} } = {}) {
   const raw = assertPlainObject(input ?? {}, 'datos');
   const source = (raw.balanceGeneral && raw.estadoResultados) ? raw : raw.estados;
   if (!source || typeof source !== 'object') {
@@ -143,7 +158,9 @@ export function normalizeFinancialData(input) {
       for (const [name, value] of Object.entries(accounts)) {
         clean[name] = toAmount(value, `${group}[${period}].${name}`);
         accountTypes[group][name] = accountType(source, group, name);
-        accountIdentities[group][name] = identidadCuenta(source, group, name);
+        const identidad = identidadCuenta(source, group, name);
+        accountIdentities[group][name] = identidad;
+        validarSigno(group, name, clean[name], period, identidad, filas);
       }
       cleanBg[group] = clean;
     }
@@ -155,7 +172,9 @@ export function normalizeFinancialData(input) {
     for (const [name, value] of Object.entries(periodEr)) {
       cleanEr[name] = toAmount(value, `estadoResultados[${period}].${name}`);
       accountTypes.estadoResultados[name] = accountType(source, 'estadoResultados', name);
-      accountIdentities.estadoResultados[name] = identidadCuenta(source, 'estadoResultados', name);
+      const identidad = identidadCuenta(source, 'estadoResultados', name);
+      accountIdentities.estadoResultados[name] = identidad;
+      validarSigno('estadoResultados', name, cleanEr[name], period, identidad, filas);
     }
     estadoResultados[period] = cleanEr;
   }
@@ -176,10 +195,13 @@ export function normalizeFinancialData(input) {
           const cuenta = obtenerCuenta(name);
           if (cuenta?.rol !== 'reported_total') throw new Error('Total reportado inválido');
           if (typeof value.nombre !== 'string' || !value.nombre.trim() || value.nombre.length > 120) throw new Error('Nombre de cuenta inválido');
-          target[period][name] = { nombre: value.nombre, grupo: cuenta.grupo, importe: toAmount(value.importe, name) };
-          accountIdentities[cuenta.grupo][value.nombre] = source.accountIdentities?.[cuenta.grupo]?.[value.nombre]
+          const importe = toAmount(value.importe, name);
+          const identidad = source.accountIdentities?.[cuenta.grupo]?.[value.nombre]
             ? identidadCuenta(source, cuenta.grupo, value.nombre)
             : { idCuenta: cuenta.id, estado: 'reconocida', metodo: 'id', candidatos: [], origen: 'legado' };
+          target[period][name] = { nombre: value.nombre, grupo: cuenta.grupo, importe };
+          accountIdentities[cuenta.grupo][value.nombre] = identidad;
+          validarSigno(cuenta.grupo, value.nombre, importe, period, identidad, filas);
         } else {
           if (!name.trim() || name.length > 120) throw new Error('Nombre de cuenta inválido');
           target[period][name] = toAmount(value, name);

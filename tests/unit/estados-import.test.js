@@ -4,6 +4,7 @@ import {
   parseAmountCell, parseDelimited, rowsToFinancialData,
   sheetsToFinancialData, tableTextToFinancialData, tabularTemplateCSV
 } from '../../js/modules/estados/estados-import.js';
+import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -142,6 +143,40 @@ describe('rowsToFinancialData', () => {
   it('rechaza tablas vacías o encabezados sin Cuenta', () => {
     expect(() => rowsToFinancialData([])).toThrow(/vacía/);
     expect(() => rowsToFinancialData([['Periodo', 'Importe'], ['2024', 1]])).toThrow(/Cuenta/);
+  });
+});
+
+describe('convención de signos del catálogo', () => {
+  const positivo = 'esta cuenta se captura en positivo. Quite el signo negativo o los paréntesis. Si es una devolución o un descuento, use su cuenta de deducción.';
+
+  it('rechaza un costo de ventas negativo con la fila exacta', () => {
+    expect(() => tableTextToFinancialData('Cuenta,Estado,2024\nCosto de Ventas,Resultados,-400'))
+      .toThrow(`Fila 2, cuenta «Costo de Ventas», periodo 2024: ${positivo}`);
+  });
+
+  it('rechaza un gasto administrativo negativo con la fila exacta', () => {
+    expect(() => tableTextToFinancialData('Cuenta,Estado,2024\nGastos de Administracion,Resultados,-200'))
+      .toThrow(`Fila 2, cuenta «Gastos de Administracion», periodo 2024: ${positivo}`);
+  });
+
+  it('rechaza la depreciación acumulada positiva y acepta la negativa', () => {
+    expect(() => tableTextToFinancialData('Cuenta,Grupo,2024\nDepreciacion Acumulada,activos,200'))
+      .toThrow('Fila 2, cuenta «Depreciacion Acumulada», periodo 2024: la depreciación acumulada se captura en negativo.');
+    const datos = tableTextToFinancialData('Cuenta,Grupo,2024\nDepreciacion Acumulada,activos,-200');
+    expect(datos.balanceGeneral['2024'].activos['Depreciacion Acumulada']).toBe(-200);
+  });
+
+  it('no valida las cuentas de convención conservar', () => {
+    const datos = tableTextToFinancialData('Cuenta,Grupo,2024\nUtilidad del Ejercicio,patrimonio,-50');
+    expect(datos.balanceGeneral['2024'].patrimonio['Utilidad del Ejercicio']).toBe(-50);
+  });
+
+  it('en datos guardados sin fila usa 0', () => {
+    expect(() => normalizeFinancialData({
+      periods: ['2024'],
+      balanceGeneral: { '2024': { activos: {}, pasivos: {}, patrimonio: {} } },
+      estadoResultados: { '2024': { 'Costo de Ventas': -400 } }
+    })).toThrow(`Fila 0, cuenta «Costo de Ventas», periodo 2024: ${positivo}`);
   });
 });
 
