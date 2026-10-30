@@ -72,6 +72,14 @@ it('imports external JSON through Estados, previews, saves once and reloads', as
       pasivos: { 'Proveedor regional': 'cuentasPorPagar' },
       patrimonio: { 'Aportes socios': 'patrimonio' },
       estadoResultados: { 'Servicios profesionales': 'ventas' }
+    },
+    accountIdentities: {
+      patrimonio: {
+        'Aportes socios': { idCuenta: 'bs.additional_paid_in_capital', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      },
+      estadoResultados: {
+        'Servicios profesionales': { idCuenta: 'is.service_revenue', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      }
     }
   };
   input.files = [{ name: 'consultora.json', contents: JSON.stringify(external) }];
@@ -185,6 +193,18 @@ it('Analysis shows extended ratios from imported custom accounts', async () => {
         'Ingresos por consultoría': 'ventas', 'Papelería y fletes': 'costoVentas',
         'Renta oficina': 'gastosAdmin', 'Publicidad': 'gastosVentas'
       }
+    },
+    accountIdentities: {
+      pasivos: {
+        'Préstamo bancario': { idCuenta: 'bs.long_term_borrowings', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      },
+      patrimonio: {
+        'Socios fundadores': { idCuenta: 'bs.additional_paid_in_capital', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      },
+      estadoResultados: {
+        'Ingresos por consultoría': { idCuenta: 'is.service_revenue', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' },
+        'Papelería y fletes': { idCuenta: 'is.service_cost', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      }
     }
   });
   const page = element();
@@ -224,6 +244,18 @@ it('Reportes resumes imported custom accounts instead of fixed account names', a
       pasivos: { 'Préstamo bancario': 'pasivoLargoPlazo' },
       patrimonio: { 'Socios fundadores': 'patrimonio' },
       estadoResultados: { 'Ingresos por consultoría': 'ventas', 'Papelería y fletes': 'costoVentas' }
+    },
+    accountIdentities: {
+      pasivos: {
+        'Préstamo bancario': { idCuenta: 'bs.long_term_borrowings', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      },
+      patrimonio: {
+        'Socios fundadores': { idCuenta: 'bs.additional_paid_in_capital', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      },
+      estadoResultados: {
+        'Ingresos por consultoría': { idCuenta: 'is.service_revenue', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' },
+        'Papelería y fletes': { idCuenta: 'is.service_cost', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      }
     }
   });
   const page = element();

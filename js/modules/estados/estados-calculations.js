@@ -13,7 +13,7 @@ export function inferAccountType(group, name) {
 export function resolveAccountType(data, group, name) {
   const explicit = data?.accountTypes?.[group];
   const identidad = data?.accountIdentities?.[group]?.[name];
-  if (identidad && identidad.origen !== 'legado' && identidad.estado !== 'reconocida') return '';
+  if (identidad && identidad.estado !== 'reconocida') return '';
   return explicit && Object.hasOwn(explicit, name)
     ? explicit[name] : inferAccountType(group, name);
 }

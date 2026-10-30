@@ -30,6 +30,17 @@ function estadosMuno() {
     estadoResultados: {
       2023: resultados(850000, 510000, 120000, 85000, 15000, 10000),
       2024: resultados(920000, 545000, 130000, 90000, 18000, 12000)
+    },
+    accountIdentities: {
+      pasivos: {
+        'Pasivo Corto Plazo': { idCuenta: 'bs.other_current_liabilities', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' },
+        'Provisiones': { idCuenta: 'bs.current_provisions', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' },
+        'Pasivo Largo Plazo': { idCuenta: 'bs.long_term_borrowings', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' }
+      },
+      estadoResultados: {
+        'Otros Ingresos': { idCuenta: 'is.nonoperating_income', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' },
+        'Otros Gastos': { idCuenta: 'is.noninterest_nonoperating_expenses', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' }
+      }
     }
   });
 }

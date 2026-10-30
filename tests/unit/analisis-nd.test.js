@@ -15,7 +15,14 @@ function datosBase(dosPeriodos = true) {
     estadoResultados: Object.fromEntries(periods.map(p => [p, {
       Ventas: 1000, 'Costo de Ventas': 400, 'Gastos de Administracion': 200,
       'Gastos de Ventas': 100, 'Gastos por Intereses': 20, 'Impuesto sobre la Renta': 50
-    }]))
+    }])),
+    // El nombre es propio del ejercicio; la identidad confirma el candidato
+    // compatible con el tipo que usaba el adaptador legado.
+    accountIdentities: {
+      pasivos: {
+        'Prestamo Largo Plazo': { idCuenta: 'bs.long_term_borrowings', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' }
+      }
+    }
   });
 }
 

@@ -176,6 +176,18 @@ describe('Reportes: utilidad neta y periodo solicitado (ronda 15)', () => {
         'Gasto extraordinario': 'otrosGastos', 'Intereses pagados': 'intereses',
         'Renta del ejercicio': 'impuestos'
       }
+    },
+    accountIdentities: {
+      pasivos: {
+        Prestamo: { idCuenta: 'bs.long_term_borrowings', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      },
+      patrimonio: {
+        Aportes: { idCuenta: 'bs.additional_paid_in_capital', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      },
+      estadoResultados: {
+        Servicios: { idCuenta: 'is.service_revenue', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' },
+        Insumos: { idCuenta: 'is.service_cost', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      }
     }
   });
 

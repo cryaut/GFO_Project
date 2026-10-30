@@ -2,7 +2,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { registrarCuenta } from '../../js/modules/estados/cuentas-registro.js';
 import { montoCuenta, consultarMontoCuenta, resumenIdentificacion } from '../../js/modules/estados/cuentas-identificador.js';
 import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
-import { computeFinancialTotals } from '../../js/modules/estados/estados-calculations.js';
+import { computeFinancialTotals, resolveAccountType } from '../../js/modules/estados/estados-calculations.js';
 import { rowsToFinancialData, tableTextToFinancialData, TABULAR_TEMPLATE_ROWS } from '../../js/modules/estados/estados-import.js';
 
 const vacio = () => ({ name: 'Prueba', periods: [], balanceGeneral: {}, estadoResultados: {} });
@@ -16,6 +16,48 @@ it('el registro manual y la importación guardan la misma forma normalizada e id
   expect(manual.accountIdentities.activos.Efectivo.idCuenta).toBe(importado.accountIdentities.activos.Efectivo.idCuenta);
   expect(normalizeFinancialData(manual)).toEqual(manual);
   expect(montoCuenta(manual, '2024', 'bs.cash_and_equivalents')).toBe(12);
+});
+
+it('una identidad sugerida da el mismo resultado sin importar su origen', () => {
+  const conOrigen = origen => normalizeFinancialData({
+    name: 'Misma regla', periods: ['2024'],
+    balanceGeneral: { '2024': { activos: { Efetivo: 30 }, pasivos: {}, patrimonio: {} } },
+    estadoResultados: { '2024': {} },
+    accountTypes: { activos: { Efetivo: 'efectivo' } },
+    accountIdentities: {
+      activos: {
+        Efetivo: {
+          idCuenta: null, estado: 'sugerida', metodo: 'similitud', origen,
+          candidatos: [{ id: 'bs.cash_and_equivalents', puntuacion: 1 }]
+        }
+      }
+    }
+  });
+  const legado = conOrigen('legado');
+  const importado = conOrigen('importacion');
+  // El tipo explícito no confirma una identidad sugerida: antes, el origen
+  // legado la dejaba pasar y la importación no.
+  expect(resolveAccountType(legado, 'activos', 'Efetivo')).toBe('');
+  expect(resolveAccountType(importado, 'activos', 'Efetivo')).toBe('');
+  expect(computeFinancialTotals(legado, '2024')).toEqual(computeFinancialTotals(importado, '2024'));
+  expect(computeFinancialTotals(legado, '2024').totalActivos).toBeNull();
+});
+
+it('una identidad reconocida de datos viejos calcula igual que una nueva', () => {
+  const datos = origen => normalizeFinancialData({
+    name: 'Identidad confirmada', periods: ['2024'],
+    balanceGeneral: { '2024': { activos: {}, pasivos: { 'Prestamo Largo Plazo': 150 }, patrimonio: {} } },
+    estadoResultados: { '2024': {} },
+    accountIdentities: {
+      pasivos: {
+        'Prestamo Largo Plazo': {
+          idCuenta: 'bs.long_term_borrowings', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen
+        }
+      }
+    }
+  });
+  expect(computeFinancialTotals(datos('legado'), '2024').totalPasivos).toBe(150);
+  expect(computeFinancialTotals(datos('importacion'), '2024').totalPasivos).toBe(150);
 });
 
 it('la plantilla termina con siete cuentas reconocidas', () => {

@@ -5,6 +5,25 @@ import { estadosUI } from './estados-ui.js';
 export const DEMO_MUNOMODA = {
   name: 'MUNO MODA S.A.',
   periods: ['2023', '2024'],
+  // La demo conserva sus nombres y cifras; estas identidades confirman el
+  // candidato compatible con el tipo que ya usaba cada cuenta ambigua.
+  accountIdentities: {
+    activos: {
+      'Equipos': { idCuenta: 'bs.ppe_machinery', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' }
+    },
+    pasivos: {
+      'Pasivo Corto Plazo': { idCuenta: 'bs.other_current_liabilities', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' },
+      'Provisiones': { idCuenta: 'bs.current_provisions', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' },
+      'Pasivo Largo Plazo': { idCuenta: 'bs.long_term_borrowings', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' }
+    },
+    patrimonio: {
+      'Reservas': { idCuenta: 'bs.legal_reserve', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' }
+    },
+    estadoResultados: {
+      'Otros Ingresos': { idCuenta: 'is.nonoperating_income', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' },
+      'Otros Gastos': { idCuenta: 'is.noninterest_nonoperating_expenses', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' }
+    }
+  },
   balanceGeneral: {
     '2023': {
       activos: {
@@ -92,6 +111,7 @@ export function loadDemo() {
   store.set('estados.balanceGeneral', DEMO_MUNOMODA.balanceGeneral);
   store.set('estados.estadoResultados', DEMO_MUNOMODA.estadoResultados);
   store.set('estados.periods', DEMO_MUNOMODA.periods);
+  store.set('estados.accountIdentities', DEMO_MUNOMODA.accountIdentities);
   return DEMO_MUNOMODA;
 }
 

@@ -34,6 +34,19 @@ function estados(interesesBancarios) {
       pasivos: { 'Proveedores': 'cuentasPorPagar', 'Préstamo bancario': 'pasivoLargoPlazo' },
       patrimonio: { 'Capital': 'patrimonio' },
       estadoResultados: tiposER
+    },
+    // Nombres propios: la identidad confirma el candidato compatible con el
+    // tipo explícito, como haría el alta manual o la importación con id.
+    accountIdentities: {
+      pasivos: {
+        'Préstamo bancario': { idCuenta: 'bs.long_term_borrowings', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      },
+      patrimonio: {
+        'Capital': { idCuenta: 'bs.share_capital', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      },
+      estadoResultados: {
+        'Ingresos por ventas': { idCuenta: 'is.sales_total', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      }
     }
   };
 }
