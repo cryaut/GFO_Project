@@ -4,6 +4,7 @@ import {
   parseAmountCell, parseDelimited, rowsToFinancialData,
   sheetsToFinancialData, tableTextToFinancialData, tabularTemplateCSV
 } from '../../js/modules/estados/estados-import.js';
+import { computeFinancialTotals } from '../../js/modules/estados/estados-calculations.js';
 import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
 
 afterEach(() => vi.unstubAllGlobals());
@@ -215,3 +216,44 @@ describe('importStatementFile', () => {
   });
 });
 
+
+describe('columnas genéricas como totales reportados (ronda 2, T3)', () => {
+  // «Ventas», «Costo de Ventas» e «Inventario» se reconocen como totales
+  // reportados al importar. Sin detalles, los valores no cambian.
+  it('(a) solo la columna genérica: los valores se conservan y no hay avisos', () => {
+    const csv = [
+      'Estado,Grupo,Cuenta,2024',
+      'Balance,Activos,Efectivo,500',
+      'Balance,Activos,Inventario,120',
+      'Balance,Pasivos,Cuentas por Pagar,150',
+      'Balance,Patrimonio,Capital Social,470',
+      'Resultados,,Ventas,920000',
+      'Resultados,,Costo de Ventas,545000'
+    ].join('\n');
+    const data = tableTextToFinancialData(csv, { name: 'Genéricas' });
+    expect(data.estadoResultados['2024']).toEqual({});
+    expect(data.reportedTotals['2024']['is.sales_total'].importe).toBe(920000);
+    expect(data.reportedTotals['2024']['is.cost_of_sales_reported'].importe).toBe(545000);
+    expect(data.reportedTotals['2024']['bs.inventory_total'].importe).toBe(120);
+    const t = computeFinancialTotals(normalizeFinancialData(data), '2024');
+    expect(t.ventasBrutas).toBe(920000);
+    expect(t.costoVentas).toBe(545000);
+    expect(t.inventario).toBe(120);
+    expect(t.notAvailableReasons.filter(r => r.motivo === 'reported_subtotal_mismatch')).toEqual([]);
+  });
+
+  it('(b) columna genérica con detalles que no suman: gana el reportado y avisa la diferencia', () => {
+    const csv = [
+      'Estado,Grupo,Cuenta,2024',
+      'Resultados,,Ventas,1000',
+      'Resultados,,Ventas de Productos,800'
+    ].join('\n');
+    const data = tableTextToFinancialData(csv, { name: 'Genéricas' });
+    expect(data.reportedTotals['2024']['is.sales_total'].importe).toBe(1000);
+    const t = computeFinancialTotals(normalizeFinancialData(data), '2024');
+    expect(t.ventasBrutas).toBe(1000);
+    expect(t.notAvailableReasons).toContainEqual(expect.objectContaining({
+      motivo: 'reported_subtotal_mismatch', diferencia: 200
+    }));
+  });
+});
