@@ -49,11 +49,13 @@ Cambios de expectativas ya existentes; las pruebas nuevas se listan al final.
 | `estados-import.test.js` — tabla con inventario | `{ Efectivo: 150, Inventario: 80 }` en activos | `{ Efectivo: 150 }` y `reportedTotals['2024']['bs.inventory_total']` 80 | D-062 |
 | `estados-import.test.js` — `sheetsToFinancialData` | `{ Ventas: 300 }` en el estado | `{}` y `reportedTotals['2024']['is.sales_total']` 300 | D-062 |
 | `estados-import-formatos.test.js` — formato de importes | Inventario 1234567.89 y Ventas 500000 en los estados | En `reportedTotals` (`bs.inventory_total` y `is.sales_total`) | D-062 |
-| `cuentas-revision.test.js` — «los 5000 pendientes corrientes solo anulan sus totales posibles…» | ER `{ Ventas: 300 }` por periodo | ER `{ Ventas: 300, 'Costo de Ventas': 0 }` (cero declarado del costo) | D-062 |
-| `razones-mercado.test.js` — fixture de mercado | `estadoResultados['2024'] = { Ventas: 100 }` | `{ Ventas: 100, 'Costo de Ventas': 0 }` | D-062 |
+| `cuentas-revision.test.js` — «los 5000 pendientes corrientes solo anulan sus totales posibles…» | ER `{ Ventas: 300 }` por periodo | ER `{ Ventas: 300, 'Costo de Ventas': 0 }` (cero declarado del costo) | D-060 caso 1 |
+| `razones-mercado.test.js` — fixture de mercado | `estadoResultados['2024'] = { Ventas: 100 }` | `{ Ventas: 100, 'Costo de Ventas': 0 }` | D-060 caso 1 |
 | `cuentas-identificador.test.js` — «conserva las 71 identidades del PR #10» | `divergenciasD055` con 55 cuentas | 52 cuentas; las tres deducciones de ventas pasan a `requires_data` | D-063 |
 
 Ninguna prueba cambió de valor esperado por una causa ajena a D-061 a D-065. Las demás diferencias del diff son agregados de 0 explícito (sección 6) y pruebas nuevas:
+
+Nota: los dos fixtures con «Costo de Ventas: 0» se atribuyen a **D-060 caso 1** (completar entradas con ceros explícitos; el esperado no cambia), decisión del encargo de la ronda 19 de razones (`instrucciones_carlos_ronda19.md`); su alta en `docs/decisiones.md` corresponde a esa rama. Corregido en la ronda 2 de Estados (`estados-R2-reporte.md`).
 
 - R1-2: pruebas de igualdad de resultados entre vías (interfaz, importación, JSON) en 10 archivos.
 - R1-3: 35 líneas en `estados-import.test.js` para la compuerta de signos (positivo, negativo, conservar).
