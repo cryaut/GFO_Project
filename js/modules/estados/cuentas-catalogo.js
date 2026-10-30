@@ -20,6 +20,7 @@ export const TIPOS_APP = {
   ],
   'estadoResultados': [
     'ventas',
+    'deduccionesVentas',
     'costoVentas',
     'gastosAdmin',
     'gastosVentas',
@@ -1947,7 +1948,7 @@ export const CUENTAS_CATALOGO = [
       'Rebajas y bonificaciones sobre ventas'
     ],
     'sinonimosDudosos': [],
-    'tipoApp': null,
+    'tipoApp': 'deduccionesVentas',
     'ambiguedades': [],
     'estadoInvestigacion': 'partially_verified',
     'fuentes': []
@@ -1965,7 +1966,7 @@ export const CUENTAS_CATALOGO = [
       'Descuentos concedidos sobre ventas'
     ],
     'sinonimosDudosos': [],
-    'tipoApp': null,
+    'tipoApp': 'deduccionesVentas',
     'ambiguedades': [],
     'estadoInvestigacion': 'partially_verified',
     'fuentes': []
@@ -1984,7 +1985,7 @@ export const CUENTAS_CATALOGO = [
       'ventas devueltas'
     ],
     'sinonimosDudosos': [],
-    'tipoApp': null,
+    'tipoApp': 'deduccionesVentas',
     'ambiguedades': [],
     'estadoInvestigacion': 'partially_verified',
     'fuentes': []

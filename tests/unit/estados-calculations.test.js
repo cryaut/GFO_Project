@@ -247,6 +247,44 @@ describe('computeFinancialTotals', () => {
     expect(t.notAvailableReasons).toEqual([]);
   });
 
+  it('D-064: resta las deducciones de ventas y conserva la bruta como trazabilidad', () => {
+    const datos = conEstados(
+      { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { 'Capital Social': 100 } },
+      {
+        Ventas: 1000, 'Devoluciones sobre ventas': 50, 'Descuentos sobre ventas': 20,
+        'Rebajas sobre ventas': 10, 'Costo de Ventas': 400
+      }
+    );
+    const t = computeFinancialTotals(datos, '2024');
+    expect(t.ventasBrutas).toBe(1000);
+    expect(t.ventas).toBe(920);
+    expect(t.utilidadBruta).toBe(520);
+    expect(t.utilidadNeta).toBe(520);
+    expect(t.notAvailableReasons).toEqual([]);
+  });
+
+  it('D-064: el total de ventas brutas reportado no anula la resta de deducciones', () => {
+    const datos = conEstados(
+      { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { 'Capital Social': 100 } },
+      {
+        'Ventas totales': 1000, 'Devoluciones sobre ventas': 50, 'Descuentos sobre ventas': 20,
+        'Rebajas sobre ventas': 10, 'Costo de Ventas': 400
+      }
+    );
+    const t = computeFinancialTotals(datos, '2024');
+    expect(t.ventasBrutas).toBe(1000);
+    expect(t.ventas).toBe(920);
+    expect(t.utilidadBruta).toBe(520);
+    expect(t.notAvailableReasons).toEqual([]);
+  });
+
+  it('D-064: el catálogo clasifica las deducciones y el selector las ofrece', () => {
+    expect(ACCOUNT_TYPES.estadoResultados).toContain('deduccionesVentas');
+    expect(inferAccountType('estadoResultados', 'Devoluciones sobre ventas')).toBe('deduccionesVentas');
+    expect(inferAccountType('estadoResultados', 'Descuentos sobre ventas')).toBe('deduccionesVentas');
+    expect(inferAccountType('estadoResultados', 'Rebajas sobre ventas')).toBe('deduccionesVentas');
+  });
+
   it('deja utilidad neta indeterminada si hay cuentas de ER sin clasificar', () => {
     const conDesconocida = {
       periods: ['2024'],

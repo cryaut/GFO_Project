@@ -15,6 +15,7 @@ const LABELS = {
   depreciacionAcumulada: 'Depreciación acumulada (negativa)', cuentasPorPagar: 'Cuentas por pagar operativas',
   pasivoCortoPlazo: 'Deuda financiera corriente', provisiones: 'Provisiones corrientes operativas',
   pasivoLargoPlazo: 'Pasivos no corrientes', patrimonio: 'Patrimonio', ventas: 'Ventas',
+  deduccionesVentas: 'Deducciones de ventas (devoluciones, descuentos y rebajas)',
   costoVentas: 'Costo de ventas', gastosAdmin: 'Gastos administrativos', gastosVentas: 'Gastos de ventas',
   otrosIngresos: 'Otros ingresos', otrosGastos: 'Otros gastos', intereses: 'Gastos financieros', impuestos: 'Impuestos'
 };

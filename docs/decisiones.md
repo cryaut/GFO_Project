@@ -109,6 +109,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-061 | Convención de signos del catálogo | Vigente |
 | D-062 | El total reportado nunca se suma a sus detalles | Vigente |
 | D-063 | Ausencia según la política del catálogo | Vigente |
+| D-064 | Ventas netas: la cuenta `ventas` resta las deducciones de ventas | Vigente |
 
 ## Decisiones
 
@@ -1348,3 +1349,24 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 **Para revertirla.** Registrar la decisión que la reemplace, devolver las tres políticas a `zero_if_not_reported`, retirar la exigencia de depreciación y ajustar los ceros explícitos y las pruebas de aceptación.
 
 **Referencias.** `instrucciones_carlos_estados_R1-R2.md`, R1-4 y tabla de aceptación; `tests/unit/estados-calculations.test.js`; `tests/unit/cuentas-identificador.test.js`.
+
+### D-064 — Ventas netas
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/estados/cuentas-catalogo.js`, `estados-calculations.js`, `estados-ui.js`
+
+**Contexto.** La cuenta `ventas` de los totales sumaba cualquier ingreso de ventas sin restar devoluciones, descuentos ni rebajas, así que las cifras de ventas, utilidad bruta y utilidad neta quedaban infladas cuando el ejercicio declaraba deducciones.
+
+**Opciones.**
+1. `ventas` pasa a ser ventas netas (ventas menos deducciones) y se conserva `ventasBrutas` solo como dato de trazabilidad — coincide con `derived.net_sales` de los JSON de razones.
+2. Mantener `ventas` bruta y agregar un campo aparte de ventas netas — evita cambiar cifras visibles, pero deja dos ventas distintas y el Análisis seguiría consumiendo la bruta.
+
+**Decisión.** Opción 1. El catálogo agrega el tipo `deduccionesVentas` al grupo `estadoResultados` y las tres cuentas de deducción adoptan ese `tipoApp`. `computeFinancialTotals` calcula `ventas` = ventas menos `deduccionesVentas`, y `utilidadBruta` = `ventas` menos `costoVentas`. `ventasBrutas` se conserva sin usarse en los cálculos. El selector de clasificación de la interfaz ofrece `deduccionesVentas`.
+
+**Consecuencias.** El caso 10 de la tabla de aceptación produce ventas netas 950 con devoluciones 50 sobre ventas 1,000. Los ejercicios con ceros explícitos en las tres deducciones no cambian de cifra. Un total de ventas netas reportado (`is.net_sales_reported`) sigue mandando sobre el cálculo según D-062.
+
+**Para revertirla.** Registrar la decisión que la reemplace, quitar `deduccionesVentas` de `TIPOS_APP`, devolver el `tipoApp` nulo de las tres cuentas y dejar `ventas` sin restar deducciones.
+
+**Referencias.** `instrucciones_carlos_estados_R1-R2.md`, R1-5 y tabla de aceptación; `derived.net_sales` de los JSON de razones.
