@@ -744,17 +744,31 @@ Añade `notAvailableReasons`: motivos originales de los totales con `periodo`, m
 ## estados-calculations.js (selección)
 
 #### `computeFinancialTotals(data, period)`
-Suma los tipos y calcula los agregados compartidos, preservando las fórmulas existentes. Devuelve totales, `unclassified`, `classificationComplete` y `notAvailableReasons: Array<{ group, name, motivo, campos }>`.
+Calcula los agregados compartidos. Devuelve totales, `unclassified`, `classificationComplete` y `notAvailableReasons: Array<{ group, name, motivo, campos }>`.
+
+Un total reportado (`rol: reported_total`) es el valor de su tipo y se compara con la suma de sus detalles del mismo tipo; si la diferencia supera 0.01, manda el total y se registra `reported_subtotal_mismatch` con la diferencia (D-062). Un subtotal sin detalles ni total propio en un grupo con total reportado es N/D, nunca 0. `ventas` es ventas netas (ventas menos `deduccionesVentas`) y `ventasBrutas` queda como trazabilidad (D-064). Si el catálogo exige una cuenta ausente (`requires_data`), los totales afectados son N/D con motivo `missing_required_account_data`; un cero declarado cuenta como dato (D-063).
 
 Una cuenta sin tipo con importe cero no aplica al cálculo; permanece pendiente de identificación. Con importe distinto de cero, incluso de origen legado, se anulan sus tipos/subtotales posibles y el total del grupo. Se usa clasificación explícita o candidatos; si hay conflicto de contexto se conservan ambas posibilidades. Sin contexto se consideran todos los tipos de su grupo. Una fila sin grupo y con importe anula todos los totales. Los saldos ausentes no se completan con cero.
 
 - **Ejemplo**: cuenta pendiente de `activosCorrientesOtros` con 5000 → ese tipo, `activosCorrientes` y `totalActivos` son null; `activosFijos` conserva su valor.
+
+#### `validateFinancialData(data)`
+Por cada periodo calcula los tres totales y evalúa el equilibrio A = P + O con la tolerancia de un centavo.
+
+- **Retorno**: `Array<{ period, totalActivos, totalPasivos, totalPatrimonio, difference, balanced, diagnostico }>`; `difference` y `balanced` son `null`/`false` si un total es N/D. `diagnostico` es «Falta incluir el resultado del ejercicio en el patrimonio.» cuando el descuadre coincide con la utilidad neta del periodo (diferencia de 0.01 o menos) y `null` en los demás casos.
 
 #### `resolveAccountType(data, group, name)`
 Tipo de una cuenta: el de `data.accountTypes[group][name]` si existe (solo propiedades propias); si no, `inferAccountType(group, name)`. Es la misma regla que aplica `computeFinancialTotals`.
 
 - **Retorno**: `string` — un tipo de `ACCOUNT_TYPES`, o `''` si no se reconoce
 - **Ejemplo**: `resolveAccountType({}, 'estadoResultados', 'Costo de ventas')` → `'costoVentas'`
+
+#### `seleccionarPeriodos({ periodos, seleccion, maximo })`
+D-065: qué periodos se muestran en la vista multiperiodo de Estados. Los cálculos nunca dependen de la selección. `periodos` llega en su orden de presentación (la interfaz usa `ordenarPeriodos`); sin `seleccion`, los predeterminados son todos los periodos si hay `maximo` (4) o menos y los dos más recientes si hay más; una `seleccion` dada manda mientras sus nombres existan y nunca supera el máximo.
+
+- **Constante**: `MAXIMO_PERIODOS_VISIBLES = 4`
+- **Retorno**: `{ visibles, predeterminados, puedeAgregar }`
+- **Ejemplo**: `seleccionarPeriodos({ periodos: ['2020','2021','2022','2023','2024','2025'] })` → `{ visibles: ['2024','2025'], predeterminados: ['2024','2025'], puedeAgregar: true }`
 
 ---
 
