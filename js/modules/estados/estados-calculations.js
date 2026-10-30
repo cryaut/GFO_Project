@@ -264,12 +264,17 @@ export function computeFinancialTotals(data, period) {
 
 export function validateFinancialData(data) {
   return (data.periods || []).map(period => {
-    const { totalActivos, totalPasivos, totalPatrimonio } = computeFinancialTotals(data, period);
+    const { totalActivos, totalPasivos, totalPatrimonio, utilidadNeta } = computeFinancialTotals(data, period);
     const complete = [totalActivos, totalPasivos, totalPatrimonio].every(value => value !== null);
     const difference = complete ? totalActivos - totalPasivos - totalPatrimonio : null;
+    const balanced = complete && Math.abs(difference) <= 0.01 + Number.EPSILON * Math.max(1, Math.abs(totalActivos));
+    // Un cuadre que falta por la utilidad del periodo apunta a la causa, no a un error del balance.
+    const diagnostico = !balanced && difference !== null && utilidadNeta !== null
+      && Math.abs(difference - utilidadNeta) <= 0.01
+      ? 'Falta incluir el resultado del ejercicio en el patrimonio.' : null;
     return {
       period, totalActivos, totalPasivos, totalPatrimonio, difference,
-      balanced: complete && Math.abs(difference) <= 0.01 + Number.EPSILON * Math.max(1, Math.abs(totalActivos))
+      balanced, diagnostico
     };
   });
 }

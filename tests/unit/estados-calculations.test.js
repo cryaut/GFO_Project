@@ -359,6 +359,41 @@ describe('validateFinancialData', () => {
     const [r] = validateFinancialData(descuadrado);
     expect(r.balanced).toBe(false);
     expect(r.difference).toBe(1);
+    expect(r.diagnostico).toBeNull();
+  });
+
+  it('diagnostica la utilidad del periodo faltante en el patrimonio', () => {
+    const sinResultado = {
+      periods: ['2024'],
+      balanceGeneral: { '2024': { activos: { 'Efectivo': 100 }, pasivos: {}, patrimonio: { 'Capital Social': 40 } } },
+      estadoResultados: {
+        '2024': {
+          'Ventas': 100, 'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0,
+          'Rebajas sobre ventas': 0, 'Costo de Ventas': 40
+        }
+      }
+    };
+    const [r] = validateFinancialData(sinResultado);
+    expect(r.balanced).toBe(false);
+    expect(r.difference).toBe(60);
+    expect(r.diagnostico).toBe('Falta incluir el resultado del ejercicio en el patrimonio.');
+  });
+
+  it('no diagnostica cuando el descuadre no coincide con la utilidad neta', () => {
+    const otroDescuadre = {
+      periods: ['2024'],
+      balanceGeneral: { '2024': { activos: { 'Efectivo': 100 }, pasivos: {}, patrimonio: { 'Capital Social': 20 } } },
+      estadoResultados: {
+        '2024': {
+          'Ventas': 100, 'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0,
+          'Rebajas sobre ventas': 0, 'Costo de Ventas': 40
+        }
+      }
+    };
+    const [r] = validateFinancialData(otroDescuadre);
+    expect(r.balanced).toBe(false);
+    expect(r.difference).toBe(80);
+    expect(r.diagnostico).toBeNull();
   });
 
   it('detecta que el demo MUNO MODA viene descuadrado de fábrica', () => {

@@ -35,6 +35,11 @@ it.each(CASOS)('reconoce %s en %s como %s, sin falsos positivos del corpus', (no
   expect(identificarCuenta(nombre, { grupo })).toMatchObject({ estado: 'reconocida', id });
 });
 
+it('reconoce el alias "Resultado del ejercicio" como resultado del periodo en patrimonio', () => {
+  expect(identificarCuenta('Resultado del ejercicio', { grupo: 'patrimonio' }))
+    .toMatchObject({ estado: 'reconocida', id: 'bs.current_year_result_equity' });
+});
+
 const AMBIGUAS = [
   ['Equipos', 'activos', ['bs.ppe_machinery', 'bs.ppe_furniture']],
   ['Pasivo Corto Plazo', 'pasivos', ['bs.short_term_borrowings', 'bs.other_current_liabilities']],

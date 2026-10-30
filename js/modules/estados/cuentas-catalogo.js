@@ -394,7 +394,8 @@ export const CUENTAS_CATALOGO = [
     'sinonimos': [
       'Utilidad del ejercicio',
       'pérdida del ejercicio',
-      'resultado del período dentro del patrimonio'
+      'resultado del período dentro del patrimonio',
+      'Resultado del ejercicio'
     ],
     'sinonimosDudosos': [],
     'tipoApp': 'patrimonio',
