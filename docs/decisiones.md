@@ -108,6 +108,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-055 | Celda vacía es dato faltante (N/D), salvo intereses ganados | Vigente en el motor; catálogo de Estados sin cambios |
 | D-061 | Convención de signos del catálogo | Vigente |
 | D-062 | El total reportado nunca se suma a sus detalles | Vigente |
+| D-063 | Ausencia según la política del catálogo | Vigente |
 
 ## Decisiones
 
@@ -1326,3 +1327,24 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 **Para revertirla.** Restaurar la suma de totales y detalles y el motivo `overlapping_account_aggregation`, retirar `reported_subtotal_mismatch` y ajustar las pruebas de importación y registro.
 
 **Referencias.** `instrucciones_carlos_estados_R1-R2.md`, R1-1 y tabla de aceptación; regla `reported_or_calculate` de los JSON de razones.
+
+### D-063 — Ausencia según la política del catálogo
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/estados/cuentas-catalogo.js`, `estados-calculations.js` y datos de demostración
+
+**Contexto.** El catálogo declaraba `requires_data` para algunas cuentas, pero el cálculo las trataba como cero cuando no aparecían. En particular, un edificio sin depreciación acumulada producía activos fijos y totales de activos inflados, y unas ventas sin devoluciones, descuentos ni rebajas se presentaban como ventas netas sin avisar.
+
+**Opciones.**
+1. Exigir el dato cuando el catálogo lo marca y devolver N/D con motivo `missing_required_account_data` — distingue el dato faltante de un cero real.
+2. Seguir tratando la ausencia como cero — conserva cifras incompletas sin explicación.
+
+**Decisión.** Opción 1. La depreciación acumulada se exige cuando hay alguna cuenta `bs.ppe_*` distinta de terrenos. Las devoluciones, descuentos y rebajas se exigen cuando hay actividad de ventas y no hay un total de ventas netas reportado; sus políticas pasan de `zero_if_not_reported` a `requires_data`. Un 0 declarado cuenta como dato presente. Si falta la depreciación, `activosFijos` y `totalActivos` son N/D; si faltan las deducciones, `ventas`, `utilidadBruta` y `utilidadNeta` son N/D.
+
+**Consecuencias.** Los casos 4 y 10 de la tabla de aceptación dejan de producir cifras silenciosas. La demostración y las pruebas que representan ejercicios con ventas declaran cero explícito en las tres deducciones; sus resultados financieros esperados no cambian. La comprobación de las 71 identidades del PR #10 se ajusta para reconocer este cambio documentado del catálogo, sin modificar los JSON de referencia.
+
+**Para revertirla.** Registrar la decisión que la reemplace, devolver las tres políticas a `zero_if_not_reported`, retirar la exigencia de depreciación y ajustar los ceros explícitos y las pruebas de aceptación.
+
+**Referencias.** `instrucciones_carlos_estados_R1-R2.md`, R1-4 y tabla de aceptación; `tests/unit/estados-calculations.test.js`; `tests/unit/cuentas-identificador.test.js`.

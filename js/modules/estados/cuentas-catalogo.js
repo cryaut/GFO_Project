@@ -1941,7 +1941,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'deduccion_ingreso',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Rebajas y bonificaciones sobre ventas'
@@ -1959,7 +1959,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'deduccion_ingreso',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Descuentos concedidos sobre ventas'
@@ -1977,7 +1977,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'deduccion_ingreso',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Devoluciones de ventas',

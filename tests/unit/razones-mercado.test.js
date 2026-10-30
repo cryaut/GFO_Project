@@ -72,7 +72,10 @@ describe('razones de mercado por periodo', () => {
   it('deja los dividendos implícitos en N/D si el patrimonio anterior es null', async () => {
     const estados = demo();
     estados.balanceGeneral['2024'].patrimonio = { 'Capital Social': 1000 };
-    estados.estadoResultados['2024'] = { Ventas: 100, 'Costo de Ventas': 0 };
+    estados.estadoResultados['2024'] = {
+      Ventas: 100, 'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+      'Costo de Ventas': 0
+    };
     const modulo = await import('../../js/modules/estados/estados-calculations.js');
     const calcularOriginal = modulo.computeFinancialTotals;
     // Simula solo el subtotal anterior N/D; main aún no lo produce directamente.

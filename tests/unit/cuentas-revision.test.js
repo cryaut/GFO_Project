@@ -31,7 +31,10 @@ it('los 5000 pendientes corrientes solo anulan sus totales posibles y conservan 
   const base = normalizeFinancialData({ name: 'Terrenos', periods: ['2023', '2024'],
     balanceGeneral: Object.fromEntries(['2023', '2024'].map(p => [p, {
       activos: { Efectivo: 100, Terrenos: 150000 }, pasivos: { 'Cuentas por Pagar': 50 }, patrimonio: { 'Capital Social': 150050 }
-    }])), estadoResultados: { '2023': { Ventas: 300, 'Costo de Ventas': 0 }, '2024': { Ventas: 300, 'Costo de Ventas': 0 } } });
+    }])), estadoResultados: {
+      '2023': { Ventas: 300, 'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0, 'Costo de Ventas': 0 },
+      '2024': { Ventas: 300, 'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0, 'Costo de Ventas': 0 }
+    } });
   const datos = registrarCuenta(base, { nombre: 'Activo corriente extra', grupo: 'activos', periodo: '2024', importe: 5000,
     clasificacion: 'activosCorrientesOtros' });
   const total = computeFinancialTotals(datos, '2024');

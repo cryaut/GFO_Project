@@ -163,7 +163,9 @@ describe('Reportes: utilidad neta y periodo solicitado (ronda 15)', () => {
       activos: { Banco: 1000 }, pasivos: { Prestamo: 300 }, patrimonio: { Aportes: 700 }
     } },
     estadoResultados: { '2023': {
-      Servicios: 1000, Insumos: 400, Administracion: 100, Publicidad: 50,
+      Servicios: 1000,
+      'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+      Insumos: 400, Administracion: 100, Publicidad: 50,
       'Intereses ganados': 30, 'Gasto extraordinario': 10,
       'Intereses pagados': 20, 'Renta del ejercicio': 90
     } },

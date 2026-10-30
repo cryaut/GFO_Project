@@ -19,7 +19,8 @@ function estadosMuno() {
     patrimonio: { 'Capital Social': 200000, 'Utilidades Acumuladas': util }
   });
   const resultados = (v, cv, ga, gv, oi, og) => ({
-    'Ventas': v, 'Costo de Ventas': cv, 'Gastos de Administracion': ga, 'Gastos de Ventas': gv, 'Otros Ingresos': oi, 'Otros Gastos': og
+    'Ventas': v, 'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+    'Costo de Ventas': cv, 'Gastos de Administracion': ga, 'Gastos de Ventas': gv, 'Otros Ingresos': oi, 'Otros Gastos': og
   });
   return normalizeFinancialData({
     name: 'MUNO MODA S.A.', periods: ['2023', '2024'],

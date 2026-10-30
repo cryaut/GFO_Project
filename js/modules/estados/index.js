@@ -80,6 +80,9 @@ export const DEMO_MUNOMODA = {
   estadoResultados: {
     '2023': {
       'Ventas': 850000,
+      'Devoluciones sobre ventas': 0,
+      'Descuentos sobre ventas': 0,
+      'Rebajas sobre ventas': 0,
       'Costo de Ventas': 510000,
       'Gastos de Administracion': 120000,
       'Gastos de Ventas': 85000,
@@ -91,6 +94,9 @@ export const DEMO_MUNOMODA = {
     },
     '2024': {
       'Ventas': 920000,
+      'Devoluciones sobre ventas': 0,
+      'Descuentos sobre ventas': 0,
+      'Rebajas sobre ventas': 0,
       'Costo de Ventas': 545000,
       'Gastos de Administracion': 130000,
       'Gastos de Ventas': 90000,

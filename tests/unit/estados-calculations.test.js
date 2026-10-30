@@ -37,11 +37,15 @@ const DATA = {
   },
   estadoResultados: {
     '2023': {
-      'Ventas': 850000, 'Costo de Ventas': 510000, 'Gastos de Administracion': 120000,
+      'Ventas': 850000,
+      'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+      'Costo de Ventas': 510000, 'Gastos de Administracion': 120000,
       'Gastos de Ventas': 85000, 'Otros Ingresos': 15000, 'Otros Gastos': 10000
     },
     '2024': {
-      'Ventas': 920000, 'Costo de Ventas': 545000, 'Gastos de Administracion': 130000,
+      'Ventas': 920000,
+      'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+      'Costo de Ventas': 545000, 'Gastos de Administracion': 130000,
       'Gastos de Ventas': 90000, 'Otros Ingresos': 18000, 'Otros Gastos': 12000
     }
   }
@@ -119,7 +123,9 @@ describe('computeFinancialTotals', () => {
     },
     estadoResultados: {
       '2024': {
-        'Ventas': 500, 'Costo de Ventas': 300, 'Gastos de Administración': 40,
+        'Ventas': 500,
+        'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+        'Costo de Ventas': 300, 'Gastos de Administración': 40,
         'Gastos de Ventas': 30, 'Otros Ingresos': 5, 'Otros Gastos': 3,
         'Intereses': 2, 'Impuestos': 10
       }
@@ -147,6 +153,98 @@ describe('computeFinancialTotals', () => {
     expect(t.totalPatrimonio).toBe(587815);
     expect(t.utilidadNeta).toBe(920000 - 545000 - 130000 - 90000 + 18000 - 12000);
     expect(t.activosCorrientes).toBe(412000);
+  });
+
+  const conEstados = (balance, resultados = {}) => normalizeFinancialData({
+    periods: ['2024'],
+    balanceGeneral: { '2024': balance },
+    estadoResultados: { '2024': resultados }
+  });
+
+  it('exige la depreciación cuando hay activos fijos distintos de terrenos', () => {
+    const datos = conEstados({
+      activos: { Efectivo: 100, Edificios: 300 },
+      pasivos: {}, patrimonio: { 'Capital Social': 400 }
+    });
+    const t = computeFinancialTotals(datos, '2024');
+    expect(t.activosFijos).toBeNull();
+    expect(t.totalActivos).toBeNull();
+    expect(t.notAvailableReasons).toContainEqual({
+      group: 'activos', name: 'Depreciación acumulada',
+      motivo: 'missing_required_account_data', campos: ['activosFijos', 'totalActivos']
+    });
+  });
+
+  it('acepta una depreciación declarada en cero', () => {
+    const datos = conEstados({
+      activos: { Efectivo: 100, Edificios: 300, 'Depreciacion Acumulada': 0 },
+      pasivos: {}, patrimonio: { 'Capital Social': 400 }
+    });
+    const t = computeFinancialTotals(datos, '2024');
+    expect(t.activosFijos).toBe(300);
+    expect(t.totalActivos).toBe(400);
+    expect(t.notAvailableReasons).toEqual([]);
+  });
+
+  it('no exige depreciación si los activos fijos son solo terrenos', () => {
+    const datos = conEstados({
+      activos: { Efectivo: 100, Terrenos: 300 },
+      pasivos: {}, patrimonio: { 'Capital Social': 400 }
+    });
+    const t = computeFinancialTotals(datos, '2024');
+    expect(t.activosFijos).toBe(300);
+    expect(t.totalActivos).toBe(400);
+    expect(t.notAvailableReasons).not.toContainEqual(expect.objectContaining({ name: 'Depreciación acumulada' }));
+  });
+
+  it('exige devoluciones, descuentos y rebajas si hay actividad de ventas', () => {
+    const datos = conEstados(
+      { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { 'Capital Social': 100 } },
+      { Ventas: 1000, 'Costo de Ventas': 400 }
+    );
+    const t = computeFinancialTotals(datos, '2024');
+    expect(t.ventas).toBeNull();
+    expect(t.utilidadBruta).toBeNull();
+    expect(t.utilidadNeta).toBeNull();
+    expect(t.notAvailableReasons.filter(r => r.motivo === 'missing_required_account_data').map(r => r.name).sort())
+      .toEqual(['Descuentos sobre ventas', 'Devoluciones sobre ventas', 'Rebajas sobre ventas']);
+  });
+
+  it('acepta las deducciones declaradas en cero y calcula ventas netas', () => {
+    const datos = conEstados(
+      { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { 'Capital Social': 100 } },
+      {
+        Ventas: 1000, 'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0,
+        'Rebajas sobre ventas': 0, 'Costo de Ventas': 400, 'Gastos de Administracion': 200,
+        'Gastos de Ventas': 100, 'Gastos por Intereses': 20, 'Impuesto sobre la Renta': 50
+      }
+    );
+    const t = computeFinancialTotals(datos, '2024');
+    expect(t.ventas).toBe(1000);
+    expect(t.utilidadBruta).toBe(600);
+    expect(t.utilidadNeta).toBe(230);
+    expect(t.notAvailableReasons).toEqual([]);
+  });
+
+  it('no exige deducciones sin actividad de ventas', () => {
+    const datos = conEstados(
+      { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { 'Capital Social': 100 } }
+    );
+    const t = computeFinancialTotals(datos, '2024');
+    expect(t.notAvailableReasons).not.toContainEqual(expect.objectContaining({
+      motivo: 'missing_required_account_data', group: 'estadoResultados'
+    }));
+  });
+
+  it('un total de ventas netas reportado no exige las deducciones', () => {
+    const datos = conEstados(
+      { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { 'Capital Social': 100 } },
+      { 'Ventas netas': 1000, 'Costo de Ventas': 400 }
+    );
+    const t = computeFinancialTotals(datos, '2024');
+    expect(t.ventas).toBe(1000);
+    expect(t.utilidadBruta).toBe(600);
+    expect(t.notAvailableReasons).toEqual([]);
   });
 
   it('deja utilidad neta indeterminada si hay cuentas de ER sin clasificar', () => {

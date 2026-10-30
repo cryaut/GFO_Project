@@ -5,6 +5,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 function estados(interesesBancarios) {
   const estadoResultados = {
     'Ingresos por ventas': 1000,
+    'Devoluciones sobre ventas': 0,
+    'Descuentos sobre ventas': 0,
+    'Rebajas sobre ventas': 0,
     'Costo de lo vendido': 400,
     'Sueldos administrativos': 200,
     'Publicidad': 100,

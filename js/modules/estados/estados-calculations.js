@@ -73,6 +73,9 @@ function camposPendientes(data, group, name, id) {
 }
 
 const TOLERANCIA = 0.01;
+const CUENTAS_DEDUCCION = ['is.sales_returns', 'is.sales_discounts', 'is.sales_allowances'];
+const CUENTA_DEPRECIACION = 'bs.accumulated_depreciation';
+const CUENTA_TERRENOS = 'bs.ppe_land';
 
 export function computeFinancialTotals(data, period) {
   const bg = data.balanceGeneral?.[period] || {};
@@ -136,6 +139,15 @@ export function computeFinancialTotals(data, period) {
   }
 
   const hayReportado = id => Object.hasOwn(reported, id);
+  // D-063: la depreciación se exige si hay activos fijos distintos de terrenos;
+  // las deducciones se exigen si hay actividad de ventas y no hay ventas netas
+  // reportadas. Un cero declarado cuenta como dato presente.
+  const ppeSinTerreno = [...idsPresentes].some(id => id.startsWith('bs.ppe_') && id !== CUENTA_TERRENOS);
+  const faltaDepreciacion = ppeSinTerreno && !idsPresentes.has(CUENTA_DEPRECIACION);
+  const hayActividadVentas = present.has('ventas') || hayReportado('is.sales_total')
+    || hayReportado('is.net_sales_reported');
+  const faltanDeducciones = hayActividadVentas && !hayReportado('is.net_sales_reported')
+    ? CUENTAS_DEDUCCION.filter(id => !idsPresentes.has(id)) : [];
   const excedeTolerancia = (a, b) => Math.abs(a - b) > TOLERANCIA + Number.EPSILON * Math.max(1, Math.abs(a), Math.abs(b));
   const usarReportado = (id, calculado) => {
     const total = reported[id];
@@ -167,9 +179,18 @@ export function computeFinancialTotals(data, period) {
   const hayFijos = present.has('activosFijos') || present.has('depreciacionAcumulada');
   const activosFijos = subtotal(activosFijosDetalle, hayFijos, 'activos', 'bs.fixed_assets_net_total');
   const totalActivosCalculado = activosCorrientes === null || activosFijos === null ? null : activosCorrientes + activosFijos;
-  const totalActivos = hayReportado('bs.total_assets')
+  let totalActivos = hayReportado('bs.total_assets')
     ? usarReportado('bs.total_assets', totalActivosCalculado)
     : (totalActivosCalculado !== null ? totalActivosCalculado : (groupReported.has('activos') ? null : 0));
+  let activosFijosFinal = activosFijos;
+  if (faltaDepreciacion) {
+    activosFijosFinal = null;
+    totalActivos = null;
+    reasons.push({
+      group: 'activos', name: 'Depreciación acumulada', motivo: 'missing_required_account_data',
+      campos: ['activosFijos', 'totalActivos']
+    });
+  }
 
   const pasivosCorrientesDetalle = detail.cuentasPorPagar + detail.pasivoCortoPlazo + detail.provisiones;
   const hayPasivosCorrientes = ['cuentasPorPagar', 'pasivoCortoPlazo', 'provisiones'].some(tipo => present.has(tipo));
@@ -187,27 +208,38 @@ export function computeFinancialTotals(data, period) {
     : (hayVentasDetalle ? detail.ventas : (groupReported.has('estadoResultados') ? null : 0));
   const deducciones = detail.deduccionesVentas || 0;
   const ventasNetasCalculadas = ventasBrutas === null ? null : ventasBrutas - deducciones;
-  const ventas = hayReportado('is.net_sales_reported')
+  let ventas = hayReportado('is.net_sales_reported')
     ? usarReportado('is.net_sales_reported', ventasNetasCalculadas)
     : (ventasNetasCalculadas !== null ? ventasNetasCalculadas : (groupReported.has('estadoResultados') ? null : 0));
   const costoVentas = hayReportado('is.cost_of_sales_reported')
     ? usarReportado('is.cost_of_sales_reported', present.has('costoVentas') ? detail.costoVentas : null)
     : (present.has('costoVentas') ? detail.costoVentas : (groupReported.has('estadoResultados') ? null : 0));
   const utilidadBrutaCalculada = ventas === null || costoVentas === null ? null : ventas - costoVentas;
-  const utilidadBruta = hayReportado('is.gross_profit_reported')
+  let utilidadBruta = hayReportado('is.gross_profit_reported')
     ? usarReportado('is.gross_profit_reported', utilidadBrutaCalculada)
     : (utilidadBrutaCalculada !== null ? utilidadBrutaCalculada : (groupReported.has('estadoResultados') ? null : 0));
   const gastos = detail.gastosAdmin + detail.gastosVentas - detail.otrosIngresos
     + detail.otrosGastos + detail.intereses + detail.impuestos;
   const utilidadNetaCalculada = utilidadBruta === null ? null : utilidadBruta - gastos;
-  const utilidadNeta = hayReportado('is.net_income_reported')
+  let utilidadNeta = hayReportado('is.net_income_reported')
     ? usarReportado('is.net_income_reported', utilidadNetaCalculada)
     : (utilidadNetaCalculada !== null ? utilidadNetaCalculada : (groupReported.has('estadoResultados') ? null : 0));
+  if (faltanDeducciones.length) {
+    ventas = null;
+    utilidadBruta = null;
+    utilidadNeta = null;
+    for (const id of faltanDeducciones) {
+      reasons.push({
+        group: 'estadoResultados', name: obtenerCuenta(id).nombreCanonico,
+        motivo: 'missing_required_account_data', campos: ['ventas', 'utilidadBruta', 'utilidadNeta']
+      });
+    }
+  }
 
   const totals = {
     ...detail,
     inventario,
-    activosCorrientes, activosFijos, totalActivos,
+    activosCorrientes, activosFijos: activosFijosFinal, totalActivos,
     pasivosCorrientes, totalPasivos, totalPatrimonio,
     ventasBrutas, ventas, costoVentas, utilidadBruta, utilidadNeta
   };
