@@ -12,7 +12,7 @@ import { formatearResultadoRazon } from '../../js/modules/razones/razones-presen
 //   razón corriente 300 / 90 = 3.33.
 // D-063: los descuentos y rebajas se declaran en 0 porque el catálogo los exige.
 
-const TRIANGULACION = () => parseFinancialJSON(JSON.stringify({
+const ENTRADA_TRIANGULACION = () => ({
   periods: ['2024'],
   // «Préstamo a largo plazo» es un nombre ambiguo del catálogo; como haría la
   // interfaz al confirmar la sugerencia, se declara su identidad reconocida.
@@ -38,7 +38,9 @@ const TRIANGULACION = () => parseFinancialJSON(JSON.stringify({
       'Impuesto sobre la Renta': 30
     }
   }
-}));
+});
+
+const TRIANGULACION = () => parseFinancialJSON(JSON.stringify(ENTRADA_TRIANGULACION()));
 
 describe('triangulación con cifras a mano (R2-3)', () => {
   const datos = TRIANGULACION();
@@ -72,5 +74,39 @@ describe('triangulación con cifras a mano (R2-3)', () => {
     const resultado = calcularRazon('liquidez_razon_corriente', entrada);
     expect(resultado.valor).toBeCloseTo(300 / 90, 6);
     expect(formatearResultadoRazon('liquidez_razon_corriente', resultado)).toBe('3.33');
+  });
+});
+
+describe('triangulación por componentes, sin subtotales reportados (ronda 2, T2)', () => {
+  // El mismo balance sin «Total de activos corrientes» ni «Total de pasivos
+  // corrientes»: todo sale de los detalles, sin motivos.
+  const sinSubtotales = () => {
+    const entrada = ENTRADA_TRIANGULACION();
+    delete entrada.balanceGeneral['2024'].activos['Total de activos corrientes'];
+    delete entrada.balanceGeneral['2024'].pasivos['Total de pasivos corrientes'];
+    return parseFinancialJSON(JSON.stringify(entrada));
+  };
+  const datos = sinSubtotales();
+  const t = computeFinancialTotals(datos, '2024');
+
+  it('los doce valores salen de los componentes y sin motivos', () => {
+    expect(t.activosCorrientes).toBe(300);
+    expect(t.activosFijos).toBe(240);
+    expect(t.totalActivos).toBe(540);
+    expect(t.pasivosCorrientes).toBe(90);
+    expect(t.totalPasivos).toBe(190);
+    expect(t.totalPatrimonio).toBe(350);
+    expect(t.ventasBrutas).toBe(500);
+    expect(t.ventas).toBe(480);
+    expect(t.costoVentas).toBe(200);
+    expect(t.utilidadBruta).toBe(280);
+    expect(t.utilidadNeta).toBe(150);
+    expect(t.notAvailableReasons).toEqual([]);
+  });
+
+  it('cuadra exacto y la razón corriente sale de los componentes (300/90 = 3.33)', () => {
+    const [fila] = validateFinancialData(datos);
+    expect(fila).toMatchObject({ balanced: true, difference: 0, diagnostico: null });
+    expect(Math.abs(t.activosCorrientes / t.pasivosCorrientes - 3.33)).toBeLessThanOrEqual(0.01);
   });
 });
