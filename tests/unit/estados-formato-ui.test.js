@@ -111,6 +111,13 @@ it('D-065: con seis periodos los predeterminados son los dos más recientes', ()
   expect(page.innerHTML).not.toContain('Máximo 4 periodos');
 });
 
+it('batería C3: con cinco periodos el selector ofrece las cinco casillas', () => {
+  const page = element();
+  estadosUI(page, { initial: conPeriodos(5), demo: conPeriodos(5), save: () => {} });
+  expect(casillasDe(page)).toHaveLength(5);
+  expect(page.innerHTML).toContain('2 de 4 seleccionados');
+});
+
 it('D-065: al llegar a 4 las casillas no marcadas se deshabilitan', async () => {
   const page = element();
   estadosUI(page, { initial: conPeriodos(6), demo: conPeriodos(6), save: () => {} });
