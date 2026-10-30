@@ -100,9 +100,10 @@ describe('importación de tablas con formato de importes', () => {
     ].join('\n');
     const avisos = [];
     const datos = tableTextToFinancialData(csv, { avisos });
-    expect(datos.balanceGeneral['2023'].activos).toEqual({ Efectivo: 45000, Inventario: 1234567.89 });
+    expect(datos.balanceGeneral['2023'].activos).toEqual({ Efectivo: 45000 });
+    expect(datos.reportedTotals['2023']['bs.inventory_total'].importe).toBe(1234567.89);
     expect(datos.balanceGeneral['2023'].pasivos['Cuentas por Pagar']).toBe(20000);
-    expect(datos.estadoResultados['2023'].Ventas).toBe(500000);
+    expect(datos.reportedTotals['2023']['is.sales_total'].importe).toBe(500000);
     expect(avisos).toEqual([]);
   });
 

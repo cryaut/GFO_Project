@@ -55,9 +55,11 @@ describe('tableTextToFinancialData', () => {
     expect(data.name).toBe('Externa');
     expect(data.periods).toEqual(['2023', '2024']);
     expect(data.balanceGeneral['2024'].activos).toEqual({ Efectivo: 52000, 'Cuentas por Cobrar': 135000 });
-    expect(data.estadoResultados['2024']).toEqual({ Ventas: 920000, 'Costo de Ventas': 545000 });
+    expect(data.estadoResultados['2024']).toEqual({});
+    expect(data.reportedTotals['2024']['is.sales_total'].importe).toBe(920000);
+    expect(data.reportedTotals['2024']['is.cost_of_sales_reported'].importe).toBe(545000);
     expect(data.accountTypes.patrimonio['Capital Social']).toBe('patrimonio');
-    expect(data.accountTypes.estadoResultados['Costo de Ventas']).toBe('costoVentas');
+    expect(data.accountIdentities.estadoResultados['Costo de Ventas'].idCuenta).toBe('is.cost_of_sales_reported');
   });
 
   it('importa el formato largo con una fila por periodo', () => {
@@ -71,7 +73,8 @@ describe('tableTextToFinancialData', () => {
     const data = tableTextToFinancialData(csv);
     expect(data.periods).toEqual(['2023', '2024']);
     expect(data.balanceGeneral['2023'].activos).toEqual({ Efectivo: 45000 });
-    expect(data.estadoResultados['2024']).toEqual({ Ventas: 920000 });
+    expect(data.estadoResultados['2024']).toEqual({});
+    expect(data.reportedTotals['2024']['is.sales_total'].importe).toBe(920000);
   });
 
   it('acepta tabuladores pegados desde Excel y clasificaciones con nombre', () => {
@@ -91,7 +94,8 @@ describe('tableTextToFinancialData', () => {
     const csv = ['Cuenta,Grupo,Clasificacion,2023,2024', 'Efectivo,Activos,efectivo,100,150', 'Inventario,Activos,inventario,,80'].join('\n');
     const data = tableTextToFinancialData(csv);
     expect(data.balanceGeneral['2023'].activos).toEqual({ Efectivo: 100 });
-    expect(data.balanceGeneral['2024'].activos).toEqual({ Efectivo: 150, Inventario: 80 });
+    expect(data.balanceGeneral['2024'].activos).toEqual({ Efectivo: 150 });
+    expect(data.reportedTotals['2024']['bs.inventory_total'].importe).toBe(80);
   });
 
   it('explica los errores con el número de fila', () => {
@@ -124,7 +128,8 @@ describe('sheetsToFinancialData', () => {
     expect(data.balanceGeneral['2024'].activos).toEqual({ Efectivo: 100 });
     expect(data.balanceGeneral['2024'].pasivos).toEqual({ Proveedores: 40 });
     expect(data.balanceGeneral['2024'].patrimonio).toEqual({ 'Capital Social': 60 });
-    expect(data.estadoResultados['2024']).toEqual({ Ventas: 300 });
+    expect(data.estadoResultados['2024']).toEqual({});
+    expect(data.reportedTotals['2024']['is.sales_total'].importe).toBe(300);
   });
 
   it('falla si ninguna hoja tiene columna Cuenta', () => {

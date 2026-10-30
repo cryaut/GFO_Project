@@ -106,6 +106,8 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-053 | Utilidad neta de Reportes igual a Análisis | Vigente |
 | D-054 | Periodo no disponible da N/D sin cambiar de periodo | Vigente |
 | D-055 | Celda vacía es dato faltante (N/D), salvo intereses ganados | Vigente en el motor; catálogo de Estados sin cambios |
+| D-061 | Convención de signos del catálogo | Vigente |
+| D-062 | El total reportado nunca se suma a sus detalles | Vigente |
 
 ## Decisiones
 
@@ -1282,3 +1284,45 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 **Para revertirla.** Registrar la decisión que la reemplace y modificar de forma coordinada las políticas de los JSON, nota maestra, generado y pruebas, conservando la evidencia y los datos de referencia.
 
 **Referencias.** `instrucciones_carlos_ronda17.md`, anexo de 55 cuentas; ejercicios ficticios v2; autorización expresa de Carlos en este chat; `tests/unit/razones-motor-vacias.test.js`; PR #18.
+
+### D-061 — Convención de signos del catálogo
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/estados/estados-normalize.js`, catálogo de cuentas y mensajes de importación
+
+**Contexto.** El catálogo ya declaraba `convencionSigno` por cuenta, pero la compuerta no la aplicaba. Un costo de ventas o un gasto capturado en negativo se sumaba en silencio y producía utilidades infladas; una depreciación positiva también pasaba sin aviso.
+
+**Opciones.**
+1. Aplicar la convención del catálogo en la compuerta y rechazar la fila con un mensaje exacto — impide que un signo contradictorio altere los totales.
+2. Conservar el signo recibido o invertirlo en silencio — evita rechazos, pero mantiene cifras incorrectas sin explicación.
+
+**Decisión.** Opción 1. En `positivo`, un valor negativo se rechaza; en `negativo`, uno positivo se rechaza; en `conservar`, cualquier signo es válido. Nunca se invierte un signo en silencio. El primer error de la importación es suficiente en esta ronda. Los datos guardados que no pasen la compuerta no se borran: la interfaz los muestra en modo lectura con el error.
+
+**Consecuencias.** Los casos 1, 2, 3a y 3b de la tabla de aceptación dejan de producir cifras silenciosas. Los mensajes distinguen la cuenta positiva de la depreciación acumulada negativa. Los datos existentes conservan su contenido y solo se bloquea su uso para calcular hasta corregirlos.
+
+**Para revertirla.** Retirar la comparación de signo en `normalizeFinancialData`, sus pruebas y los textos de error; volver a aceptar cualquier signo reintroduce los totales inflados documentados.
+
+**Referencias.** `instrucciones_carlos_estados_R1-R2.md`, R1-3 y tabla de aceptación; `docs/contexto/dominio-financiero.md`.
+
+### D-062 — El total reportado nunca se suma a sus detalles
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/estados/estados-calculations.js`, `cuentas-registro.js`, `estados-normalize.js`
+
+**Contexto.** Un total reportado convivía con sus componentes y el motor anterior los sumaba, duplicando activos, ventas o inventario. En otros casos el total se descartaba y el subtotal quedaba N/D aunque el ejercicio sí lo hubiera publicado.
+
+**Opciones.**
+1. Usar el total reportado como valor del tipo, compararlo con sus detalles y avisar el descuadre — conserva la cifra publicada y hace visible la diferencia.
+2. Seguir sumando totales y detalles, o ignorar el total — mantiene duplicaciones o pierde el dato reportado.
+
+**Decisión.** Opción 1. Un total reportado se compara con los detalles del mismo tipo. Si existe, es el valor de ese tipo. Si la diferencia supera 0.01, manda el total reportado y se registra `reported_subtotal_mismatch` con la diferencia. Todos los totales con `rol: reported_total` se guardan en `reportedTotals`, también los que tienen `tipoApp`. Si un grupo tiene total reportado y un subtotal no tiene detalles ni total propio, ese subtotal es N/D, nunca 0.
+
+**Consecuencias.** Los casos 5 a 9 de la tabla de aceptación dan la cifra reportada y, cuando corresponde, el aviso con su diferencia. Cambia la forma normalizada de los totales reportados con tipo: dejan de estar en el estado y pasan a `reportedTotals`; las pruebas de importación y registro se actualizan por esa causa. No se suman dos veces los mismos importes.
+
+**Para revertirla.** Restaurar la suma de totales y detalles y el motivo `overlapping_account_aggregation`, retirar `reported_subtotal_mismatch` y ajustar las pruebas de importación y registro.
+
+**Referencias.** `instrucciones_carlos_estados_R1-R2.md`, R1-1 y tabla de aceptación; regla `reported_or_calculate` de los JSON de razones.

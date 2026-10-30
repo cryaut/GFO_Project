@@ -38,7 +38,7 @@ export function renderRevisionCuentas(contenedor, datos, cambiar, fallo) {
     ${filas.length ? '<p>Las cuentas pendientes se conservan. Sus montos siguen visibles; los cálculos afectados quedan en N/D hasta confirmar. Los datos anteriores conservan su clasificación.</p>' : '<p>Todas las cuentas tienen identificador.</p>'}
     ${filas.map((fila, i) => `<form data-review="${i}" class="mb-4"><h3>${esc(fila.nombre)}</h3><div data-selector></div>
       <button class="btn btn-secondary" type="submit">Confirmar cuenta</button></form>`).join('')}
-    ${datos.reportedTotals ? '<p>Los totales reportados sin tipo equivalente se conservan para la API por identificador; no se suman a los componentes.</p>' : ''}
+    ${datos.reportedTotals ? '<p>Los totales reportados se conservan para la API por identificador; no se suman a los componentes.</p>' : ''}
     </section>`;
   contenedor.querySelectorAll('[data-review]').forEach(formulario => {
     const fila = filas[Number(formulario.dataset.review)];

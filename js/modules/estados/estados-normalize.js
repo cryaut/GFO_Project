@@ -174,7 +174,7 @@ export function normalizeFinancialData(input) {
         if (key === 'reportedTotals') {
           assertPlainObject(value, 'total reportado');
           const cuenta = obtenerCuenta(name);
-          if (cuenta?.rol !== 'reported_total' || cuenta.tipoApp) throw new Error('Total reportado inválido');
+          if (cuenta?.rol !== 'reported_total') throw new Error('Total reportado inválido');
           if (typeof value.nombre !== 'string' || !value.nombre.trim() || value.nombre.length > 120) throw new Error('Nombre de cuenta inválido');
           target[period][name] = { nombre: value.nombre, grupo: cuenta.grupo, importe: toAmount(value.importe, name) };
           accountIdentities[cuenta.grupo][value.nombre] = source.accountIdentities?.[cuenta.grupo]?.[value.nombre]

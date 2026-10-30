@@ -35,7 +35,7 @@ export function registrarCuenta(datos, registros) {
     const anterior = copia.accountIdentities[grupo]?.[nombre];
     if (anterior?.idCuenta && cuenta && anterior.idCuenta !== cuenta.id && !registro.reemplazar) throw new Error('La misma cuenta tiene identificadores distintos entre periodos.');
     let destino;
-    if (cuenta?.rol === 'reported_total' && !cuenta.tipoApp) {
+    if (cuenta?.rol === 'reported_total') {
       copia.reportedTotals ??= {};
       copia.reportedTotals[periodo] ??= {};
       if (Object.hasOwn(copia.reportedTotals[periodo], cuenta.id) && !registro.reemplazar) throw new Error('Total reportado duplicado');
