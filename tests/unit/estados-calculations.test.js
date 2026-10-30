@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   ACCOUNT_TYPES, inferAccountType, computeFinancialTotals,
-  validateFinancialData, estadosCalculations
+  validateFinancialData, estadosCalculations, seleccionarPeriodos
 } from '../../js/modules/estados/estados-calculations.js';
 import { normalizeFinancialData, parseFinancialJSON } from '../../js/modules/estados/estados-normalize.js';
 
@@ -406,6 +406,48 @@ describe('validateFinancialData', () => {
 
   it('un conjunto vacío no produce filas de validación', () => {
     expect(validateFinancialData({ periods: [], balanceGeneral: {}, estadoResultados: {} })).toEqual([]);
+  });
+});
+
+describe('seleccionarPeriodos (D-065)', () => {
+  const seis = ['2020', '2021', '2022', '2023', '2024', '2025'];
+
+  it('tres periodos quedan todos visibles por defecto', () => {
+    const r = seleccionarPeriodos({ periodos: ['2022', '2023', '2024'] });
+    expect(r.visibles).toEqual(['2022', '2023', '2024']);
+    expect(r.predeterminados).toEqual(['2022', '2023', '2024']);
+    expect(r.puedeAgregar).toBe(true);
+  });
+
+  it('seis periodos dejan por defecto los dos más recientes', () => {
+    const r = seleccionarPeriodos({ periodos: seis });
+    expect(r.predeterminados).toEqual(['2024', '2025']);
+    expect(r.visibles).toEqual(['2024', '2025']);
+  });
+
+  it('respeta la selección dada y descarta los nombres que ya no existen', () => {
+    const r = seleccionarPeriodos({ periodos: seis, seleccion: ['2021', '2023', '1999'] });
+    expect(r.visibles).toEqual(['2021', '2023']);
+    expect(r.puedeAgregar).toBe(true);
+  });
+
+  it('nunca muestra más de 4 aunque la selección lo exceda', () => {
+    const r = seleccionarPeriodos({ periodos: seis, seleccion: seis });
+    expect(r.visibles).toEqual(['2022', '2023', '2024', '2025']);
+    expect(r.puedeAgregar).toBe(false);
+  });
+
+  it('una selección vacía muestra la vista sin columnas', () => {
+    const r = seleccionarPeriodos({ periodos: seis, seleccion: [] });
+    expect(r.visibles).toEqual([]);
+    expect(r.puedeAgregar).toBe(true);
+  });
+
+  it('restaurar predeterminados es volver a pasar la selección nula', () => {
+    const personalizada = seleccionarPeriodos({ periodos: seis, seleccion: ['2020'] });
+    expect(personalizada.visibles).toEqual(['2020']);
+    const restaurada = seleccionarPeriodos({ periodos: seis, seleccion: null });
+    expect(restaurada.visibles).toEqual(['2024', '2025']);
   });
 });
 

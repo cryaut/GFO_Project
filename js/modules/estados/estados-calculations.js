@@ -282,3 +282,20 @@ export function validateFinancialData(data) {
 export function estadosCalculations(data, period) {
   return computeFinancialTotals(data, period);
 }
+
+// D-065: qué periodos se muestran en la vista multiperiodo. Los cálculos nunca
+// dependen de esta selección; solo filtra las columnas visibles. `periodos`
+// llega en su orden de presentación (la interfaz lo obtiene con ordenarPeriodos),
+// así que los predeterminados toman los dos más recientes del final cuando hay
+// más de `maximo`. Una `seleccion` dada manda mientras sus nombres existan,
+// puede quedar vacía y nunca supera el máximo.
+export const MAXIMO_PERIODOS_VISIBLES = 4;
+
+export function seleccionarPeriodos({ periodos, seleccion, maximo = MAXIMO_PERIODOS_VISIBLES } = {}) {
+  const lista = Array.isArray(periodos) ? periodos.filter(p => typeof p === 'string') : [];
+  const predeterminados = lista.length > maximo ? lista.slice(-2) : [...lista];
+  const visibles = Array.isArray(seleccion)
+    ? lista.filter(p => seleccion.includes(p)).slice(-maximo)
+    : predeterminados;
+  return { visibles, predeterminados, puedeAgregar: visibles.length < maximo };
+}

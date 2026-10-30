@@ -110,6 +110,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-062 | El total reportado nunca se suma a sus detalles | Vigente |
 | D-063 | Ausencia según la política del catálogo | Vigente |
 | D-064 | Ventas netas: la cuenta `ventas` resta las deducciones de ventas | Vigente |
+| D-065 | Selección de periodos visibles en Estados | Vigente |
 
 ## Decisiones
 
@@ -1370,3 +1371,24 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 **Para revertirla.** Registrar la decisión que la reemplace, quitar `deduccionesVentas` de `TIPOS_APP`, devolver el `tipoApp` nulo de las tres cuentas y dejar `ventas` sin restar deducciones.
 
 **Referencias.** `instrucciones_carlos_estados_R1-R2.md`, R1-5 y tabla de aceptación; `derived.net_sales` de los JSON de razones.
+
+### D-065 — Selección de periodos visibles en Estados
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi autorizó la decisión; el número máximo y los predeterminados son criterio del asistente
+- **Área**: `js/modules/estados/estados-calculations.js`, `estados-ui.js`
+
+**Contexto.** Con muchos periodos, la vista multiperiodo de Estados los muestra todos como columnas y se desborda en pantallas chicas. La decisión es qué periodos se presentan, no con cuáles se calcula.
+
+**Opciones.**
+1. Un selector de casillas que solo filtra las columnas visibles, con función pura separada de la interfaz — la vista se mantiene legible y los cálculos quedan intactos.
+2. Dejar la vista con todos los periodos y confiar en el desplazamiento horizontal — no resuelve la legibilidad con muchos periodos.
+
+**Decisión.** Opción 1. Con un solo periodo no hay selector. Predeterminados: todos los periodos si hay 4 o menos; con más de 4, los dos más recientes. Máximo 4 periodos visibles a la vez; al llegar al máximo, las casillas no marcadas se deshabilitan. La selección vive solo en la sesión, no se guarda en el store, y vuelve a los predeterminados cuando cambian los periodos guardados. La lógica es la función pura `seleccionarPeriodos({ periodos, seleccion, maximo = 4 })`; la interfaz solo la llama. Los cálculos siempre usan todos los periodos que necesiten, así que ninguna cifra depende de la selección.
+
+**Consecuencias.** La vista multiperiodo no desborda la página en un teléfono (el contenedor conserva su margen de 16 px y las tablas anchas se desplazan dentro de su contenedor). El selector no se aplica en Análisis ni en Reportes en esta ronda.
+
+**Para revertirla.** Registrar la decisión que la reemplace, retirar `seleccionarPeriodos` y el bloque del selector de `estados-ui.js`, y devolver a la vista todas las columnas.
+
+**Referencias.** `instrucciones_carlos_estados_R1-R2.md`, R2-1; `ordenarPeriodos` de `estados-normalize.js`.
