@@ -5,7 +5,7 @@ import {
 import { proformaUI } from '../../js/modules/proforma/proforma-ui.js';
 import { calcularPresupuestoMaestro, ejemploPlaneacion, normalizarSupuestos } from '../../js/modules/planeacion/planeacion-calculations.js';
 import { calcularCVU, ejemploEquilibrio, normalizarEquilibrio } from '../../js/modules/equilibrio/equilibrio-calculations.js';
-import { calcularFlujo, ejemploFlujo } from '../../js/modules/flujo/flujo-calculations.js';
+import { ejemploFlujo } from '../../js/modules/flujo/flujo-calculations.js';
 import { calcularInventario, ejemploInventario } from '../../js/modules/inventario/inventario-calculations.js';
 import { calcularApalancamiento } from '../../js/modules/apalancamiento/apalancamiento-calculations.js';
 import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
