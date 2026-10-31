@@ -111,6 +111,10 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-063 | Ausencia según la política del catálogo | Vigente |
 | D-064 | Ventas netas: la cuenta `ventas` resta las deducciones de ventas | Vigente |
 | D-065 | Selección de periodos visibles en Estados | Vigente |
+| D-066 | EFE: clasificación por id de cuenta | Vigente |
+| D-067 | Totales reportados fuera del EFE | Vigente |
+| D-068 | Reservas como destino de utilidades | Vigente |
+| D-069 | Utilidad del EFE conciliada contra el balance | Vigente |
 
 ## Decisiones
 
@@ -1392,3 +1396,87 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 **Para revertirla.** Registrar la decisión que la reemplace, retirar `seleccionarPeriodos` y el bloque del selector de `estados-ui.js`, y devolver a la vista todas las columnas.
 
 **Referencias.** `instrucciones_carlos_estados_R1-R2.md`, R2-1; `ordenarPeriodos` de `estados-normalize.js`.
+
+### D-066 — EFE: clasificación por id de cuenta
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/analisis/efe-roles.js`, `efe-calculations.js`
+
+**Contexto.** El EFE clasificaba por tipo general (tipoApp), que mezcla cuentas que el flujo de efectivo separa: los gastos acumulados, impuestos por pagar, provisiones y otros pasivos corrientes caían en financiamiento, las inversiones de corto plazo en operación y las provisiones de largo plazo en financiamiento.
+
+**Opciones.**
+1. Tabla propia de roles por id del catálogo en el módulo de Análisis — separa lo que el tipo general mezcla sin tocar el catálogo.
+2. Agregar el rol al catálogo de cuentas — cambia un archivo que `feat/razones-app-final` también modifica.
+
+**Decisión.** Opción 1. `efe-roles.js` declara el rol por id: operación (cuentas por cobrar comerciales, todos los inventarios, gastos pagados por anticipado, otras cuentas por cobrar y otros activos corrientes, cuentas por pagar comerciales, impuestos por pagar, gastos acumulados por pagar, provisiones corrientes y de largo plazo, otros pasivos corrientes; la depreciación se suma como no efectivo), inversión (activos fijos, inversiones de largo y corto plazo, otros activos no corrientes), financiamiento (préstamos de corto plazo, porción corriente de deuda, deudas de largo plazo, otros pasivos no corrientes) y efectivo. `construirEFE` usa el rol; una prueba falla si un activo o pasivo del catálogo no tiene rol.
+
+**Consecuencias.** Los renglones del EFE se consolidan por rol («activos de operación», «pasivos de operación», «activos de inversión», «Aumento de deuda»). Las cifras de la demo cambian; se registran con esta causa y sin citarse. Los datos de prueba con nombres ambiguos por id adoptan nombres canónicos del catálogo.
+
+**Para revertirla.** Registrar la decisión que la reemplace, retirar la tabla de roles y devolver la clasificación por tipo general en `construirEFE`.
+
+**Referencias.** `instrucciones_efe_ronda1.md`, T1 y variantes V11 a V13; hallazgo H2.
+
+### D-067 — Totales reportados fuera del EFE
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/analisis/efe-roles.js`, `efe-calculations.js`
+
+**Contexto.** Los totales reportados del balance («Total de activos corrientes», entre otros) ya son datos válidos desde Estados, pero el EFE los trataba como cuentas sin clasificación y el par A3 2024 → 2025 del bloque A salía incompleto.
+
+**Opciones.**
+1. Excluir los totales reportados del EFE y usar sus componentes — evita contar dos veces la misma variación.
+2. Seguir incluyéndolos — duplica la variación cuando conviven total y componentes.
+
+**Decisión.** Opción 1. Una cuenta de rol `reported_total` no entra en el EFE cuando alguna de sus componentes del catálogo está en los datos; sin componentes, el total se conserva porque es el único dato de ese concepto. El mapa de componentes vive en `efe-roles.js`.
+
+**Consecuencias.** El par A3 2024 → 2025 queda en cuadra con la referencia. Un «Inventario» sin desglose sigue contando (no se pierde la variación); con desglose, manda el desglose.
+
+**Para revertirla.** Registrar la decisión que la reemplace y retirar la exclusión en `construirEFE`.
+
+**Referencias.** `instrucciones_efe_ronda1.md`, T2; hallazgo H3.
+
+### D-068 — Reservas como destino de utilidades
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/analisis/efe-calculations.js`
+
+**Contexto.** Un traspaso interno a reserva legal se leía como aportación de capital: los dividendos salían inflados y las aportaciones con un movimiento que no existió (hallazgo H1).
+
+**Opciones.**
+1. Mover las reservas al destino de utilidades junto con las utilidades acumuladas y las cuentas del resultado — separa aportaciones de distribuciones.
+2. Dejar las reservas como aportaciones — conserva el error del hallazgo.
+
+**Decisión.** Opción 1. Con la misma regla de nombres del aviso de sentidos opuestos (nombre normalizado que contiene «reserva»), las reservas entran al destino de utilidades: dividendos = utilidad neta − Δ(utilidades acumuladas + cuentas del resultado + reservas); aportaciones = Δpatrimonio − Δ(destino).
+
+**Consecuencias.** La variante V6 da dividendos −30 y aportaciones 0 con una reserva de traspaso de 20. El aviso de ausencia ahora menciona «utilidades acumuladas ni reservas».
+
+**Para revertirla.** Registrar la decisión que la reemplace y retirar las reservas del conjunto de destino.
+
+**Referencias.** `instrucciones_efe_ronda1.md`, T3; hallazgo H1.
+
+### D-069 — Utilidad del EFE conciliada contra el balance
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/analisis/efe-calculations.js`, `analisis/index.js`
+
+**Contexto.** El «cuadra» del EFE solo prueba el balance: una utilidad inflada podía compensarse en los dividendos derivados y el estado salía cuadrado (hallazgo H4).
+
+**Opciones.**
+1. Conciliar la utilidad del estado de resultados contra la cuenta de resultado del periodo del patrimonio, con un tercer estado cuando la cuenta no existe — hace visible la diferencia y declara qué no se verificó.
+2. Dejar el cuadre como única comprobación — la identidad cerraría aunque la utilidad esté mal.
+
+**Decisión.** Opción 1. Si existe la cuenta de resultado del periodo en el patrimonio (id `bs.current_year_result_equity`) y no coincide con la utilidad neta dentro de la tolerancia de `toleranciaComprobacion`, el estado es no cuadra con motivo `utilidad_no_conciliada` y la diferencia en el campo `conciliacionUtilidad`. Si no existe esa cuenta, el estado es «cuadra (sin verificar la utilidad)»: tercer estado, con insignia y advertencia visibles en Análisis. La interpretación solo afirma la verificación cuando concilia.
+
+**Consecuencias.** La variante VB sale no cuadra con diferencia 50. Los casos sin cuenta de resultado (la demo entre otros) pasan del estado «cuadra» al tercer estado; sus pruebas se ajustan con esta causa. La conciliación usa el saldo final de la cuenta de resultado del periodo.
+
+**Para revertirla.** Registrar la decisión que la reemplace, retirar `conciliacionUtilidad` y el tercer estado, y devolver el binomio cuadra/no cuadra.
+
+**Referencias.** `instrucciones_efe_ronda1.md`, T4 y variante VB; hallazgo H4.
