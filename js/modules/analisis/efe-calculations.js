@@ -268,7 +268,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     const aportaciones = patrimonioCompleto && Number.isFinite(deltaDestino) ? patrimonioTotal - deltaDestino : null;
     const dividendos = utilidadNeta != null && Number.isFinite(deltaDestino) ? utilidadNeta - deltaDestino : null;
     financiamientoItems.push(
-      item('(+) Aportaciones de capital, reservas y otros patrimonios', aportaciones,
+      item('(+) Aportaciones de capital y otros patrimonios', aportaciones,
         aportaciones == null ? 'falta-saldo' : null),
       item('(-) Dividendos y distribuciones de utilidades (derivados de las utilidades acumuladas)', opuesto(dividendos),
         dividendos == null ? 'sin-dividendos' : null)
