@@ -115,6 +115,9 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-067 | Totales reportados fuera del EFE | Vigente |
 | D-068 | Reservas como destino de utilidades | Vigente |
 | D-069 | Utilidad del EFE conciliada contra el balance | Vigente |
+| D-070 | Proforma usa el EFE como única fuente del flujo | Vigente |
+| D-071 | Tolerancia única en el flujo directo | Vigente |
+| D-072 | Totales reportados fuera de los avisos de balance y del EOAF | Vigente |
 
 ## Decisiones
 
@@ -1480,3 +1483,66 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 **Para revertirla.** Registrar la decisión que la reemplace, retirar `conciliacionUtilidad` y el tercer estado, y devolver el binomio cuadra/no cuadra.
 
 **Referencias.** `instrucciones_efe_ronda1.md`, T4 y variante VB; hallazgo H4.
+
+### D-070 — Proforma usa el EFE como única fuente del flujo
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/proforma/proforma-calculations.js`, `proforma/index.js`, `flujo/flujo-ui.js`
+
+**Contexto.** Proforma leía la captura manual del flujo directo (`store.get('flujo')`), así que podía presentar un flujo distinto del EFE de Análisis con los mismos estados guardados.
+
+**Opciones.**
+1. Adaptar el resultado de `construirEFE` (último par de periodos de Estados) a la forma que ya consumen los indicadores — una sola fuente para Proforma y el panorama de Inicio.
+2. Mantener la captura manual como fuente de Proforma — conserva la divergencia entre pantallas.
+
+**Decisión.** Opción 1. El adaptador `flujoDesdeEFE(estados)` en `proforma-calculations.js` toma el último par de periodos y traduce operación, variación neta y saldo final. Los indicadores y las alertas de flujo se muestran solo si el EFE está en `cuadra` o `cuadra-sin-verificar`; si está `incompleta` o `no-cuadra` (o faltan periodos), no se muestran y aparece un faltante que dice qué revisar en Análisis, pestaña EFE. El colector `reunirEntradas` — compartido con el panorama de Inicio — deja de leer `store.get('flujo')`. El flujo directo (`#/flujo`) queda como captura no oficial: su pantalla lleva esa leyenda y su carga de demostración en Inicio se mantiene.
+
+**Consecuencias.** Las cifras de flujo de la demostración de Proforma cambian; se registran con esta causa y sin citar cifras de MUNO MODA. La captura manual ya no altera ningún indicador de Proforma ni de Inicio.
+
+**Para revertirla.** Registrar la decisión que la reemplace, devolver `calcularFlujo(store.get('flujo'))` en `reunirEntradas` y retirar la leyenda.
+
+**Referencias.** `instrucciones_efe_ronda2_ultima.md`, T2 y T3.
+
+### D-071 — Tolerancia única en el flujo directo
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/flujo/flujo-calculations.js`
+
+**Contexto.** `conciliarConBalance` usaba 0.005 con `<`, mientras el EFE y el EOAF usan `toleranciaComprobacion` (un centavo más redondeo) con `<=`: la misma diferencia podía conciliar en una comprobación y no en otra.
+
+**Opciones.**
+1. Usar `toleranciaComprobacion` y `<=` en el flujo directo — una sola regla de tolerancia en todo el módulo.
+2. Dejar 0.005 con `<` — conserva la inconsistencia.
+
+**Decisión.** Opción 1. `conciliarConBalance` compara con `toleranciaComprobacion(saldoFinal, efectivo)` y `<=`.
+
+**Consecuencias.** Una diferencia de 0.007 ahora concilia (antes no); una de 0.011 sigue sin conciliar. Las diferencias exactas de medio centavo dejan de estar en la frontera exclusiva.
+
+**Para revertirla.** Registrar la decisión que la reemplace y devolver la constante local con su comparación.
+
+**Referencias.** `instrucciones_efe_ronda2_ultima.md`, T4.
+
+### D-072 — Totales reportados fuera de los avisos de balance y del EOAF
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/analisis/comprobacion-calculations.js`, `eoaf-calculations.js`, `efe-roles.js`
+
+**Contexto.** D-067 se aplicó en el EFE, pero no en el código compartido: `totalGrupo` sumaba los totales reportados junto a sus componentes, el EOAF marcaba «Total de activos corrientes no tiene clasificación» y A3 mostraba avisos falsos de balance.
+
+**Opciones.**
+1. Extender D-067 al código compartido, con la regla en un solo lugar que use `totalGrupo`, `variacionesDeCuentas` y el EOAF — desaparecen el doble conteo y los avisos falsos.
+2. Corregir cada punto por separado — la regla se duplicaría y se desincronizaría.
+
+**Decisión.** Opción 1. El mapa de componentes de los totales reportados se traslada a `comprobacion-calculations.js` y la regla es la misma del EFE: un total reportado con componentes en los datos no entra; sin componentes, sí entra. `variacionesDeCuentas` excluye esas filas (el EOAF y el EFE heredan la exclusión) y `totalGrupo` no las suma en los avisos de balance.
+
+**Consecuencias.** El par A3 2024 → 2025 del EOAF queda en `cuadra` con diferencia 0 y sin avisos de «el balance no cumple». El EFE pierde su filtro local (la regla ya viene en las filas). `advertenciasDeBalance` recibe los estados como primer argumento porque la regla necesita las identidades de cuenta.
+
+**Para revertirla.** Registrar la decisión que la reemplace, devolver el mapa a `efe-roles.js` y retirar la exclusión de `variacionesDeCuentas` y `totalGrupo`.
+
+**Referencias.** `instrucciones_efe_ronda2_ultima.md`, T1; D-067; hallazgos de partida de la ronda 2.
