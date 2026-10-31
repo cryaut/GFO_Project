@@ -146,7 +146,7 @@ export function construirEOAF(datos, periodoInicial, periodoFinal) {
   if (!secciones.some(seccion => seccion.filas.length > 0)) {
     motivos.push('El balance general de los periodos seleccionados no tiene cuentas.');
   }
-  advertencias.push(...advertenciasDeBalance(periodos, bgInicial, bgFinal));
+  advertencias.push(...advertenciasDeBalance(datos, periodos, bgInicial, bgFinal));
 
   const filas = secciones.flatMap(seccion => seccion.filas);
   const motivosUnicos = [...new Set(motivos)];
