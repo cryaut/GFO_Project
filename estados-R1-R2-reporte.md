@@ -154,9 +154,9 @@ Los 10 avisos son preexistentes en `main` y están en archivos que esta rama no 
 
 ## 10. Pull Request
 
-- La rama está empujada: <https://github.com/cryaut/GFO_Project/tree/feat/estados-calculo-robusto>
-- Enlace para abrir el PR hacia `main` (la CLI `gh` no está disponible en este entorno): <https://github.com/cryaut/GFO_Project/pull/new/feat/estados-calculo-robusto>
-- Revisor: pedir uno distinto del autor (Carlos o Henry), según la regla 1 de AGENTS.md y el encargo. Pendiente de asignación en GitHub al abrir el PR.
+- El PR #19 (`feat/estados-calculo-robusto` → `main`, con revisor distinto del autor según la regla 1 de AGENTS.md y el encargo) quedó **integrado el 30 de octubre de 2026**: `main` está en `00c60f3` («Merge pull request #19 from cryaut/feat/estados-calculo-robusto»).
+- Rama integrada: <https://github.com/cryaut/GFO_Project/tree/feat/estados-calculo-robusto>
+- Pendiente de integración: actualizar `feat/razones-app-final` con merge de `main` (nunca rebase).
 
 ## 11. Qué no se tocó (verificación del encargo)
 

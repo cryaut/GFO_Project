@@ -1,0 +1,104 @@
+{
+  "nota": "Referencia independiente del EFE indirecto para el bloque A, calculada fuera de la app con la clasificación propuesta (operación: cuentas por cobrar, inventarios, gastos pagados por anticipado, otras cuentas por cobrar, cuentas por pagar, impuestos, gastos acumulados, provisiones corrientes, otros pasivos corrientes; inversión: activos fijos, inversiones de largo plazo, otros activos no corrientes e inversiones de corto plazo; financiamiento: préstamos de corto plazo, porción corriente y deuda de largo plazo, otros pasivos no corrientes). Dividendos = utilidad neta − variación de utilidades acumuladas y reservas. Aportaciones = variación del patrimonio − variación de utilidades acumuladas y reservas.",
+  "pares": [
+    {
+      "id": "A1",
+      "p0": "2024",
+      "p1": "2025",
+      "operacion": 116,
+      "inversion": -80,
+      "financiamiento": -18,
+      "dividendos": -40,
+      "aportaciones": 0,
+      "variacionEfectivo": 18
+    },
+    {
+      "id": "A2",
+      "p0": "2023",
+      "p1": "2024",
+      "operacion": 65,
+      "inversion": -39,
+      "financiamiento": 4,
+      "dividendos": -38,
+      "aportaciones": 0,
+      "variacionEfectivo": 30
+    },
+    {
+      "id": "A2",
+      "p0": "2024",
+      "p1": "2025",
+      "operacion": 71,
+      "inversion": -39,
+      "financiamiento": -2,
+      "dividendos": -44,
+      "aportaciones": 0,
+      "variacionEfectivo": 30
+    },
+    {
+      "id": "A3",
+      "p0": "2024",
+      "p1": "2025",
+      "operacion": 119,
+      "inversion": -124,
+      "financiamiento": 16,
+      "dividendos": -32,
+      "aportaciones": 0,
+      "variacionEfectivo": 11
+    },
+    {
+      "id": "A4",
+      "p0": "2024",
+      "p1": "2025",
+      "operacion": -32,
+      "inversion": 55,
+      "financiamiento": -32,
+      "dividendos": -3,
+      "aportaciones": 0,
+      "variacionEfectivo": -9
+    },
+    {
+      "id": "A5",
+      "p0": "2021",
+      "p1": "2022",
+      "operacion": 83,
+      "inversion": -80,
+      "financiamiento": 15,
+      "dividendos": -7,
+      "aportaciones": 0,
+      "variacionEfectivo": 18
+    },
+    {
+      "id": "A5",
+      "p0": "2022",
+      "p1": "2023",
+      "operacion": 94,
+      "inversion": -80,
+      "financiamiento": 4,
+      "dividendos": -18,
+      "aportaciones": 0,
+      "variacionEfectivo": 18
+    },
+    {
+      "id": "A5",
+      "p0": "2023",
+      "p1": "2024",
+      "operacion": 105,
+      "inversion": -80,
+      "financiamiento": -7,
+      "dividendos": -29,
+      "aportaciones": 0,
+      "variacionEfectivo": 18
+    },
+    {
+      "id": "A5",
+      "p0": "2024",
+      "p1": "2025",
+      "operacion": 116,
+      "inversion": -80,
+      "financiamiento": -18,
+      "dividendos": -40,
+      "aportaciones": 0,
+      "variacionEfectivo": 18
+    }
+  ]
+}

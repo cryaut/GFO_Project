@@ -638,6 +638,9 @@ export function computeEOAF(periods) {
 // Piezas de interfaz que comparten las pestañas EOAF y EFE.
 const INSIGNIAS_COMPROBACION = {
   cuadra: '<span class="badge badge-success">Cuadra</span>',
+  // D-069: tercer estado del EFE — los flujos cierran pero no hay cuenta de
+  // resultado del periodo contra la que verificar la utilidad.
+  'cuadra-sin-verificar': '<span class="badge badge-info">Cuadra (sin verificar la utilidad)</span>',
   'no-cuadra': '<span class="badge badge-danger">No cuadra</span>',
   incompleta: '<span class="badge badge-warning">Comprobación incompleta</span>'
 };
@@ -780,7 +783,7 @@ function renderEFESection(period) {
     </tr>`;
   return `<p class="text-muted mb-4" style="font-size:var(--font-size-sm)">
     Método indirecto desde dos balances: <strong>${escapeHTML(efe.periodos.inicial)}</strong> (inicial) → <strong>${escapeHTML(efe.periodos.final)}</strong> (final).
-    Operación = utilidad neta + depreciación + capital de trabajo; Inversión = activos fijos; Financiamiento = deuda, patrimonio y dividendos.
+    Operación = utilidad neta + depreciación + variación de activos y pasivos de operación; Inversión = activos de inversión; Financiamiento = deuda, patrimonio y dividendos.
     Los gastos por intereses e impuestos ya están dentro de la utilidad neta.
   </p>
   <div class="table-wrapper mb-4"><table>

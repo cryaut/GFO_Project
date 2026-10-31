@@ -283,8 +283,8 @@ Los 10 avisos son los mismos de `main`, en archivos que esta rama no toca (`js/c
 
 ## 5. Conclusión
 
-**Estados queda listo para PR.**
+**Estados quedó integrado en `main`**: el PR #19 (`feat/estados-calculo-robusto`) se fusionó el 30 de octubre de 2026 y `main` está en `00c60f3`.
 
 - Los 10 casos de aceptación de la ronda 1, la triangulación con y sin subtotales, y los 15 conjuntos de la batería pasan; 0 valores incorrectos sin motivo.
 - Ninguna condición de parada se activó: no hay diferencias sin causa, ningún test existente cambió de valor esperado fuera de lo atribuido (T1 corrigió solo la atribución documental), no se asignó identidad por nombre, no se tocaron JSON, `docs/razones_financieras/` ni el motor de razones.
-- Pendiente declarado: abrir el PR hacia `main` con revisor distinto del autor (el encargo de esta ronda prohíbe abrirlo desde aquí), y actualizar `feat/razones-app-final` con merge de `main` cuando Estados se integre. Sin ronda 3: lo anterior es trabajo de integración, no de esta rama.
+- Pendiente de integración: actualizar `feat/razones-app-final` con merge de `main` (nunca rebase). Sin ronda 3: lo anterior es trabajo de integración, no de esta rama.

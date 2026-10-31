@@ -6,6 +6,7 @@
 
 import { formatCurrency } from '../../utils/format.js';
 import { resolveAccountType } from '../estados/estados-calculations.js';
+import { identificarCuenta } from '../estados/cuentas-identificador.js';
 import { ordenarPeriodos } from '../estados/estados-normalize.js';
 
 // Un centavo, más el epsilon de coma flotante escalado a las magnitudes (misma
@@ -50,6 +51,16 @@ export function seleccionarPeriodoPar(periodos, periodoFinal) {
   };
 }
 
+// Id del catálogo de una fila: la identidad reconocida manda (la misma puerta
+// que resolveAccountType); sin identidad guardada se identifica por nombre.
+// Devuelve null cuando la cuenta no está reconocida.
+function idDeCuenta(datos, grupo, cuenta) {
+  const guardada = datos?.accountIdentities?.[grupo]?.[cuenta];
+  if (guardada) return guardada.estado === 'reconocida' ? guardada.idCuenta : null;
+  const inferida = identificarCuenta(cuenta, { grupo });
+  return inferida.estado === 'reconocida' ? inferida.id : null;
+}
+
 // Variación de cada cuenta de un grupo del balance ('activos', 'pasivos' o
 // 'patrimonio') entre dos periodos, con su tipo. Primero van las cuentas del
 // periodo inicial y después las que solo aparecen en el final. Un saldo ausente
@@ -70,6 +81,7 @@ export function variacionesDeCuentas(datos, grupo, periodoInicial, periodoFinal)
     return {
       cuenta,
       grupo,
+      id: idDeCuenta(datos, grupo, cuenta),
       tipo: resolveAccountType(datos, grupo, cuenta) || '',
       saldoInicial,
       saldoFinal,
