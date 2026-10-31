@@ -641,3 +641,40 @@ describe('pantalla de EFE en Análisis', () => {
     expect(bloque).not.toContain('-0.00');
   });
 });
+
+// La prueba de D-068 va antes de las variantes de la ronda 1 (T5).
+describe('reservas como destino de utilidades (D-068)', () => {
+  it('un traspaso a reservas no figura como aportación ni distorsiona los dividendos', () => {
+    // Caso resuelto a mano: UN 80; ΔUA 0; ΔReservas +20; ΔResultado +30.
+    // D-068: dividendos = 80 − (0 + 20 + 30) = 30; aportaciones = 50 − 50 = 0.
+    // Con la regla anterior la reserva parecía capital: dividendos 50, aportaciones 20.
+    const traspaso = {
+      '2024': {
+        activos: { Efectivo: 100, 'Inventario de mercaderías': 50, 'Maquinaria y equipo': 130, 'Depreciacion Acumulada': -20 },
+        pasivos: { 'Cuentas por pagar comerciales': 40, 'Deudas de largo plazo': 40 },
+        patrimonio: { 'Capital social': 100, 'Utilidades acumuladas': 30, 'Reservas': 0, 'Resultado del ejercicio': 50 }
+      },
+      '2025': {
+        activos: { Efectivo: 150, 'Inventario de mercaderías': 60, 'Maquinaria y equipo': 150, 'Depreciacion Acumulada': -40 },
+        pasivos: { 'Cuentas por pagar comerciales': 50, 'Deudas de largo plazo': 40 },
+        patrimonio: { 'Capital social': 100, 'Utilidades acumuladas': 30, 'Reservas': 20, 'Resultado del ejercicio': 80 }
+      }
+    };
+    const r = construirEFE(estados(traspaso, {
+      '2024': {},
+      '2025': {
+        Ventas: 500,
+        'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+        'Costo de Ventas': 300, 'Gastos de Administracion': 80,
+        'Gastos por Intereses': 20, 'Impuesto sobre la Renta': 20
+      }
+    }), '2024', '2025');
+    expect(r.utilidadNeta).toBe(80);
+    expect(itemDe(r.financiamiento, 'Dividendos').monto).toBe(-30);
+    expect(itemDe(r.financiamiento, 'Aportaciones').monto).toBe(0);
+    expect(r.financiamiento.total).toBe(-30);
+    expect(r.operacion.total).toBe(100);
+    expect(r.inversion.total).toBe(-20);
+    expect(r.estado).toBe('cuadra');
+  });
+});

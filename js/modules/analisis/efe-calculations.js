@@ -218,12 +218,18 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     (suma, fila) => (fila.saldoInicial !== null && fila.saldoFinal !== null ? suma + fila.variacion : NaN), 0
   );
   const patrimonioCompleto = Number.isFinite(patrimonioTotal);
+  // D-068: las reservas son destino de utilidades, no aportaciones de capital:
+  // se mueven junto con las utilidades acumuladas y las cuentas del resultado
+  // del periodo. Misma regla de nombres del aviso de sentidos opuestos
+  // (/\breservas?\b/ sobre el nombre normalizado).
+  const esReserva = nombre => /\breservas?\b/.test(normalizarNombre(nombre));
   const reAcumuladas = patrimonio.filter(fila => esResultadoAcumulado(fila.cuenta));
-  const tieneResultadosAcumulados = reAcumuladas.length > 0;
-  const deltaRE = reAcumuladas.reduce(
+  const reservas = patrimonio.filter(fila => esReserva(fila.cuenta));
+  const destinoUtilidades = patrimonio.filter(fila => esResultadoAcumulado(fila.cuenta) || esReserva(fila.cuenta));
+  const tieneDestinoUtilidades = destinoUtilidades.length > 0;
+  const deltaDestino = destinoUtilidades.reduce(
     (suma, fila) => (fila.saldoInicial !== null && fila.saldoFinal !== null ? suma + fila.variacion : NaN), 0
   );
-  const reservas = patrimonio.filter(fila => /\breservas?\b/.test(normalizarNombre(fila.cuenta)));
   if (reAcumuladas.some(resultado => reservas.some(reserva =>
     resultado.variacion !== null && reserva.variacion !== null && resultado.variacion * reserva.variacion < 0))) {
     advertencias.push('Las reservas y los resultados acumulados cambiaron en sentidos opuestos: puede haber transferencias internas que distorsionen la separación de aportaciones y dividendos derivados. Revise el estado de cambios en el patrimonio.');
@@ -233,9 +239,9 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     item('(+) Aumento de deuda (o - si se paga)', deuda.delta,
       deuda.presente && !deuda.completo ? 'falta-saldo' : null)
   ];
-  if (tieneResultadosAcumulados) {
-    const aportaciones = patrimonioCompleto && Number.isFinite(deltaRE) ? patrimonioTotal - deltaRE : null;
-    const dividendos = utilidadNeta != null && Number.isFinite(deltaRE) ? utilidadNeta - deltaRE : null;
+  if (tieneDestinoUtilidades) {
+    const aportaciones = patrimonioCompleto && Number.isFinite(deltaDestino) ? patrimonioTotal - deltaDestino : null;
+    const dividendos = utilidadNeta != null && Number.isFinite(deltaDestino) ? utilidadNeta - deltaDestino : null;
     financiamientoItems.push(
       item('(+) Aportaciones de capital, reservas y otros patrimonios', aportaciones,
         aportaciones == null ? 'falta-saldo' : null),
@@ -246,7 +252,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
       advertencias.push('La utilidad acumulada creció más que la utilidad neta: revise las transferencias entre cuentas de patrimonio, porque el renglón de dividendos queda negativo.');
     }
   } else {
-    advertencias.push(`No se identificaron cuentas de utilidades acumuladas en el patrimonio (${periodoInicial} → ${periodoFinal}): los dividendos no se pueden separar y se descuenta la utilidad neta de la variación de patrimonio.`);
+    advertencias.push(`No se identificaron cuentas de utilidades acumuladas ni reservas en el patrimonio (${periodoInicial} → ${periodoFinal}): los dividendos no se pueden separar y se descuenta la utilidad neta de la variación de patrimonio.`);
     financiamientoItems.push(
       item('(+) Variación total del patrimonio', patrimonioCompleto ? patrimonioTotal : null,
         patrimonioCompleto ? null : 'falta-saldo'),
