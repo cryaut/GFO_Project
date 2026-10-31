@@ -2,15 +2,17 @@
 // ni store. Deriva las tres actividades desde dos balances y comprueba que la
 // suma de los flujos iguale la variación de efectivo entre los dos periodos.
 //
-// Operación: utilidad neta + depreciación/amortización del periodo + ajustes de
-// capital de trabajo (Inventario, CxC, otros activos corrientes, CxP y
-// provisiones). Inversión: variación de los activos fijos brutos.
-// Financiamiento: variación de la deuda (largo y corto plazo), aportaciones de
-// patrimonio y dividendos. Los gastos por intereses e impuestos quedan dentro
-// de la utilidad neta, como en el método indirecto clásico.
+// D-066: la pertenencia a cada actividad se decide por el rol del id del
+// catálogo (efe-roles.js), no por el tipo general. Operación: utilidad neta +
+// depreciación/amortización del periodo + variación de los activos y pasivos de
+// operación. Inversión: variación de los activos de inversión. Financiamiento:
+// variación de la deuda, aportaciones de patrimonio y dividendos. Los gastos
+// por intereses e impuestos quedan dentro de la utilidad neta, como en el
+// método indirecto clásico.
 
 import { formatCurrency } from '../../utils/format.js';
-import { computeFinancialTotals, resolveAccountType } from '../estados/estados-calculations.js';
+import { computeFinancialTotals } from '../estados/estados-calculations.js';
+import { rolEFE } from './efe-roles.js';
 import {
   variacionesDeCuentas, advertenciasDeBalance, toleranciaComprobacion
 } from './comprobacion-calculations.js';
@@ -39,10 +41,12 @@ function opuesto(monto) {
   return monto == null ? null : 0 - monto;
 }
 
-// Δ de un tipo dentro de un grupo. Si la empresa no tiene cuentas de ese tipo
-// la variación es 0; si le falta el saldo de alguna, es null (dato faltante).
-function deltaTipo(filas, tipo) {
-  const relevantes = filas.filter(fila => fila.tipo === tipo);
+// Δ de todas las filas de un rol del EFE. Si la empresa no tiene cuentas de ese
+// rol la variación es 0; si le falta el saldo de alguna, es null (dato
+// faltante). `excluirId` saca una cuenta del lote (la depreciación acumulada va
+// en su propio renglón).
+function deltaRol(filas, rol, excluirId = null) {
+  const relevantes = filas.filter(fila => rolEFE(fila.id) === rol && fila.id !== excluirId);
   if (relevantes.length === 0) return { delta: 0, presente: false, completo: true, filas: [] };
   const completo = relevantes.every(fila => fila.saldoInicial !== null && fila.saldoFinal !== null);
   const delta = completo
@@ -54,7 +58,7 @@ function deltaTipo(filas, tipo) {
 // Δ de depreciación acumulada medida en magnitud (|final| − |inicial|): un
 // crecimiento es el gasto no efectivo del periodo; una baja puede ser un retiro.
 function deltaDepreciacion(filas) {
-  const relevantes = filas.filter(fila => fila.tipo === 'depreciacionAcumulada');
+  const relevantes = filas.filter(fila => fila.id === 'bs.accumulated_depreciation');
   if (relevantes.length === 0) return { delta: 0, presente: false, completo: true, filas: [] };
   const completo = relevantes.every(fila => fila.saldoInicial !== null && fila.saldoFinal !== null);
   const delta = completo
@@ -104,17 +108,17 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     if (fila.saldoInicial === null || fila.saldoFinal === null) {
       const faltante = fila.saldoInicial === null ? periodoInicial : periodoFinal;
       motivos.push(`La cuenta «${fila.cuenta}» no tiene saldo en el periodo ${faltante}; su variación no entra en el EFE.`);
-    } else if (!fila.tipo && !(fila.saldoInicial === 0 && fila.saldoFinal === 0)) {
+    } else if (!(fila.saldoInicial === 0 && fila.saldoFinal === 0)
+      && (fila.grupo === 'patrimonio' ? !fila.tipo : !rolEFE(fila.id))) {
       motivos.push(`La cuenta «${fila.cuenta}» no tiene clasificación; añada un tipo de cuenta en Estados Financieros para incluirla en el EFE.`);
     }
   }
 
   // Efectivo: es la cifra con la que se comprueba el estado.
-  const efectivo = deltaTipo(activos, 'efectivo');
+  const efectivo = deltaRol(activos, 'efectivo');
+  const nombresEfectivo = new Set(efectivo.filas.map(fila => fila.cuenta));
   for (const [bg, periodo] of [[bgInicial, periodoInicial], [bgFinal, periodoFinal]]) {
-    const hayEfectivo = Object.keys(bg.activos || {}).some(
-      nombre => resolveAccountType(datos, 'activos', nombre) === 'efectivo'
-    );
+    const hayEfectivo = Object.keys(bg.activos || {}).some(nombre => nombresEfectivo.has(nombre));
     if (!hayEfectivo) {
       motivos.push(`El periodo ${periodo} no tiene cuentas de efectivo: la comprobación necesita el saldo de efectivo.`);
     }
@@ -146,11 +150,10 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
   }
 
   // --- Operación ---
-  const inventario = deltaTipo(activos, 'inventario');
-  const cxC = deltaTipo(activos, 'cxC');
-  const acOtros = deltaTipo(activos, 'activosCorrientesOtros');
-  const cxP = deltaTipo(pasivos, 'cuentasPorPagar');
-  const provisiones = deltaTipo(pasivos, 'provisiones');
+  // D-066: los activos de operación van netos de su propia línea de depreciación,
+  // que se suma como no efectivo; los pasivos de operación suman directo.
+  const activosOperacion = deltaRol(activos, 'operacion', 'bs.accumulated_depreciation');
+  const pasivosOperacion = deltaRol(pasivos, 'operacion');
   const depreciacion = deltaDepreciacion(activos);
   if (depreciacion.presente && depreciacion.completo && depreciacion.delta < 0) {
     for (const fila of depreciacion.filas) {
@@ -173,32 +176,25 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     item('Utilidad Neta', utilidadNeta, utilidadNeta == null ? 'sin-utilidad-neta' : null),
     item('(+) Depreciación y amortización del periodo', depreciacion.delta,
       depreciacion.presente && !depreciacion.completo ? 'falta-saldo' : null),
-    item('(-) Aumento de Inventario (o + si disminuye)', opuesto(inventario.delta),
-      inventario.presente && !inventario.completo ? 'falta-saldo' : null),
-    item('(-) Aumento de Cuentas por Cobrar (o + si disminuye)', opuesto(cxC.delta),
-      cxC.presente && !cxC.completo ? 'falta-saldo' : null),
-    item('(-) Aumento de otros activos corrientes (o + si disminuye)', opuesto(acOtros.delta),
-      acOtros.presente && !acOtros.completo ? 'falta-saldo' : null),
-    item('(+) Aumento de Cuentas por Pagar (o - si disminuye)', cxP.delta,
-      cxP.presente && !cxP.completo ? 'falta-saldo' : null),
-    item('(+) Aumento de Provisiones (o - si disminuye)', provisiones.delta,
-      provisiones.presente && !provisiones.completo ? 'falta-saldo' : null)
+    item('(-) Aumento de activos de operación (o + si disminuye)', opuesto(activosOperacion.delta),
+      activosOperacion.presente && !activosOperacion.completo ? 'falta-saldo' : null),
+    item('(+) Aumento de pasivos de operación (o - si disminuye)', pasivosOperacion.delta,
+      pasivosOperacion.presente && !pasivosOperacion.completo ? 'falta-saldo' : null)
   ];
   const CFO = totalDe(operacionItems);
   const operacion = { items: operacionItems, total: CFO };
 
   // --- Inversión ---
-  const activosFijos = deltaTipo(activos, 'activosFijos');
+  const activosInversion = deltaRol(activos, 'inversion');
   const inversionItems = [
-    item('(+) Venta o baja de activos fijos (o - si compra)', opuesto(activosFijos.delta),
-      activosFijos.presente && !activosFijos.completo ? 'falta-saldo' : null)
+    item('(+) Venta o baja de activos de inversión (o - si compra)', opuesto(activosInversion.delta),
+      activosInversion.presente && !activosInversion.completo ? 'falta-saldo' : null)
   ];
   const CFI = totalDe(inversionItems);
   const inversion = { items: inversionItems, total: CFI };
 
   // --- Financiamiento ---
-  const pasivoLargo = deltaTipo(pasivos, 'pasivoLargoPlazo');
-  const pasivoCorto = deltaTipo(pasivos, 'pasivoCortoPlazo');
+  const deuda = deltaRol(pasivos, 'financiamiento');
   const patrimonioTotal = patrimonio.reduce(
     (suma, fila) => (fila.saldoInicial !== null && fila.saldoFinal !== null ? suma + fila.variacion : NaN), 0
   );
@@ -215,10 +211,8 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
   }
 
   const financiamientoItems = [
-    item('(+) Aumento de pasivo a largo plazo (o - si disminuye)', pasivoLargo.delta,
-      pasivoLargo.presente && !pasivoLargo.completo ? 'falta-saldo' : null),
-    item('(+) Aumento de pasivo a corto plazo financiero (o - si disminuye)', pasivoCorto.delta,
-      pasivoCorto.presente && !pasivoCorto.completo ? 'falta-saldo' : null)
+    item('(+) Aumento de deuda (o - si se paga)', deuda.delta,
+      deuda.presente && !deuda.completo ? 'falta-saldo' : null)
   ];
   if (tieneResultadosAcumulados) {
     const aportaciones = patrimonioCompleto && Number.isFinite(deltaRE) ? patrimonioTotal - deltaRE : null;

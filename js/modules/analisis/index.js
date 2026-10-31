@@ -780,7 +780,7 @@ function renderEFESection(period) {
     </tr>`;
   return `<p class="text-muted mb-4" style="font-size:var(--font-size-sm)">
     Método indirecto desde dos balances: <strong>${escapeHTML(efe.periodos.inicial)}</strong> (inicial) → <strong>${escapeHTML(efe.periodos.final)}</strong> (final).
-    Operación = utilidad neta + depreciación + capital de trabajo; Inversión = activos fijos; Financiamiento = deuda, patrimonio y dividendos.
+    Operación = utilidad neta + depreciación + variación de activos y pasivos de operación; Inversión = activos de inversión; Financiamiento = deuda, patrimonio y dividendos.
     Los gastos por intereses e impuestos ya están dentro de la utilidad neta.
   </p>
   <div class="table-wrapper mb-4"><table>
