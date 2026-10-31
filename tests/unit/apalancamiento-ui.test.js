@@ -47,12 +47,22 @@ function muno() {
     balanceGeneral: { 2023: {}, 2024: {} },
     estadoResultados: {
       2023: {
-        'Ventas': 850000, 'Costo de Ventas': 510000, 'Gastos de Administracion': 120000,
+        'Ventas': 850000,
+        'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+        'Costo de Ventas': 510000, 'Gastos de Administracion': 120000,
         'Gastos de Ventas': 85000, 'Otros Ingresos': 15000, 'Otros Gastos': 10000
       },
       2024: {
-        'Ventas': 920000, 'Costo de Ventas': 545000, 'Gastos de Administracion': 130000,
+        'Ventas': 920000,
+        'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+        'Costo de Ventas': 545000, 'Gastos de Administracion': 130000,
         'Gastos de Ventas': 90000, 'Otros Ingresos': 18000, 'Otros Gastos': 12000
+      }
+    },
+    accountIdentities: {
+      estadoResultados: {
+        'Otros Ingresos': { idCuenta: 'is.nonoperating_income', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' },
+        'Otros Gastos': { idCuenta: 'is.noninterest_nonoperating_expenses', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' }
       }
     }
   };

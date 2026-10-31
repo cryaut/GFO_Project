@@ -66,12 +66,28 @@ it('imports external JSON through Estados, previews, saves once and reloads', as
       pasivos: { 'Proveedor regional': 50 },
       patrimonio: { 'Aportes socios': 100 }
     } },
-    estadoResultados: { '2025': { 'Servicios profesionales': 300 } },
+    estadoResultados: { '2025': {
+      'Servicios profesionales': 300,
+      'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0
+    } },
     accountTypes: {
       activos: { 'Cuenta bancaria principal': 'efectivo' },
       pasivos: { 'Proveedor regional': 'cuentasPorPagar' },
       patrimonio: { 'Aportes socios': 'patrimonio' },
-      estadoResultados: { 'Servicios profesionales': 'ventas' }
+      estadoResultados: {
+        'Servicios profesionales': 'ventas',
+        'Devoluciones sobre ventas': '',
+        'Descuentos sobre ventas': '',
+        'Rebajas sobre ventas': ''
+      }
+    },
+    accountIdentities: {
+      patrimonio: {
+        'Aportes socios': { idCuenta: 'bs.additional_paid_in_capital', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      },
+      estadoResultados: {
+        'Servicios profesionales': { idCuenta: 'is.service_revenue', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      }
     }
   };
   input.files = [{ name: 'consultora.json', contents: JSON.stringify(external) }];
@@ -174,8 +190,16 @@ it('Analysis shows extended ratios from imported custom accounts', async () => {
       }
     },
     estadoResultados: {
-      '2024': { 'Ingresos por consultoría': 400, 'Papelería y fletes': 150, 'Renta oficina': 60, 'Publicidad': 40 },
-      '2025': { 'Ingresos por consultoría': 500, 'Papelería y fletes': 180, 'Renta oficina': 70, 'Publicidad': 50 }
+      '2024': {
+        'Ingresos por consultoría': 400,
+        'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+        'Papelería y fletes': 150, 'Renta oficina': 60, 'Publicidad': 40
+      },
+      '2025': {
+        'Ingresos por consultoría': 500,
+        'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+        'Papelería y fletes': 180, 'Renta oficina': 70, 'Publicidad': 50
+      }
     },
     accountTypes: {
       activos: { 'Banco regional': 'efectivo', 'Cartera clientes': 'cxC', 'Mercadería': 'inventario' },
@@ -184,6 +208,18 @@ it('Analysis shows extended ratios from imported custom accounts', async () => {
       estadoResultados: {
         'Ingresos por consultoría': 'ventas', 'Papelería y fletes': 'costoVentas',
         'Renta oficina': 'gastosAdmin', 'Publicidad': 'gastosVentas'
+      }
+    },
+    accountIdentities: {
+      pasivos: {
+        'Préstamo bancario': { idCuenta: 'bs.long_term_borrowings', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      },
+      patrimonio: {
+        'Socios fundadores': { idCuenta: 'bs.additional_paid_in_capital', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      },
+      estadoResultados: {
+        'Ingresos por consultoría': { idCuenta: 'is.service_revenue', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' },
+        'Papelería y fletes': { idCuenta: 'is.service_cost', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
       }
     }
   });
@@ -218,12 +254,28 @@ it('Reportes resumes imported custom accounts instead of fixed account names', a
       pasivos: { 'Préstamo bancario': 100 },
       patrimonio: { 'Socios fundadores': 200 }
     } },
-    estadoResultados: { '2024': { 'Ingresos por consultoría': 500, 'Papelería y fletes': 200 } },
+    estadoResultados: { '2024': {
+      'Ingresos por consultoría': 500,
+      'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+      'Papelería y fletes': 200
+    } },
     accountTypes: {
       activos: { 'Banco regional': 'efectivo' },
       pasivos: { 'Préstamo bancario': 'pasivoLargoPlazo' },
       patrimonio: { 'Socios fundadores': 'patrimonio' },
       estadoResultados: { 'Ingresos por consultoría': 'ventas', 'Papelería y fletes': 'costoVentas' }
+    },
+    accountIdentities: {
+      pasivos: {
+        'Préstamo bancario': { idCuenta: 'bs.long_term_borrowings', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      },
+      patrimonio: {
+        'Socios fundadores': { idCuenta: 'bs.additional_paid_in_capital', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      },
+      estadoResultados: {
+        'Ingresos por consultoría': { idCuenta: 'is.service_revenue', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' },
+        'Papelería y fletes': { idCuenta: 'is.service_cost', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      }
     }
   });
   const page = element();

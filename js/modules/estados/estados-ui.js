@@ -1,5 +1,6 @@
-import { ACCOUNT_TYPES, computeFinancialTotals, validateFinancialData, inferAccountType } from './estados-calculations.js';
-import { normalizeFinancialData } from './estados-normalize.js';
+import { ACCOUNT_TYPES, computeFinancialTotals, validateFinancialData, inferAccountType,
+  seleccionarPeriodos, MAXIMO_PERIODOS_VISIBLES } from './estados-calculations.js';
+import { normalizeFinancialData, ordenarPeriodos } from './estados-normalize.js';
 import { escapeHTML as esc } from '../../utils/html.js';
 import { formatCurrency } from '../../utils/format.js';
 import { exportJSON, exportCSV } from '../../utils/export.js';
@@ -15,6 +16,7 @@ const LABELS = {
   depreciacionAcumulada: 'Depreciación acumulada (negativa)', cuentasPorPagar: 'Cuentas por pagar operativas',
   pasivoCortoPlazo: 'Deuda financiera corriente', provisiones: 'Provisiones corrientes operativas',
   pasivoLargoPlazo: 'Pasivos no corrientes', patrimonio: 'Patrimonio', ventas: 'Ventas',
+  deduccionesVentas: 'Deducciones de ventas (devoluciones, descuentos y rebajas)',
   costoVentas: 'Costo de ventas', gastosAdmin: 'Gastos administrativos', gastosVentas: 'Gastos de ventas',
   otrosIngresos: 'Otros ingresos', otrosGastos: 'Otros gastos', intereses: 'Gastos financieros', impuestos: 'Impuestos'
 };
@@ -31,6 +33,13 @@ export function estadosUI(page, { initial, demo, save }) {
   let selected = draft.periods[0] || '';
   let dirty = false;
   let numberFormat = 'auto';
+  // D-065: periodos visibles elegidos en la sesión; null usa los predeterminados.
+  // No se guarda en el store: los cálculos siempre usan todos los periodos.
+  let seleccionVisibles = null;
+  const periodosOrdenados = () => ordenarPeriodos(draft.periods);
+  const periodosVisibles = () => seleccionarPeriodos({
+    periodos: periodosOrdenados(), seleccion: seleccionVisibles, maximo: MAXIMO_PERIODOS_VISIBLES
+  });
   // Opciones de lectura de importes: formato elegido y lista donde se acumulan los avisos.
   const importOptions = () => ({ decimal: numberFormat, avisos: [] });
   const avisoText = avisos => {
@@ -57,12 +66,26 @@ export function estadosUI(page, { initial, demo, save }) {
     if ((dirty || draft.periods.length) && !window.confirm('¿Reemplazar el borrador completo? Los datos guardados no cambian hasta pulsar Guardar.')) return;
     draft = data;
     selected = draft.periods[0] || '';
+    seleccionVisibles = null;
     dirty = true;
     render();
     message(text);
   };
 
   function render() {
+    const { visibles, puedeAgregar } = periodosVisibles();
+    const ordenados = periodosOrdenados();
+    const casillas = ordenados.map(p => {
+      const marcado = visibles.includes(p);
+      return `<label><input type="checkbox" data-periodo value="${esc(p)}" ${marcado ? 'checked' : ''} ${!marcado && !puedeAgregar ? 'disabled' : ''}> ${esc(p)}</label>`;
+    }).join('');
+    const selectorPeriodos = ordenados.length > 1
+      ? `<div class="card mb-4" id="periodSelector"><p><strong>Periodos visibles</strong>
+          <span class="text-muted" id="periodSelectorCount">${visibles.length} de ${MAXIMO_PERIODOS_VISIBLES} seleccionados</span></p>
+        <div class="flex-gap flex-wrap">${casillas}</div>
+        ${!puedeAgregar ? '<p class="text-muted">Máximo 4 periodos</p>' : ''}
+        <button type="button" class="btn btn-secondary mt-2" id="defaultPeriods">Predeterminados</button></div>`
+      : '';
     page.innerHTML = `<div class="page-header"><h1 class="page-title">Estados Financieros</h1>
       <p>1. Cargar o editar → 2. Revisar equilibrio → 3. Guardar → <a href="#/analisis">Analizar datos guardados</a></p></div>
       <div class="card mb-4"><div class="flex-gap flex-wrap">
@@ -100,10 +123,12 @@ export function estadosUI(page, { initial, demo, save }) {
         <form id="renamePeriod" class="flex-gap mt-4"><input class="form-input" name="period" aria-label="Nuevo nombre del periodo" required maxlength="40" value="${esc(selected)}"><button class="btn btn-secondary">Renombrar</button></form>
         <div class="flex-gap mt-4"><button class="btn btn-secondary" id="earlierPeriod">Mover antes</button><button class="btn btn-secondary" id="laterPeriod">Mover después</button><button class="btn btn-danger" id="deletePeriod">Eliminar periodo</button></div>` : '<p>No hay periodos. Añada uno para empezar, sin necesidad de cargar el ejemplo.</p>'}</div>
       <div id="accountReview"></div><div id="accountEditor"></div><div id="balanceCheck" aria-live="polite"></div>
+      ${selectorPeriodos}
       <h2 class="mt-4">Vista multiperiodo del borrador</h2><div id="statementPreview"></div>`;
     renderAccounts();
     renderReview();
     guard(renderPreview);
+    bindPeriodSelector();
     bind();
   }
 
@@ -177,6 +202,29 @@ export function estadosUI(page, { initial, demo, save }) {
     }, text => message(text, true));
   }
 
+  // La selección vive solo en esta sesión: no marca el borrador como sucio.
+  function bindPeriodSelector() {
+    const contenedor = page.querySelector('#periodSelector');
+    if (!contenedor) return;
+    for (const casilla of page.querySelectorAll('input[data-periodo]')) {
+      casilla.onchange = event => {
+        const marcados = new Set(periodosVisibles().visibles);
+        if (event.target.checked) marcados.add(event.target.value);
+        else marcados.delete(event.target.value);
+        seleccionVisibles = ordenadosQueExisten(marcados);
+        render();
+      };
+    }
+    page.querySelector('#defaultPeriods').onclick = () => {
+      seleccionVisibles = null;
+      render();
+    };
+  }
+
+  function ordenadosQueExisten(marcados) {
+    return periodosOrdenados().filter(p => marcados.has(p));
+  }
+
   function bind() {
     page.querySelector('#companyName').oninput = event => {
       draft.name = event.target.value.trim() || 'Mi empresa';
@@ -193,6 +241,7 @@ export function estadosUI(page, { initial, demo, save }) {
         candidate.estadoResultados[period] = {};
         draft = normalizeFinancialData(candidate);
         selected = period;
+        seleccionVisibles = null;
         markDirty(); render();
       });
     };
@@ -200,6 +249,7 @@ export function estadosUI(page, { initial, demo, save }) {
       const to = draft.periods.indexOf(selected) + offset;
       if (to < 0 || to >= draft.periods.length) return;
       [draft.periods[to], draft.periods[to - offset]] = [draft.periods[to - offset], draft.periods[to]];
+      seleccionVisibles = null;
       markDirty(); render();
     });
     page.querySelector('#earlierPeriod')?.addEventListener('click', () => move(-1));
@@ -225,6 +275,7 @@ export function estadosUI(page, { initial, demo, save }) {
         if (draft.periods.includes(period) && period !== selected) throw new Error('Ese periodo ya existe.');
         draft = normalizeFinancialData(candidate);
         selected = period;
+        seleccionVisibles = null;
         markDirty(); render();
       });
     });
@@ -240,6 +291,7 @@ export function estadosUI(page, { initial, demo, save }) {
         candidate.pendingAccounts = candidate.pendingAccounts?.filter(fila => Object.keys(fila.importes).length);
         draft = normalizeFinancialData(candidate);
         selected = draft.periods[0] || '';
+        seleccionVisibles = null;
         markDirty(); render();
       });
     });
@@ -310,23 +362,25 @@ export function estadosUI(page, { initial, demo, save }) {
     check.textContent = 'Complete importes válidos para calcular el borrador.';
     const normalized = normalizeFinancialData(draft);
     const validation = validateFinancialData(normalized);
+    // La selección solo filtra las columnas; cada total se calcula igual con cualquier selección (D-065).
+    const { visibles } = periodosVisibles();
     const mostrarMonto = valor => valor === null ? 'N/D' : formatCurrency(valor);
-    if (validation.length) check.innerHTML = validation.map(row => `<p class="${row.balanced ? 'text-success' : 'text-danger'}">${esc(row.period)}: ${row.difference === null ? 'Comprobación incompleta: revise las cuentas pendientes' : row.balanced ? 'Balance equilibrado' : 'Balance descuadrado'} — Activos ${mostrarMonto(row.totalActivos)}; Pasivos + Patrimonio ${mostrarMonto(row.totalPasivos === null || row.totalPatrimonio === null ? null : row.totalPasivos + row.totalPatrimonio)}; diferencia ${mostrarMonto(row.difference)}</p>`).join('');
-    const table = (label, rows) => `<h3>${label}</h3><div class="table-wrapper mb-4"><table><thead><tr><th>Cuenta</th>${draft.periods.map(p => `<th>${esc(p)}</th>`).join('')}</tr></thead><tbody>${rows.map(([name, values]) => `<tr><td>${esc(name)}</td>${values.map(v => `<td>${mostrarMonto(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    if (validation.length) check.innerHTML = validation.map(row => `<p class="${row.balanced ? 'text-success' : 'text-danger'}">${esc(row.period)}: ${row.difference === null ? 'Comprobación incompleta: revise las cuentas pendientes' : row.balanced ? 'Balance equilibrado' : 'Balance descuadrado'} — Activos ${mostrarMonto(row.totalActivos)}; Pasivos + Patrimonio ${mostrarMonto(row.totalPasivos === null || row.totalPatrimonio === null ? null : row.totalPasivos + row.totalPatrimonio)}; diferencia ${mostrarMonto(row.difference)}${row.diagnostico ? `; ${esc(row.diagnostico)}` : ''}</p>`).join('');
+    const table = (label, rows) => `<h3>${label}</h3><div class="table-wrapper mb-4"><table><thead><tr><th>Cuenta</th>${visibles.map(p => `<th>${esc(p)}</th>`).join('')}</tr></thead><tbody>${rows.map(([name, values]) => `<tr><td>${esc(name)}</td>${values.map(v => `<td>${mostrarMonto(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
     preview.innerHTML = Object.entries(GROUPS).map(([group, label]) => {
       const names = [...new Set(draft.periods.flatMap(p => Object.keys(accountsFor(normalized, p, group))))];
-      return table(label, names.map(name => [name, draft.periods.map(p => accountsFor(normalized, p, group)[name] ?? null)]));
+      return table(label, names.map(name => [name, visibles.map(p => accountsFor(normalized, p, group)[name] ?? null)]));
     }).join('') + table('Totales reportados conservados', [...new Set(Object.values(normalized.reportedTotals || {}).flatMap(totales => Object.keys(totales)))].map(id => [
       Object.values(normalized.reportedTotals).find(totales => totales[id])?.[id].nombre || id,
-      draft.periods.map(periodo => normalized.reportedTotals?.[periodo]?.[id]?.importe ?? null)
+      visibles.map(periodo => normalized.reportedTotals?.[periodo]?.[id]?.importe ?? null)
     ])) + table('Datos suplementarios', [...new Set(Object.values(normalized.supplementaryAccounts || {}).flatMap(cuentas => Object.keys(cuentas)))].map(nombre => [
-      nombre, draft.periods.map(periodo => normalized.supplementaryAccounts?.[periodo]?.[nombre] ?? null)
+      nombre, visibles.map(periodo => normalized.supplementaryAccounts?.[periodo]?.[nombre] ?? null)
     ])) + table('Cuentas pendientes de grupo', (normalized.pendingAccounts || []).map(fila => [
-      fila.nombre, draft.periods.map(periodo => fila.importes[periodo] ?? null)
+      fila.nombre, visibles.map(periodo => fila.importes[periodo] ?? null)
     ])) + table('Totales compartidos', [
       ['Total activos', 'totalActivos'], ['Total pasivos', 'totalPasivos'],
       ['Total patrimonio', 'totalPatrimonio'], ['Utilidad bruta', 'utilidadBruta'], ['Utilidad neta', 'utilidadNeta']
-    ].map(([label, key]) => [label, draft.periods.map(p => computeFinancialTotals(normalized, p)[key])]));
+    ].map(([label, key]) => [label, visibles.map(p => computeFinancialTotals(normalized, p)[key])]));
   }
 
   render();

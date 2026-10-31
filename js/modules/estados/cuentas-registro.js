@@ -7,6 +7,7 @@ export function registrarCuenta(datos, registros) {
   const copia = structuredClone(datos);
   copia.accountTypes ??= { activos: {}, pasivos: {}, patrimonio: {}, estadoResultados: {} };
   copia.accountIdentities ??= { activos: {}, pasivos: {}, patrimonio: {}, estadoResultados: {}, suplementario: {} };
+  const filas = {};
   for (const registro of Array.isArray(registros) ? registros : [registros]) {
     const { nombre, periodo, importe, clasificacion = '', origen = 'manual' } = registro;
     if (typeof nombre !== 'string' || !nombre.trim() || nombre.length > 120 || ['__proto__', 'constructor', 'prototype'].includes(nombre)) throw new Error('Nombre de cuenta inválido');
@@ -32,10 +33,11 @@ export function registrarCuenta(datos, registros) {
       continue;
     }
     const tipo = resolverClasificacion(grupo, clasificacion) || cuenta?.tipoApp || '';
+    if (Number.isInteger(registro.fila) && registro.fila > 0) filas[`${grupo}:${nombre}:${periodo}`] = registro.fila;
     const anterior = copia.accountIdentities[grupo]?.[nombre];
     if (anterior?.idCuenta && cuenta && anterior.idCuenta !== cuenta.id && !registro.reemplazar) throw new Error('La misma cuenta tiene identificadores distintos entre periodos.');
     let destino;
-    if (cuenta?.rol === 'reported_total' && !cuenta.tipoApp) {
+    if (cuenta?.rol === 'reported_total') {
       copia.reportedTotals ??= {};
       copia.reportedTotals[periodo] ??= {};
       if (Object.hasOwn(copia.reportedTotals[periodo], cuenta.id) && !registro.reemplazar) throw new Error('Total reportado duplicado');
@@ -52,5 +54,5 @@ export function registrarCuenta(datos, registros) {
     }
     copia.accountIdentities[grupo][nombre] = identidad;
   }
-  return normalizeFinancialData(copia);
+  return normalizeFinancialData(copia, { filas });
 }

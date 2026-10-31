@@ -114,9 +114,17 @@ function muno() {
     name: 'MUNO MODA S.A.', periods: ['2024'],
     balanceGeneral: { 2024: { activos: {}, pasivos: {}, patrimonio: {} } },
     estadoResultados: { 2024: {
-      'Ventas': 920000, 'Costo de Ventas': 545000, 'Gastos de Administracion': 130000,
+      'Ventas': 920000,
+      'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+      'Costo de Ventas': 545000, 'Gastos de Administracion': 130000,
       'Gastos de Ventas': 90000, 'Otros Ingresos': 18000, 'Otros Gastos': 12000
-    } }
+    } },
+    accountIdentities: {
+      estadoResultados: {
+        'Otros Ingresos': { idCuenta: 'is.nonoperating_income', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' },
+        'Otros Gastos': { idCuenta: 'is.noninterest_nonoperating_expenses', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' }
+      }
+    }
   });
 }
 

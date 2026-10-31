@@ -9,7 +9,15 @@ const estados = () => normalizeFinancialData({
     '2023': { activos: { Efectivo: 100 }, pasivos: { Proveedores: 40 }, patrimonio: { Capital: 60 } },
     '2024': { activos: { Efectivo: 150, Bodega: 50 }, pasivos: { Proveedores: 70 }, patrimonio: { Capital: 130 } }
   },
-  estadoResultados: { '2023': { Ventas: 500, 'Costo de Ventas': 300 }, '2024': { Ventas: 600, 'Costo de Ventas': 350 } },
+  estadoResultados: { '2023': {
+    Ventas: 500,
+    'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+    'Costo de Ventas': 300
+  }, '2024': {
+    Ventas: 600,
+    'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+    'Costo de Ventas': 350
+  } },
   accountTypes: {
     activos: { Efectivo: 'efectivo', Bodega: 'activosFijos' },
     pasivos: { Proveedores: 'cuentasPorPagar' },

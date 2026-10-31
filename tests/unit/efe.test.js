@@ -71,9 +71,15 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
     }
   };
   const er = {
-    '2024': { Ventas: 400, 'Costo de Ventas': 240 },
+    '2024': {
+      Ventas: 400,
+      'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+      'Costo de Ventas': 240
+    },
     '2025': {
-      Ventas: 500, 'Costo de Ventas': 300, 'Gastos de Administracion': 80,
+      Ventas: 500,
+      'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+      'Costo de Ventas': 300, 'Gastos de Administracion': 80,
       'Gastos de Ventas': 40, 'Otros Ingresos': 10, 'Otros Gastos': 5,
       'Gastos por Intereses': 9, 'Impuesto sobre la Renta': 10
     }
@@ -178,7 +184,11 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
       '2025': { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { Capital: 100 } }
     };
     const r = construirEFE(estados(sinResultados, {
-      '2024': {}, '2025': { Ventas: 100, 'Costo de Ventas': 70 }
+      '2024': {}, '2025': {
+        Ventas: 100,
+        'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+        'Costo de Ventas': 70
+      }
     }), '2024', '2025');
     expect(itemDe(r.financiamiento, 'Variación total del patrimonio').monto).toBe(50);
     expect(itemDe(r.financiamiento, 'Utilidad neta del periodo').monto).toBe(-30);
@@ -197,7 +207,11 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
       '2025': { activos: { Efectivo: 124, Equipos: 200, 'Depreciacion Acumulada': 104 }, pasivos: { 'Cuentas por Pagar': 80 }, patrimonio: { Capital: 348 } }
     };
     const r = construirEFE(estados(signoPositivo, {
-      '2024': {}, '2025': { Ventas: 200, 'Costo de Ventas': 100, 'Gastos de Administracion': 52 }
+      '2024': {}, '2025': {
+        Ventas: 200,
+        'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+        'Costo de Ventas': 100, 'Gastos de Administracion': 52
+      }
     }), '2024', '2025');
     expect(itemDe(r.operacion, 'Depreciación').monto).toBe(24);
     expect(r.advertencias.join(' ')).toContain('signo positivo');
@@ -337,7 +351,11 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
       '2025': { activos: { Efectivo: 210 }, pasivos: {}, patrimonio: { Capital: 100, 'Utilidad acumulada': 70, 'Utilidad del ejercicio': 40 } }
     };
     const r = construirEFE(estados(conEjercicio, {
-      '2024': {}, '2025': { Ventas: 100, 'Costo de Ventas': 60 }
+      '2024': {}, '2025': {
+        Ventas: 100,
+        'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+        'Costo de Ventas': 60
+      }
     }), '2024', '2025');
     expect(r.utilidadNeta).toBe(40);
     expect(itemDe(r.financiamiento, 'Dividendos').monto).toBe(-10);

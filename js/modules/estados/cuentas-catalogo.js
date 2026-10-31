@@ -20,6 +20,7 @@ export const TIPOS_APP = {
   ],
   'estadoResultados': [
     'ventas',
+    'deduccionesVentas',
     'costoVentas',
     'gastosAdmin',
     'gastosVentas',
@@ -393,7 +394,8 @@ export const CUENTAS_CATALOGO = [
     'sinonimos': [
       'Utilidad del ejercicio',
       'pérdida del ejercicio',
-      'resultado del período dentro del patrimonio'
+      'resultado del período dentro del patrimonio',
+      'Resultado del ejercicio'
     ],
     'sinonimosDudosos': [],
     'tipoApp': 'patrimonio',
@@ -1941,13 +1943,13 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'deduccion_ingreso',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Rebajas y bonificaciones sobre ventas'
     ],
     'sinonimosDudosos': [],
-    'tipoApp': null,
+    'tipoApp': 'deduccionesVentas',
     'ambiguedades': [],
     'estadoInvestigacion': 'partially_verified',
     'fuentes': []
@@ -1959,13 +1961,13 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'deduccion_ingreso',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Descuentos concedidos sobre ventas'
     ],
     'sinonimosDudosos': [],
-    'tipoApp': null,
+    'tipoApp': 'deduccionesVentas',
     'ambiguedades': [],
     'estadoInvestigacion': 'partially_verified',
     'fuentes': []
@@ -1977,14 +1979,14 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'deduccion_ingreso',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Devoluciones de ventas',
       'ventas devueltas'
     ],
     'sinonimosDudosos': [],
-    'tipoApp': null,
+    'tipoApp': 'deduccionesVentas',
     'ambiguedades': [],
     'estadoInvestigacion': 'partially_verified',
     'fuentes': []

@@ -2,7 +2,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { registrarCuenta } from '../../js/modules/estados/cuentas-registro.js';
 import { montoCuenta, consultarMontoCuenta, resumenIdentificacion } from '../../js/modules/estados/cuentas-identificador.js';
 import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
-import { computeFinancialTotals } from '../../js/modules/estados/estados-calculations.js';
+import { computeFinancialTotals, resolveAccountType } from '../../js/modules/estados/estados-calculations.js';
 import { rowsToFinancialData, tableTextToFinancialData, TABULAR_TEMPLATE_ROWS } from '../../js/modules/estados/estados-import.js';
 
 const vacio = () => ({ name: 'Prueba', periods: [], balanceGeneral: {}, estadoResultados: {} });
@@ -16,6 +16,48 @@ it('el registro manual y la importación guardan la misma forma normalizada e id
   expect(manual.accountIdentities.activos.Efectivo.idCuenta).toBe(importado.accountIdentities.activos.Efectivo.idCuenta);
   expect(normalizeFinancialData(manual)).toEqual(manual);
   expect(montoCuenta(manual, '2024', 'bs.cash_and_equivalents')).toBe(12);
+});
+
+it('una identidad sugerida da el mismo resultado sin importar su origen', () => {
+  const conOrigen = origen => normalizeFinancialData({
+    name: 'Misma regla', periods: ['2024'],
+    balanceGeneral: { '2024': { activos: { Efetivo: 30 }, pasivos: {}, patrimonio: {} } },
+    estadoResultados: { '2024': {} },
+    accountTypes: { activos: { Efetivo: 'efectivo' } },
+    accountIdentities: {
+      activos: {
+        Efetivo: {
+          idCuenta: null, estado: 'sugerida', metodo: 'similitud', origen,
+          candidatos: [{ id: 'bs.cash_and_equivalents', puntuacion: 1 }]
+        }
+      }
+    }
+  });
+  const legado = conOrigen('legado');
+  const importado = conOrigen('importacion');
+  // El tipo explícito no confirma una identidad sugerida: antes, el origen
+  // legado la dejaba pasar y la importación no.
+  expect(resolveAccountType(legado, 'activos', 'Efetivo')).toBe('');
+  expect(resolveAccountType(importado, 'activos', 'Efetivo')).toBe('');
+  expect(computeFinancialTotals(legado, '2024')).toEqual(computeFinancialTotals(importado, '2024'));
+  expect(computeFinancialTotals(legado, '2024').totalActivos).toBeNull();
+});
+
+it('una identidad reconocida de datos viejos calcula igual que una nueva', () => {
+  const datos = origen => normalizeFinancialData({
+    name: 'Identidad confirmada', periods: ['2024'],
+    balanceGeneral: { '2024': { activos: {}, pasivos: { 'Prestamo Largo Plazo': 150 }, patrimonio: {} } },
+    estadoResultados: { '2024': {} },
+    accountIdentities: {
+      pasivos: {
+        'Prestamo Largo Plazo': {
+          idCuenta: 'bs.long_term_borrowings', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen
+        }
+      }
+    }
+  });
+  expect(computeFinancialTotals(datos('legado'), '2024').totalPasivos).toBe(150);
+  expect(computeFinancialTotals(datos('importacion'), '2024').totalPasivos).toBe(150);
 });
 
 it('la plantilla termina con siete cuentas reconocidas', () => {
@@ -50,12 +92,15 @@ it('una clasificación contradictoria queda sugerida y conserva el importe', () 
   expect(computeFinancialTotals(datos, '2024').efectivo).toBeNull();
 });
 
-it('los totales reportados se leen directamente y nunca se inventan a partir de sus componentes', () => {
+it('los totales reportados se leen directamente y los subtotales sin detalle quedan N/D', () => {
   const datos = tableTextToFinancialData('Cuenta,Grupo,id,2024\nCaja,activos,bs.cash_and_equivalents,20\nTotal de activos,activos,bs.total_assets,100');
   expect(montoCuenta(datos, '2024', 'bs.total_assets')).toBe(100);
   expect(datos.balanceGeneral['2024'].activos).toEqual({ Caja: 20 });
   expect(datos.reportedTotals['2024']['bs.total_assets'].importe).toBe(100);
-  expect(computeFinancialTotals(datos, '2024').totalActivos).toBeNull(); // No presentar 20 como total completo.
+  const totales = computeFinancialTotals(datos, '2024');
+  expect(totales.totalActivos).toBe(100); // El total reportado manda.
+  expect(totales.activosCorrientes).toBe(20);
+  expect(totales.activosFijos).toBeNull(); // Sin detalle ni total propio.
   expect(normalizeFinancialData(datos)).toEqual(datos);
 });
 
@@ -66,7 +111,7 @@ it('conserva los datos suplementarios requeridos y distingue cero de ausencia', 
 });
 
 it('ingresos por intereses se suman y gastos por intereses se restan con las fórmulas vigentes', () => {
-  const datos = tableTextToFinancialData('Cuenta,Estado,2024\nVentas,Resultados,100\nIngresos por intereses,Resultados,20\nGastos por intereses,Resultados,5');
+  const datos = tableTextToFinancialData('Cuenta,Estado,2024\nVentas,Resultados,100\nDevoluciones sobre ventas,Resultados,0\nDescuentos sobre ventas,Resultados,0\nRebajas sobre ventas,Resultados,0\nCosto de Ventas,Resultados,0\nIngresos por intereses,Resultados,20\nGastos por intereses,Resultados,5');
   expect(datos.accountTypes.estadoResultados['Ingresos por intereses']).toBe('otrosIngresos');
   // 100 + 20 - 5 = 115; antes el ingreso 20 se restaba y daba 75.
   expect(computeFinancialTotals(datos, '2024')).toMatchObject({ otrosIngresos: 20, intereses: 5, utilidadNeta: 115 });
@@ -97,11 +142,14 @@ it('otros ingresos y gastos genéricos requieren confirmación aun con su tipo t
   expect(computeFinancialTotals(datos, '2024').utilidadNeta).toBeNull();
 });
 
-it('un total y sus detalles no producen una suma duplicada en el motor anterior', () => {
+it('un total reportado y sus detalles no se suman: manda el total y se avisa el descuadre', () => {
   const datos = tableTextToFinancialData('Cuenta,Grupo,2024\nInventario,activos,100\nInventario de mercaderías,activos,60');
   expect(montoCuenta(datos, '2024', 'bs.inventory_total')).toBe(100);
-  expect(computeFinancialTotals(datos, '2024').inventario).toBeNull();
-  expect(computeFinancialTotals(datos, '2024').notAvailableReasons[0].motivo).toBe('overlapping_account_aggregation');
+  const totales = computeFinancialTotals(datos, '2024');
+  expect(totales.inventario).toBe(100);
+  expect(totales.notAvailableReasons).toContainEqual(expect.objectContaining({
+    motivo: 'reported_subtotal_mismatch', diferencia: 40
+  }));
 });
 
 it('rechaza claves peligrosas, duplicados, grupos y periodos malformados sin perder el borrador original', () => {

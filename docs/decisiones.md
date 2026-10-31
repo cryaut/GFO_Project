@@ -106,6 +106,11 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-053 | Utilidad neta de Reportes igual a Análisis | Vigente |
 | D-054 | Periodo no disponible da N/D sin cambiar de periodo | Vigente |
 | D-055 | Celda vacía es dato faltante (N/D), salvo intereses ganados | Vigente en el motor; catálogo de Estados sin cambios |
+| D-061 | Convención de signos del catálogo | Vigente |
+| D-062 | El total reportado nunca se suma a sus detalles | Vigente |
+| D-063 | Ausencia según la política del catálogo | Vigente |
+| D-064 | Ventas netas: la cuenta `ventas` resta las deducciones de ventas | Vigente |
+| D-065 | Selección de periodos visibles en Estados | Vigente |
 
 ## Decisiones
 
@@ -1282,3 +1287,108 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 **Para revertirla.** Registrar la decisión que la reemplace y modificar de forma coordinada las políticas de los JSON, nota maestra, generado y pruebas, conservando la evidencia y los datos de referencia.
 
 **Referencias.** `instrucciones_carlos_ronda17.md`, anexo de 55 cuentas; ejercicios ficticios v2; autorización expresa de Carlos en este chat; `tests/unit/razones-motor-vacias.test.js`; PR #18.
+
+### D-061 — Convención de signos del catálogo
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/estados/estados-normalize.js`, catálogo de cuentas y mensajes de importación
+
+**Contexto.** El catálogo ya declaraba `convencionSigno` por cuenta, pero la compuerta no la aplicaba. Un costo de ventas o un gasto capturado en negativo se sumaba en silencio y producía utilidades infladas; una depreciación positiva también pasaba sin aviso.
+
+**Opciones.**
+1. Aplicar la convención del catálogo en la compuerta y rechazar la fila con un mensaje exacto — impide que un signo contradictorio altere los totales.
+2. Conservar el signo recibido o invertirlo en silencio — evita rechazos, pero mantiene cifras incorrectas sin explicación.
+
+**Decisión.** Opción 1. En `positivo`, un valor negativo se rechaza; en `negativo`, uno positivo se rechaza; en `conservar`, cualquier signo es válido. Nunca se invierte un signo en silencio. El primer error de la importación es suficiente en esta ronda. Los datos guardados que no pasen la compuerta no se borran: la interfaz los muestra en modo lectura con el error.
+
+**Consecuencias.** Los casos 1, 2, 3a y 3b de la tabla de aceptación dejan de producir cifras silenciosas. Los mensajes distinguen la cuenta positiva de la depreciación acumulada negativa. Los datos existentes conservan su contenido y solo se bloquea su uso para calcular hasta corregirlos.
+
+**Para revertirla.** Retirar la comparación de signo en `normalizeFinancialData`, sus pruebas y los textos de error; volver a aceptar cualquier signo reintroduce los totales inflados documentados.
+
+**Referencias.** `instrucciones_carlos_estados_R1-R2.md`, R1-3 y tabla de aceptación; `docs/contexto/dominio-financiero.md`.
+
+### D-062 — El total reportado nunca se suma a sus detalles
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/estados/estados-calculations.js`, `cuentas-registro.js`, `estados-normalize.js`
+
+**Contexto.** Un total reportado convivía con sus componentes y el motor anterior los sumaba, duplicando activos, ventas o inventario. En otros casos el total se descartaba y el subtotal quedaba N/D aunque el ejercicio sí lo hubiera publicado.
+
+**Opciones.**
+1. Usar el total reportado como valor del tipo, compararlo con sus detalles y avisar el descuadre — conserva la cifra publicada y hace visible la diferencia.
+2. Seguir sumando totales y detalles, o ignorar el total — mantiene duplicaciones o pierde el dato reportado.
+
+**Decisión.** Opción 1. Un total reportado se compara con los detalles del mismo tipo. Si existe, es el valor de ese tipo. Si la diferencia supera 0.01, manda el total reportado y se registra `reported_subtotal_mismatch` con la diferencia. Todos los totales con `rol: reported_total` se guardan en `reportedTotals`, también los que tienen `tipoApp`. Si un grupo tiene total reportado y un subtotal no tiene detalles ni total propio, ese subtotal es N/D, nunca 0.
+
+**Consecuencias.** Los casos 5 a 9 de la tabla de aceptación dan la cifra reportada y, cuando corresponde, el aviso con su diferencia. Cambia la forma normalizada de los totales reportados con tipo: dejan de estar en el estado y pasan a `reportedTotals`; las pruebas de importación y registro se actualizan por esa causa. No se suman dos veces los mismos importes.
+
+**Para revertirla.** Restaurar la suma de totales y detalles y el motivo `overlapping_account_aggregation`, retirar `reported_subtotal_mismatch` y ajustar las pruebas de importación y registro.
+
+**Referencias.** `instrucciones_carlos_estados_R1-R2.md`, R1-1 y tabla de aceptación; regla `reported_or_calculate` de los JSON de razones.
+
+### D-063 — Ausencia según la política del catálogo
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/estados/cuentas-catalogo.js`, `estados-calculations.js` y datos de demostración
+
+**Contexto.** El catálogo declaraba `requires_data` para algunas cuentas, pero el cálculo las trataba como cero cuando no aparecían. En particular, un edificio sin depreciación acumulada producía activos fijos y totales de activos inflados, y unas ventas sin devoluciones, descuentos ni rebajas se presentaban como ventas netas sin avisar.
+
+**Opciones.**
+1. Exigir el dato cuando el catálogo lo marca y devolver N/D con motivo `missing_required_account_data` — distingue el dato faltante de un cero real.
+2. Seguir tratando la ausencia como cero — conserva cifras incompletas sin explicación.
+
+**Decisión.** Opción 1. La depreciación acumulada se exige cuando hay alguna cuenta `bs.ppe_*` distinta de terrenos. Las devoluciones, descuentos y rebajas se exigen cuando hay actividad de ventas y no hay un total de ventas netas reportado; sus políticas pasan de `zero_if_not_reported` a `requires_data`. Un 0 declarado cuenta como dato presente. Si falta la depreciación, `activosFijos` y `totalActivos` son N/D; si faltan las deducciones, `ventas`, `utilidadBruta` y `utilidadNeta` son N/D.
+
+**Consecuencias.** Los casos 4 y 10 de la tabla de aceptación dejan de producir cifras silenciosas. La demostración y las pruebas que representan ejercicios con ventas declaran cero explícito en las tres deducciones; sus resultados financieros esperados no cambian. La comprobación de las 71 identidades del PR #10 se ajusta para reconocer este cambio documentado del catálogo, sin modificar los JSON de referencia.
+
+**Para revertirla.** Registrar la decisión que la reemplace, devolver las tres políticas a `zero_if_not_reported`, retirar la exigencia de depreciación y ajustar los ceros explícitos y las pruebas de aceptación.
+
+**Referencias.** `instrucciones_carlos_estados_R1-R2.md`, R1-4 y tabla de aceptación; `tests/unit/estados-calculations.test.js`; `tests/unit/cuentas-identificador.test.js`.
+
+### D-064 — Ventas netas
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/estados/cuentas-catalogo.js`, `estados-calculations.js`, `estados-ui.js`
+
+**Contexto.** La cuenta `ventas` de los totales sumaba cualquier ingreso de ventas sin restar devoluciones, descuentos ni rebajas, así que las cifras de ventas, utilidad bruta y utilidad neta quedaban infladas cuando el ejercicio declaraba deducciones.
+
+**Opciones.**
+1. `ventas` pasa a ser ventas netas (ventas menos deducciones) y se conserva `ventasBrutas` solo como dato de trazabilidad — coincide con `derived.net_sales` de los JSON de razones.
+2. Mantener `ventas` bruta y agregar un campo aparte de ventas netas — evita cambiar cifras visibles, pero deja dos ventas distintas y el Análisis seguiría consumiendo la bruta.
+
+**Decisión.** Opción 1. El catálogo agrega el tipo `deduccionesVentas` al grupo `estadoResultados` y las tres cuentas de deducción adoptan ese `tipoApp`. `computeFinancialTotals` calcula `ventas` = ventas menos `deduccionesVentas`, y `utilidadBruta` = `ventas` menos `costoVentas`. `ventasBrutas` se conserva sin usarse en los cálculos. El selector de clasificación de la interfaz ofrece `deduccionesVentas`.
+
+**Consecuencias.** El caso 10 de la tabla de aceptación produce ventas netas 950 con devoluciones 50 sobre ventas 1,000. Los ejercicios con ceros explícitos en las tres deducciones no cambian de cifra. Un total de ventas netas reportado (`is.net_sales_reported`) sigue mandando sobre el cálculo según D-062.
+
+**Para revertirla.** Registrar la decisión que la reemplace, quitar `deduccionesVentas` de `TIPOS_APP`, devolver el `tipoApp` nulo de las tres cuentas y dejar `ventas` sin restar deducciones.
+
+**Referencias.** `instrucciones_carlos_estados_R1-R2.md`, R1-5 y tabla de aceptación; `derived.net_sales` de los JSON de razones.
+
+### D-065 — Selección de periodos visibles en Estados
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi autorizó la decisión; el número máximo y los predeterminados son criterio del asistente
+- **Área**: `js/modules/estados/estados-calculations.js`, `estados-ui.js`
+
+**Contexto.** Con muchos periodos, la vista multiperiodo de Estados los muestra todos como columnas y se desborda en pantallas chicas. La decisión es qué periodos se presentan, no con cuáles se calcula.
+
+**Opciones.**
+1. Un selector de casillas que solo filtra las columnas visibles, con función pura separada de la interfaz — la vista se mantiene legible y los cálculos quedan intactos.
+2. Dejar la vista con todos los periodos y confiar en el desplazamiento horizontal — no resuelve la legibilidad con muchos periodos.
+
+**Decisión.** Opción 1. Con un solo periodo no hay selector. Predeterminados: todos los periodos si hay 4 o menos; con más de 4, los dos más recientes. Máximo 4 periodos visibles a la vez; al llegar al máximo, las casillas no marcadas se deshabilitan. La selección vive solo en la sesión, no se guarda en el store, y vuelve a los predeterminados cuando cambian los periodos guardados. La lógica es la función pura `seleccionarPeriodos({ periodos, seleccion, maximo = 4 })`; la interfaz solo la llama. Los cálculos siempre usan todos los periodos que necesiten, así que ninguna cifra depende de la selección.
+
+**Consecuencias.** La vista multiperiodo no desborda la página en un teléfono (el contenedor conserva su margen de 16 px y las tablas anchas se desplazan dentro de su contenedor). El selector no se aplica en Análisis ni en Reportes en esta ronda.
+
+**Para revertirla.** Registrar la decisión que la reemplace, retirar `seleccionarPeriodos` y el bloque del selector de `estados-ui.js`, y devolver a la vista todas las columnas.
+
+**Referencias.** `instrucciones_carlos_estados_R1-R2.md`, R2-1; `ordenarPeriodos` de `estados-normalize.js`.

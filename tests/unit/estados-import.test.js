@@ -4,6 +4,8 @@ import {
   parseAmountCell, parseDelimited, rowsToFinancialData,
   sheetsToFinancialData, tableTextToFinancialData, tabularTemplateCSV
 } from '../../js/modules/estados/estados-import.js';
+import { computeFinancialTotals } from '../../js/modules/estados/estados-calculations.js';
+import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -55,9 +57,11 @@ describe('tableTextToFinancialData', () => {
     expect(data.name).toBe('Externa');
     expect(data.periods).toEqual(['2023', '2024']);
     expect(data.balanceGeneral['2024'].activos).toEqual({ Efectivo: 52000, 'Cuentas por Cobrar': 135000 });
-    expect(data.estadoResultados['2024']).toEqual({ Ventas: 920000, 'Costo de Ventas': 545000 });
+    expect(data.estadoResultados['2024']).toEqual({});
+    expect(data.reportedTotals['2024']['is.sales_total'].importe).toBe(920000);
+    expect(data.reportedTotals['2024']['is.cost_of_sales_reported'].importe).toBe(545000);
     expect(data.accountTypes.patrimonio['Capital Social']).toBe('patrimonio');
-    expect(data.accountTypes.estadoResultados['Costo de Ventas']).toBe('costoVentas');
+    expect(data.accountIdentities.estadoResultados['Costo de Ventas'].idCuenta).toBe('is.cost_of_sales_reported');
   });
 
   it('importa el formato largo con una fila por periodo', () => {
@@ -71,7 +75,8 @@ describe('tableTextToFinancialData', () => {
     const data = tableTextToFinancialData(csv);
     expect(data.periods).toEqual(['2023', '2024']);
     expect(data.balanceGeneral['2023'].activos).toEqual({ Efectivo: 45000 });
-    expect(data.estadoResultados['2024']).toEqual({ Ventas: 920000 });
+    expect(data.estadoResultados['2024']).toEqual({});
+    expect(data.reportedTotals['2024']['is.sales_total'].importe).toBe(920000);
   });
 
   it('acepta tabuladores pegados desde Excel y clasificaciones con nombre', () => {
@@ -91,7 +96,8 @@ describe('tableTextToFinancialData', () => {
     const csv = ['Cuenta,Grupo,Clasificacion,2023,2024', 'Efectivo,Activos,efectivo,100,150', 'Inventario,Activos,inventario,,80'].join('\n');
     const data = tableTextToFinancialData(csv);
     expect(data.balanceGeneral['2023'].activos).toEqual({ Efectivo: 100 });
-    expect(data.balanceGeneral['2024'].activos).toEqual({ Efectivo: 150, Inventario: 80 });
+    expect(data.balanceGeneral['2024'].activos).toEqual({ Efectivo: 150 });
+    expect(data.reportedTotals['2024']['bs.inventory_total'].importe).toBe(80);
   });
 
   it('explica los errores con el número de fila', () => {
@@ -124,7 +130,8 @@ describe('sheetsToFinancialData', () => {
     expect(data.balanceGeneral['2024'].activos).toEqual({ Efectivo: 100 });
     expect(data.balanceGeneral['2024'].pasivos).toEqual({ Proveedores: 40 });
     expect(data.balanceGeneral['2024'].patrimonio).toEqual({ 'Capital Social': 60 });
-    expect(data.estadoResultados['2024']).toEqual({ Ventas: 300 });
+    expect(data.estadoResultados['2024']).toEqual({});
+    expect(data.reportedTotals['2024']['is.sales_total'].importe).toBe(300);
   });
 
   it('falla si ninguna hoja tiene columna Cuenta', () => {
@@ -137,6 +144,40 @@ describe('rowsToFinancialData', () => {
   it('rechaza tablas vacías o encabezados sin Cuenta', () => {
     expect(() => rowsToFinancialData([])).toThrow(/vacía/);
     expect(() => rowsToFinancialData([['Periodo', 'Importe'], ['2024', 1]])).toThrow(/Cuenta/);
+  });
+});
+
+describe('convención de signos del catálogo', () => {
+  const positivo = 'esta cuenta se captura en positivo. Quite el signo negativo o los paréntesis. Si es una devolución o un descuento, use su cuenta de deducción.';
+
+  it('rechaza un costo de ventas negativo con la fila exacta', () => {
+    expect(() => tableTextToFinancialData('Cuenta,Estado,2024\nCosto de Ventas,Resultados,-400'))
+      .toThrow(`Fila 2, cuenta «Costo de Ventas», periodo 2024: ${positivo}`);
+  });
+
+  it('rechaza un gasto administrativo negativo con la fila exacta', () => {
+    expect(() => tableTextToFinancialData('Cuenta,Estado,2024\nGastos de Administracion,Resultados,-200'))
+      .toThrow(`Fila 2, cuenta «Gastos de Administracion», periodo 2024: ${positivo}`);
+  });
+
+  it('rechaza la depreciación acumulada positiva y acepta la negativa', () => {
+    expect(() => tableTextToFinancialData('Cuenta,Grupo,2024\nDepreciacion Acumulada,activos,200'))
+      .toThrow('Fila 2, cuenta «Depreciacion Acumulada», periodo 2024: la depreciación acumulada se captura en negativo.');
+    const datos = tableTextToFinancialData('Cuenta,Grupo,2024\nDepreciacion Acumulada,activos,-200');
+    expect(datos.balanceGeneral['2024'].activos['Depreciacion Acumulada']).toBe(-200);
+  });
+
+  it('no valida las cuentas de convención conservar', () => {
+    const datos = tableTextToFinancialData('Cuenta,Grupo,2024\nUtilidad del Ejercicio,patrimonio,-50');
+    expect(datos.balanceGeneral['2024'].patrimonio['Utilidad del Ejercicio']).toBe(-50);
+  });
+
+  it('en datos guardados sin fila usa 0', () => {
+    expect(() => normalizeFinancialData({
+      periods: ['2024'],
+      balanceGeneral: { '2024': { activos: {}, pasivos: {}, patrimonio: {} } },
+      estadoResultados: { '2024': { 'Costo de Ventas': -400 } }
+    })).toThrow(`Fila 0, cuenta «Costo de Ventas», periodo 2024: ${positivo}`);
   });
 });
 
@@ -175,3 +216,44 @@ describe('importStatementFile', () => {
   });
 });
 
+
+describe('columnas genéricas como totales reportados (ronda 2, T3)', () => {
+  // «Ventas», «Costo de Ventas» e «Inventario» se reconocen como totales
+  // reportados al importar. Sin detalles, los valores no cambian.
+  it('(a) solo la columna genérica: los valores se conservan y no hay avisos', () => {
+    const csv = [
+      'Estado,Grupo,Cuenta,2024',
+      'Balance,Activos,Efectivo,500',
+      'Balance,Activos,Inventario,120',
+      'Balance,Pasivos,Cuentas por Pagar,150',
+      'Balance,Patrimonio,Capital Social,470',
+      'Resultados,,Ventas,920000',
+      'Resultados,,Costo de Ventas,545000'
+    ].join('\n');
+    const data = tableTextToFinancialData(csv, { name: 'Genéricas' });
+    expect(data.estadoResultados['2024']).toEqual({});
+    expect(data.reportedTotals['2024']['is.sales_total'].importe).toBe(920000);
+    expect(data.reportedTotals['2024']['is.cost_of_sales_reported'].importe).toBe(545000);
+    expect(data.reportedTotals['2024']['bs.inventory_total'].importe).toBe(120);
+    const t = computeFinancialTotals(normalizeFinancialData(data), '2024');
+    expect(t.ventasBrutas).toBe(920000);
+    expect(t.costoVentas).toBe(545000);
+    expect(t.inventario).toBe(120);
+    expect(t.notAvailableReasons.filter(r => r.motivo === 'reported_subtotal_mismatch')).toEqual([]);
+  });
+
+  it('(b) columna genérica con detalles que no suman: gana el reportado y avisa la diferencia', () => {
+    const csv = [
+      'Estado,Grupo,Cuenta,2024',
+      'Resultados,,Ventas,1000',
+      'Resultados,,Ventas de Productos,800'
+    ].join('\n');
+    const data = tableTextToFinancialData(csv, { name: 'Genéricas' });
+    expect(data.reportedTotals['2024']['is.sales_total'].importe).toBe(1000);
+    const t = computeFinancialTotals(normalizeFinancialData(data), '2024');
+    expect(t.ventasBrutas).toBe(1000);
+    expect(t.notAvailableReasons).toContainEqual(expect.objectContaining({
+      motivo: 'reported_subtotal_mismatch', diferencia: 200
+    }));
+  });
+});

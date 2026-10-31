@@ -35,6 +35,11 @@ it.each(CASOS)('reconoce %s en %s como %s, sin falsos positivos del corpus', (no
   expect(identificarCuenta(nombre, { grupo })).toMatchObject({ estado: 'reconocida', id });
 });
 
+it('reconoce el alias "Resultado del ejercicio" como resultado del periodo en patrimonio', () => {
+  expect(identificarCuenta('Resultado del ejercicio', { grupo: 'patrimonio' }))
+    .toMatchObject({ estado: 'reconocida', id: 'bs.current_year_result_equity' });
+});
+
 const AMBIGUAS = [
   ['Equipos', 'activos', ['bs.ppe_machinery', 'bs.ppe_furniture']],
   ['Pasivo Corto Plazo', 'pasivos', ['bs.short_term_borrowings', 'bs.other_current_liabilities']],
@@ -94,10 +99,18 @@ it('conserva las 71 identidades del PR #10 y enumera cada diferencia de investig
   expect(referencia.cuentas).toHaveLength(71);
   const auditoria = JSON.parse(readFileSync(new URL('../fixtures/cuentas-revision-investigacion.json', import.meta.url), 'utf8'));
   expect(auditoria.referencia).toBe(referencia.commit);
+  // D-063 cambia la política de las tres deducciones de ventas; el resto de
+  // identidades conserva la referencia del PR #10.
+  const politicasD063 = new Set(['is.sales_allowances', 'is.sales_discounts', 'is.sales_returns']);
   for (const cuenta of referencia.cuentas) expect(obtenerCuenta(cuenta.id)).toMatchObject({
     nombreCanonico: cuenta.canonical_name, clasificacion: cuenta.classification,
-    rol: cuenta.account_role, politicaAusencia: cuenta.absence_policy
+    rol: cuenta.account_role,
+    politicaAusencia: politicasD063.has(cuenta.id) ? 'requires_data' : cuenta.absence_policy
   });
+  for (const id of politicasD063) {
+    expect(referencia.cuentas.find(cuenta => cuenta.id === id).absence_policy).toBe('zero_if_not_reported');
+    expect(obtenerCuenta(id).politicaAusencia).toBe('requires_data');
+  }
   // Se hacen visibles todas las rebajas locales, sin fingir que los JSON ajenos
   // ya cambiaron. Toda diferencia nueva requiere documentarse y revisarse.
   const diferencias = referencia.cuentas.filter(cuenta => obtenerCuenta(cuenta.id).estadoInvestigacion !== cuenta.research.status);
@@ -131,6 +144,8 @@ it('conserva las 71 identidades del PR #10 y enumera cada diferencia de investig
     politicasMotor.set(cuenta.id, cuenta.absence_policy);
   }
   // D-055 cambia solo el motor. Se permite esta divergencia exacta, sin relajar el catálogo de Estados.
+  // D-063 acerca el catálogo al motor en las tres deducciones de ventas.
+  const divergenciasD063 = ['is.sales_allowances', 'is.sales_discounts', 'is.sales_returns'];
   const divergenciasD055 = [
     'bs.accrued_expenses_payable', 'bs.additional_paid_in_capital', 'bs.cash_and_equivalents',
     'bs.current_portion_long_term_debt', 'bs.current_provisions', 'bs.current_year_result_equity',
@@ -149,14 +164,18 @@ it('conserva las 71 identidades del PR #10 y enumera cada diferencia de investig
     'is.other_operating_income', 'is.other_sales_revenue', 'is.product_cost', 'is.product_sales',
     'is.sales_allowances', 'is.sales_discounts', 'is.sales_returns', 'is.selling_expenses',
     'is.service_cost', 'is.service_revenue'
-  ];
+  ].filter(id => !divergenciasD063.includes(id));
   const diferenciasPolitica = [...politicasMotor].filter(([id, politica]) => obtenerCuenta(id).politicaAusencia !== politica);
-  expect(divergenciasD055).toHaveLength(55);
+  expect(divergenciasD055).toHaveLength(52);
   expect(politicasMotor.size).toBe(72);
   expect(diferenciasPolitica.map(([id]) => id).sort()).toEqual([...divergenciasD055].sort());
   for (const id of divergenciasD055) {
     expect(politicasMotor.get(id), id).toBe('requires_data');
     expect(obtenerCuenta(id).politicaAusencia, id).toBe('zero_if_not_reported');
+  }
+  for (const id of divergenciasD063) {
+    expect(politicasMotor.get(id), id).toBe('requires_data');
+    expect(obtenerCuenta(id).politicaAusencia, id).toBe('requires_data');
   }
   expect(politicasMotor.get('is.interest_income')).toBe('zero_if_not_reported');
   expect(obtenerCuenta('is.interest_income').politicaAusencia).toBe('zero_if_not_reported');

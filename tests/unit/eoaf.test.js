@@ -449,6 +449,14 @@ describe('pantalla de EOAF en Análisis', () => {
       pasivos: { 'Cuentas por Pagar': 'cuentasPorPagar' },
       patrimonio: { Capital: 'patrimonio' },
       estadoResultados: { Ventas: 'ventas' }
+    },
+    accountIdentities: {
+      activos: {
+        Terreno: { idCuenta: 'bs.ppe_land', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      },
+      patrimonio: {
+        Capital: { idCuenta: 'bs.share_capital', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      }
     }
   });
 
