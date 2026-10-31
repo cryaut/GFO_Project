@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { construirEOAF } from '../../js/modules/analisis/eoaf-calculations.js';
 import { construirReporte, flujoDesdeEFE } from '../../js/modules/proforma/proforma-calculations.js';
-import { ejemploFlujo } from '../../js/modules/flujo/flujo-calculations.js';
+import { calcularFlujo, conciliarConBalance, ejemploFlujo } from '../../js/modules/flujo/flujo-calculations.js';
 import { parseFinancialJSON } from '../../js/modules/estados/estados-normalize.js';
 import { element } from './helpers/dom-falso.js';
 
@@ -102,5 +102,44 @@ describe('ruta #/proforma con captura manual en #/flujo (D-070)', () => {
     initProforma();
     expect(page.innerHTML).toContain('C$ 116.00');
     expect(page.innerHTML).not.toContain('C$ 98,000.00');
+  });
+});
+
+describe('pantalla del flujo directo y tolerancia única (D-070, D-071)', () => {
+  const estadosDos = parseFinancialJSON(JSON.stringify({
+    periods: ['2023', '2024'],
+    balanceGeneral: {
+      '2023': { activos: { 'Efectivo': 45000 }, pasivos: {}, patrimonio: { 'Capital social': 45000 } },
+      '2024': { activos: { 'Efectivo': 52000 }, pasivos: {}, patrimonio: { 'Capital social': 52000 } }
+    },
+    estadoResultados: { '2023': {}, '2024': {} }
+  }));
+
+  it('T3: la pantalla del flujo directo lleva la leyenda de captura no oficial', async () => {
+    const { flujoUI } = await import('../../js/modules/flujo/flujo-ui.js');
+    const page = element();
+    flujoUI(page, { datos: undefined, guardar: () => {}, graficar: () => {}, confirmar: () => true });
+    expect(page.innerHTML).toContain('Captura no oficial');
+    expect(page.innerHTML).toContain('EFE de Análisis');
+  });
+
+  it('T4: una diferencia de 0.007 concilia con la tolerancia del EFE', () => {
+    const flujo = calcularFlujo({
+      saldoInicial: 45000, periodoBase: '2023',
+      movimientos: [{ id: 'a', concepto: 'Cobros', actividad: 'operacion', tipo: 'entrada', monto: 7000.007 }]
+    });
+    const r = conciliarConBalance(flujo, estadosDos, '2023');
+    expect(r.diferencia).toBeCloseTo(0.007, 6);
+    expect(r.cuadra).toBe(true);
+  });
+
+  it('T4: una diferencia de 0.011 no concilia', () => {
+    const flujo = calcularFlujo({
+      saldoInicial: 45000, periodoBase: '2023',
+      movimientos: [{ id: 'a', concepto: 'Cobros', actividad: 'operacion', tipo: 'entrada', monto: 7000.011 }]
+    });
+    const r = conciliarConBalance(flujo, estadosDos, '2023');
+    expect(r.diferencia).toBeCloseTo(0.011, 6);
+    expect(r.cuadra).toBe(false);
   });
 });
