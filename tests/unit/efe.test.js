@@ -66,7 +66,8 @@ describe('totales reportados fuera del EFE (D-067)', () => {
       '2024': {}, '2025': { Ventas: 100, 'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0, 'Costo de Ventas': 70 }
     }), '2024', '2025');
     expect(itemDe(r.operacion, 'activos de operación').monto).toBe(-30);
-    expect(r.estado).toBe('cuadra');
+    // D-069: sin cuenta de resultado en el patrimonio, el estado cuadra sin verificar.
+    expect(r.estado).toBe('cuadra-sin-verificar');
   });
 });
 
@@ -175,9 +176,13 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
     expect(r.variacionEfectivo).toBe(30);
     expect(r.totalFlujos).toBe(30);
     expect(r.diferencia).toBe(0);
-    expect(r.estado).toBe('cuadra');
+    // D-069: el balance no tiene cuenta de resultado del periodo; el estado
+    // cuadra pero la utilidad no se puede verificar contra el patrimonio.
+    expect(r.estado).toBe('cuadra-sin-verificar');
+    expect(r.conciliacionUtilidad).toBeNull();
     expect(r.motivos).toEqual([]);
     expect(r.interpretacion).toContain('el estado cuadra');
+    expect(r.interpretacion).toContain('no se pudo conciliar');
     expect(TOLERANCIA_COMPROBACION).toBe(0.01);
   });
 
@@ -200,7 +205,7 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
     expect(c.operacion.total).toBe(-30);
     expect(c.inversion.total).toBe(-20);
     expect(c.financiamiento.total).toBe(50);
-    expect(c.estado).toBe('cuadra');
+    expect(c.estado).toBe('cuadra-sin-verificar');
     expect(c.interpretacion).toContain('La operación consumió C$ 30.00 de efectivo');
     expect(c.interpretacion).toContain('no alcanzó a cubrir la inversión (faltaron C$ 50.00)');
     expect(c.interpretacion).toContain('el financiamiento aportó C$ 50.00');
@@ -258,7 +263,7 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
     expect(itemDe(r.financiamiento, 'Utilidad neta del periodo').monto).toBe(-30);
     expect(itemDe(r.financiamiento, 'Dividendos')).toBeUndefined();
     expect(r.advertencias.join(' ')).toContain('No se identificaron cuentas de utilidades acumuladas');
-    expect(r.estado).toBe('cuadra');
+    expect(r.estado).toBe('cuadra-sin-verificar');
     expect(r.totalFlujos).toBe(50);
     expect(r.diferencia).toBe(0);
   });
@@ -305,7 +310,7 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
     expect(r.advertencias.join(' ')).toContain('disminuyó');
     expect(r.operacion.total).toBe(-80);
     expect(r.inversion.total).toBe(100);
-    expect(r.estado).toBe('cuadra');
+    expect(r.estado).toBe('cuadra-sin-verificar');
     expect(r.diferencia).toBe(0);
   });
 
@@ -386,8 +391,9 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
 
     const erVacio = construirEFE(estados(balanceado, { '2024': {}, '2025': {} }), '2024', '2025');
     expect(erVacio.utilidadNeta).toBe(0);
-    expect(erVacio.estado).toBe('cuadra');
+    expect(erVacio.estado).toBe('cuadra-sin-verificar');
     expect(erVacio.advertencias.join(' ')).toContain('no tiene cuentas');
+    expect(erVacio.advertencias.join(' ')).toContain('No hay cuenta de resultado del periodo');
   });
 
   it('un balance descuadrado se avisa por periodo, igual que en el EOAF', () => {
@@ -428,7 +434,11 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
     expect(r.financiamiento.total).toBe(-10);
     expect(r.totalFlujos).toBe(30);
     expect(r.variacionEfectivo).toBe(30);
+    // D-069: «Utilidad del ejercicio» (40) coincide con la utilidad neta (40):
+    // el estado cuadra con la utilidad verificada contra el balance.
+    expect(r.conciliacionUtilidad).toMatchObject({ conciliada: true, diferencia: 0, motivo: null });
     expect(r.estado).toBe('cuadra');
+    expect(r.interpretacion).toContain('concilia con el resultado del periodo');
   });
 
   it('sin balance general de un periodo no se presenta ningún estado', () => {
@@ -491,7 +501,8 @@ describe('pantalla de EFE en Análisis', () => {
     expect(r.variacionEfectivo).toBe(7000);
     expect(r.totalFlujos).toBe(7000);
     expect(r.diferencia).toBe(0);
-    expect(r.estado).toBe('cuadra');
+    // D-069: la demo no tiene cuenta de resultado del periodo en el patrimonio.
+    expect(r.estado).toBe('cuadra-sin-verificar');
   });
 
   it('presenta las tres actividades, la comprobación y la interpretación', async () => {
@@ -676,5 +687,76 @@ describe('reservas como destino de utilidades (D-068)', () => {
     expect(r.operacion.total).toBe(100);
     expect(r.inversion.total).toBe(-20);
     expect(r.estado).toBe('cuadra');
+  });
+});
+
+describe('conciliación de la utilidad contra el balance (D-069)', () => {
+  it('la utilidad no conciliada marca no cuadra con su motivo, aunque los flujos cierren', () => {
+    // Misma base del caso del resultado del ejercicio, con la utilidad inflada:
+    // UN 90 contra un resultado en patrimonio de 40 → diferencia 50. Los flujos
+    // cuadran (dividendos derivados −60), pero la utilidad no concilia.
+    const conEjercicio = {
+      '2024': { activos: { Efectivo: 180 }, pasivos: {}, patrimonio: { Capital: 100, 'Utilidad acumulada': 50, 'Utilidad del ejercicio': 30 } },
+      '2025': { activos: { Efectivo: 210 }, pasivos: {}, patrimonio: { Capital: 100, 'Utilidad acumulada': 70, 'Utilidad del ejercicio': 40 } }
+    };
+    const r = construirEFE(estados(conEjercicio, {
+      '2024': {}, '2025': {
+        Ventas: 150,
+        'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+        'Costo de Ventas': 60
+      }
+    }), '2024', '2025');
+    expect(r.utilidadNeta).toBe(90);
+    expect(r.totalFlujos).toBe(30);
+    expect(r.variacionEfectivo).toBe(30);
+    expect(r.diferencia).toBe(0);
+    expect(r.conciliacionUtilidad).toMatchObject({
+      cuenta: 'Utilidad del ejercicio', utilidadNeta: 90, resultadoPatrimonio: 40,
+      diferencia: 50, conciliada: false, motivo: 'utilidad_no_conciliada'
+    });
+    expect(r.estado).toBe('no-cuadra');
+    expect(r.advertencias.join(' ')).toContain('no coincide con el resultado del periodo del balance');
+    expect(r.interpretacion).toContain('utilidad_no_conciliada');
+    expect(r.interpretacion).toContain('diferencia de C$ 50.00');
+  });
+
+  it('la pantalla muestra el tercer estado cuando no hay cuenta de resultado', async () => {
+    function stubNavegador() {
+      vi.stubGlobal('window', { location: { hash: '' }, addEventListener() {} });
+      vi.stubGlobal('document', {
+        getElementById: () => null, querySelector: () => null, querySelectorAll: () => [],
+        addEventListener() {},
+        documentElement: { setAttribute() {}, getAttribute: () => 'light' }
+      });
+    }
+    vi.resetModules();
+    stubNavegador();
+    const storage = new Map();
+    vi.stubGlobal('localStorage', {
+      getItem: key => storage.get(key) ?? null,
+      setItem: (key, value) => storage.set(key, value)
+    });
+    const { default: store } = await import('../../js/store.js');
+    store.setPersisted('estados', normalizeFinancialData({
+      name: 'Sin verificar',
+      periods: ['2024', '2025'],
+      balanceGeneral: {
+        '2024': { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { 'Capital social': 100 } },
+        '2025': { activos: { Efectivo: 130 }, pasivos: {}, patrimonio: { 'Capital social': 130 } }
+      },
+      estadoResultados: { '2024': { Ventas: 50, 'Costo de Ventas': 0, 'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0 }, '2025': { Ventas: 60, 'Costo de Ventas': 0, 'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0 } },
+      accountTypes: {
+        activos: { Efectivo: 'efectivo' }, pasivos: {}, patrimonio: { 'Capital social': 'patrimonio' },
+        estadoResultados: { Ventas: 'ventas' }
+      }
+    }));
+    const analisis = await import('../../js/modules/analisis/index.js');
+    const page = { innerHTML: '', querySelectorAll: () => [] };
+    vi.stubGlobal('document', { getElementById: id => (id === 'page-analisis' ? page : null) });
+    analisis.initAnalisis();
+    expect(page.innerHTML).toContain('Cuadra (sin verificar la utilidad)');
+    expect(page.innerHTML).toContain('No hay cuenta de resultado del periodo');
+    vi.unstubAllGlobals();
+    vi.resetModules();
   });
 });

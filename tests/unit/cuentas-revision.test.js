@@ -129,9 +129,12 @@ it('el EFE advierte transferencias entre reservas y resultados aun con dividendo
 it('cuadrar el EFE con dividendos derivados no se presenta como validación de utilidad', async () => {
   const datos = await demo();
   const efe = construirEFE(datos, '2023', '2024');
-  expect(efe.estado).toBe('cuadra');
+  // D-069: la demo no tiene cuenta de resultado del periodo en el patrimonio;
+  // el estado es el tercero («cuadra sin verificar») y la interpretación pide
+  // confirmación independiente de los dividendos en lugar de darlos por buenos.
+  expect(efe.estado).toBe('cuadra-sin-verificar');
   expect(efe.financiamiento.items.find(f => f.concepto.includes('Dividendos')).concepto).toContain('derivados');
-  expect(efe.interpretacion).toContain('no valida de forma independiente la utilidad neta');
+  expect(efe.interpretacion).toContain('requieren confirmación con un dato independiente');
 });
 
 it('un cambio en utilidad puede compensarse en dividendos derivados: no sirve de comprobación independiente', async () => {
@@ -143,5 +146,6 @@ it('un cambio en utilidad puede compensarse en dividendos derivados: no sirve de
   expect(actual.operacion.total - anterior.operacion.total).toBe(20);
   expect(actual.financiamiento.total - anterior.financiamiento.total).toBe(-20);
   expect(actual.totalFlujos).toBe(anterior.totalFlujos);
-  expect(actual.estado).toBe('cuadra');
+  // D-069: sin cuenta de resultado que concilie, el cuadre no verifica la utilidad.
+  expect(actual.estado).toBe('cuadra-sin-verificar');
 });

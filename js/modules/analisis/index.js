@@ -638,6 +638,9 @@ export function computeEOAF(periods) {
 // Piezas de interfaz que comparten las pestañas EOAF y EFE.
 const INSIGNIAS_COMPROBACION = {
   cuadra: '<span class="badge badge-success">Cuadra</span>',
+  // D-069: tercer estado del EFE — los flujos cierran pero no hay cuenta de
+  // resultado del periodo contra la que verificar la utilidad.
+  'cuadra-sin-verificar': '<span class="badge badge-info">Cuadra (sin verificar la utilidad)</span>',
   'no-cuadra': '<span class="badge badge-danger">No cuadra</span>',
   incompleta: '<span class="badge badge-warning">Comprobación incompleta</span>'
 };

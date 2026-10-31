@@ -102,6 +102,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     operacion: null, inversion: null, financiamiento: null,
     totalFlujos: null, efectivoInicial: null, efectivoFinal: null,
     variacionEfectivo: null, diferencia: null, tolerancia: toleranciaComprobacion(),
+    conciliacionUtilidad: null,
     estado: 'incompleta', motivos, advertencias, interpretacion: ''
   });
 
@@ -165,6 +166,30 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
       }
     } catch (error) {
       motivos.push(`No se pudo calcular la utilidad neta del periodo ${periodoFinal} (${error.message}). Corrija el importe en Estados Financieros.`);
+    }
+  }
+
+  // D-069: la utilidad del estado de resultados se concilia contra la cuenta de
+  // resultado del periodo en el patrimonio. Si difiere (tolerancia de la
+  // comprobación), el estado no cuadra con motivo `utilidad_no_conciliada`. Sin
+  // esa cuenta la utilidad no se puede verificar: tercer estado de la
+  // comprobación, con advertencia visible.
+  const filaResultadoPatrimonio = patrimonio.find(fila => fila.id === 'bs.current_year_result_equity');
+  let conciliacionUtilidad = null;
+  if (filaResultadoPatrimonio && utilidadNeta != null && filaResultadoPatrimonio.saldoFinal != null) {
+    const diferenciaConciliacion = utilidadNeta - filaResultadoPatrimonio.saldoFinal;
+    const conciliada = Math.abs(diferenciaConciliacion)
+      <= toleranciaComprobacion(utilidadNeta, filaResultadoPatrimonio.saldoFinal);
+    conciliacionUtilidad = {
+      cuenta: filaResultadoPatrimonio.cuenta,
+      utilidadNeta,
+      resultadoPatrimonio: filaResultadoPatrimonio.saldoFinal,
+      diferencia: diferenciaConciliacion,
+      conciliada,
+      motivo: conciliada ? null : 'utilidad_no_conciliada'
+    };
+    if (!conciliada) {
+      advertencias.push(`La utilidad neta del estado de resultados (${formatCurrency(utilidadNeta)}) no coincide con el resultado del periodo del balance (${formatCurrency(filaResultadoPatrimonio.saldoFinal)}): diferencia de ${formatCurrency(Math.abs(diferenciaConciliacion))}. Revise la utilidad, los dividendos declarados o el resultado cargado en el patrimonio.`);
     }
   }
 
@@ -276,9 +301,21 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     motivos.push('Faltan datos para calcular la diferencia entre los flujos y la variación de efectivo.');
   }
   const motivosUnicos = [...new Set(motivos)];
+  const conciliacionFallida = conciliacionUtilidad != null && conciliacionUtilidad.motivo === 'utilidad_no_conciliada';
+  // D-069: la conciliación de la utilidad manda. Con los flujos cuadrados hay
+  // dos salidas: «cuadra» cuando la utilidad concilia contra el balance, y el
+  // tercer estado «cuadra-sin-verificar» cuando no existe la cuenta de
+  // resultado del periodo que permita verificarla.
   const estado = motivosUnicos.length > 0
     ? 'incompleta'
-    : (Math.abs(diferencia) <= tolerancia ? 'cuadra' : 'no-cuadra');
+    : conciliacionFallida
+      ? 'no-cuadra'
+      : Math.abs(diferencia) <= tolerancia
+        ? (conciliacionUtilidad != null ? 'cuadra' : 'cuadra-sin-verificar')
+        : 'no-cuadra';
+  if (motivosUnicos.length === 0 && conciliacionUtilidad == null) {
+    advertencias.push('No hay cuenta de resultado del periodo en el patrimonio: la comprobación no puede verificar la utilidad neta contra el balance y los dividendos derivados requieren confirmación con un dato independiente.');
+  }
 
   const resultado = {
     periodos,
@@ -292,6 +329,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     variacionEfectivo,
     diferencia,
     tolerancia,
+    conciliacionUtilidad,
     estado,
     motivos: motivosUnicos,
     advertencias,
@@ -328,16 +366,25 @@ function lecturaFlujos({ operacion, inversion, financiamiento }) {
 // Lectura breve del estado. Los motivos y advertencias pueden traer nombres de
 // cuenta del archivo importado: el llamador debe escaparlos antes de HTML.
 export function interpretarEFE(resultado) {
-  const { estado, totalFlujos, variacionEfectivo, diferencia, operacion, inversion, financiamiento, motivos } = resultado;
+  const { estado, totalFlujos, variacionEfectivo, diferencia, operacion, inversion, financiamiento, motivos, conciliacionUtilidad } = resultado;
   if (estado === 'incompleta') {
     return `El EFE está incompleto: ${motivos.join(' ')} Complete los datos en Estados Financieros y vuelva a comprobar el estado.`;
   }
   const fmt = valor => formatCurrency(valor);
   const partes = `Operación ${fmt(operacion.total)}, inversión ${fmt(inversion.total)} y financiamiento ${fmt(financiamiento.total)}`;
   const lectura = lecturaFlujos(resultado);
-  const alcance = ' La conciliación no valida de forma independiente la utilidad neta: los dividendos se derivan de ella y de la variación del patrimonio; requieren confirmación con un dato independiente.';
   if (estado === 'cuadra') {
+    // D-069: con la cuenta de resultado del periodo presente y coincidente, la
+    // utilidad quedó verificada contra el balance.
+    const alcance = ' La utilidad neta concilia con el resultado del periodo del balance: los dividendos derivados quedan respaldados por esa verificación.';
     return `Los flujos suman ${fmt(totalFlujos)}, igual a la variación de efectivo entre ${resultado.periodos.inicial} y ${resultado.periodos.final}: el estado cuadra dentro de la tolerancia de ${fmt(resultado.tolerancia)}. (${partes}.) ${lectura}${alcance}`;
   }
+  if (estado === 'cuadra-sin-verificar') {
+    const alcance = ' No hay cuenta de resultado del periodo en el patrimonio: la utilidad neta no se pudo conciliar contra el balance y los dividendos derivados requieren confirmación con un dato independiente.';
+    return `Los flujos suman ${fmt(totalFlujos)}, igual a la variación de efectivo entre ${resultado.periodos.inicial} y ${resultado.periodos.final}: el estado cuadra dentro de la tolerancia de ${fmt(resultado.tolerancia)}. (${partes}.) ${lectura}${alcance}`;
+  }
+  const alcance = conciliacionUtilidad != null && conciliacionUtilidad.motivo === 'utilidad_no_conciliada'
+    ? ` La utilidad neta (${fmt(conciliacionUtilidad.utilidadNeta)}) no coincide con el resultado del periodo del balance (${fmt(conciliacionUtilidad.resultadoPatrimonio)}): diferencia de ${fmt(Math.abs(conciliacionUtilidad.diferencia))} (utilidad_no_conciliada).`
+    : ' La conciliación no valida de forma independiente la utilidad neta: los dividendos se derivan de ella y de la variación del patrimonio; requieren confirmación con un dato independiente.';
   return `Los flujos suman ${fmt(totalFlujos)} pero el efectivo varió ${fmt(variacionEfectivo)}: la diferencia es de ${fmt(Math.abs(diferencia))}. Revise las cuentas, las clasificaciones o los movimientos faltantes: el estado no ajusta cifras ni distribuye diferencias automáticamente. (${partes}.) ${lectura}${alcance}`;
 }
