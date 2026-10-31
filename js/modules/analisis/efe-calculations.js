@@ -12,7 +12,8 @@
 
 import { formatCurrency } from '../../utils/format.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
-import { rolEFE } from './efe-roles.js';
+import { obtenerCuenta } from '../estados/cuentas-identificador.js';
+import { rolEFE, COMPONENTES_TOTALES } from './efe-roles.js';
 import {
   variacionesDeCuentas, advertenciasDeBalance, toleranciaComprobacion
 } from './comprobacion-calculations.js';
@@ -71,6 +72,19 @@ function item(concepto, monto, falta = null) {
   return { concepto, monto, falta };
 }
 
+// D-067: un total reportado no entra en el EFE cuando alguna de sus componentes
+// del catálogo está en los datos — la variación la explican ellas y el total
+// duplicaría. Sin componentes, el total es el único dato de ese concepto y se
+// conserva (por ejemplo un «Inventario» sin desglose).
+function sinTotalesDuplicados(filas) {
+  const idsPresentes = new Set(filas.map(fila => fila.id).filter(Boolean));
+  return filas.filter(fila => {
+    if (obtenerCuenta(fila.id)?.rol !== 'reported_total') return true;
+    const componentes = COMPONENTES_TOTALES[fila.id] || [];
+    return !componentes.some(id => idsPresentes.has(id));
+  });
+}
+
 function totalDe(items) {
   return items.every(fila => typeof fila.monto === 'number' && Number.isFinite(fila.monto))
     ? items.reduce((suma, fila) => suma + fila.monto, 0)
@@ -100,11 +114,16 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
 
   const activos = variacionesDeCuentas(datos, 'activos', periodoInicial, periodoFinal);
   const pasivos = variacionesDeCuentas(datos, 'pasivos', periodoInicial, periodoFinal);
-  const patrimonio = variacionesDeCuentas(datos, 'patrimonio', periodoInicial, periodoFinal);
+  const patrimonio = sinTotalesDuplicados(
+    variacionesDeCuentas(datos, 'patrimonio', periodoInicial, periodoFinal)
+  );
+  // D-067: los totales reportados con componentes en los datos no entran.
+  const activosEFE = sinTotalesDuplicados(activos);
+  const pasivosEFE = sinTotalesDuplicados(pasivos);
   // Si el balance no cierra, la comprobación lo va a reflejar: se avisa de dónde viene.
   advertencias.push(...advertenciasDeBalance(periodos, bgInicial, bgFinal));
 
-  for (const fila of [...activos, ...pasivos, ...patrimonio]) {
+  for (const fila of [...activosEFE, ...pasivosEFE, ...patrimonio]) {
     if (fila.saldoInicial === null || fila.saldoFinal === null) {
       const faltante = fila.saldoInicial === null ? periodoInicial : periodoFinal;
       motivos.push(`La cuenta «${fila.cuenta}» no tiene saldo en el periodo ${faltante}; su variación no entra en el EFE.`);
@@ -115,7 +134,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
   }
 
   // Efectivo: es la cifra con la que se comprueba el estado.
-  const efectivo = deltaRol(activos, 'efectivo');
+  const efectivo = deltaRol(activosEFE, 'efectivo');
   const nombresEfectivo = new Set(efectivo.filas.map(fila => fila.cuenta));
   for (const [bg, periodo] of [[bgInicial, periodoInicial], [bgFinal, periodoFinal]]) {
     const hayEfectivo = Object.keys(bg.activos || {}).some(nombre => nombresEfectivo.has(nombre));
@@ -152,9 +171,9 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
   // --- Operación ---
   // D-066: los activos de operación van netos de su propia línea de depreciación,
   // que se suma como no efectivo; los pasivos de operación suman directo.
-  const activosOperacion = deltaRol(activos, 'operacion', 'bs.accumulated_depreciation');
-  const pasivosOperacion = deltaRol(pasivos, 'operacion');
-  const depreciacion = deltaDepreciacion(activos);
+  const activosOperacion = deltaRol(activosEFE, 'operacion', 'bs.accumulated_depreciation');
+  const pasivosOperacion = deltaRol(pasivosEFE, 'operacion');
+  const depreciacion = deltaDepreciacion(activosEFE);
   if (depreciacion.presente && depreciacion.completo && depreciacion.delta < 0) {
     for (const fila of depreciacion.filas) {
       if (Math.abs(fila.saldoFinal) < Math.abs(fila.saldoInicial)) {
@@ -185,7 +204,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
   const operacion = { items: operacionItems, total: CFO };
 
   // --- Inversión ---
-  const activosInversion = deltaRol(activos, 'inversion');
+  const activosInversion = deltaRol(activosEFE, 'inversion');
   const inversionItems = [
     item('(+) Venta o baja de activos de inversión (o - si compra)', opuesto(activosInversion.delta),
       activosInversion.presente && !activosInversion.completo ? 'falta-saldo' : null)
@@ -194,7 +213,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
   const inversion = { items: inversionItems, total: CFI };
 
   // --- Financiamiento ---
-  const deuda = deltaRol(pasivos, 'financiamiento');
+  const deuda = deltaRol(pasivosEFE, 'financiamiento');
   const patrimonioTotal = patrimonio.reduce(
     (suma, fila) => (fila.saldoInicial !== null && fila.saldoFinal !== null ? suma + fila.variacion : NaN), 0
   );

@@ -1,11 +1,20 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { readFileSync } from 'node:fs';
 import {
   esResultadoAcumulado, construirEFE, interpretarEFE
 } from '../../js/modules/analisis/efe-calculations.js';
 import { rolEFE } from '../../js/modules/analisis/efe-roles.js';
 import { TOLERANCIA_COMPROBACION } from '../../js/modules/analisis/comprobacion-calculations.js';
-import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
+import { normalizeFinancialData, parseFinancialJSON } from '../../js/modules/estados/estados-normalize.js';
 import { listarCuentas } from '../../js/modules/estados/cuentas-identificador.js';
+
+// Referencia independiente del EFE para el bloque A (calculada fuera de la app).
+const REFERENCIA_BLOQUE_A = JSON.parse(
+  readFileSync(new URL('./fixtures/efe_ronda1_referencia_bloque_A.json', import.meta.url), 'utf8')
+);
+const ENTRADA_BLOQUE_A = JSON.parse(
+  readFileSync(new URL('./fixtures/estados_ronda2_bloque_A.json', import.meta.url), 'utf8')
+);
 
 describe('roles del EFE por id de cuenta (D-066)', () => {
   it('cada activo y pasivo del catálogo tiene rol', () => {
@@ -30,6 +39,34 @@ describe('roles del EFE por id de cuenta (D-066)', () => {
     expect(rolEFE('bs.cash_and_equivalents')).toBe('efectivo');
     expect(rolEFE('bs.current_year_result_equity')).toBeNull();
     expect(rolEFE('id-inexistente')).toBeNull();
+  });
+});
+
+describe('totales reportados fuera del EFE (D-067)', () => {
+  it('el par A3 2024 → 2025 usa los componentes y cuadra con la referencia', () => {
+    const a3 = ENTRADA_BLOQUE_A.conjuntos.find(conjunto => conjunto.id === 'A3');
+    const datos = parseFinancialJSON(JSON.stringify(a3.entrada));
+    const r = construirEFE(datos, '2024', '2025');
+    const referencia = REFERENCIA_BLOQUE_A.pares.find(par => par.id === 'A3');
+    expect(r.estado).toBe('cuadra');
+    expect(r.motivos).toEqual([]);
+    expect(Math.abs(r.operacion.total - referencia.operacion)).toBeLessThanOrEqual(0.01);
+    expect(Math.abs(r.inversion.total - referencia.inversion)).toBeLessThanOrEqual(0.01);
+    expect(Math.abs(r.financiamiento.total - referencia.financiamiento)).toBeLessThanOrEqual(0.01);
+  });
+
+  it('un total sin componentes en los datos sigue entrando (no se pierde la variación)', () => {
+    // Solo «Inventario» (total reportado) sin desglose: su variación es el único
+    // dato del concepto y debe seguir contando en la operación.
+    const conTotal = {
+      '2024': { activos: { Efectivo: 100, 'Inventario': 50 }, pasivos: { 'Cuentas por Pagar': 50 }, patrimonio: { 'Capital social': 100 } },
+      '2025': { activos: { Efectivo: 100, 'Inventario': 80 }, pasivos: { 'Cuentas por Pagar': 50 }, patrimonio: { 'Capital social': 130 } }
+    };
+    const r = construirEFE(estados(conTotal, {
+      '2024': {}, '2025': { Ventas: 100, 'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0, 'Costo de Ventas': 70 }
+    }), '2024', '2025');
+    expect(itemDe(r.operacion, 'activos de operación').monto).toBe(-30);
+    expect(r.estado).toBe('cuadra');
   });
 });
 
