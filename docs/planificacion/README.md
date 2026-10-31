@@ -16,7 +16,7 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 | Origen y Aplicación de Fondos (EOAF) | Henry | En revisión | [origen-y-aplicacion](origen-y-aplicacion/README.md) |
 | Flujo de efectivo desde los estados (EFE de Análisis) | Henry | En revisión | [flujo-de-efectivo](flujo-de-efectivo/README.md) |
 | JSON autónomos de razones financieras v3 | Cris Lumbi | En revisión | [razones-json-v3](razones-json-v3/README.md) |
-| Estados financieros: cálculo robusto (R1-R2) | Cris Lumbi | En revisión | [estados-calculo-robusto](estados-calculo-robusto/README.md) |
+| Estados financieros: cálculo robusto (R1-R2) | Cris Lumbi | Completada (PR #19) | [estados-calculo-robusto](estados-calculo-robusto/README.md) |
 
 Agrega una fila cuando empieces una feature y actualiza el estado cuando cambie.
 
