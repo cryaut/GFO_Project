@@ -85,8 +85,9 @@ describe('batería B: adversariales', () => {
       'Fila 0, cuenta «Cuentas por pagar comerciales», periodo 2024: esta cuenta se captura en positivo. '
       + 'Quite el signo negativo o los paréntesis. Si es una devolución o un descuento, use su cuenta de deducción.'
     );
-    // Convención conservar (lado del pasivo total): el paréntesis se acepta como
-    // negativo y el balance cuadra con la referencia calculada a mano.
+    // Convención conservar (la cuenta, «Resultado del período incluido en
+    // patrimonio», es del patrimonio, no de pasivos): el paréntesis se acepta
+    // como negativo y el balance cuadra con la referencia calculada a mano.
     const csv = [
       'Estado,Grupo,Cuenta,2024',
       'Balance,Activos,Efectivo,100',
