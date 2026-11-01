@@ -65,3 +65,9 @@ Los 10 avisos son los mismos de `main`, en archivos que esta rama no toca.
 - H4 corregido: el faltante usa `TOLERANCIA_REPOSICION`; C10 no muestra «comprar al menos 0.0000001».
 - H5 corregido: el SHA de T4 del reporte R1 es `80a8054` y el reporte tiene una sección «Corrección» que supera su sección 7 y precisa el alcance de D-083.
 - Ninguna condición de parada se activó: ninguna cifra de Estados, EFE, Equilibrio, Análisis o Dashboards cambió; ningún respaldo válido se rechazó (C5 acepta); la regresión M0-M11 se mantuvo; no se tocó `js/modules/razones/`, `cuentas-catalogo.js`, los JSON de razones ni `docs/razones_financieras/`.
+
+## 8. Corrección posterior (2026-11-01)
+
+- **Pista de «Tomar de Inventario» en Planeación.** El texto decía que el costo se leía del producto vigente al calcular. Era falso: el costo es una copia del costo promedio del momento en que se elige el producto. El texto ahora dice eso, y solo afirma que el stock mínimo se lee del producto vigente. No cambia ninguna cifra ni prueba.
+- **Estado de los PR.** `feat/f8-lectura-unica` ya está integrada en `main` como PR #23. `feat/efe-robusto` y `feat/equilibrio-robusto` también están en `main`. El único PR por abrir es el de `feat/inventario-robusto`.
+- **Pruebas.** La corrección es solo de texto. Las cifras de esta sección (1390 pruebas, 10 avisos de lint) son de la ronda 2, antes de esta corrección. El PR debe correr `npm.cmd test` y `npm.cmd run lint` antes de abrirse.
