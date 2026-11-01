@@ -199,10 +199,20 @@ export function baseDesdeEstados(estados, configApalancamiento, periodo, unidade
   const derivado = resultado.periodos.find(p => p.periodo === periodo);
   const v = derivado.variables;
   if (v.cv === null || v.cf === null) {
-    const faltan = derivado.faltantes.filter(f => f.cuenta).map(f => f.cuenta);
+    // D-076: el motivo distingue una cuenta fuera del catálogo de una cuenta del
+    // catálogo sin comportamiento fijo o variable asignado.
+    const conCuenta = derivado.faltantes.filter(f => f.cuenta);
+    const fueraDelCatalogo = conCuenta.filter(f => f.tipo === 'sinClasificacion').map(f => f.cuenta);
+    const sinComportamiento = conCuenta.filter(f => f.tipo === 'sinComportamiento').map(f => f.cuenta);
+    const partes = [];
+    for (const cuenta of fueraDelCatalogo) {
+      partes.push(`La cuenta «${cuenta}» no está en el catálogo de cuentas: revise su nombre en Estados Financieros.`);
+    }
+    if (sinComportamiento.length) {
+      partes.push(`Clasifique en Apalancamiento como fijas o variables: ${sinComportamiento.join(', ')}.`);
+    }
     return {
-      error: faltan.length
-        ? `Clasifique en Apalancamiento como fijas o variables: ${faltan.join(', ')}.`
+      error: partes.length ? partes.join(' ')
         : 'Los estados del periodo no permiten separar costos fijos y variables.'
     };
   }

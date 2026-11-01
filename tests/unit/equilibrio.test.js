@@ -381,3 +381,26 @@ describe('escenarios inválidos (D-075)', () => {
     expect(porId['volumen-baja'].resultado.uaii).toBeCloseTo(21000, 6);
   });
 });
+
+describe('motivos precisos en baseDesdeEstados (D-076)', () => {
+  const CONFIG = { comportamiento: { 'Gastos de ventas': { tipo: 'fijo' } } };
+
+  it('una cuenta renombrada (fuera del catálogo) pide revisar su nombre en Estados', () => {
+    const entrada = JSON.parse(JSON.stringify(ENTRADA_BLOQUE_A.conjuntos.find(c => c.id === 'A1').entrada));
+    const er = entrada.estadoResultados['2025'];
+    er['Gastos de venta del periodo'] = er['Gastos de ventas'];
+    delete er['Gastos de ventas'];
+    const estados = normalizeFinancialData(entrada);
+    const r = resolverBase({ origen: 'estados', periodo: '2025', unidades: 1000 }, estados, CONFIG);
+    expect(r.error).toContain('Gastos de venta del periodo');
+    expect(r.error).toContain('no está en el catálogo de cuentas');
+    expect(r.error).not.toContain('Clasifique en Apalancamiento');
+  });
+
+  it('una cuenta del catálogo sin fijo o variable pide clasificarla en Apalancamiento', () => {
+    const estados = normalizeFinancialData(ENTRADA_BLOQUE_A.conjuntos.find(c => c.id === 'A1').entrada);
+    const r = resolverBase({ origen: 'estados', periodo: '2025', unidades: 1000 }, estados, {});
+    expect(r.error).toContain('Clasifique en Apalancamiento como fijas o variables: Gastos de ventas.');
+    expect(r.error).not.toContain('no está en el catálogo');
+  });
+});
