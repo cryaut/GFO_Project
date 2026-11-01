@@ -42,9 +42,12 @@ describe('Apalancamiento — caso B (casos especiales)', () => {
     expect(gao(200000, 0)).toBeNull();
   });
 
-  it('UAII negativa devuelve el valor (la interfaz advierte, D-008)', () => {
-    // Ventas 400,000; CV 240,000; CF 200,000 → MC 160,000; UAII −40,000; GAO = 160,000 / −40,000
-    expect(gao(160000, -40000)).toBe(-4);
+  it('UAII negativa da N/D: con base negativa el porcentaje invierte su sentido (D-073)', () => {
+    // Ventas 400,000; CV 240,000; CF 200,000 → MC 160,000; UAII −40,000. Antes daba −4.
+    expect(gao(160000, -40000)).toBeNull();
+    // D-073: también el margen negativo y el casi cero (0.005) dan N/D.
+    expect(gao(-200, -40)).toBeNull();
+    expect(gao(0.004, 100)).toBeNull();
   });
 
   it('denominador del GAF igual a 0 da N/D en GAF y GAT', () => {

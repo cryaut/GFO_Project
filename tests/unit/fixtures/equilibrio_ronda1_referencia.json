@@ -1,0 +1,407 @@
+{
+  "nota": "Referencia independiente de la ronda 1 de Equilibrio, calculada fuera de la app. Bloque A: reglas de texto propias sobre tests/unit/fixtures/estados_ronda2_bloque_A.json. Ventas netas = ventas − devoluciones − descuentos − rebajas; «Ventas netas reportadas» y otros totales reportados no se suman, solo se contrastan (D-067/D-072); ingresos por servicios cuentan como ventas; CV = costo de mercadería o de servicios; CF = gastos administrativos + gastos de ventas; intereses, otros ingresos, otros gastos e impuestos quedan fuera de la UAII. Cada periodo se cruza con ventas, costo y utilidad neta esperados del fixture.",
+  "config_referencia": "costo variable; gastos administrativos y de ventas fijos",
+  "tolerancia": 0.01,
+  "casos_manuales": [
+    {
+      "id": "M1",
+      "descripcion": "Caso normal: MC>0 y UAII>0",
+      "entrada": {
+        "precio": 100,
+        "costoVariableUnitario": 60,
+        "costosFijos": 2000,
+        "unidades": 100,
+        "utilidadObjetivo": null
+      },
+      "esperado": {
+        "mcu": 40.0,
+        "rmc": 0.4,
+        "peUnidades": 50.0,
+        "peVentas": 5000.0,
+        "unidadesMinimas": 50,
+        "msPorcentaje": 0.5,
+        "uaii": 2000.0,
+        "gao": 2.0,
+        "motivoGao": null,
+        "unidadesObjetivo": null
+      }
+    },
+    {
+      "id": "M2",
+      "descripcion": "Caso normal con utilidad objetivo",
+      "entrada": {
+        "precio": 100,
+        "costoVariableUnitario": 60,
+        "costosFijos": 2000,
+        "unidades": 100,
+        "utilidadObjetivo": 1000
+      },
+      "esperado": {
+        "mcu": 40.0,
+        "rmc": 0.4,
+        "peUnidades": 50.0,
+        "peVentas": 5000.0,
+        "unidadesMinimas": 50,
+        "msPorcentaje": 0.5,
+        "uaii": 2000.0,
+        "gao": 2.0,
+        "motivoGao": null,
+        "unidadesObjetivo": 75.0
+      }
+    },
+    {
+      "id": "M3",
+      "descripcion": "Sin costos fijos: GAO = 1",
+      "entrada": {
+        "precio": 100,
+        "costoVariableUnitario": 60,
+        "costosFijos": 0,
+        "unidades": 100,
+        "utilidadObjetivo": null
+      },
+      "esperado": {
+        "mcu": 40.0,
+        "rmc": 0.4,
+        "peUnidades": 0.0,
+        "peVentas": 0.0,
+        "unidadesMinimas": 0,
+        "msPorcentaje": 1.0,
+        "uaii": 4000.0,
+        "gao": 1.0,
+        "motivoGao": null,
+        "unidadesObjetivo": null
+      }
+    },
+    {
+      "id": "M4",
+      "descripcion": "Margen unitario cero: sin punto de equilibrio; GAO N/D",
+      "entrada": {
+        "precio": 100,
+        "costoVariableUnitario": 100,
+        "costosFijos": 500,
+        "unidades": 10,
+        "utilidadObjetivo": 500
+      },
+      "esperado": {
+        "mcu": 0.0,
+        "rmc": 0.0,
+        "peUnidades": null,
+        "peVentas": null,
+        "unidadesMinimas": null,
+        "msPorcentaje": null,
+        "uaii": -500.0,
+        "gao": null,
+        "motivoGao": "margen-no-positivo",
+        "unidadesObjetivo": null
+      }
+    },
+    {
+      "id": "M5",
+      "descripcion": "Margen negativo: GAO N/D (antes salía +0.8)",
+      "entrada": {
+        "precio": 100,
+        "costoVariableUnitario": 120,
+        "costosFijos": 50,
+        "unidades": 10,
+        "utilidadObjetivo": 500
+      },
+      "esperado": {
+        "mcu": -20.0,
+        "rmc": -0.2,
+        "peUnidades": null,
+        "peVentas": null,
+        "unidadesMinimas": null,
+        "msPorcentaje": null,
+        "uaii": -250.0,
+        "gao": null,
+        "motivoGao": "margen-no-positivo",
+        "unidadesObjetivo": null
+      }
+    },
+    {
+      "id": "M6",
+      "descripcion": "Margen positivo con UAII negativa: GAO N/D (antes salía −4)",
+      "entrada": {
+        "precio": 100,
+        "costoVariableUnitario": 60,
+        "costosFijos": 500,
+        "unidades": 10,
+        "utilidadObjetivo": null
+      },
+      "esperado": {
+        "mcu": 40.0,
+        "rmc": 0.4,
+        "peUnidades": 12.5,
+        "peVentas": 1250.0,
+        "unidadesMinimas": 13,
+        "msPorcentaje": -0.25,
+        "uaii": -100.0,
+        "gao": null,
+        "motivoGao": "uaii-no-positiva",
+        "unidadesObjetivo": null
+      }
+    },
+    {
+      "id": "M7",
+      "descripcion": "UAII exactamente cero: GAO N/D",
+      "entrada": {
+        "precio": 100,
+        "costoVariableUnitario": 60,
+        "costosFijos": 400,
+        "unidades": 10,
+        "utilidadObjetivo": null
+      },
+      "esperado": {
+        "mcu": 40.0,
+        "rmc": 0.4,
+        "peUnidades": 10.0,
+        "peVentas": 1000.0,
+        "unidadesMinimas": 10,
+        "msPorcentaje": 0.0,
+        "uaii": 0.0,
+        "gao": null,
+        "motivoGao": "uaii-no-positiva",
+        "unidadesObjetivo": null
+      }
+    },
+    {
+      "id": "M8",
+      "descripcion": "Cero unidades: GAO N/D por falta de ventas",
+      "entrada": {
+        "precio": 100,
+        "costoVariableUnitario": 60,
+        "costosFijos": 50,
+        "unidades": 0,
+        "utilidadObjetivo": null
+      },
+      "esperado": {
+        "mcu": 40.0,
+        "rmc": 0.4,
+        "peUnidades": 1.25,
+        "peVentas": 125.0,
+        "unidadesMinimas": 2,
+        "msPorcentaje": null,
+        "uaii": -50.0,
+        "gao": null,
+        "motivoGao": "sin-ventas",
+        "unidadesObjetivo": null
+      }
+    },
+    {
+      "id": "M9",
+      "descripcion": "Decimales (servicio por horas)",
+      "entrada": {
+        "precio": 12.5,
+        "costoVariableUnitario": 7.25,
+        "costosFijos": 1234.56,
+        "unidades": 333.3,
+        "utilidadObjetivo": null
+      },
+      "esperado": {
+        "mcu": 5.25,
+        "rmc": 0.42,
+        "peUnidades": 235.1542857143,
+        "peVentas": 2939.4285714286,
+        "unidadesMinimas": 236,
+        "msPorcentaje": 0.2944665895,
+        "uaii": 515.265,
+        "gao": 3.3959710052,
+        "motivoGao": null,
+        "unidadesObjetivo": null
+      }
+    },
+    {
+      "id": "M10",
+      "descripcion": "UAII muy pequeña: GAO muy alto pero válido",
+      "entrada": {
+        "precio": 100,
+        "costoVariableUnitario": 60,
+        "costosFijos": 3990,
+        "unidades": 100,
+        "utilidadObjetivo": null
+      },
+      "esperado": {
+        "mcu": 40.0,
+        "rmc": 0.4,
+        "peUnidades": 99.75,
+        "peVentas": 9975.0,
+        "unidadesMinimas": 100,
+        "msPorcentaje": 0.0025,
+        "uaii": 10.0,
+        "gao": 400.0,
+        "motivoGao": null,
+        "unidadesObjetivo": null
+      }
+    }
+  ],
+  "bloque_A_estados": [
+    {
+      "conjunto": "A1",
+      "periodo": "2024",
+      "ventasNetas": 864.0,
+      "costoVariable": 504.0,
+      "costosFijos": 216.0,
+      "mcTotal": 360.0,
+      "uaii": 144.0,
+      "gao": 2.5,
+      "motivoGao": null,
+      "cruzaConFixture": true
+    },
+    {
+      "conjunto": "A1",
+      "periodo": "2025",
+      "ventasNetas": 960.0,
+      "costoVariable": 560.0,
+      "costosFijos": 240.0,
+      "mcTotal": 400.0,
+      "uaii": 160.0,
+      "gao": 2.5,
+      "motivoGao": null,
+      "cruzaConFixture": true
+    },
+    {
+      "conjunto": "A2",
+      "periodo": "2023",
+      "ventasNetas": 640.0,
+      "costoVariable": 336.0,
+      "costosFijos": 176.0,
+      "mcTotal": 304.0,
+      "uaii": 128.0,
+      "gao": 2.375,
+      "motivoGao": null,
+      "cruzaConFixture": true
+    },
+    {
+      "conjunto": "A2",
+      "periodo": "2024",
+      "ventasNetas": 720.0,
+      "costoVariable": 378.0,
+      "costosFijos": 198.0,
+      "mcTotal": 342.0,
+      "uaii": 144.0,
+      "gao": 2.375,
+      "motivoGao": null,
+      "cruzaConFixture": true
+    },
+    {
+      "conjunto": "A2",
+      "periodo": "2025",
+      "ventasNetas": 800.0,
+      "costoVariable": 420.0,
+      "costosFijos": 220.0,
+      "mcTotal": 380.0,
+      "uaii": 160.0,
+      "gao": 2.375,
+      "motivoGao": null,
+      "cruzaConFixture": true
+    },
+    {
+      "conjunto": "A3",
+      "periodo": "2024",
+      "ventasNetas": 1748.0,
+      "costoVariable": 1196.0,
+      "costosFijos": 340.0,
+      "mcTotal": 552.0,
+      "uaii": 212.0,
+      "gao": 2.6037735849,
+      "motivoGao": null,
+      "cruzaConFixture": true
+    },
+    {
+      "conjunto": "A3",
+      "periodo": "2025",
+      "ventasNetas": 1900.0,
+      "costoVariable": 1300.0,
+      "costosFijos": 370.0,
+      "mcTotal": 600.0,
+      "uaii": 230.0,
+      "gao": 2.6086956522,
+      "motivoGao": null,
+      "cruzaConFixture": true
+    },
+    {
+      "conjunto": "A4",
+      "periodo": "2024",
+      "ventasNetas": 544.0,
+      "costoVariable": 363.0,
+      "costosFijos": 182.0,
+      "mcTotal": 181.0,
+      "uaii": -1.0,
+      "gao": null,
+      "motivoGao": "uaii-no-positiva",
+      "cruzaConFixture": true
+    },
+    {
+      "conjunto": "A4",
+      "periodo": "2025",
+      "ventasNetas": 495.0,
+      "costoVariable": 330.0,
+      "costosFijos": 165.0,
+      "mcTotal": 165.0,
+      "uaii": 0.0,
+      "gao": null,
+      "motivoGao": "uaii-no-positiva",
+      "cruzaConFixture": true
+    },
+    {
+      "conjunto": "A5",
+      "periodo": "2021",
+      "ventasNetas": 576.0,
+      "costoVariable": 336.0,
+      "costosFijos": 144.0,
+      "mcTotal": 240.0,
+      "uaii": 96.0,
+      "gao": 2.5,
+      "motivoGao": null,
+      "cruzaConFixture": true
+    },
+    {
+      "conjunto": "A5",
+      "periodo": "2022",
+      "ventasNetas": 672.0,
+      "costoVariable": 392.0,
+      "costosFijos": 168.0,
+      "mcTotal": 280.0,
+      "uaii": 112.0,
+      "gao": 2.5,
+      "motivoGao": null,
+      "cruzaConFixture": true
+    },
+    {
+      "conjunto": "A5",
+      "periodo": "2023",
+      "ventasNetas": 768.0,
+      "costoVariable": 448.0,
+      "costosFijos": 192.0,
+      "mcTotal": 320.0,
+      "uaii": 128.0,
+      "gao": 2.5,
+      "motivoGao": null,
+      "cruzaConFixture": true
+    },
+    {
+      "conjunto": "A5",
+      "periodo": "2024",
+      "ventasNetas": 864.0,
+      "costoVariable": 504.0,
+      "costosFijos": 216.0,
+      "mcTotal": 360.0,
+      "uaii": 144.0,
+      "gao": 2.5,
+      "motivoGao": null,
+      "cruzaConFixture": true
+    },
+    {
+      "conjunto": "A5",
+      "periodo": "2025",
+      "ventasNetas": 960.0,
+      "costoVariable": 560.0,
+      "costosFijos": 240.0,
+      "mcTotal": 400.0,
+      "uaii": 160.0,
+      "gao": 2.5,
+      "motivoGao": null,
+      "cruzaConFixture": true
+    }
+  ]
+}

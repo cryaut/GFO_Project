@@ -258,12 +258,12 @@ describe('Derivación — casos especiales', () => {
     expect(periodo.faltantes).toContainEqual({ tipo: 'dapInvalido', periodo: 'P1' });
   });
 
-  it('UAII negativa: grado negativo con advertencia', () => {
-    // Ventas 400,000; CV 240,000; CF 150,000 + 100,000 → UAII −90,000
+  it('UAII negativa: grado N/D con advertencias (D-073)', () => {
+    // Ventas 400,000; CV 240,000; CF 150,000 + 100,000 → UAII −90,000. Antes el grado salía negativo.
     const datos = casoA({ conImpuestos: false, periodos: ['P1'] });
     Object.assign(datos.estadoResultados.P1, { 'Ingresos por consultoría': 400000, 'Costo de mercadería': 240000 });
     const resultado = calcularApalancamiento(datos, CONFIG_A);
-    expect(resultado.periodos[0].grados.gao).toBeCloseTo(160000 / -90000, 6);
+    expect(resultado.periodos[0].grados.gao).toBeNull();
     expect(codigos(resultado)).toContain('bajo-equilibrio-operativo');
     expect(codigos(resultado)).toContain('bajo-equilibrio-financiero');
   });
