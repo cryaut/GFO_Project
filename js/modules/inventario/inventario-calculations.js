@@ -16,13 +16,29 @@ function texto(valor) {
 }
 
 // Datos guardados → forma válida. Lo que no cumple la forma se descarta para no romper la pantalla.
+// D-083: cada descarte se cuenta en `descartados` con su motivo (nada silencioso).
 export function normalizarInventario(datos) {
+  const descartados = [];
+  const contar = motivo => {
+    const existente = descartados.find(d => d.motivo === motivo);
+    if (existente) existente.cantidad += 1;
+    else descartados.push({ motivo, cantidad: 1 });
+  };
   const productos = [];
   const ids = new Set();
   for (const p of Array.isArray(datos?.productos) ? datos.productos : []) {
-    if (!p || typeof p.id !== 'string' || ids.has(p.id) || !texto(p.nombre)) continue;
-    if (![p.existenciaInicial, p.costoUnitario, p.stockMinimo].every(esNumero)) continue;
-    if (p.existenciaInicial < 0 || p.costoUnitario < 0 || p.stockMinimo < 0) continue;
+    if (!p || typeof p.id !== 'string' || !texto(p.nombre) || ids.has(p.id)) {
+      contar('Producto sin nombre o identificador inválido');
+      continue;
+    }
+    if (![p.existenciaInicial, p.costoUnitario, p.stockMinimo].every(esNumero)) {
+      contar('Producto con campo numérico inválido o negativo');
+      continue;
+    }
+    if (p.existenciaInicial < 0 || p.costoUnitario < 0 || p.stockMinimo < 0) {
+      contar('Producto con campo numérico inválido o negativo');
+      continue;
+    }
     ids.add(p.id);
     productos.push({
       id: p.id, nombre: texto(p.nombre), unidad: texto(p.unidad) || 'unidades',
@@ -32,16 +48,37 @@ export function normalizarInventario(datos) {
   const movimientos = [];
   const idsMovimiento = new Set();
   for (const m of Array.isArray(datos?.movimientos) ? datos.movimientos : []) {
-    if (!m || typeof m.id !== 'string' || idsMovimiento.has(m.id) || !ids.has(m.productoId)) continue;
-    if (!TIPOS_MOVIMIENTO.includes(m.tipo) || !esNumero(m.cantidad) || m.cantidad <= 0) continue;
-    if (typeof m.fecha !== 'string' || !FECHA_ISO.test(m.fecha)) continue;
+    if (!m || typeof m.id !== 'string' || idsMovimiento.has(m.id)) {
+      contar('Movimiento con identificador inválido o repetido');
+      continue;
+    }
+    if (!ids.has(m.productoId)) {
+      contar('Movimiento de un producto inexistente');
+      continue;
+    }
+    if (!TIPOS_MOVIMIENTO.includes(m.tipo)) {
+      contar('Movimiento con tipo inválido');
+      continue;
+    }
+    if (!esNumero(m.cantidad) || m.cantidad <= 0) {
+      contar('Movimiento con cantidad inválida');
+      continue;
+    }
+    if (typeof m.fecha !== 'string' || !FECHA_ISO.test(m.fecha)) {
+      contar('Movimiento con fecha inválida');
+      continue;
+    }
     idsMovimiento.add(m.id);
+    // D-081: las entradas pueden traer su costo unitario (≥ 0); los datos
+    // anteriores sin costo se conservan sin él y usan el costo del producto.
+    const conCosto = esNumero(m.costoUnitario) && m.costoUnitario >= 0;
     movimientos.push({
       id: m.id, productoId: m.productoId, fecha: m.fecha, tipo: m.tipo,
-      cantidad: m.cantidad, concepto: texto(m.concepto)
+      cantidad: m.cantidad, concepto: texto(m.concepto),
+      ...(conCosto ? { costoUnitario: m.costoUnitario } : {})
     });
   }
-  return { productos, movimientos };
+  return { productos, movimientos, descartados };
 }
 
 // Movimientos de un producto en orden cronológico; a igual fecha, en el orden en que se registraron.
@@ -53,54 +90,75 @@ export function movimientosDeProducto(datos, productoId) {
     .map(({ movimiento }) => movimiento);
 }
 
-// Kardex en unidades: saldo después de cada movimiento. primerNegativo es el primer
-// movimiento que deja la existencia bajo cero (null si ninguno lo hace).
+// Kardex en unidades y en costo: saldo después de cada movimiento y, con D-081,
+// costo promedio ponderado móvil (las entradas lo recalculan, las salidas salen
+// al costo vigente). primerNegativo es el primer movimiento que deja la
+// existencia bajo cero (null si ninguno lo hace).
 export function kardex(producto, movimientos) {
   let saldo = producto.existenciaInicial;
+  let costoPromedio = producto.costoUnitario; // D-081: costo de la existencia inicial
   let entradas = 0;
   let salidas = 0;
+  let costoSalidas = 0;
   let primerNegativo = null;
   const filas = movimientos.map(movimiento => {
+    let costoMovimiento = null;
     if (movimiento.tipo === 'entrada') {
+      const costoEntrada = esNumero(movimiento.costoUnitario) && movimiento.costoUnitario >= 0
+        ? movimiento.costoUnitario : producto.costoUnitario;
+      // C = (E × C + q × c) / (E + q); con E = 0 el nuevo promedio es c.
+      costoPromedio = saldo <= 0
+        ? costoEntrada
+        : (saldo * costoPromedio + movimiento.cantidad * costoEntrada) / (saldo + movimiento.cantidad);
       entradas += movimiento.cantidad;
       saldo += movimiento.cantidad;
     } else {
+      // La salida sale al costo promedio vigente y no cambia el promedio.
+      costoMovimiento = movimiento.cantidad * costoPromedio;
+      costoSalidas += costoMovimiento;
       salidas += movimiento.cantidad;
       saldo -= movimiento.cantidad;
     }
     if (saldo < -TOLERANCIA_REPOSICION && !primerNegativo) primerNegativo = { ...movimiento, saldo };
-    return { ...movimiento, saldo };
+    return { ...movimiento, saldo, costoPromedio, costoMovimiento };
   });
-  return { filas, entradas, salidas, saldoFinal: saldo, primerNegativo };
+  return { filas, entradas, salidas, saldoFinal: saldo, primerNegativo, costoPromedio, costoSalidas };
 }
 
-// Existencia final, valor y alerta de un producto con sus movimientos ya ordenados.
+// Existencia final, valuación a costo promedio y alerta de un producto con sus
+// movimientos ya ordenados.
 export function resumenProducto(producto, movimientos) {
-  const { entradas, salidas, filas } = kardex(producto, movimientos);
-  const final = existenciaFinal(producto.existenciaInicial, entradas, salidas);
+  const k = kardex(producto, movimientos);
+  const final = existenciaFinal(producto.existenciaInicial, k.entradas, k.salidas);
   const reponer = necesitaReposicion(final, producto.stockMinimo);
   // Faltante para volver al stock mínimo: la cantidad mínima a comprar (D-011).
   const faltante = reponer ? Math.max(0, producto.stockMinimo - final) : 0;
   return {
-    ...producto, entradas, salidas, existenciaFinal: final,
-    valor: valorInventario(final, producto.costoUnitario),
-    reponer, faltante, costoReposicion: faltante * producto.costoUnitario,
-    cantidadMovimientos: filas.length
+    ...producto, entradas: k.entradas, salidas: k.salidas, existenciaFinal: final,
+    costoPromedio: k.costoPromedio, costoSalidas: k.costoSalidas,
+    valor: valorInventario(final, k.costoPromedio),
+    reponer, faltante, costoReposicion: faltante * k.costoPromedio,
+    cantidadMovimientos: k.filas.length
   };
 }
 
-// Resumen de todo el inventario: productos, valor total y alertas de reposición.
+// Resumen de todo el inventario: productos, valor total, alertas de reposición,
+// descartes visibles (D-083) y conteo de entradas sin costo (D-081).
 export function calcularInventario(datos) {
   const normal = normalizarInventario(datos);
   const productos = normal.productos
     .map(producto => resumenProducto(producto, movimientosDeProducto(normal, producto.id)));
   const porReponer = productos.filter(producto => producto.reponer);
+  // D-084: sumar existencias de unidades distintas no tiene sentido → N/D.
+  const unidadesDistintas = new Set(productos.map(p => p.unidad)).size > 1;
   return {
     productos,
     valorTotal: productos.reduce((suma, p) => suma + p.valor, 0),
-    unidadesTotales: productos.reduce((suma, p) => suma + p.existenciaFinal, 0),
+    unidadesTotales: unidadesDistintas ? null : productos.reduce((suma, p) => suma + p.existenciaFinal, 0),
     porReponer,
-    costoReposicionTotal: porReponer.reduce((suma, p) => suma + p.costoReposicion, 0)
+    costoReposicionTotal: porReponer.reduce((suma, p) => suma + p.costoReposicion, 0),
+    descartados: normal.descartados,
+    movimientosSinCosto: normal.movimientos.filter(m => m.tipo === 'entrada' && !esNumero(m.costoUnitario)).length
   };
 }
 
@@ -146,13 +204,16 @@ export function validarProducto(datos, producto, idEditado = null) {
 }
 
 // Errores de un movimiento nuevo. Una salida no puede dejar la existencia negativa en su
-// fecha ni en las siguientes.
+// fecha ni en las siguientes. D-081: las entradas exigen costo unitario ≥ 0.
 export function validarMovimiento(datos, movimiento) {
   const errores = [];
   const producto = datos.productos.find(p => p.id === movimiento.productoId);
   if (!producto) errores.push('Elija un producto.');
   if (!TIPOS_MOVIMIENTO.includes(movimiento.tipo)) errores.push('Elija si es una entrada o una salida.');
   if (!esNumero(movimiento.cantidad) || movimiento.cantidad <= 0) errores.push('La cantidad debe ser un número mayor que 0.');
+  if (movimiento.tipo === 'entrada' && (!esNumero(movimiento.costoUnitario) || movimiento.costoUnitario < 0)) {
+    errores.push('La entrada debe indicar un costo unitario mayor o igual a 0.');
+  }
   if (typeof movimiento.fecha !== 'string' || !FECHA_ISO.test(movimiento.fecha)) errores.push('Indique la fecha del movimiento.');
   if (texto(movimiento.concepto).length > MAX_TEXTO) errores.push(`El concepto admite hasta ${MAX_TEXTO} caracteres.`);
   if (errores.length) return errores;

@@ -68,11 +68,21 @@ export function inventarioUI(page, opciones) {
   }
 
   function seccionAlertas(r) {
-    if (!r.porReponer.length) return '';
+    if (!r.porReponer.length && !r.descartados.length && !r.movimientosSinCosto) return '';
+    const descartes = r.descartados.length
+      ? `<p class="form-hint" style="color:var(--color-warning)">Datos descartados al leer (no se usan y no se guardan): ${r.descartados.map(d => `${esc(d.motivo)}: ${d.cantidad}`).join('; ')}.</p>`
+      : '';
+    const sinCosto = r.movimientosSinCosto
+      ? `<p class="form-hint">${r.movimientosSinCosto} movimiento(s) de entrada sin costo usan el costo de la existencia inicial de su producto (datos anteriores). Registre el costo en nuevas entradas.</p>`
+      : '';
+    if (!r.porReponer.length) {
+      return `<div class="card mb-4">${descartes}${sinCosto}</div>`;
+    }
     return `<div class="card mb-4" style="border-left:4px solid var(--color-danger)">
       <h2 class="card-title">Alertas de reposición</h2>
       <ul>${r.porReponer.map(p => `<li>${textoAlerta(p)}</li>`).join('')}</ul>
-      <p class="form-hint">Costo estimado para volver al stock mínimo: ${formatCurrency(r.costoReposicionTotal)}. El presupuesto maestro puede usar estas cantidades para planificar las compras.</p></div>`;
+      <p class="form-hint">Costo estimado para volver al stock mínimo: ${formatCurrency(r.costoReposicionTotal)}. El presupuesto maestro puede usar estas cantidades para planificar las compras.</p>
+      ${descartes}${sinCosto}</div>`;
   }
 
   function formularioProducto() {
@@ -86,7 +96,7 @@ export function inventarioUI(page, opciones) {
           <input class="form-input" id="invUnidad" maxlength="${MAX_TEXTO}" value="${valor('unidad', 'unidades')}"></div>
         <div class="form-group"><label class="form-label" for="invInicial">Existencia inicial</label>
           <input class="form-input" id="invInicial" type="number" min="0" step="any" value="${valor('existenciaInicial', '0')}"></div>
-        <div class="form-group"><label class="form-label" for="invCosto">Costo unitario (C$)</label>
+        <div class="form-group"><label class="form-label" for="invCosto">Costo de la existencia inicial (C$)</label>
           <input class="form-input" id="invCosto" type="number" min="0" step="any" value="${valor('costoUnitario')}"></div>
         <div class="form-group"><label class="form-label" for="invMinimo">Stock mínimo</label>
           <input class="form-input" id="invMinimo" type="number" min="0" step="any" value="${valor('stockMinimo', '0')}"></div>
@@ -104,7 +114,7 @@ export function inventarioUI(page, opciones) {
       <td class="text-right font-mono text-success">${cantidad(p.entradas)}</td>
       <td class="text-right font-mono text-danger">${cantidad(p.salidas)}</td>
       <td class="text-right font-mono font-bold">${cantidad(p.existenciaFinal)}</td>
-      <td class="text-right font-mono" style="white-space:nowrap">${formatCurrency(p.costoUnitario)}</td>
+      <td class="text-right font-mono" style="white-space:nowrap">${formatCurrency(p.costoPromedio)}</td>
       <td class="text-right font-mono" style="white-space:nowrap">${formatCurrency(p.valor)}</td>
       <td class="text-right font-mono">${cantidad(p.stockMinimo)}</td>
       <td>${p.reponer ? '<span class="badge badge-danger">Reponer</span>' : '<span class="badge badge-success">OK</span>'}</td>
@@ -112,7 +122,7 @@ export function inventarioUI(page, opciones) {
     </tr>`).join('');
     return `<div class="table-wrapper"><table class="statement-table">
       <thead><tr><th scope="col">Producto</th><th scope="col" class="text-right">Existencia inicial</th><th scope="col" class="text-right">Entradas</th>
-        <th scope="col" class="text-right">Salidas</th><th scope="col" class="text-right">Existencia final</th><th scope="col" class="text-right">Costo unitario</th>
+        <th scope="col" class="text-right">Salidas</th><th scope="col" class="text-right">Existencia final</th><th scope="col" class="text-right">Costo promedio (C$)</th>
         <th scope="col" class="text-right">Valor</th><th scope="col" class="text-right">Stock mínimo</th><th scope="col">Estado</th><th scope="col"><span class="sr-only">Acciones</span></th></tr></thead>
       <tbody>${filas}
         <tr><td colspan="6"><strong>Total</strong></td><td class="text-right font-mono"><strong>${formatCurrency(r.valorTotal)}</strong></td><td colspan="3"></td></tr></tbody>
@@ -131,6 +141,8 @@ export function inventarioUI(page, opciones) {
           <select class="form-select" id="movTipo"><option value="entrada">Entrada (compra, devolución)</option><option value="salida">Salida (venta, consumo)</option></select></div>
         <div class="form-group"><label class="form-label" for="movCantidad">Cantidad</label>
           <input class="form-input" id="movCantidad" type="number" min="0" step="any"></div>
+        <div class="form-group" id="grupoMovCosto"><label class="form-label" for="movCosto">Costo unitario de la entrada (C$)</label>
+          <input class="form-input" id="movCosto" type="number" min="0" step="any"></div>
         <div class="form-group"><label class="form-label" for="movFecha">Fecha</label>
           <input class="form-input" id="movFecha" type="date" value="${fechaHoy()}"></div>
         <div class="form-group"><label class="form-label" for="movConcepto">Concepto</label>
@@ -149,6 +161,8 @@ export function inventarioUI(page, opciones) {
       <td class="text-right font-mono text-success">${m.tipo === 'entrada' ? cantidad(m.cantidad) : ''}</td>
       <td class="text-right font-mono text-danger">${m.tipo === 'salida' ? cantidad(m.cantidad) : ''}</td>
       <td class="text-right font-mono">${cantidad(m.saldo)}</td>
+      <td class="text-right font-mono">${formatCurrency(m.costoPromedio)}</td>
+      <td class="text-right font-mono">${m.tipo === 'salida' ? formatCurrency(m.costoMovimiento) : ''}</td>
       <td><button type="button" class="btn btn-sm btn-danger" id="borrarMovimiento-${i}" aria-label="Borrar movimiento del ${esc(m.fecha)}">&times;</button></td>
     </tr>`).join('');
     return `<div class="card mb-4"><h2 class="card-title">3. Kardex de ${esc(p.nombre)} (${esc(p.unidad)})</h2>
@@ -157,14 +171,19 @@ export function inventarioUI(page, opciones) {
         <button type="button" class="btn btn-sm btn-danger" id="borrarProducto">Eliminar producto</button></div>
       <div class="table-wrapper"><table class="statement-table">
         <thead><tr><th scope="col">Fecha</th><th scope="col">Concepto</th><th scope="col" class="text-right">Entrada</th>
-          <th scope="col" class="text-right">Salida</th><th scope="col" class="text-right">Saldo</th><th scope="col"><span class="sr-only">Acciones</span></th></tr></thead>
-        <tbody><tr><td>—</td><td>Existencia inicial</td><td></td><td></td><td class="text-right font-mono">${cantidad(p.existenciaInicial)}</td><td></td></tr>
+          <th scope="col" class="text-right">Salida</th><th scope="col" class="text-right">Saldo</th><th scope="col" class="text-right">Costo promedio (C$)</th>
+          <th scope="col" class="text-right">Costo de la salida (C$)</th><th scope="col"><span class="sr-only">Acciones</span></th></tr></thead>
+        <tbody><tr><td>—</td><td>Existencia inicial</td><td></td><td></td><td class="text-right font-mono">${cantidad(p.existenciaInicial)}</td>
+          <td class="text-right font-mono">${formatCurrency(p.costoUnitario)}</td><td></td></tr>
           ${filas}
           <tr><td colspan="2"><strong>Totales y existencia final</strong></td><td class="text-right font-mono">${cantidad(k.entradas)}</td>
-            <td class="text-right font-mono">${cantidad(k.salidas)}</td><td class="text-right font-mono"><strong>${cantidad(k.saldoFinal)}</strong></td><td></td></tr></tbody>
+            <td class="text-right font-mono">${cantidad(k.salidas)}</td><td class="text-right font-mono"><strong>${cantidad(k.saldoFinal)}</strong></td>
+            <td class="text-right font-mono"><strong>${formatCurrency(k.costoPromedio)}</strong></td>
+            <td class="text-right font-mono"><strong>${formatCurrency(k.costoSalidas)}</strong></td></tr></tbody>
       </table></div>
       <p class="form-hint">Existencia final = ${cantidad(p.existenciaInicial)} + ${cantidad(k.entradas)} − ${cantidad(k.salidas)} = ${cantidad(k.saldoFinal)} ${esc(p.unidad)}.
-        Valor = ${cantidad(k.saldoFinal)} × ${formatCurrency(p.costoUnitario)} = ${formatCurrency(k.saldoFinal * p.costoUnitario)}.</p></div>`;
+        Costo promedio ponderado móvil: cada entrada lo recalcula y las salidas salen al costo vigente.
+        Valor = ${cantidad(k.saldoFinal)} × ${formatCurrency(k.costoPromedio)} = ${formatCurrency(k.saldoFinal * k.costoPromedio)}.</p></div>`;
   }
 
   function render() {
@@ -188,7 +207,7 @@ export function inventarioUI(page, opciones) {
         <div style="height:280px"><canvas id="inventarioChart" role="img" aria-label="Barras de existencia final y stock mínimo por producto"></canvas></div></div>` : ''}
       <div class="card mb-4"><h2 class="card-title">Fórmulas y lectura</h2><ul>
         <li><strong>Existencia final</strong> = existencia inicial + entradas − salidas (unidades).</li>
-        <li><strong>Valor del inventario</strong> = existencia final × costo unitario (C$).</li>
+        <li><strong>Valor del inventario</strong> = existencia final × costo promedio (C$). El costo promedio ponderado móvil se recalcula con cada entrada y las salidas salen al costo vigente.</li>
         <li><strong>Alerta de reposición</strong>: la existencia final es menor o igual al stock mínimo; se sugiere comprar lo que falta para volver al mínimo.</li></ul>
         <p class="text-muted">Una alerta indica que conviene comprar antes de quedarse sin existencias. El valor muestra cuánto dinero está invertido en mercadería.</p></div>`;
     bind(r);
@@ -266,13 +285,16 @@ export function inventarioUI(page, opciones) {
     });
     page.querySelector('#formMovimiento')?.addEventListener('submit', event => {
       event.preventDefault();
+      const tipo = campo('movTipo');
       const movimiento = {
         id: nuevoId('mov'),
         productoId: campo('movProducto'),
-        tipo: campo('movTipo'),
+        tipo,
         cantidad: numero('movCantidad'),
         fecha: campo('movFecha'),
-        concepto: campo('movConcepto').trim()
+        concepto: campo('movConcepto').trim(),
+        // D-081: solo las entradas llevan costo unitario.
+        ...(tipo === 'entrada' ? { costoUnitario: numero('movCosto') } : {})
       };
       const errores = validarMovimiento(datos, movimiento);
       if (errores.length) { mensaje(errores.join(' '), true); return; }
@@ -280,6 +302,11 @@ export function inventarioUI(page, opciones) {
       const producto = datos.productos.find(p => p.id === movimiento.productoId);
       persistir({ ...datos, movimientos: [...datos.movimientos, movimiento] },
         `${ETIQUETA_TIPO[movimiento.tipo]} de ${cantidad(movimiento.cantidad)} ${producto.unidad} registrada para ${producto.nombre}.`);
+    });
+    page.querySelector('#movTipo')?.addEventListener('change', event => {
+      // D-081: el costo unitario solo aplica a las entradas.
+      const grupo = page.querySelector('#grupoMovCosto');
+      if (grupo) grupo.style.display = event.target.value === 'entrada' ? '' : 'none';
     });
     const actual = datos.productos.find(p => p.id === seleccionado);
     if (actual) {
