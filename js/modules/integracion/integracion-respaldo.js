@@ -60,8 +60,17 @@ function validarModulo(clave, importado, actual, omitidos) {
     return lectura.estados ?? normalizeFinancialData(importado);
   }
   if (clave === 'inventario') {
-    // D-083: un inventario con registros descartados no se puede usar completo —
-    // el respaldo se rechaza entero, igual que D-080 con estados.
+    // D-083 (ronda 2): primero las mismas validaciones de forma que el resto de
+    // módulos, con los mismos mensajes que main (H1); después la normalización
+    // y el rechazo por registros descartados.
+    if (!esObjeto(importado)) throw new Error(`El módulo "${clave}" debe ser un objeto.`);
+    for (const [campo, valor] of Object.entries(importado)) {
+      if (!Object.hasOwn(actual, campo)) {
+        omitidos.push(`${clave}.${campo}`);
+        continue;
+      }
+      validarTipo(valor, actual[campo], `${clave}.${campo}`);
+    }
     const normal = normalizarInventario(importado);
     if (normal.descartados.length) {
       const detalle = normal.descartados.map(d => `${d.motivo}: ${d.cantidad}`).join('; ');

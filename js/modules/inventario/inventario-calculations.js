@@ -17,6 +17,7 @@ function texto(valor) {
 
 // Datos guardados → forma válida. Lo que no cumple la forma se descarta para no romper la pantalla.
 // D-083: cada descarte se cuenta en `descartados` con su motivo (nada silencioso).
+// D-083 (ronda 2): una `productos` o `movimientos` que no sea lista también cuenta.
 export function normalizarInventario(datos) {
   const descartados = [];
   const contar = motivo => {
@@ -24,6 +25,12 @@ export function normalizarInventario(datos) {
     if (existente) existente.cantidad += 1;
     else descartados.push({ motivo, cantidad: 1 });
   };
+  if (datos?.productos !== undefined && !Array.isArray(datos.productos)) {
+    contar('Lista de productos inválida');
+  }
+  if (datos?.movimientos !== undefined && !Array.isArray(datos.movimientos)) {
+    contar('Lista de movimientos inválida');
+  }
   const productos = [];
   const ids = new Set();
   for (const p of Array.isArray(datos?.productos) ? datos.productos : []) {
@@ -164,9 +171,11 @@ export function calcularInventario(datos) {
 
 // D-082: redacción única de la alerta de reposición para las tres pantallas
 // (Inventario, Inicio y Proforma). Devuelve '' si el producto no pide reposición.
+// D-082 (ronda 2): el faltante usa la misma tolerancia que necesitaReposicion —
+// un faltante de una fracción de centavo se lee como «Llegó al mínimo».
 export function descripcionReposicion(producto) {
   if (!producto.reponer) return '';
-  return producto.faltante > 0
+  return producto.faltante > TOLERANCIA_REPOSICION
     ? `Bajo el mínimo: comprar al menos ${producto.faltante} ${producto.unidad} (costo estimado ${formatCurrency(producto.costoReposicion)}) para volver al mínimo.`
     : 'Llegó al mínimo: programe una compra.';
 }
