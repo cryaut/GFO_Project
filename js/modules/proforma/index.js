@@ -42,7 +42,7 @@ export function reunirEntradas() {
       ? intentar(() => calcularRazonesMercado(estados, store.get('razonesMercado'), store.get('apalancamiento')?.dap || {}).at(-1))
       : null,
     apalancamiento: estados ? intentar(() => calcularApalancamiento(estados, store.get('apalancamiento') || {})) : null,
-    presupuesto: validarSupuestos(supuestos).length ? null : intentar(() => calcularPresupuestoMaestro(supuestos)),
+    presupuesto: validarSupuestos(supuestos).length ? null : intentar(() => calcularPresupuestoMaestro(supuestos, inventario)),
     equilibrio: validarEquilibrio(equilibrio).length ? null : calcularCVU(equilibrio),
     flujo,
     inventario: inventario.productos.length ? inventario : null,

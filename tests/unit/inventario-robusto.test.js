@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { necesitaReposicion, TOLERANCIA_REPOSICION } from '../../js/utils/calculate.js';
 import { descripcionReposicion } from '../../js/modules/inventario/inventario-calculations.js';
 
@@ -47,5 +47,169 @@ describe('redacción única de la alerta (T2, D-082)', () => {
 
   it('sin reposición devuelve cadena vacía', () => {
     expect(descripcionReposicion({ reponer: false })).toBe('');
+  });
+});
+
+
+// --- Matriz de casos M0 a M11 (los datos viven aquí, no la demostración) ---
+
+import { calcularInventario as calcularInv, normalizarInventario } from '../../js/modules/inventario/inventario-calculations.js';
+import { validarRespaldo } from '../../js/modules/integracion/integracion-respaldo.js';
+
+describe('matriz de casos de inventario (M0 a M11)', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  // M0: movimientos sin costo (datos anteriores) — el costo del producto es el
+  // costo de la existencia inicial y el promedio no cambia: regresión con main.
+  const BASE = () => ({
+    productos: [
+      { id: 'p1', nombre: 'Producto único', unidad: 'unidades', existenciaInicial: 10, costoUnitario: 4, stockMinimo: 4 }
+    ],
+    movimientos: [
+      { id: 'm1', productoId: 'p1', fecha: '2026-01-05', tipo: 'entrada', cantidad: 6, concepto: 'Compra' },
+      { id: 'm2', productoId: 'p1', fecha: '2026-01-20', tipo: 'salida', cantidad: 8, concepto: 'Venta' }
+    ]
+  });
+
+  it('M0: regresión — sin costo en movimientos, valor y alertas iguales a main', () => {
+    const r = calcularInv(BASE());
+    expect(r.productos[0].existenciaFinal).toBe(8);
+    expect(r.productos[0].costoPromedio).toBe(4);
+    expect(r.productos[0].valor).toBe(32);
+    expect(r.valorTotal).toBe(32);
+    expect(r.productos[0].reponer).toBe(false);
+    // La entrada sin costo cuenta en el aviso (D-081/D-083).
+    expect(r.movimientosSinCosto).toBe(1);
+  });
+
+  it('M1: existencia igual al mínimo (enteros) — alerta con «Llegó al mínimo»', () => {
+    const datos = BASE();
+    datos.productos[0].stockMinimo = 8;
+    datos.movimientos = [{ id: 'm2', productoId: 'p1', fecha: '2026-01-20', tipo: 'salida', cantidad: 2, concepto: 'Venta' }];
+    const r = calcularInv(datos);
+    expect(r.productos[0].existenciaFinal).toBe(8);
+    expect(r.productos[0].reponer).toBe(true);
+    expect(r.productos[0].faltante).toBe(0);
+    expect(descripcionReposicion(r.productos[0])).toBe('Llegó al mínimo: programe una compra.');
+  });
+
+  it('M2: decimales igual al mínimo (0.3 + 0.1 + 0.2 frente a 0.6) — alerta', () => {
+    const datos = {
+      productos: [{ id: 'p1', nombre: 'Harina', unidad: 'kilos', existenciaInicial: 0.3, costoUnitario: 2, stockMinimo: 0.6 }],
+      movimientos: [
+        { id: 'm1', productoId: 'p1', fecha: '2026-01-05', tipo: 'entrada', cantidad: 0.1, concepto: 'Compra' },
+        { id: 'm2', productoId: 'p1', fecha: '2026-01-10', tipo: 'entrada', cantidad: 0.2, concepto: 'Compra' }
+      ]
+    };
+    const r = calcularInv(datos);
+    expect(r.productos[0].existenciaFinal).toBeCloseTo(0.6, 9);
+    expect(r.productos[0].reponer).toBe(true);
+    expect(descripcionReposicion(r.productos[0])).toBe('Llegó al mínimo: programe una compra.');
+  });
+
+  it('M3: existencia debajo del mínimo — faltante y costo con el costo promedio', () => {
+    const datos = BASE();
+    datos.productos[0].existenciaInicial = 2;
+    datos.movimientos = [];
+    const r = calcularInv(datos);
+    expect(r.productos[0].existenciaFinal).toBe(2);
+    expect(r.productos[0].reponer).toBe(true);
+    expect(r.productos[0].faltante).toBe(2);
+    expect(r.productos[0].costoReposicion).toBe(8); // 2 faltantes × 4 promedio
+    expect(descripcionReposicion(r.productos[0])).toBe('Bajo el mínimo: comprar al menos 2 unidades (costo estimado C$ 8.00) para volver al mínimo.');
+  });
+
+  it('M4: compra a precio distinto — promedio ponderado móvil', () => {
+    const datos = {
+      productos: [{ id: 'p1', nombre: 'Producto', unidad: 'unidades', existenciaInicial: 5, costoUnitario: 10, stockMinimo: 0 }],
+      movimientos: [
+        { id: 'm1', productoId: 'p1', fecha: '2026-01-05', tipo: 'entrada', cantidad: 10, costoUnitario: 12, concepto: 'Compra a otro precio' },
+        { id: 'm2', productoId: 'p1', fecha: '2026-01-20', tipo: 'salida', cantidad: 8, concepto: 'Venta' }
+      ]
+    };
+    const r = calcularInv(datos);
+    const p = r.productos[0];
+    // Promedio tras la entrada: (5 × 10 + 10 × 12) / 15 = 170 / 15 = 11.3333.
+    expect(p.costoPromedio).toBeCloseTo(170 / 15, 6);
+    // Salida de 8 u: costo 8 × 11.3333 = 90.6667; existencia final 7 u; valor 79.3333.
+    expect(p.costoSalidas).toBeCloseTo(8 * 170 / 15, 6);
+    expect(p.existenciaFinal).toBe(7);
+    expect(p.valor).toBeCloseTo(7 * 170 / 15, 6);
+  });
+
+  it('M5: salida que deja la existencia en 0 — alerta con mínimo 5, sin alerta con mínimo 0', () => {
+    const datos = BASE();
+    datos.productos[0].stockMinimo = 5;
+    datos.movimientos = [{ id: 'm1', productoId: 'p1', fecha: '2026-01-20', tipo: 'salida', cantidad: 10, concepto: 'Venta' }];
+    const r = calcularInv(datos);
+    expect(r.productos[0].existenciaFinal).toBe(0);
+    expect(r.productos[0].reponer).toBe(true);
+    // Con mínimo 0 no hay política de reposición.
+    const sinPolitica = { ...datos, productos: [{ ...datos.productos[0], stockMinimo: 0 }] };
+    const r2 = calcularInv(sinPolitica);
+    expect(r2.productos[0].existenciaFinal).toBe(0);
+    expect(r2.productos[0].reponer).toBe(false);
+    expect(r2.porReponer).toEqual([]);
+  });
+
+  it('M6: fecha mal escrita en dato importado — descartada, contada y el respaldo se rechaza', () => {
+    const datos = BASE();
+    datos.movimientos.forEach(m => { m.fecha = '05/01/2026'; });
+    expect(normalizarInventario(datos).movimientos).toEqual([]);
+    const r = calcularInv(datos);
+    expect(r.descartados).toContainEqual({ motivo: 'Movimiento con fecha inválida', cantidad: 2 });
+    expect(() => validarRespaldo({ inventario: datos }, { inventario: { productos: [], movimientos: [] } }))
+      .toThrow(/El inventario del respaldo tiene registros descartados/);
+  });
+
+  it('M7: existencia inicial negativa en dato importado — descartada con su motivo', () => {
+    const datos = BASE();
+    datos.productos[0].existenciaInicial = -3;
+    const r = calcularInv(datos);
+    expect(r.productos).toEqual([]);
+    expect(r.descartados).toContainEqual({ motivo: 'Producto con campo numérico inválido o negativo', cantidad: 1 });
+  });
+
+  it('M8: entrada sin costo (dato anterior) usa el costo del producto y cuenta en el aviso', () => {
+    const datos = BASE();
+    datos.productos[0].costoUnitario = 6;
+    const r = calcularInv(datos);
+    // La entrada de 6 u sin costo usa el costo del producto (6): el promedio no cambia.
+    expect(r.productos[0].costoPromedio).toBe(6);
+    expect(r.productos[0].valor).toBe(8 * 6);
+    expect(r.movimientosSinCosto).toBe(1);
+  });
+
+  it('M10: productos con unidades distintas — existencia total N/D', () => {
+    const datos = {
+      productos: [
+        { id: 'p1', nombre: 'Prenda', unidad: 'prendas', existenciaInicial: 10, costoUnitario: 4, stockMinimo: 2 },
+        { id: 'p2', nombre: 'Tela', unidad: 'kilos', existenciaInicial: 5, costoUnitario: 3, stockMinimo: 1 }
+      ],
+      movimientos: []
+    };
+    const r = calcularInv(datos);
+    expect(r.unidadesTotales).toBeNull();
+    expect(r.productos).toHaveLength(2);
+  });
+
+  it('M9 y M11: el mínimo cambia en Inventario y Planeación alerta con el valor nuevo', async () => {
+    vi.stubGlobal('document', { getElementById: () => null });
+    vi.stubGlobal('localStorage', { getItem: () => null, setItem: () => {} });
+    const { default: store } = await import('../../js/store.js');
+    store._data = null;
+    store._listeners = [];
+    const planeacion = await import('../../js/modules/planeacion/planeacion-calculations.js');
+    const supuestos = { ...planeacion.ejemploPlaneacion(), productoId: 'prod-min' };
+    const inventarioCon = minimo => ({
+      productos: [{ id: 'prod-min', nombre: 'Producto', unidad: 'unidades', stockMinimo: minimo, existenciaFinal: 60, costoPromedio: 480, reponer: false, faltante: 0, costoReposicion: 0 }]
+    });
+    // Con mínimo 50, el Trimestre 1 (60 sobre el mínimo) no avisa; al subirlo a 70 sí (60 ≤ 70).
+    const r1 = planeacion.calcularPresupuestoMaestro(supuestos, inventarioCon(50));
+    expect(r1.avisos.some(a => a.codigo === 'bajo-stock-minimo')).toBe(false);
+    const r2 = planeacion.calcularPresupuestoMaestro(supuestos, inventarioCon(70));
+    expect(r2.avisos.filter(a => a.codigo === 'bajo-stock-minimo').map(a => a.periodo))
+      .toEqual(['Trimestre 1', 'Trimestre 2', 'Trimestre 4']);
+    vi.unstubAllGlobals();
   });
 });

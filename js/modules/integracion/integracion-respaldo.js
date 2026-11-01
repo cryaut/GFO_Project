@@ -1,5 +1,6 @@
 import { normalizeFinancialData } from '../estados/estados-normalize.js';
 import { leerEstados } from '../../utils/estados-guardados.js';
+import { normalizarInventario } from '../inventario/inventario-calculations.js';
 
 // Validación de un respaldo JSON (el que genera "Exportar JSON" en Reportes) antes de
 // tocar el store. Es pura: recibe el archivo ya parseado y los datos actuales, y devuelve
@@ -57,6 +58,16 @@ function validarModulo(clave, importado, actual, omitidos) {
       throw new Error(`No se pudieron leer los estados del respaldo: ${lectura.error}. No se importó nada.`);
     }
     return lectura.estados ?? normalizeFinancialData(importado);
+  }
+  if (clave === 'inventario') {
+    // D-083: un inventario con registros descartados no se puede usar completo —
+    // el respaldo se rechaza entero, igual que D-080 con estados.
+    const normal = normalizarInventario(importado);
+    if (normal.descartados.length) {
+      const detalle = normal.descartados.map(d => `${d.motivo}: ${d.cantidad}`).join('; ');
+      throw new Error(`El inventario del respaldo tiene registros descartados (${detalle}). No se importó nada.`);
+    }
+    return { productos: normal.productos, movimientos: normal.movimientos };
   }
   if (!esObjeto(importado)) throw new Error(`El módulo "${clave}" debe ser un objeto.`);
   // Lo que el archivo no trae se conserva del módulo actual para que no quede incompleto.

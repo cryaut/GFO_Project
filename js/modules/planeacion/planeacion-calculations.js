@@ -3,7 +3,7 @@
 // Lógica pura: sin DOM, window ni store. Plan: docs/planificacion/modulos-guia/01-modulos-obligatorios.md.
 import {
   comprasPresupuestadas, costoBienesVendidos, financiamientoRequerido, margenContribucionUnitario,
-  margenSeguridad, puntoEquilibrioUnidades, puntoEquilibrioVentas, razonMargenContribucion
+  margenSeguridad, necesitaReposicion, puntoEquilibrioUnidades, puntoEquilibrioVentas, razonMargenContribucion
 } from '../../utils/calculate.js';
 
 export const TIPOS_PERIODO = ['Mes', 'Trimestre'];
@@ -56,7 +56,8 @@ export function normalizarSupuestos(datos) {
     ventasUnidades: ajustarLista(datos.ventasUnidades, periodos),
     otrosDesembolsos: ajustarLista(datos.otrosDesembolsos, periodos),
     productoInventario: typeof datos.productoInventario === 'string' ? datos.productoInventario : '',
-    stockMinimo: esNumero(datos.stockMinimo) ? datos.stockMinimo : null
+    // D-082: el stock mínimo ya no se guarda: se toma del producto vigente en Inventario.
+    productoId: typeof datos.productoId === 'string' ? datos.productoId : ''
   };
   for (const [clave] of SUPUESTOS) s[clave] = esNumero(datos[clave]) ? datos[clave] : null;
   return s;
@@ -89,11 +90,16 @@ export function validarSupuestos(s) {
 }
 
 // Todos los presupuestos. Supone supuestos válidos (validarSupuestos vacío).
-export function calcularPresupuestoMaestro(s) {
+// D-082: `inventario` es el resultado de calcularInventario; el stock mínimo
+// vigente sale del producto elegido (supuestos.productoId), no de una copia.
+export function calcularPresupuestoMaestro(s, inventario = null) {
   const n = s.periodos;
   const etiquetas = Array.from({ length: n }, (_, i) => `${s.tipoPeriodo} ${i + 1}`);
   const avisos = [];
   const cada = f => Array.from({ length: n }, (_, i) => f(i));
+  const productoElegido = s.productoId && inventario?.productos
+    ? inventario.productos.find(p => p.id === s.productoId) : null;
+  const stockMinimo = productoElegido ? productoElegido.stockMinimo : null;
 
   // 1. Ventas y cobros: lo vendido a crédito se cobra el periodo siguiente (D-014).
   const unidades = s.ventasUnidades;
@@ -121,8 +127,8 @@ export function calcularPresupuestoMaestro(s) {
       comprasU[i] = compras;
       invFinalU[i] = deseadoU[i];
     }
-    if (esNumero(s.stockMinimo) && invFinalU[i] < s.stockMinimo) {
-      avisos.push({ codigo: 'bajo-stock-minimo', periodo: etiquetas[i], inventario: invFinalU[i], stockMinimo: s.stockMinimo });
+    if (stockMinimo !== null && necesitaReposicion(invFinalU[i], stockMinimo)) {
+      avisos.push({ codigo: 'bajo-stock-minimo', periodo: etiquetas[i], inventario: invFinalU[i], stockMinimo });
     }
   }
   const comprasImporte = cada(i => comprasU[i] * s.costoUnitario);
@@ -232,6 +238,6 @@ export function ejemploPlaneacion() {
     inventarioInicial: 50, pctInventarioFinal: 0.2, inventarioFinalUltimo: 56,
     pctGastosVariables: 0.05, gastosFijos: 37500, depreciacion: 4500, intereses: 3000,
     otrosDesembolsos: [0, 120000, 0, 0], tasaIR: 0.3, saldoInicialCaja: 52000, saldoMinimoCaja: 40000,
-    productoInventario: '', stockMinimo: null
+    productoInventario: '', productoId: ''
   };
 }
