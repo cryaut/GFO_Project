@@ -234,7 +234,7 @@ export function planeacionUI(page, opciones) {
     return partes.length
       ? `<div class="flex-gap flex-wrap mb-4" style="align-items:center">${partes.join('')}</div>
          ${borrador.productoInventario ? `<p class="form-hint">${borrador.productoId
-           ? `Inventario inicial y costo tomados de ${esc(borrador.productoInventario)}: el stock mínimo y el costo se leen del producto vigente en Inventario al calcular.`
+           ? `Inventario inicial y costo promedio tomados de ${esc(borrador.productoInventario)} al elegirlo. El stock mínimo se lee del producto vigente en Inventario al calcular.`
            : 'Este presupuesto se guardó con una versión anterior. Vuelva a tomar el producto de Inventario para que el stock mínimo se lea del producto.'}</p>` : ''}`
       : '<p class="form-hint">Con estados guardados o productos en Inventario, puede tomar de ahí los saldos iniciales.</p>';
   }
