@@ -100,6 +100,11 @@ export function calcularPresupuestoMaestro(s, inventario = null) {
   const productoElegido = s.productoId && inventario?.productos
     ? inventario.productos.find(p => p.id === s.productoId) : null;
   const stockMinimo = productoElegido ? productoElegido.stockMinimo : null;
+  // D-085: supuestos de una versión anterior con el nombre del producto pero sin
+  // productoId — el presupuesto no adivina el producto por nombre; pide re vincularlo.
+  if (s.productoInventario && !s.productoId) {
+    avisos.push({ codigo: 'sin-producto-vinculado' });
+  }
 
   // 1. Ventas y cobros: lo vendido a crédito se cobra el periodo siguiente (D-014).
   const unidades = s.ventasUnidades;

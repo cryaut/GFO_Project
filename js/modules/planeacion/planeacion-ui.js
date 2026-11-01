@@ -80,6 +80,8 @@ function textoAviso(a) {
       return `${esc(a.periodo)}: el inventario inicial cubre las ventas y el inventario deseado; no se compra y sobran ${num(a.sobrante)} unidades.`;
     case 'bajo-stock-minimo':
       return `${esc(a.periodo)}: el inventario final (${num(a.inventario)} u) llegó al stock mínimo del producto (${num(a.stockMinimo)} u) registrado en Inventario: programe una compra.`;
+    case 'sin-producto-vinculado':
+      return 'Este presupuesto se guardó con una versión anterior. Vuelva a tomar el producto de Inventario para que el stock mínimo se lea del producto.';
     case 'perdida':
       return `${esc(a.periodo)}: pérdida presupuestada de ${monto(-a.monto)}.`;
     case 'bajo-equilibrio':
@@ -231,7 +233,9 @@ export function planeacionUI(page, opciones) {
     }
     return partes.length
       ? `<div class="flex-gap flex-wrap mb-4" style="align-items:center">${partes.join('')}</div>
-         ${borrador.productoInventario ? `<p class="form-hint">Inventario inicial y costo tomados de ${esc(borrador.productoInventario)}: el stock mínimo y el costo se leen del producto vigente en Inventario al calcular.</p>` : ''}`
+         ${borrador.productoInventario ? `<p class="form-hint">${borrador.productoId
+           ? `Inventario inicial y costo tomados de ${esc(borrador.productoInventario)}: el stock mínimo y el costo se leen del producto vigente en Inventario al calcular.`
+           : 'Este presupuesto se guardó con una versión anterior. Vuelva a tomar el producto de Inventario para que el stock mínimo se lea del producto.'}</p>` : ''}`
       : '<p class="form-hint">Con estados guardados o productos en Inventario, puede tomar de ahí los saldos iniciales.</p>';
   }
 
