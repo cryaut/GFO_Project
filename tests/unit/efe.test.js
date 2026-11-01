@@ -601,7 +601,8 @@ describe('pantalla de EFE en Análisis', () => {
 
   it('un importe no numérico guardado no deja vacía la pantalla de Análisis', async () => {
     // Regresión: computeEFE lanzaba "Importe inválido" y toda la pantalla quedaba
-    // en blanco; en main, con los mismos datos, se renderizaba completa.
+    // en blanco. D-077/D-078: los estados no se leen, la pantalla muestra el
+    // aviso real escapado y las secciones su estado incompleto; ningún 0 falso.
     const { html } = await cargarAnalisis({
       name: 'Importe de texto',
       periods: ['2024', '2025'],
@@ -616,9 +617,11 @@ describe('pantalla de EFE en Análisis', () => {
       }
     });
     expect(html.length).toBeGreaterThan(0);
-    expect(html).toContain('Método indirecto desde dos balances');
-    expect(html).toContain('No se pudo calcular la utilidad neta');
-    expect(html).toContain('Comprobación incompleta');
+    expect(html).toContain('No se pudieron leer los estados guardados');
+    // La causa real, con el nombre de cuenta escapado (regla 7).
+    expect(html).toContain('Importe inválido en activos[2025].Efectivo');
+    expect(html).toContain('&quot;cien&quot;');
+    expect(html).not.toContain('<p>Efectivo: C$ 0.00');
   });
 
   it('computeEFE compara el cierre indicado con el periodo inmediatamente anterior', async () => {

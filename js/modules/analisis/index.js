@@ -13,11 +13,12 @@ import {
   rotacionActivosFijos, rotacionCapitalTrabajo, solvencia
 } from '../../utils/calculate.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
-import { normalizeFinancialData, sortPeriods } from '../estados/estados-normalize.js';
+import { sortPeriods } from '../estados/estados-normalize.js';
 import { escapeHTML } from '../../utils/html.js';
 import { construirEOAF } from './eoaf-calculations.js';
 import { construirEFE } from './efe-calculations.js';
 import { seleccionarPeriodoPar, TOLERANCIA_COMPROBACION } from './comprobacion-calculations.js';
+import { leerEstados } from '../../utils/estados-guardados.js';
 
 export const UMBRALES = {
   ratioCorrienteMin: 1,
@@ -33,36 +34,33 @@ export const UMBRALES = {
   cicloConversionMaxDias: 60
 };
 
-function getSavedStates() {
-  const accountTypes = store.get('estados.accountTypes');
-  const data = {
-    ...store.get('estados'),
-    name: store.get('estados.name') || 'Datos guardados',
-    periods: store.get('estados.periods') || [],
-    balanceGeneral: store.get('estados.balanceGeneral') || {},
-    estadoResultados: store.get('estados.estadoResultados') || {},
-    accountTypes: accountTypes && typeof accountTypes === 'object' ? accountTypes : undefined
-  };
-  // Data saved before this refactor may lack accountTypes; classify defensively.
-  return normalizeFinancialData(data);
-}
+const esNumero = valor => typeof valor === 'number' && Number.isFinite(valor);
 
 let savedCache = null;
 let savedPeriods = [];
+let savedError = null;
 // Exportada: Reportes refresca la caché antes de reutilizar computeRazones para
 // que el dashboard no lea estados guardados de una navegación anterior.
+// D-078: sin respaldo por nombres — si los estados no se pueden leer, la
+// caché queda null, el error se guarda y los periodos crudos siguen visibles
+// para que las pestañas muestren N/D con el motivo.
 export function refreshSavedStates() {
-  try {
-    savedCache = getSavedStates();
-    savedPeriods = savedCache.periods;
-  } catch {
-    // Unsaved/legacy data without valid classification: analysis degrades to
-    // the fixed-name readers instead of crashing the whole section.
-    savedCache = null;
-    const raw = store.get('estados.periods');
-    savedPeriods = Array.isArray(raw) ? sortPeriods(raw) : [];
-  }
+  const { estados, error } = leerEstados(store.get('estados'));
+  savedCache = estados;
+  savedError = error;
+  savedPeriods = estados
+    ? estados.periods
+    : (Array.isArray(store.get('estados.periods')) ? sortPeriods(store.get('estados.periods')) : []);
   return savedCache;
+}
+
+// D-078: texto del aviso cuando los estados guardados no se pueden leer, o null
+// si no hay error. Las pantallas lo muestran escapado (regla 7).
+export function avisoEstadosGuardados() {
+  if (!savedCache && !refreshSavedStates() && savedError) {
+    return `No se pudieron leer los estados guardados: ${savedError}`;
+  }
+  return null;
 }
 
 function totalsFor(period) {
@@ -72,73 +70,44 @@ function totalsFor(period) {
 }
 
 
+// D-078: sin estados legibles, cada campo sale N/D (null) — nunca 0 ni una
+// lectura por nombres fijos. El motivo del N/D lo explican las razones
+// (estados_no_legibles) y el aviso de la pantalla.
+const ER_ND = () => ({
+  ventas: null, costoVentas: null, gastosAdmin: null, gastosVentas: null,
+  otrosIngresos: null, otrosGastos: null, intereses: null, impuestos: null,
+  utilidadNeta: null
+});
+const BG_ND = () => ({
+  efectivo: null, cxC: null, inventario: null, activosCorrientesOtros: null,
+  activosCorrientes: null, cuentasPorPagar: null, pasivoCortoPlazo: null,
+  provisiones: null, pasivosCorrientes: null, totalActivos: null,
+  totalPasivos: null, totalPatrimonio: null, activosFijos: null
+});
+
 function getERData(period) {
   const shared = totalsFor(period);
-  if (shared) {
-    return {
-      ventas: shared.ventas, costoVentas: shared.costoVentas,
-      gastosAdmin: shared.gastosAdmin, gastosVentas: shared.gastosVentas,
-      otrosIngresos: shared.otrosIngresos, otrosGastos: shared.otrosGastos,
-      intereses: shared.intereses, impuestos: shared.impuestos,
-      utilidadNeta: shared.utilidadNeta
-    };
-  }
-  // Datos sin clasificación válida: lectura por nombres fijos.
-  const er = store.get('estados.estadoResultados')?.[period] || {};
-  const ventas = er['Ventas'] || 0;
-  const costoVentas = er['Costo de Ventas'] || 0;
-  const gastosAdmin = er['Gastos de Administracion'] || 0;
-  const gastosVentas = er['Gastos de Ventas'] || 0;
-  const otrosIngresos = er['Otros Ingresos'] || 0;
-  const otrosGastos = er['Otros Gastos'] || 0;
-  const intereses = er['Gastos por Intereses'] || 0;
-  const impuestos = er['Impuestos'] || 0;
+  if (!shared) return ER_ND();
   return {
-    ventas, costoVentas, gastosAdmin, gastosVentas, otrosIngresos, otrosGastos,
-    intereses, impuestos,
-    utilidadNeta: ventas - costoVentas - gastosAdmin - gastosVentas +
-      otrosIngresos - otrosGastos - intereses - impuestos
+    ventas: shared.ventas, costoVentas: shared.costoVentas,
+    gastosAdmin: shared.gastosAdmin, gastosVentas: shared.gastosVentas,
+    otrosIngresos: shared.otrosIngresos, otrosGastos: shared.otrosGastos,
+    intereses: shared.intereses, impuestos: shared.impuestos,
+    utilidadNeta: shared.utilidadNeta
   };
 }
 
 function getBGData(period) {
   const shared = totalsFor(period);
-  if (shared) {
-    return {
-      efectivo: shared.efectivo, cxC: shared.cxC, inventario: shared.inventario,
-      activosCorrientesOtros: shared.activosCorrientesOtros,
-      activosCorrientes: shared.activosCorrientes,
-      cuentasPorPagar: shared.cuentasPorPagar, pasivoCortoPlazo: shared.pasivoCortoPlazo,
-      provisiones: shared.provisiones, pasivosCorrientes: shared.pasivosCorrientes,
-      totalActivos: shared.totalActivos, totalPasivos: shared.totalPasivos,
-      totalPatrimonio: shared.totalPatrimonio, activosFijos: shared.activosFijos
-    };
-  }
-  const bg = store.get('estados.balanceGeneral')?.[period] || {};
-  const activos = bg.activos || {};
-  const pasivos = bg.pasivos || {};
-  const patrimonio = bg.patrimonio || {};
-
-  const efectivo = activos['Efectivo'] || 0;
-  const cxC = activos['Cuentas por Cobrar'] || 0;
-  const inventario = activos['Inventario'] || 0;
-  const activosCorrientesOtros = activos['Activos Corrientes Otros'] || 0;
-  const activosCorrientes = efectivo + cxC + inventario + activosCorrientesOtros;
-
-  const cuentasPorPagar = pasivos['Cuentas por Pagar'] || 0;
-  const pasivoCortoPlazo = pasivos['Pasivo Corto Plazo'] || 0;
-  const provisiones = pasivos['Provisiones'] || 0;
-  const pasivosCorrientes = cuentasPorPagar + pasivoCortoPlazo + provisiones;
-
-  const totalActivos = Object.values(activos).reduce((s, v) => s + v, 0);
-  const totalPasivos = Object.values(pasivos).reduce((s, v) => s + v, 0);
-  const totalPatrimonio = Object.values(patrimonio).reduce((s, v) => s + v, 0);
-
+  if (!shared) return BG_ND();
   return {
-    efectivo, cxC, inventario, activosCorrientesOtros, activosCorrientes,
-    cuentasPorPagar, pasivoCortoPlazo, provisiones, pasivosCorrientes,
-    totalActivos, totalPasivos, totalPatrimonio,
-    activosFijos: totalActivos - activosCorrientes
+    efectivo: shared.efectivo, cxC: shared.cxC, inventario: shared.inventario,
+    activosCorrientesOtros: shared.activosCorrientesOtros,
+    activosCorrientes: shared.activosCorrientes,
+    cuentasPorPagar: shared.cuentasPorPagar, pasivoCortoPlazo: shared.pasivoCortoPlazo,
+    provisiones: shared.provisiones, pasivosCorrientes: shared.pasivosCorrientes,
+    totalActivos: shared.totalActivos, totalPasivos: shared.totalPasivos,
+    totalPatrimonio: shared.totalPatrimonio, activosFijos: shared.activosFijos
   };
 }
 
@@ -229,7 +198,14 @@ export function computeRazones(period) {
   // y volver a leer. Las operaciones previas añaden su campo y operandos faltantes.
   const notAvailableReasons = [period, ...(prev ? [prev] : [])].flatMap(periodo =>
     (totalsFor(periodo)?.notAvailableReasons || []).map(motivo => ({ ...motivo, periodo })));
+  // D-078: si los estados no se pueden leer, el motivo de cada razón es
+  // estados_no_legibles con el mensaje real — no missing_required_account_data.
+  const aviso = avisoEstadosGuardados();
   const conDatos = (campo, operandos, calcular) => {
+    if (aviso) {
+      notAvailableReasons.push({ campo, periodo: period, motivo: 'estados_no_legibles', mensaje: aviso });
+      return null;
+    }
     const faltantes = Object.keys(operandos).filter(nombre => operandos[nombre] === null || operandos[nombre] === undefined);
     if (!faltantes.length) return calcular();
     notAvailableReasons.push({ campo, periodo: period, motivo: 'missing_required_account_data', operandos: faltantes });
@@ -359,13 +335,14 @@ export function computeDuPont(period) {
 
 export function computeCNTCNO(period) {
   const bg = getBGData(period);
+  const sumaND = (a, b) => (esNumero(a) && esNumero(b) ? a + b : null);
   const CNT = capitalNetoTrabajo(bg.activosCorrientes, bg.pasivosCorrientes);
-  const activosCorrientesOps = bg.cxC + bg.inventario;
-  const pasivosCorrientesOps = bg.cuentasPorPagar + bg.provisiones;
+  const activosCorrientesOps = sumaND(bg.cxC, bg.inventario);
+  const pasivosCorrientesOps = sumaND(bg.cuentasPorPagar, bg.provisiones);
   const CNO = capitalNetoOperativo(activosCorrientesOps, pasivosCorrientesOps);
   return {
     CNT, CNO, activosCorrientesOps, pasivosCorrientesOps,
-    excluidosAC: bg.efectivo + bg.activosCorrientesOtros,
+    excluidosAC: sumaND(bg.efectivo, bg.activosCorrientesOtros),
     excluidosPC: bg.pasivoCortoPlazo
   };
 }
@@ -619,12 +596,9 @@ function renderCNTCNOSection(period) {
 // no, los guardados en bruto, porque las cuentas sin clasificar o con importes
 // inválidos se reportan en la comprobación en lugar de ignorarse.
 function estadosParaComprobacion() {
-  const estados = savedCache || refreshSavedStates();
-  return estados || {
-    balanceGeneral: store.get('estados.balanceGeneral') || {},
-    estadoResultados: store.get('estados.estadoResultados') || {},
-    accountTypes: store.get('estados.accountTypes')
-  };
+  // D-078: sin respaldo — si los estados no se pueden leer, el EOAF y el EFE
+  // muestran su estado incompleto; el aviso real lo da avisoEstadosGuardados().
+  return savedCache || refreshSavedStates();
 }
 
 export function computeEOAF(periods) {
@@ -675,7 +649,9 @@ function pieComprobacion() {
 function renderEOAFSection(periods) {
   const estado = computeEOAF(periods);
   if (estado.incompleto) {
-    return `<p class="text-muted">${escapeHTML(estado.incompleto)}</p>`;
+    // D-078: cuando los estados no se leen, el aviso real precede al mensaje.
+    const aviso = avisoEstadosGuardados();
+    return `<p class="text-muted">${escapeHTML(aviso ? `${aviso} ${estado.incompleto}` : estado.incompleto)}</p>`;
   }
   const { periodos, secciones, resumen, advertencias, interpretacion } = estado;
   // Los subtotales y totales solo muestran saldos: nunca suman movimientos.
@@ -765,7 +741,9 @@ function renderEOAFSection(periods) {
 function renderEFESection(period) {
   const efe = computeEFE(period);
   if (efe.incompleto) {
-    return `<p class="text-muted">${escapeHTML(efe.incompleto)}</p>`;
+    // D-078: cuando los estados no se leen, el aviso real precede al mensaje.
+    const aviso = avisoEstadosGuardados();
+    return `<p class="text-muted">${escapeHTML(aviso ? `${aviso} ${efe.incompleto}` : efe.incompleto)}</p>`;
   }
   const fmt = valor => valor == null ? 'N/D' : formatCurrency(valor);
   const celda = valor => `<td class="text-right font-mono ${valor != null && valor < 0 ? 'text-danger' : ''}">${fmt(valor)}</td>`;
@@ -884,6 +862,7 @@ export function initAnalisis() {
       <h1 class="page-title">Análisis Financiero</h1>
       <p class="page-subtitle">AH, AV, Razones, CNT/CNO, EOAF, EFE, DuPont, Interpretación y razones de mercado</p>
     </div>
+    ${avisoEstadosGuardados() ? `<p class="form-hint mb-4" style="color:var(--color-danger)">${escapeHTML(avisoEstadosGuardados())}</p>` : ''}
     <div class="tabs">
       <button class="tab-btn active" data-tab="ah">AH</button>
       <button class="tab-btn" data-tab="av">AV</button>

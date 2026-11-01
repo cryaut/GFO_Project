@@ -564,8 +564,12 @@ describe('pantalla de EOAF en Análisis', () => {
         estadoResultados: { Ventas: 'ventas' }
       }
     });
-    expect(html).toContain('Comparación de saldos');
-    expect(html).toContain('Dato faltante');
+    // D-077/D-078: los estados no se leen, la pantalla muestra el aviso real
+    // escapado y la sección del EOAF su estado incompleto; ningún 0 falso.
+    expect(html.length).toBeGreaterThan(0);
+    expect(html).toContain('No se pudieron leer los estados guardados');
+    expect(html).toContain('Importe inválido en activos[2025].Efectivo');
+    expect(html).toContain('No hay balance general del periodo 2024');
   });
 
   it('la demo MUNO MODA cuadra con C$ 97,775 de cada lado', async () => {
