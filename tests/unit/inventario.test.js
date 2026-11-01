@@ -137,7 +137,8 @@ describe('pantalla de inventario', () => {
     const html = page.innerHTML;
     expect(html).toContain('78,790.00');
     expect(html).toContain('Alertas de reposición');
-    expect(html).toContain('Comprar al menos 5 prendas');
+    // D-082: redacción única de la alerta (descripcionReposicion).
+    expect(html).toContain('Bajo el mínimo: comprar al menos 5 prendas');
     expect(html).toContain('Existencia final = 120 + 60 − 145 = 35 prendas');
     expect(graficar).toHaveBeenLastCalledWith('inventarioChart', expect.objectContaining({ type: 'bar' }));
   });

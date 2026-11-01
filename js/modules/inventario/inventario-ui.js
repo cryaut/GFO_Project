@@ -4,7 +4,7 @@ import { escapeHTML as esc } from '../../utils/html.js';
 import { formatCurrency, formatNumber } from '../../utils/format.js';
 import { fechaHoy, leerNumero, nuevoId } from '../../utils/form.js';
 import {
-  MAX_TEXTO, calcularInventario, ejemploInventario, kardex, movimientosDeProducto,
+  MAX_TEXTO, calcularInventario, descripcionReposicion, ejemploInventario, kardex, movimientosDeProducto,
   normalizarInventario, validarBorradoMovimiento, validarMovimiento, validarProducto
 } from './inventario-calculations.js';
 
@@ -16,9 +16,7 @@ function cantidad(valor) {
 
 function textoAlerta(p) {
   const base = `<strong>${esc(p.nombre)}</strong>: existencia ${cantidad(p.existenciaFinal)} ${esc(p.unidad)}, stock mínimo ${cantidad(p.stockMinimo)}.`;
-  return p.faltante > 0
-    ? `${base} Comprar al menos ${cantidad(p.faltante)} ${esc(p.unidad)} (costo estimado ${formatCurrency(p.costoReposicion)}) para volver al mínimo.`
-    : `${base} Llegó al mínimo: programe una compra.`;
+  return `${base} ${descripcionReposicion(p)}`;
 }
 
 // opciones: { datos, guardar, graficar?, confirmar?, inventarioContable? }

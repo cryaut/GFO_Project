@@ -418,9 +418,14 @@ export function valorInventario(existencia, costoUnitario) {
 }
 
 // Alerta de reposición: la existencia llegó al stock mínimo o quedó por debajo.
+// D-082: tolerancia única (1e-6, la misma del kardex) para la frontera decimal,
+// y mínimo 0 = sin política de reposición (no hay alerta).
+export const TOLERANCIA_REPOSICION = 1e-6;
+
 export function necesitaReposicion(existencia, stockMinimo) {
   if (!esNumero(existencia) || !esNumero(stockMinimo)) return null;
-  return existencia <= stockMinimo;
+  if (stockMinimo === 0) return false;
+  return existencia <= stockMinimo + TOLERANCIA_REPOSICION;
 }
 
 // === Flujo de efectivo ===

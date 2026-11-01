@@ -1,12 +1,11 @@
 // Control básico de inventario: existencia final, valor y alerta de reposición por producto.
 // Lógica pura: sin DOM, window ni store. Plan: docs/planificacion/modulos-guia/01-modulos-obligatorios.md.
-import { existenciaFinal, necesitaReposicion, valorInventario } from '../../utils/calculate.js';
+import { formatCurrency } from '../../utils/format.js';
+import { existenciaFinal, necesitaReposicion, TOLERANCIA_REPOSICION, valorInventario } from '../../utils/calculate.js';
 
 export const TIPOS_MOVIMIENTO = ['entrada', 'salida'];
 export const MAX_TEXTO = 80;
 const FECHA_ISO = /^\d{4}-\d{2}-\d{2}$/;
-// Cantidades con decimales (kg, metros): menos de una millonésima cuenta como 0.
-const TOLERANCIA = 1e-6;
 
 function esNumero(valor) {
   return typeof valor === 'number' && Number.isFinite(valor);
@@ -69,7 +68,7 @@ export function kardex(producto, movimientos) {
       salidas += movimiento.cantidad;
       saldo -= movimiento.cantidad;
     }
-    if (saldo < -TOLERANCIA && !primerNegativo) primerNegativo = { ...movimiento, saldo };
+    if (saldo < -TOLERANCIA_REPOSICION && !primerNegativo) primerNegativo = { ...movimiento, saldo };
     return { ...movimiento, saldo };
   });
   return { filas, entradas, salidas, saldoFinal: saldo, primerNegativo };
@@ -103,6 +102,15 @@ export function calcularInventario(datos) {
     porReponer,
     costoReposicionTotal: porReponer.reduce((suma, p) => suma + p.costoReposicion, 0)
   };
+}
+
+// D-082: redacción única de la alerta de reposición para las tres pantallas
+// (Inventario, Inicio y Proforma). Devuelve '' si el producto no pide reposición.
+export function descripcionReposicion(producto) {
+  if (!producto.reponer) return '';
+  return producto.faltante > 0
+    ? `Bajo el mínimo: comprar al menos ${producto.faltante} ${producto.unidad} (costo estimado ${formatCurrency(producto.costoReposicion)}) para volver al mínimo.`
+    : 'Llegó al mínimo: programe una compra.';
 }
 
 function negativoEn(datos, producto) {
