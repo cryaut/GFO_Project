@@ -232,12 +232,21 @@ export function alertasIntegradas({ razones, presupuesto, equilibrio, flujo, inv
 }
 
 // Reporte completo. Cada entrada puede ser null si el módulo no tiene datos.
+// D-078: `errorEstados` distingue «no hay estados» de «hay estados que no se
+// leen»: el faltante muestra el aviso real en lugar de pedir que cargue datos.
 export function construirReporte(entradas) {
-  const { estados = null, apalancamiento = null, presupuesto = null, equilibrio = null, flujo = null, inventario = null } = entradas;
+  const { estados = null, errorEstados = null, apalancamiento = null, presupuesto = null, equilibrio = null, flujo = null, inventario = null } = entradas;
   const real = resultadosReales(estados);
   const proforma = resultadosProforma(presupuesto);
   const faltantes = [];
-  if (!estados) faltantes.push({ modulo: 'Estados financieros', ruta: '#/estados', texto: 'Cargue la demo o importe estados para comparar con datos reales.' });
+  if (!estados) {
+    faltantes.push({
+      modulo: 'Estados financieros', ruta: errorEstados ? '#/analisis' : '#/estados',
+      texto: errorEstados
+        ? `No se pudieron leer los estados guardados: ${errorEstados}. Revise Análisis y Estados Financieros.`
+        : 'Cargue la demo o importe estados para comparar con datos reales.'
+    });
+  }
   const ultimoApal = apalancamiento?.periodos?.[apalancamiento.periodos.length - 1];
   if (estados && ultimoApal && ultimoApal.grados.gao === null) {
     faltantes.push({ modulo: 'Apalancamiento', ruta: '#/apalancamiento', texto: 'Clasifique los costos como fijos o variables para obtener el GAO y el GAT.' });
