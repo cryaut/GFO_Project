@@ -130,6 +130,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-082 | Regla única de reposición y lectura del mínimo | Vigente |
 | D-083 | Sin descartes silenciosos | Vigente |
 | D-084 | Totales de existencia solo con una unidad | Vigente |
+| D-085 | Supuestos de Planeación guardados sin producto vinculado | Vigente |
 
 ## Decisiones
 
@@ -1806,3 +1807,24 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 **Para revertirla.** Registrar la decisión que la reemplace y devolver la suma directa.
 
 **Referencias.** `instrucciones_inventario_ronda1.md`, T6; hallazgo H6.
+
+### D-085 — Supuestos de Planeación guardados sin producto vinculado
+
+- **Fecha**: 2026-11-01
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/planeacion/planeacion-calculations.js`, `planeacion-ui.js`
+
+**Contexto.** Los supuestos guardados antes de la ronda 1 de Inventario traen `productoInventario` (el nombre) y un `stockMinimo` copiado, pero no `productoId`. Con la nueva regla, el mínimo quedó `null` y el presupuesto perdía el aviso de stock sin decir nada (hallazgo H3).
+
+**Opciones.**
+1. Adivinar el producto por nombre — puede apuntar a otro producto si el nombre cambió o se repite.
+2. Un aviso visible `sin-producto-vinculado` que pida volver a tomar el producto — ninguna pérdida silenciosa y ninguna alerta de otro producto.
+
+**Decisión.** Opción 2. Si los supuestos tienen `productoInventario` y no `productoId`, `calcularPresupuestoMaestro` agrega el aviso con código `sin-producto-vinculado`. Mientras no se vincule, no hay aviso de stock mínimo, pero el aviso de vinculación sí se muestra. La pista de «Tomar de Inventario» solo dice que el mínimo se lee del producto cuando hay `productoId`.
+
+**Consecuencias.** Los datos anteriores muestran el aviso de vinculación y ninguna alerta de stock hasta que la persona vuelva a tomar el producto. Los supuestos nuevos guardan `productoId` y funcionan como en la ronda 1.
+
+**Para revertirla.** Registrar la decisión que la reemplace y volver a leer el mínimo del nombre.
+
+**Referencias.** `instrucciones_inventario_ronda2.md`, T2; hallazgo H3.
