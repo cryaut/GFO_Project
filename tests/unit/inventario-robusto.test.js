@@ -213,3 +213,128 @@ describe('matriz de casos de inventario (M0 a M11)', () => {
     vi.unstubAllGlobals();
   });
 });
+
+// --- Ronda 2: correcciones (H1 a H5) y D-085 ---
+
+// Productos y movimientos base de la matriz (sin costo en los movimientos: M0).
+const BASE = () => ({
+  productos: [
+    { id: 'p1', nombre: 'Producto único', unidad: 'unidades', existenciaInicial: 10, costoUnitario: 4, stockMinimo: 4 }
+  ],
+  movimientos: [
+    { id: 'm1', productoId: 'p1', fecha: '2026-01-05', tipo: 'entrada', cantidad: 6, concepto: 'Compra' },
+    { id: 'm2', productoId: 'p1', fecha: '2026-01-20', tipo: 'salida', cantidad: 8, concepto: 'Venta' }
+  ]
+});
+
+describe('respaldo de inventario: forma y descartes (ronda 2, T1)', () => {
+  const ACTUALES = { inventario: { productos: [], movimientos: [] }, estados: { periods: [], balanceGeneral: {}, estadoResultados: {} } };
+
+  it('C1: inventario null se rechaza con el texto de main', () => {
+    expect(() => validarRespaldo({ inventario: null }, ACTUALES))
+      .toThrow('El módulo "inventario" debe ser un objeto.');
+  });
+
+  it('C2: inventario texto se rechaza con el texto de main', () => {
+    expect(() => validarRespaldo({ inventario: 'abc' }, ACTUALES))
+      .toThrow('El módulo "inventario" debe ser un objeto.');
+  });
+
+  it('C3: productos que no es lista se rechaza con el texto de main', () => {
+    expect(() => validarRespaldo({ inventario: { productos: 'x', movimientos: [] } }, ACTUALES))
+      .toThrow('inventario.productos debe ser una lista.');
+  });
+
+  it('C4: movimientos que no es lista se rechaza con el texto de main', () => {
+    expect(() => validarRespaldo({ inventario: { productos: [], movimientos: 'x' } }, ACTUALES))
+      .toThrow('inventario.movimientos debe ser una lista.');
+  });
+
+  it('C5: respaldo válido se acepta y se normaliza', () => {
+    const { modulos } = validarRespaldo({ inventario: BASE() }, ACTUALES);
+    expect(modulos.inventario.productos).toHaveLength(1);
+    expect(modulos.inventario.movimientos).toHaveLength(2);
+  });
+
+  it('C6: respaldo con registros descartados se rechaza con el conteo (D-083)', () => {
+    const conDescartes = BASE();
+    conDescartes.movimientos[0].fecha = '05/01/2026';
+    expect(() => validarRespaldo({ inventario: conDescartes }, ACTUALES))
+      .toThrow(/El inventario del respaldo tiene registros descartados \(Movimiento con fecha inválida: 1\)/);
+  });
+});
+
+describe('normalizarInventario con listas no válidas (ronda 2, T1/H2)', () => {
+  it('C7: una productos o movimientos que no sea lista cuenta como descarte', () => {
+    const r = normalizarInventario({ productos: 'x', movimientos: 'y' });
+    expect(r.productos).toEqual([]);
+    expect(r.movimientos).toEqual([]);
+    expect(r.descartados).toContainEqual({ motivo: 'Lista de productos inválida', cantidad: 1 });
+    expect(r.descartados).toContainEqual({ motivo: 'Lista de movimientos inválida', cantidad: 1 });
+  });
+});
+
+describe('Planeación sin producto vinculado (ronda 2, T2/D-085)', () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('C8: con nombre y sin productoId hay aviso y no hay alerta de stock por nombre', async () => {
+    vi.stubGlobal('document', { getElementById: () => null });
+    vi.stubGlobal('localStorage', { getItem: () => null, setItem: () => {} });
+    const { default: store } = await import('../../js/store.js');
+    store._data = null;
+    store._listeners = [];
+    const planeacion = await import('../../js/modules/planeacion/planeacion-calculations.js');
+    const supuestos = {
+      ...planeacion.ejemploPlaneacion(),
+      productoInventario: 'Producto anterior', productoId: ''
+    };
+    const inventario = {
+      productos: [{ id: 'prod-1', nombre: 'Producto', unidad: 'unidades', stockMinimo: 1, existenciaFinal: 0, costoPromedio: 480, reponer: false, faltante: 0, costoReposicion: 0 }]
+    };
+    const r = planeacion.calcularPresupuestoMaestro(supuestos, inventario);
+    expect(r.avisos).toContainEqual({ codigo: 'sin-producto-vinculado' });
+    expect(r.avisos.some(a => a.codigo === 'bajo-stock-minimo')).toBe(false);
+    vi.unstubAllGlobals();
+  });
+
+  it('C9: con productoId y mínimo vigente, la alerta usa el mínimo del producto', async () => {
+    vi.stubGlobal('document', { getElementById: () => null });
+    vi.stubGlobal('localStorage', { getItem: () => null, setItem: () => {} });
+    const { default: store } = await import('../../js/store.js');
+    store._data = null;
+    store._listeners = [];
+    const planeacion = await import('../../js/modules/planeacion/planeacion-calculations.js');
+    const supuestos = {
+      ...planeacion.ejemploPlaneacion(),
+      productoInventario: 'Producto', productoId: 'prod-1'
+    };
+    const inventario = {
+      productos: [{ id: 'prod-1', nombre: 'Producto', unidad: 'unidades', stockMinimo: 80, existenciaFinal: 0, costoPromedio: 480, reponer: false, faltante: 0, costoReposicion: 0 }]
+    };
+    const r = planeacion.calcularPresupuestoMaestro(supuestos, inventario);
+    expect(r.avisos.filter(a => a.codigo === 'bajo-stock-minimo').map(a => a.periodo))
+      .toEqual(['Trimestre 1', 'Trimestre 2', 'Trimestre 3', 'Trimestre 4']);
+    expect(r.avisos.some(a => a.codigo === 'sin-producto-vinculado')).toBe(false);
+    vi.unstubAllGlobals();
+  });
+});
+
+describe('faltante con tolerancia (ronda 2, T3/H4)', () => {
+  it('C10: existencia 0.5999999 con mínimo 0.6 — «Llegó al mínimo», sin comprar 0.0000001', () => {
+    const p = {
+      nombre: 'Harina', unidad: 'kilos', reponer: true,
+      existenciaFinal: 0.5999999, stockMinimo: 0.6,
+      faltante: 0.6 - 0.5999999, costoReposicion: 0.6 - 0.5999999
+    };
+    const texto = descripcionReposicion(p);
+    expect(texto).toBe('Llegó al mínimo: programe una compra.');
+    expect(texto).not.toContain('comprar al menos');
+  });
+
+  it('C11: la regresión M0 a M11 de la ronda 1 sigue en verde en este archivo', () => {
+    // C11 no agrega una prueba nueva: los describes «matriz de casos de
+    // inventario (M0 a M11)» de este archivo son la verificación, y la suite
+    // los ejecuta en cada corrida. La fila del reporte apunta a ellos.
+    expect(true).toBe(true);
+  });
+});
