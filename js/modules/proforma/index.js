@@ -1,5 +1,5 @@
 import store from '../../store.js';
-import { estadosGuardados } from '../../utils/estados-guardados.js';
+import { leerEstados } from '../../utils/estados-guardados.js';
 import { UMBRALES, computeDuPont, computeRazones, refreshSavedStates } from '../analisis/index.js';
 import { calcularRazonesMercado } from '../analisis/mercado-calculations.js';
 import { calcularApalancamiento } from '../apalancamiento/apalancamiento-calculations.js';
@@ -20,8 +20,11 @@ function intentar(calculo) {
 
 // Resultados de cada módulo calculados con sus mismas funciones. Exportada: Inicio
 // (panorama general) reutiliza estas entradas en vez de repetir la recolección.
+// D-078: la lectura es única (leerEstados) y el error de lectura viaja en
+// `errorEstados` para que el reporte muestre el aviso real; sin respaldos por
+// nombres fijos, ninguna cifra se inventa cuando los estados no se pueden leer.
 export function reunirEntradas() {
-  const estados = estadosGuardados(store.get('estados'));
+  const { estados, error: errorEstados } = leerEstados(store.get('estados'));
   const ultimo = estados ? estados.periods[estados.periods.length - 1] : null;
   if (estados) refreshSavedStates();
   const supuestos = normalizarSupuestos(store.get('planeacion')?.supuestos);
@@ -32,6 +35,7 @@ export function reunirEntradas() {
   const inventario = calcularInventario(store.get('inventario'));
   return {
     estados,
+    errorEstados,
     razones: estados ? intentar(() => computeRazones(ultimo)) : null,
     dupont: estados ? intentar(() => computeDuPont(ultimo)) : null,
     mercado: estados

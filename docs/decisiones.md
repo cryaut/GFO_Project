@@ -122,6 +122,10 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-074 | Fuente única de costos en Punto de equilibrio | Vigente |
 | D-075 | Escenarios inválidos no se convierten en 0 | Vigente |
 | D-076 | Motivos precisos en baseDesdeEstados | Vigente |
+| D-077 | Una sola lectura de estados | Vigente |
+| D-078 | Sin lectura por nombres fijos y N/D con motivo | Vigente |
+| D-079 | Totales reportados no se suman en ningún camino | Vigente |
+| D-080 | El respaldo rechaza estados que no se leen | Vigente |
 
 ## Decisiones
 
@@ -1634,3 +1638,83 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 **Para revertirla.** Registrar la decisión que la reemplace y volver al mensaje único.
 
 **Referencias.** `instrucciones_equilibrio_ronda1.md`, T4; hallazgo H7.
+
+### D-077 — Una sola lectura de estados
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/utils/estados-guardados.js`
+
+**Contexto.** Cada módulo leía los estados guardados a su manera: `estadosGuardados` normalizaba y descartaba el error, Análisis tenía su propio `getSavedStates`, y Integración otro. Cuando la lectura fallaba, el error desaparecía y las pantallas mostraban cifras falsas.
+
+**Opciones.**
+1. Una función `leerEstados(estados)` que devuelva `{ estados, error }` — el error viaja a quien sabe mostrarlo, y `estadosGuardados` queda como envoltorio para los módulos que solo necesitan los datos.
+2. Un servicio de lectura en el store — acopla la lectura a la persistencia.
+
+**Decisión.** Opción 1. `leerEstados(estados)` devuelve `{ estados, error }`: sin periodos → `{ estados: null, error: null }` (no hay datos); si `normalizeFinancialData` lanza → `{ estados: null, error: <mensaje> }` (hay datos, pero no se leen); si todo va bien → `{ estados: <normalizados>, error: null }`. `estadosGuardados` queda como envoltorio que devuelve solo `estados`, así Flujo, Equilibrio, Inventario y Planeación no cambian. Solo lee; no escribe en el store.
+
+**Consecuencias.** Los módulos pueden distinguir «no hay datos» de «hay datos que no se leen». El respaldo, el dashboard y los reportes consumen el error real.
+
+**Para revertirla.** Registrar la decisión que la reemplace y devolver la normalización silenciosa.
+
+**Referencias.** `instrucciones_f8_ronda1.md`, T1; hallazgos H1 y H5.
+
+### D-078 — Sin lectura por nombres fijos y N/D con motivo
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/analisis/index.js`, `js/modules/integracion/index.js`, `js/modules/proforma/index.js`, `proforma-calculations.js`
+
+**Contexto.** Cuando `getSavedStates` lanzaba, `refreshSavedStates` caía a leer por nombres fijos (`er['Ventas'] || 0`), `getBGData` sumaba todas las cuentas del grupo y Análisis calculaba la utilidad neta con una fórmula local. El resultado eran ceros y utilidades falsas que llegaban a Proforma, Inicio y Reportes (hallazgos H1 a H5).
+
+**Opciones.**
+1. Quitar los respaldos por nombres: sin estados legibles, cada razón, total y KPI sale N/D con el motivo `estados_no_legibles` y el texto «No se pudieron leer los estados guardados: <mensaje>»; la utilidad neta sale de la fórmula canónica de `computeFinancialTotals`.
+2. Mantener los respaldos y añadir avisos — conservaría cifras falsas junto al aviso.
+
+**Decisión.** Opción 1. Se eliminan los respaldos por nombre de `getERData`, `getBGData`, `refreshSavedStates` y `computeDashboardKPIs`. `computeRazones` añade el motivo `estados_no_legibles` con el mensaje real cuando hay error; Análisis, el dashboard de Integración, Proforma e Inicio muestran el aviso escapado (regla 7). La utilidad neta de la fórmula local se borra. Cierra F1 y F8.
+
+**Consecuencias.** Un dato guardado que no se puede leer ya no produce ceros ni utilidades falsas en ninguna pantalla. Las pruebas que esperaban 0 por el respaldo cambian con esta causa: dos de la pantalla de EFE en `efe.test.js` y una de la pantalla del EOAF en `eoaf.test.js`, lo que activó la parada 5 del encargo (contradicción entre permitir cambios por D-077 a D-080 y congelar las pruebas de EFE); el resultado nuevo es mejor y se recomienda aceptarlo. `advertenciasDeBalance` no se tocó: su firma con los estados ya estaba en `main` desde D-072.
+
+**Para revertirla.** Registrar la decisión que la reemplace y restaurar los respaldos por nombres.
+
+**Referencias.** `instrucciones_f8_ronda1.md`, T2 a T4; hallazgos H1 a H5.
+
+### D-079 — Totales reportados no se suman en ningún camino
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/analisis/index.js`, `js/modules/integracion/index.js`
+
+**Contexto.** `getBGData` sumaba todas las cuentas del grupo (incluidos los totales reportados) como respaldo, contra D-072. Al quitar el respaldo por nombres, la suma desaparece.
+
+**Decisión.** Los totales reportados con sus componentes solo se contrastan en todos los caminos (EFE, EOAF, razones, dashboard, reportes). Debe quedar una prueba que lo confirme: A3 con total de ventas netas reportado muestra las ventas del total, sin duplicar.
+
+**Consecuencias.** Ninguna pantalla suma un total junto a sus componentes. La prueba del caso A3 queda como guardián.
+
+**Para revertirla.** Registrar la decisión que la reemplace y restaurar la suma.
+
+**Referencias.** `instrucciones_f8_ronda1.md`, D-079; D-067 y D-072.
+
+### D-080 — El respaldo rechaza estados que no se leen
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/integracion/integracion-respaldo.js`
+
+**Contexto.** `validarRespaldo` normalizaba `estados` (y lanzaba si no podía), pero un respaldo con estados dañados dejaba el store modificado si el error aparecía después; además no usaba la lectura única.
+
+**Opciones.**
+1. Validar los estados con `leerEstados` antes de guardar: si hay error, rechazar el respaldo completo con mensaje claro — nada queda guardado a medias.
+2. Importar los módulos que sí se leen y avisar de los que no — dejaría datos inservibles guardados.
+
+**Decisión.** Opción 1. Al importar un respaldo, `validarModulo` valida `estados` con `leerEstados`: si devuelve `error`, el respaldo completo se rechaza con «No se pudieron leer los estados del respaldo: <mensaje>. No se importó nada.»; ningún módulo se guarda en ese caso.
+
+**Consecuencias.** Un respaldo con gasto negativo (o cualquier dato que la compuerta rechace) se rechaza y el store no cambia. Los respaldos válidos se guardan normalizados igual que antes.
+
+**Para revertirla.** Registrar la decisión que la reemplace y devolver la normalización directa.
+
+**Referencias.** `instrucciones_f8_ronda1.md`, T6 y M7; hallazgo H8.
