@@ -78,7 +78,11 @@ function resumen(kpis) {
 }
 
 // kpis: resultado de computeDashboardKPIs (o null). estados: datos normalizados (o null).
-export function construirReporteHTML({ kpis = null, estados = null } = {}) {
+// errorEstados: mensaje de D-077 cuando los estados guardados existen pero no se leen.
+export function construirReporteHTML({ kpis = null, estados = null, errorEstados = null } = {}) {
+  if (errorEstados) {
+    return `${resumen(kpis)}<p>No se pudieron leer los estados financieros guardados: ${esc(errorEstados)}. Revise los datos en Estados Financieros.</p>`;
+  }
   if (!estados || !estados.periods?.length) {
     return `${resumen(kpis)}<p>No hay estados financieros guardados. Cárguelos en Estados Financieros para generar el reporte.</p>`;
   }
