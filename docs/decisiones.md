@@ -126,6 +126,10 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-078 | Sin lectura por nombres fijos y N/D con motivo | Vigente |
 | D-079 | Totales reportados no se suman en ningún camino | Vigente |
 | D-080 | El respaldo rechaza estados que no se leen | Vigente |
+| D-081 | Valuación a costo promedio ponderado móvil | Vigente |
+| D-082 | Regla única de reposición y lectura del mínimo | Vigente |
+| D-083 | Sin descartes silenciosos | Vigente |
+| D-084 | Totales de existencia solo con una unidad | Vigente |
 
 ## Decisiones
 
@@ -1718,3 +1722,87 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 **Para revertirla.** Registrar la decisión que la reemplace y devolver la normalización directa.
 
 **Referencias.** `instrucciones_f8_ronda1.md`, T6 y M7; hallazgo H8.
+
+### D-081 — Valuación a costo promedio ponderado móvil
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/inventario/inventario-calculations.js`, `inventario-ui.js`
+
+**Contexto.** El valor del inventario era existencia final × un costo unitario fijo por producto, y los movimientos no guardaban costo: una compra a otro precio no cambiaba la valuación.
+
+**Opciones.**
+1. Costo promedio ponderado móvil: cada entrada guarda su costo unitario, recalcula el promedio y las salidas salen al costo vigente.
+2. Mantener el costo fijo — solo es correcto si el precio nunca cambió.
+
+**Decisión.** Opción 1 (la NIC 2 acepta PEPS o promedio ponderado). Cada movimiento de entrada guarda su costo unitario (≥ 0); el `costoUnitario` del producto pasa a ser el costo de la existencia inicial (etiqueta «Costo de la existencia inicial»); cada entrada recalcula `C = (E × C + q × c) / (E + q)` — con E = 0, el nuevo promedio es c —; cada salida sale al costo promedio vigente (costo de la salida = q × C) y no cambia el promedio; valor del inventario = existencia final × costo promedio final. Las entradas de datos anteriores sin costo usan el costo del producto y se cuentan en el aviso de D-083. Con todos los movimientos sin costo, el valor es igual al de antes (regresión M0).
+
+**Consecuencias.** La matriz M4 verifica el caso manual: existencia 5 a C$ 10, entrada 10 a C$ 12 → promedio 11.3333; salida 8 → costo 90.6667; valor 79.3333. El kardex muestra el costo promedio por fila y el costo total de las salidas.
+
+**Para revertirla.** Registrar la decisión que la reemplace y volver al costo fijo por producto.
+
+**Referencias.** `instrucciones_inventario_ronda1.md`, T4 y matriz; hallazgo H5.
+
+### D-082 — Regla única de reposición y lectura del mínimo
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/utils/calculate.js`, `inventario-calculations.js`, `inventario-ui.js`, `inicio-calculations.js`, `proforma-calculations.js`, `planeacion-calculations.js`, `planeacion-ui.js`
+
+**Contexto.** La frontera decimal (0.6000000000000001 frente a 0.6) no daba alerta porque la regla de reposición no tenía tolerancia (el kardex sí); Planeación comparaba con `<` (la igualdad no avisaba); había tres redacciones distintas para la misma alerta; y Planeación copiaba el mínimo del producto como valor fijo, sin enterarse de cambios posteriores.
+
+**Opciones.**
+1. Regla única con tolerancia 1e-6, una redacción compartida y el mínimo leído del producto vigente por `productoId`.
+2. Parchar cada pantalla por separado — conservaría las divergencias.
+
+**Decisión.** Opción 1. `necesitaReposicion(existencia, mínimo)` en `calculate.js` alerta si `existencia <= mínimo + 1e-6` (tolerancia única, la misma del kardex); mínimo 0 = sin política de reposición. `descripcionReposicion(producto)` en `inventario-calculations.js` da la redacción única para Inventario, Inicio y Proforma: «Bajo el mínimo: comprar al menos N u (costo estimado C$ X) para volver al mínimo.» o «Llegó al mínimo: programe una compra.» Planeación usa `necesitaReposicion` (la igualdad ahora avisa) y deja de copiar el mínimo: los supuestos guardan `productoId`, el mínimo vigente se lee del producto en Inventario al calcular, y «Tomar de Inventario» guarda `productoId` y el costo promedio vigente.
+
+**Consecuencias.** El caso H1 (0.3 + 0.1 + 0.2 con mínimo 0.6) ahora da alerta. M11: con inventario final igual al mínimo, Planeación avisa (antes no). Si el mínimo del producto cambia, Planeación se entera sin reguardar nada. La prueba de Planeación que usaba `stockMinimo: 70` cambia con esta causa.
+
+**Para revertirla.** Registrar la decisión que la reemplace y devolver las comparaciones locales.
+
+**Referencias.** `instrucciones_inventario_ronda1.md`, T1 a T3 y matriz; hallazgos H1, H3 y H4.
+
+### D-083 — Sin descartes silenciosos
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/inventario/inventario-calculations.js`, `inventario-ui.js`, `js/modules/integracion/integracion-respaldo.js`
+
+**Contexto.** `normalizarInventario` descartaba sin aviso los registros que no cumplían la forma: una existencia real quedaba inflada y sin alerta (existencia 10 con una salida de 8 descartada mostraba existencia 10 en vez de 2).
+
+**Opciones.**
+1. Contar los descartes por motivo, mostrarlos en la pantalla y rechazar el respaldo completo si hay descartados — nada desaparece en silencio ni queda guardado inservible.
+2. Seguir descartando en silencio — conserva el hallazgo H2.
+
+**Decisión.** Opción 1. `normalizarInventario` devuelve `{ productos, movimientos, descartados }`, con el conteo por motivo (producto sin nombre o identificador inválido, identificador repetido, campo numérico inválido o negativo, movimiento de un producto inexistente, tipo inválido, cantidad inválida, fecha inválida, identificador repetido). La pantalla de Inventario muestra el aviso con el conteo y los movimientos de entrada sin costo. El respaldo valida `inventario` con `normalizarInventario`: si hay descartados, se rechaza el respaldo completo (igual que D-080 con estados); ningún módulo se guarda.
+
+**Consecuencias.** El caso H2 (salida descartada) queda visible: el aviso dice cuántos registros de cada clase se descartaron y cuántas entradas sin costo hay. M6 y M7 de la matriz lo verifican.
+
+**Para revertirla.** Registrar la decisión que la reemplace y volver al descarte silencioso.
+
+**Referencias.** `instrucciones_inventario_ronda1.md`, T5 y matriz; hallazgo H2.
+
+### D-084 — Totales de existencia solo con una unidad
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/inventario/inventario-calculations.js`
+
+**Contexto.** `unidadesTotales` sumaba unidades distintas (prendas + kilos = 30): un número sin sentido. La pantalla ya lo ocultaba; el modelo lo producía igual.
+
+**Opciones.**
+1. `unidadesTotales` N/D cuando los productos tienen unidades distintas.
+2. Dejar la suma — conserva el número sin sentido en el modelo.
+
+**Decisión.** Opción 1. `unidadesTotales` es `null` cuando los productos tienen unidades distintas; con una sola unidad, el total se calcula igual que antes.
+
+**Consecuencias.** La pantalla ya mostraba «—» en ese caso; el modelo ahora coincide con la pantalla. M10 de la matriz lo verifica.
+
+**Para revertirla.** Registrar la decisión que la reemplace y devolver la suma directa.
+
+**Referencias.** `instrucciones_inventario_ronda1.md`, T6; hallazgo H6.
