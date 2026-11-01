@@ -4,10 +4,9 @@ import { UMBRALES, computeDuPont, computeRazones, refreshSavedStates } from '../
 import { calcularRazonesMercado } from '../analisis/mercado-calculations.js';
 import { calcularApalancamiento } from '../apalancamiento/apalancamiento-calculations.js';
 import { calcularCVU, normalizarEquilibrio, validarEquilibrio } from '../equilibrio/equilibrio-calculations.js';
-import { calcularFlujo } from '../flujo/flujo-calculations.js';
 import { calcularInventario } from '../inventario/inventario-calculations.js';
 import { calcularPresupuestoMaestro, normalizarSupuestos, validarSupuestos } from '../planeacion/planeacion-calculations.js';
-import { construirReporte } from './proforma-calculations.js';
+import { construirReporte, flujoDesdeEFE } from './proforma-calculations.js';
 import { proformaUI } from './proforma-ui.js';
 
 // Un módulo con datos dañados no debe impedir el resto del reporte.
@@ -27,7 +26,9 @@ export function reunirEntradas() {
   if (estados) refreshSavedStates();
   const supuestos = normalizarSupuestos(store.get('planeacion')?.supuestos);
   const equilibrio = normalizarEquilibrio(store.get('equilibrio'));
-  const flujo = calcularFlujo(store.get('flujo'));
+  // D-070: el flujo viene del EFE de Análisis (último par de periodos), no de la
+  // captura manual del flujo directo, que queda como captura no oficial.
+  const flujo = estados ? intentar(() => flujoDesdeEFE(estados)) : flujoDesdeEFE(null);
   const inventario = calcularInventario(store.get('inventario'));
   return {
     estados,
@@ -39,7 +40,7 @@ export function reunirEntradas() {
     apalancamiento: estados ? intentar(() => calcularApalancamiento(estados, store.get('apalancamiento') || {})) : null,
     presupuesto: validarSupuestos(supuestos).length ? null : intentar(() => calcularPresupuestoMaestro(supuestos)),
     equilibrio: validarEquilibrio(equilibrio).length ? null : calcularCVU(equilibrio),
-    flujo: flujo.cantidadMovimientos ? flujo : null,
+    flujo,
     inventario: inventario.productos.length ? inventario : null,
     umbrales: UMBRALES
   };

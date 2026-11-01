@@ -6,7 +6,7 @@
 
 import { formatCurrency } from '../../utils/format.js';
 import { resolveAccountType } from '../estados/estados-calculations.js';
-import { identificarCuenta } from '../estados/cuentas-identificador.js';
+import { identificarCuenta, obtenerCuenta } from '../estados/cuentas-identificador.js';
 import { ordenarPeriodos } from '../estados/estados-normalize.js';
 
 // Un centavo, más el epsilon de coma flotante escalado a las magnitudes (misma
@@ -61,6 +61,63 @@ function idDeCuenta(datos, grupo, cuenta) {
   return inferida.estado === 'reconocida' ? inferida.id : null;
 }
 
+// D-072: componentes del catálogo de cada total reportado del balance. Un total
+// se excluye de las comprobaciones solo cuando alguna de sus componentes está
+// en los datos: entonces la variación la explican ellas y el total duplicaría.
+// Sin componentes, el total es el único dato de ese concepto y se conserva
+// (por ejemplo un «Inventario» sin desglose). Las listas cubren las componentes
+// brutas; la depreciación acumulada va en su propio renglón. La regla vive aquí
+// y la usan `variacionesDeCuentas`, `totalGrupo`, el EOAF y el EFE (D-067).
+export const COMPONENTES_TOTALES = {
+  'bs.inventory_total': [
+    'bs.inventory_merchandise', 'bs.inventory_raw_materials',
+    'bs.inventory_work_in_process', 'bs.inventory_finished_goods'
+  ],
+  'bs.current_assets_total': [
+    'bs.cash_and_equivalents', 'bs.trade_receivables', 'bs.other_current_receivables',
+    'bs.prepaid_expenses', 'bs.other_current_assets', 'bs.short_term_investments',
+    'bs.inventory_merchandise', 'bs.inventory_raw_materials',
+    'bs.inventory_work_in_process', 'bs.inventory_finished_goods'
+  ],
+  'bs.fixed_assets_net_total': [
+    'bs.ppe_buildings', 'bs.ppe_furniture', 'bs.ppe_land', 'bs.ppe_machinery',
+    'bs.ppe_other', 'bs.ppe_vehicles', 'bs.intangible_assets',
+    'bs.other_noncurrent_assets', 'bs.long_term_investments'
+  ],
+  'bs.total_assets': [
+    'bs.cash_and_equivalents', 'bs.trade_receivables', 'bs.other_current_receivables',
+    'bs.prepaid_expenses', 'bs.other_current_assets', 'bs.short_term_investments',
+    'bs.inventory_merchandise', 'bs.inventory_raw_materials',
+    'bs.inventory_work_in_process', 'bs.inventory_finished_goods',
+    'bs.ppe_buildings', 'bs.ppe_furniture', 'bs.ppe_land', 'bs.ppe_machinery',
+    'bs.ppe_other', 'bs.ppe_vehicles', 'bs.intangible_assets',
+    'bs.other_noncurrent_assets', 'bs.long_term_investments'
+  ],
+  'bs.current_liabilities_total': [
+    'bs.trade_payables', 'bs.taxes_payable', 'bs.accrued_expenses_payable',
+    'bs.current_provisions', 'bs.other_current_liabilities',
+    'bs.short_term_borrowings', 'bs.current_portion_long_term_debt'
+  ],
+  'bs.total_liabilities': [
+    'bs.trade_payables', 'bs.taxes_payable', 'bs.accrued_expenses_payable',
+    'bs.current_provisions', 'bs.other_current_liabilities',
+    'bs.short_term_borrowings', 'bs.current_portion_long_term_debt',
+    'bs.long_term_borrowings', 'bs.long_term_provisions', 'bs.other_noncurrent_liabilities'
+  ],
+  'bs.total_equity': [
+    'bs.share_capital', 'bs.additional_paid_in_capital', 'bs.retained_earnings',
+    'bs.current_year_result_equity', 'bs.legal_reserve', 'bs.other_reserves',
+    'bs.other_equity_components'
+  ]
+};
+
+// ¿El id es un total reportado cuya variación ya explican sus componentes
+// presentes en los datos? Los ids presentes son los del mismo grupo.
+export function esTotalDuplicado(id, idsPresentes) {
+  if (!id || obtenerCuenta(id)?.rol !== 'reported_total') return false;
+  return (COMPONENTES_TOTALES[id] || []).some(cid => idsPresentes.has(cid));
+}
+
 // Variación de cada cuenta de un grupo del balance ('activos', 'pasivos' o
 // 'patrimonio') entre dos periodos, con su tipo. Primero van las cuentas del
 // periodo inicial y después las que solo aparecen en el final. Un saldo ausente
@@ -75,7 +132,7 @@ export function variacionesDeCuentas(datos, grupo, periodoInicial, periodoFinal)
     ...Object.keys(cuentasInicial),
     ...Object.keys(cuentasFinal).filter(nombre => !Object.hasOwn(cuentasInicial, nombre))
   ];
-  return nombres.map(cuenta => {
+  const filas = nombres.map(cuenta => {
     const saldoInicial = saldoDe(cuentasInicial, cuenta);
     const saldoFinal = saldoDe(cuentasFinal, cuenta);
     return {
@@ -88,21 +145,29 @@ export function variacionesDeCuentas(datos, grupo, periodoInicial, periodoFinal)
       variacion: saldoInicial !== null && saldoFinal !== null ? saldoFinal - saldoInicial : null
     };
   });
+  const idsPresentes = new Set(filas.map(fila => fila.id).filter(Boolean));
+  return filas.filter(fila => !esTotalDuplicado(fila.id, idsPresentes));
 }
 
-function totalGrupo(bg, grupo) {
-  return Object.values(bg[grupo] || {}).reduce(
-    (suma, valor) => (Number.isFinite(valor) ? suma + valor : suma), 0
-  );
+function totalGrupo(datos, bg, grupo) {
+  const cuentas = bg[grupo] || {};
+  const ids = Object.keys(cuentas).map(nombre => idDeCuenta(datos, grupo, nombre));
+  const idsPresentes = new Set(ids.filter(Boolean));
+  return Object.keys(cuentas).reduce((suma, nombre, i) => {
+    if (esTotalDuplicado(ids[i], idsPresentes)) return suma;
+    const valor = cuentas[nombre];
+    return Number.isFinite(valor) ? suma + valor : suma;
+  }, 0);
 }
 
 // Avisos cuando un balance no cumple A = P + O. Las dos comprobaciones dependen
 // de esa identidad: sin el aviso, un descuadre del balance aparecería como un
-// error del estado.
-export function advertenciasDeBalance(periodos, bgInicial, bgFinal) {
+// error del estado. D-072: los totales reportados con componentes en los datos
+// no suman (duplicarían a sus componentes).
+export function advertenciasDeBalance(datos, periodos, bgInicial, bgFinal) {
   const advertencias = [];
   for (const [etiqueta, bg] of [[periodos.inicial, bgInicial], [periodos.final, bgFinal]]) {
-    const descuadre = totalGrupo(bg, 'activos') - totalGrupo(bg, 'pasivos') - totalGrupo(bg, 'patrimonio');
+    const descuadre = totalGrupo(datos, bg, 'activos') - totalGrupo(datos, bg, 'pasivos') - totalGrupo(datos, bg, 'patrimonio');
     if (Math.abs(descuadre) > TOLERANCIA_COMPROBACION) {
       advertencias.push(`El balance del periodo ${etiqueta} no cumple A = P + O (diferencia de ${formatCurrency(descuadre)}); esa diferencia se refleja en la comprobación.`);
     }

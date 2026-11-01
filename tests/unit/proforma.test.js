@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
-  alertasIntegradas, construirReporte, resultadosProforma, resultadosReales
+  alertasIntegradas, construirReporte, flujoDesdeEFE, resultadosProforma, resultadosReales
 } from '../../js/modules/proforma/proforma-calculations.js';
 import { proformaUI } from '../../js/modules/proforma/proforma-ui.js';
 import { calcularPresupuestoMaestro, ejemploPlaneacion, normalizarSupuestos } from '../../js/modules/planeacion/planeacion-calculations.js';
 import { calcularCVU, ejemploEquilibrio, normalizarEquilibrio } from '../../js/modules/equilibrio/equilibrio-calculations.js';
-import { calcularFlujo, ejemploFlujo } from '../../js/modules/flujo/flujo-calculations.js';
+import { ejemploFlujo } from '../../js/modules/flujo/flujo-calculations.js';
 import { calcularInventario, ejemploInventario } from '../../js/modules/inventario/inventario-calculations.js';
 import { calcularApalancamiento } from '../../js/modules/apalancamiento/apalancamiento-calculations.js';
 import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
@@ -58,7 +58,8 @@ function entradasCompletas(extra = {}) {
     apalancamiento: calcularApalancamiento(estados, CONFIG_APALANCAMIENTO),
     presupuesto: calcularPresupuestoMaestro(normalizarSupuestos(ejemploPlaneacion())),
     equilibrio: calcularCVU(normalizarEquilibrio(ejemploEquilibrio())),
-    flujo: calcularFlujo(ejemploFlujo()),
+    // D-070: el flujo de Proforma sale del EFE de Análisis, no de la captura manual.
+    flujo: flujoDesdeEFE(estados),
     inventario: calcularInventario(ejemploInventario()),
     umbrales: UMBRALES,
     ...extra
@@ -92,7 +93,8 @@ describe('indicadores, alertas y faltantes', () => {
     expect(valor('Liquidez corriente')).toBe(2.35);
     expect(valor('GAO')).toBeCloseTo(375000 / 155000, 10); // MC / UAII de 2024
     expect(valor('Punto de equilibrio')).toBe(150);
-    expect(valor('Flujo de operación')).toBe(98000);
+    // D-070: el renglón de flujo sale del EFE de Análisis (antes venía de la captura manual).
+    expect(valor('Flujo de operación')).toBe(158950);
     expect(valor('Financiamiento máximo requerido')).toBe(20800);
     expect(valor('Valor del inventario')).toBe(78790);
     expect(valor('Productos por reponer')).toBe(2);

@@ -135,6 +135,7 @@ export function flujoUI(page, opciones) {
     const kpi = (valor, etiqueta) => `<div class="kpi-card"><div class="kpi-value ${claseSigno(valor)}">${monto(valor)}</div><div class="kpi-label">${etiqueta}</div></div>`;
     page.innerHTML = `<div class="page-header"><h1 class="page-title">Flujo de Efectivo</h1>
         <p class="page-subtitle">Entradas y salidas de efectivo clasificadas en operación, inversión y financiamiento.</p></div>
+      <p class="text-muted" style="font-size:var(--font-size-sm)">Captura no oficial: el flujo que presentan Proforma y el panorama de Inicio sale del EFE de Análisis. Esta pantalla sirve para registrar y explorar movimientos de efectivo con fines didácticos.</p>
       <p id="flujoMensaje" role="status" aria-live="polite" class="text-muted">Indique el saldo inicial y registre las entradas y salidas de efectivo.</p>
       <div class="flex-gap flex-wrap mb-4"><button type="button" class="btn btn-secondary" id="flujoEjemplo">Cargar ejemplo</button>
         ${r.cantidadMovimientos ? '<button type="button" class="btn btn-danger" id="flujoVaciar">Borrar movimientos</button>' : ''}</div>
