@@ -232,6 +232,18 @@ describe('pantalla de punto de equilibrio', () => {
     const { page } = montar({ precio: 100, costoVariableUnitario: 120, costosFijos: 50, unidades: 10 });
     expect(page.innerHTML).toContain('margen de contribución no positivo');
   });
+
+  it('pantalla: el dato dañado muestra el error y se corrige reenviando el formulario', async () => {
+    const { page, guardar } = montar({
+      ...ejemploEquilibrio(), escenario: { precio: 'abc', costoVariable: 0, costosFijos: 0, volumen: 0 }
+    });
+    expect(page.innerHTML).toContain('El cambio de precio del escenario');
+    expect(page.innerHTML).not.toContain('Personalizado:');
+    llenar(page, { escPrecio: '5', escCV: '0', escCF: '0', escVolumen: '0' });
+    await enviar(page, 'formEscenario');
+    expect(guardar.mock.lastCall[0].escenario).toEqual({ precio: 0.05, costoVariable: 0, costosFijos: 0, volumen: 0 });
+    expect(page.innerHTML).toContain('Personalizado: precio +5 %');
+  });
 });
 
 describe('matriz manual de la ronda 1 (D-073)', () => {
@@ -337,5 +349,35 @@ describe('fuente única de costos (D-074)', () => {
     const r = calcularCVU({ ...datos, ...resolucion.base });
     expect(r.uaii).toBe(2000);
     expect(r.gao).toBeCloseTo(2, 10);
+  });
+});
+
+describe('escenarios inválidos (D-075)', () => {
+  it('un valor de escenario que no es número se conserva como null y se reporta por campo', () => {
+    const datos = normalizarEquilibrio({
+      ...ejemploEquilibrio(), escenario: { precio: 'abc', costoVariable: 0, costosFijos: 0, volumen: 0 }
+    });
+    expect(datos.escenario.precio).toBeNull();
+    expect(datos.escenario.costoVariable).toBe(0);
+    const errores = validarEquilibrio(datos);
+    expect(errores.join(' ')).toContain('El cambio de precio del escenario');
+  });
+
+  it('un escenario vacío sigue siendo 0 y no produce errores', () => {
+    const datos = normalizarEquilibrio({
+      escenario: { precio: '', costoVariable: undefined, costosFijos: null, volumen: 0 }
+    });
+    expect(datos.escenario).toEqual({ precio: 0, costoVariable: 0, costosFijos: 0, volumen: 0 });
+    expect(validarEquilibrio({ ...ejemploEquilibrio(), escenario: datos.escenario })).toEqual([]);
+  });
+
+  it('el escenario personalizado no se calcula con un null; los predefinidos sí', () => {
+    const danado = normalizarEquilibrio({
+      ...ejemploEquilibrio(), escenario: { precio: 'abc', costoVariable: 0, costosFijos: 0, volumen: 0 }
+    });
+    const porId = Object.fromEntries(calcularEscenarios(danado).map(e => [e.id, e]));
+    expect(porId.personalizado).toBeUndefined();
+    expect(porId['precio-sube']).toBeDefined();
+    expect(porId['volumen-baja'].resultado.uaii).toBeCloseTo(21000, 6);
   });
 });

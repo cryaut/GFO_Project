@@ -91,6 +91,9 @@ function seccionInterpretacion(r) {
 }
 
 function seccionEscenarios(datos) {
+  // D-075: los errores de escenario se muestran en la tarjeta, junto al
+  // formulario con el que se corrigen; los predefinidos se calculan siempre.
+  const erroresEscenario = validarEquilibrio(datos).filter(texto => texto.includes('escenario'));
   const filas = calcularEscenarios(datos).map(e => {
     const r = e.resultado;
     const delta = esNumero(e.deltaUAII)
@@ -106,6 +109,7 @@ function seccionEscenarios(datos) {
   const campoPct = (id, etiqueta, valor) => `<div class="form-group"><label class="form-label" for="${id}">${etiqueta} (%)</label>
     <input class="form-input" id="${id}" type="number" step="any" value="${valorPorcentaje(valor)}"></div>`;
   return `<div class="card mb-4"><h2 class="card-title">Análisis de escenarios</h2>
+    ${erroresEscenario.length ? `<ul style="margin:0 0 .5rem;padding-left:1.2em;font-size:var(--font-size-sm);color:var(--color-danger)">${erroresEscenario.map(texto => `<li>${esc(texto)}</li>`).join('')}</ul>` : ''}
     <p class="form-hint">Cada fila cambia una sola variable respecto de la base. El escenario personalizado combina los cambios que indique (por ejemplo, −10 en volumen).</p>
     <form id="formEscenario" class="mb-4" novalidate><div class="form-row">
       ${campoPct('escPrecio', 'Precio', e.precio)}${campoPct('escCV', 'Costo variable unitario', e.costoVariable)}
@@ -244,16 +248,20 @@ export function equilibrioUI(page, opciones) {
     const resolucion = resolverBase(datos, estados, configApalancamiento);
     const datosEfectivos = resolucion.base ? { ...datos, ...resolucion.base } : datos;
     const errores = validarEquilibrio(datosEfectivos);
-    const r = !resolucion.error && !errores.length ? calcularCVU(datosEfectivos) : null;
+    // D-075: la base se calcula aunque el escenario esté dañado — los errores de
+    // escenario se muestran en su tarjeta, no tumban los resultados. La copia de
+    // validación lleva un escenario en ceros para no mezclar esas notas con las
+    // de la base.
+    const erroresBase = validarEquilibrio(normalizarEquilibrio({ ...datosEfectivos, escenario: {} }));
+    const r = !resolucion.error && !erroresBase.length ? calcularCVU(datosEfectivos) : null;
     const resultados = r
       ? `${seccionResultados(r)}${seccionInterpretacion(r)}${seccionTraza(r)}
         <div class="card mb-4"><h2 class="card-title">Gráfica costo-volumen-utilidad</h2>
           <p class="form-hint">El punto de equilibrio está donde los ingresos totales cortan a los costos totales. A la derecha hay utilidad; a la izquierda, pérdida.</p>
           <div style="height:320px"><canvas id="equilibrioChart" role="img" aria-label="Ingresos y costos totales según las unidades vendidas"></canvas></div></div>
         ${seccionEscenarios(datosEfectivos)}`
-      : resolucion.error
-        ? `<div class="card empty-state"><p>${esc(resolucion.error)}</p></div>`
-        : '<div class="card empty-state"><p>Complete el precio, el costo variable unitario, los costos fijos y las unidades, o pulse "Cargar ejemplo".</p></div>';
+      : `<div class="card empty-state"><p>${esc(resolucion.error || 'Complete el precio, el costo variable unitario, los costos fijos y las unidades, o pulse "Cargar ejemplo".')}</p>
+        ${errores.length ? `<ul>${errores.map(texto => `<li>${esc(texto)}</li>`).join('')}</ul>` : ''}</div>`;
     page.innerHTML = `<div class="page-header"><h1 class="page-title">Punto de Equilibrio y C-V-U</h1>
         <p class="page-subtitle">Margen de contribución, punto de equilibrio en unidades y en C$, margen de seguridad y escenarios.</p></div>
       <p id="equilibrioMensaje" role="status" aria-live="polite" class="text-muted">Ingrese los datos del producto o de la línea y pulse Calcular.</p>

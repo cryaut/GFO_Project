@@ -31,11 +31,14 @@ function menos(a, b) {
 // unidades, utilidadObjetivo, escenario }. D-074: origen «estados» guarda solo el
 // origen, el periodo y las unidades (la base se deriva en cada consulta); datos
 // sin `origen` se leen como «manual» (migración), igual que el formato de hoy.
+// D-075: en los escenarios, un valor vacío sigue siendo 0, pero uno que no es
+// número se conserva como null para que validarEquilibrio lo reporte.
 export function normalizarEquilibrio(datos) {
   const escenario = {};
   for (const campo of CAMPOS_ESCENARIO) {
     const valor = datos?.escenario?.[campo];
-    escenario[campo] = esNumero(valor) && valor > -1 ? valor : 0;
+    escenario[campo] = valor === undefined || valor === null || valor === '' ? 0
+      : esNumero(valor) ? valor : null;
   }
   return {
     origen: datos?.origen === 'estados' ? 'estados' : 'manual',
@@ -59,11 +62,18 @@ export function validarEquilibrio(datos) {
   if (!esNumero(datos.costosFijos) || datos.costosFijos < 0) errores.push('Los costos fijos deben ser un número mayor o igual a 0.');
   if (!esNumero(datos.unidades) || datos.unidades < 0) errores.push('Las unidades vendidas deben ser un número mayor o igual a 0.');
   if (datos.utilidadObjetivo !== null && !esNumero(datos.utilidadObjetivo)) errores.push('La utilidad objetivo debe ser un número.');
+  // D-075: cada campo del escenario se reporta por su nombre (un valor no
+  // numérico llega aquí como null, sin convertirse en 0).
+  const etiquetasEscenario = {
+    precio: 'precio', costoVariable: 'costo variable', costosFijos: 'costos fijos', volumen: 'volumen'
+  };
   for (const campo of CAMPOS_ESCENARIO) {
     const valor = datos.escenario?.[campo];
-    if (!esNumero(valor) || valor <= -1) errores.push('Cada cambio del escenario debe ser mayor que −100 %.');
+    if (valor === null || !esNumero(valor) || valor <= -1) {
+      errores.push(`El cambio de ${etiquetasEscenario[campo]} del escenario debe ser un número mayor que −100 %.`);
+    }
   }
-  return [...new Set(errores)];
+  return errores;
 }
 
 // Resultados de un caso. Cada valor es un número o null (N/D).
@@ -142,7 +152,10 @@ export function calcularEscenarios(datos) {
     { id: 'volumen-baja', nombre: `Volumen −${pct}`, cambios: { volumen: -CAMBIO_ESCENARIO } }
   ];
   const personalizado = datos.escenario || {};
-  if (CAMPOS_ESCENARIO.some(c => personalizado[c])) {
+  // D-075: el escenario personalizado no se calcula mientras tenga un valor
+  // inválido (null); los escenarios predefinidos sí.
+  const personalizadoValido = CAMPOS_ESCENARIO.every(campo => personalizado[campo] !== null);
+  if (CAMPOS_ESCENARIO.some(campo => personalizado[campo]) && personalizadoValido) {
     lista.push({ id: 'personalizado', nombre: nombreCambios(personalizado), cambios: personalizado });
   }
   const base = calcularCVU(datos);
