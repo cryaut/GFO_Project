@@ -1675,7 +1675,7 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 
 **Decisión.** Opción 1. Se eliminan los respaldos por nombre de `getERData`, `getBGData`, `refreshSavedStates` y `computeDashboardKPIs`. `computeRazones` añade el motivo `estados_no_legibles` con el mensaje real cuando hay error; Análisis, el dashboard de Integración, Proforma e Inicio muestran el aviso escapado (regla 7). La utilidad neta de la fórmula local se borra. Cierra F1 y F8.
 
-**Consecuencias.** Un dato guardado que no se puede leer ya no produce ceros ni utilidades falsas en ninguna pantalla. Las pruebas que esperaban 0 por el respaldo cambian con esta causa. `advertenciasDeBalance` recibe los estados como primer argumento (D-072).
+**Consecuencias.** Un dato guardado que no se puede leer ya no produce ceros ni utilidades falsas en ninguna pantalla. Las pruebas que esperaban 0 por el respaldo cambian con esta causa: dos de la pantalla de EFE en `efe.test.js` y una de la pantalla del EOAF en `eoaf.test.js`, lo que activó la parada 5 del encargo (contradicción entre permitir cambios por D-077 a D-080 y congelar las pruebas de EFE); el resultado nuevo es mejor y se recomienda aceptarlo. `advertenciasDeBalance` no se tocó: su firma con los estados ya estaba en `main` desde D-072.
 
 **Para revertirla.** Registrar la decisión que la reemplace y restaurar los respaldos por nombres.
 

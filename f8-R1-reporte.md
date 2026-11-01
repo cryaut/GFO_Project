@@ -17,7 +17,7 @@ npm.cmd run lint  →  ✖ 10 problems (0 errors, 10 warnings)
 | SHA | Tarea | Commit | Qué cambió |
 |---|---|---|---|
 | `a7c644d` | T1 | `feat: crea leerEstados como única lectura de estados guardados` | D-077: `leerEstados(estados)` en `estados-guardados.js` devuelve `{ estados, error }` (sin periodos → `{ null, null }`; normalización que lanza → `{ null, <mensaje> }`; bien → `{ normalizados, null }`). `estadosGuardados` queda como envoltorio que devuelve solo `estados`; Flujo, Equilibrio, Inventario y Planeación no cambian. |
-| `d07fbde` | T2 | `fix: elimina la lectura por nombres fijos y muestra N/D con el motivo real` | D-078: se borran los respaldos por nombre de `getERData`, `getBGData` y `getSavedStates`; `refreshSavedStates` guarda el error; `computeRazones` añade el motivo `estados_no_legibles` con el mensaje real; la utilidad neta de la fórmula local desaparece (sale de `computeFinancialTotals`); `advertenciasDeBalance` recibe los estados (D-072); Análisis muestra el aviso escapado y el EOAF/EFE su estado incompleto con el aviso delante. |
+| `d07fbde` | T2 | `fix: elimina la lectura por nombres fijos y muestra N/D con el motivo real` | D-078: se borran los respaldos por nombre de `getERData`, `getBGData` y `getSavedStates`; `refreshSavedStates` guarda el error; `computeRazones` añade el motivo `estados_no_legibles` con el mensaje real; la utilidad neta de la fórmula local desaparece (sale de `computeFinancialTotals`); Análisis muestra el aviso escapado y el EOAF/EFE su estado incompleto con el aviso delante. |
 | `6835f0d` | T3 | `fix: muestra el estado real de los estados en el dashboard y quita los ceros del respaldo` | D-078: `computeDashboardKPIs` sin respaldos (`er['Ventas'] || 0` y las sumas del grupo se borran); todo sale N/D sin estados legibles; `renderDashboard` muestra el aviso real escapado y la etiqueta fija «Activo» pasa a «Activo» o «Con error» según el estado real de la lectura. |
 | `fbd35c0` | T4 | `fix: propaga el aviso de lectura a Proforma e Inicio` | D-078: `reunirEntradas` usa `leerEstados` y viaja `errorEstados`; el faltante de Estados Financieros muestra el aviso real con ruta a `#/analisis` cuando hay datos ilegibles (en vez de pedir que cargue datos). Las razones y DuPont que llegan de Análisis ya salen N/D con motivo; ningún indicador muestra 0 por falta de datos. |
 | `00416e0` | T5 | `fix: distingue estados ausentes de estados ilegibles en el reporte` | H7: `construirReporteHTML` acepta `errorEstados` y separa «No hay estados financieros guardados» de «No se pudieron leer los estados financieros guardados: <mensaje>». |
@@ -34,9 +34,14 @@ Nota sobre la fuente del aviso: la auditoría proponía usar `revisarEntradaRazo
 |---|---|---|---|
 | `efe.test.js` — «un importe no numérico guardado no deja vacía la pantalla de Análisis» | El EFE se calculaba con el respaldo crudo: mostraba «Método indirecto desde dos balances», «No se pudo calcular la utilidad neta» y «Comprobación incompleta» | La pantalla muestra el aviso real escapado «No se pudieron leer los estados guardados: Importe inválido en activos[2025].Efectivo: "cien"» y ninguna cifra del respaldo | D-077, D-078 |
 | `eoaf.test.js` — «un importe no numérico no deja vacía la pantalla de Análisis» | El EOAF se calculaba con el respaldo crudo: «Comparación de saldos» y «Dato faltante» | El aviso real escapado y el estado incompleto del EOAF («No hay balance general del periodo 2024») precedido del aviso | D-077, D-078 |
-| `comprobacion.test.js` — «advertencias de balance» (3 pruebas) | `advertenciasDeBalance(periodos, bgInicial, bgFinal)` | `advertenciasDeBalance(datos, periodos, bgInicial, bgFinal)` — la regla de totales necesita las identidades (llegó con D-072 a este código) | D-072 (llegó con este módulo al archivo) |
 
-Ninguna prueba de EFE (V0 a V16, VB), de Equilibrio (matriz y bloque A) ni de GAO cambió.
+Esta rama no toca `comprobacion.test.js` ni `comprobacion-calculations.js`: la firma `advertenciasDeBalance(datos, periodos, …)` ya estaba en `main` desde D-072 (PR #21).
+
+### Parada 5 activada
+
+La regla «Una prueba de EFE o Equilibrio cambia» del encargo **se activó**: cambiaron dos pruebas de la pantalla de EFE en `efe.test.js` y una de la pantalla del EOAF en `eoaf.test.js` (la tabla de arriba). El encargo era contradictorio en este punto: por un lado permitía cambiar pruebas existentes por D-077 a D-080 («Es esperable que cambien pruebas que esperaban 0 por el respaldo»), y por el otro paraba si cambiaba una prueba de EFE. Las dos pruebas caen dentro de D-077/D-078 — eran exactamente el caso «esperaban 0 por el respaldo».
+
+La contradicción es del encargo, no de la ejecución. **Recomendación: aceptar el cambio.** El resultado nuevo es mejor: antes las pantallas mostraban cifras parciales calculadas sobre un respaldo ilegible (el EFE con una utilidad neta inventada por la fórmula local y el EOAF con «Dato faltante» sobre datos que no se podían leer); ahora muestran el error real («No se pudieron leer los estados guardados: Importe inválido…») y ninguna cifra falsa. Ninguna prueba de Equilibrio cambió.
 
 ## 4. Matriz de casos (M1 a M11) y bloque A
 
@@ -46,7 +51,7 @@ Todos en `tests/unit/f8-lectura.test.js`, en verde:
 |---|---|---|
 | M1. A1 2024→2025 (base válida) | Ventas y utilidad neta 2025 = 110; razones como las de la app; Proforma 116/18/180 | Cumple: UN 110; MN calculado; `flujoDesdeEFE` 116/18/180 |
 | M2. A3 con ventas netas reportadas | Las ventas no se duplican; el total solo se contrasta | Cumple: `computeFinancialTotals` y `getSavedTotals` dan 1748 (el total reportado), no 1932 |
-| M3. A4 2024 con UAII −1 | GAO N/D (D-073) | Cumple — cubierto por las pruebas de Equilibrio (bloque A), no duplicado |
+| M3. A4 2024 con UAII −1 | GAO N/D (D-073) | Cumple — la cubre «A4 2024: base derivada, UAII y GAO contra la referencia» (describe «fuente única de costos (D-074)» en `tests/unit/equilibrio.test.js`, generado del bloque A de la referencia, que afirma GAO N/D con `motivoGao` «uaii-no-positiva»); también la matriz manual «M6: Margen positivo con UAII negativa: GAO N/D (antes salía −4)» del mismo archivo. No se duplicó |
 | M4. Gasto negativo en dato guardado | Análisis, Integración, Proforma e Inicio muestran N/D con el motivo; ninguno muestra 0 | Cumple: `computeRazones` N/D con `estados_no_legibles` y el mensaje real; DuPont N/D; Proforma e Inicio reciben nulls y el faltante con el aviso |
 | M5. Importe en texto | «1200» se acepta y convierte; «abc» da error visible | Cumple |
 | M6. Cuenta sin clasificar | El reporte muestra la nota; las razones que dependen de ella salen N/D | Cumple: «Cuentas sin clasificar» en el reporte; MN N/D |
@@ -73,4 +78,8 @@ Los 10 avisos son los mismos de `main`, en archivos que esta rama no toca.
 
 ## 7. Cierre del módulo
 
-**Ronda 1 completa.** T0 a T9 cumplidos, con el bloque R pendiente por falta de datos reales. No quedó nada abierto: los hallazgos H1 a H9 están resueltos (H9 con el borrado del código muerto), ninguna condición de parada se activó, y las únicas pruebas cambiadas tienen causa D-077 a D-080. Si el bloque R llega en la ronda 2, se registra ahí; si no, el módulo queda cerrado con ese pendiente.
+**Ronda 1 completa, con una parada activada y resuelta.** T0 a T9 cumplidos, con el bloque R pendiente por falta de datos reales. Los hallazgos H1 a H9 están resueltos (H9 con el borrado del código muerto).
+
+- **Parada 5 activada** («Una prueba de EFE o Equilibrio cambia»): cambiaron dos pruebas de la pantalla de EFE en `efe.test.js` y una de la pantalla del EOAF en `eoaf.test.js`. La activación se debe a una contradicción del propio encargo, que permitía cambiar pruebas por D-077 a D-080 («Es esperable que cambien pruebas que esperaban 0 por el respaldo») y a la vez paraba si cambiaba una prueba de EFE. Los cambios caen dentro de D-077/D-078 y el resultado nuevo es mejor: antes las pantallas mostraban cifras parciales de un respaldo ilegible; ahora muestran el error real y ninguna cifra falsa. **Se recomienda aceptar el cambio.** Detalle en la sección 3. Las pruebas de Equilibrio no cambiaron.
+- Las demás condiciones de parada no se activaron: ninguna razón, total o KPI muestra 0 donde debe ir N/D; no hizo falta tocar `js/modules/razones/`, `cuentas-catalogo.js`, los JSON de razones ni `docs/razones_financieras/`; ningún valor del bloque A cambió; ningún respaldo válido se rechazó.
+- Si el bloque R llega en la ronda 2, se registra ahí; si no, el módulo queda cerrado con ese pendiente.
