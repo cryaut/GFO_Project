@@ -6,6 +6,7 @@ import { formatCurrencyND as monto, formatNumberND, formatPercentND as pct } fro
 import { construirEFE } from '../analisis/efe-calculations.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
 import { ordenarPeriodos } from '../estados/estados-normalize.js';
+import { descripcionReposicion } from '../inventario/inventario-calculations.js';
 
 const esNumero = valor => typeof valor === 'number' && Number.isFinite(valor);
 const num = valor => formatNumberND(valor, esNumero(valor) && Number.isInteger(valor) ? 0 : 2);
@@ -181,9 +182,13 @@ export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento
   }
   if (inventario) {
     const grupo = 'Inventario';
+    // D-082: misma redacción de la alerta que la pantalla de Inventario, por producto.
+    const lecturaReposicion = inventario.porReponer.length
+      ? inventario.porReponer.map(p => `${p.nombre}: ${descripcionReposicion(p)}`).join(' ')
+      : 'Todos sobre el stock mínimo.';
     lista.push(indicador(grupo, 'Valor del inventario', inventario.valorTotal, 'monto', 'Inventario', '#/inventario', `${inventario.productos.length} productos.`));
     lista.push(indicador(grupo, 'Productos por reponer', inventario.porReponer.length, 'unidades', 'Inventario', '#/inventario',
-      inventario.porReponer.length ? `Compra mínima estimada: ${monto(inventario.costoReposicionTotal)}.` : 'Todos sobre el stock mínimo.',
+      lecturaReposicion,
       inventario.porReponer.length ? 'alerta' : 'ok'));
   }
   return lista;
