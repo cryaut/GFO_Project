@@ -1,15 +1,21 @@
 import { describe, expect, it, vi } from 'vitest';
+import { readFileSync } from 'node:fs';
 import {
   margenContribucionUnitario, margenSeguridad, puntoEquilibrioUnidades, puntoEquilibrioVentas,
   razonMargenContribucion, unidadesUtilidadObjetivo
 } from '../../js/utils/calculate.js';
 import {
   baseDesdeEstados, calcularCVU, calcularEscenarios, ejemploEquilibrio, normalizarEquilibrio,
-  puntosGrafica, validarEquilibrio
+  puntosGrafica, resolverBase, validarEquilibrio
 } from '../../js/modules/equilibrio/equilibrio-calculations.js';
 import { equilibrioUI } from '../../js/modules/equilibrio/equilibrio-ui.js';
 import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
 import { clic, element, enviar, llenar, mensaje } from './helpers/dom-falso.js';
+
+// Referencia independiente de la ronda 1 (calculada fuera de la app).
+const REFERENCIA = JSON.parse(
+  readFileSync(new URL('./fixtures/equilibrio_ronda1_referencia.json', import.meta.url), 'utf8')
+);
 
 // Caso del paso 01: P 800, CVu 520, CF 42,000, Q 250, utilidad objetivo 42,000.
 const ejemplo = normalizarEquilibrio(ejemploEquilibrio());
@@ -206,4 +212,33 @@ describe('pantalla de punto de equilibrio', () => {
     expect(guardar.mock.lastCall[0].precio).toBeCloseTo(800, 6);
     expect(mensaje(page, 'equilibrioMensaje')).toContain('Datos tomados de los estados de 2024');
   });
+});
+
+describe('matriz manual de la ronda 1 (D-073)', () => {
+  // Tolerancias del encargo: 0.01 en montos y unidades; 0.0001 en GAO.
+  const cerca = (obtenido, esperado, tolerancia) => {
+    if (esperado === null || esperado === undefined) {
+      expect(obtenido, `esperaba N/D y llegó ${obtenido}`).toBeNull();
+      return;
+    }
+    expect(obtenido, `esperaba ${esperado} y llegó ${obtenido}`).not.toBeNull();
+    expect(Math.abs(obtenido - esperado), `esperaba ${esperado} y llegó ${obtenido}`).toBeLessThanOrEqual(tolerancia);
+  };
+
+  for (const caso of REFERENCIA.casos_manuales) {
+    it(`${caso.id}: ${caso.descripcion}`, () => {
+      const r = calcularCVU(normalizarEquilibrio(caso.entrada));
+      const e = caso.esperado;
+      cerca(r.mcu, e.mcu, 0.01);
+      cerca(r.rmc, e.rmc, 0.01);
+      cerca(r.peUnidades, e.peUnidades, 0.01);
+      cerca(r.peVentas, e.peVentas, 0.01);
+      cerca(r.unidadesMinimas, e.unidadesMinimas, 0.01);
+      cerca(r.msPorcentaje, e.msPorcentaje, 0.01);
+      cerca(r.uaii, e.uaii, 0.01);
+      cerca(r.gao, e.gao, 0.0001);
+      expect(r.motivoGao, 'motivoGao').toBe(e.motivoGao);
+      cerca(r.unidadesObjetivo, e.unidadesObjetivo, 0.01);
+    });
+  }
 });

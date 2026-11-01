@@ -275,6 +275,12 @@ function esCasiCero(valor) {
   return Math.abs(valor) < TOLERANCIA_CERO;
 }
 
+// Tolerancia de "casi cero" (0.005), la misma que usan gao y las divisiones
+// protegidas. Exportada para que los motivos de N/D se expliquen igual (D-073).
+export function casiCero(valor) {
+  return esCasiCero(valor);
+}
+
 function esTasaValida(tasa) {
   return esNumero(tasa) && tasa >= 0 && tasa < 1;
 }
@@ -301,9 +307,13 @@ export function denominadorGaf(uai, dap = 0, t = null) {
   return uai - dap / (1 - t);
 }
 
-// GAO = MC / UAII
+// GAO = MC / UAII. D-073: solo con margen de contribución y UAII positivos —
+// con base negativa o nula el porcentaje de cambio invierte su sentido. Casi
+// cero (tolerancia de siempre, 0.005) cuenta como no positivo.
 export function gao(mc, uaii) {
-  if (!esNumero(mc) || !esNumero(uaii) || esCasiCero(uaii)) return null;
+  if (!esNumero(mc) || !esNumero(uaii)) return null;
+  if (mc <= 0 || esCasiCero(mc)) return null;
+  if (uaii <= 0 || esCasiCero(uaii)) return null;
   return mc / uaii;
 }
 

@@ -1,7 +1,7 @@
 // Punto de equilibrio y análisis costo-volumen-utilidad (C-V-U).
 // Lógica pura: sin DOM, window ni store. Plan: docs/planificacion/modulos-guia/01-modulos-obligatorios.md.
 import {
-  gao, margenContribucionUnitario, margenSeguridad, puntoEquilibrioUnidades,
+  gao, casiCero, margenContribucionUnitario, margenSeguridad, puntoEquilibrioUnidades,
   puntoEquilibrioVentas, razonMargenContribucion, unidadesUtilidadObjetivo
 } from '../../utils/calculate.js';
 import { calcularApalancamiento } from '../apalancamiento/apalancamiento-calculations.js';
@@ -74,6 +74,17 @@ export function calcularCVU(datos) {
   const uaii = menos(mcTotal, cf);
   const unidadesObjetivo = esNumero(datos.utilidadObjetivo)
     ? unidadesUtilidadObjetivo(cf, datos.utilidadObjetivo, mcu) : null;
+  // D-073: el GAO solo existe con margen y UAII positivos; el motivo explica
+  // por qué falta, en este orden: sin ventas, margen no positivo, UAII no
+  // positiva, dato faltante.
+  const valorGao = gao(mcTotal, uaii);
+  let motivoGao = null;
+  if (valorGao === null) {
+    if (!esNumero(q) || q <= 0) motivoGao = 'sin-ventas';
+    else if (!esNumero(mcTotal) || mcTotal <= 0 || casiCero(mcTotal)) motivoGao = 'margen-no-positivo';
+    else if (!esNumero(uaii) || uaii <= 0 || casiCero(uaii)) motivoGao = 'uaii-no-positiva';
+    else motivoGao = 'dato-faltante';
+  }
   return {
     precio, cvu, cf, q, mcu, rmc, peUnidades, peVentas,
     // Unidades enteras que hay que vender para no perder.
@@ -84,7 +95,8 @@ export function calcularCVU(datos) {
     msUnidades: peUnidades === null ? null : menos(q, peUnidades),
     msVentas: peVentas === null ? null : menos(ventas, peVentas),
     msPorcentaje: peUnidades === null ? null : margenSeguridad(q, peUnidades),
-    gao: gao(mcTotal, uaii),
+    gao: valorGao,
+    motivoGao,
     utilidadObjetivo: numeroONull(datos.utilidadObjetivo),
     unidadesObjetivo,
     ventasObjetivo: por(unidadesObjetivo, precio)
