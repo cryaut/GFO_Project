@@ -9,12 +9,17 @@ import {
   puntosGrafica, resolverBase, validarEquilibrio
 } from '../../js/modules/equilibrio/equilibrio-calculations.js';
 import { equilibrioUI } from '../../js/modules/equilibrio/equilibrio-ui.js';
+import { calcularApalancamiento } from '../../js/modules/apalancamiento/apalancamiento-calculations.js';
 import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
-import { clic, element, enviar, llenar, mensaje } from './helpers/dom-falso.js';
+import { cambiar, clic, element, enviar, llenar, mensaje } from './helpers/dom-falso.js';
 
 // Referencia independiente de la ronda 1 (calculada fuera de la app).
 const REFERENCIA = JSON.parse(
   readFileSync(new URL('./fixtures/equilibrio_ronda1_referencia.json', import.meta.url), 'utf8')
+);
+// Entrada del bloque A (compartida con las rondas de Estados y EFE).
+const ENTRADA_BLOQUE_A = JSON.parse(
+  readFileSync(new URL('./fixtures/estados_ronda2_bloque_A.json', import.meta.url), 'utf8')
 );
 
 // Caso del paso 01: P 800, CVu 520, CF 42,000, Q 250, utilidad objetivo 42,000.
@@ -204,13 +209,28 @@ describe('pantalla de punto de equilibrio', () => {
     expect(page.innerHTML).toContain('Personalizado: CF +10 %, volumen −10 %');
   });
 
-  it('toma precio y costos de los estados guardados', async () => {
+  it('con origen estados guarda solo origen, periodo y unidades, y muestra los derivados', async () => {
     const config = { comportamiento: { 'Gastos de Ventas': { tipo: 'fijo' } } };
     const { page, guardar } = montar(undefined, { estados: muno(), configApalancamiento: config });
-    llenar(page, { eqPeriodo: '2024', eqUnidadesVendidas: '1150' });
-    await clic(page, 'eqDesdeEstados');
-    expect(guardar.mock.lastCall[0].precio).toBeCloseTo(800, 6);
-    expect(mensaje(page, 'equilibrioMensaje')).toContain('Datos tomados de los estados de 2024');
+    await cambiar(page, 'eqOrigen', 'estados');
+    llenar(page, { eqPeriodo: '2024', eqUnidades: '1150' });
+    await enviar(page, 'formEquilibrio');
+    const guardado = guardar.mock.lastCall[0];
+    // D-074: sin copias de precio, CVu o CF; solo el origen, el periodo y las unidades.
+    expect(guardado).toMatchObject({ origen: 'estados', periodo: '2024', unidades: 1150 });
+    expect(guardado.precio).toBeUndefined();
+    expect(guardado.costoVariableUnitario).toBeUndefined();
+    expect(guardado.costosFijos).toBeUndefined();
+    // Los derivados se muestran: P = 920,000 / 1,150 = 800.
+    expect(page.innerHTML).toContain('value="800"');
+    expect(page.innerHTML).toContain('value="220000"');
+    expect(page.innerHTML).toContain('precio promedio');
+    expect(mensaje(page, 'equilibrioMensaje')).toContain('se derivan de los estados de 2024');
+  });
+
+  it('el motivo del GAO se muestra cuando es N/D (D-073)', () => {
+    const { page } = montar({ precio: 100, costoVariableUnitario: 120, costosFijos: 50, unidades: 10 });
+    expect(page.innerHTML).toContain('margen de contribución no positivo');
   });
 });
 
@@ -241,4 +261,81 @@ describe('matriz manual de la ronda 1 (D-073)', () => {
       cerca(r.unidadesObjetivo, e.unidadesObjetivo, 0.01);
     });
   }
+});
+
+describe('fuente única de costos (D-074)', () => {
+  // Configuración de referencia: costo variable; gastos administrativos y de ventas fijos.
+  // «Gastos administrativos» ya es fija por la sugerencia; «Gastos de ventas» se fija aquí.
+  const CONFIG = { comportamiento: { 'Gastos de ventas': { tipo: 'fijo' } } };
+  const UNIDADES = 1000;
+
+  for (const fila of REFERENCIA.bloque_A_estados) {
+    it(`${fila.conjunto} ${fila.periodo}: base derivada, UAII y GAO contra la referencia`, () => {
+      const estados = normalizeFinancialData(
+        ENTRADA_BLOQUE_A.conjuntos.find(c => c.id === fila.conjunto).entrada
+      );
+      const datos = { origen: 'estados', periodo: fila.periodo, unidades: UNIDADES };
+      const resolucion = resolverBase(datos, estados, CONFIG);
+      expect(resolucion.error).toBeNull();
+      // Ventas netas = precio × unidades; CV = CVu × unidades; CF igual a la referencia.
+      expect(resolucion.base.precio * UNIDADES).toBeCloseTo(fila.ventasNetas, 2);
+      expect(resolucion.base.costoVariableUnitario * UNIDADES).toBeCloseTo(fila.costoVariable, 2);
+      expect(resolucion.base.costosFijos).toBeCloseTo(fila.costosFijos, 2);
+      const r = calcularCVU({ ...datos, ...resolucion.base });
+      expect(r.uaii).toBeCloseTo(fila.uaii, 2);
+      if (fila.gao === null) {
+        expect(r.gao).toBeNull();
+        expect(r.motivoGao).toBe(fila.motivoGao);
+      } else {
+        expect(r.gao).toBeCloseTo(fila.gao, 4);
+        expect(r.motivoGao).toBeNull();
+      }
+      // El GAO de Equilibrio es el mismo que el de Apalancamiento con la misma configuración.
+      const apal = calcularApalancamiento(estados, CONFIG);
+      const gaoApal = apal.periodos.find(p => p.periodo === fila.periodo).grados.gao;
+      if (fila.gao === null) expect(gaoApal).toBeNull();
+      else expect(gaoApal).toBeCloseTo(r.gao, 4);
+    });
+  }
+
+  it('vínculo vivo: «Gastos de ventas» a variable baja el CF en su monto y cambia el GAO, sin reguardar nada', () => {
+    const estados = normalizeFinancialData(ENTRADA_BLOQUE_A.conjuntos.find(c => c.id === 'A1').entrada);
+    const datos = { origen: 'estados', periodo: '2025', unidades: UNIDADES };
+    const conVentasFijas = resolverBase(datos, estados, { comportamiento: { 'Gastos de ventas': { tipo: 'fijo' } } });
+    const conVentasVariables = resolverBase(datos, estados, { comportamiento: { 'Gastos de ventas': { tipo: 'variable' } } });
+    // El CF baja justo en el monto de «Gastos de ventas» (90) y el GAO cambia.
+    expect(conVentasVariables.base.costosFijos)
+      .toBeCloseTo(conVentasFijas.base.costosFijos - 90, 6);
+    const cvuFijas = calcularCVU({ ...datos, ...conVentasFijas.base });
+    const cvuVariables = calcularCVU({ ...datos, ...conVentasVariables.base });
+    expect(cvuVariables.gao).not.toBe(cvuFijas.gao);
+  });
+
+  it('aviso de CF: sin aviso cuando coincide; aviso con 10 % más; sin aviso sin estados', () => {
+    const config = { comportamiento: { 'Gastos de Ventas': { tipo: 'fijo' } } };
+    const manual = {
+      origen: 'manual', precio: 800, costoVariableUnitario: 520,
+      costosFijos: 220000, unidades: 250
+    };
+    expect(resolverBase(manual, muno(), config).avisoCF).toBeNull();
+    const inflado = resolverBase({ ...manual, costosFijos: 242000 }, muno(), config);
+    expect(inflado.avisoCF).not.toBeNull();
+    expect(inflado.avisoCF.cfManual).toBe(242000);
+    expect(inflado.avisoCF.cfEstados).toBe(220000);
+    expect(inflado.avisoCF.diferenciaPct).toBeCloseTo(0.1, 6);
+    expect(resolverBase(manual, null, config).avisoCF).toBeNull();
+  });
+
+  it('migración: datos sin origen se leen como manuales y dan los mismos resultados (M1)', () => {
+    const m1 = REFERENCIA.casos_manuales.find(caso => caso.id === 'M1');
+    const datos = normalizarEquilibrio(m1.entrada); // formato de hoy: sin campo origen
+    expect(datos.origen).toBe('manual');
+    const resolucion = resolverBase(datos, null, {});
+    expect(resolucion.base).toEqual({
+      precio: 100, costoVariableUnitario: 60, costosFijos: 2000, unidades: 100
+    });
+    const r = calcularCVU({ ...datos, ...resolucion.base });
+    expect(r.uaii).toBe(2000);
+    expect(r.gao).toBeCloseTo(2, 10);
+  });
 });

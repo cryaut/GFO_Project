@@ -1,11 +1,13 @@
 // Pantalla #/equilibrio: punto de equilibrio, margen de seguridad, escenarios C-V-U y gráfica.
 // El cálculo está en equilibrio-calculations.js; aquí solo se arma el HTML y se atienden los eventos.
+// D-074: fuente única de costos — origen «estados» deriva la base en cada consulta y
+// origen «manual» es la captura de hoy con un aviso si el CF difiere del de los estados.
 import { escapeHTML as esc } from '../../utils/html.js';
 import { formatCurrencyND as monto, formatNumberND, formatPercentND as pct } from '../../utils/format.js';
 import { leerNumero } from '../../utils/form.js';
 import {
-  baseDesdeEstados, calcularCVU, calcularEscenarios, ejemploEquilibrio, normalizarEquilibrio,
-  puntosGrafica, validarEquilibrio
+  calcularCVU, calcularEscenarios, ejemploEquilibrio, normalizarEquilibrio,
+  puntosGrafica, resolverBase, validarEquilibrio
 } from './equilibrio-calculations.js';
 
 const esNumero = valor => typeof valor === 'number' && Number.isFinite(valor);
@@ -14,6 +16,13 @@ const num = valor => formatNumberND(valor, esNumero(valor) && Number.isInteger(v
 const valorCampo = valor => (esNumero(valor) ? String(valor) : '');
 const valorPorcentaje = fraccion => (fraccion ? String(Number((fraccion * 100).toFixed(4))) : '0');
 
+const ETIQUETA_MOTIVO_GAO = {
+  'sin-ventas': 'sin unidades vendidas',
+  'margen-no-positivo': 'margen de contribución no positivo',
+  'uaii-no-positiva': 'UAII no positiva',
+  'dato-faltante': 'dato faltante'
+};
+
 function kpi(valor, etiqueta, clase = '') {
   return `<div class="kpi-card"><div class="kpi-value ${clase}">${valor}</div><div class="kpi-label">${etiqueta}</div></div>`;
 }
@@ -21,6 +30,7 @@ function kpi(valor, etiqueta, clase = '') {
 function seccionResultados(r) {
   const claseUAII = esNumero(r.uaii) && r.uaii < 0 ? 'text-danger' : '';
   const claseMS = esNumero(r.msPorcentaje) && r.msPorcentaje < 0 ? 'text-danger' : '';
+  const etiquetaGao = `Grado de apalancamiento operativo (GAO)${r.motivoGao ? ` — ${ETIQUETA_MOTIVO_GAO[r.motivoGao] ?? r.motivoGao}` : ''}`;
   return `<div class="kpi-grid mb-6">
     ${kpi(monto(r.mcu), 'Margen de contribución unitario (C$ por unidad)')}
     ${kpi(pct(r.rmc), 'Razón de margen de contribución')}
@@ -28,7 +38,7 @@ function seccionResultados(r) {
     ${kpi(monto(r.peVentas), 'Punto de equilibrio en ventas (C$)')}
     ${kpi(monto(r.uaii), `UAII con ${num(r.q)} unidades`, claseUAII)}
     ${kpi(pct(r.msPorcentaje), `Margen de seguridad (${num(r.msUnidades)} u · ${monto(r.msVentas)})`, claseMS)}
-    ${kpi(`${num(r.gao)} veces`, 'Grado de apalancamiento operativo (GAO)')}
+    ${kpi(`${num(r.gao)} veces`, etiquetaGao)}
     ${esNumero(r.utilidadObjetivo) ? kpi(`${num(r.unidadesObjetivo)} u`, `Unidades para ganar ${monto(r.utilidadObjetivo)}`) : ''}
   </div>`;
 }
@@ -152,8 +162,14 @@ export function equilibrioUI(page, opciones) {
     el.className = error ? 'text-danger' : 'text-muted';
   }
 
+  // D-074: se guardan los datos de captura (origen, periodo y unidades en modo
+  // estados; sin copias derivadas). La validación corre sobre los datos
+  // efectivos, con la base derivada cuando el origen son los estados.
   function persistir(nuevos, texto) {
-    const errores = validarEquilibrio(nuevos);
+    const resolucion = resolverBase(nuevos, estados, configApalancamiento);
+    if (resolucion.error) { mensaje(resolucion.error, true); return; }
+    const efectivos = resolucion.base ? { ...nuevos, ...resolucion.base } : nuevos;
+    const errores = validarEquilibrio(efectivos);
     if (errores.length) { mensaje(errores.join(' '), true); return; }
     try {
       guardar(nuevos);
@@ -166,50 +182,83 @@ export function equilibrioUI(page, opciones) {
     mensaje(texto);
   }
 
-  function seccionEstados() {
-    if (!estados) {
-      return '<p class="form-hint">Si guarda estados financieros y clasifica sus costos en <a href="#/apalancamiento">Apalancamiento</a>, puede tomar el precio y los costos de un periodo.</p>';
+  function avisoCF(a) {
+    return `<p class="form-hint" style="color:var(--color-warning)">El CF manual (${monto(a.cfManual)}) difiere del CF de los estados (${monto(a.cfEstados)}) en ${pct(a.diferenciaPct)}. Verifique la captura o la clasificación de <a href="#/apalancamiento">Apalancamiento</a>; el aviso no impide guardar.</p>`;
+  }
+
+  function seccionDatos(resolucion) {
+    const selector = estados
+      ? `<div class="form-group"><label class="form-label" for="eqOrigen">Fuente de los costos</label>
+          <select class="form-select" id="eqOrigen">
+            <option value="manual"${datos.origen !== 'estados' ? ' selected' : ''}>Captura manual</option>
+            <option value="estados"${datos.origen === 'estados' ? ' selected' : ''}>Derivar de los estados</option>
+          </select></div>`
+      : '';
+    if (datos.origen === 'estados' && estados) {
+      const opcionesPeriodo = estados.periods.map(p =>
+        `<option value="${esc(p)}"${p === datos.periodo ? ' selected' : ''}>${esc(p)}</option>`).join('');
+      const b = resolucion.base;
+      const derivado = (id, etiqueta, valor) => `<div class="form-group"><label class="form-label" for="${id}">${etiqueta}</label>
+        <input class="form-input" id="${id}" type="text" readonly value="${valorCampo(valor)}"></div>`;
+      return `<div class="card mb-4"><h2 class="card-title">1. Datos</h2>
+        <form id="formEquilibrio" novalidate><div class="form-row">
+          ${selector}
+          <div class="form-group"><label class="form-label" for="eqPeriodo">Periodo de los estados</label>
+            <select class="form-select" id="eqPeriodo">${opcionesPeriodo}</select></div>
+          <div class="form-group"><label class="form-label" for="eqUnidades">Unidades vendidas en el periodo</label>
+            <input class="form-input" id="eqUnidades" type="number" min="0" step="any" value="${valorCampo(datos.unidades)}"></div>
+          <div class="form-group"><label class="form-label" for="eqUtilidad">Utilidad objetivo (C$, opcional)</label>
+            <input class="form-input" id="eqUtilidad" type="number" step="any" value="${valorCampo(datos.utilidadObjetivo)}"></div>
+        </div>
+        <div class="form-row">
+          ${derivado('eqPrecio', 'Precio de venta unitario (C$, derivado)', b?.precio)}
+          ${derivado('eqCVu', 'Costo variable unitario (C$, derivado)', b?.costoVariableUnitario)}
+          ${derivado('eqCF', 'Costos fijos del periodo (C$, derivados)', b?.costosFijos)}
+        </div>
+        <p class="form-hint">Derivados en cada consulta con la clasificación de <a href="#/apalancamiento">Apalancamiento</a>: P = Ventas / unidades, CVu = CV / unidades y CF = costos fijos. P = ventas / unidades supone un precio promedio; con varios productos, use una mezcla representativa.</p>
+        <button type="submit" class="btn btn-primary">Calcular y guardar</button></form>
+        ${resolucion.error ? `<p class="form-hint" style="color:var(--color-danger)">${esc(resolucion.error)}</p>` : ''}</div>`;
     }
-    const opcionesPeriodo = estados.periods.map((p, k) =>
-      `<option value="${esc(p)}"${k === estados.periods.length - 1 ? ' selected' : ''}>${esc(p)}</option>`).join('');
-    return `<div class="card mb-4"><h2 class="card-title">Tomar de los estados financieros</h2>
-      <p class="form-hint">Usa las ventas y los costos del periodo, separados en fijos y variables según <a href="#/apalancamiento">Apalancamiento</a>: P = Ventas / unidades, CVu = CV / unidades y CF = costos fijos.</p>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label" for="eqPeriodo">Periodo</label><select class="form-select" id="eqPeriodo">${opcionesPeriodo}</select></div>
-        <div class="form-group"><label class="form-label" for="eqUnidadesVendidas">Unidades vendidas en el periodo</label>
-          <input class="form-input" id="eqUnidadesVendidas" type="number" min="0" step="any"></div>
-        <div class="form-group" style="display:flex;align-items:flex-end"><button type="button" class="btn btn-secondary" id="eqDesdeEstados">Tomar datos</button></div>
-      </div></div>`;
+    return `<div class="card mb-4"><h2 class="card-title">1. Datos</h2>
+      <form id="formEquilibrio" novalidate><div class="form-row">
+        ${selector}
+        <div class="form-group"><label class="form-label" for="eqPrecio">Precio de venta unitario (C$)</label>
+          <input class="form-input" id="eqPrecio" type="number" min="0" step="any" value="${valorCampo(datos.precio)}"></div>
+        <div class="form-group"><label class="form-label" for="eqCVu">Costo variable unitario (C$)</label>
+          <input class="form-input" id="eqCVu" type="number" min="0" step="any" value="${valorCampo(datos.costoVariableUnitario)}"></div>
+        <div class="form-group"><label class="form-label" for="eqCF">Costos fijos del periodo (C$)</label>
+          <input class="form-input" id="eqCF" type="number" min="0" step="any" value="${valorCampo(datos.costosFijos)}"></div>
+        <div class="form-group"><label class="form-label" for="eqUnidades">Unidades vendidas o previstas</label>
+          <input class="form-input" id="eqUnidades" type="number" min="0" step="any" value="${valorCampo(datos.unidades)}"></div>
+        <div class="form-group"><label class="form-label" for="eqUtilidad">Utilidad objetivo (C$, opcional)</label>
+          <input class="form-input" id="eqUtilidad" type="number" step="any" value="${valorCampo(datos.utilidadObjetivo)}"></div>
+      </div>
+      ${estados
+        ? '<p class="form-hint">Si prefiere tomar el precio y los costos de un periodo de los estados, cambie la fuente de los costos a «Derivar de los estados». Con los estados guardados, se avisa cuando el CF manual difiere del CF de estados.</p>'
+        : '<p class="form-hint">Si guarda estados financieros y clasifica sus costos en <a href="#/apalancamiento">Apalancamiento</a>, puede derivar el precio y los costos de un periodo.</p>'}
+      ${resolucion.avisoCF ? avisoCF(resolucion.avisoCF) : ''}
+      <button type="submit" class="btn btn-primary">Calcular y guardar</button></form></div>`;
   }
 
   function render() {
-    const errores = validarEquilibrio(datos);
-    const r = errores.length ? null : calcularCVU(datos);
+    const resolucion = resolverBase(datos, estados, configApalancamiento);
+    const datosEfectivos = resolucion.base ? { ...datos, ...resolucion.base } : datos;
+    const errores = validarEquilibrio(datosEfectivos);
+    const r = !resolucion.error && !errores.length ? calcularCVU(datosEfectivos) : null;
     const resultados = r
       ? `${seccionResultados(r)}${seccionInterpretacion(r)}${seccionTraza(r)}
         <div class="card mb-4"><h2 class="card-title">Gráfica costo-volumen-utilidad</h2>
           <p class="form-hint">El punto de equilibrio está donde los ingresos totales cortan a los costos totales. A la derecha hay utilidad; a la izquierda, pérdida.</p>
           <div style="height:320px"><canvas id="equilibrioChart" role="img" aria-label="Ingresos y costos totales según las unidades vendidas"></canvas></div></div>
-        ${seccionEscenarios(datos)}`
-      : '<div class="card empty-state"><p>Complete el precio, el costo variable unitario, los costos fijos y las unidades, o pulse "Cargar ejemplo".</p></div>';
+        ${seccionEscenarios(datosEfectivos)}`
+      : resolucion.error
+        ? `<div class="card empty-state"><p>${esc(resolucion.error)}</p></div>`
+        : '<div class="card empty-state"><p>Complete el precio, el costo variable unitario, los costos fijos y las unidades, o pulse "Cargar ejemplo".</p></div>';
     page.innerHTML = `<div class="page-header"><h1 class="page-title">Punto de Equilibrio y C-V-U</h1>
         <p class="page-subtitle">Margen de contribución, punto de equilibrio en unidades y en C$, margen de seguridad y escenarios.</p></div>
       <p id="equilibrioMensaje" role="status" aria-live="polite" class="text-muted">Ingrese los datos del producto o de la línea y pulse Calcular.</p>
       <div class="flex-gap flex-wrap mb-4"><button type="button" class="btn btn-secondary" id="eqEjemplo">Cargar ejemplo</button></div>
-      <div class="card mb-4"><h2 class="card-title">1. Datos</h2>
-        <form id="formEquilibrio" novalidate><div class="form-row">
-          <div class="form-group"><label class="form-label" for="eqPrecio">Precio de venta unitario (C$)</label>
-            <input class="form-input" id="eqPrecio" type="number" min="0" step="any" value="${valorCampo(datos.precio)}"></div>
-          <div class="form-group"><label class="form-label" for="eqCVu">Costo variable unitario (C$)</label>
-            <input class="form-input" id="eqCVu" type="number" min="0" step="any" value="${valorCampo(datos.costoVariableUnitario)}"></div>
-          <div class="form-group"><label class="form-label" for="eqCF">Costos fijos del periodo (C$)</label>
-            <input class="form-input" id="eqCF" type="number" min="0" step="any" value="${valorCampo(datos.costosFijos)}"></div>
-          <div class="form-group"><label class="form-label" for="eqUnidades">Unidades vendidas o previstas</label>
-            <input class="form-input" id="eqUnidades" type="number" min="0" step="any" value="${valorCampo(datos.unidades)}"></div>
-          <div class="form-group"><label class="form-label" for="eqUtilidad">Utilidad objetivo (C$, opcional)</label>
-            <input class="form-input" id="eqUtilidad" type="number" step="any" value="${valorCampo(datos.utilidadObjetivo)}"></div>
-        </div><button type="submit" class="btn btn-primary">Calcular y guardar</button></form></div>
-      ${seccionEstados()}
+      ${seccionDatos(resolucion)}
       ${resultados}`;
     bind();
     const config = r && graficar ? configGrafica(r) : null;
@@ -221,14 +270,30 @@ export function equilibrioUI(page, opciones) {
       persistir(normalizarEquilibrio(ejemploEquilibrio()),
         'Ejemplo cargado: una prenda de MUNO MODA en un trimestre (datos ficticios).');
     });
+    page.querySelector('#eqOrigen')?.addEventListener('change', event => {
+      // El cambio de origen es de captura: se guarda al pulsar Calcular y guardar.
+      datos = normalizarEquilibrio({ ...datos, origen: event.target.value });
+      render();
+    });
     page.querySelector('#formEquilibrio')?.addEventListener('submit', event => {
       event.preventDefault();
+      if (datos.origen === 'estados' && estados) {
+        const unidades = numero('eqUnidades');
+        const nuevos = {
+          origen: 'estados', periodo: campo('eqPeriodo'),
+          unidades: unidades.vacio ? null : unidades.valor,
+          utilidadObjetivo: numero('eqUtilidad').vacio ? null : numero('eqUtilidad').valor,
+          escenario: datos.escenario
+        };
+        persistir(nuevos, `Datos guardados: el precio y los costos se derivan de los estados de ${nuevos.periodo} en cada consulta.`);
+        return;
+      }
       const leidos = {
         precio: numero('eqPrecio'), costoVariableUnitario: numero('eqCVu'),
         costosFijos: numero('eqCF'), unidades: numero('eqUnidades')
       };
       const objetivo = numero('eqUtilidad');
-      const nuevos = { ...datos, utilidadObjetivo: objetivo.vacio ? null : objetivo.valor };
+      const nuevos = { ...datos, origen: 'manual', utilidadObjetivo: objetivo.vacio ? null : objetivo.valor };
       for (const [clave, { valor }] of Object.entries(leidos)) nuevos[clave] = valor;
       // Un texto no numérico en la utilidad objetivo es un error, no un campo vacío.
       if (!objetivo.vacio && objetivo.valor === null) { mensaje('La utilidad objetivo debe ser un número.', true); return; }
@@ -243,14 +308,6 @@ export function equilibrioUI(page, opciones) {
         escenario[clave] = vacio ? 0 : valor / 100;
       }
       persistir({ ...datos, escenario }, 'Escenario personalizado aplicado.');
-    });
-    page.querySelector('#eqDesdeEstados')?.addEventListener('click', () => {
-      const unidades = numero('eqUnidadesVendidas').valor;
-      const periodo = campo('eqPeriodo');
-      const resultado = baseDesdeEstados(estados, configApalancamiento, periodo, unidades);
-      if (resultado.error) { mensaje(resultado.error, true); return; }
-      persistir({ ...datos, ...resultado.base },
-        `Datos tomados de los estados de ${periodo}: precio ${monto(resultado.base.precio)}, CVu ${monto(resultado.base.costoVariableUnitario)} y CF ${monto(resultado.base.costosFijos)}.`);
     });
   }
 

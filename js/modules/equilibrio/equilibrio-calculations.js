@@ -27,7 +27,10 @@ function menos(a, b) {
   return esNumero(a) && esNumero(b) ? a - b : null;
 }
 
-// Datos guardados → { precio, costoVariableUnitario, costosFijos, unidades, utilidadObjetivo, escenario }.
+// Datos guardados → { origen, periodo, precio, costoVariableUnitario, costosFijos,
+// unidades, utilidadObjetivo, escenario }. D-074: origen «estados» guarda solo el
+// origen, el periodo y las unidades (la base se deriva en cada consulta); datos
+// sin `origen` se leen como «manual» (migración), igual que el formato de hoy.
 export function normalizarEquilibrio(datos) {
   const escenario = {};
   for (const campo of CAMPOS_ESCENARIO) {
@@ -35,6 +38,8 @@ export function normalizarEquilibrio(datos) {
     escenario[campo] = esNumero(valor) && valor > -1 ? valor : 0;
   }
   return {
+    origen: datos?.origen === 'estados' ? 'estados' : 'manual',
+    periodo: typeof datos?.periodo === 'string' ? datos.periodo : '',
     precio: numeroONull(datos?.precio),
     costoVariableUnitario: numeroONull(datos?.costoVariableUnitario),
     costosFijos: numeroONull(datos?.costosFijos),
@@ -193,6 +198,52 @@ export function baseDesdeEstados(estados, configApalancamiento, periodo, unidade
     periodo,
     variables: v,
     base: { precio: v.ventas / unidades, costoVariableUnitario: v.cv / unidades, costosFijos: v.cf, unidades }
+  };
+}
+
+// D-074: aviso de divergencia del CF manual contra el CF de estados del último
+// periodo. La diferencia pasa del 0,5 % del CF de estados (mínimo 0,005 C$).
+// Devuelve null cuando no hay con qué comparar o la diferencia está dentro.
+function avisoCostosFijos(cfManual, estados, configApalancamiento) {
+  if (!estados || !esNumero(cfManual)) return null;
+  let ultimo = null;
+  try {
+    const resultado = calcularApalancamiento(estados, configApalancamiento || {});
+    ultimo = resultado.periodos[resultado.periodos.length - 1];
+  } catch {
+    return null;
+  }
+  const cfEstados = ultimo?.variables?.cf;
+  if (!esNumero(cfEstados)) return null;
+  const diferencia = cfManual - cfEstados;
+  const umbral = Math.max(0.005, 0.005 * Math.abs(cfEstados));
+  if (Math.abs(diferencia) <= umbral) return null;
+  return {
+    cfManual, cfEstados, diferencia,
+    diferenciaPct: Math.abs(diferencia) / Math.abs(cfEstados)
+  };
+}
+
+// D-074: fuente única de costos. Origen «estados»: la base se deriva en cada
+// consulta con la clasificación de Apalancamiento y no se guardan copias.
+// Origen «manual» (o datos sin origen, por migración): la captura de hoy, con
+// el aviso de divergencia del CF. La pantalla solo usa esta función.
+export function resolverBase(datos, estados, configApalancamiento) {
+  const origen = datos?.origen === 'estados' ? 'estados' : 'manual';
+  if (origen === 'estados') {
+    const r = baseDesdeEstados(estados, configApalancamiento, datos?.periodo, datos?.unidades);
+    if (r.error) return { origen, error: r.error, avisoCF: null };
+    return { origen, base: r.base, periodo: r.periodo, error: null, avisoCF: null };
+  }
+  const base = {
+    precio: numeroONull(datos?.precio),
+    costoVariableUnitario: numeroONull(datos?.costoVariableUnitario),
+    costosFijos: numeroONull(datos?.costosFijos),
+    unidades: numeroONull(datos?.unidades)
+  };
+  return {
+    origen, base, periodo: null, error: null,
+    avisoCF: avisoCostosFijos(base.costosFijos, estados, configApalancamiento)
   };
 }
 
