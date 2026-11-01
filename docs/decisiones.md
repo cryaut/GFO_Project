@@ -118,6 +118,10 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-070 | Proforma usa el EFE como única fuente del flujo | Vigente |
 | D-071 | Tolerancia única en el flujo directo | Vigente |
 | D-072 | Totales reportados fuera de los avisos de balance y del EOAF | Vigente |
+| D-073 | GAO en porcentaje solo con margen y UAII positivos | Vigente |
+| D-074 | Fuente única de costos en Punto de equilibrio | Vigente |
+| D-075 | Escenarios inválidos no se convierten en 0 | Vigente |
+| D-076 | Motivos precisos en baseDesdeEstados | Vigente |
 
 ## Decisiones
 
@@ -1546,3 +1550,87 @@ Aclaración (20 de octubre de 2026): el cambio de TasaImpuesto en Apalancamiento
 **Para revertirla.** Registrar la decisión que la reemplace, devolver el mapa a `efe-roles.js` y retirar la exclusión de `variacionesDeCuentas` y `totalGrupo`.
 
 **Referencias.** `instrucciones_efe_ronda2_ultima.md`, T1; D-067; hallazgos de partida de la ronda 2.
+
+### D-073 — GAO en porcentaje solo con margen y UAII positivos
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/utils/calculate.js`, `js/modules/equilibrio/equilibrio-calculations.js`
+
+**Contexto.** Con margen de contribución negativo o UAII negativa, el GAO seguía produciendo un número: con MC −200 y UAII −250 salía +0.8, y con MC 400 y UAII −100 salía −4. Con base negativa o nula el porcentaje de cambio invierte su sentido, así que la cifra no se podía leer.
+
+**Opciones.**
+1. N/D con motivo cuando el margen o la UAII no son positivos — el GAO desaparece y la pantalla explica por qué.
+2. Seguir calculando y advertir — mantiene un número que no admite la lectura «por cada 1 % de ventas».
+
+**Decisión.** Opción 1. `gao(mc, uaii)` devuelve N/D si `mc ≤ 0` o `uaii ≤ 0`, o casi cero con la tolerancia de siempre (0.005). `calcularCVU` devuelve `motivoGao` con los motivos en este orden: `sin-ventas` (unidades ≤ 0), `margen-no-positivo` (MC ≤ 0), `uaii-no-positiva` (UAII ≤ 0), `dato-faltante`. El GAO de Apalancamiento usa la misma función, así que también cambia; el GAF y el GAT no cambian en esta ronda.
+
+**Consecuencias.** La matriz manual queda N/D en los casos M4 a M8 con su motivo (antes +0.8, −4, 0 o valores de margen cero), y el bloque A da N/D en A4 2024 y 2025 con `uaii-no-positiva`. Dos pruebas de Apalancamiento y una de su pantalla cambian con esta causa; la advertencia `bajo-equilibrio-operativo` se mantiene.
+
+**Para revertirla.** Registrar la decisión que la reemplace y devolver la división sin las condiciones de signo.
+
+**Referencias.** `instrucciones_equilibrio_ronda1.md`, T1 y matriz manual; hallazgos H3, H4 y H5.
+
+### D-074 — Fuente única de costos en Punto de equilibrio
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/equilibrio/equilibrio-calculations.js`, `equilibrio-ui.js`
+
+**Contexto.** El botón «Tomar datos» copiaba precio, costo variable unitario y costos fijos a los datos guardados (`persistir({ ...datos, ...resultado.base })`): si después cambiaban los estados o la clasificación de Apalancamiento, Equilibrio seguía con la copia y no avisaba (el GAO se separaba del de Apalancamiento).
+
+**Opciones.**
+1. Origen «estados» que deriva la base en cada consulta con la clasificación vigente, y origen «manual» con aviso de divergencia del CF — una sola fuente y la divergencia visible.
+2. Mantener la copia y añadir un aviso de copia vieja — conserva dos fuentes del mismo costo.
+
+**Decisión.** Opción 1. La pantalla guarda solo `origen`, `periodo` y `unidades` (más utilidad objetivo y escenario); precio, CVu y CF se calculan en cada consulta con `resolverBase(datos, estados, configApalancamiento)` → `{ origen, base, periodo, error, avisoCF }`. En origen «manual» se compara el CF con el CF de estados del último periodo: si la diferencia pasa de 0,5 % del CF de estados (mínimo 0,005 C$), la pantalla muestra un aviso con las dos cifras, sin bloquear el guardado. Los datos sin campo `origen` se leen como manuales (migración, mismos resultados). Se quita el botón «Tomar datos» y se agrega la limitación: P = ventas / unidades supone un precio promedio; con varios productos, use una mezcla representativa.
+
+**Consecuencias.** El cambio de clasificación en Apalancamiento se refleja en Equilibrio sin reguardar nada (vínculo vivo) y el GAO de ambas pantallas coincide en el bloque A. La prueba «toma precio y costos de los estados guardados» cambia por esta causa.
+
+**Para revertirla.** Registrar la decisión que la reemplace, devolver el botón con su copia y retirar `resolverBase`.
+
+**Referencias.** `instrucciones_equilibrio_ronda1.md`, T2 y bloque A; hallazgos H1 y H2.
+
+### D-075 — Escenarios inválidos no se convierten en 0
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/equilibrio/equilibrio-calculations.js`, `equilibrio-ui.js`
+
+**Contexto.** `normalizarEquilibrio` convertía cualquier valor de escenario no numérico (o menor que −100 %) en 0, y `validarEquilibrio` ya no lo veía: un dato dañado del almacenamiento producía escenarios silenciosamente distintos de los pedidos.
+
+**Opciones.**
+1. Conservar el valor inválido como `null`, reportar el campo y no calcular el escenario personalizado mientras exista un `null` — el error se ve y se corrige desde su formulario.
+2. Mantener la conversión a 0 — sigue ocultando el dato dañado.
+
+**Decisión.** Opción 1. Un valor de escenario que no es número se conserva como `null`; `validarEquilibrio` reporta el campo por su nombre («El cambio de precio del escenario…») y la pantalla muestra el error en la tarjeta de escenarios, junto al formulario con el que se corrige. El escenario personalizado no se calcula mientras tenga un `null`; los escenarios predefinidos sí. Un valor vacío sigue siendo 0.
+
+**Consecuencias.** La tarjeta de escenarios puede mostrar errores propias sin tumbar los resultados de la base, que se calculan con los datos base aunque el escenario esté dañado.
+
+**Para revertirla.** Registrar la decisión que la reemplace y devolver la conversión a 0 en `normalizarEquilibrio`.
+
+**Referencias.** `instrucciones_equilibrio_ronda1.md`, T3; hallazgo H6.
+
+### D-076 — Motivos precisos en `baseDesdeEstados`
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/equilibrio/equilibrio-calculations.js`
+
+**Contexto.** Una cuenta del estado de resultados que no está en el catálogo aparecía con el mensaje «Clasifique en Apalancamiento como fijas o variables», que pide una acción que no resuelve el problema: el nombre hay que corregirlo en Estados Financieros.
+
+**Opciones.**
+1. Distinguir dos motivos según el tipo de faltante de Apalancamiento — fuera del catálogo («sinClasificación») frente a cuenta del catálogo sin comportamiento («sinComportamiento»).
+2. Un solo mensaje genérico — conserva la instrucción equivocada.
+
+**Decisión.** Opción 1. Cuenta fuera del catálogo: «La cuenta «X» no está en el catálogo de cuentas: revise su nombre en Estados Financieros.» Cuenta del catálogo sin fijo o variable: «Clasifique en Apalancamiento como fijas o variables: X.»
+
+**Consecuencias.** Renombrar una cuenta operativa produce el mensaje de catálogo; quitar la clasificación de «Gastos de ventas» produce el mensaje de Apalancamiento. Las pruebas de T4 fijan ambos textos.
+
+**Para revertirla.** Registrar la decisión que la reemplace y volver al mensaje único.
+
+**Referencias.** `instrucciones_equilibrio_ronda1.md`, T4; hallazgo H7.
