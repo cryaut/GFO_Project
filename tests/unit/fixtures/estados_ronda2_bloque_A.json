@@ -1,0 +1,791 @@
+{
+  "nota": "Balances de referencia construidos para la batería de Estados (ronda 2). No son estados de empresas reales. Los esperados se calculan con las definiciones contables (ventas netas = ventas − deducciones; utilidad bruta = ventas netas − costo; utilidad neta = utilidad bruta − gastos + otros ingresos − otros gastos − intereses − impuestos), fuera de la app. «Utilidades retenidas» es la cifra que cuadra cada balance.",
+  "conjuntos": [
+    {
+      "id": "A1",
+      "descripcion": "Comercio minorista, 2 periodos, con devoluciones y descuentos",
+      "entrada": {
+        "periods": [
+          "2024",
+          "2025"
+        ],
+        "balanceGeneral": {
+          "2024": {
+            "activos": {
+              "Efectivo y equivalentes": 162,
+              "Cuentas por cobrar comerciales": 108,
+              "Inventario de mercaderías": 234,
+              "Gastos pagados por anticipado": 18,
+              "Terrenos": 180,
+              "Edificios e instalaciones": 360,
+              "Mobiliario y equipo de oficina": 81,
+              "Vehículos": 99,
+              "Depreciación acumulada": -216
+            },
+            "pasivos": {
+              "Cuentas por pagar comerciales": 135,
+              "Impuestos por pagar": 36,
+              "Gastos acumulados por pagar": 27,
+              "Deudas de largo plazo": 198
+            },
+            "patrimonio": {
+              "Capital social": 500,
+              "Utilidades retenidas": 31,
+              "Resultado del período incluido en patrimonio": 99
+            }
+          },
+          "2025": {
+            "activos": {
+              "Efectivo y equivalentes": 180,
+              "Cuentas por cobrar comerciales": 120,
+              "Inventario de mercaderías": 260,
+              "Gastos pagados por anticipado": 20,
+              "Terrenos": 200,
+              "Edificios e instalaciones": 400,
+              "Mobiliario y equipo de oficina": 90,
+              "Vehículos": 110,
+              "Depreciación acumulada": -240
+            },
+            "pasivos": {
+              "Cuentas por pagar comerciales": 150,
+              "Impuestos por pagar": 40,
+              "Gastos acumulados por pagar": 30,
+              "Deudas de largo plazo": 220
+            },
+            "patrimonio": {
+              "Capital social": 500,
+              "Utilidades retenidas": 90,
+              "Resultado del período incluido en patrimonio": 110
+            }
+          }
+        },
+        "estadoResultados": {
+          "2024": {
+            "Ventas totales": 900,
+            "Devoluciones sobre ventas": 27,
+            "Descuentos sobre ventas": 9,
+            "Rebajas sobre ventas": 0,
+            "Costo de mercadería vendida": 504,
+            "Gastos administrativos": 135,
+            "Gastos de ventas": 81,
+            "Ingresos por intereses": 4,
+            "Gastos por intereses": 22,
+            "Gasto por impuesto sobre la renta": 27
+          },
+          "2025": {
+            "Ventas totales": 1000,
+            "Devoluciones sobre ventas": 30,
+            "Descuentos sobre ventas": 10,
+            "Rebajas sobre ventas": 0,
+            "Costo de mercadería vendida": 560,
+            "Gastos administrativos": 150,
+            "Gastos de ventas": 90,
+            "Ingresos por intereses": 5,
+            "Gastos por intereses": 25,
+            "Gasto por impuesto sobre la renta": 30
+          }
+        }
+      },
+      "esperado": {
+        "2024": {
+          "activosCorrientes": 522,
+          "activosFijos": 504,
+          "totalActivos": 1026,
+          "pasivosCorrientes": 198,
+          "totalPasivos": 396,
+          "totalPatrimonio": 630,
+          "ventasBrutas": 900,
+          "ventas": 864,
+          "costoVentas": 504,
+          "utilidadBruta": 360,
+          "utilidadNeta": 99,
+          "razonCorriente": 2.64
+        },
+        "2025": {
+          "activosCorrientes": 580,
+          "activosFijos": 560,
+          "totalActivos": 1140,
+          "pasivosCorrientes": 220,
+          "totalPasivos": 440,
+          "totalPatrimonio": 700,
+          "ventasBrutas": 1000,
+          "ventas": 960,
+          "costoVentas": 560,
+          "utilidadBruta": 400,
+          "utilidadNeta": 110,
+          "razonCorriente": 2.64
+        }
+      }
+    },
+    {
+      "id": "A2",
+      "descripcion": "Empresa de servicios, 3 periodos, sin inventario, con préstamo de corto plazo",
+      "entrada": {
+        "periods": [
+          "2023",
+          "2024",
+          "2025"
+        ],
+        "balanceGeneral": {
+          "2023": {
+            "activos": {
+              "Efectivo y equivalentes": 240,
+              "Cuentas por cobrar comerciales": 168,
+              "Otras cuentas por cobrar corrientes": 20,
+              "Gastos pagados por anticipado": 12,
+              "Mobiliario y equipo de oficina": 120,
+              "Maquinaria y equipo": 144,
+              "Activos intangibles": 48,
+              "Depreciación acumulada": -120
+            },
+            "pasivos": {
+              "Cuentas por pagar comerciales": 72,
+              "Préstamos de corto plazo": 96,
+              "Gastos acumulados por pagar": 28,
+              "Otros pasivos corrientes": 8,
+              "Deudas de largo plazo": 240
+            },
+            "patrimonio": {
+              "Capital social": 400,
+              "Utilidades retenidas": -266,
+              "Resultado del período incluido en patrimonio": 54
+            }
+          },
+          "2024": {
+            "activos": {
+              "Efectivo y equivalentes": 270,
+              "Cuentas por cobrar comerciales": 189,
+              "Otras cuentas por cobrar corrientes": 22,
+              "Gastos pagados por anticipado": 14,
+              "Mobiliario y equipo de oficina": 135,
+              "Maquinaria y equipo": 162,
+              "Activos intangibles": 54,
+              "Depreciación acumulada": -135
+            },
+            "pasivos": {
+              "Cuentas por pagar comerciales": 81,
+              "Préstamos de corto plazo": 108,
+              "Gastos acumulados por pagar": 32,
+              "Otros pasivos corrientes": 9,
+              "Deudas de largo plazo": 270
+            },
+            "patrimonio": {
+              "Capital social": 400,
+              "Utilidades retenidas": -250,
+              "Resultado del período incluido en patrimonio": 61
+            }
+          },
+          "2025": {
+            "activos": {
+              "Efectivo y equivalentes": 300,
+              "Cuentas por cobrar comerciales": 210,
+              "Otras cuentas por cobrar corrientes": 25,
+              "Gastos pagados por anticipado": 15,
+              "Mobiliario y equipo de oficina": 150,
+              "Maquinaria y equipo": 180,
+              "Activos intangibles": 60,
+              "Depreciación acumulada": -150
+            },
+            "pasivos": {
+              "Cuentas por pagar comerciales": 90,
+              "Préstamos de corto plazo": 120,
+              "Gastos acumulados por pagar": 35,
+              "Otros pasivos corrientes": 10,
+              "Deudas de largo plazo": 300
+            },
+            "patrimonio": {
+              "Capital social": 400,
+              "Utilidades retenidas": -233,
+              "Resultado del período incluido en patrimonio": 68
+            }
+          }
+        },
+        "estadoResultados": {
+          "2023": {
+            "Ingresos por servicios": 640,
+            "Devoluciones sobre ventas": 0,
+            "Descuentos sobre ventas": 0,
+            "Rebajas sobre ventas": 0,
+            "Costo de servicios": 336,
+            "Gastos administrativos": 144,
+            "Gastos de ventas": 32,
+            "Gastos no operativos distintos de intereses": 10,
+            "Gastos por intereses": 36,
+            "Gasto por impuesto sobre la renta": 28
+          },
+          "2024": {
+            "Ingresos por servicios": 720,
+            "Devoluciones sobre ventas": 0,
+            "Descuentos sobre ventas": 0,
+            "Rebajas sobre ventas": 0,
+            "Costo de servicios": 378,
+            "Gastos administrativos": 162,
+            "Gastos de ventas": 36,
+            "Gastos no operativos distintos de intereses": 11,
+            "Gastos por intereses": 40,
+            "Gasto por impuesto sobre la renta": 32
+          },
+          "2025": {
+            "Ingresos por servicios": 800,
+            "Devoluciones sobre ventas": 0,
+            "Descuentos sobre ventas": 0,
+            "Rebajas sobre ventas": 0,
+            "Costo de servicios": 420,
+            "Gastos administrativos": 180,
+            "Gastos de ventas": 40,
+            "Gastos no operativos distintos de intereses": 12,
+            "Gastos por intereses": 45,
+            "Gasto por impuesto sobre la renta": 35
+          }
+        }
+      },
+      "esperado": {
+        "2023": {
+          "activosCorrientes": 440,
+          "activosFijos": 192,
+          "totalActivos": 632,
+          "pasivosCorrientes": 204,
+          "totalPasivos": 444,
+          "totalPatrimonio": 188,
+          "ventasBrutas": 640,
+          "ventas": 640,
+          "costoVentas": 336,
+          "utilidadBruta": 304,
+          "utilidadNeta": 54,
+          "razonCorriente": 2.16
+        },
+        "2024": {
+          "activosCorrientes": 495,
+          "activosFijos": 216,
+          "totalActivos": 711,
+          "pasivosCorrientes": 230,
+          "totalPasivos": 500,
+          "totalPatrimonio": 211,
+          "ventasBrutas": 720,
+          "ventas": 720,
+          "costoVentas": 378,
+          "utilidadBruta": 342,
+          "utilidadNeta": 61,
+          "razonCorriente": 2.15
+        },
+        "2025": {
+          "activosCorrientes": 550,
+          "activosFijos": 240,
+          "totalActivos": 790,
+          "pasivosCorrientes": 255,
+          "totalPasivos": 555,
+          "totalPatrimonio": 235,
+          "ventasBrutas": 800,
+          "ventas": 800,
+          "costoVentas": 420,
+          "utilidadBruta": 380,
+          "utilidadNeta": 68,
+          "razonCorriente": 2.16
+        }
+      }
+    },
+    {
+      "id": "A3",
+      "descripcion": "Manufactura, 2 periodos, inventario por etapas, totales reportados y ventas netas reportadas consistentes",
+      "entrada": {
+        "periods": [
+          "2024",
+          "2025"
+        ],
+        "balanceGeneral": {
+          "2024": {
+            "activos": {
+              "Efectivo y equivalentes": 129,
+              "Cuentas por cobrar comerciales": 239,
+              "Inventario de materias primas": 138,
+              "Inventario de productos en proceso": 83,
+              "Inventario de productos terminados": 193,
+              "Inversiones de corto plazo": 46,
+              "Total de activos corrientes": 828,
+              "Maquinaria y equipo": 644,
+              "Edificios e instalaciones": 460,
+              "Terrenos": 276,
+              "Depreciación acumulada": -478
+            },
+            "pasivos": {
+              "Cuentas por pagar comerciales": 304,
+              "Porción corriente de deuda de largo plazo": 55,
+              "Provisiones corrientes": 37,
+              "Total de pasivos corrientes": 396,
+              "Deudas de largo plazo": 497
+            },
+            "patrimonio": {
+              "Capital social": 600,
+              "Utilidades retenidas": 139,
+              "Resultado del período incluido en patrimonio": 98
+            }
+          },
+          "2025": {
+            "activos": {
+              "Efectivo y equivalentes": 140,
+              "Cuentas por cobrar comerciales": 260,
+              "Inventario de materias primas": 150,
+              "Inventario de productos en proceso": 90,
+              "Inventario de productos terminados": 210,
+              "Inversiones de corto plazo": 50,
+              "Total de activos corrientes": 900,
+              "Maquinaria y equipo": 700,
+              "Edificios e instalaciones": 500,
+              "Terrenos": 300,
+              "Depreciación acumulada": -520
+            },
+            "pasivos": {
+              "Cuentas por pagar comerciales": 330,
+              "Porción corriente de deuda de largo plazo": 60,
+              "Provisiones corrientes": 40,
+              "Total de pasivos corrientes": 430,
+              "Deudas de largo plazo": 540
+            },
+            "patrimonio": {
+              "Capital social": 600,
+              "Utilidades retenidas": 205,
+              "Resultado del período incluido en patrimonio": 105
+            }
+          }
+        },
+        "estadoResultados": {
+          "2024": {
+            "Ventas de productos": 1840,
+            "Devoluciones sobre ventas": 92,
+            "Ventas netas reportadas": 1748,
+            "Costo de productos vendidos": 1196,
+            "Gastos administrativos": 202,
+            "Gastos de ventas": 138,
+            "Gastos no operativos distintos de intereses": 18,
+            "Gastos por intereses": 55,
+            "Gasto por impuesto sobre la renta": 41
+          },
+          "2025": {
+            "Ventas de productos": 2000,
+            "Devoluciones sobre ventas": 100,
+            "Ventas netas reportadas": 1900,
+            "Costo de productos vendidos": 1300,
+            "Gastos administrativos": 220,
+            "Gastos de ventas": 150,
+            "Gastos no operativos distintos de intereses": 20,
+            "Gastos por intereses": 60,
+            "Gasto por impuesto sobre la renta": 45
+          }
+        }
+      },
+      "esperado": {
+        "2024": {
+          "activosCorrientes": 828,
+          "activosFijos": 902,
+          "totalActivos": 1730,
+          "pasivosCorrientes": 396,
+          "totalPasivos": 893,
+          "totalPatrimonio": 837,
+          "ventasBrutas": 1840,
+          "ventas": 1748,
+          "costoVentas": 1196,
+          "utilidadBruta": 552,
+          "utilidadNeta": 98,
+          "razonCorriente": 2.09
+        },
+        "2025": {
+          "activosCorrientes": 900,
+          "activosFijos": 980,
+          "totalActivos": 1880,
+          "pasivosCorrientes": 430,
+          "totalPasivos": 970,
+          "totalPatrimonio": 910,
+          "ventasBrutas": 2000,
+          "ventas": 1900,
+          "costoVentas": 1300,
+          "utilidadBruta": 600,
+          "utilidadNeta": 105,
+          "razonCorriente": 2.09
+        }
+      }
+    },
+    {
+      "id": "A4",
+      "descripcion": "Empresa con pérdida neta, 2 periodos, solo terrenos, otros ingresos y gastos no operativos",
+      "entrada": {
+        "periods": [
+          "2024",
+          "2025"
+        ],
+        "balanceGeneral": {
+          "2024": {
+            "activos": {
+              "Efectivo y equivalentes": 99,
+              "Cuentas por cobrar comerciales": 82,
+              "Otras cuentas por cobrar corrientes": 16,
+              "Inventario de mercaderías": 66,
+              "Terrenos": 440,
+              "Inversiones de largo plazo": 132,
+              "Otros activos no corrientes": 33
+            },
+            "pasivos": {
+              "Cuentas por pagar comerciales": 121,
+              "Préstamos de corto plazo": 88,
+              "Otros pasivos no corrientes": 66,
+              "Deudas de largo plazo": 165
+            },
+            "patrimonio": {
+              "Capital social": 300,
+              "Utilidades retenidas": 168,
+              "Resultado del período incluido en patrimonio": -40
+            }
+          },
+          "2025": {
+            "activos": {
+              "Efectivo y equivalentes": 90,
+              "Cuentas por cobrar comerciales": 75,
+              "Otras cuentas por cobrar corrientes": 15,
+              "Inventario de mercaderías": 60,
+              "Terrenos": 400,
+              "Inversiones de largo plazo": 120,
+              "Otros activos no corrientes": 30
+            },
+            "pasivos": {
+              "Cuentas por pagar comerciales": 110,
+              "Préstamos de corto plazo": 80,
+              "Otros pasivos no corrientes": 60,
+              "Deudas de largo plazo": 150
+            },
+            "patrimonio": {
+              "Capital social": 300,
+              "Utilidades retenidas": 125,
+              "Resultado del período incluido en patrimonio": -35
+            }
+          }
+        },
+        "estadoResultados": {
+          "2024": {
+            "Ventas totales": 550,
+            "Devoluciones sobre ventas": 6,
+            "Descuentos sobre ventas": 0,
+            "Rebajas sobre ventas": 0,
+            "Costo de mercadería vendida": 363,
+            "Gastos administrativos": 132,
+            "Gastos de ventas": 50,
+            "Ingresos no operativos": 16,
+            "Gastos no operativos distintos de intereses": 22,
+            "Gastos por intereses": 33,
+            "Gasto por impuesto sobre la renta": 0
+          },
+          "2025": {
+            "Ventas totales": 500,
+            "Devoluciones sobre ventas": 5,
+            "Descuentos sobre ventas": 0,
+            "Rebajas sobre ventas": 0,
+            "Costo de mercadería vendida": 330,
+            "Gastos administrativos": 120,
+            "Gastos de ventas": 45,
+            "Ingresos no operativos": 15,
+            "Gastos no operativos distintos de intereses": 20,
+            "Gastos por intereses": 30,
+            "Gasto por impuesto sobre la renta": 0
+          }
+        }
+      },
+      "esperado": {
+        "2024": {
+          "activosCorrientes": 263,
+          "activosFijos": 605,
+          "totalActivos": 868,
+          "pasivosCorrientes": 209,
+          "totalPasivos": 440,
+          "totalPatrimonio": 428,
+          "ventasBrutas": 550,
+          "ventas": 544,
+          "costoVentas": 363,
+          "utilidadBruta": 181,
+          "utilidadNeta": -40,
+          "razonCorriente": 1.26
+        },
+        "2025": {
+          "activosCorrientes": 240,
+          "activosFijos": 550,
+          "totalActivos": 790,
+          "pasivosCorrientes": 190,
+          "totalPasivos": 400,
+          "totalPatrimonio": 390,
+          "ventasBrutas": 500,
+          "ventas": 495,
+          "costoVentas": 330,
+          "utilidadBruta": 165,
+          "utilidadNeta": -35,
+          "razonCorriente": 1.26
+        }
+      }
+    },
+    {
+      "id": "A5",
+      "descripcion": "Histórico de 5 periodos de un comercio: orden y balance en cada periodo",
+      "entrada": {
+        "periods": [
+          "2021",
+          "2022",
+          "2023",
+          "2024",
+          "2025"
+        ],
+        "balanceGeneral": {
+          "2021": {
+            "activos": {
+              "Efectivo y equivalentes": 108,
+              "Cuentas por cobrar comerciales": 72,
+              "Inventario de mercaderías": 156,
+              "Gastos pagados por anticipado": 12,
+              "Terrenos": 120,
+              "Edificios e instalaciones": 240,
+              "Mobiliario y equipo de oficina": 54,
+              "Vehículos": 66,
+              "Depreciación acumulada": -144
+            },
+            "pasivos": {
+              "Cuentas por pagar comerciales": 90,
+              "Impuestos por pagar": 24,
+              "Gastos acumulados por pagar": 18,
+              "Deudas de largo plazo": 132
+            },
+            "patrimonio": {
+              "Capital social": 500,
+              "Utilidades retenidas": -146,
+              "Resultado del período incluido en patrimonio": 66
+            }
+          },
+          "2022": {
+            "activos": {
+              "Efectivo y equivalentes": 126,
+              "Cuentas por cobrar comerciales": 84,
+              "Inventario de mercaderías": 182,
+              "Gastos pagados por anticipado": 14,
+              "Terrenos": 140,
+              "Edificios e instalaciones": 280,
+              "Mobiliario y equipo de oficina": 63,
+              "Vehículos": 77,
+              "Depreciación acumulada": -168
+            },
+            "pasivos": {
+              "Cuentas por pagar comerciales": 105,
+              "Impuestos por pagar": 28,
+              "Gastos acumulados por pagar": 21,
+              "Deudas de largo plazo": 154
+            },
+            "patrimonio": {
+              "Capital social": 500,
+              "Utilidades retenidas": -87,
+              "Resultado del período incluido en patrimonio": 77
+            }
+          },
+          "2023": {
+            "activos": {
+              "Efectivo y equivalentes": 144,
+              "Cuentas por cobrar comerciales": 96,
+              "Inventario de mercaderías": 208,
+              "Gastos pagados por anticipado": 16,
+              "Terrenos": 160,
+              "Edificios e instalaciones": 320,
+              "Mobiliario y equipo de oficina": 72,
+              "Vehículos": 88,
+              "Depreciación acumulada": -192
+            },
+            "pasivos": {
+              "Cuentas por pagar comerciales": 120,
+              "Impuestos por pagar": 32,
+              "Gastos acumulados por pagar": 24,
+              "Deudas de largo plazo": 176
+            },
+            "patrimonio": {
+              "Capital social": 500,
+              "Utilidades retenidas": -28,
+              "Resultado del período incluido en patrimonio": 88
+            }
+          },
+          "2024": {
+            "activos": {
+              "Efectivo y equivalentes": 162,
+              "Cuentas por cobrar comerciales": 108,
+              "Inventario de mercaderías": 234,
+              "Gastos pagados por anticipado": 18,
+              "Terrenos": 180,
+              "Edificios e instalaciones": 360,
+              "Mobiliario y equipo de oficina": 81,
+              "Vehículos": 99,
+              "Depreciación acumulada": -216
+            },
+            "pasivos": {
+              "Cuentas por pagar comerciales": 135,
+              "Impuestos por pagar": 36,
+              "Gastos acumulados por pagar": 27,
+              "Deudas de largo plazo": 198
+            },
+            "patrimonio": {
+              "Capital social": 500,
+              "Utilidades retenidas": 31,
+              "Resultado del período incluido en patrimonio": 99
+            }
+          },
+          "2025": {
+            "activos": {
+              "Efectivo y equivalentes": 180,
+              "Cuentas por cobrar comerciales": 120,
+              "Inventario de mercaderías": 260,
+              "Gastos pagados por anticipado": 20,
+              "Terrenos": 200,
+              "Edificios e instalaciones": 400,
+              "Mobiliario y equipo de oficina": 90,
+              "Vehículos": 110,
+              "Depreciación acumulada": -240
+            },
+            "pasivos": {
+              "Cuentas por pagar comerciales": 150,
+              "Impuestos por pagar": 40,
+              "Gastos acumulados por pagar": 30,
+              "Deudas de largo plazo": 220
+            },
+            "patrimonio": {
+              "Capital social": 500,
+              "Utilidades retenidas": 90,
+              "Resultado del período incluido en patrimonio": 110
+            }
+          }
+        },
+        "estadoResultados": {
+          "2021": {
+            "Ventas totales": 600,
+            "Devoluciones sobre ventas": 18,
+            "Descuentos sobre ventas": 6,
+            "Rebajas sobre ventas": 0,
+            "Costo de mercadería vendida": 336,
+            "Gastos administrativos": 90,
+            "Gastos de ventas": 54,
+            "Ingresos por intereses": 3,
+            "Gastos por intereses": 15,
+            "Gasto por impuesto sobre la renta": 18
+          },
+          "2022": {
+            "Ventas totales": 700,
+            "Devoluciones sobre ventas": 21,
+            "Descuentos sobre ventas": 7,
+            "Rebajas sobre ventas": 0,
+            "Costo de mercadería vendida": 392,
+            "Gastos administrativos": 105,
+            "Gastos de ventas": 63,
+            "Ingresos por intereses": 4,
+            "Gastos por intereses": 18,
+            "Gasto por impuesto sobre la renta": 21
+          },
+          "2023": {
+            "Ventas totales": 800,
+            "Devoluciones sobre ventas": 24,
+            "Descuentos sobre ventas": 8,
+            "Rebajas sobre ventas": 0,
+            "Costo de mercadería vendida": 448,
+            "Gastos administrativos": 120,
+            "Gastos de ventas": 72,
+            "Ingresos por intereses": 4,
+            "Gastos por intereses": 20,
+            "Gasto por impuesto sobre la renta": 24
+          },
+          "2024": {
+            "Ventas totales": 900,
+            "Devoluciones sobre ventas": 27,
+            "Descuentos sobre ventas": 9,
+            "Rebajas sobre ventas": 0,
+            "Costo de mercadería vendida": 504,
+            "Gastos administrativos": 135,
+            "Gastos de ventas": 81,
+            "Ingresos por intereses": 4,
+            "Gastos por intereses": 22,
+            "Gasto por impuesto sobre la renta": 27
+          },
+          "2025": {
+            "Ventas totales": 1000,
+            "Devoluciones sobre ventas": 30,
+            "Descuentos sobre ventas": 10,
+            "Rebajas sobre ventas": 0,
+            "Costo de mercadería vendida": 560,
+            "Gastos administrativos": 150,
+            "Gastos de ventas": 90,
+            "Ingresos por intereses": 5,
+            "Gastos por intereses": 25,
+            "Gasto por impuesto sobre la renta": 30
+          }
+        }
+      },
+      "esperado": {
+        "2021": {
+          "activosCorrientes": 348,
+          "activosFijos": 336,
+          "totalActivos": 684,
+          "pasivosCorrientes": 132,
+          "totalPasivos": 264,
+          "totalPatrimonio": 420,
+          "ventasBrutas": 600,
+          "ventas": 576,
+          "costoVentas": 336,
+          "utilidadBruta": 240,
+          "utilidadNeta": 66,
+          "razonCorriente": 2.64
+        },
+        "2022": {
+          "activosCorrientes": 406,
+          "activosFijos": 392,
+          "totalActivos": 798,
+          "pasivosCorrientes": 154,
+          "totalPasivos": 308,
+          "totalPatrimonio": 490,
+          "ventasBrutas": 700,
+          "ventas": 672,
+          "costoVentas": 392,
+          "utilidadBruta": 280,
+          "utilidadNeta": 77,
+          "razonCorriente": 2.64
+        },
+        "2023": {
+          "activosCorrientes": 464,
+          "activosFijos": 448,
+          "totalActivos": 912,
+          "pasivosCorrientes": 176,
+          "totalPasivos": 352,
+          "totalPatrimonio": 560,
+          "ventasBrutas": 800,
+          "ventas": 768,
+          "costoVentas": 448,
+          "utilidadBruta": 320,
+          "utilidadNeta": 88,
+          "razonCorriente": 2.64
+        },
+        "2024": {
+          "activosCorrientes": 522,
+          "activosFijos": 504,
+          "totalActivos": 1026,
+          "pasivosCorrientes": 198,
+          "totalPasivos": 396,
+          "totalPatrimonio": 630,
+          "ventasBrutas": 900,
+          "ventas": 864,
+          "costoVentas": 504,
+          "utilidadBruta": 360,
+          "utilidadNeta": 99,
+          "razonCorriente": 2.64
+        },
+        "2025": {
+          "activosCorrientes": 580,
+          "activosFijos": 560,
+          "totalActivos": 1140,
+          "pasivosCorrientes": 220,
+          "totalPasivos": 440,
+          "totalPatrimonio": 700,
+          "ventasBrutas": 1000,
+          "ventas": 960,
+          "costoVentas": 560,
+          "utilidadBruta": 400,
+          "utilidadNeta": 110,
+          "razonCorriente": 2.64
+        }
+      }
+    }
+  ]
+}

@@ -1,28 +1,25 @@
 import store from '../../store.js';
 import { formatCurrency, formatCurrencyND, formatPercent } from '../../utils/format.js';
+import { escapeHTML as esc } from '../../utils/html.js';
 import { exportJSON, exportCSV, exportHTML, importJSON } from '../../utils/export.js';
 import { showToast } from '../../components/toast.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
-import { normalizeFinancialData } from '../estados/estados-normalize.js';
+import { leerEstados } from '../../utils/estados-guardados.js';
 import { computeRazones, refreshSavedStates } from '../analisis/index.js';
+import { obtenerUtilidadNetaMotor } from '../razones/razones-app-adapter.js';
 import { validarRespaldo, MAX_RESPALDO_BYTES } from './integracion-respaldo.js';
 import { construirReporteHTML } from './integracion-reporte.js';
+
+// D-077: una sola lectura. Devuelve { estados, error } para quien necesita el
+// motivo y solo los estados para el resto.
+function leerGuardados() {
+  return leerEstados(store.get('estados'));
+}
 
 function getNormalizedStates() {
   // Single source of truth: the same normalized engine Análisis consumes, so
   // imported/custom account names are summed instead of the fixed-name lookup.
-  try {
-    return normalizeFinancialData({
-      ...store.get('estados'),
-      name: store.get('estados.name') || 'Datos guardados',
-      periods: store.get('estados.periods') || [],
-      balanceGeneral: store.get('estados.balanceGeneral') || {},
-      estadoResultados: store.get('estados.estadoResultados') || {},
-      accountTypes: store.get('estados.accountTypes')
-    });
-  } catch {
-    return null;
-  }
+  return leerGuardados().estados;
 }
 
 export function getSavedTotals(period) {
@@ -34,22 +31,19 @@ function computeDashboardKPIs() {
   // Periodos normalizados (orden cronológico) y caché de Análisis refrescada:
   // el ROA/endeudamiento del dashboard salen de computeRazones, la misma lógica
   // que la pestaña Análisis (no un cálculo paralelo con activo de cierre).
-  const states = getNormalizedStates();
+  const { estados, error } = leerGuardados();
   const rawPeriods = store.get('estados.periods') || [];
-  const periods = states ? states.periods : rawPeriods;
+  const periods = estados ? estados.periods : rawPeriods;
   const lastP = periods[periods.length - 1];
   if (!lastP) return null;
 
+  // D-078: sin respaldo por nombres fijos. Sin estados legibles, los totales
+  // salen N/D (null) y el estado del dashboard es el error real.
   const shared = getSavedTotals(lastP);
-  const bg = store.get('estados.balanceGeneral')?.[lastP] || {};
-  const er = store.get('estados.estadoResultados')?.[lastP] || {};
-  const sum = source => Object.values(source || {}).reduce((s, v) => s + v, 0);
-
-  const totalActivos = shared ? shared.totalActivos : sum(bg.activos);
-  const totalPasivos = shared ? shared.totalPasivos : sum(bg.pasivos);
-  const totalPatrimonio = shared ? shared.totalPatrimonio : sum(bg.patrimonio);
-  const ventas = shared ? shared.ventas : (er['Ventas'] || 0);
-  const utilidadNeta = shared ? shared.utilidadNeta : null;
+  const lectura = {
+    estado: estados ? 'ok' : 'error',
+    mensaje: error ? `No se pudieron leer los estados guardados: ${error}` : null
+  };
 
   refreshSavedStates();
   const razones = computeRazones(lastP);
@@ -60,10 +54,14 @@ function computeDashboardKPIs() {
   const quizScore = store.get('mercados.quizScore') || 0;
 
   return {
-    totalActivos, totalPasivos, totalPatrimonio,
-    ventas, utilidadNeta,
+    totalActivos: shared ? shared.totalActivos : null,
+    totalPasivos: shared ? shared.totalPasivos : null,
+    totalPatrimonio: shared ? shared.totalPatrimonio : null,
+    ventas: shared ? shared.ventas : null,
+    utilidadNeta: estados ? obtenerUtilidadNetaMotor(store.get('estados'), lastP).valor : null,
     presupuestoIngreso: ingreso, presupuestoMeta: meta,
     activosCount, quizScore,
+    lectura,
     // null (N/D) cuando el denominador no permite calcularla, como en Análisis.
     endeudamiento: razones.endeudamiento,
     roa: razones.ROA
@@ -124,13 +122,27 @@ function renderDashboard(page) {
     return;
   }
 
+  // D-078: el estado de Estados Financieros es el real — activo, o con error
+  // visible cuando los estados guardados no se pueden leer (nunca «Activo» fijo).
+  const enError = kpis.lectura.estado === 'error';
+  const aviso = enError
+    ? `<p class="form-hint mb-4" style="color:var(--color-danger)">${esc(kpis.lectura.mensaje)}</p>`
+    : '';
+  const insigniaEstados = enError
+    ? '<span class="badge badge-danger">Con error</span>'
+    : '<span class="badge badge-success">Activo</span>';
+  const detalleEstados = enError
+    ? 'Los estados guardados no se pueden leer: las cifras de la empresa salen N/D.'
+    : kpis.totalActivos != null ? 'Datos cargados' : 'Sin datos';
+
   el.innerHTML = `
+    ${aviso}
     <div class="kpi-grid mb-8">
       <div class="kpi-card"><div class="kpi-value">${formatCurrencyND(kpis.totalActivos)}</div><div class="kpi-label">Total Activos</div></div>
       <div class="kpi-card"><div class="kpi-value" style="color:var(--color-danger)">${formatCurrencyND(kpis.totalPasivos)}</div><div class="kpi-label">Total Pasivos</div></div>
       <div class="kpi-card"><div class="kpi-value" style="color:var(--color-success)">${formatCurrencyND(kpis.totalPatrimonio)}</div><div class="kpi-label">Patrimonio</div></div>
       <div class="kpi-card"><div class="kpi-value">${formatCurrencyND(kpis.ventas)}</div><div class="kpi-label">Ventas</div></div>
-      <div class="kpi-card"><div class="kpi-value ${kpis.utilidadNeta >= 0 ? '' : 'text-danger'}">${formatCurrencyND(kpis.utilidadNeta)}</div><div class="kpi-label">Utilidad Neta</div></div>
+      <div class="kpi-card"><div class="kpi-value ${kpis.utilidadNeta != null && kpis.utilidadNeta >= 0 ? '' : 'text-danger'}">${formatCurrencyND(kpis.utilidadNeta)}</div><div class="kpi-label">Utilidad Neta</div></div>
       <div class="kpi-card"><div class="kpi-value">${kpis.endeudamiento == null ? 'N/D' : formatPercent(kpis.endeudamiento)}</div><div class="kpi-label">Endeudamiento</div></div>
       <div class="kpi-card"><div class="kpi-value">${kpis.roa == null ? 'N/D' : formatPercent(kpis.roa)}</div><div class="kpi-label">ROA</div></div>
     </div>
@@ -140,7 +152,7 @@ function renderDashboard(page) {
         <thead><tr><th>Módulo</th><th>Estado</th><th>Detalle</th></tr></thead>
         <tbody>
           <tr><th scope="rowgroup" colspan="3">Empresa</th></tr>
-          <tr><td>Estados Financieros</td><td><span class="badge badge-success">Activo</span></td><td>${kpis.totalActivos > 0 ? 'Datos cargados' : 'Sin datos'}</td></tr>
+          <tr><td>Estados Financieros</td><td>${insigniaEstados}</td><td>${detalleEstados}</td></tr>
           <tr><th scope="rowgroup" colspan="3">Finanzas personales (independientes de la empresa)</th></tr>
           <tr><td>Presupuesto personal</td><td><span class="badge ${kpis.presupuestoIngreso > 0 ? 'badge-success' : 'badge-warning'}">${kpis.presupuestoIngreso > 0 ? 'Configurado' : 'Sin configurar'}</span></td><td>Ingreso: ${formatCurrency(kpis.presupuestoIngreso)}</td></tr>
           <tr><td>Activos del hogar</td><td><span class="badge ${kpis.activosCount > 0 ? 'badge-success' : 'badge-warning'}">${kpis.activosCount > 0 ? 'Con bienes' : 'Sin bienes'}</span></td><td>${kpis.activosCount} bienes registrados</td></tr>
@@ -192,7 +204,11 @@ function bindExportEvents(page) {
     showToast('CSV exportado (reimportable en Estados)', 'success');
   });
 
-  const cuerpoReporte = () => construirReporteHTML({ kpis: computeDashboardKPIs(), estados: getNormalizedStates() });
+  const cuerpoReporte = () => {
+    const { error } = leerGuardados();
+    // D-078: el reporte distingue «no hay datos» de «hay datos que no se leen».
+    return construirReporteHTML({ kpis: computeDashboardKPIs(), estados: getNormalizedStates(), errorEstados: error });
+  };
 
   page.querySelector('#btnPreviewHTML')?.addEventListener('click', () => {
     const preview = page.querySelector('#exportPreview');

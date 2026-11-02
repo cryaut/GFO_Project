@@ -14,9 +14,17 @@ function datosBase(dosPeriodos = true) {
       patrimonio: { 'Capital Social': 800 }
     }])),
     estadoResultados: Object.fromEntries(periods.map(p => [p, {
-      Ventas: 1000, 'Costo de Ventas': 400, 'Gastos de Administracion': 200,
+      Ventas: 1000, 'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+      'Costo de Ventas': 400, 'Gastos de Administracion': 200,
       'Gastos de Ventas': 100, 'Gastos por Intereses': 20, 'Impuesto sobre la Renta': 50
-    }]))
+    }])),
+    // El nombre es propio del ejercicio; la identidad confirma el candidato
+    // compatible con el tipo que usaba el adaptador legado.
+    accountIdentities: {
+      pasivos: {
+        'Prestamo Largo Plazo': { idCuenta: 'bs.long_term_borrowings', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' }
+      }
+    }
   });
 }
 
@@ -47,7 +55,7 @@ async function cargar(datos) {
 }
 
 it('costo N/D conserva N/D antes de restar márgenes, cobertura y compras', async () => {
-  const datos = registrarCuenta(datosBase(), { nombre: 'Rubro X', grupo: 'estadoResultados',
+  const datos = registrarCuenta(agregarCeros(datosBase(), ['bs.short_term_investments', 'bs.other_current_receivables', 'bs.prepaid_expenses', 'bs.other_current_assets', 'bs.short_term_borrowings', 'bs.current_portion_long_term_debt', 'bs.taxes_payable', 'bs.accrued_expenses_payable', 'bs.current_provisions', 'bs.other_current_liabilities', 'bs.inventory_raw_materials', 'bs.inventory_work_in_process', 'bs.inventory_finished_goods']), { nombre: 'Rubro X', grupo: 'estadoResultados',
     clasificacion: 'costoVentas', periodo: '2025', importe: 10 });
   expect(datos.accountIdentities.estadoResultados['Rubro X'].estado).not.toBe('reconocida');
   const analisis = await cargar(datos);
@@ -70,8 +78,8 @@ it('gasto administrativo N/D no se convierte en utilidad operativa para cobertur
   expect(r.coberturaIntereses).toBeNull();
   expect(r.margenOperativo).toBeNull();
   expect(r.margenBruto).toBe(0.6); // (1000 − 400) / 1000.
-  expect(r.notAvailableReasons).toContainEqual(expect.objectContaining({ campo: 'utilidadOperativa',
-    operandos: expect.arrayContaining(['gastosAdmin']) }));
+  expect(r.notAvailableReasons).toContainEqual(expect.objectContaining({ campo: 'margenOperativo', motivo: 'ambiguous_account_match',
+    operandos: expect.arrayContaining(['is.administrative_expenses']) }));
 });
 
 it('activo corriente pendiente anula RC y la resta del capital de trabajo, sin falsos negativos', async () => {
@@ -85,8 +93,8 @@ it('activo corriente pendiente anula RC y la resta del capital de trabajo, sin f
   expect(r.denominadores.rotacionCapitalTrabajo).toBeNull();
   expect(r.rotacionActivosFijos).toBe(2); // 1000 / Terrenos 500.
   expect(r.margenBruto).toBe(0.6);
-  expect(r.notAvailableReasons).toContainEqual(expect.objectContaining({ campo: 'capitalNetoTrabajo',
-    operandos: expect.arrayContaining(['activosCorrientes']) }));
+  expect(r.notAvailableReasons).toContainEqual(expect.objectContaining({ campo: 'capitalNetoTrabajo', motivo: 'ambiguous_account_match',
+    operandos: expect.arrayContaining(['bs.other_current_assets']) }));
 });
 
 it('un solo periodo sigue usando saldos finales y CxP requiere pagos declarados (D-059)', async () => {
@@ -125,8 +133,9 @@ it('cero explícito produce margen y cobertura cero, y no N/D', async () => {
   Object.assign(datos.estadoResultados['2025'], { 'Costo de Ventas': 1000,
     'Gastos de Administracion': 0, 'Gastos de Ventas': 0 });
   const analisis = await cargar(datos);
-  expect(analisis.computeRazones('2025')).toMatchObject({ margenBruto: 0, margenOperativo: 0,
-    coberturaIntereses: 0, notAvailableReasons: [] });
+  const r = analisis.computeRazones('2025');
+  expect(r).toMatchObject({ margenBruto: 0, margenOperativo: 0, coberturaIntereses: 0 });
+  expect(r.notAvailableReasons.filter(m => ['margenBruto', 'margenOperativo', 'coberturaIntereses'].includes(m.campo))).toEqual([]);
 });
 
 it('un pendiente cero no cambia las razones ni sus motivos', async () => {

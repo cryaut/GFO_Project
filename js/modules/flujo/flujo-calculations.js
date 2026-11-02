@@ -1,13 +1,13 @@
 // Estado de flujo de efectivo por actividades (método directo: entradas y salidas de efectivo).
 // Lógica pura: sin DOM, window ni store. Plan: docs/planificacion/modulos-guia/01-modulos-obligatorios.md.
 import { flujoNeto, saldoFinalEfectivo, variacionNetaEfectivo } from '../../utils/calculate.js';
+import { toleranciaComprobacion } from '../analisis/comprobacion-calculations.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
 
 export const ACTIVIDADES = ['operacion', 'inversion', 'financiamiento'];
 export const ETIQUETA_ACTIVIDAD = { operacion: 'Operación', inversion: 'Inversión', financiamiento: 'Financiamiento' };
 export const TIPOS_FLUJO = ['entrada', 'salida'];
 export const MAX_TEXTO = 80;
-const TOLERANCIA = 0.005;
 
 function esNumero(valor) {
   return typeof valor === 'number' && Number.isFinite(valor);
@@ -89,7 +89,8 @@ export function conciliarConBalance(resultado, estados, periodoBase) {
     return null;
   }
   const diferencia = resultado.saldoFinal - efectivo;
-  return { periodo, efectivo, diferencia, cuadra: Math.abs(diferencia) < TOLERANCIA };
+  // D-071: misma tolerancia del EFE y del EOAF (un centavo más redondeo), con <=.
+  return { periodo, efectivo, diferencia, cuadra: Math.abs(diferencia) <= toleranciaComprobacion(resultado.saldoFinal, efectivo) };
 }
 
 // Ejemplo ficticio de MUNO MODA para un año (caso del paso 01): saldo inicial igual al

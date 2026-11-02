@@ -89,10 +89,24 @@ describe('casos especiales y validación', () => {
     expect(r.avisos).toContainEqual(expect.objectContaining({ codigo: 'sin-compras', periodo: 'Trimestre 1', sobrante: 690 }));
   });
 
-  it('avisa cuando el inventario final queda bajo el stock mínimo del producto', () => {
-    const r = calcularPresupuestoMaestro({ ...ejemplo, stockMinimo: 70 });
+  it('avisa cuando el inventario final llega al stock mínimo del producto (D-082)', () => {
+    // D-082: el mínimo sale del producto en Inventario (por productoId), no de
+    // una copia en los supuestos; la igualdad también avisa (necesitaReposicion).
+    // Inventarios finales del ejemplo: T1 60, T2 60, T3 80, T4 56.
+    const supuestos = { ...ejemplo, productoId: 'prod-1' };
+    const inventario = minimo => ({
+      productos: [{ id: 'prod-1', nombre: 'Producto', unidad: 'unidades', stockMinimo: minimo, existenciaFinal: 0, costoPromedio: 480, reponer: false, faltante: 0, costoReposicion: 0 }]
+    });
+    const r = calcularPresupuestoMaestro(supuestos, inventario(70));
     expect(r.avisos.filter(a => a.codigo === 'bajo-stock-minimo').map(a => a.periodo))
       .toEqual(['Trimestre 1', 'Trimestre 2', 'Trimestre 4']);
+    // Con mínimo 80, el Trimestre 3 (80 = 80) ahora también avisa por la igualdad.
+    const r2 = calcularPresupuestoMaestro(supuestos, inventario(80));
+    expect(r2.avisos.filter(a => a.codigo === 'bajo-stock-minimo').map(a => a.periodo))
+      .toEqual(['Trimestre 1', 'Trimestre 2', 'Trimestre 3', 'Trimestre 4']);
+    // Sin productoId (datos viejos) no hay mínimo: sin avisos de stock.
+    const r3 = calcularPresupuestoMaestro(supuestos, null);
+    expect(r3.avisos.some(a => a.codigo === 'bajo-stock-minimo')).toBe(false);
   });
 
   it('valida los supuestos', () => {
@@ -183,9 +197,11 @@ describe('pantalla del presupuesto maestro', () => {
     await clic(page, 'planTomarInventario');
     expect(mensaje(page, 'planMensaje')).toContain('Camisa casual');
     await enviar(page, 'formPlaneacion');
+    // D-082: se guarda productoId (el mínimo y el costo se leen del producto
+    // vigente); el costo de la demo es su costo promedio (sin costo en movimientos).
     expect(guardar.mock.lastCall[0].supuestos).toMatchObject({
       saldoInicialCaja: 52000, cxcInicial: 135000, cxpInicial: 92000,
-      inventarioInicial: 35, costoUnitario: 350, stockMinimo: 40, productoInventario: 'Camisa casual'
+      inventarioInicial: 35, costoUnitario: 350, productoId: 'demo-camisa', productoInventario: 'Camisa casual'
     });
   });
 });

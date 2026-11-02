@@ -19,7 +19,8 @@ function estadosMuno() {
     patrimonio: { 'Capital Social': 200000, 'Utilidades Acumuladas': util }
   });
   const resultados = (v, cv, ga, gv, oi, og) => ({
-    'Ventas': v, 'Costo de Ventas': cv, 'Gastos de Administracion': ga, 'Gastos de Ventas': gv, 'Otros Ingresos': oi, 'Otros Gastos': og
+    'Ventas': v, 'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+    'Costo de Ventas': cv, 'Gastos de Administracion': ga, 'Gastos de Ventas': gv, 'Otros Ingresos': oi, 'Otros Gastos': og
   });
   return normalizeFinancialData({
     name: 'MUNO MODA S.A.', periods: ['2023', '2024'],
@@ -30,6 +31,17 @@ function estadosMuno() {
     estadoResultados: {
       2023: resultados(850000, 510000, 120000, 85000, 15000, 10000),
       2024: resultados(920000, 545000, 130000, 90000, 18000, 12000)
+    },
+    accountIdentities: {
+      pasivos: {
+        'Pasivo Corto Plazo': { idCuenta: 'bs.other_current_liabilities', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' },
+        'Provisiones': { idCuenta: 'bs.current_provisions', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' },
+        'Pasivo Largo Plazo': { idCuenta: 'bs.long_term_borrowings', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' }
+      },
+      estadoResultados: {
+        'Otros Ingresos': { idCuenta: 'is.nonoperating_income', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' },
+        'Otros Gastos': { idCuenta: 'is.noninterest_nonoperating_expenses', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' }
+      }
     }
   });
 }

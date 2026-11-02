@@ -163,7 +163,9 @@ describe('Reportes: utilidad neta y periodo solicitado (ronda 15)', () => {
       activos: { Banco: 1000 }, pasivos: { Prestamo: 300 }, patrimonio: { Aportes: 700 }
     } },
     estadoResultados: { '2023': {
-      Servicios: 1000, Insumos: 400, Administracion: 100, Publicidad: 50,
+      Servicios: 1000,
+      'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+      Insumos: 400, Administracion: 100, Publicidad: 50,
       'Intereses ganados': 30, 'Gasto extraordinario': 10,
       'Intereses pagados': 20, 'Renta del ejercicio': 90
     } },
@@ -176,6 +178,18 @@ describe('Reportes: utilidad neta y periodo solicitado (ronda 15)', () => {
         'Gasto extraordinario': 'otrosGastos', 'Intereses pagados': 'intereses',
         'Renta del ejercicio': 'impuestos'
       }
+    },
+    accountIdentities: {
+      pasivos: {
+        Prestamo: { idCuenta: 'bs.long_term_borrowings', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      },
+      patrimonio: {
+        Aportes: { idCuenta: 'bs.additional_paid_in_capital', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      },
+      estadoResultados: {
+        Servicios: { idCuenta: 'is.service_revenue', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' },
+        Insumos: { idCuenta: 'is.service_cost', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'importacion' }
+      }
     }
   });
 
@@ -186,9 +200,13 @@ describe('Reportes: utilidad neta y periodo solicitado (ronda 15)', () => {
     refreshSavedStates();
     // 1000 - 400 - 100 - 50 + 30 - 10 - 20 - 90 = 360.
     expect(getSavedTotals('2023').utilidadNeta).toBe(360);
-    expect(computeRazones('2023').MN * 1000).toBeCloseTo(360, 6);
+    // El documento anterior solo acredita dos identidades de resultados; el
+    // motor no convierte las demás filas en identidades por su nombre.
+    const razones = computeRazones('2023');
+    expect(razones.MN).toBeNull();
+    expect(razones.notAvailableReasons.some(m => m.campo === 'MN')).toBe(true);
     expect(store.get('analisis.resultados')).toEqual({});
-    expect(page.querySelector('#dashboardContent').innerHTML).toMatch(/360\.00[\s\S]*?Utilidad Neta/);
+    expect(page.querySelector('#dashboardContent').innerHTML).toMatch(/N\/D<\/div><div class="kpi-label">Utilidad Neta/);
   });
 
   it('un periodo inexistente da N/D sin sustituirlo por el disponible', async () => {

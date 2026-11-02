@@ -1,7 +1,7 @@
 // Punto de equilibrio y análisis costo-volumen-utilidad (C-V-U).
 // Lógica pura: sin DOM, window ni store. Plan: docs/planificacion/modulos-guia/01-modulos-obligatorios.md.
 import {
-  gao, margenContribucionUnitario, margenSeguridad, puntoEquilibrioUnidades,
+  gao, casiCero, margenContribucionUnitario, margenSeguridad, puntoEquilibrioUnidades,
   puntoEquilibrioVentas, razonMargenContribucion, unidadesUtilidadObjetivo
 } from '../../utils/calculate.js';
 import { calcularApalancamiento } from '../apalancamiento/apalancamiento-calculations.js';
@@ -27,14 +27,22 @@ function menos(a, b) {
   return esNumero(a) && esNumero(b) ? a - b : null;
 }
 
-// Datos guardados → { precio, costoVariableUnitario, costosFijos, unidades, utilidadObjetivo, escenario }.
+// Datos guardados → { origen, periodo, precio, costoVariableUnitario, costosFijos,
+// unidades, utilidadObjetivo, escenario }. D-074: origen «estados» guarda solo el
+// origen, el periodo y las unidades (la base se deriva en cada consulta); datos
+// sin `origen` se leen como «manual» (migración), igual que el formato de hoy.
+// D-075: en los escenarios, un valor vacío sigue siendo 0, pero uno que no es
+// número se conserva como null para que validarEquilibrio lo reporte.
 export function normalizarEquilibrio(datos) {
   const escenario = {};
   for (const campo of CAMPOS_ESCENARIO) {
     const valor = datos?.escenario?.[campo];
-    escenario[campo] = esNumero(valor) && valor > -1 ? valor : 0;
+    escenario[campo] = valor === undefined || valor === null || valor === '' ? 0
+      : esNumero(valor) ? valor : null;
   }
   return {
+    origen: datos?.origen === 'estados' ? 'estados' : 'manual',
+    periodo: typeof datos?.periodo === 'string' ? datos.periodo : '',
     precio: numeroONull(datos?.precio),
     costoVariableUnitario: numeroONull(datos?.costoVariableUnitario),
     costosFijos: numeroONull(datos?.costosFijos),
@@ -54,11 +62,18 @@ export function validarEquilibrio(datos) {
   if (!esNumero(datos.costosFijos) || datos.costosFijos < 0) errores.push('Los costos fijos deben ser un número mayor o igual a 0.');
   if (!esNumero(datos.unidades) || datos.unidades < 0) errores.push('Las unidades vendidas deben ser un número mayor o igual a 0.');
   if (datos.utilidadObjetivo !== null && !esNumero(datos.utilidadObjetivo)) errores.push('La utilidad objetivo debe ser un número.');
+  // D-075: cada campo del escenario se reporta por su nombre (un valor no
+  // numérico llega aquí como null, sin convertirse en 0).
+  const etiquetasEscenario = {
+    precio: 'precio', costoVariable: 'costo variable', costosFijos: 'costos fijos', volumen: 'volumen'
+  };
   for (const campo of CAMPOS_ESCENARIO) {
     const valor = datos.escenario?.[campo];
-    if (!esNumero(valor) || valor <= -1) errores.push('Cada cambio del escenario debe ser mayor que −100 %.');
+    if (valor === null || !esNumero(valor) || valor <= -1) {
+      errores.push(`El cambio de ${etiquetasEscenario[campo]} del escenario debe ser un número mayor que −100 %.`);
+    }
   }
-  return [...new Set(errores)];
+  return errores;
 }
 
 // Resultados de un caso. Cada valor es un número o null (N/D).
@@ -74,6 +89,17 @@ export function calcularCVU(datos) {
   const uaii = menos(mcTotal, cf);
   const unidadesObjetivo = esNumero(datos.utilidadObjetivo)
     ? unidadesUtilidadObjetivo(cf, datos.utilidadObjetivo, mcu) : null;
+  // D-073: el GAO solo existe con margen y UAII positivos; el motivo explica
+  // por qué falta, en este orden: sin ventas, margen no positivo, UAII no
+  // positiva, dato faltante.
+  const valorGao = gao(mcTotal, uaii);
+  let motivoGao = null;
+  if (valorGao === null) {
+    if (!esNumero(q) || q <= 0) motivoGao = 'sin-ventas';
+    else if (!esNumero(mcTotal) || mcTotal <= 0 || casiCero(mcTotal)) motivoGao = 'margen-no-positivo';
+    else if (!esNumero(uaii) || uaii <= 0 || casiCero(uaii)) motivoGao = 'uaii-no-positiva';
+    else motivoGao = 'dato-faltante';
+  }
   return {
     precio, cvu, cf, q, mcu, rmc, peUnidades, peVentas,
     // Unidades enteras que hay que vender para no perder.
@@ -84,7 +110,8 @@ export function calcularCVU(datos) {
     msUnidades: peUnidades === null ? null : menos(q, peUnidades),
     msVentas: peVentas === null ? null : menos(ventas, peVentas),
     msPorcentaje: peUnidades === null ? null : margenSeguridad(q, peUnidades),
-    gao: gao(mcTotal, uaii),
+    gao: valorGao,
+    motivoGao,
     utilidadObjetivo: numeroONull(datos.utilidadObjetivo),
     unidadesObjetivo,
     ventasObjetivo: por(unidadesObjetivo, precio)
@@ -125,7 +152,10 @@ export function calcularEscenarios(datos) {
     { id: 'volumen-baja', nombre: `Volumen −${pct}`, cambios: { volumen: -CAMBIO_ESCENARIO } }
   ];
   const personalizado = datos.escenario || {};
-  if (CAMPOS_ESCENARIO.some(c => personalizado[c])) {
+  // D-075: el escenario personalizado no se calcula mientras tenga un valor
+  // inválido (null); los escenarios predefinidos sí.
+  const personalizadoValido = CAMPOS_ESCENARIO.every(campo => personalizado[campo] !== null);
+  if (CAMPOS_ESCENARIO.some(campo => personalizado[campo]) && personalizadoValido) {
     lista.push({ id: 'personalizado', nombre: nombreCambios(personalizado), cambios: personalizado });
   }
   const base = calcularCVU(datos);
@@ -169,10 +199,20 @@ export function baseDesdeEstados(estados, configApalancamiento, periodo, unidade
   const derivado = resultado.periodos.find(p => p.periodo === periodo);
   const v = derivado.variables;
   if (v.cv === null || v.cf === null) {
-    const faltan = derivado.faltantes.filter(f => f.cuenta).map(f => f.cuenta);
+    // D-076: el motivo distingue una cuenta fuera del catálogo de una cuenta del
+    // catálogo sin comportamiento fijo o variable asignado.
+    const conCuenta = derivado.faltantes.filter(f => f.cuenta);
+    const fueraDelCatalogo = conCuenta.filter(f => f.tipo === 'sinClasificacion').map(f => f.cuenta);
+    const sinComportamiento = conCuenta.filter(f => f.tipo === 'sinComportamiento').map(f => f.cuenta);
+    const partes = [];
+    for (const cuenta of fueraDelCatalogo) {
+      partes.push(`La cuenta «${cuenta}» no está en el catálogo de cuentas: revise su nombre en Estados Financieros.`);
+    }
+    if (sinComportamiento.length) {
+      partes.push(`Clasifique en Apalancamiento como fijas o variables: ${sinComportamiento.join(', ')}.`);
+    }
     return {
-      error: faltan.length
-        ? `Clasifique en Apalancamiento como fijas o variables: ${faltan.join(', ')}.`
+      error: partes.length ? partes.join(' ')
         : 'Los estados del periodo no permiten separar costos fijos y variables.'
     };
   }
@@ -181,6 +221,52 @@ export function baseDesdeEstados(estados, configApalancamiento, periodo, unidade
     periodo,
     variables: v,
     base: { precio: v.ventas / unidades, costoVariableUnitario: v.cv / unidades, costosFijos: v.cf, unidades }
+  };
+}
+
+// D-074: aviso de divergencia del CF manual contra el CF de estados del último
+// periodo. La diferencia pasa del 0,5 % del CF de estados (mínimo 0,005 C$).
+// Devuelve null cuando no hay con qué comparar o la diferencia está dentro.
+function avisoCostosFijos(cfManual, estados, configApalancamiento) {
+  if (!estados || !esNumero(cfManual)) return null;
+  let ultimo = null;
+  try {
+    const resultado = calcularApalancamiento(estados, configApalancamiento || {});
+    ultimo = resultado.periodos[resultado.periodos.length - 1];
+  } catch {
+    return null;
+  }
+  const cfEstados = ultimo?.variables?.cf;
+  if (!esNumero(cfEstados)) return null;
+  const diferencia = cfManual - cfEstados;
+  const umbral = Math.max(0.005, 0.005 * Math.abs(cfEstados));
+  if (Math.abs(diferencia) <= umbral) return null;
+  return {
+    cfManual, cfEstados, diferencia,
+    diferenciaPct: Math.abs(diferencia) / Math.abs(cfEstados)
+  };
+}
+
+// D-074: fuente única de costos. Origen «estados»: la base se deriva en cada
+// consulta con la clasificación de Apalancamiento y no se guardan copias.
+// Origen «manual» (o datos sin origen, por migración): la captura de hoy, con
+// el aviso de divergencia del CF. La pantalla solo usa esta función.
+export function resolverBase(datos, estados, configApalancamiento) {
+  const origen = datos?.origen === 'estados' ? 'estados' : 'manual';
+  if (origen === 'estados') {
+    const r = baseDesdeEstados(estados, configApalancamiento, datos?.periodo, datos?.unidades);
+    if (r.error) return { origen, error: r.error, avisoCF: null };
+    return { origen, base: r.base, periodo: r.periodo, error: null, avisoCF: null };
+  }
+  const base = {
+    precio: numeroONull(datos?.precio),
+    costoVariableUnitario: numeroONull(datos?.costoVariableUnitario),
+    costosFijos: numeroONull(datos?.costosFijos),
+    unidades: numeroONull(datos?.unidades)
+  };
+  return {
+    origen, base, periodo: null, error: null,
+    avisoCF: avisoCostosFijos(base.costosFijos, estados, configApalancamiento)
   };
 }
 

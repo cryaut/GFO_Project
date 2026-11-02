@@ -5,6 +5,7 @@ import { ahPctDelta, ahorroMensual, capacidadAhorro, depAcumulada, depAnualLinea
 import { totalesPeriodo } from '../../utils/estados-guardados.js';
 import { formatCurrencyND as monto, formatNumberND, formatPercentND as pct } from '../../utils/format.js';
 import { razon } from '../proforma/proforma-calculations.js';
+import { descripcionReposicion } from '../inventario/inventario-calculations.js';
 
 const esNumero = valor => typeof valor === 'number' && Number.isFinite(valor);
 const veces = valor => formatNumberND(valor);
@@ -186,8 +187,11 @@ function areaInventario(inventario) {
   const puntos = [punto('Valor del inventario', inventario.valorTotal, 'monto'), punto('Productos', inventario.productos.length, 'unidades'),
     punto('Por reponer', n, 'unidades')];
   if (n) {
+    // D-082: misma redacción de la alerta que la pantalla de Inventario, por producto.
+    const detalle = inventario.porReponer
+      .map(p => `${p.nombre}: ${descripcionReposicion(p)}`).join(' ');
     return area('inventario', 'Inventario', '#/inventario', 'alerta', puntos,
-      `${n} producto(s) bajo el stock mínimo. Compra mínima estimada: ${monto(inventario.costoReposicionTotal)}.`);
+      `${n} producto(s) por reponer. ${detalle}`);
   }
   return area('inventario', 'Inventario', '#/inventario', 'ok', puntos, 'Todos los productos están sobre el stock mínimo.');
 }

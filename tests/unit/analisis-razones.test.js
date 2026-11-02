@@ -10,6 +10,9 @@ const identidad = idCuenta => ({ idCuenta, estado: 'reconocida', metodo: 'id',
 function estados(interesesBancarios) {
   const estadoResultados = {
     'Ingresos por ventas': 1000,
+    'Devoluciones sobre ventas': 0,
+    'Descuentos sobre ventas': 0,
+    'Rebajas sobre ventas': 0,
     'Costo de lo vendido': 400,
     'Sueldos administrativos': 200,
     'Publicidad': 100,
@@ -118,13 +121,12 @@ describe('plazos en días (año de 365)', () => {
     // D-059: el fixture declara ventas a crédito iguales a sus ventas totales.
     expect(razones.RotCxC).toBe(10); // 1000 / 100
     expect(razones.PPC).toBeCloseTo(36.5, 6); // 365 / 10
-    // Compras = 400 + inventario (no hay periodo previo): se aproxima con costo de ventas.
-    expect(razones.rotacionCxP).toBe(8); // 400 / 50
-    expect(razones.plazoPago).toBeCloseTo(45.625, 6);
-    expect(razones.cicloConversion).toBeCloseTo(82.125, 6); // 36.5 + 91.25 − 45.625
-    expect(html).toContain('Rotación CxC (ventas totales)');
-    expect(html).toContain('con ventas totales');
-    expect(html).toContain('Ciclo de conversión de efectivo mayor a 60 días');
+    // Sin pagos a proveedores ni saldo anterior, D-059 exige N/D.
+    expect(razones.rotacionCxP).toBeNull();
+    expect(razones.plazoPago).toBeNull();
+    expect(razones.cicloConversion).toBeNull();
+    expect(html).toContain('Rotación CxC (ventas a crédito)');
+    expect(html).toContain('ventas a crédito');
     expect(html).not.toContain('NaN');
   });
 

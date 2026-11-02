@@ -1,5 +1,7 @@
 # Contexto maestro — conexión de razones y ronda 19
 
+> **Actualización del 2 de noviembre:** se preparó la integración con `main` `fc2ebfd`. F8 elimina los respaldos por nombres; Análisis usa el motor y conserva el aviso de lectura de F8; Reportes toma la utilidad del motor. Las pruebas focalizadas R4/F8 pasaron 156/156, la aceptación 1c 225/225 y la comparación con libros 301/301 (300 celdas más la comprobación de estructura). La suite completa pasó 2007/2007 en 58 archivos antes de añadir una guarda estática, que pasó por separado. Lint: 0 errores y 10 advertencias. La validación final y el PR dependen de cerrar y revisar el merge; las secciones siguientes conservan el estado histórico del 25 de octubre.
+
 **Actualizado:** 25 de octubre de 2026 (America/Managua)
 
 **Proyecto:** GFO Toolkit

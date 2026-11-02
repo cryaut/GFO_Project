@@ -117,14 +117,14 @@ describe('advertencias de balance', () => {
 
   it('no avisa cuando A = P + O en los dos periodos', () => {
     const bg = { activos: { Efectivo: 100 }, pasivos: { CxP: 40 }, patrimonio: { Capital: 60 } };
-    expect(advertenciasDeBalance(periodos, bg, bg)).toEqual([]);
+    expect(advertenciasDeBalance({}, periodos, bg, bg)).toEqual([]);
   });
 
   it('avisa del periodo descuadrado con la diferencia exacta', () => {
     // 2024: 100 = 40 + 60. 2025: activos 120 contra 40 + 60 = 100 → descuadre de 20.
     const bgInicial = { activos: { Efectivo: 100 }, pasivos: { CxP: 40 }, patrimonio: { Capital: 60 } };
     const bgFinal = { activos: { Efectivo: 120 }, pasivos: { CxP: 40 }, patrimonio: { Capital: 60 } };
-    const avisos = advertenciasDeBalance(periodos, bgInicial, bgFinal);
+    const avisos = advertenciasDeBalance({}, periodos, bgInicial, bgFinal);
     expect(avisos).toHaveLength(1);
     expect(avisos[0]).toContain('periodo 2025');
     expect(avisos[0]).toContain('no cumple A = P + O');
@@ -133,6 +133,6 @@ describe('advertencias de balance', () => {
 
   it('un descuadre de medio centavo se tolera', () => {
     const bg = { activos: { Efectivo: 100.005 }, pasivos: { CxP: 40 }, patrimonio: { Capital: 60 } };
-    expect(advertenciasDeBalance(periodos, bg, bg)).toEqual([]);
+    expect(advertenciasDeBalance({}, periodos, bg, bg)).toEqual([]);
   });
 });

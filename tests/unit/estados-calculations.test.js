@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   ACCOUNT_TYPES, inferAccountType, computeFinancialTotals,
-  validateFinancialData, estadosCalculations
+  validateFinancialData, estadosCalculations, seleccionarPeriodos
 } from '../../js/modules/estados/estados-calculations.js';
 import { normalizeFinancialData, parseFinancialJSON } from '../../js/modules/estados/estados-normalize.js';
 
@@ -37,11 +37,15 @@ const DATA = {
   },
   estadoResultados: {
     '2023': {
-      'Ventas': 850000, 'Costo de Ventas': 510000, 'Gastos de Administracion': 120000,
+      'Ventas': 850000,
+      'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+      'Costo de Ventas': 510000, 'Gastos de Administracion': 120000,
       'Gastos de Ventas': 85000, 'Otros Ingresos': 15000, 'Otros Gastos': 10000
     },
     '2024': {
-      'Ventas': 920000, 'Costo de Ventas': 545000, 'Gastos de Administracion': 130000,
+      'Ventas': 920000,
+      'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+      'Costo de Ventas': 545000, 'Gastos de Administracion': 130000,
       'Gastos de Ventas': 90000, 'Otros Ingresos': 18000, 'Otros Gastos': 12000
     }
   }
@@ -119,7 +123,9 @@ describe('computeFinancialTotals', () => {
     },
     estadoResultados: {
       '2024': {
-        'Ventas': 500, 'Costo de Ventas': 300, 'Gastos de Administración': 40,
+        'Ventas': 500,
+        'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+        'Costo de Ventas': 300, 'Gastos de Administración': 40,
         'Gastos de Ventas': 30, 'Otros Ingresos': 5, 'Otros Gastos': 3,
         'Intereses': 2, 'Impuestos': 10
       }
@@ -147,6 +153,136 @@ describe('computeFinancialTotals', () => {
     expect(t.totalPatrimonio).toBe(587815);
     expect(t.utilidadNeta).toBe(920000 - 545000 - 130000 - 90000 + 18000 - 12000);
     expect(t.activosCorrientes).toBe(412000);
+  });
+
+  const conEstados = (balance, resultados = {}) => normalizeFinancialData({
+    periods: ['2024'],
+    balanceGeneral: { '2024': balance },
+    estadoResultados: { '2024': resultados }
+  });
+
+  it('exige la depreciación cuando hay activos fijos distintos de terrenos', () => {
+    const datos = conEstados({
+      activos: { Efectivo: 100, Edificios: 300 },
+      pasivos: {}, patrimonio: { 'Capital Social': 400 }
+    });
+    const t = computeFinancialTotals(datos, '2024');
+    expect(t.activosFijos).toBeNull();
+    expect(t.totalActivos).toBeNull();
+    expect(t.notAvailableReasons).toContainEqual({
+      group: 'activos', name: 'Depreciación acumulada',
+      motivo: 'missing_required_account_data', campos: ['activosFijos', 'totalActivos']
+    });
+  });
+
+  it('acepta una depreciación declarada en cero', () => {
+    const datos = conEstados({
+      activos: { Efectivo: 100, Edificios: 300, 'Depreciacion Acumulada': 0 },
+      pasivos: {}, patrimonio: { 'Capital Social': 400 }
+    });
+    const t = computeFinancialTotals(datos, '2024');
+    expect(t.activosFijos).toBe(300);
+    expect(t.totalActivos).toBe(400);
+    expect(t.notAvailableReasons).toEqual([]);
+  });
+
+  it('no exige depreciación si los activos fijos son solo terrenos', () => {
+    const datos = conEstados({
+      activos: { Efectivo: 100, Terrenos: 300 },
+      pasivos: {}, patrimonio: { 'Capital Social': 400 }
+    });
+    const t = computeFinancialTotals(datos, '2024');
+    expect(t.activosFijos).toBe(300);
+    expect(t.totalActivos).toBe(400);
+    expect(t.notAvailableReasons).not.toContainEqual(expect.objectContaining({ name: 'Depreciación acumulada' }));
+  });
+
+  it('exige devoluciones, descuentos y rebajas si hay actividad de ventas', () => {
+    const datos = conEstados(
+      { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { 'Capital Social': 100 } },
+      { Ventas: 1000, 'Costo de Ventas': 400 }
+    );
+    const t = computeFinancialTotals(datos, '2024');
+    expect(t.ventas).toBeNull();
+    expect(t.utilidadBruta).toBeNull();
+    expect(t.utilidadNeta).toBeNull();
+    expect(t.notAvailableReasons.filter(r => r.motivo === 'missing_required_account_data').map(r => r.name).sort())
+      .toEqual(['Descuentos sobre ventas', 'Devoluciones sobre ventas', 'Rebajas sobre ventas']);
+  });
+
+  it('acepta las deducciones declaradas en cero y calcula ventas netas', () => {
+    const datos = conEstados(
+      { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { 'Capital Social': 100 } },
+      {
+        Ventas: 1000, 'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0,
+        'Rebajas sobre ventas': 0, 'Costo de Ventas': 400, 'Gastos de Administracion': 200,
+        'Gastos de Ventas': 100, 'Gastos por Intereses': 20, 'Impuesto sobre la Renta': 50
+      }
+    );
+    const t = computeFinancialTotals(datos, '2024');
+    expect(t.ventas).toBe(1000);
+    expect(t.utilidadBruta).toBe(600);
+    expect(t.utilidadNeta).toBe(230);
+    expect(t.notAvailableReasons).toEqual([]);
+  });
+
+  it('no exige deducciones sin actividad de ventas', () => {
+    const datos = conEstados(
+      { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { 'Capital Social': 100 } }
+    );
+    const t = computeFinancialTotals(datos, '2024');
+    expect(t.notAvailableReasons).not.toContainEqual(expect.objectContaining({
+      motivo: 'missing_required_account_data', group: 'estadoResultados'
+    }));
+  });
+
+  it('un total de ventas netas reportado no exige las deducciones', () => {
+    const datos = conEstados(
+      { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { 'Capital Social': 100 } },
+      { 'Ventas netas': 1000, 'Costo de Ventas': 400 }
+    );
+    const t = computeFinancialTotals(datos, '2024');
+    expect(t.ventas).toBe(1000);
+    expect(t.utilidadBruta).toBe(600);
+    expect(t.notAvailableReasons).toEqual([]);
+  });
+
+  it('D-064: resta las deducciones de ventas y conserva la bruta como trazabilidad', () => {
+    const datos = conEstados(
+      { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { 'Capital Social': 100 } },
+      {
+        Ventas: 1000, 'Devoluciones sobre ventas': 50, 'Descuentos sobre ventas': 20,
+        'Rebajas sobre ventas': 10, 'Costo de Ventas': 400
+      }
+    );
+    const t = computeFinancialTotals(datos, '2024');
+    expect(t.ventasBrutas).toBe(1000);
+    expect(t.ventas).toBe(920);
+    expect(t.utilidadBruta).toBe(520);
+    expect(t.utilidadNeta).toBe(520);
+    expect(t.notAvailableReasons).toEqual([]);
+  });
+
+  it('D-064: el total de ventas brutas reportado no anula la resta de deducciones', () => {
+    const datos = conEstados(
+      { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { 'Capital Social': 100 } },
+      {
+        'Ventas totales': 1000, 'Devoluciones sobre ventas': 50, 'Descuentos sobre ventas': 20,
+        'Rebajas sobre ventas': 10, 'Costo de Ventas': 400
+      }
+    );
+    const t = computeFinancialTotals(datos, '2024');
+    expect(t.ventasBrutas).toBe(1000);
+    expect(t.ventas).toBe(920);
+    expect(t.utilidadBruta).toBe(520);
+    expect(t.notAvailableReasons).toEqual([]);
+  });
+
+  it('D-064: el catálogo clasifica las deducciones y el selector las ofrece', () => {
+    expect(ACCOUNT_TYPES.estadoResultados).toContain('deduccionesVentas');
+    expect(inferAccountType('estadoResultados', 'Devoluciones sobre ventas')).toBe('deduccionesVentas');
+    expect(inferAccountType('estadoResultados', 'Descuentos sobre ventas')).toBe('deduccionesVentas');
+    expect(inferAccountType('estadoResultados', 'Rebajas sobre ventas')).toBe('deduccionesVentas');
   });
 
   it('deja utilidad neta indeterminada si hay cuentas de ER sin clasificar', () => {
@@ -223,6 +359,41 @@ describe('validateFinancialData', () => {
     const [r] = validateFinancialData(descuadrado);
     expect(r.balanced).toBe(false);
     expect(r.difference).toBe(1);
+    expect(r.diagnostico).toBeNull();
+  });
+
+  it('diagnostica la utilidad del periodo faltante en el patrimonio', () => {
+    const sinResultado = {
+      periods: ['2024'],
+      balanceGeneral: { '2024': { activos: { 'Efectivo': 100 }, pasivos: {}, patrimonio: { 'Capital Social': 40 } } },
+      estadoResultados: {
+        '2024': {
+          'Ventas': 100, 'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0,
+          'Rebajas sobre ventas': 0, 'Costo de Ventas': 40
+        }
+      }
+    };
+    const [r] = validateFinancialData(sinResultado);
+    expect(r.balanced).toBe(false);
+    expect(r.difference).toBe(60);
+    expect(r.diagnostico).toBe('Falta incluir el resultado del ejercicio en el patrimonio.');
+  });
+
+  it('no diagnostica cuando el descuadre no coincide con la utilidad neta', () => {
+    const otroDescuadre = {
+      periods: ['2024'],
+      balanceGeneral: { '2024': { activos: { 'Efectivo': 100 }, pasivos: {}, patrimonio: { 'Capital Social': 20 } } },
+      estadoResultados: {
+        '2024': {
+          'Ventas': 100, 'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0,
+          'Rebajas sobre ventas': 0, 'Costo de Ventas': 40
+        }
+      }
+    };
+    const [r] = validateFinancialData(otroDescuadre);
+    expect(r.balanced).toBe(false);
+    expect(r.difference).toBe(80);
+    expect(r.diagnostico).toBeNull();
   });
 
   it('detecta que el demo MUNO MODA viene descuadrado de fábrica', () => {
@@ -235,6 +406,48 @@ describe('validateFinancialData', () => {
 
   it('un conjunto vacío no produce filas de validación', () => {
     expect(validateFinancialData({ periods: [], balanceGeneral: {}, estadoResultados: {} })).toEqual([]);
+  });
+});
+
+describe('seleccionarPeriodos (D-065)', () => {
+  const seis = ['2020', '2021', '2022', '2023', '2024', '2025'];
+
+  it('tres periodos quedan todos visibles por defecto', () => {
+    const r = seleccionarPeriodos({ periodos: ['2022', '2023', '2024'] });
+    expect(r.visibles).toEqual(['2022', '2023', '2024']);
+    expect(r.predeterminados).toEqual(['2022', '2023', '2024']);
+    expect(r.puedeAgregar).toBe(true);
+  });
+
+  it('seis periodos dejan por defecto los dos más recientes', () => {
+    const r = seleccionarPeriodos({ periodos: seis });
+    expect(r.predeterminados).toEqual(['2024', '2025']);
+    expect(r.visibles).toEqual(['2024', '2025']);
+  });
+
+  it('respeta la selección dada y descarta los nombres que ya no existen', () => {
+    const r = seleccionarPeriodos({ periodos: seis, seleccion: ['2021', '2023', '1999'] });
+    expect(r.visibles).toEqual(['2021', '2023']);
+    expect(r.puedeAgregar).toBe(true);
+  });
+
+  it('nunca muestra más de 4 aunque la selección lo exceda', () => {
+    const r = seleccionarPeriodos({ periodos: seis, seleccion: seis });
+    expect(r.visibles).toEqual(['2022', '2023', '2024', '2025']);
+    expect(r.puedeAgregar).toBe(false);
+  });
+
+  it('una selección vacía muestra la vista sin columnas', () => {
+    const r = seleccionarPeriodos({ periodos: seis, seleccion: [] });
+    expect(r.visibles).toEqual([]);
+    expect(r.puedeAgregar).toBe(true);
+  });
+
+  it('restaurar predeterminados es volver a pasar la selección nula', () => {
+    const personalizada = seleccionarPeriodos({ periodos: seis, seleccion: ['2020'] });
+    expect(personalizada.visibles).toEqual(['2020']);
+    const restaurada = seleccionarPeriodos({ periodos: seis, seleccion: null });
+    expect(restaurada.visibles).toEqual(['2024', '2025']);
   });
 });
 

@@ -107,6 +107,34 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-053 | Utilidad neta de Reportes igual a Análisis | Vigente |
 | D-054 | Periodo no disponible da N/D sin cambiar de periodo | Vigente |
 | D-055 | Celda vacía es dato faltante (N/D), salvo intereses ganados | Vigente; catálogo sincronizado por D-057 |
+| D-055 | Celda vacía es dato faltante (N/D), salvo intereses ganados | Vigente en el motor; catálogo de Estados sin cambios |
+| D-061 | Convención de signos del catálogo | Vigente |
+| D-062 | El total reportado nunca se suma a sus detalles | Vigente |
+| D-063 | Ausencia según la política del catálogo | Vigente |
+| D-064 | Ventas netas: la cuenta `ventas` resta las deducciones de ventas | Vigente |
+| D-065 | Selección de periodos visibles en Estados | Vigente |
+| D-066 | EFE: clasificación por id de cuenta | Vigente |
+| D-067 | Totales reportados fuera del EFE | Vigente |
+| D-068 | Reservas como destino de utilidades | Vigente |
+| D-069 | Utilidad del EFE conciliada contra el balance | Vigente |
+| D-070 | Proforma usa el EFE como única fuente del flujo | Vigente |
+| D-071 | Tolerancia única en el flujo directo | Vigente |
+| D-072 | Totales reportados fuera de los avisos de balance y del EOAF | Vigente |
+| D-073 | GAO en porcentaje solo con margen y UAII positivos | Vigente |
+| D-074 | Fuente única de costos en Punto de equilibrio | Vigente |
+| D-075 | Escenarios inválidos no se convierten en 0 | Vigente |
+| D-076 | Motivos precisos en baseDesdeEstados | Vigente |
+| D-077 | Una sola lectura de estados | Vigente |
+| D-078 | Sin lectura por nombres fijos y N/D con motivo | Vigente |
+| D-079 | Totales reportados no se suman en ningún camino | Vigente |
+| D-080 | El respaldo rechaza estados que no se leen | Vigente |
+| D-081 | Valuación a costo promedio ponderado móvil | Vigente |
+| D-082 | Regla única de reposición y lectura del mínimo | Vigente |
+| D-083 | Sin descartes silenciosos | Vigente |
+| D-084 | Totales de existencia solo con una unidad | Vigente |
+| D-085 | Supuestos de Planeación guardados sin producto vinculado | Vigente |
+| D-086 | Integrar lectura segura de F8 con el motor de razones | Vigente |
+
 
 | D-056 | Razones de la app leen el motor | Vigente |
 | D-057 | Catálogo de Estados sincronizado con D-055 | Vigente |
@@ -1427,3 +1455,542 @@ Se retira la prueba histórica de regresión de la demo (caso de ejemplo cargado
 **Para revertirla.** Registrar una decisión posterior y aportar identidades/evidencia antes de restituir la regresión retirada o autorizar otros cambios de esperados.
 
 **Referencias.** instrucciones_carlos_ronda19.md, R1/R4; D-059; reporte ronda19-R1-razones-final.md.
+### D-061 — Convención de signos del catálogo
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/estados/estados-normalize.js`, catálogo de cuentas y mensajes de importación
+
+**Contexto.** El catálogo ya declaraba `convencionSigno` por cuenta, pero la compuerta no la aplicaba. Un costo de ventas o un gasto capturado en negativo se sumaba en silencio y producía utilidades infladas; una depreciación positiva también pasaba sin aviso.
+
+**Opciones.**
+1. Aplicar la convención del catálogo en la compuerta y rechazar la fila con un mensaje exacto — impide que un signo contradictorio altere los totales.
+2. Conservar el signo recibido o invertirlo en silencio — evita rechazos, pero mantiene cifras incorrectas sin explicación.
+
+**Decisión.** Opción 1. En `positivo`, un valor negativo se rechaza; en `negativo`, uno positivo se rechaza; en `conservar`, cualquier signo es válido. Nunca se invierte un signo en silencio. El primer error de la importación es suficiente en esta ronda. Los datos guardados que no pasen la compuerta no se borran: la interfaz los muestra en modo lectura con el error.
+
+**Consecuencias.** Los casos 1, 2, 3a y 3b de la tabla de aceptación dejan de producir cifras silenciosas. Los mensajes distinguen la cuenta positiva de la depreciación acumulada negativa. Los datos existentes conservan su contenido y solo se bloquea su uso para calcular hasta corregirlos.
+
+**Para revertirla.** Retirar la comparación de signo en `normalizeFinancialData`, sus pruebas y los textos de error; volver a aceptar cualquier signo reintroduce los totales inflados documentados.
+
+**Referencias.** `instrucciones_carlos_estados_R1-R2.md`, R1-3 y tabla de aceptación; `docs/contexto/dominio-financiero.md`.
+
+### D-062 — El total reportado nunca se suma a sus detalles
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/estados/estados-calculations.js`, `cuentas-registro.js`, `estados-normalize.js`
+
+**Contexto.** Un total reportado convivía con sus componentes y el motor anterior los sumaba, duplicando activos, ventas o inventario. En otros casos el total se descartaba y el subtotal quedaba N/D aunque el ejercicio sí lo hubiera publicado.
+
+**Opciones.**
+1. Usar el total reportado como valor del tipo, compararlo con sus detalles y avisar el descuadre — conserva la cifra publicada y hace visible la diferencia.
+2. Seguir sumando totales y detalles, o ignorar el total — mantiene duplicaciones o pierde el dato reportado.
+
+**Decisión.** Opción 1. Un total reportado se compara con los detalles del mismo tipo. Si existe, es el valor de ese tipo. Si la diferencia supera 0.01, manda el total reportado y se registra `reported_subtotal_mismatch` con la diferencia. Todos los totales con `rol: reported_total` se guardan en `reportedTotals`, también los que tienen `tipoApp`. Si un grupo tiene total reportado y un subtotal no tiene detalles ni total propio, ese subtotal es N/D, nunca 0.
+
+**Consecuencias.** Los casos 5 a 9 de la tabla de aceptación dan la cifra reportada y, cuando corresponde, el aviso con su diferencia. Cambia la forma normalizada de los totales reportados con tipo: dejan de estar en el estado y pasan a `reportedTotals`; las pruebas de importación y registro se actualizan por esa causa. No se suman dos veces los mismos importes.
+
+**Para revertirla.** Restaurar la suma de totales y detalles y el motivo `overlapping_account_aggregation`, retirar `reported_subtotal_mismatch` y ajustar las pruebas de importación y registro.
+
+**Referencias.** `instrucciones_carlos_estados_R1-R2.md`, R1-1 y tabla de aceptación; regla `reported_or_calculate` de los JSON de razones.
+
+### D-063 — Ausencia según la política del catálogo
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/estados/cuentas-catalogo.js`, `estados-calculations.js` y datos de demostración
+
+**Contexto.** El catálogo declaraba `requires_data` para algunas cuentas, pero el cálculo las trataba como cero cuando no aparecían. En particular, un edificio sin depreciación acumulada producía activos fijos y totales de activos inflados, y unas ventas sin devoluciones, descuentos ni rebajas se presentaban como ventas netas sin avisar.
+
+**Opciones.**
+1. Exigir el dato cuando el catálogo lo marca y devolver N/D con motivo `missing_required_account_data` — distingue el dato faltante de un cero real.
+2. Seguir tratando la ausencia como cero — conserva cifras incompletas sin explicación.
+
+**Decisión.** Opción 1. La depreciación acumulada se exige cuando hay alguna cuenta `bs.ppe_*` distinta de terrenos. Las devoluciones, descuentos y rebajas se exigen cuando hay actividad de ventas y no hay un total de ventas netas reportado; sus políticas pasan de `zero_if_not_reported` a `requires_data`. Un 0 declarado cuenta como dato presente. Si falta la depreciación, `activosFijos` y `totalActivos` son N/D; si faltan las deducciones, `ventas`, `utilidadBruta` y `utilidadNeta` son N/D.
+
+**Consecuencias.** Los casos 4 y 10 de la tabla de aceptación dejan de producir cifras silenciosas. La demostración y las pruebas que representan ejercicios con ventas declaran cero explícito en las tres deducciones; sus resultados financieros esperados no cambian. La comprobación de las 71 identidades del PR #10 se ajusta para reconocer este cambio documentado del catálogo, sin modificar los JSON de referencia.
+
+**Para revertirla.** Registrar la decisión que la reemplace, devolver las tres políticas a `zero_if_not_reported`, retirar la exigencia de depreciación y ajustar los ceros explícitos y las pruebas de aceptación.
+
+**Referencias.** `instrucciones_carlos_estados_R1-R2.md`, R1-4 y tabla de aceptación; `tests/unit/estados-calculations.test.js`; `tests/unit/cuentas-identificador.test.js`.
+
+### D-064 — Ventas netas
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/estados/cuentas-catalogo.js`, `estados-calculations.js`, `estados-ui.js`
+
+**Contexto.** La cuenta `ventas` de los totales sumaba cualquier ingreso de ventas sin restar devoluciones, descuentos ni rebajas, así que las cifras de ventas, utilidad bruta y utilidad neta quedaban infladas cuando el ejercicio declaraba deducciones.
+
+**Opciones.**
+1. `ventas` pasa a ser ventas netas (ventas menos deducciones) y se conserva `ventasBrutas` solo como dato de trazabilidad — coincide con `derived.net_sales` de los JSON de razones.
+2. Mantener `ventas` bruta y agregar un campo aparte de ventas netas — evita cambiar cifras visibles, pero deja dos ventas distintas y el Análisis seguiría consumiendo la bruta.
+
+**Decisión.** Opción 1. El catálogo agrega el tipo `deduccionesVentas` al grupo `estadoResultados` y las tres cuentas de deducción adoptan ese `tipoApp`. `computeFinancialTotals` calcula `ventas` = ventas menos `deduccionesVentas`, y `utilidadBruta` = `ventas` menos `costoVentas`. `ventasBrutas` se conserva sin usarse en los cálculos. El selector de clasificación de la interfaz ofrece `deduccionesVentas`.
+
+**Consecuencias.** El caso 10 de la tabla de aceptación produce ventas netas 950 con devoluciones 50 sobre ventas 1,000. Los ejercicios con ceros explícitos en las tres deducciones no cambian de cifra. Un total de ventas netas reportado (`is.net_sales_reported`) sigue mandando sobre el cálculo según D-062.
+
+**Para revertirla.** Registrar la decisión que la reemplace, quitar `deduccionesVentas` de `TIPOS_APP`, devolver el `tipoApp` nulo de las tres cuentas y dejar `ventas` sin restar deducciones.
+
+**Referencias.** `instrucciones_carlos_estados_R1-R2.md`, R1-5 y tabla de aceptación; `derived.net_sales` de los JSON de razones.
+
+### D-065 — Selección de periodos visibles en Estados
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi autorizó la decisión; el número máximo y los predeterminados son criterio del asistente
+- **Área**: `js/modules/estados/estados-calculations.js`, `estados-ui.js`
+
+**Contexto.** Con muchos periodos, la vista multiperiodo de Estados los muestra todos como columnas y se desborda en pantallas chicas. La decisión es qué periodos se presentan, no con cuáles se calcula.
+
+**Opciones.**
+1. Un selector de casillas que solo filtra las columnas visibles, con función pura separada de la interfaz — la vista se mantiene legible y los cálculos quedan intactos.
+2. Dejar la vista con todos los periodos y confiar en el desplazamiento horizontal — no resuelve la legibilidad con muchos periodos.
+
+**Decisión.** Opción 1. Con un solo periodo no hay selector. Predeterminados: todos los periodos si hay 4 o menos; con más de 4, los dos más recientes. Máximo 4 periodos visibles a la vez; al llegar al máximo, las casillas no marcadas se deshabilitan. La selección vive solo en la sesión, no se guarda en el store, y vuelve a los predeterminados cuando cambian los periodos guardados. La lógica es la función pura `seleccionarPeriodos({ periodos, seleccion, maximo = 4 })`; la interfaz solo la llama. Los cálculos siempre usan todos los periodos que necesiten, así que ninguna cifra depende de la selección.
+
+**Consecuencias.** La vista multiperiodo no desborda la página en un teléfono (el contenedor conserva su margen de 16 px y las tablas anchas se desplazan dentro de su contenedor). El selector no se aplica en Análisis ni en Reportes en esta ronda.
+
+**Para revertirla.** Registrar la decisión que la reemplace, retirar `seleccionarPeriodos` y el bloque del selector de `estados-ui.js`, y devolver a la vista todas las columnas.
+
+**Referencias.** `instrucciones_carlos_estados_R1-R2.md`, R2-1; `ordenarPeriodos` de `estados-normalize.js`.
+
+### D-066 — EFE: clasificación por id de cuenta
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/analisis/efe-roles.js`, `efe-calculations.js`
+
+**Contexto.** El EFE clasificaba por tipo general (tipoApp), que mezcla cuentas que el flujo de efectivo separa: los gastos acumulados, impuestos por pagar, provisiones y otros pasivos corrientes caían en financiamiento, las inversiones de corto plazo en operación y las provisiones de largo plazo en financiamiento.
+
+**Opciones.**
+1. Tabla propia de roles por id del catálogo en el módulo de Análisis — separa lo que el tipo general mezcla sin tocar el catálogo.
+2. Agregar el rol al catálogo de cuentas — cambia un archivo que `feat/razones-app-final` también modifica.
+
+**Decisión.** Opción 1. `efe-roles.js` declara el rol por id: operación (cuentas por cobrar comerciales, todos los inventarios, gastos pagados por anticipado, otras cuentas por cobrar y otros activos corrientes, cuentas por pagar comerciales, impuestos por pagar, gastos acumulados por pagar, provisiones corrientes y de largo plazo, otros pasivos corrientes; la depreciación se suma como no efectivo), inversión (activos fijos, inversiones de largo y corto plazo, otros activos no corrientes), financiamiento (préstamos de corto plazo, porción corriente de deuda, deudas de largo plazo, otros pasivos no corrientes) y efectivo. `construirEFE` usa el rol; una prueba falla si un activo o pasivo del catálogo no tiene rol.
+
+**Consecuencias.** Los renglones del EFE se consolidan por rol («activos de operación», «pasivos de operación», «activos de inversión», «Aumento de deuda»). Las cifras de la demo cambian; se registran con esta causa y sin citarse. Los datos de prueba con nombres ambiguos por id adoptan nombres canónicos del catálogo.
+
+**Para revertirla.** Registrar la decisión que la reemplace, retirar la tabla de roles y devolver la clasificación por tipo general en `construirEFE`.
+
+**Referencias.** `instrucciones_efe_ronda1.md`, T1 y variantes V11 a V13; hallazgo H2.
+
+### D-067 — Totales reportados fuera del EFE
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/analisis/efe-roles.js`, `efe-calculations.js`
+
+**Contexto.** Los totales reportados del balance («Total de activos corrientes», entre otros) ya son datos válidos desde Estados, pero el EFE los trataba como cuentas sin clasificación y el par A3 2024 → 2025 del bloque A salía incompleto.
+
+**Opciones.**
+1. Excluir los totales reportados del EFE y usar sus componentes — evita contar dos veces la misma variación.
+2. Seguir incluyéndolos — duplica la variación cuando conviven total y componentes.
+
+**Decisión.** Opción 1. Una cuenta de rol `reported_total` no entra en el EFE cuando alguna de sus componentes del catálogo está en los datos; sin componentes, el total se conserva porque es el único dato de ese concepto. El mapa de componentes vive en `efe-roles.js`.
+
+**Consecuencias.** El par A3 2024 → 2025 queda en cuadra con la referencia. Un «Inventario» sin desglose sigue contando (no se pierde la variación); con desglose, manda el desglose.
+
+**Para revertirla.** Registrar la decisión que la reemplace y retirar la exclusión en `construirEFE`.
+
+**Referencias.** `instrucciones_efe_ronda1.md`, T2; hallazgo H3.
+
+### D-068 — Reservas como destino de utilidades
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/analisis/efe-calculations.js`
+
+**Contexto.** Un traspaso interno a reserva legal se leía como aportación de capital: los dividendos salían inflados y las aportaciones con un movimiento que no existió (hallazgo H1).
+
+**Opciones.**
+1. Mover las reservas al destino de utilidades junto con las utilidades acumuladas y las cuentas del resultado — separa aportaciones de distribuciones.
+2. Dejar las reservas como aportaciones — conserva el error del hallazgo.
+
+**Decisión.** Opción 1. Con la misma regla de nombres del aviso de sentidos opuestos (nombre normalizado que contiene «reserva»), las reservas entran al destino de utilidades: dividendos = utilidad neta − Δ(utilidades acumuladas + cuentas del resultado + reservas); aportaciones = Δpatrimonio − Δ(destino).
+
+**Consecuencias.** La variante V6 da dividendos −30 y aportaciones 0 con una reserva de traspaso de 20. El aviso de ausencia ahora menciona «utilidades acumuladas ni reservas».
+
+**Para revertirla.** Registrar la decisión que la reemplace y retirar las reservas del conjunto de destino.
+
+**Referencias.** `instrucciones_efe_ronda1.md`, T3; hallazgo H1.
+
+### D-069 — Utilidad del EFE conciliada contra el balance
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/analisis/efe-calculations.js`, `analisis/index.js`
+
+**Contexto.** El «cuadra» del EFE solo prueba el balance: una utilidad inflada podía compensarse en los dividendos derivados y el estado salía cuadrado (hallazgo H4).
+
+**Opciones.**
+1. Conciliar la utilidad del estado de resultados contra la cuenta de resultado del periodo del patrimonio, con un tercer estado cuando la cuenta no existe — hace visible la diferencia y declara qué no se verificó.
+2. Dejar el cuadre como única comprobación — la identidad cerraría aunque la utilidad esté mal.
+
+**Decisión.** Opción 1. Si existe la cuenta de resultado del periodo en el patrimonio (id `bs.current_year_result_equity`) y no coincide con la utilidad neta dentro de la tolerancia de `toleranciaComprobacion`, el estado es no cuadra con motivo `utilidad_no_conciliada` y la diferencia en el campo `conciliacionUtilidad`. Si no existe esa cuenta, el estado es «cuadra (sin verificar la utilidad)»: tercer estado, con insignia y advertencia visibles en Análisis. La interpretación solo afirma la verificación cuando concilia.
+
+**Consecuencias.** La variante VB sale no cuadra con diferencia 50. Los casos sin cuenta de resultado (la demo entre otros) pasan del estado «cuadra» al tercer estado; sus pruebas se ajustan con esta causa. La conciliación usa el saldo final de la cuenta de resultado del periodo.
+
+**Para revertirla.** Registrar la decisión que la reemplace, retirar `conciliacionUtilidad` y el tercer estado, y devolver el binomio cuadra/no cuadra.
+
+**Referencias.** `instrucciones_efe_ronda1.md`, T4 y variante VB; hallazgo H4.
+
+### D-070 — Proforma usa el EFE como única fuente del flujo
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/proforma/proforma-calculations.js`, `proforma/index.js`, `flujo/flujo-ui.js`
+
+**Contexto.** Proforma leía la captura manual del flujo directo (`store.get('flujo')`), así que podía presentar un flujo distinto del EFE de Análisis con los mismos estados guardados.
+
+**Opciones.**
+1. Adaptar el resultado de `construirEFE` (último par de periodos de Estados) a la forma que ya consumen los indicadores — una sola fuente para Proforma y el panorama de Inicio.
+2. Mantener la captura manual como fuente de Proforma — conserva la divergencia entre pantallas.
+
+**Decisión.** Opción 1. El adaptador `flujoDesdeEFE(estados)` en `proforma-calculations.js` toma el último par de periodos y traduce operación, variación neta y saldo final. Los indicadores y las alertas de flujo se muestran solo si el EFE está en `cuadra` o `cuadra-sin-verificar`; si está `incompleta` o `no-cuadra` (o faltan periodos), no se muestran y aparece un faltante que dice qué revisar en Análisis, pestaña EFE. El colector `reunirEntradas` — compartido con el panorama de Inicio — deja de leer `store.get('flujo')`. El flujo directo (`#/flujo`) queda como captura no oficial: su pantalla lleva esa leyenda y su carga de demostración en Inicio se mantiene.
+
+**Consecuencias.** Las cifras de flujo de la demostración de Proforma cambian; se registran con esta causa y sin citar cifras de MUNO MODA. La captura manual ya no altera ningún indicador de Proforma ni de Inicio.
+
+**Para revertirla.** Registrar la decisión que la reemplace, devolver `calcularFlujo(store.get('flujo'))` en `reunirEntradas` y retirar la leyenda.
+
+**Referencias.** `instrucciones_efe_ronda2_ultima.md`, T2 y T3.
+
+### D-071 — Tolerancia única en el flujo directo
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/flujo/flujo-calculations.js`
+
+**Contexto.** `conciliarConBalance` usaba 0.005 con `<`, mientras el EFE y el EOAF usan `toleranciaComprobacion` (un centavo más redondeo) con `<=`: la misma diferencia podía conciliar en una comprobación y no en otra.
+
+**Opciones.**
+1. Usar `toleranciaComprobacion` y `<=` en el flujo directo — una sola regla de tolerancia en todo el módulo.
+2. Dejar 0.005 con `<` — conserva la inconsistencia.
+
+**Decisión.** Opción 1. `conciliarConBalance` compara con `toleranciaComprobacion(saldoFinal, efectivo)` y `<=`.
+
+**Consecuencias.** Una diferencia de 0.007 ahora concilia (antes no); una de 0.011 sigue sin conciliar. Las diferencias exactas de medio centavo dejan de estar en la frontera exclusiva.
+
+**Para revertirla.** Registrar la decisión que la reemplace y devolver la constante local con su comparación.
+
+**Referencias.** `instrucciones_efe_ronda2_ultima.md`, T4.
+
+### D-072 — Totales reportados fuera de los avisos de balance y del EOAF
+
+- **Fecha**: 2026-10-30
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/analisis/comprobacion-calculations.js`, `eoaf-calculations.js`, `efe-roles.js`
+
+**Contexto.** D-067 se aplicó en el EFE, pero no en el código compartido: `totalGrupo` sumaba los totales reportados junto a sus componentes, el EOAF marcaba «Total de activos corrientes no tiene clasificación» y A3 mostraba avisos falsos de balance.
+
+**Opciones.**
+1. Extender D-067 al código compartido, con la regla en un solo lugar que use `totalGrupo`, `variacionesDeCuentas` y el EOAF — desaparecen el doble conteo y los avisos falsos.
+2. Corregir cada punto por separado — la regla se duplicaría y se desincronizaría.
+
+**Decisión.** Opción 1. El mapa de componentes de los totales reportados se traslada a `comprobacion-calculations.js` y la regla es la misma del EFE: un total reportado con componentes en los datos no entra; sin componentes, sí entra. `variacionesDeCuentas` excluye esas filas (el EOAF y el EFE heredan la exclusión) y `totalGrupo` no las suma en los avisos de balance.
+
+**Consecuencias.** El par A3 2024 → 2025 del EOAF queda en `cuadra` con diferencia 0 y sin avisos de «el balance no cumple». El EFE pierde su filtro local (la regla ya viene en las filas). `advertenciasDeBalance` recibe los estados como primer argumento porque la regla necesita las identidades de cuenta.
+
+**Para revertirla.** Registrar la decisión que la reemplace, devolver el mapa a `efe-roles.js` y retirar la exclusión de `variacionesDeCuentas` y `totalGrupo`.
+
+**Referencias.** `instrucciones_efe_ronda2_ultima.md`, T1; D-067; hallazgos de partida de la ronda 2.
+
+### D-073 — GAO en porcentaje solo con margen y UAII positivos
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/utils/calculate.js`, `js/modules/equilibrio/equilibrio-calculations.js`
+
+**Contexto.** Con margen de contribución negativo o UAII negativa, el GAO seguía produciendo un número: con MC −200 y UAII −250 salía +0.8, y con MC 400 y UAII −100 salía −4. Con base negativa o nula el porcentaje de cambio invierte su sentido, así que la cifra no se podía leer.
+
+**Opciones.**
+1. N/D con motivo cuando el margen o la UAII no son positivos — el GAO desaparece y la pantalla explica por qué.
+2. Seguir calculando y advertir — mantiene un número que no admite la lectura «por cada 1 % de ventas».
+
+**Decisión.** Opción 1. `gao(mc, uaii)` devuelve N/D si `mc ≤ 0` o `uaii ≤ 0`, o casi cero con la tolerancia de siempre (0.005). `calcularCVU` devuelve `motivoGao` con los motivos en este orden: `sin-ventas` (unidades ≤ 0), `margen-no-positivo` (MC ≤ 0), `uaii-no-positiva` (UAII ≤ 0), `dato-faltante`. El GAO de Apalancamiento usa la misma función, así que también cambia; el GAF y el GAT no cambian en esta ronda.
+
+**Consecuencias.** La matriz manual queda N/D en los casos M4 a M8 con su motivo (antes +0.8, −4, 0 o valores de margen cero), y el bloque A da N/D en A4 2024 y 2025 con `uaii-no-positiva`. Dos pruebas de Apalancamiento y una de su pantalla cambian con esta causa; la advertencia `bajo-equilibrio-operativo` se mantiene.
+
+**Para revertirla.** Registrar la decisión que la reemplace y devolver la división sin las condiciones de signo.
+
+**Referencias.** `instrucciones_equilibrio_ronda1.md`, T1 y matriz manual; hallazgos H3, H4 y H5.
+
+### D-074 — Fuente única de costos en Punto de equilibrio
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/equilibrio/equilibrio-calculations.js`, `equilibrio-ui.js`
+
+**Contexto.** El botón «Tomar datos» copiaba precio, costo variable unitario y costos fijos a los datos guardados (`persistir({ ...datos, ...resultado.base })`): si después cambiaban los estados o la clasificación de Apalancamiento, Equilibrio seguía con la copia y no avisaba (el GAO se separaba del de Apalancamiento).
+
+**Opciones.**
+1. Origen «estados» que deriva la base en cada consulta con la clasificación vigente, y origen «manual» con aviso de divergencia del CF — una sola fuente y la divergencia visible.
+2. Mantener la copia y añadir un aviso de copia vieja — conserva dos fuentes del mismo costo.
+
+**Decisión.** Opción 1. La pantalla guarda solo `origen`, `periodo` y `unidades` (más utilidad objetivo y escenario); precio, CVu y CF se calculan en cada consulta con `resolverBase(datos, estados, configApalancamiento)` → `{ origen, base, periodo, error, avisoCF }`. En origen «manual» se compara el CF con el CF de estados del último periodo: si la diferencia pasa de 0,5 % del CF de estados (mínimo 0,005 C$), la pantalla muestra un aviso con las dos cifras, sin bloquear el guardado. Los datos sin campo `origen` se leen como manuales (migración, mismos resultados). Se quita el botón «Tomar datos» y se agrega la limitación: P = ventas / unidades supone un precio promedio; con varios productos, use una mezcla representativa.
+
+**Consecuencias.** El cambio de clasificación en Apalancamiento se refleja en Equilibrio sin reguardar nada (vínculo vivo) y el GAO de ambas pantallas coincide en el bloque A. La prueba «toma precio y costos de los estados guardados» cambia por esta causa.
+
+**Para revertirla.** Registrar la decisión que la reemplace, devolver el botón con su copia y retirar `resolverBase`.
+
+**Referencias.** `instrucciones_equilibrio_ronda1.md`, T2 y bloque A; hallazgos H1 y H2.
+
+### D-075 — Escenarios inválidos no se convierten en 0
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/equilibrio/equilibrio-calculations.js`, `equilibrio-ui.js`
+
+**Contexto.** `normalizarEquilibrio` convertía cualquier valor de escenario no numérico (o menor que −100 %) en 0, y `validarEquilibrio` ya no lo veía: un dato dañado del almacenamiento producía escenarios silenciosamente distintos de los pedidos.
+
+**Opciones.**
+1. Conservar el valor inválido como `null`, reportar el campo y no calcular el escenario personalizado mientras exista un `null` — el error se ve y se corrige desde su formulario.
+2. Mantener la conversión a 0 — sigue ocultando el dato dañado.
+
+**Decisión.** Opción 1. Un valor de escenario que no es número se conserva como `null`; `validarEquilibrio` reporta el campo por su nombre («El cambio de precio del escenario…») y la pantalla muestra el error en la tarjeta de escenarios, junto al formulario con el que se corrige. El escenario personalizado no se calcula mientras tenga un `null`; los escenarios predefinidos sí. Un valor vacío sigue siendo 0.
+
+**Consecuencias.** La tarjeta de escenarios puede mostrar errores propias sin tumbar los resultados de la base, que se calculan con los datos base aunque el escenario esté dañado.
+
+**Para revertirla.** Registrar la decisión que la reemplace y devolver la conversión a 0 en `normalizarEquilibrio`.
+
+**Referencias.** `instrucciones_equilibrio_ronda1.md`, T3; hallazgo H6.
+
+### D-076 — Motivos precisos en `baseDesdeEstados`
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/equilibrio/equilibrio-calculations.js`
+
+**Contexto.** Una cuenta del estado de resultados que no está en el catálogo aparecía con el mensaje «Clasifique en Apalancamiento como fijas o variables», que pide una acción que no resuelve el problema: el nombre hay que corregirlo en Estados Financieros.
+
+**Opciones.**
+1. Distinguir dos motivos según el tipo de faltante de Apalancamiento — fuera del catálogo («sinClasificación») frente a cuenta del catálogo sin comportamiento («sinComportamiento»).
+2. Un solo mensaje genérico — conserva la instrucción equivocada.
+
+**Decisión.** Opción 1. Cuenta fuera del catálogo: «La cuenta «X» no está en el catálogo de cuentas: revise su nombre en Estados Financieros.» Cuenta del catálogo sin fijo o variable: «Clasifique en Apalancamiento como fijas o variables: X.»
+
+**Consecuencias.** Renombrar una cuenta operativa produce el mensaje de catálogo; quitar la clasificación de «Gastos de ventas» produce el mensaje de Apalancamiento. Las pruebas de T4 fijan ambos textos.
+
+**Para revertirla.** Registrar la decisión que la reemplace y volver al mensaje único.
+
+**Referencias.** `instrucciones_equilibrio_ronda1.md`, T4; hallazgo H7.
+
+### D-077 — Una sola lectura de estados
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/utils/estados-guardados.js`
+
+**Contexto.** Cada módulo leía los estados guardados a su manera: `estadosGuardados` normalizaba y descartaba el error, Análisis tenía su propio `getSavedStates`, y Integración otro. Cuando la lectura fallaba, el error desaparecía y las pantallas mostraban cifras falsas.
+
+**Opciones.**
+1. Una función `leerEstados(estados)` que devuelva `{ estados, error }` — el error viaja a quien sabe mostrarlo, y `estadosGuardados` queda como envoltorio para los módulos que solo necesitan los datos.
+2. Un servicio de lectura en el store — acopla la lectura a la persistencia.
+
+**Decisión.** Opción 1. `leerEstados(estados)` devuelve `{ estados, error }`: sin periodos → `{ estados: null, error: null }` (no hay datos); si `normalizeFinancialData` lanza → `{ estados: null, error: <mensaje> }` (hay datos, pero no se leen); si todo va bien → `{ estados: <normalizados>, error: null }`. `estadosGuardados` queda como envoltorio que devuelve solo `estados`, así Flujo, Equilibrio, Inventario y Planeación no cambian. Solo lee; no escribe en el store.
+
+**Consecuencias.** Los módulos pueden distinguir «no hay datos» de «hay datos que no se leen». El respaldo, el dashboard y los reportes consumen el error real.
+
+**Para revertirla.** Registrar la decisión que la reemplace y devolver la normalización silenciosa.
+
+**Referencias.** `instrucciones_f8_ronda1.md`, T1; hallazgos H1 y H5.
+
+### D-078 — Sin lectura por nombres fijos y N/D con motivo
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/analisis/index.js`, `js/modules/integracion/index.js`, `js/modules/proforma/index.js`, `proforma-calculations.js`
+
+**Contexto.** Cuando `getSavedStates` lanzaba, `refreshSavedStates` caía a leer por nombres fijos (`er['Ventas'] || 0`), `getBGData` sumaba todas las cuentas del grupo y Análisis calculaba la utilidad neta con una fórmula local. El resultado eran ceros y utilidades falsas que llegaban a Proforma, Inicio y Reportes (hallazgos H1 a H5).
+
+**Opciones.**
+1. Quitar los respaldos por nombres: sin estados legibles, cada razón, total y KPI sale N/D con el motivo `estados_no_legibles` y el texto «No se pudieron leer los estados guardados: <mensaje>»; la utilidad neta sale de la fórmula canónica de `computeFinancialTotals`.
+2. Mantener los respaldos y añadir avisos — conservaría cifras falsas junto al aviso.
+
+**Decisión.** Opción 1. Se eliminan los respaldos por nombre de `getERData`, `getBGData`, `refreshSavedStates` y `computeDashboardKPIs`. `computeRazones` añade el motivo `estados_no_legibles` con el mensaje real cuando hay error; Análisis, el dashboard de Integración, Proforma e Inicio muestran el aviso escapado (regla 7). La utilidad neta de la fórmula local se borra. Cierra F1 y F8.
+
+**Consecuencias.** Un dato guardado que no se puede leer ya no produce ceros ni utilidades falsas en ninguna pantalla. Las pruebas que esperaban 0 por el respaldo cambian con esta causa: dos de la pantalla de EFE en `efe.test.js` y una de la pantalla del EOAF en `eoaf.test.js`, lo que activó la parada 5 del encargo (contradicción entre permitir cambios por D-077 a D-080 y congelar las pruebas de EFE); el resultado nuevo es mejor y se recomienda aceptarlo. `advertenciasDeBalance` no se tocó: su firma con los estados ya estaba en `main` desde D-072.
+
+**Para revertirla.** Registrar la decisión que la reemplace y restaurar los respaldos por nombres.
+
+**Referencias.** `instrucciones_f8_ronda1.md`, T2 a T4; hallazgos H1 a H5.
+
+### D-079 — Totales reportados no se suman en ningún camino
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/analisis/index.js`, `js/modules/integracion/index.js`
+
+**Contexto.** `getBGData` sumaba todas las cuentas del grupo (incluidos los totales reportados) como respaldo, contra D-072. Al quitar el respaldo por nombres, la suma desaparece.
+
+**Decisión.** Los totales reportados con sus componentes solo se contrastan en todos los caminos (EFE, EOAF, razones, dashboard, reportes). Debe quedar una prueba que lo confirme: A3 con total de ventas netas reportado muestra las ventas del total, sin duplicar.
+
+**Consecuencias.** Ninguna pantalla suma un total junto a sus componentes. La prueba del caso A3 queda como guardián.
+
+**Para revertirla.** Registrar la decisión que la reemplace y restaurar la suma.
+
+**Referencias.** `instrucciones_f8_ronda1.md`, D-079; D-067 y D-072.
+
+### D-080 — El respaldo rechaza estados que no se leen
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/integracion/integracion-respaldo.js`
+
+**Contexto.** `validarRespaldo` normalizaba `estados` (y lanzaba si no podía), pero un respaldo con estados dañados dejaba el store modificado si el error aparecía después; además no usaba la lectura única.
+
+**Opciones.**
+1. Validar los estados con `leerEstados` antes de guardar: si hay error, rechazar el respaldo completo con mensaje claro — nada queda guardado a medias.
+2. Importar los módulos que sí se leen y avisar de los que no — dejaría datos inservibles guardados.
+
+**Decisión.** Opción 1. Al importar un respaldo, `validarModulo` valida `estados` con `leerEstados`: si devuelve `error`, el respaldo completo se rechaza con «No se pudieron leer los estados del respaldo: <mensaje>. No se importó nada.»; ningún módulo se guarda en ese caso.
+
+**Consecuencias.** Un respaldo con gasto negativo (o cualquier dato que la compuerta rechace) se rechaza y el store no cambia. Los respaldos válidos se guardan normalizados igual que antes.
+
+**Para revertirla.** Registrar la decisión que la reemplace y devolver la normalización directa.
+
+**Referencias.** `instrucciones_f8_ronda1.md`, T6 y M7; hallazgo H8.
+
+### D-081 — Valuación a costo promedio ponderado móvil
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/inventario/inventario-calculations.js`, `inventario-ui.js`
+
+**Contexto.** El valor del inventario era existencia final × un costo unitario fijo por producto, y los movimientos no guardaban costo: una compra a otro precio no cambiaba la valuación.
+
+**Opciones.**
+1. Costo promedio ponderado móvil: cada entrada guarda su costo unitario, recalcula el promedio y las salidas salen al costo vigente.
+2. Mantener el costo fijo — solo es correcto si el precio nunca cambió.
+
+**Decisión.** Opción 1 (la NIC 2 acepta PEPS o promedio ponderado). Cada movimiento de entrada guarda su costo unitario (≥ 0); el `costoUnitario` del producto pasa a ser el costo de la existencia inicial (etiqueta «Costo de la existencia inicial»); cada entrada recalcula `C = (E × C + q × c) / (E + q)` — con E = 0, el nuevo promedio es c —; cada salida sale al costo promedio vigente (costo de la salida = q × C) y no cambia el promedio; valor del inventario = existencia final × costo promedio final. Las entradas de datos anteriores sin costo usan el costo del producto y se cuentan en el aviso de D-083. Con todos los movimientos sin costo, el valor es igual al de antes (regresión M0).
+
+**Consecuencias.** La matriz M4 verifica el caso manual: existencia 5 a C$ 10, entrada 10 a C$ 12 → promedio 11.3333; salida 8 → costo 90.6667; valor 79.3333. El kardex muestra el costo promedio por fila y el costo total de las salidas.
+
+**Para revertirla.** Registrar la decisión que la reemplace y volver al costo fijo por producto.
+
+**Referencias.** `instrucciones_inventario_ronda1.md`, T4 y matriz; hallazgo H5.
+
+### D-082 — Regla única de reposición y lectura del mínimo
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/utils/calculate.js`, `inventario-calculations.js`, `inventario-ui.js`, `inicio-calculations.js`, `proforma-calculations.js`, `planeacion-calculations.js`, `planeacion-ui.js`
+
+**Contexto.** La frontera decimal (0.6000000000000001 frente a 0.6) no daba alerta porque la regla de reposición no tenía tolerancia (el kardex sí); Planeación comparaba con `<` (la igualdad no avisaba); había tres redacciones distintas para la misma alerta; y Planeación copiaba el mínimo del producto como valor fijo, sin enterarse de cambios posteriores.
+
+**Opciones.**
+1. Regla única con tolerancia 1e-6, una redacción compartida y el mínimo leído del producto vigente por `productoId`.
+2. Parchar cada pantalla por separado — conservaría las divergencias.
+
+**Decisión.** Opción 1. `necesitaReposicion(existencia, mínimo)` en `calculate.js` alerta si `existencia <= mínimo + 1e-6` (tolerancia única, la misma del kardex); mínimo 0 = sin política de reposición. `descripcionReposicion(producto)` en `inventario-calculations.js` da la redacción única para Inventario, Inicio y Proforma: «Bajo el mínimo: comprar al menos N u (costo estimado C$ X) para volver al mínimo.» o «Llegó al mínimo: programe una compra.» Planeación usa `necesitaReposicion` (la igualdad ahora avisa) y deja de copiar el mínimo: los supuestos guardan `productoId`, el mínimo vigente se lee del producto en Inventario al calcular, y «Tomar de Inventario» guarda `productoId` y el costo promedio vigente.
+
+**Consecuencias.** El caso H1 (0.3 + 0.1 + 0.2 con mínimo 0.6) ahora da alerta. M11: con inventario final igual al mínimo, Planeación avisa (antes no). Si el mínimo del producto cambia, Planeación se entera sin reguardar nada. La prueba de Planeación que usaba `stockMinimo: 70` cambia con esta causa.
+
+**Para revertirla.** Registrar la decisión que la reemplace y devolver las comparaciones locales.
+
+**Referencias.** `instrucciones_inventario_ronda1.md`, T1 a T3 y matriz; hallazgos H1, H3 y H4.
+
+### D-083 — Sin descartes silenciosos
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/inventario/inventario-calculations.js`, `inventario-ui.js`, `js/modules/integracion/integracion-respaldo.js`
+
+**Contexto.** `normalizarInventario` descartaba sin aviso los registros que no cumplían la forma: una existencia real quedaba inflada y sin alerta (existencia 10 con una salida de 8 descartada mostraba existencia 10 en vez de 2).
+
+**Opciones.**
+1. Contar los descartes por motivo, mostrarlos en la pantalla y rechazar el respaldo completo si hay descartados — nada desaparece en silencio ni queda guardado inservible.
+2. Seguir descartando en silencio — conserva el hallazgo H2.
+
+**Decisión.** Opción 1. `normalizarInventario` devuelve `{ productos, movimientos, descartados }`, con el conteo por motivo (producto sin nombre o identificador inválido, identificador repetido, campo numérico inválido o negativo, movimiento de un producto inexistente, tipo inválido, cantidad inválida, fecha inválida, identificador repetido). La pantalla de Inventario muestra el aviso con el conteo y los movimientos de entrada sin costo. El respaldo valida `inventario` con `normalizarInventario`: si hay descartados, se rechaza el respaldo completo (igual que D-080 con estados); ningún módulo se guarda.
+
+**Consecuencias.** El caso H2 (salida descartada) queda visible: el aviso dice cuántos registros de cada clase se descartaron y cuántas entradas sin costo hay. M6 y M7 de la matriz lo verifican.
+
+**Para revertirla.** Registrar la decisión que la reemplace y volver al descarte silencioso.
+
+**Referencias.** `instrucciones_inventario_ronda1.md`, T5 y matriz; hallazgo H2.
+
+### D-084 — Totales de existencia solo con una unidad
+
+- **Fecha**: 2026-10-31
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/inventario/inventario-calculations.js`
+
+**Contexto.** `unidadesTotales` sumaba unidades distintas (prendas + kilos = 30): un número sin sentido. La pantalla ya lo ocultaba; el modelo lo producía igual.
+
+**Opciones.**
+1. `unidadesTotales` N/D cuando los productos tienen unidades distintas.
+2. Dejar la suma — conserva el número sin sentido en el modelo.
+
+**Decisión.** Opción 1. `unidadesTotales` es `null` cuando los productos tienen unidades distintas; con una sola unidad, el total se calcula igual que antes.
+
+**Consecuencias.** La pantalla ya mostraba «—» en ese caso; el modelo ahora coincide con la pantalla. M10 de la matriz lo verifica.
+
+**Para revertirla.** Registrar la decisión que la reemplace y devolver la suma directa.
+
+**Referencias.** `instrucciones_inventario_ronda1.md`, T6; hallazgo H6.
+
+### D-085 — Supuestos de Planeación guardados sin producto vinculado
+
+- **Fecha**: 2026-11-01
+- **Estado**: Vigente
+- **Decidió**: Cris Lumbi, según la recomendación
+- **Área**: `js/modules/planeacion/planeacion-calculations.js`, `planeacion-ui.js`
+
+**Contexto.** Los supuestos guardados antes de la ronda 1 de Inventario traen `productoInventario` (el nombre) y un `stockMinimo` copiado, pero no `productoId`. Con la nueva regla, el mínimo quedó `null` y el presupuesto perdía el aviso de stock sin decir nada (hallazgo H3).
+
+**Opciones.**
+1. Adivinar el producto por nombre — puede apuntar a otro producto si el nombre cambió o se repite.
+2. Un aviso visible `sin-producto-vinculado` que pida volver a tomar el producto — ninguna pérdida silenciosa y ninguna alerta de otro producto.
+
+**Decisión.** Opción 2. Si los supuestos tienen `productoInventario` y no `productoId`, `calcularPresupuestoMaestro` agrega el aviso con código `sin-producto-vinculado`. Mientras no se vincule, no hay aviso de stock mínimo, pero el aviso de vinculación sí se muestra. La pista de «Tomar de Inventario» solo dice que el mínimo se lee del producto cuando hay `productoId`.
+
+**Consecuencias.** Los datos anteriores muestran el aviso de vinculación y ninguna alerta de stock hasta que la persona vuelva a tomar el producto. Los supuestos nuevos guardan `productoId` y funcionan como en la ronda 1.
+
+**Para revertirla.** Registrar la decisión que la reemplace y volver a leer el mínimo del nombre.
+
+**Referencias.** `instrucciones_inventario_ronda2.md`, T2; hallazgo H3.
+
+### D-086 — Integrar lectura segura de F8 con el motor de razones
+
+- **Fecha**: 2026-11-02
+- **Estado**: Vigente en la rama de integración, pendiente de revisión humana
+- **Decidió**: Carlos, al autorizar la recomendación para continuar
+- **Área**: Análisis, Reportes y pruebas de integración
+
+**Contexto.** F8 (D-077 y D-078) incorporó lectura segura de estados y mensajes de error mientras esta rama conectaba las razones al motor. Los datos de ejercicios anteriores no siempre acreditan todas las identidades ni los componentes exigidos por D-055 y D-057.
+
+**Opciones.** Conservar el cálculo mediante el motor y mostrar el error de lectura de F8, o recuperar cálculos anteriores que suponen importes y usan políticas distintas.
+
+**Decisión.** Se conserva el motor y el mensaje `estados_no_legibles` con el detalle de F8. Los datos que no acreditan entradas requeridas dan N/D para sus razones. Reportes obtiene la utilidad neta del derivado del motor. Los fixtures ficticios pueden completar ceros e identidades acreditadas; si carecen de datos exigidos por D-059, la prueba espera N/D. Las etiquetas describen ventas y compras a crédito.
+
+**Consecuencias.** Algunas pruebas de integración anteriores cambian de cifra a N/D cuando sus documentos no acreditan los datos necesarios. Los motivos se comprueban por razón e identificador; los ceros declarados siguen siendo cero. El cálculo compartido de Estados y su salida por tipos se conserva para los demás módulos. No se cambian los JSON ni sus fórmulas.
+
+**Para revertirla.** Acordar un contrato alternativo para la lectura, la utilidad neta y las entradas faltantes, y revisar los consumidores y sus pruebas en conjunto.
+
+**Referencias.** D-049, D-055 a D-060, D-063, D-077 y D-078; `tests/unit/f8-lectura.test.js`; `tests/unit/razones-app-aceptacion-1c.test.js`.

@@ -29,7 +29,7 @@ function aBorrador(s) {
     ventas: s ? s.ventasUnidades.map(v => (esNumero(v) ? String(v) : '')) : Array(n).fill(''),
     otros: s ? s.otrosDesembolsos.map(v => (esNumero(v) ? String(v) : '0')) : Array(n).fill('0'),
     productoInventario: s?.productoInventario ?? '',
-    stockMinimo: s?.stockMinimo ?? null
+    productoId: s?.productoId ?? ''
   };
 }
 
@@ -43,7 +43,7 @@ function desdeBorrador(b) {
       const { vacio, valor } = leerNumero(t);
       return vacio ? 0 : valor;
     }),
-    productoInventario: b.productoInventario, stockMinimo: b.stockMinimo
+    productoInventario: b.productoInventario, productoId: b.productoId
   };
   for (const [clave, , clase] of SUPUESTOS) {
     const { valor } = leerNumero(b.campos[clave]);
@@ -79,7 +79,9 @@ function textoAviso(a) {
     case 'sin-compras':
       return `${esc(a.periodo)}: el inventario inicial cubre las ventas y el inventario deseado; no se compra y sobran ${num(a.sobrante)} unidades.`;
     case 'bajo-stock-minimo':
-      return `${esc(a.periodo)}: el inventario final (${num(a.inventario)} u) queda bajo el stock mínimo del producto (${num(a.stockMinimo)} u) registrado en Inventario.`;
+      return `${esc(a.periodo)}: el inventario final (${num(a.inventario)} u) llegó al stock mínimo del producto (${num(a.stockMinimo)} u) registrado en Inventario: programe una compra.`;
+    case 'sin-producto-vinculado':
+      return 'Este presupuesto se guardó con una versión anterior. Vuelva a tomar el producto de Inventario para que el stock mínimo se lea del producto.';
     case 'perdida':
       return `${esc(a.periodo)}: pérdida presupuestada de ${monto(-a.monto)}.`;
     case 'bajo-equilibrio':
@@ -231,7 +233,9 @@ export function planeacionUI(page, opciones) {
     }
     return partes.length
       ? `<div class="flex-gap flex-wrap mb-4" style="align-items:center">${partes.join('')}</div>
-         ${borrador.productoInventario ? `<p class="form-hint">Inventario inicial y costo tomados de ${esc(borrador.productoInventario)}${esNumero(borrador.stockMinimo) ? `, con stock mínimo de ${num(borrador.stockMinimo)} u` : ''}.</p>` : ''}`
+         ${borrador.productoInventario ? `<p class="form-hint">${borrador.productoId
+           ? `Inventario inicial y costo tomados de ${esc(borrador.productoInventario)}: el stock mínimo y el costo se leen del producto vigente en Inventario al calcular.`
+           : 'Este presupuesto se guardó con una versión anterior. Vuelva a tomar el producto de Inventario para que el stock mínimo se lea del producto.'}</p>` : ''}`
       : '<p class="form-hint">Con estados guardados o productos en Inventario, puede tomar de ahí los saldos iniciales.</p>';
   }
 
@@ -265,7 +269,7 @@ export function planeacionUI(page, opciones) {
 
   function render() {
     const errores = validarSupuestos(guardado);
-    const resultado = errores.length ? null : calcularPresupuestoMaestro(guardado);
+    const resultado = errores.length ? null : calcularPresupuestoMaestro(guardado, inventario);
     page.innerHTML = `<div class="page-header"><h1 class="page-title">Presupuesto Maestro</h1>
         <p class="page-subtitle">Presupuestos de ventas, compras, costo de bienes vendidos, gastos de operación y caja de una empresa comercial.</p></div>
       <p id="planMensaje" role="status" aria-live="polite" class="text-muted">Complete los supuestos y pulse Calcular y guardar.</p>
@@ -333,12 +337,14 @@ export function planeacionUI(page, opciones) {
       const id = page.querySelector('#planProducto')?.value;
       const producto = inventario?.productos?.find(p => p.id === id);
       if (!producto) { mensaje('Elija un producto de Inventario.', true); return; }
+      // D-082: se guarda el productoId (el mínimo y el costo se leen del producto
+      // vigente al calcular) y el costo es el promedio vigente, no el inicial.
       borrador.campos.inventarioInicial = String(producto.existenciaFinal);
-      borrador.campos.costoUnitario = String(producto.costoUnitario);
+      borrador.campos.costoUnitario = String(producto.costoPromedio);
       borrador.productoInventario = producto.nombre;
-      borrador.stockMinimo = producto.stockMinimo;
+      borrador.productoId = producto.id;
       render();
-      mensaje(`Tomados de ${producto.nombre}: inventario inicial ${num(producto.existenciaFinal)} ${producto.unidad} y costo ${monto(producto.costoUnitario)}. Pulse Calcular y guardar.`);
+      mensaje(`Tomados de ${producto.nombre}: inventario inicial ${num(producto.existenciaFinal)} ${producto.unidad} y costo promedio ${monto(producto.costoPromedio)}. Pulse Calcular y guardar.`);
     });
   }
 

@@ -3,7 +3,10 @@
 // Lógica pura: recibe los resultados ya calculados por cada módulo (index.js los reúne).
 import { ahPctDelta, margenBruto, margenNeto, margenOperativo } from '../../utils/calculate.js';
 import { formatCurrencyND as monto, formatNumberND, formatPercentND as pct } from '../../utils/format.js';
+import { construirEFE } from '../analisis/efe-calculations.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
+import { ordenarPeriodos } from '../estados/estados-normalize.js';
+import { descripcionReposicion } from '../inventario/inventario-calculations.js';
 
 const esNumero = valor => typeof valor === 'number' && Number.isFinite(valor);
 const num = valor => formatNumberND(valor, esNumero(valor) && Number.isInteger(valor) ? 0 : 2);
@@ -80,6 +83,34 @@ function indicador(grupo, nombre, valor, formato, fuente, ruta, lectura = '', es
   return { grupo, nombre, valor, formato, fuente, ruta, lectura, estado };
 }
 
+// D-070: el EFE de Análisis es la única fuente del flujo en Proforma. El
+// adaptador toma el último par de periodos de los estados guardados y traduce
+// el resultado de construirEFE a la forma que ya consumen los indicadores y
+// las alertas (operación, variación neta y saldo final). Cuando el EFE no se
+// puede usar devuelve { disponible: false, motivo } para armar el faltante.
+export function flujoDesdeEFE(estados) {
+  const periodos = ordenarPeriodos(estados?.periods || []);
+  if (periodos.length < 2) {
+    return { disponible: false, motivo: 'El EFE necesita al menos dos periodos de Estados Financieros.' };
+  }
+  const efe = construirEFE(estados, periodos[periodos.length - 2], periodos[periodos.length - 1]);
+  if (efe.estado !== 'cuadra' && efe.estado !== 'cuadra-sin-verificar') {
+    const causa = efe.estado === 'incompleta' ? 'está incompleto' : 'no cuadra';
+    return {
+      disponible: false,
+      motivo: `El EFE de ${efe.periodos.inicial} → ${efe.periodos.final} ${causa}: revise Análisis, pestaña EFE.`
+    };
+  }
+  return {
+    disponible: true,
+    neto: { operacion: efe.operacion.total },
+    variacionNeta: efe.variacionEfectivo,
+    saldoFinal: efe.efectivoFinal,
+    periodos: efe.periodos,
+    estado: efe.estado
+  };
+}
+
 // Indicadores de todos los módulos en una sola tabla.
 export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento, presupuesto, equilibrio, flujo, inventario, umbrales = {} }, periodoReal) {
   const lista = [];
@@ -132,12 +163,13 @@ export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento
       esNumero(equilibrio.msPorcentaje) ? `Las ventas pueden caer ${pct(Math.max(0, equilibrio.msPorcentaje))} antes de tener pérdida.` : '',
       esNumero(equilibrio.msPorcentaje) ? (equilibrio.msPorcentaje >= 0.2 ? 'ok' : 'alerta') : 'info'));
   }
-  if (flujo) {
-    const grupo = 'Flujo de efectivo';
-    lista.push(indicador(grupo, 'Flujo de operación', flujo.neto.operacion, 'monto', 'Flujo de Efectivo', '#/flujo',
+  if (flujo?.disponible) {
+    // D-070: los renglones de flujo salen del EFE de Análisis, no de la captura manual.
+    const grupo = `Flujo de efectivo (EFE ${flujo.periodos.inicial} → ${flujo.periodos.final})`;
+    lista.push(indicador(grupo, 'Flujo de operación', flujo.neto.operacion, 'monto', 'Análisis (EFE)', '#/analisis',
       flujo.neto.operacion >= 0 ? 'La operación genera efectivo.' : 'La operación consume efectivo.', flujo.neto.operacion >= 0 ? 'ok' : 'alerta'));
-    lista.push(indicador(grupo, 'Variación neta del efectivo', flujo.variacionNeta, 'monto', 'Flujo de Efectivo', '#/flujo', 'Operación + inversión + financiamiento.'));
-    lista.push(indicador(grupo, 'Saldo final de efectivo', flujo.saldoFinal, 'monto', 'Flujo de Efectivo', '#/flujo', 'Saldo inicial + variación neta.'));
+    lista.push(indicador(grupo, 'Variación neta del efectivo', flujo.variacionNeta, 'monto', 'Análisis (EFE)', '#/analisis', 'Operación + inversión + financiamiento.'));
+    lista.push(indicador(grupo, 'Saldo final de efectivo', flujo.saldoFinal, 'monto', 'Análisis (EFE)', '#/analisis', 'Efectivo al cierre del periodo final.'));
   }
   if (presupuesto) {
     const grupo = 'Presupuesto maestro';
@@ -150,9 +182,13 @@ export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento
   }
   if (inventario) {
     const grupo = 'Inventario';
+    // D-082: misma redacción de la alerta que la pantalla de Inventario, por producto.
+    const lecturaReposicion = inventario.porReponer.length
+      ? inventario.porReponer.map(p => `${p.nombre}: ${descripcionReposicion(p)}`).join(' ')
+      : 'Todos sobre el stock mínimo.';
     lista.push(indicador(grupo, 'Valor del inventario', inventario.valorTotal, 'monto', 'Inventario', '#/inventario', `${inventario.productos.length} productos.`));
     lista.push(indicador(grupo, 'Productos por reponer', inventario.porReponer.length, 'unidades', 'Inventario', '#/inventario',
-      inventario.porReponer.length ? `Compra mínima estimada: ${monto(inventario.costoReposicionTotal)}.` : 'Todos sobre el stock mínimo.',
+      lecturaReposicion,
       inventario.porReponer.length ? 'alerta' : 'ok'));
   }
   return lista;
@@ -168,11 +204,11 @@ export function alertasIntegradas({ razones, presupuesto, equilibrio, flujo, inv
   if (presupuesto && presupuesto.totales.utilidadNeta < 0) {
     agregar('alta', `El presupuesto proyecta una pérdida neta de ${monto(-presupuesto.totales.utilidadNeta)}. Revise precios, volumen o gastos.`, '#/planeacion');
   }
-  if (flujo && flujo.neto.operacion < 0) {
-    agregar('alta', `La operación consume ${monto(-flujo.neto.operacion)} de efectivo: revise cobros, precios y gastos antes de invertir o repartir dividendos.`, '#/flujo');
+  if (flujo?.disponible && flujo.neto.operacion < 0) {
+    agregar('alta', `La operación consume ${monto(-flujo.neto.operacion)} de efectivo: revise cobros, precios y gastos antes de invertir o repartir dividendos.`, '#/analisis');
   }
-  if (flujo && esNumero(flujo.saldoFinal) && flujo.saldoFinal < 0) {
-    agregar('alta', `El flujo de efectivo termina con saldo negativo (${monto(flujo.saldoFinal)}).`, '#/flujo');
+  if (flujo?.disponible && esNumero(flujo.saldoFinal) && flujo.saldoFinal < 0) {
+    agregar('alta', `El flujo de efectivo termina con saldo negativo (${monto(flujo.saldoFinal)}).`, '#/analisis');
   }
   const rc = razon(razones, 'RC');
   if (esNumero(rc) && rc < (umbrales.ratioCorrienteMin ?? 1)) {
@@ -201,19 +237,31 @@ export function alertasIntegradas({ razones, presupuesto, equilibrio, flujo, inv
 }
 
 // Reporte completo. Cada entrada puede ser null si el módulo no tiene datos.
+// D-078: `errorEstados` distingue «no hay estados» de «hay estados que no se
+// leen»: el faltante muestra el aviso real en lugar de pedir que cargue datos.
 export function construirReporte(entradas) {
-  const { estados = null, apalancamiento = null, presupuesto = null, equilibrio = null, flujo = null, inventario = null } = entradas;
+  const { estados = null, errorEstados = null, apalancamiento = null, presupuesto = null, equilibrio = null, flujo = null, inventario = null } = entradas;
   const real = resultadosReales(estados);
   const proforma = resultadosProforma(presupuesto);
   const faltantes = [];
-  if (!estados) faltantes.push({ modulo: 'Estados financieros', ruta: '#/estados', texto: 'Cargue la demo o importe estados para comparar con datos reales.' });
+  if (!estados) {
+    faltantes.push({
+      modulo: 'Estados financieros', ruta: errorEstados ? '#/analisis' : '#/estados',
+      texto: errorEstados
+        ? `No se pudieron leer los estados guardados: ${errorEstados}. Revise Análisis y Estados Financieros.`
+        : 'Cargue la demo o importe estados para comparar con datos reales.'
+    });
+  }
   const ultimoApal = apalancamiento?.periodos?.[apalancamiento.periodos.length - 1];
   if (estados && ultimoApal && ultimoApal.grados.gao === null) {
     faltantes.push({ modulo: 'Apalancamiento', ruta: '#/apalancamiento', texto: 'Clasifique los costos como fijos o variables para obtener el GAO y el GAT.' });
   }
   if (!presupuesto) faltantes.push({ modulo: 'Presupuesto maestro', ruta: '#/planeacion', texto: 'Configure los supuestos para obtener la proforma y la caja proyectada.' });
   if (!equilibrio) faltantes.push({ modulo: 'Punto de equilibrio', ruta: '#/equilibrio', texto: 'Ingrese precio, costos y unidades.' });
-  if (!flujo) faltantes.push({ modulo: 'Flujo de efectivo', ruta: '#/flujo', texto: 'Registre las entradas y salidas de efectivo.' });
+  if (!flujo?.disponible) {
+    // D-070: sin un EFE utilizable no hay renglones de flujo; el faltante envía a Análisis.
+    faltantes.push({ modulo: 'Flujo de efectivo', ruta: '#/analisis', texto: flujo?.motivo || 'No hay un EFE utilizable: revise Análisis, pestaña EFE.' });
+  }
   if (!inventario) faltantes.push({ modulo: 'Inventario', ruta: '#/inventario', texto: 'Registre productos y movimientos.' });
   return {
     real, proforma,

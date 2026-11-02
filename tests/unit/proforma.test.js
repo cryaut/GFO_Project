@@ -1,11 +1,11 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
-  alertasIntegradas, construirReporte, resultadosProforma, resultadosReales
+  alertasIntegradas, construirReporte, flujoDesdeEFE, resultadosProforma, resultadosReales
 } from '../../js/modules/proforma/proforma-calculations.js';
 import { proformaUI } from '../../js/modules/proforma/proforma-ui.js';
 import { calcularPresupuestoMaestro, ejemploPlaneacion, normalizarSupuestos } from '../../js/modules/planeacion/planeacion-calculations.js';
 import { calcularCVU, ejemploEquilibrio, normalizarEquilibrio } from '../../js/modules/equilibrio/equilibrio-calculations.js';
-import { calcularFlujo, ejemploFlujo } from '../../js/modules/flujo/flujo-calculations.js';
+import { ejemploFlujo } from '../../js/modules/flujo/flujo-calculations.js';
 import { calcularInventario, ejemploInventario } from '../../js/modules/inventario/inventario-calculations.js';
 import { calcularApalancamiento } from '../../js/modules/apalancamiento/apalancamiento-calculations.js';
 import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
@@ -19,7 +19,8 @@ function estadosMuno() {
     patrimonio: { 'Capital Social': 200000, 'Utilidades Acumuladas': util }
   });
   const resultados = (v, cv, ga, gv, oi, og) => ({
-    'Ventas': v, 'Costo de Ventas': cv, 'Gastos de Administracion': ga, 'Gastos de Ventas': gv, 'Otros Ingresos': oi, 'Otros Gastos': og
+    'Ventas': v, 'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
+    'Costo de Ventas': cv, 'Gastos de Administracion': ga, 'Gastos de Ventas': gv, 'Otros Ingresos': oi, 'Otros Gastos': og
   });
   return normalizeFinancialData({
     name: 'MUNO MODA S.A.', periods: ['2023', '2024'],
@@ -30,6 +31,17 @@ function estadosMuno() {
     estadoResultados: {
       2023: resultados(850000, 510000, 120000, 85000, 15000, 10000),
       2024: resultados(920000, 545000, 130000, 90000, 18000, 12000)
+    },
+    accountIdentities: {
+      pasivos: {
+        'Pasivo Corto Plazo': { idCuenta: 'bs.other_current_liabilities', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' },
+        'Provisiones': { idCuenta: 'bs.current_provisions', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' },
+        'Pasivo Largo Plazo': { idCuenta: 'bs.long_term_borrowings', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' }
+      },
+      estadoResultados: {
+        'Otros Ingresos': { idCuenta: 'is.nonoperating_income', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' },
+        'Otros Gastos': { idCuenta: 'is.noninterest_nonoperating_expenses', estado: 'reconocida', metodo: 'contexto', candidatos: [], origen: 'legado' }
+      }
     }
   });
 }
@@ -46,7 +58,8 @@ function entradasCompletas(extra = {}) {
     apalancamiento: calcularApalancamiento(estados, CONFIG_APALANCAMIENTO),
     presupuesto: calcularPresupuestoMaestro(normalizarSupuestos(ejemploPlaneacion())),
     equilibrio: calcularCVU(normalizarEquilibrio(ejemploEquilibrio())),
-    flujo: calcularFlujo(ejemploFlujo()),
+    // D-070: el flujo de Proforma sale del EFE de Análisis, no de la captura manual.
+    flujo: flujoDesdeEFE(estados),
     inventario: calcularInventario(ejemploInventario()),
     umbrales: UMBRALES,
     ...extra
@@ -80,7 +93,8 @@ describe('indicadores, alertas y faltantes', () => {
     expect(valor('Liquidez corriente')).toBe(2.35);
     expect(valor('GAO')).toBeCloseTo(375000 / 155000, 10); // MC / UAII de 2024
     expect(valor('Punto de equilibrio')).toBe(150);
-    expect(valor('Flujo de operación')).toBe(98000);
+    // D-070: el renglón de flujo sale del EFE de Análisis (antes venía de la captura manual).
+    expect(valor('Flujo de operación')).toBe(158950);
     expect(valor('Financiamiento máximo requerido')).toBe(20800);
     expect(valor('Valor del inventario')).toBe(78790);
     expect(valor('Productos por reponer')).toBe(2);
@@ -170,8 +184,12 @@ describe('ruta #/proforma con datos guardados', () => {
     expect(html).not.toContain('Para completar el reporte');
     expect(html).toContain('Real 2024');
     expect(html).toContain('C$ 1,000,000.00');
-    // Liquidez corriente 2024 = (52,000 + 135,000 + 195,000 + 30,000) / (92,000 + 65,000 + 18,000)
-    expect(html).toContain(`${(412000 / 175000).toFixed(2)} veces`);
+    // Los datos legados incompletos no acreditan todos los componentes que
+    // requiere el motor; Proforma no debe presentar una liquidez fabricada.
+    const { computeRazones } = await import('../../js/modules/analisis/index.js');
+    const razones = computeRazones('2024');
+    expect(razones.RC).toBeNull();
+    expect(razones.notAvailableReasons.some(m => m.campo === 'RC')).toBe(true);
     expect(html).toContain('Productos por reponer');
   });
 });

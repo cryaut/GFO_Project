@@ -36,6 +36,11 @@ it.each(CASOS)('reconoce %s en %s como %s, sin falsos positivos del corpus', (no
   expect(identificarCuenta(nombre, { grupo })).toMatchObject({ estado: 'reconocida', id });
 });
 
+it('reconoce el alias "Resultado del ejercicio" como resultado del periodo en patrimonio', () => {
+  expect(identificarCuenta('Resultado del ejercicio', { grupo: 'patrimonio' }))
+    .toMatchObject({ estado: 'reconocida', id: 'bs.current_year_result_equity' });
+});
+
 const AMBIGUAS = [
   ['Equipos', 'activos', ['bs.ppe_machinery', 'bs.ppe_furniture']],
   ['Pasivo Corto Plazo', 'pasivos', ['bs.short_term_borrowings', 'bs.other_current_liabilities']],
@@ -99,7 +104,13 @@ it('conserva las 71 identidades del PR #10 y enumera cada diferencia de investig
   for (const cuenta of referencia.cuentas) expect(obtenerCuenta(cuenta.id)).toMatchObject({
     nombreCanonico: cuenta.canonical_name, clasificacion: cuenta.classification,
     rol: cuenta.account_role
+
   });
+  const politicasD063 = new Set(['is.sales_allowances', 'is.sales_discounts', 'is.sales_returns']);
+  for (const id of politicasD063) {
+    expect(referencia.cuentas.find(cuenta => cuenta.id === id).absence_policy).toBe('zero_if_not_reported');
+    expect(obtenerCuenta(id).politicaAusencia).toBe('requires_data');
+  }
   // Se hacen visibles todas las rebajas locales, sin fingir que los JSON ajenos
   // ya cambiaron. Toda diferencia nueva requiere documentarse y revisarse.
   const diferencias = referencia.cuentas.filter(cuenta => obtenerCuenta(cuenta.id).estadoInvestigacion !== cuenta.research.status);
@@ -130,6 +141,7 @@ it('conserva las 71 identidades del PR #10 y enumera cada diferencia de investig
       definicion: cuenta.definition
     });
   }
+
   expect(obtenerCuenta('is.interest_income').politicaAusencia).toBe('zero_if_not_reported');
 });
 

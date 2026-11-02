@@ -77,10 +77,14 @@ describe('validaciones', () => {
     expect(errores.join(' ')).toContain('2025-01-15');
   });
 
-  it('acepta una entrada válida', () => {
+  it('acepta una entrada válida (D-081: con costo unitario)', () => {
+    expect(validarMovimiento(datos, {
+      id: 'x', productoId: 'demo-camisa', tipo: 'entrada', cantidad: 50, costoUnitario: 360, fecha: '2025-02-01', concepto: 'Compra'
+    })).toEqual([]);
+    // D-081: la entrada exige costo unitario ≥ 0.
     expect(validarMovimiento(datos, {
       id: 'x', productoId: 'demo-camisa', tipo: 'entrada', cantidad: 50, fecha: '2025-02-01', concepto: 'Compra'
-    })).toEqual([]);
+    }).join(' ')).toContain('costo unitario');
   });
 
   it('no deja borrar una entrada de la que dependen salidas posteriores', () => {
@@ -98,7 +102,7 @@ describe('validaciones', () => {
     expect(validarProducto(datos, { ...base, existenciaInicial: 0 }, 'demo-camisa').join(' ')).toContain('-30');
   });
 
-  it('descarta datos guardados inválidos en vez de romper la pantalla', () => {
+  it('descarta datos guardados inválidos en vez de romper la pantalla (D-083: contados)', () => {
     const limpio = normalizarInventario({
       productos: [{ id: 'a', nombre: 'A', existenciaInicial: 5, costoUnitario: 2, stockMinimo: 1 }, { id: 'b', nombre: '' }],
       movimientos: [
@@ -110,7 +114,11 @@ describe('validaciones', () => {
     });
     expect(limpio.productos.map(p => p.id)).toEqual(['a']);
     expect(limpio.movimientos.map(m => m.id)).toEqual(['m1']);
-    expect(normalizarInventario(undefined)).toEqual({ productos: [], movimientos: [] });
+    expect(limpio.descartados).toContainEqual({ motivo: 'Producto sin nombre o identificador inválido', cantidad: 1 });
+    expect(limpio.descartados).toContainEqual({ motivo: 'Movimiento de un producto inexistente', cantidad: 1 });
+    expect(limpio.descartados).toContainEqual({ motivo: 'Movimiento con cantidad inválida', cantidad: 1 });
+    expect(limpio.descartados).toContainEqual({ motivo: 'Movimiento con fecha inválida', cantidad: 1 });
+    expect(normalizarInventario(undefined)).toEqual({ productos: [], movimientos: [], descartados: [] });
   });
 });
 
@@ -137,7 +145,8 @@ describe('pantalla de inventario', () => {
     const html = page.innerHTML;
     expect(html).toContain('78,790.00');
     expect(html).toContain('Alertas de reposición');
-    expect(html).toContain('Comprar al menos 5 prendas');
+    // D-082: redacción única de la alerta (descripcionReposicion).
+    expect(html).toContain('Bajo el mínimo: comprar al menos 5 prendas');
     expect(html).toContain('Existencia final = 120 + 60 − 145 = 35 prendas');
     expect(graficar).toHaveBeenLastCalledWith('inventarioChart', expect.objectContaining({ type: 'bar' }));
   });
@@ -162,7 +171,8 @@ describe('pantalla de inventario', () => {
 
   it('registra una entrada que quita la alerta', async () => {
     const { page, guardar } = montar(ejemploInventario());
-    llenar(page, { movProducto: 'demo-vestido', movTipo: 'entrada', movCantidad: '10', movFecha: '2025-02-01', movConcepto: 'Compra' });
+    // D-081: la entrada lleva su costo unitario.
+    llenar(page, { movProducto: 'demo-vestido', movTipo: 'entrada', movCantidad: '10', movCosto: '800', movFecha: '2025-02-01', movConcepto: 'Compra' });
     await enviar(page, 'formMovimiento');
     expect(guardar).toHaveBeenCalledTimes(1);
     const vestido = calcularInventario(guardar.mock.calls[0][0]).productos.find(p => p.id === 'demo-vestido');

@@ -328,7 +328,7 @@ function ingestTable(builder, rows, defaults = {}) {
       const key = `${group}:${name}:${period}`;
       if (builder.seen.has(key)) throw new Error(`Fila ${rowNumber}: la cuenta "${name}" está duplicada en ${period}.`);
       builder.seen.add(key);
-      builder.registros.push({ nombre: name, grupo: group, clasificacion: clasif, id, periodo: period, importe: amount, origen: 'importacion' });
+      builder.registros.push({ nombre: name, grupo: group, clasificacion: clasif, id, periodo: period, importe: amount, origen: 'importacion', fila: rowNumber });
       builder.values += 1;
       if (builder.values > MAX_VALUES) throw new Error('La tabla contiene demasiados importes.');
     };

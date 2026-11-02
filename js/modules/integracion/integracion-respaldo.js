@@ -1,4 +1,6 @@
 import { normalizeFinancialData } from '../estados/estados-normalize.js';
+import { leerEstados } from '../../utils/estados-guardados.js';
+import { normalizarInventario } from '../inventario/inventario-calculations.js';
 
 // Validación de un respaldo JSON (el que genera "Exportar JSON" en Reportes) antes de
 // tocar el store. Es pura: recibe el archivo ya parseado y los datos actuales, y devuelve
@@ -48,7 +50,34 @@ function validarTipo(importado, actual, ruta) {
 }
 
 function validarModulo(clave, importado, actual, omitidos) {
-  if (clave === 'estados') return normalizeFinancialData(importado);
+  if (clave === 'estados') {
+    // D-080: si los estados del respaldo no se pueden leer, el respaldo completo
+    // se rechaza — un dato que las pantallas no pueden usar no debe quedar guardado.
+    const lectura = leerEstados(importado);
+    if (lectura.error) {
+      throw new Error(`No se pudieron leer los estados del respaldo: ${lectura.error}. No se importó nada.`);
+    }
+    return lectura.estados ?? normalizeFinancialData(importado);
+  }
+  if (clave === 'inventario') {
+    // D-083 (ronda 2): primero las mismas validaciones de forma que el resto de
+    // módulos, con los mismos mensajes que main (H1); después la normalización
+    // y el rechazo por registros descartados.
+    if (!esObjeto(importado)) throw new Error(`El módulo "${clave}" debe ser un objeto.`);
+    for (const [campo, valor] of Object.entries(importado)) {
+      if (!Object.hasOwn(actual, campo)) {
+        omitidos.push(`${clave}.${campo}`);
+        continue;
+      }
+      validarTipo(valor, actual[campo], `${clave}.${campo}`);
+    }
+    const normal = normalizarInventario(importado);
+    if (normal.descartados.length) {
+      const detalle = normal.descartados.map(d => `${d.motivo}: ${d.cantidad}`).join('; ');
+      throw new Error(`El inventario del respaldo tiene registros descartados (${detalle}). No se importó nada.`);
+    }
+    return { productos: normal.productos, movimientos: normal.movimientos };
+  }
   if (!esObjeto(importado)) throw new Error(`El módulo "${clave}" debe ser un objeto.`);
   // Lo que el archivo no trae se conserva del módulo actual para que no quede incompleto.
   const resultado = structuredClone(actual);
