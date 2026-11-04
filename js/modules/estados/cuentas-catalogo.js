@@ -1,5 +1,5 @@
 // Datos de la colección. Investigación y procedencia: docs/planificacion/cuentas/investigacion.md.
-export const versionCatalogo = '2026-10-20.1';
+export const versionCatalogo = '2026-10-24.1';
 export const TIPOS_APP = {
   'activos': [
     'efectivo',
@@ -188,7 +188,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'pasivos',
     'clasificacion': 'pasivo_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Gastos devengados por pagar',
@@ -244,7 +244,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'patrimonio',
     'clasificacion': 'patrimonio',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Prima en emisión',
@@ -263,7 +263,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'activos',
     'clasificacion': 'activo_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Efectivo',
@@ -333,7 +333,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'pasivos',
     'clasificacion': 'pasivo_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Vencimientos corrientes de deuda a largo plazo'
@@ -351,7 +351,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'pasivos',
     'clasificacion': 'pasivo_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Provisiones de corto plazo',
@@ -389,7 +389,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'patrimonio',
     'clasificacion': 'patrimonio',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'conservar',
     'sinonimos': [
       'Utilidad del ejercicio',
@@ -459,7 +459,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'activos',
     'clasificacion': 'activo_no_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Intangibles',
@@ -490,7 +490,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'activos',
     'clasificacion': 'activo_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Productos terminados',
@@ -528,7 +528,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'activos',
     'clasificacion': 'activo_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Mercaderías',
@@ -568,7 +568,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'activos',
     'clasificacion': 'activo_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Materias primas',
@@ -629,7 +629,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'activos',
     'clasificacion': 'activo_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Producción en proceso',
@@ -667,7 +667,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'patrimonio',
     'clasificacion': 'patrimonio',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Reserva legal acumulada',
@@ -688,7 +688,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'pasivos',
     'clasificacion': 'pasivo_no_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Préstamos a largo plazo',
@@ -724,7 +724,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'activos',
     'clasificacion': 'activo_no_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Inversiones permanentes',
@@ -743,7 +743,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'pasivos',
     'clasificacion': 'pasivo_no_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Provisiones no corrientes',
@@ -781,7 +781,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'activos',
     'clasificacion': 'activo_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Otros activos circulantes',
@@ -800,7 +800,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'pasivos',
     'clasificacion': 'pasivo_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Otros pasivos circulantes',
@@ -828,7 +828,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'activos',
     'clasificacion': 'activo_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Deudores varios corrientes',
@@ -847,7 +847,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'patrimonio',
     'clasificacion': 'patrimonio',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Otras cuentas patrimoniales que no tengan un identificador más específico'
@@ -865,7 +865,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'activos',
     'clasificacion': 'activo_no_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Otros activos a largo plazo'
@@ -883,7 +883,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'pasivos',
     'clasificacion': 'pasivo_no_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Otros pasivos a largo plazo',
@@ -902,7 +902,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'patrimonio',
     'clasificacion': 'patrimonio',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Reservas',
@@ -930,7 +930,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'activos',
     'clasificacion': 'activo_fijo',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Edificios',
@@ -968,7 +968,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'activos',
     'clasificacion': 'activo_fijo',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Mobiliario',
@@ -1008,7 +1008,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'activos',
     'clasificacion': 'activo_fijo',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Terrenos de uso operativo'
@@ -1045,7 +1045,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'activos',
     'clasificacion': 'activo_fijo',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Maquinaria',
@@ -1074,7 +1074,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'activos',
     'clasificacion': 'activo_fijo',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Propiedad, planta y equipo',
@@ -1112,7 +1112,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'activos',
     'clasificacion': 'activo_fijo',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Equipo de transporte',
@@ -1150,7 +1150,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'activos',
     'clasificacion': 'activo_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Pagos anticipados',
@@ -1169,7 +1169,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'patrimonio',
     'clasificacion': 'patrimonio',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'conservar',
     'sinonimos': [
       'Resultados acumulados',
@@ -1189,7 +1189,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'patrimonio',
     'clasificacion': 'patrimonio',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Capital emitido',
@@ -1228,7 +1228,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'pasivos',
     'clasificacion': 'pasivo_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Deudas bancarias de corto plazo',
@@ -1249,7 +1249,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'activos',
     'clasificacion': 'activo_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Inversiones temporales',
@@ -1287,7 +1287,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'pasivos',
     'clasificacion': 'pasivo_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Tributos por pagar',
@@ -1384,7 +1384,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'pasivos',
     'clasificacion': 'pasivo_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'CxP',
@@ -1405,7 +1405,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'activos',
     'clasificacion': 'activo_corriente',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'CxC',
@@ -1427,7 +1427,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'gasto_operativo',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Gastos de administración',
@@ -1497,7 +1497,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'impuesto',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Impuesto sobre la renta',
@@ -1537,7 +1537,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'financiero',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Intereses pagados o devengados',
@@ -1607,7 +1607,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'costo',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Costo de ventas de mercaderías',
@@ -1676,7 +1676,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'no_operativo',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Otros gastos no operativos',
@@ -1696,7 +1696,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'no_operativo',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Otros ingresos no operativos',
@@ -1715,7 +1715,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'gasto_operativo',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Amortización de activos usados en operaciones, bajo la misma regla de no duplicación'
@@ -1751,7 +1751,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'gasto_operativo',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Depreciación de activos usados en operaciones, solo si no está incluida ya en otra cuenta agregada utilizada'
@@ -1807,7 +1807,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'gasto_operativo',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Otros gastos de operación',
@@ -1826,7 +1826,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'ingreso',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Otros ingresos de operación si pertenecen a la actividad operativa',
@@ -1845,7 +1845,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'ingreso',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Otras ventas',
@@ -1875,7 +1875,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'costo',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Costo de producción vendido',
@@ -1905,7 +1905,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'ingreso',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Ventas de mercaderías',
@@ -2020,7 +2020,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'gasto_operativo',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Gastos comerciales',
@@ -2039,7 +2039,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'costo',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Costos de servicios prestados'
@@ -2057,7 +2057,7 @@ export const CUENTAS_CATALOGO = [
     'grupo': 'estadoResultados',
     'clasificacion': 'ingreso',
     'rol': 'detail',
-    'politicaAusencia': 'zero_if_not_reported',
+    'politicaAusencia': 'requires_data',
     'convencionSigno': 'positivo',
     'sinonimos': [
       'Ventas de servicios',

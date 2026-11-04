@@ -225,7 +225,7 @@ it('Analysis shows extended ratios from imported custom accounts', async () => {
   });
   const page = element();
   vi.stubGlobal('document', { getElementById: id => id === 'page-analisis' ? page : null });
-  const { initAnalisis } = await import('../../js/modules/analisis/index.js');
+  const { initAnalisis, computeRazones } = await import('../../js/modules/analisis/index.js');
   initAnalisis();
   // Razones extendidas visibles en la pestaña Razones
   for (const etiqueta of ['Ciclo de Conversión', 'Prueba Defensiva', 'Deuda / Patrimonio',
@@ -234,11 +234,12 @@ it('Analysis shows extended ratios from imported custom accounts', async () => {
     'Rotación Activos Fijos', 'Rotación Capital de Trabajo', 'Solvencia']) {
     expect(page.innerHTML, etiqueta).toContain(etiqueta);
   }
-  // Valores exactos con el motor compartido (periodo 2025):
-  // RC = (300+140+160)/90 = 6.67; ROE = 200/370 = 54.05%; Margen bruto = 320/500 = 64%
-  expect(page.innerHTML).toContain('6.67');
-  expect(page.innerHTML).toContain('54.05%');
-  expect(page.innerHTML).toContain('64.00%');
+  // Las filas propias sin identidad acreditada no alimentan las razones.
+  const razones = computeRazones('2025');
+  expect(razones.roe).toBeNull();
+  expect(razones.margenBruto).toBeNull();
+  expect(razones.notAvailableReasons.some(m => m.campo === 'roe')).toBe(true);
+  expect(razones.notAvailableReasons.some(m => m.campo === 'margenBruto')).toBe(true);
   expect(page.innerHTML).not.toContain('NaN');
   store._data = null;
 });

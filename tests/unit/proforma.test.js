@@ -184,8 +184,12 @@ describe('ruta #/proforma con datos guardados', () => {
     expect(html).not.toContain('Para completar el reporte');
     expect(html).toContain('Real 2024');
     expect(html).toContain('C$ 1,000,000.00');
-    // Liquidez corriente 2024 = (52,000 + 135,000 + 195,000 + 30,000) / (92,000 + 65,000 + 18,000)
-    expect(html).toContain(`${(412000 / 175000).toFixed(2)} veces`);
+    // Los datos legados incompletos no acreditan todos los componentes que
+    // requiere el motor; Proforma no debe presentar una liquidez fabricada.
+    const { computeRazones } = await import('../../js/modules/analisis/index.js');
+    const razones = computeRazones('2024');
+    expect(razones.RC).toBeNull();
+    expect(razones.notAvailableReasons.some(m => m.campo === 'RC')).toBe(true);
     expect(html).toContain('Productos por reponer');
   });
 });

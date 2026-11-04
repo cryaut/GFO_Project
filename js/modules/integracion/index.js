@@ -6,6 +6,7 @@ import { showToast } from '../../components/toast.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
 import { leerEstados } from '../../utils/estados-guardados.js';
 import { computeRazones, refreshSavedStates } from '../analisis/index.js';
+import { obtenerUtilidadNetaMotor } from '../razones/razones-app-adapter.js';
 import { validarRespaldo, MAX_RESPALDO_BYTES } from './integracion-respaldo.js';
 import { construirReporteHTML } from './integracion-reporte.js';
 
@@ -57,7 +58,7 @@ function computeDashboardKPIs() {
     totalPasivos: shared ? shared.totalPasivos : null,
     totalPatrimonio: shared ? shared.totalPatrimonio : null,
     ventas: shared ? shared.ventas : null,
-    utilidadNeta: shared ? shared.utilidadNeta : null,
+    utilidadNeta: estados ? obtenerUtilidadNetaMotor(store.get('estados'), lastP).valor : null,
     presupuestoIngreso: ingreso, presupuestoMeta: meta,
     activosCount, quizScore,
     lectura,

@@ -6,6 +6,9 @@ Todos los cambios notables en GFO Toolkit.
 
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
+### Integración de razones y lectura segura
+- Análisis conserva el aviso de F8 para estados ilegibles y calcula las razones con el motor; las etiquetas de rotaciones indican ventas y compras a crédito. Reportes obtiene la utilidad neta del motor. Los documentos sin datos acreditados mantienen N/D (D-086).
+
 ### Módulo 2: Estados Financieros
 - R1/R2 del plan de reparación (D-061 a D-065): la compuerta de datos rechaza los importes con el signo contrario a `convencionSigno` del catálogo (los mensajes indican fila, cuenta y periodo) y nunca invierte un signo en silencio; los datos guardados que no pasan la compuerta se muestran en modo lectura, sin borrarse.
 - R1/R2 (D-062): un total reportado es el valor de su tipo y se compara con sus detalles; si no cuadra (diferencia mayor de 0.01) se registra `reported_subtotal_mismatch` con la diferencia (reemplaza a `overlapping_account_aggregation`). Todos los totales con `rol: reported_total` se guardan en `reportedTotals`, también los que tienen tipo; un subtotal sin detalles ni total propio en un grupo con total reportado es N/D, nunca 0.
@@ -46,6 +49,7 @@ Todos los cambios notables en GFO Toolkit.
 - Botón **Vista previa del reporte** (muestra el reporte en la página) y **Descargar reporte HTML**; antes el botón "Vista Previa HTML" descargaba el archivo.
 
 ### Módulo 3: Análisis Financiero
+- Ronda 18 / D-049 y D-056–D-058: razones de Análisis, Integración y Proforma conectadas al motor JSON; composición de ingresos declarada por periodo, identidad acreditada y N/D con motivos. Catálogo de Estados sincronizado con D-055 y nota maestra alineada, sin cambios en fórmulas JSON ni referencias.
 - Ronda 17 / D-055: las 55 cuentas del motor antes opcionales requieren dato; solo intereses ganados conserva cero si no se reporta. JSON, nota maestra y generado sincronizados, pruebas con ceros explícitos y comparación de ejercicios v2 en ambas lecturas; catálogo de Estados sin cambios.
 - Ronda 16 / D-051: se registra y prueba que la ausencia de línea de intereses ganados vale cero según su política; una línea presente se suma una sola vez desde el JSON. Se conservan las políticas de las demás cuentas y el ejemplo v3.
 - Ronda 15 / motor independiente: intereses ganados como operando explícito de utilidad neta en los tres JSON; lectura por id sin sumas automáticas. El ejemplo ficticio v3 reemplaza MUNO en las pruebas de razones, con comparación de 60 celdas y N/D con motivo. Se prepara el PR para revisión tras integrar #14, sin conexión con Análisis.

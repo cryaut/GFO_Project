@@ -1,6 +1,7 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import { registrarCuenta } from '../../js/modules/estados/cuentas-registro.js';
 import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
+import { obtenerCuenta } from '../../js/modules/estados/cuentas-identificador.js';
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -27,6 +28,21 @@ function datosBase(dosPeriodos = true) {
   });
 }
 
+const DEDUCCIONES = ['is.sales_returns', 'is.sales_discounts', 'is.sales_allowances'];
+const COMPONENTES_AF_SIN_MOVIMIENTO = ['bs.ppe_buildings', 'bs.ppe_machinery',
+  'bs.ppe_vehicles', 'bs.ppe_furniture', 'bs.ppe_other', 'bs.accumulated_depreciation'];
+const GASTOS_SIN_MOVIMIENTO = ['is.operating_depreciation', 'is.operating_amortization',
+  'is.other_operating_expenses', 'is.other_operating_income',
+  'is.nonoperating_income', 'is.noninterest_nonoperating_expenses'];
+
+// D-055/D-060: el fixture declara expresamente los componentes sin movimiento.
+function agregarCeros(datos, ids) {
+  return registrarCuenta(datos, ids.flatMap(id => datos.periods.map(periodo => ({
+    id, nombre: `Componente sin movimiento ${id}`, grupo: obtenerCuenta(id).grupo,
+    periodo, importe: 0, confirmado: true
+  }))));
+}
+
 async function cargar(datos) {
   vi.resetModules();
   vi.stubGlobal('document', { getElementById: () => null });
@@ -39,7 +55,7 @@ async function cargar(datos) {
 }
 
 it('costo N/D conserva N/D antes de restar márgenes, cobertura y compras', async () => {
-  const datos = registrarCuenta(datosBase(), { nombre: 'Rubro X', grupo: 'estadoResultados',
+  const datos = registrarCuenta(agregarCeros(datosBase(), ['bs.short_term_investments', 'bs.other_current_receivables', 'bs.prepaid_expenses', 'bs.other_current_assets', 'bs.short_term_borrowings', 'bs.current_portion_long_term_debt', 'bs.taxes_payable', 'bs.accrued_expenses_payable', 'bs.current_provisions', 'bs.other_current_liabilities', 'bs.inventory_raw_materials', 'bs.inventory_work_in_process', 'bs.inventory_finished_goods']), { nombre: 'Rubro X', grupo: 'estadoResultados',
     clasificacion: 'costoVentas', periodo: '2025', importe: 10 });
   expect(datos.accountIdentities.estadoResultados['Rubro X'].estado).not.toBe('reconocida');
   const analisis = await cargar(datos);
@@ -48,13 +64,13 @@ it('costo N/D conserva N/D antes de restar márgenes, cobertura y compras', asyn
     expect(r[campo], campo).toBeNull();
   }
   expect(r.usaComprasReales).toBe(false);
-  expect(r.notAvailableReasons).toContainEqual(expect.objectContaining({ campo: 'compras', periodo: '2025',
-    motivo: 'missing_required_account_data', operandos: expect.arrayContaining(['costoVentas']) }));
+  expect(r.notAvailableReasons).toContainEqual(expect.objectContaining({ campo: 'rotacionCxP', periodo: '2025',
+    motivo: 'missing_required_account_data', operandos: expect.arrayContaining(['supp.supplier_payments']) }));
   expect(r.RC).toBe(10); // 500 de AC / 50 de PC, independientes del costo.
 });
 
 it('gasto administrativo N/D no se convierte en utilidad operativa para cobertura', async () => {
-  const datos = registrarCuenta(datosBase(), { nombre: 'Gastos de Adminstración', grupo: 'estadoResultados',
+  const datos = registrarCuenta(agregarCeros(datosBase(), DEDUCCIONES), { nombre: 'Gastos de Adminstración', grupo: 'estadoResultados',
     periodo: '2025', importe: 20 });
   expect(datos.accountIdentities.estadoResultados['Gastos de Adminstración'].estado).toBe('sugerida');
   const analisis = await cargar(datos);
@@ -62,12 +78,12 @@ it('gasto administrativo N/D no se convierte en utilidad operativa para cobertur
   expect(r.coberturaIntereses).toBeNull();
   expect(r.margenOperativo).toBeNull();
   expect(r.margenBruto).toBe(0.6); // (1000 − 400) / 1000.
-  expect(r.notAvailableReasons).toContainEqual(expect.objectContaining({ campo: 'utilidadOperativa',
-    operandos: expect.arrayContaining(['gastosAdmin']) }));
+  expect(r.notAvailableReasons).toContainEqual(expect.objectContaining({ campo: 'margenOperativo', motivo: 'ambiguous_account_match',
+    operandos: expect.arrayContaining(['is.administrative_expenses']) }));
 });
 
 it('activo corriente pendiente anula RC y la resta del capital de trabajo, sin falsos negativos', async () => {
-  const datos = registrarCuenta(datosBase(), { nombre: 'Activo corriente extra', grupo: 'activos',
+  const datos = registrarCuenta(agregarCeros(datosBase(), [...DEDUCCIONES, ...COMPONENTES_AF_SIN_MOVIMIENTO]), { nombre: 'Activo corriente extra', grupo: 'activos',
     clasificacion: 'activosCorrientesOtros', periodo: '2025', importe: 5000 });
   expect(datos.accountIdentities.activos['Activo corriente extra'].estado).not.toBe('reconocida');
   const analisis = await cargar(datos);
@@ -77,21 +93,34 @@ it('activo corriente pendiente anula RC y la resta del capital de trabajo, sin f
   expect(r.denominadores.rotacionCapitalTrabajo).toBeNull();
   expect(r.rotacionActivosFijos).toBe(2); // 1000 / Terrenos 500.
   expect(r.margenBruto).toBe(0.6);
-  expect(r.notAvailableReasons).toContainEqual(expect.objectContaining({ campo: 'capitalNetoTrabajo',
-    operandos: expect.arrayContaining(['activosCorrientes']) }));
+  expect(r.notAvailableReasons).toContainEqual(expect.objectContaining({ campo: 'capitalNetoTrabajo', motivo: 'ambiguous_account_match',
+    operandos: expect.arrayContaining(['bs.other_current_assets']) }));
 });
 
-it('un solo periodo sigue usando saldos finales y la aproximación de compras existente', async () => {
-  const analisis = await cargar(datosBase(false));
+it('un solo periodo sigue usando saldos finales y CxP requiere pagos declarados (D-059)', async () => {
+  const datos = agregarCeros(datosBase(false), [...DEDUCCIONES, ...COMPONENTES_AF_SIN_MOVIMIENTO,
+    ...GASTOS_SIN_MOVIMIENTO, 'bs.short_term_investments', 'bs.other_current_receivables',
+    'bs.prepaid_expenses', 'bs.other_current_assets', 'bs.intangible_assets',
+    'bs.long_term_investments', 'bs.other_noncurrent_assets', 'bs.additional_paid_in_capital',
+    'bs.legal_reserve', 'bs.other_reserves', 'bs.retained_earnings',
+    'bs.current_year_result_equity', 'bs.other_equity_components']);
+  datos.composicionIngresos['2025'] = 'excluye_intereses';
+  const analisis = await cargar(datos);
   const r = analisis.computeRazones('2025');
   expect(r).toMatchObject({ usaPromedios: false, usaComprasReales: false,
-    invProm: 100, cxcProm: 100, activoProm: 1000, patrimonioProm: 800, RotInv: 4, rotacionCxP: 8 });
+    invProm: 100, cxcProm: 100, activoProm: 1000, patrimonioProm: 800, RotInv: 4, rotacionCxP: null });
   expect(r.ROA).toBe(230 / 1000); // UN = 1000−400−200−100−20−50.
-  expect(r.notAvailableReasons).toEqual([]);
+  expect(r.notAvailableReasons).toContainEqual(expect.objectContaining({ campo: 'rotacionCxP',
+    motivo: 'missing_required_account_data', operandos: ['supp.supplier_payments'] }));
 });
 
 it('dos periodos completos conservan compras e inventario promedio', async () => {
-  const analisis = await cargar(datosBase());
+  // D-059/D-060: dato construido para reproducir compras a crédito 440
+  // mediante 430 de pagos + (50 final - 40 inicial), sin cambiar el esperado.
+  const datos = registrarCuenta(datosBase(), { id: 'supp.supplier_payments',
+    nombre: 'Pagos declarados del periodo', grupo: 'suplementario',
+    periodo: '2025', importe: 430, confirmado: true });
+  const analisis = await cargar(datos);
   const r = analisis.computeRazones('2025');
   expect(r.invProm).toBe(80); // (60 + 100) / 2.
   expect(r.rotacionCxP).toBeCloseTo((400 + 100 - 60) / ((40 + 50) / 2), 8);
@@ -99,12 +128,14 @@ it('dos periodos completos conservan compras e inventario promedio', async () =>
 });
 
 it('cero explícito produce margen y cobertura cero, y no N/D', async () => {
-  const datos = datosBase(false);
+  const datos = agregarCeros(datosBase(false), [...DEDUCCIONES, ...GASTOS_SIN_MOVIMIENTO]);
+  datos.composicionIngresos['2025'] = 'excluye_intereses';
   Object.assign(datos.estadoResultados['2025'], { 'Costo de Ventas': 1000,
     'Gastos de Administracion': 0, 'Gastos de Ventas': 0 });
   const analisis = await cargar(datos);
-  expect(analisis.computeRazones('2025')).toMatchObject({ margenBruto: 0, margenOperativo: 0,
-    coberturaIntereses: 0, notAvailableReasons: [] });
+  const r = analisis.computeRazones('2025');
+  expect(r).toMatchObject({ margenBruto: 0, margenOperativo: 0, coberturaIntereses: 0 });
+  expect(r.notAvailableReasons.filter(m => ['margenBruto', 'margenOperativo', 'coberturaIntereses'].includes(m.campo))).toEqual([]);
 });
 
 it('un pendiente cero no cambia las razones ni sus motivos', async () => {
@@ -114,36 +145,4 @@ it('un pendiente cero no cambia las razones ni sus motivos', async () => {
   const datos = registrarCuenta(base, { nombre: 'Activo corriente extra', grupo: 'activos', periodo: '2025', importe: 0 });
   const analisis = await cargar(datos);
   expect(analisis.computeRazones('2025')).toEqual(esperado);
-});
-
-it('MUNO MODA conserva las razones de 2023 y 2024, incluido el primer periodo', async () => {
-  vi.stubGlobal('document', { getElementById: () => null });
-  const { DEMO_MUNOMODA } = await import('../../js/modules/estados/index.js');
-  const analisis = await cargar(structuredClone(DEMO_MUNOMODA));
-  // Saldos de la regresión del caso; fórmulas y metodología anteriores a D-047/D-048.
-  const esperados = {
-    '2023': { RC: 370000 / 160000, RR: (370000 - 180000) / 160000,
-      RotInv: 510000 / 180000, RotCxC: 850000 / 120000, PPC: 51.529411764705884,
-      endeudamiento: 283860 / 801475, MN: 89180 / 850000, ROA: 89180 / 801475,
-      pruebaDefensiva: 45000 / 160000, rotacionActivos: 850000 / 801475,
-      rotacionCxP: 510000 / 85000, plazoPago: 60.833333333333336, edadInventario: 128.8235294117647,
-      cicloConversion: 119.51960784313724, coberturaIntereses: 135000 / 12600,
-      deudaPatrimonio: 283860 / 517615, apalancamiento: 801475 / 517615,
-      margenBruto: 340000 / 850000, margenOperativo: 135000 / 850000, roe: 89180 / 517615,
-      rotacionActivosFijos: 850000 / 431475, rotacionCapitalTrabajo: 850000 / 210000, solvencia: 801475 / 283860 },
-    '2024': { RC: 412000 / 175000, RR: (412000 - 195000) / 175000,
-      RotInv: 545000 / 187500, RotCxC: 920000 / 127500, PPC: 50.58423913043478,
-      endeudamiento: 243085 / 825525, MN: 104825 / 920000, ROA: 104825 / 813500,
-      pruebaDefensiva: 52000 / 175000, rotacionActivos: 920000 / 813500,
-      rotacionCxP: 560000 / 88500, plazoPago: 57.68303571428571, edadInventario: 125.57339449541284,
-      cicloConversion: 118.4745979115619, coberturaIntereses: 155000 / 11250,
-      deudaPatrimonio: 243085 / 582440, apalancamiento: 813500 / 550027.5,
-      margenBruto: 375000 / 920000, margenOperativo: 155000 / 920000, roe: 104825 / 550027.5,
-      rotacionActivosFijos: 920000 / 413525, rotacionCapitalTrabajo: 920000 / 237000, solvencia: 825525 / 243085 }
-  };
-  for (const [periodo, campos] of Object.entries(esperados)) {
-    const r = analisis.computeRazones(periodo);
-    for (const [campo, esperado] of Object.entries(campos)) expect(r[campo], `${periodo}/${campo}`).toBeCloseTo(esperado, 10);
-    expect(r.notAvailableReasons).toEqual([]);
-  }
 });

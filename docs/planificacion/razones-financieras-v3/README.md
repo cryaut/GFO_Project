@@ -1,5 +1,14 @@
 # Corrección de razones financieras (auditoría)
 
+## Conexión final con la app — ronda 18, 24 de octubre de 2026
+
+- Base: `main` = `84cbd31`, con PR #18 y PR #17 fusionados por Cris. Rama independiente `feat/razones-app-final`; PR nuevo sin fusión automática.
+- D-049, D-056, D-057 y D-058: entrada acreditada, 20 razones del motor, catálogo sincronizado, composición declarada por periodo y excepción formal de la regla 3. JSON, generado, ejemplo v3 y ejercicios v2 protegidos.
+- Se conservan las claves públicas; `capitalNetoTrabajo` se añade para completar los 20 ids. Prueba defensiva también conserva su función actual: es un cuarto indicador fuera del JSON que ya existía en el contrato.
+- Aceptación: matriz 1c contra el adaptador; comparación de `computeRazones` con 60 celdas del v3 y 240 de ejercicios v2. Los motivos se traducen al contrato de UI.
+- T11: el reporte explica antes de editar la nota las 62 cuentas/63 campos frente a 8 notas de comparación del validador. La nota se alinea a los JSON, sin editar estos.
+- Reporte y salidas finales: `ronda18-R1-razones-final.md`. Las secciones de rondas anteriores se conservan como historial.
+
 ## Política de datos faltantes — ronda 17, 24 de octubre de 2026
 
 - **D-055**: 55 cuentas pasan a `requires_data` en los 20 JSON y la nota maestra. Solo `is.interest_income` conserva `zero_if_not_reported` como excepción D-051; se añade esa cuenta a la nota, que pasa de 71 a 72. El generado se obtiene del generador existente.

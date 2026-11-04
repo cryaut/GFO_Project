@@ -200,9 +200,13 @@ describe('Reportes: utilidad neta y periodo solicitado (ronda 15)', () => {
     refreshSavedStates();
     // 1000 - 400 - 100 - 50 + 30 - 10 - 20 - 90 = 360.
     expect(getSavedTotals('2023').utilidadNeta).toBe(360);
-    expect(computeRazones('2023').MN * 1000).toBeCloseTo(360, 6);
+    // El documento anterior solo acredita dos identidades de resultados; el
+    // motor no convierte las demás filas en identidades por su nombre.
+    const razones = computeRazones('2023');
+    expect(razones.MN).toBeNull();
+    expect(razones.notAvailableReasons.some(m => m.campo === 'MN')).toBe(true);
     expect(store.get('analisis.resultados')).toEqual({});
-    expect(page.querySelector('#dashboardContent').innerHTML).toMatch(/360\.00[\s\S]*?Utilidad Neta/);
+    expect(page.querySelector('#dashboardContent').innerHTML).toMatch(/N\/D<\/div><div class="kpi-label">Utilidad Neta/);
   });
 
   it('un periodo inexistente da N/D sin sustituirlo por el disponible', async () => {

@@ -97,7 +97,9 @@ describe('matriz de casos F8', () => {
     expect(t.utilidadNeta).toBe(110);
     const { computeRazones } = await montarF8(estados);
     const r = computeRazones('2025');
-    expect(r.MN).not.toBeNull();
+    // Este fixture no declara todos los componentes exigidos por el motor.
+    expect(r.MN).toBeNull();
+    expect(r.notAvailableReasons.some(m => m.campo === 'MN')).toBe(true);
     expect(flujoDesdeEFE(estados)).toMatchObject({
       disponible: true, neto: { operacion: 116 }, variacionNeta: 18, saldoFinal: 180
     });
@@ -164,7 +166,9 @@ describe('matriz de casos F8', () => {
     }));
     const r = computeRazones('2025');
     expect(r.usaPromedios).toBe(false);
-    expect(r.RC).not.toBeNull();
+    // El fixture no acredita todos los componentes de la razón corriente.
+    expect(r.RC).toBeNull();
+    expect(r.notAvailableReasons.some(m => m.campo === 'RC')).toBe(true);
   });
 
   it('M9: sin estados guardados — el reporte dice «No hay estados financieros guardados»', async () => {
