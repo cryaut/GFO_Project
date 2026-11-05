@@ -84,6 +84,18 @@ describe('validaciones y conciliación', () => {
     // Sin periodo siguiente no hay con qué comparar.
     expect(conciliarConBalance(cuadra, estados, '2024')).toBeNull();
   });
+
+  it('conserva un cero explícito de efectivo en la conciliación', () => {
+    const datos = normalizeFinancialData({
+      periods: ['2023', '2024'],
+      balanceGeneral: {
+        '2023': { activos: { Efectivo: 10 }, pasivos: {}, patrimonio: {} },
+        '2024': { activos: { Efectivo: 0 }, pasivos: {}, patrimonio: {} }
+      }, estadoResultados: { '2023': {}, '2024': {} }
+    });
+    expect(conciliarConBalance({ saldoFinal: 0 }, datos, '2023'))
+      .toMatchObject({ efectivo: 0, diferencia: 0, cuadra: true });
+  });
 });
 
 describe('pantalla de flujo de efectivo', () => {
@@ -107,6 +119,17 @@ describe('pantalla de flujo de efectivo', () => {
     expect(html).toContain('C$ 75,000.00');
     expect(html).toContain('La operación <strong>genera</strong>');
     expect(graficar).toHaveBeenLastCalledWith('flujoChart', expect.objectContaining({ type: 'bar' }));
+  });
+
+  it('explica que no puede conciliar si falta el efectivo del balance', () => {
+    const estados = normalizeFinancialData({ periods: ['2023', '2024'],
+      balanceGeneral: {
+        '2023': { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: {} },
+        '2024': { activos: { 'Cuenta pendiente': 50 }, pasivos: {}, patrimonio: {} }
+      }, estadoResultados: { '2023': {}, '2024': {} } });
+    const { page } = montar({ saldoInicial: 0, periodoBase: '2023', movimientos: [] }, { estados });
+    expect(page.innerHTML).toContain('No se puede conciliar');
+    expect(page.innerHTML).not.toContain('El saldo final coincide');
   });
 
   it('agrega un movimiento válido y rechaza uno sin monto', async () => {

@@ -17,13 +17,8 @@ import {
   variacionesDeCuentas, advertenciasDeBalance, toleranciaComprobacion
 } from './comprobacion-calculations.js';
 
-// Cuentas de patrimonio que acumulan resultados: su variación permite separar
-// los dividendos de las aportaciones de capital. Es una inferencia local por
-// nombre: ACCOUNT_TYPES no tiene subtipos de patrimonio, porque partirlo
-// cambiaría el patrimonio que consumen las razones. Incluye las cuentas del
-// resultado del ejercicio (utilidad del ejercicio o del periodo): si se
-// dejaran fuera, su cambio se leería como aportación de capital y los
-// dividendos saldrían distorsionados por la utilidad del año anterior.
+// Esta función se conserva para consumidores que consultan nombres. El cálculo
+// del EFE usa los identificadores acreditados de variacionesDeCuentas.
 const RE_RESULTADOS = /\b(utilidad(es)? (acumuladas?|retenidas?|del (ejercicio|periodo))|resultados? (acumulados?|del (ejercicio|periodo)|de ejercicios anteriores)|ganancias? (acumuladas?|retenidas?)|perdidas? (acumuladas?|del (ejercicio|periodo)))\b/;
 
 function normalizarNombre(nombre) {
@@ -82,7 +77,9 @@ function totalDe(items) {
 export function construirEFE(datos, periodoInicial, periodoFinal) {
   const periodos = { inicial: periodoInicial, final: periodoFinal };
   const motivos = [];
-  const advertencias = [];
+  const advertencias = [
+    'Estimación por variaciones de saldos: se necesitan los movimientos reales de efectivo y los ajustes no monetarios para confirmar los flujos por actividad. Que la suma cuadre no confirma esos movimientos ni los dividendos derivados.'
+  ];
   const sinDatos = incompleto => ({
     periodos, incompleto, utilidadNeta: null,
     operacion: null, inversion: null, financiamiento: null,
@@ -226,15 +223,16 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     (suma, fila) => (fila.saldoInicial !== null && fila.saldoFinal !== null ? suma + fila.variacion : NaN), 0
   );
   const patrimonioCompleto = Number.isFinite(patrimonioTotal);
-  // D-068: las reservas son destino de utilidades, no aportaciones de capital:
-  // se mueven junto con las utilidades acumuladas y las cuentas del resultado
-  // del periodo. Misma regla de nombres del aviso de sentidos opuestos
-  // (/\breservas?\b/ sobre el nombre normalizado).
-  const esReserva = nombre => /\breservas?\b/.test(normalizarNombre(nombre));
-  const reAcumuladas = patrimonio.filter(fila => esResultadoAcumulado(fila.cuenta));
-  const reservas = patrimonio.filter(fila => esReserva(fila.cuenta));
-  const destinoUtilidades = patrimonio.filter(fila => esResultadoAcumulado(fila.cuenta) || esReserva(fila.cuenta));
+  // D-068: resultados y reservas son destinos de utilidades. La identidad
+  // acreditada determina su función aunque cambie la etiqueta importada.
+  const idsResultados = new Set(['bs.retained_earnings', 'bs.current_year_result_equity']);
+  const idsReservas = new Set(['bs.legal_reserve', 'bs.other_reserves']);
+  const reAcumuladas = patrimonio.filter(fila => idsResultados.has(fila.id));
+  const reservas = patrimonio.filter(fila => idsReservas.has(fila.id));
+  const destinoUtilidades = patrimonio.filter(fila => idsResultados.has(fila.id) || idsReservas.has(fila.id));
   const tieneDestinoUtilidades = destinoUtilidades.length > 0;
+  const patrimonioSinIdentidad = patrimonio.some(fila => !fila.id
+    && (fila.variacion === null || fila.variacion !== 0));
   const deltaDestino = destinoUtilidades.reduce(
     (suma, fila) => (fila.saldoInicial !== null && fila.saldoFinal !== null ? suma + fila.variacion : NaN), 0
   );
@@ -247,7 +245,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     item('(+) Aumento de deuda (o - si se paga)', deuda.delta,
       deuda.presente && !deuda.completo ? 'falta-saldo' : null)
   ];
-  if (tieneDestinoUtilidades) {
+  if (tieneDestinoUtilidades && !patrimonioSinIdentidad) {
     const aportaciones = patrimonioCompleto && Number.isFinite(deltaDestino) ? patrimonioTotal - deltaDestino : null;
     const dividendos = utilidadNeta != null && Number.isFinite(deltaDestino) ? utilidadNeta - deltaDestino : null;
     financiamientoItems.push(
@@ -260,7 +258,9 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
       advertencias.push('La utilidad acumulada creció más que la utilidad neta: revise las transferencias entre cuentas de patrimonio, porque el renglón de dividendos queda negativo.');
     }
   } else {
-    advertencias.push(`No se identificaron cuentas de utilidades acumuladas ni reservas en el patrimonio (${periodoInicial} → ${periodoFinal}): los dividendos no se pueden separar y se descuenta la utilidad neta de la variación de patrimonio.`);
+    advertencias.push(patrimonioSinIdentidad && tieneDestinoUtilidades
+      ? `Hay cuentas de patrimonio sin identidad confirmada (${periodoInicial} → ${periodoFinal}): no se pueden separar dividendos y aportaciones; se usa la variación total del patrimonio.`
+      : `No se identificaron cuentas de utilidades acumuladas ni reservas en el patrimonio (${periodoInicial} → ${periodoFinal}): los dividendos no se pueden separar y se descuenta la utilidad neta de la variación de patrimonio.`);
     financiamientoItems.push(
       item('(+) Variación total del patrimonio', patrimonioCompleto ? patrimonioTotal : null,
         patrimonioCompleto ? null : 'falta-saldo'),
@@ -301,6 +301,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
   }
 
   const resultado = {
+    naturaleza: 'estimacion_por_variaciones',
     periodos,
     utilidadNeta,
     operacion,
@@ -330,20 +331,20 @@ function lecturaFlujos({ operacion, inversion, financiamiento }) {
   const cfi = inversion.total;
   const cff = financiamiento.total;
   const frases = [cfo >= 0
-    ? `la operación generó ${formatCurrency(cfo)} de efectivo`
-    : `la operación consumió ${formatCurrency(Math.abs(cfo))} de efectivo`];
+    ? `la operación habría generado ${formatCurrency(cfo)} de efectivo`
+    : `la operación habría consumido ${formatCurrency(Math.abs(cfo))} de efectivo`];
   if (cfo + cfi < 0) {
-    frases.push(`no alcanzó a cubrir la inversión (faltaron ${formatCurrency(Math.abs(cfo + cfi))})`);
+    frases.push(`no habría alcanzado para cubrir la inversión (faltaron ${formatCurrency(Math.abs(cfo + cfi))})`);
   } else if (cfi < 0) {
-    frases.push('alcanzó para cubrir la inversión');
+    frases.push('habría alcanzado para cubrir la inversión');
   }
   if (cff > 0) {
-    frases.push(`el financiamiento aportó ${formatCurrency(cff)}`);
+    frases.push(`el financiamiento habría aportado ${formatCurrency(cff)}`);
   } else if (cff < 0) {
-    frases.push(`el financiamiento devolvió o distribuyó ${formatCurrency(Math.abs(cff))}`);
+    frases.push(`el financiamiento habría devuelto o distribuido ${formatCurrency(Math.abs(cff))}`);
   }
   const texto = frases.join('; ');
-  return `${texto.charAt(0).toUpperCase()}${texto.slice(1)}.`;
+  return `Según esta estimación, ${texto}.`;
 }
 
 // Lectura breve del estado. Los motivos y advertencias pueden traer nombres de
@@ -359,7 +360,7 @@ export function interpretarEFE(resultado) {
   if (estado === 'cuadra') {
     // D-069: con la cuenta de resultado del periodo presente y coincidente, la
     // utilidad quedó verificada contra el balance.
-    const alcance = ' La utilidad neta concilia con el resultado del periodo del balance: los dividendos derivados quedan respaldados por esa verificación.';
+    const alcance = ' La utilidad neta concilia con el resultado del periodo del balance. Esto no confirma los dividendos derivados ni los flujos por actividad; requieren evidencia de los movimientos reales.';
     return `Los flujos suman ${fmt(totalFlujos)}, igual a la variación de efectivo entre ${resultado.periodos.inicial} y ${resultado.periodos.final}: el estado cuadra dentro de la tolerancia de ${fmt(resultado.tolerancia)}. (${partes}.) ${lectura}${alcance}`;
   }
   if (estado === 'cuadra-sin-verificar') {
