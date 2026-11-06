@@ -53,7 +53,7 @@
       "gastos_operativos": 170000,
       "depreciacion": 20000,
       "tasa_interes": 0.1,
-      "tasa_impuesto": null,
+      "tasa_impuesto": 0.3,
       "pago_impuesto": 46600,
       "inversion": 0,
       "prestamo": 0,
@@ -193,7 +193,7 @@
     "tolerancia_balance": 0.01
   },
   "notas": [
-    "La ronda omite la tasa de impuesto de 2025. El campo permanece null hasta confirmarla. El impuesto causado esperado pertenece a la sección de verificación.",
+    "La ronda omite la tasa de impuesto de 2025. Se adoptó el 30 % de 2024 al interpretar el «Procede» de Carlos como confirmación del supuesto. El impuesto causado esperado pertenece a la sección de verificación.",
     "En los ejercicios históricos los supuestos no incluyen compras de activo fijo ni préstamos nuevos. Los movimientos se representan con cero.",
     "La línea agregada conserva fracciones de unidades cuando el objetivo de inventario las produce."
   ]
