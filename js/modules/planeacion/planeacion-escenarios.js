@@ -1,12 +1,15 @@
-import { MAX_PERIODOS, SUPUESTOS, normalizarSupuestos, validarSupuestos } from './planeacion-calculations.js';
+import {
+  MAX_PERIODOS, SUPUESTOS, normalizarSupuestos, validarCapitalTrabajo, validarSupuestos
+} from './planeacion-calculations.js';
 
 export const ARCHIVO_REFERENCIA = 'propuesta-caso/referencia/referencia_resultados.json';
+export const ARCHIVO_ENTRADAS = 'propuesta-caso/referencia/inputs.json';
 export const CAMPOS_BASE = ['saldoInicialCaja', 'cxcInicial', 'cxpInicial', 'inventarioInicial'];
 export const MAX_NOMBRE_ESCENARIO = 80;
 const VERSION = 1;
 const MAX_ESCENARIOS = 50;
 const ID_BASE = 'comercial-ejemplo-2025-r1';
-const ID_ESCENARIO_BASE = 'comercial-ejemplo-base';
+const ID_ESCENARIO_CAPITAL = 'comercial-ejemplo-capital-trabajo';
 const CAMPOS_SUPUESTOS = new Set([
   ...SUPUESTOS.map(([clave]) => clave), 'tipoPeriodo', 'periodos', 'ventasUnidades',
   'otrosDesembolsos', 'productoInventario', 'productoId'
@@ -75,6 +78,10 @@ export function validarEscenarios(datos) {
       throw new Error('El escenario tiene supuestos incompatibles con su base.');
     }
     const errores = validarSupuestos(conApertura(escenario, base), { parcial: true });
+    if (Object.hasOwn(escenario, 'capitalTrabajo')) {
+      if (!base) throw new Error('Capital de trabajo requiere una base histórica.');
+      errores.push(...validarCapitalTrabajo(escenario.capitalTrabajo, supuestos));
+    }
     if (errores.length) throw new Error(`Escenario ${escenario.nombre}. ${errores.join(' ')}`);
   }
   if (!ids.has(datos.activoId)) throw new Error('El escenario activo no existe.');
@@ -98,14 +105,24 @@ export function leerPlaneacion(datos) {
   }
 }
 
-export function crearCasoComercial(datos, referencia) {
+function pagoEnMes(mes) {
+  if (!Number.isInteger(mes) || mes < 1 || mes > MAX_PERIODOS) {
+    throw new Error('El mes de pago en los supuestos de Comercial Ejemplo no es válido.');
+  }
+  return Array.from({ length: mes }, (_, i) => i + 1 === mes ? 1 : 0);
+}
+
+export function crearCasoComercial(datos, referencia, entradas) {
   const cierre = referencia?.historicos?.['2025']?.cierre;
-  const meses = referencia?.proyeccion_2026?.meses;
-  if (referencia?.caso !== 'Caso ficticio' || cierre?.diferencia !== 0
-      || !Array.isArray(meses) || meses.length !== MAX_PERIODOS
-      || !meses.every((mes, i) => mes?.mes === i + 1 && Number.isFinite(mes.movimientos?.unidades_vendidas)
-        && mes.movimientos.unidades_vendidas >= 0)) {
-    throw new Error('El archivo de referencia de Comercial Ejemplo está incompleto.');
+  const plan = entradas?.proyeccion_2026;
+  const unidades = plan?.unidades_vendidas;
+  if (referencia?.caso !== 'Caso ficticio' || cierre?.diferencia !== 0 || plan?.anio !== 2026
+      || !entradas.base_main || ['caso', 'empresa', 'moneda', 'base_main'].some(clave => entradas[clave] !== referencia[clave])
+      || !Array.isArray(unidades) || unidades.length !== MAX_PERIODOS
+      || !Array.from(unidades).every(v => Number.isFinite(v) && v >= 0)
+      || ![plan.precio_unitario, plan.venta_contado, plan.compra_contado, plan.objetivo_inventario_siguiente,
+        plan.inventario_final_diciembre].every(Number.isFinite)) {
+    throw new Error('El archivo de referencia o los supuestos de Comercial Ejemplo están incompletos o no corresponden al mismo caso.');
   }
   const base = {
     id: ID_BASE, empresa: referencia.empresa, moneda: referencia.moneda,
@@ -123,14 +140,27 @@ export function crearCasoComercial(datos, referencia) {
         || existente.empresa !== base.empresa || existente.fechaCorte !== base.fechaCorte) {
       throw new Error('La base guardada tiene otros datos. Revise el respaldo antes de cargar la referencia.');
     }
-    const escenario = anterior.escenarios.find(e => e.baseId === base.id);
-    if (escenario) return { ...anterior, activoId: escenario.id };
+    const escenario = anterior.escenarios.find(e => e.id === ID_ESCENARIO_CAPITAL);
+    if (escenario) {
+      if (escenario.baseId !== base.id || !escenario.capitalTrabajo) {
+        throw new Error('El escenario de referencia guardado no corresponde a la base histórica.');
+      }
+      return seleccionarEscenario(anterior, escenario.id);
+    }
   }
   const supuestos = normalizarSupuestos({
-    tipoPeriodo: 'Mes', periodos: meses.length,
-    ventasUnidades: meses.map(mes => mes.movimientos.unidades_vendidas),
-    otrosDesembolsos: meses.map(() => null)
+    tipoPeriodo: 'Mes', periodos: unidades.length, ventasUnidades: unidades,
+    otrosDesembolsos: unidades.map(() => null),
+    precio: plan.precio_unitario, pctContado: plan.venta_contado, pctComprasContado: plan.compra_contado,
+    pctInventarioFinal: plan.objetivo_inventario_siguiente, inventarioFinalUltimo: plan.inventario_final_diciembre
   });
+  const capitalTrabajo = {
+    costosCompra: plan.costo_compra_unitario,
+    cobrosApertura: plan.distribucion_cobro_apertura,
+    cobrosCredito: plan.distribucion_cobro_credito,
+    pagosApertura: pagoEnMes(plan.mes_pago_cxp_apertura),
+    pagosCredito: pagoEnMes(plan.meses_hasta_pago_credito)
+  };
   for (const clave of CAMPOS_BASE) delete supuestos[clave];
   const previo = normalizarSupuestos(datos?.supuestos);
   const escenarios = anterior?.escenarios ?? (previo ? [{
@@ -140,9 +170,10 @@ export function crearCasoComercial(datos, referencia) {
     versionEscenarios: VERSION,
     bases: existente ? anterior.bases : [...(anterior?.bases ?? []), base],
     escenarios: [...escenarios, {
-      id: ID_ESCENARIO_BASE, nombre: 'Base', baseId: base.id, origenId: null, supuestos
+      id: ID_ESCENARIO_CAPITAL, nombre: 'Base de capital de trabajo', baseId: base.id, origenId: null,
+      supuestos, capitalTrabajo: structuredClone(capitalTrabajo)
     }],
-    activoId: ID_ESCENARIO_BASE
+    activoId: ID_ESCENARIO_CAPITAL
   });
 }
 
@@ -160,10 +191,11 @@ export function duplicarEscenario(datos, id) {
   return validarEscenarios({ ...datos, escenarios: [...datos.escenarios, copia], activoId: id });
 }
 
-export function editarEscenario(datos, nombre, supuestos) {
+export function editarEscenario(datos, nombre, supuestos, capitalTrabajo = undefined) {
   const { escenario, base, error } = leerPlaneacion(datos);
   if (!escenario) throw new Error(error ?? 'Seleccione un escenario para guardarlo.');
   const nuevo = { ...escenario, nombre: nombre.trim(), supuestos: { ...supuestos } };
+  if (capitalTrabajo !== undefined) nuevo.capitalTrabajo = capitalTrabajo;
   if (base) for (const clave of CAMPOS_BASE) delete nuevo.supuestos[clave];
   return validarEscenarios({
     ...datos, escenarios: datos.escenarios.map(e => (e.id === escenario.id ? nuevo : e))

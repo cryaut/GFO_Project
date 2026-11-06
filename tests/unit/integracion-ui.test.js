@@ -151,7 +151,8 @@ describe('Reportes: importar JSON', () => {
 
   it('restaura escenarios desde un respaldo y rechaza referencias inválidas antes de escribir', async () => {
     const referencia = JSON.parse(readFileSync(new URL('./fixtures/caso_ficticio_referencia.json', import.meta.url), 'utf8'));
-    const caso = duplicarEscenario(crearCasoComercial(null, referencia), 'escenario-copia');
+    const entradas = JSON.parse(readFileSync(new URL('../../propuesta-caso/referencia/inputs.json', import.meta.url), 'utf8'));
+    const caso = duplicarEscenario(crearCasoComercial(null, referencia, entradas), 'escenario-copia');
     const { page, store, almacen, toasts, setItem, confirm, descargas } = await montar();
     await importar(page, JSON.stringify({ planeacion: caso }));
     expect(store.get('planeacion')).toEqual(caso);
@@ -170,6 +171,15 @@ describe('Reportes: importar JSON', () => {
     expect(setItem).not.toHaveBeenCalled();
     expect(almacen.get(CLAVE)).toBe(antes);
     expect(store.get('flujo.saldoInicial')).toBeNull();
+
+    const calendarioInvalido = JSON.parse(respaldo);
+    calendarioInvalido.planeacion.escenarios[1].capitalTrabajo.cobrosCredito = [0.25, 0.25];
+    calendarioInvalido.flujo.saldoInicial = 900;
+    await importar(page, JSON.stringify(calendarioInvalido));
+    expect(ultimoToast(toasts).textContent).toContain('que sumen 100 %');
+    expect(confirm).not.toHaveBeenCalled();
+    expect(setItem).not.toHaveBeenCalled();
+    expect(almacen.get(CLAVE)).toBe(antes);
 
     const legado = { supuestos: ejemploPlaneacion() };
     await importar(page, JSON.stringify({ planeacion: legado }));

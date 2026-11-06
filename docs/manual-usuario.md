@@ -689,12 +689,13 @@ La pantalla arma, en orden: ventas y cobros, compras (unidades = ventas + invent
 
 ### Escenarios de Comercial Ejemplo
 
-1. Pulsa **Cargar Comercial Ejemplo**. El escenario **Base** muestra la apertura ficticia al cierre de 2025 y las unidades de venta de 2026. Si tenías un presupuesto, aparece en el selector como **Presupuesto anterior**.
-2. Edita los supuestos o el nombre y pulsa **Guardar borrador**. Los campos vacíos quedan pendientes y un cero escrito se conserva como cero. **Calcular y guardar** requiere los supuestos completos del presupuesto.
-3. Pulsa **Duplicar escenario** para copiar la versión guardada. Selecciona el escenario que quieres consultar en **Escenario activo**. Ambos conservan la misma apertura histórica y sus supuestos propios.
-4. Guarda un respaldo desde **Reportes** para recuperar los escenarios y su base. Si restauras un respaldo antiguo de Planeación, recuperas su presupuesto anterior con apertura editable.
+1. Pulsa **Cargar Comercial Ejemplo**. **Base de capital de trabajo** carga la apertura ficticia de 2025 y los supuestos mensuales de 2026. El selector conserva los escenarios previos y muestra un presupuesto anterior sin escenarios como **Presupuesto anterior**.
+2. Edita las unidades y el costo de compra de cada mes. En los calendarios escribe porcentajes separados por espacios que sumen 100 %. `60 40` en el cobro de saldos iniciales cobra 60 % en enero y 40 % en febrero. `0 100` en el cobro de ventas a crédito cobra todo dos meses después de cada venta.
+3. Pulsa **Calcular y guardar**. La pantalla muestra ventas, cobros, existencias físicas, compras y pagos. **Vencimientos después del horizonte** detalla qué importes de crédito quedan pendientes y en qué mes vencen. Un campo vacío queda pendiente y un cero escrito se conserva como cero.
+4. Pulsa **Duplicar escenario** para copiar la versión guardada y probar otra política. Elige el escenario en **Escenario activo**. Los escenarios comparten el cierre histórico y guardan supuestos independientes.
+5. Guarda un respaldo desde **Reportes** para conservar los escenarios y su base. Los respaldos anteriores siguen siendo recuperables.
 
-Consulta el presupuesto del caso ficticio en Planeación. Proforma identifica que tiene su propia base histórica.
+Consulta este presupuesto parcial en Planeación. La proyección de caja completa, el costo de ventas y los estados proforma del caso corresponden a etapas posteriores.
 
 ---
 

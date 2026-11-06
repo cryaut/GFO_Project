@@ -135,6 +135,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-085 | Supuestos de Planeación guardados sin producto vinculado | Vigente |
 | D-086 | Integrar lectura segura de F8 con el motor de razones | Vigente |
 | D-089 | Escenarios con base compartida y respaldo atómico | En prueba local |
+| D-090 | Calendarios de crédito y presupuesto parcial mensual | En prueba local |
 
 
 | D-056 | Razones de la app leen el motor | Vigente |
@@ -2014,3 +2015,22 @@ Se retira la prueba histórica de regresión de la demo (caso de ejemplo cargado
 **Para revertirla.** Registrar una decisión de migración con un criterio explícito para conservar las bases y los escenarios de los respaldos versionados.
 
 **Referencias.** REV-07, el caso ficticio de etapa 1 y las pruebas de Planeación y Reportes.
+
+### D-090 — Calendarios de crédito y presupuesto parcial mensual
+
+- **Fecha**: 2026-11-06
+- **Estado**: En prueba en `test/caso-integrado-excepciones`, pendiente de revisión del equipo
+- **Decidió**: Carlos encargó la rama de prueba y el agente propuso el contrato
+- **Área**: Planeación y respaldo de Reportes
+
+**Contexto.** Comercial Ejemplo cobra parte de sus ventas a crédito a dos meses, tiene saldos iniciales con vencimientos propios y cambia el costo de compra en julio. Parte del crédito de 2026 vence en 2027.
+
+**Opciones.** El desfase único de D-014 permite reproducir el presupuesto sencillo. Calendarios por escenario permiten distribuir la apertura y el crédito nuevo en varios meses y conservar las fechas de cobro y pago que exceden el horizonte.
+
+**Decisión.** Agregar calendarios separados para la apertura y el crédito nuevo en clientes y proveedores. Cada calendario completo reparte 100 % del saldo o del crédito en hasta doce plazos. Un calendario vacío se conserva pendiente. Los costos unitarios de compra se editan por mes. El cálculo conserva precisión interna y la pantalla redondea los importes.
+
+**Consecuencias.** Los vencimientos posteriores al horizonte permanecen en cuentas por cobrar o por pagar. Si faltan datos, se muestra N/D para los cálculos que dependen de ellos y se conservan los cálculos independientes. Los escenarios nuevos cargan sus supuestos declarados desde `inputs.json` y los anteriores conservan su política de D-014. La valorización de inventario y la proyección de caja y estados proforma del caso quedan para cortes posteriores.
+
+**Para revertirla.** Definir una migración de los escenarios con `capitalTrabajo` que conserve los calendarios y costos ya guardados.
+
+**Referencias.** REV-02, D-014, D-089 y la referencia independiente de la etapa 1.

@@ -125,6 +125,8 @@ Secciones de `defaultData` en `js/store.js`:
 
 En Planeación, cada base guarda empresa, moneda, fecha de corte, origen, revisión y apertura. Los escenarios guardan `id`, `nombre`, `baseId`, `origenId` y `supuestos`. La lectura combina los saldos de la base con los supuestos del escenario. `baseId: null` identifica el presupuesto anterior con apertura editable. `null` en un supuesto conserva un dato pendiente.
 
+El campo opcional `escenario.capitalTrabajo` guarda el costo por mes y los calendarios de cobros y pagos de apertura y de crédito nuevo. Requiere una base histórica y periodos mensuales. Los escenarios v1 sin ese campo siguen usando el presupuesto anterior. Los vencimientos y los demás resultados se calculan al leer los supuestos guardados.
+
 El respaldo versionado reemplaza el módulo completo después de validar los vínculos. Restaurar un respaldo antiguo con `{ supuestos }` recupera su presupuesto sin atribuirle una base histórica. Proforma mantiene los presupuestos ligados a la base ficticia en Planeación y muestra un aviso de procedencia.
 
 Forma de `estados`:
