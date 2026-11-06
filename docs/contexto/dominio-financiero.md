@@ -262,11 +262,13 @@ Disponibilidad de cuentas (D-043 y excepción limitada D-047/D-048 a D-044): una
 | `js/modules/equilibrio/equilibrio-calculations.js` | `calcularCVU`, `calcularEscenarios`, `puntosGrafica`, `baseDesdeEstados` (P, CVu y CF desde Estados y Apalancamiento) |
 | `js/modules/flujo/flujo-calculations.js` | `calcularFlujo`, `conciliarConBalance` |
 | `js/modules/planeacion/planeacion-calculations.js` | `calcularPresupuestoMaestro`, `validarSupuestos`, `SUPUESTOS`, `calcularCapitalTrabajo`, `validarCapitalTrabajo`, `CALENDARIOS_CAPITAL_TRABAJO` |
-| `js/modules/proforma/proforma-calculations.js` | `construirReporte`, `resultadosReales`, `resultadosProforma`, `alertasIntegradas` |
+| `js/modules/proforma/proforma-calculations.js` | `construirReporte`, `resultadosReales`, `resultadosProforma`, `compararResultados`, `alertasIntegradas` |
 | `js/utils/form.js`, `js/utils/estados-guardados.js` | `leerNumero`, `nuevoId`, `fechaHoy`; `estadosGuardados`, `totalesPeriodo` |
 | `js/utils/format.js` (N/D) | `formatCurrencyND`, `formatNumberND`, `formatPercentND`: muestran "N/D" en lugar de 0 |
 
 En el capital de trabajo mensual (D-090), el cobro o pago del periodo suma el contado y las cuotas que vencen. El saldo de cierre concilia como saldo inicial más crédito generado menos cuotas aplicadas. El inventario físico arrastra la existencia final de cada mes. Si cubre las ventas y el objetivo, la compra es cero y queda el sobrante. Los costos de compra se aplican al importe de las compras del mes. Las cifras conservan precisión interna y se redondean al mostrarlas.
+
+En Proforma, las variaciones entre histórico y presupuesto se calculan entre ejercicios anuales identificados (D-091). Si la cobertura es parcial o desconocida, la variación queda en N/D y cada cifra conserva su periodo de origen.
 
 ## Razones de la app — D-049 y D-056
 

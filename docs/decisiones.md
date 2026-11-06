@@ -136,6 +136,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-086 | Integrar lectura segura de F8 con el motor de razones | Vigente |
 | D-089 | Escenarios con base compartida y respaldo atómico | En prueba local |
 | D-090 | Calendarios de crédito y presupuesto parcial mensual | En prueba local |
+| D-091 | Variaciones de Proforma solo con cobertura anual comparable | En prueba local |
 
 
 | D-056 | Razones de la app leen el motor | Vigente |
@@ -2034,3 +2035,22 @@ Se retira la prueba histórica de regresión de la demo (caso de ejemplo cargado
 **Para revertirla.** Definir una migración de los escenarios con `capitalTrabajo` que conserve los calendarios y costos ya guardados.
 
 **Referencias.** REV-02, D-014, D-089 y la referencia independiente de la etapa 1.
+
+### D-091 — Variaciones de Proforma solo con cobertura anual comparable
+
+- **Fecha**: 2026-11-06
+- **Estado**: En prueba en `test/caso-integrado-excepciones`
+- **Decidió**: Carlos autorizó la corrección y el agente definió el criterio temporal
+- **Área**: Proforma
+
+**Contexto.** La tabla comparaba un mes presupuestado con un ejercicio real y mostraba una caída aparente de ventas. El aviso del horizonte coexistía con el porcentaje. El presupuesto anterior identifica los periodos parciales por su orden y duración.
+
+**Opciones.** Mostrar un aviso junto a la variación, o calcular la variación solo cuando el histórico y la proyección tengan una cobertura anual identificable.
+
+**Decisión.** Exigir un histórico anual identificado con `AAAA` y una proyección de 12 meses o 4 trimestres. En las demás ventanas, las variaciones de montos y de márgenes quedan como N/D con una explicación de cobertura. Ambos valores se muestran en sus columnas.
+
+**Consecuencias.** La comparación anual de MUNO MODA sigue produciendo el cambio esperado. Las etiquetas mensuales, trimestrales o libres conservan sus cifras y la variación queda pendiente de acreditar fechas comparables.
+
+**Para revisar el criterio.** Incorporar fechas explícitas de inicio y cierre antes de habilitar comparaciones de periodos parciales.
+
+**Referencias.** D-014, REV-08 y `tests/unit/proforma.test.js`.

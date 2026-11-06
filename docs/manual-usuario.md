@@ -703,7 +703,7 @@ Consulta este presupuesto parcial en Planeación. La proyección de caja complet
 
 `#/proforma` no pide datos: reúne lo que ya calcularon los demás módulos.
 
-1. **Estado de resultados proforma:** el total del presupuesto contra el último periodo real de los estados, con variación y márgenes.
+1. **Estado de resultados proforma.** Muestra el total del presupuesto y el último periodo real de los estados. La variación requiere un histórico anual identificado con el año (`AAAA`) y una proyección de 12 meses o 4 trimestres. Para los demás horizontes, la variación figura como N/D y la pantalla explica el motivo.
 2. **Efectivo proyectado:** saldo inicial, flujo neto, saldo final y financiamiento máximo.
 3. **Indicadores integrados:** liquidez, endeudamiento, ROE (DuPont), GAO, GAF y GAT, punto de equilibrio, flujo de efectivo, presupuesto e inventario, cada uno con su lectura y un enlace al módulo de origen.
 4. **Alertas y decisiones sugeridas:** por ejemplo, gestionar el financiamiento del trimestre 2 o reponer los productos bajo su stock mínimo.
