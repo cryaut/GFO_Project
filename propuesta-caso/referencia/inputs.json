@@ -1,0 +1,200 @@
+{
+  "caso": "Caso ficticio",
+  "empresa": "Comercial Ejemplo, S.A. (ficticia)",
+  "moneda": "C$",
+  "linea": "Una línea comercial agregada",
+  "fuente": "ronda_etapa1_R1_referencia.md, Cris Lumbi, 2026-11-05",
+  "base_main": "255b06823394a947c4c6f8e7f3cd023f39b3ec08",
+  "apertura_2023": {
+    "fecha": "2023-12-31",
+    "efectivo": 40000,
+    "cxc": 50000,
+    "inventario_unidades": 500,
+    "inventario_valor": 50000,
+    "activo_fijo_bruto": 200000,
+    "depreciacion_acumulada": -40000,
+    "cxp": 30000,
+    "impuesto_por_pagar": 6000,
+    "deuda": 80000,
+    "capital": 100000,
+    "resultados_acumulados": 84000
+  },
+  "historicos": [
+    {
+      "periodo": "2024",
+      "unidades_vendidas": 3000,
+      "precio_unitario": 200,
+      "venta_contado": 0.4,
+      "cobros_cxc": 350000,
+      "compras_unidades": 3200,
+      "costo_compra_unitario": 100,
+      "compra_contado": 0.3,
+      "pagos_cxp": 230000,
+      "gastos_operativos": 150000,
+      "depreciacion": 20000,
+      "tasa_interes": 0.1,
+      "tasa_impuesto": 0.3,
+      "pago_impuesto": 36000,
+      "inversion": 0,
+      "prestamo": 0,
+      "principal": 10000,
+      "dividendos": 20000
+    },
+    {
+      "periodo": "2025",
+      "unidades_vendidas": 3400,
+      "precio_unitario": 210,
+      "venta_contado": 0.4,
+      "cobros_cxc": 460000,
+      "compras_unidades": 3500,
+      "costo_compra_unitario": 100,
+      "compra_contado": 0.3,
+      "pagos_cxp": 244000,
+      "gastos_operativos": 170000,
+      "depreciacion": 20000,
+      "tasa_interes": 0.1,
+      "tasa_impuesto": null,
+      "pago_impuesto": 46600,
+      "inversion": 0,
+      "prestamo": 0,
+      "principal": 10000,
+      "dividendos": 30000
+    }
+  ],
+  "proyeccion_2026": {
+    "anio": 2026,
+    "unidades_vendidas": [
+      280,
+      290,
+      300,
+      310,
+      320,
+      300,
+      290,
+      280,
+      300,
+      310,
+      330,
+      350
+    ],
+    "precio_unitario": 220,
+    "venta_contado": 0.4,
+    "distribucion_cobro_credito": [
+      0.5,
+      0.5
+    ],
+    "distribucion_cobro_apertura": [
+      0.6,
+      0.4
+    ],
+    "costo_compra_unitario": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      108,
+      108,
+      108,
+      108,
+      108,
+      108
+    ],
+    "objetivo_inventario_siguiente": 0.25,
+    "inventario_final_diciembre": 75,
+    "compra_contado": 0.4,
+    "meses_hasta_pago_credito": 1,
+    "mes_pago_cxp_apertura": 1,
+    "gasto_fijo_mensual": 12000,
+    "gasto_variable_sobre_ventas": 0.04,
+    "inversiones_por_mes": {
+      "3": 60000
+    },
+    "tasa_depreciacion_anual": 0.1,
+    "prestamos_al_cierre_por_mes": {
+      "6": 50000
+    },
+    "principal_mensual": 1000,
+    "tasa_interes_anual": 0.1,
+    "tasa_impuesto": 0.3,
+    "meses_hasta_pago_impuesto": 1,
+    "mes_pago_impuesto_apertura": 1,
+    "dividendos_por_mes": {
+      "12": 20000
+    }
+  },
+  "verificacion": {
+    "apertura_activos": 300000,
+    "historicos": {
+      "2024": {
+        "estado_resultados": {
+          "ventas": 600000,
+          "costo_ventas": 300000,
+          "gastos_operativos": 150000,
+          "depreciacion": 20000,
+          "intereses": 8000,
+          "utilidad_antes_impuesto": 122000,
+          "impuesto_causado": 36600,
+          "utilidad_neta": 85400
+        },
+        "flujo": {
+          "operacion": 70000,
+          "financiamiento": -30000
+        },
+        "cierre": {
+          "efectivo": 80000,
+          "cxc": 60000,
+          "inventario_unidades": 700,
+          "inventario_valor": 70000,
+          "activo_fijo_bruto": 200000,
+          "depreciacion_acumulada": -60000,
+          "cxp": 24000,
+          "impuesto_por_pagar": 6600,
+          "deuda": 70000,
+          "resultados_acumulados": 149400
+        }
+      },
+      "2025": {
+        "estado_resultados": {
+          "ventas": 714000,
+          "costo_ventas": 340000,
+          "gastos_operativos": 170000,
+          "depreciacion": 20000,
+          "intereses": 7000,
+          "utilidad_antes_impuesto": 177000,
+          "impuesto_causado": 53100,
+          "utilidad_neta": 123900
+        },
+        "flujo": {
+          "operacion": 173000,
+          "financiamiento": -40000
+        },
+        "cierre": {
+          "efectivo": 213000,
+          "cxc": 28400,
+          "inventario_unidades": 800,
+          "inventario_valor": 80000,
+          "activo_fijo_bruto": 200000,
+          "depreciacion_acumulada": -80000,
+          "cxp": 25000,
+          "impuesto_por_pagar": 13100,
+          "deuda": 60000,
+          "resultados_acumulados": 243300
+        }
+      }
+    },
+    "meses_sin_compras": [
+      1,
+      2
+    ],
+    "deuda_final_2026": 98000,
+    "activo_fijo_bruto_final_2026": 260000,
+    "tolerancia_balance": 0.01
+  },
+  "notas": [
+    "La ronda omite la tasa de impuesto de 2025. El campo permanece null hasta confirmarla. El impuesto causado esperado pertenece a la sección de verificación.",
+    "En los ejercicios históricos los supuestos no incluyen compras de activo fijo ni préstamos nuevos. Los movimientos se representan con cero.",
+    "La línea agregada conserva fracciones de unidades cuando el objetivo de inventario las produce."
+  ]
+}
