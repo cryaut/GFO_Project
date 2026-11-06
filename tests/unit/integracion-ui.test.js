@@ -1,5 +1,8 @@
+import { readFileSync } from 'node:fs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { element, clic } from './helpers/dom-falso.js';
+import { crearCasoComercial, duplicarEscenario } from '../../js/modules/planeacion/planeacion-escenarios.js';
+import { ejemploPlaneacion } from '../../js/modules/planeacion/planeacion-calculations.js';
 
 // Pantalla de Reportes con dobles de navegador: se ejecutan el render y los manejadores
 // reales; el DOM, localStorage, FileReader y la descarga son falsos.
@@ -14,6 +17,11 @@ async function montar({ guardado = null, confirmar = true, fallaEnEscritura = nu
   const toasts = [];
   const page = element();
   const confirm = vi.fn(() => confirmar);
+  const setItem = vi.fn((key, value) => {
+    escrituras += 1;
+    if (fallaEnEscritura?.(escrituras)) throw new Error('cuota excedida');
+    almacen.set(key, value);
+  });
   vi.stubGlobal('document', {
     getElementById: id => (id === 'toast-container' ? { appendChild: t => toasts.push(t) } : id === 'page-reportes' ? page : null),
     createElement: () => ({ style: {}, remove() {}, click() {} }),
@@ -22,11 +30,7 @@ async function montar({ guardado = null, confirmar = true, fallaEnEscritura = nu
   vi.stubGlobal('window', { confirm });
   vi.stubGlobal('localStorage', {
     getItem: key => almacen.get(key) ?? null,
-    setItem: (key, value) => {
-      escrituras += 1;
-      if (fallaEnEscritura?.(escrituras)) throw new Error('cuota excedida');
-      almacen.set(key, value);
-    }
+    setItem
   });
   vi.stubGlobal('FileReader', class {
     readAsText(file) { this.result = file.contents; this.onload(); }
@@ -38,7 +42,7 @@ async function montar({ guardado = null, confirmar = true, fallaEnEscritura = nu
   const { default: store } = await import('../../js/store.js');
   const { initReportes } = await import('../../js/modules/integracion/index.js');
   initReportes();
-  return { page, store, almacen, toasts, confirm, descargas };
+  return { page, store, almacen, toasts, confirm, descargas, setItem };
 }
 
 async function importar(page, contenido, { tamano } = {}) {
@@ -56,11 +60,19 @@ afterEach(() => {
 
 describe('Reportes: importar JSON', () => {
   it('valida, pide confirmación y guarda los módulos del respaldo', async () => {
-    const { page, store, almacen, toasts, confirm } = await montar();
-    await importar(page, JSON.stringify({ presupuesto: { ingresoMensual: 900 }, theme: 'dark' }));
+    const { page, store, almacen, toasts, confirm, setItem } = await montar();
+    const cambio = vi.fn();
+    store.subscribe(cambio);
+    await importar(page, JSON.stringify({ presupuesto: { ingresoMensual: 900 }, flujo: { saldoInicial: 50 }, theme: 'dark' }));
     expect(confirm).toHaveBeenCalledWith(expect.stringContaining('presupuesto'));
     expect(store.get('presupuesto.ingresoMensual')).toBe(900);
     expect(JSON.parse(almacen.get(CLAVE)).presupuesto.ingresoMensual).toBe(900);
+    expect(JSON.parse(almacen.get(CLAVE)).flujo.saldoInicial).toBe(50);
+    expect(setItem).toHaveBeenCalledTimes(1);
+    expect(cambio).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({
+      presupuesto: expect.objectContaining({ ingresoMensual: 900 }),
+      flujo: expect.objectContaining({ saldoInicial: 50 })
+    }));
     expect(store.get('theme')).toBe('light'); // el tema no se importa
     expect(ultimoToast(toasts).textContent).toContain('importados correctamente');
   });
@@ -107,14 +119,63 @@ describe('Reportes: importar JSON', () => {
     expect(ultimoToast(toasts).textContent).toContain('JSON inválido');
   });
 
-  it('si el almacenamiento falla a mitad, restaura los módulos ya guardados', async () => {
-    // Escritura 1: presupuesto (ok). Escritura 2: flujo (falla). Escritura 3: restauración.
-    const { page, store, toasts } = await montar({ fallaEnEscritura: n => n === 2 });
+  it('si la escritura del respaldo falla conserva todos los módulos y el respaldo anterior', async () => {
+    const guardado = { flujo: { saldoInicial: 12, periodoBase: '2024', movimientos: [] } };
+    const { page, store, almacen, toasts, setItem } = await montar({ guardado, fallaEnEscritura: () => true });
+    const previo = store.getAll();
+    const cambio = vi.fn();
+    store.subscribe(cambio);
     await importar(page, JSON.stringify({ presupuesto: { ingresoMensual: 700 }, flujo: { saldoInicial: 50 } }));
     expect(ultimoToast(toasts).textContent).toContain('cuota excedida');
     expect(ultimoToast(toasts).textContent).toContain('Se conservaron los datos anteriores');
-    expect(store.get('presupuesto.ingresoMensual')).toBe(0);
+    expect(store.getAll()).toEqual(previo);
+    expect(almacen.get(CLAVE)).toBe(JSON.stringify(guardado));
+    expect(setItem).toHaveBeenCalledTimes(1);
+    expect(cambio).not.toHaveBeenCalled();
+  });
+
+  it('un observador que falla después de guardar no revierte el respaldo ni impide las otras notificaciones', async () => {
+    const { page, store, toasts, setItem } = await montar();
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const cambio = vi.fn();
+    store.subscribe(() => { throw new Error('observador fallido'); });
+    store.subscribe(cambio);
+    await importar(page, JSON.stringify({ presupuesto: { ingresoMensual: 900 }, flujo: { saldoInicial: 50 } }));
+    expect(store.get('presupuesto.ingresoMensual')).toBe(900);
+    expect(store.get('flujo.saldoInicial')).toBe(50);
+    expect(ultimoToast(toasts).textContent).toContain('importados correctamente');
+    expect(setItem).toHaveBeenCalledTimes(1);
+    expect(cambio).toHaveBeenCalledTimes(1);
+    expect(error).toHaveBeenCalled();
+  });
+
+  it('restaura escenarios desde un respaldo y rechaza referencias inválidas antes de escribir', async () => {
+    const referencia = JSON.parse(readFileSync(new URL('./fixtures/caso_ficticio_referencia.json', import.meta.url), 'utf8'));
+    const caso = duplicarEscenario(crearCasoComercial(null, referencia), 'escenario-copia');
+    const { page, store, almacen, toasts, setItem, confirm, descargas } = await montar();
+    await importar(page, JSON.stringify({ planeacion: caso }));
+    expect(store.get('planeacion')).toEqual(caso);
+    await clic(page, 'btnExportJSON');
+    const respaldo = await descargas.at(-1).text();
+    expect(JSON.parse(respaldo).planeacion).toEqual(caso);
+    const antes = almacen.get(CLAVE);
+    setItem.mockClear();
+    confirm.mockClear();
+    const invalido = JSON.parse(respaldo);
+    invalido.planeacion.escenarios[0].baseId = 'sin-base';
+    invalido.flujo.saldoInicial = 900;
+    await importar(page, JSON.stringify(invalido));
+    expect(ultimoToast(toasts).textContent).toContain('base histórica inexistente');
+    expect(confirm).not.toHaveBeenCalled();
+    expect(setItem).not.toHaveBeenCalled();
+    expect(almacen.get(CLAVE)).toBe(antes);
     expect(store.get('flujo.saldoInicial')).toBeNull();
+
+    const legado = { supuestos: ejemploPlaneacion() };
+    await importar(page, JSON.stringify({ planeacion: legado }));
+    expect(store.get('planeacion')).toEqual(legado);
+    await importar(page, respaldo);
+    expect(store.get('planeacion')).toEqual(caso);
   });
 });
 

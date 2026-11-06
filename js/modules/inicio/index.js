@@ -11,6 +11,7 @@ import { normalizeFinancialData } from '../estados/estados-normalize.js';
 import { ejemploFlujo, normalizarFlujo } from '../flujo/flujo-calculations.js';
 import { ejemploInventario, normalizarInventario } from '../inventario/inventario-calculations.js';
 import { ejemploPlaneacion, normalizarSupuestos } from '../planeacion/planeacion-calculations.js';
+import { tieneEscenarios } from '../planeacion/planeacion-escenarios.js';
 import { ejemploPresupuestoPersonal, presupuestoCalculations } from '../presupuesto/index.js';
 import { reunirEntradas } from '../proforma/index.js';
 import { construirReporte } from '../proforma/proforma-calculations.js';
@@ -39,7 +40,10 @@ export function cargarEjemploEmpresa() {
     periodos = estados.periods;
   }
   if (!Object.keys(store.get('razonesMercado')?.periodos || {}).length) guardar('razonesMercado', ejemploMercado(periodos), 'Razones de mercado');
-  if (!store.get('planeacion')?.supuestos) guardar('planeacion', { supuestos: normalizarSupuestos(ejemploPlaneacion()) }, 'Presupuesto maestro');
+  const planeacion = store.get('planeacion');
+  if (!planeacion?.supuestos && !tieneEscenarios(planeacion)) {
+    guardar('planeacion', { supuestos: normalizarSupuestos(ejemploPlaneacion()) }, 'Presupuesto maestro');
+  }
   if (store.get('equilibrio')?.precio == null) guardar('equilibrio', normalizarEquilibrio(ejemploEquilibrio()), 'Punto de equilibrio');
   if (vacio(store.get('flujo')?.movimientos)) guardar('flujo', normalizarFlujo(ejemploFlujo()), 'Flujo de efectivo');
   if (vacio(store.get('inventario')?.productos)) guardar('inventario', normalizarInventario(ejemploInventario()), 'Inventario');

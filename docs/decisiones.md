@@ -134,6 +134,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-084 | Totales de existencia solo con una unidad | Vigente |
 | D-085 | Supuestos de Planeación guardados sin producto vinculado | Vigente |
 | D-086 | Integrar lectura segura de F8 con el motor de razones | Vigente |
+| D-089 | Escenarios con base compartida y respaldo atómico | En prueba local |
 
 
 | D-056 | Razones de la app leen el motor | Vigente |
@@ -1994,3 +1995,22 @@ Se retira la prueba histórica de regresión de la demo (caso de ejemplo cargado
 **Para revertirla.** Acordar un contrato alternativo para la lectura, la utilidad neta y las entradas faltantes, y revisar los consumidores y sus pruebas en conjunto.
 
 **Referencias.** D-049, D-055 a D-060, D-063, D-077 y D-078; `tests/unit/f8-lectura.test.js`; `tests/unit/razones-app-aceptacion-1c.test.js`.
+
+### D-089 — Escenarios con base compartida y respaldo atómico
+
+- **Fecha**: 2026-11-05
+- **Estado**: En prueba en `test/caso-integrado-excepciones`, pendiente de revisión del equipo
+- **Decidió**: Carlos autorizó la rama de prueba y el agente propuso el contrato
+- **Área**: Planeación, `store` y respaldo de Reportes
+
+**Contexto.** Planeación guardaba un solo presupuesto. Reportes reemplazaba cada módulo por separado y la recuperación podía fallar si el almacenamiento seguía inaccesible.
+
+**Opciones.** Guardar la apertura en cada escenario simplifica la lectura y multiplica las copias. Guardar una base compartida identifica el cierre de origen y permite cambios independientes de los supuestos. Para el respaldo, una escritura del estado completo permite publicar el lote después del guardado.
+
+**Decisión.** Versionar Planeación al cargar Comercial Ejemplo. Los escenarios enlazan su base por identificador y guardan los supuestos que pueden editarse. El presupuesto anterior se conserva como escenario sin base al cargar el caso. Reportes valida todo el respaldo y lo persiste en una escritura.
+
+**Consecuencias.** Los escenarios ligados al caso usan su apertura en Planeación. Proforma muestra su procedencia y conserva un contexto coherente con sus propios estados. La validación admite borradores con N/D y señala los vínculos inválidos. Los respaldos antiguos recuperan su presupuesto al confirmar el reemplazo de Planeación.
+
+**Para revertirla.** Registrar una decisión de migración con un criterio explícito para conservar las bases y los escenarios de los respaldos versionados.
+
+**Referencias.** REV-07, el caso ficticio de etapa 1 y las pruebas de Planeación y Reportes.

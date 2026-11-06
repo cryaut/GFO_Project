@@ -63,8 +63,8 @@ export function normalizarSupuestos(datos) {
   return s;
 }
 
-// Errores de los supuestos (lista vacía si se puede calcular).
-export function validarSupuestos(s) {
+// En un borrador, null conserva un supuesto pendiente de revisión.
+export function validarSupuestos(s, { parcial = false } = {}) {
   if (!s) return ['Configure los supuestos o cargue el ejemplo.'];
   const errores = [];
   if (!TIPOS_PERIODO.includes(s.tipoPeriodo)) errores.push('Elija meses o trimestres.');
@@ -73,6 +73,7 @@ export function validarSupuestos(s) {
   }
   for (const [clave, etiqueta, clase] of SUPUESTOS) {
     const v = s[clave];
+    if (parcial && v === null) continue;
     if (!esNumero(v)) { errores.push(`${etiqueta}: escriba un número.`); continue; }
     if (clase === 'positivo' && v <= 0) errores.push(`${etiqueta}: debe ser mayor que 0.`);
     if (['monto', 'unidades', 'multiplo'].includes(clase) && v < 0) errores.push(`${etiqueta}: no puede ser negativo.`);
@@ -82,7 +83,7 @@ export function validarSupuestos(s) {
   const listas = [['ventasUnidades', 'Unidades a vender'], ['otrosDesembolsos', 'Otros desembolsos']];
   for (const [clave, etiqueta] of listas) {
     const lista = s[clave];
-    if (!Array.isArray(lista) || lista.length !== s.periodos || !lista.every(v => esNumero(v) && v >= 0)) {
+    if (!Array.isArray(lista) || lista.length !== s.periodos || !lista.every(v => (parcial && v === null) || (esNumero(v) && v >= 0))) {
       errores.push(`${etiqueta}: indique un número mayor o igual a 0 en cada periodo.`);
     }
   }

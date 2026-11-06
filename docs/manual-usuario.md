@@ -554,7 +554,7 @@ Navega al glosario para consultar más de 20 términos financieros definidos: me
 
 1. Navega a `#/reportes`.
 2. Haz clic en **"Exportar JSON"**.
-3. Se descarga un archivo `gfo-export.json` con todos los datos.
+3. Se descarga `gfo-toolkit-export.json` con los módulos guardados, incluidos los escenarios de Planeación.
 
 ### 7.2 Exportar a CSV
 
@@ -572,7 +572,7 @@ Navega al glosario para consultar más de 20 términos financieros definidos: me
 
 1. Haz clic en **"Importar JSON"** y selecciona un archivo `.json` generado con **"Exportar JSON"** (máximo 5 MB).
 2. La aplicación valida el archivo y muestra qué módulos se van a **reemplazar**; confirma para continuar. Si algo no es válido, no se cambia nada y el mensaje explica el motivo.
-3. Si el almacenamiento del navegador se llena a mitad de la importación, se conservan los datos anteriores.
+3. Todos los módulos del respaldo se guardan juntos. Si falla el almacenamiento, se conserva el último estado válido.
 
 Para cargar un archivo de estados financieros (JSON, CSV o Excel) usa **Importar archivo** en `#/estados`; un JSON de Estados no es un respaldo y Reportes lo rechaza.
 
@@ -686,6 +686,15 @@ En `#/planeacion` se presupuesta una empresa comercial (un producto o línea) de
 La pantalla arma, en orden: ventas y cobros, compras (unidades = ventas + inventario final deseado − inventario inicial) y pagos, costo de bienes vendidos, gastos de operación, caja y estado de resultados presupuestado.
 
 **Ejemplo MUNO MODA 2025:** ventas de 250, 300, 300 y 400 prendas a C$ 800 (C$ 1,000,000), UAII C$ 182,000 y utilidad neta C$ 119,000. La compra de un vehículo de C$ 120,000 en el trimestre 2 deja la caja en C$ 19,200, bajo el mínimo de C$ 40,000: se requieren **C$ 20,800 de financiamiento**. La caja cierra en C$ 122,360. La UAII del trimestre 1 (28,000) coincide con la del punto de equilibrio.
+
+### Escenarios de Comercial Ejemplo
+
+1. Pulsa **Cargar Comercial Ejemplo**. El escenario **Base** muestra la apertura ficticia al cierre de 2025 y las unidades de venta de 2026. Si tenías un presupuesto, aparece en el selector como **Presupuesto anterior**.
+2. Edita los supuestos o el nombre y pulsa **Guardar borrador**. Los campos vacíos quedan pendientes y un cero escrito se conserva como cero. **Calcular y guardar** requiere los supuestos completos del presupuesto.
+3. Pulsa **Duplicar escenario** para copiar la versión guardada. Selecciona el escenario que quieres consultar en **Escenario activo**. Ambos conservan la misma apertura histórica y sus supuestos propios.
+4. Guarda un respaldo desde **Reportes** para recuperar los escenarios y su base. Si restauras un respaldo antiguo de Planeación, recuperas su presupuesto anterior con apertura editable.
+
+Consulta el presupuesto del caso ficticio en Planeación. Proforma identifica que tiene su propia base histórica.
 
 ---
 

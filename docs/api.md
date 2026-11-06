@@ -708,7 +708,9 @@ Deduce el separador decimal de un conjunto de celdas.
 
 ## integracion-respaldo.js e integracion-reporte.js
 
-Lógica pura de Reportes (sin DOM ni `store`); el `index.js` del módulo lee el `store` y guarda con `setPersisted`.
+Lógica pura de Reportes (sin DOM ni `store`). El `index.js` guarda el respaldo validado con `store.setModulesPersisted(modulos)`.
+
+`setModulesPersisted(modulos)` acepta un objeto con secciones de primer nivel reconocidas. Clona los cambios y escribe el estado completo una vez. Lanza un error si falla la escritura y conserva el último estado válido. Notifica a los suscriptores después del guardado.
 
 #### `getSavedTotals(period)` — `js/modules/integracion/index.js`
 Consulta los totales de los estados guardados mediante `computeFinancialTotals`, la misma función usada por Análisis. La utilidad neta incluye intereses e impuestos y conserva N/D.
@@ -724,6 +726,8 @@ Valida un respaldo JSON ya parseado antes de tocar el `store`.
 - **Retorno**: `{ modulos, omitidos }` — `modulos`: módulos validados y copiados (los campos ausentes se completan con los actuales; `estados` sale de `normalizeFinancialData`); `omitidos`: claves o campos desconocidos. `theme` se ignora.
 - **Errores**: `Error` en español si no es un objeto, hay claves peligrosas, es demasiado profundo (más de 12 niveles o 200 000 nodos), un campo tiene el tipo equivocado o no hay ningún módulo reconocible
 - **Ejemplo**: `validarRespaldo({ presupuesto: { ingresoMensual: 900 } }, store.getAll())`
+
+Planeación admite el presupuesto anterior `{ supuestos }` y el contrato de escenarios versionado. Un respaldo versionado se valida completo y las bases referidas deben existir.
 
 #### `construirReporteHTML({ kpis, estados })`
 Cuerpo HTML del reporte (resumen, Balance General, Estado de Resultados y Totales por periodo), con una columna por periodo y todo texto del usuario escapado.
@@ -915,9 +919,12 @@ Lógica pura en `js/modules/<modulo>/<modulo>-calculations.js` (sin DOM ni `stor
 | `inventario/inventario-calculations.js` | `normalizarInventario(datos)`, `movimientosDeProducto(datos, productoId)`, `kardex(producto, movimientos)` → `{ filas, entradas, salidas, saldoFinal, primerNegativo }`, `resumenProducto(producto, movimientos)`, `calcularInventario(datos)` → `{ productos, valorTotal, unidadesTotales, porReponer, costoReposicionTotal }`, `validarProducto(datos, producto, idEditado)`, `validarMovimiento(datos, movimiento)`, `validarBorradoMovimiento(datos, id)`, `ejemploInventario()` |
 | `equilibrio/equilibrio-calculations.js` | `normalizarEquilibrio(datos)`, `validarEquilibrio(datos)`, `calcularCVU(datos)` → `{ mcu, rmc, peUnidades, peVentas, unidadesMinimas, ventas, mcTotal, uaii, msUnidades, msVentas, msPorcentaje, gao, unidadesObjetivo, … }`, `aplicarCambios(datos, cambios)`, `calcularEscenarios(datos)`, `puntosGrafica(resultado)`, `baseDesdeEstados(estados, configApalancamiento, periodo, unidades)`, `ejemploEquilibrio()` |
 | `flujo/flujo-calculations.js` | `normalizarFlujo(datos)`, `validarMovimientoFlujo(movimiento)`, `calcularFlujo(datos)` → `{ actividades, neto, totalEntradas, totalSalidas, variacionNeta, saldoFinal }`, `conciliarConBalance(resultado, estados, periodoBase)`, `ejemploFlujo()` |
-| `planeacion/planeacion-calculations.js` | `SUPUESTOS`, `normalizarSupuestos(datos)`, `validarSupuestos(s)`, `ajustarLista(lista, n)`, `calcularPresupuestoMaestro(s)` → `{ ventas, compras, cbv, gastos, caja, resultados, equilibrio, cierre, totales, financiamientoMaximo, periodoFinanciamiento, avisos }`, `ejemploPlaneacion()` |
+| `planeacion/planeacion-calculations.js` | `SUPUESTOS`, `normalizarSupuestos(datos)`, `validarSupuestos(s, { parcial = false } = {})`, `ajustarLista(lista, n)`, `calcularPresupuestoMaestro(s)` → `{ ventas, compras, cbv, gastos, caja, resultados, equilibrio, cierre, totales, financiamientoMaximo, periodoFinanciamiento, avisos }`, `ejemploPlaneacion()` |
+| `planeacion/planeacion-escenarios.js` | `tieneEscenarios(datos)` detecta el discriminante de versión. `validarEscenarios(datos)` verifica la forma, bases y supuestos parciales y devuelve los datos o lanza un error. `leerPlaneacion(datos)` devuelve `{ escenario, base, supuestos, error }` para el formato vigente o anterior. |
 | `proforma/proforma-calculations.js` | `resultadosReales(estados)`, `resultadosProforma(presupuesto)`, `compararResultados(real, proforma)`, `indicadoresIntegrados(entradas, periodo)`, `alertasIntegradas(entradas)`, `construirReporte(entradas)` → `{ real, proforma, comparacion, efectivo, indicadores, alertas, faltantes }`, `razon(razones, clave, denominador?)` (razón de Análisis con N/D si su denominador es 0) |
 | `inicio/inicio-calculations.js` | `tendenciaEstados(estados)` → `{ periodos, ventas, utilidadNeta, totalActivos }`, `kpisPrincipales(entradas)`, `areasClave(entradas)` (solo empresa), `resumenActivos(lista)` → `{ cantidad, costoTotal, valorLibros, pctDepreciado, requierenAtencion }`, `finanzasPersonales(presupuesto, activos)` (presupuesto personal y activos del hogar), `saludGeneral(areas, alertas)` → `{ nivel, puntaje, ok, alerta, texto }` (D-017), `panoramaGeneral(entradas, reporte, { presupuesto, activos })` |
+
+`crearCasoComercial(datos, referencia)` extrae el cierre de 2025 y las unidades proyectadas del JSON del caso ficticio. `seleccionarEscenario(datos, id)`, `duplicarEscenario(datos, id)` y `editarEscenario(datos, nombre, supuestos)` preparan una nueva versión del módulo para que el llamador la guarde. Con `parcial: true`, `validarSupuestos` admite `null` para un dato pendiente y conserva las validaciones de tipo y rango.
 
 Inicio reutiliza la recolección de la proforma: `proforma/index.js` exporta `reunirEntradas()`, y `inicio/index.js` exporta `initInicio()`, `cargarEjemploEmpresa()` y `cargarEjemploPersonal()` (solo llenan módulos vacíos; devuelven los nombres cargados). Activos exporta `calcularEstado(activo)` y `ejemploActivos()`. `js/components/chart.js` exporta `refreshChartsTheme()`, que recolorea ejes y leyendas de las gráficas abiertas al cambiar de tema.
 

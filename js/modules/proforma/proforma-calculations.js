@@ -256,7 +256,10 @@ export function construirReporte(entradas) {
   if (estados && ultimoApal && ultimoApal.grados.gao === null) {
     faltantes.push({ modulo: 'Apalancamiento', ruta: '#/apalancamiento', texto: 'Clasifique los costos como fijos o variables para obtener el GAO y el GAT.' });
   }
-  if (!presupuesto) faltantes.push({ modulo: 'Presupuesto maestro', ruta: '#/planeacion', texto: 'Configure los supuestos para obtener la proforma y la caja proyectada.' });
+  if (!presupuesto) faltantes.push({
+    modulo: 'Presupuesto maestro', ruta: '#/planeacion',
+    texto: entradas.motivoPresupuesto || 'Configure los supuestos para obtener la proforma y la caja proyectada.'
+  });
   if (!equilibrio) faltantes.push({ modulo: 'Punto de equilibrio', ruta: '#/equilibrio', texto: 'Ingrese precio, costos y unidades.' });
   if (!flujo?.disponible) {
     // D-070: sin un EFE utilizable no hay renglones de flujo; el faltante envía a Análisis.

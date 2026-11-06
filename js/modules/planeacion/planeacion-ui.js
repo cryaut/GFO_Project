@@ -2,12 +2,16 @@
 // y estado de resultados presupuestado. El cálculo está en planeacion-calculations.js.
 import { escapeHTML as esc } from '../../utils/html.js';
 import { formatCurrencyND as monto, formatNumberND, formatPercentND as pct } from '../../utils/format.js';
-import { leerNumero } from '../../utils/form.js';
+import { leerNumero, nuevoId } from '../../utils/form.js';
 import { totalesPeriodo } from '../../utils/estados-guardados.js';
 import {
   MAX_PERIODOS, SUPUESTOS, TIPOS_PERIODO, calcularPresupuestoMaestro, ejemploPlaneacion,
   normalizarSupuestos, validarSupuestos
 } from './planeacion-calculations.js';
+import {
+  CAMPOS_BASE, MAX_NOMBRE_ESCENARIO, crearCasoComercial, duplicarEscenario, editarEscenario,
+  leerPlaneacion, seleccionarEscenario
+} from './planeacion-escenarios.js';
 
 const esNumero = valor => typeof valor === 'number' && Number.isFinite(valor);
 const num = valor => formatNumberND(valor, esNumero(valor) && Number.isInteger(valor) ? 0 : 2);
@@ -27,33 +31,37 @@ function aBorrador(s) {
     periodos: String(n),
     campos,
     ventas: s ? s.ventasUnidades.map(v => (esNumero(v) ? String(v) : '')) : Array(n).fill(''),
-    otros: s ? s.otrosDesembolsos.map(v => (esNumero(v) ? String(v) : '0')) : Array(n).fill('0'),
+    otros: s ? s.otrosDesembolsos.map(v => (esNumero(v) ? String(v) : '')) : Array(n).fill('0'),
     productoInventario: s?.productoInventario ?? '',
     productoId: s?.productoId ?? ''
   };
 }
 
-// Textos del formulario → supuestos numéricos (null donde el texto no es un número).
-function desdeBorrador(b) {
+function desdeBorrador(b, escenario) {
+  const leer = (texto, etiqueta) => {
+    const dato = leerNumero(texto);
+    if (escenario && !dato.vacio && dato.valor === null) throw new Error(`${etiqueta} requiere un número válido.`);
+    return dato;
+  };
   const periodos = Number(b.periodos);
   const s = {
     tipoPeriodo: b.tipoPeriodo, periodos,
-    ventasUnidades: b.ventas.map(t => leerNumero(t).valor),
-    otrosDesembolsos: b.otros.map(t => {
-      const { vacio, valor } = leerNumero(t);
-      return vacio ? 0 : valor;
+    ventasUnidades: b.ventas.map((t, i) => leer(t, `Unidades a vender del periodo ${i + 1}`).valor),
+    otrosDesembolsos: b.otros.map((t, i) => {
+      const { vacio, valor } = leer(t, `Otros desembolsos del periodo ${i + 1}`);
+      return vacio && !escenario ? 0 : valor;
     }),
     productoInventario: b.productoInventario, productoId: b.productoId
   };
-  for (const [clave, , clase] of SUPUESTOS) {
-    const { valor } = leerNumero(b.campos[clave]);
+  for (const [clave, etiqueta, clase] of SUPUESTOS) {
+    const { valor } = leer(b.campos[clave], etiqueta);
     s[clave] = valor !== null && EN_PORCENTAJE.includes(clase) ? valor / 100 : valor;
   }
   return s;
 }
 
 function redimensionar(lista, n, relleno) {
-  return Array.from({ length: n }, (_, i) => (i < lista.length ? lista[i] : (lista[lista.length - 1] ?? relleno)));
+  return Array.from({ length: n }, (_, i) => (i < lista.length ? lista[i] : relleno));
 }
 
 const FORMATOS = { monto, unidades: num, pct };
@@ -191,11 +199,14 @@ function seccionResultados(p) {
     </ul></div>`;
 }
 
-// opciones: { datos, guardar, graficar?, estados?, inventario? } — inventario es el resultado de calcularInventario.
+// inventario es el resultado de calcularInventario.
 export function planeacionUI(page, opciones) {
-  const { guardar, graficar = null, estados = null, inventario = null } = opciones;
-  let guardado = normalizarSupuestos(opciones.datos?.supuestos);
-  let borrador = aBorrador(guardado);
+  const { guardar, graficar = null, estados = null, inventario = null, cargarReferencia } = opciones;
+  let datos = opciones.datos;
+  let lectura = leerPlaneacion(datos);
+  let borrador = aBorrador(lectura.supuestos);
+  let nombre = lectura.escenario?.nombre ?? '';
+  let cambios = false;
 
   function mensaje(texto, error = false) {
     const el = page.querySelector('#planMensaje');
@@ -204,22 +215,62 @@ export function planeacionUI(page, opciones) {
     el.className = error ? 'text-danger' : 'text-muted';
   }
 
-  function guardarSupuestos(s, texto) {
-    const errores = validarSupuestos(s);
-    if (errores.length) { mensaje(errores.join(' '), true); return; }
+  function guardarDatos(nuevos, texto) {
     try {
-      guardar({ supuestos: s });
+      guardar(nuevos);
     } catch (error) {
-      mensaje(`No se pudo guardar: ${error.message}. Los datos anteriores no cambiaron.`, true);
-      return;
+      mensaje(`No se pudo guardar. ${error.message}. Se conservó el último estado válido.`, true);
+      return false;
     }
-    guardado = s;
-    borrador = aBorrador(s);
+    datos = nuevos;
+    lectura = leerPlaneacion(datos);
+    borrador = aBorrador(lectura.supuestos);
+    nombre = lectura.escenario?.nombre ?? '';
+    cambios = false;
     render();
     mensaje(texto);
+    return true;
+  }
+
+  function guardarSupuestos(s, texto, parcial = false) {
+    const errores = validarSupuestos(s, { parcial });
+    if (errores.length) { mensaje(errores.join(' '), true); return; }
+    guardarDatos(lectura.escenario ? editarEscenario(datos, nombre, s) : { supuestos: s }, texto);
+  }
+
+  function guardarFormulario(parcial) {
+    try {
+      guardarSupuestos(desdeBorrador(borrador, Boolean(lectura.escenario)), parcial
+        ? 'Borrador guardado. Los campos vacíos quedan pendientes.' : 'Presupuesto calculado y guardado.', parcial);
+    } catch (error) {
+      mensaje(error.message, true);
+    }
+  }
+
+  function confirmarCambio() {
+    return !cambios || window.confirm('Hay cambios sin guardar. ¿Descartarlos y continuar?');
+  }
+
+  function seccionEscenarios() {
+    const { escenario, base } = lectura;
+    if (!cargarReferencia && !escenario) return '';
+    const selector = escenario ? `<div class="form-row mt-4">
+      <div class="form-group"><label class="form-label" for="planEscenario">Escenario activo</label>
+        <select id="planEscenario" class="form-select">${datos.escenarios.map(e => `<option value="${esc(e.id)}"${e.id === escenario.id ? ' selected' : ''}>${esc(e.nombre)}</option>`).join('')}</select></div>
+      <div class="form-group"><label class="form-label" for="planNombreEscenario">Nombre del escenario</label>
+        <input id="planNombreEscenario" class="form-input" maxlength="${MAX_NOMBRE_ESCENARIO}" value="${esc(nombre)}"></div>
+      <button id="planDuplicarEscenario" type="button" class="btn btn-secondary">Duplicar escenario</button>
+    </div>
+    <p class="form-hint">${base
+    ? `${esc(base.empresa)} · Caso ficticio · Corte ${esc(base.fechaCorte)} · ${esc(base.revision)}. Inventario al cierre ${monto(base.apertura.inventarioValor)}.`
+    : 'Presupuesto anterior con apertura editable.'}</p>` : '';
+    return `<div class="card mb-4"><h2 class="card-title">Escenarios de Planeación</h2>
+      ${cargarReferencia ? '<button id="planCargarCaso" type="button" class="btn btn-secondary">Cargar Comercial Ejemplo</button>' : ''}
+      ${selector}</div>`;
   }
 
   function seccionIntegracion() {
+    if (lectura.base) return '';
     const partes = [];
     if (estados) {
       const ultimo = estados.periods[estados.periods.length - 1];
@@ -244,7 +295,7 @@ export function planeacionUI(page, opciones) {
     const nValido = Number.isInteger(n) && n >= 1 && n <= MAX_PERIODOS;
     const campos = SUPUESTOS.map(([clave, etiqueta, clase]) => `<div class="form-group">
         <label class="form-label" for="plan-${clave}">${etiqueta}</label>
-        <input class="form-input" id="plan-${clave}" type="number" step="any"${clase === 'libre' ? '' : ' min="0"'} value="${esc(borrador.campos[clave])}"></div>`).join('');
+        <input class="form-input" id="plan-${clave}" type="number" step="any"${clase === 'libre' ? '' : ' min="0"'}${lectura.base && CAMPOS_BASE.includes(clave) ? ' readonly' : ''} value="${esc(borrador.campos[clave])}"></div>`).join('');
     const columnas = nValido ? Array.from({ length: n }, (_, i) => i) : [];
     const encabezado = columnas.map(i => `<th scope="col">${esc(borrador.tipoPeriodo)} ${i + 1}</th>`).join('');
     const fila = (prefijo, lista, etiqueta) => `<tr><th scope="row">${etiqueta}</th>${columnas.map(i => `<td>
@@ -263,20 +314,29 @@ export function planeacionUI(page, opciones) {
         ${nValido ? `<div class="table-wrapper"><table class="statement-table"><thead><tr><th scope="col">Concepto</th>${encabezado}</tr></thead>
           <tbody>${fila('planVentas', borrador.ventas, 'Unidades a vender')}${fila('planOtros', borrador.otros, 'Otros desembolsos (C$): compra de activos, dividendos…')}</tbody></table></div>`
     : `<p class="text-danger">El número de periodos debe ser un entero entre 1 y ${MAX_PERIODOS}.</p>`}
-        <button type="submit" class="btn btn-primary mt-4">Calcular y guardar</button></div>
+        <button type="submit" class="btn btn-primary mt-4">Calcular y guardar</button>
+        ${lectura.escenario ? '<button id="planGuardarBorrador" type="button" class="btn btn-secondary mt-4">Guardar borrador</button>' : ''}</div>
     </form>`;
   }
 
   function render() {
-    const errores = validarSupuestos(guardado);
-    const resultado = errores.length ? null : calcularPresupuestoMaestro(guardado, inventario);
+    if (lectura.error) {
+      page.innerHTML = `<div class="card"><h1 class="card-title">Presupuesto Maestro</h1>
+        <p role="alert" class="text-danger">${esc(lectura.error)} Restaure un respaldo válido en Reportes.</p></div>`;
+      return;
+    }
+    const errores = validarSupuestos(lectura.supuestos);
+    const resultado = errores.length ? null : calcularPresupuestoMaestro(lectura.supuestos, lectura.base ? null : inventario);
     page.innerHTML = `<div class="page-header"><h1 class="page-title">Presupuesto Maestro</h1>
         <p class="page-subtitle">Presupuestos de ventas, compras, costo de bienes vendidos, gastos de operación y caja de una empresa comercial.</p></div>
       <p id="planMensaje" role="status" aria-live="polite" class="text-muted">Complete los supuestos y pulse Calcular y guardar.</p>
-      <div class="flex-gap flex-wrap mb-4"><button type="button" class="btn btn-secondary" id="planEjemplo">Cargar ejemplo</button></div>
+      ${seccionEscenarios()}
+      ${lectura.escenario ? '' : '<div class="flex-gap flex-wrap mb-4"><button type="button" class="btn btn-secondary" id="planEjemplo">Cargar ejemplo</button></div>'}
       ${seccionIntegracion()}
       ${formulario()}
-      ${resultado ? seccionResultados(resultado) : '<div class="card empty-state"><p>Todavía no hay un presupuesto calculado. Complete los supuestos o pulse "Cargar ejemplo".</p></div>'}`;
+      ${resultado ? seccionResultados(resultado) : `<div class="card empty-state"><p>${lectura.escenario
+    ? 'Complete los supuestos para calcular el presupuesto.'
+    : 'Todavía no hay un presupuesto calculado. Complete los supuestos o pulse "Cargar ejemplo".'}</p></div>`}`;
     bind();
     if (resultado && graficar) {
       graficar('planChart', {
@@ -294,42 +354,82 @@ export function planeacionUI(page, opciones) {
   }
 
   function bind() {
+    const botonCaso = page.querySelector('#planCargarCaso');
+    botonCaso?.addEventListener('click', async () => {
+      if (botonCaso.disabled) return;
+      botonCaso.disabled = true;
+      try {
+        const referencia = await cargarReferencia();
+        if (page.querySelector('#planCargarCaso') !== botonCaso || !confirmarCambio()) return;
+        guardarDatos(crearCasoComercial(datos, referencia), 'Comercial Ejemplo cargado desde la referencia.');
+      } catch (error) {
+        if (page.querySelector('#planCargarCaso') === botonCaso) mensaje(`No se pudo cargar Comercial Ejemplo. ${error.message}`, true);
+      } finally {
+        botonCaso.disabled = false;
+      }
+    });
+    page.querySelector('#planEscenario')?.addEventListener('change', event => {
+      try {
+        if (confirmarCambio() && guardarDatos(seleccionarEscenario(datos, event.target.value), 'Escenario seleccionado.')) return;
+      } catch (error) {
+        mensaje(error.message, true);
+      }
+      event.target.value = lectura.escenario.id;
+    });
+    page.querySelector('#planDuplicarEscenario')?.addEventListener('click', () => {
+      if (!confirmarCambio()) return;
+      try {
+        guardarDatos(duplicarEscenario(datos, nuevoId('escenario')), 'Escenario duplicado.');
+      } catch (error) {
+        mensaje(error.message, true);
+      }
+    });
+    page.querySelector('#planNombreEscenario')?.addEventListener('input', event => {
+      nombre = event.target.value;
+      cambios = true;
+    });
+    page.querySelector('#planGuardarBorrador')?.addEventListener('click', () => guardarFormulario(true));
     page.querySelector('#planEjemplo')?.addEventListener('click', () => {
       guardarSupuestos(normalizarSupuestos(ejemploPlaneacion()),
         'Ejemplo cargado: MUNO MODA 2025 por trimestres (datos ficticios, saldos iniciales del balance 2024 de la demo).');
     });
     page.querySelector('#planTipoPeriodo')?.addEventListener('change', event => {
       borrador.tipoPeriodo = event.target.value;
+      cambios = true;
       render();
       mensaje('Cambios sin guardar: pulse Calcular y guardar.');
     });
     page.querySelector('#planPeriodos')?.addEventListener('change', event => {
       borrador.periodos = event.target.value;
+      cambios = true;
       const n = Number(event.target.value);
       if (Number.isInteger(n) && n >= 1 && n <= MAX_PERIODOS) {
-        borrador.ventas = redimensionar(borrador.ventas, n, '');
-        borrador.otros = redimensionar(borrador.otros, n, '0');
+        borrador.ventas = redimensionar(borrador.ventas, n, lectura.escenario ? '' : (borrador.ventas.at(-1) ?? ''));
+        borrador.otros = redimensionar(borrador.otros, n, lectura.escenario ? '' : (borrador.otros.at(-1) ?? '0'));
       }
       render();
       mensaje('Cambios sin guardar: pulse Calcular y guardar.');
     });
-    for (const [clave] of SUPUESTOS) {
-      page.querySelector(`#plan-${clave}`)?.addEventListener('input', event => { borrador.campos[clave] = event.target.value; });
-    }
+    const enlazarNumero = (selector, asignar) => page.querySelector(selector)?.addEventListener('input', event => {
+      asignar(event.target.validity?.badInput ? 'Inválido' : event.target.value);
+      cambios = true;
+    });
+    for (const [clave] of SUPUESTOS) enlazarNumero(`#plan-${clave}`, valor => { borrador.campos[clave] = valor; });
     borrador.ventas.forEach((_, i) => {
-      page.querySelector(`#planVentas-${i}`)?.addEventListener('input', event => { borrador.ventas[i] = event.target.value; });
-      page.querySelector(`#planOtros-${i}`)?.addEventListener('input', event => { borrador.otros[i] = event.target.value; });
+      enlazarNumero(`#planVentas-${i}`, valor => { borrador.ventas[i] = valor; });
+      enlazarNumero(`#planOtros-${i}`, valor => { borrador.otros[i] = valor; });
     });
     page.querySelector('#formPlaneacion')?.addEventListener('submit', event => {
       event.preventDefault();
-      guardarSupuestos(desdeBorrador(borrador), 'Presupuesto calculado y guardado.');
+      guardarFormulario(false);
     });
     page.querySelector('#planTomarBalance')?.addEventListener('click', () => {
       const totales = totalesPeriodo(estados);
       if (!totales) { mensaje('No se pudieron leer los estados guardados.', true); return; }
-      borrador.campos.saldoInicialCaja = String(totales.efectivo);
-      borrador.campos.cxcInicial = String(totales.cxC);
-      borrador.campos.cxpInicial = String(totales.cuentasPorPagar);
+      borrador.campos.saldoInicialCaja = String(totales.efectivo ?? '');
+      borrador.campos.cxcInicial = String(totales.cxC ?? '');
+      borrador.campos.cxpInicial = String(totales.cuentasPorPagar ?? '');
+      cambios = true;
       render();
       mensaje(`Tomados del balance ${totales.periodo}: efectivo ${monto(totales.efectivo)}, CxC ${monto(totales.cxC)} y CxP ${monto(totales.cuentasPorPagar)}. Pulse Calcular y guardar.`);
     });
@@ -343,6 +443,7 @@ export function planeacionUI(page, opciones) {
       borrador.campos.costoUnitario = String(producto.costoPromedio);
       borrador.productoInventario = producto.nombre;
       borrador.productoId = producto.id;
+      cambios = true;
       render();
       mensaje(`Tomados de ${producto.nombre}: inventario inicial ${num(producto.existenciaFinal)} ${producto.unidad} y costo promedio ${monto(producto.costoPromedio)}. Pulse Calcular y guardar.`);
     });

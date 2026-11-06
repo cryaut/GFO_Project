@@ -5,7 +5,8 @@ import { calcularRazonesMercado } from '../analisis/mercado-calculations.js';
 import { calcularApalancamiento } from '../apalancamiento/apalancamiento-calculations.js';
 import { calcularCVU, normalizarEquilibrio, validarEquilibrio } from '../equilibrio/equilibrio-calculations.js';
 import { calcularInventario } from '../inventario/inventario-calculations.js';
-import { calcularPresupuestoMaestro, normalizarSupuestos, validarSupuestos } from '../planeacion/planeacion-calculations.js';
+import { calcularPresupuestoMaestro, validarSupuestos } from '../planeacion/planeacion-calculations.js';
+import { leerPlaneacion } from '../planeacion/planeacion-escenarios.js';
 import { construirReporte, flujoDesdeEFE } from './proforma-calculations.js';
 import { proformaUI } from './proforma-ui.js';
 
@@ -27,7 +28,9 @@ export function reunirEntradas() {
   const { estados, error: errorEstados } = leerEstados(store.get('estados'));
   const ultimo = estados ? estados.periods[estados.periods.length - 1] : null;
   if (estados) refreshSavedStates();
-  const supuestos = normalizarSupuestos(store.get('planeacion')?.supuestos);
+  const { supuestos, base, error: errorPlaneacion } = leerPlaneacion(store.get('planeacion'));
+  const motivoPresupuesto = errorPlaneacion || (base
+    ? 'El escenario activo tiene su propia base histórica. Consulte el presupuesto de ese caso en Planeación.' : null);
   const equilibrio = normalizarEquilibrio(store.get('equilibrio'));
   // D-070: el flujo viene del EFE de Análisis (último par de periodos), no de la
   // captura manual del flujo directo, que queda como captura no oficial.
@@ -42,7 +45,9 @@ export function reunirEntradas() {
       ? intentar(() => calcularRazonesMercado(estados, store.get('razonesMercado'), store.get('apalancamiento')?.dap || {}).at(-1))
       : null,
     apalancamiento: estados ? intentar(() => calcularApalancamiento(estados, store.get('apalancamiento') || {})) : null,
-    presupuesto: validarSupuestos(supuestos).length ? null : intentar(() => calcularPresupuestoMaestro(supuestos, inventario)),
+    presupuesto: motivoPresupuesto || validarSupuestos(supuestos).length
+      ? null : intentar(() => calcularPresupuestoMaestro(supuestos, inventario)),
+    motivoPresupuesto,
     equilibrio: validarEquilibrio(equilibrio).length ? null : calcularCVU(equilibrio),
     flujo,
     inventario: inventario.productos.length ? inventario : null,
