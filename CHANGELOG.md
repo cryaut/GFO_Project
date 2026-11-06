@@ -125,6 +125,7 @@ Todos los cambios notables en GFO Toolkit.
 - La pregunta del quiz sobre los días del PPC da como correcta 365, igual que el cálculo.
 
 ### Módulo 6: Reportes e Integración
+- Al restaurar Inventario se comprueban las fechas de calendario, los costos explícitos y cada saldo del kardex. Un error detiene el respaldo completo antes de guardar (D-092).
 - El dashboard y el CSV dejan de usar nombres de cuenta fijos: consumen el mismo motor normalizado que Análisis.
 - ROA y endeudamiento del dashboard reutilizan `computeRazones` (con `refreshSavedStates`): mismos promedios y semántica N/D que la pestaña Análisis, no un cálculo paralelo con saldo de cierre.
 - El CSV exportado incluye `Estado`, `Grupo`, `Cuenta` y `Clasificacion`, y puede reimportarse en Estados sin edición manual.

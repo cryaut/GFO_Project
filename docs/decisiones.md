@@ -137,6 +137,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-089 | Escenarios con base compartida y respaldo atómico | En prueba local |
 | D-090 | Calendarios de crédito y presupuesto parcial mensual | En prueba local |
 | D-091 | Variaciones de Proforma solo con cobertura anual comparable | En prueba local |
+| D-092 | Restaurar Inventario exige un kardex válido | En prueba local |
 
 
 | D-056 | Razones de la app leen el motor | Vigente |
@@ -2054,3 +2055,22 @@ Se retira la prueba histórica de regresión de la demo (caso de ejemplo cargado
 **Para revisar el criterio.** Incorporar fechas explícitas de inicio y cierre antes de habilitar comparaciones de periodos parciales.
 
 **Referencias.** D-014, REV-08 y `tests/unit/proforma.test.js`.
+
+### D-092 — Restaurar Inventario exige un kardex válido
+
+- **Fecha**: 2026-11-06
+- **Estado**: En prueba en `test/caso-integrado-excepciones`
+- **Decidió**: Carlos autorizó la corrección
+- **Área**: Inventario y Reportes
+
+**Contexto.** La restauración validaba la estructura del módulo. Podía aceptar un día inexistente, tratar un costo explícito inválido como omitido y admitir una salida que dejara existencias negativas antes de una reposición.
+
+**Opciones.** Validar el saldo final o recorrer cada movimiento en el orden que usa el kardex. Para costos, usar el costo del producto ante cualquier dato ilegible o reservarlo para entradas legadas con la propiedad omitida.
+
+**Decisión.** Validar fechas de calendario y costos explícitos antes de aceptar el respaldo. Comprobar el saldo de cada producto después de cada movimiento con la tolerancia del kardex. El orden es cronológico y los movimientos del mismo día conservan el orden del archivo. Las entradas legadas sin la propiedad `costoUnitario` conservan la política de D-081.
+
+**Consecuencias.** Un error en Inventario rechaza el lote antes de confirmar o guardar. El mensaje de fecha o costo indica la posición en el archivo. El error de existencia indica el movimiento, el producto y la fecha. La captura de movimientos también valida días reales de calendario.
+
+**Para revisar el criterio.** Cualquier política nueva de existencias negativas debe aplicarse conjuntamente a la captura y a la restauración.
+
+**Referencias.** D-011, D-081, D-083, D-089 y las pruebas de Inventario y Reportes.

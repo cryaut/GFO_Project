@@ -1,6 +1,6 @@
 import { normalizeFinancialData } from '../estados/estados-normalize.js';
 import { leerEstados } from '../../utils/estados-guardados.js';
-import { normalizarInventario } from '../inventario/inventario-calculations.js';
+import { validarInventarioRespaldo } from '../inventario/inventario-calculations.js';
 import { tieneEscenarios, validarEscenarios } from '../planeacion/planeacion-escenarios.js';
 
 // Validación de un respaldo JSON (el que genera "Exportar JSON" en Reportes) antes de
@@ -75,8 +75,7 @@ function validarModulo(clave, importado, actual, omitidos) {
   }
   if (clave === 'inventario') {
     // D-083 (ronda 2): primero las mismas validaciones de forma que el resto de
-    // módulos, con los mismos mensajes que main (H1); después la normalización
-    // y el rechazo por registros descartados.
+    // módulos y después la validación del kardex.
     if (!esObjeto(importado)) throw new Error(`El módulo "${clave}" debe ser un objeto.`);
     for (const [campo, valor] of Object.entries(importado)) {
       if (!Object.hasOwn(actual, campo)) {
@@ -85,12 +84,7 @@ function validarModulo(clave, importado, actual, omitidos) {
       }
       validarTipo(valor, actual[campo], `${clave}.${campo}`);
     }
-    const normal = normalizarInventario(importado);
-    if (normal.descartados.length) {
-      const detalle = normal.descartados.map(d => `${d.motivo}: ${d.cantidad}`).join('; ');
-      throw new Error(`El inventario del respaldo tiene registros descartados (${detalle}). No se importó nada.`);
-    }
-    return { productos: normal.productos, movimientos: normal.movimientos };
+    return validarInventarioRespaldo(importado);
   }
   if (!esObjeto(importado)) throw new Error(`El módulo "${clave}" debe ser un objeto.`);
   // Lo que el archivo no trae se conserva del módulo actual para que no quede incompleto.

@@ -111,6 +111,30 @@ describe('Reportes: importar JSON', () => {
     expect(store.get('presupuesto.gastos')).toEqual([]);
   });
 
+  it.each([
+    [{ fecha: '2026-02-31' }, 'no existe en el calendario'],
+    [{ costoUnitario: -1 }, 'El costo unitario de inventario.movimientos[0]'],
+    [{ tipo: 'salida', cantidad: 2 }, 'Existencia insuficiente en el movimiento "salida"']
+  ])('rechaza un kardex inválido (%j) antes de confirmar o escribir otros módulos', async (cambio, motivo) => {
+    const producto = { id: 'p1', nombre: 'Artículo', unidad: 'unidades', existenciaInicial: 1, costoUnitario: 20, stockMinimo: 0 };
+    const guardado = { flujo: { saldoInicial: 12 }, inventario: { productos: [producto], movimientos: [] } };
+    const { page, store, almacen, toasts, confirm, setItem } = await montar({ guardado });
+    const antes = store.getAll();
+    const inventario = {
+      productos: [producto],
+      movimientos: [
+        { id: 'salida', productoId: 'p1', fecha: '2026-02-01', tipo: 'entrada', cantidad: 1, ...cambio },
+        { id: 'reposición', productoId: 'p1', fecha: '2026-03-01', tipo: 'entrada', cantidad: 1, costoUnitario: 20 }
+      ]
+    };
+    await importar(page, JSON.stringify({ flujo: { saldoInicial: 900 }, inventario }));
+    expect(ultimoToast(toasts).textContent).toContain(motivo);
+    expect(confirm).not.toHaveBeenCalled();
+    expect(setItem).not.toHaveBeenCalled();
+    expect(store.getAll()).toEqual(antes);
+    expect(almacen.get(CLAVE)).toBe(JSON.stringify(guardado));
+  });
+
   it('rechaza un archivo que supera el máximo y JSON corrupto', async () => {
     const { page, toasts } = await montar();
     await importar(page, '{}', { tamano: 6 * 1024 * 1024 });

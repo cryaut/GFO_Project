@@ -574,6 +574,8 @@ Navega al glosario para consultar más de 20 términos financieros definidos: me
 2. La aplicación valida el archivo y muestra qué módulos se van a **reemplazar**; confirma para continuar. Si algo no es válido, no se cambia nada y el mensaje explica el motivo.
 3. Todos los módulos del respaldo se guardan juntos. Si falla el almacenamiento, se conserva el último estado válido.
 
+Si el respaldo contiene Inventario, Reportes verifica las fechas reales, los costos declarados y los saldos del kardex en orden cronológico. Una salida que deje existencias negativas impide restaurar el archivo aunque una compra posterior recupere el saldo. El mensaje identifica el campo o movimiento que debes corregir. Las entradas de respaldos antiguos con el costo omitido usan el costo del producto.
+
 Para cargar un archivo de estados financieros (JSON, CSV o Excel) usa **Importar archivo** en `#/estados`; un JSON de Estados no es un respaldo y Reportes lo rechaza.
 
 ### 7.5 Dashboard resumen

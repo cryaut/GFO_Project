@@ -258,7 +258,7 @@ Disponibilidad de cuentas (D-043 y excepción limitada D-047/D-048 a D-044): una
 | `js/modules/analisis/efe-calculations.js` | `esResultadoAcumulado`, `construirEFE`, `interpretarEFE` (EFE por método indirecto, sin DOM ni store) |
 | `js/utils/format.js` | `formatCurrency`, `formatNumber`, `formatPercent`, `formatPercentRaw`, `parseNumber`. Convierten `null` en 0: verifica `null` antes de formatear |
 | `js/utils/html.js` | `escapeHTML(valor)` |
-| `js/modules/inventario/inventario-calculations.js` | `calcularInventario`, `kardex`, `resumenProducto`, `validarMovimiento` y el resto en `docs/api.md` |
+| `js/modules/inventario/inventario-calculations.js` | `calcularInventario`, `kardex`, `resumenProducto`, `validarMovimiento`, `validarInventarioRespaldo` y el resto en `docs/api.md` |
 | `js/modules/equilibrio/equilibrio-calculations.js` | `calcularCVU`, `calcularEscenarios`, `puntosGrafica`, `baseDesdeEstados` (P, CVu y CF desde Estados y Apalancamiento) |
 | `js/modules/flujo/flujo-calculations.js` | `calcularFlujo`, `conciliarConBalance` |
 | `js/modules/planeacion/planeacion-calculations.js` | `calcularPresupuestoMaestro`, `validarSupuestos`, `SUPUESTOS`, `calcularCapitalTrabajo`, `validarCapitalTrabajo`, `CALENDARIOS_CAPITAL_TRABAJO` |

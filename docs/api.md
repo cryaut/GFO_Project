@@ -729,6 +729,8 @@ Valida un respaldo JSON ya parseado antes de tocar el `store`.
 
 Planeación admite el presupuesto anterior `{ supuestos }` y el contrato de escenarios versionado. Un respaldo versionado se valida completo y las bases referidas deben existir.
 
+Los respaldos con Inventario pasan por `validarInventarioRespaldo` antes de solicitar confirmación o persistir el lote.
+
 #### `construirReporteHTML({ kpis, estados })`
 Cuerpo HTML del reporte (resumen, Balance General, Estado de Resultados y Totales por periodo), con una columna por periodo y todo texto del usuario escapado.
 
@@ -916,7 +918,7 @@ Lógica pura en `js/modules/<modulo>/<modulo>-calculations.js` (sin DOM ni `stor
 
 | Archivo | Funciones públicas |
 |---|---|
-| `inventario/inventario-calculations.js` | `normalizarInventario(datos)`, `movimientosDeProducto(datos, productoId)`, `kardex(producto, movimientos)` → `{ filas, entradas, salidas, saldoFinal, primerNegativo }`, `resumenProducto(producto, movimientos)`, `calcularInventario(datos)` → `{ productos, valorTotal, unidadesTotales, porReponer, costoReposicionTotal }`, `validarProducto(datos, producto, idEditado)`, `validarMovimiento(datos, movimiento)`, `validarBorradoMovimiento(datos, id)`, `ejemploInventario()` |
+| `inventario/inventario-calculations.js` | `normalizarInventario(datos)`, `movimientosDeProducto(datos, productoId)`, `kardex(producto, movimientos)` → `{ filas, entradas, salidas, saldoFinal, primerNegativo }`, `resumenProducto(producto, movimientos)`, `calcularInventario(datos)` → `{ productos, valorTotal, unidadesTotales, porReponer, costoReposicionTotal }`, `validarProducto(datos, producto, idEditado)`, `validarMovimiento(datos, movimiento)`, `validarBorradoMovimiento(datos, id)`, `validarInventarioRespaldo(datos)`, `ejemploInventario()` |
 | `equilibrio/equilibrio-calculations.js` | `normalizarEquilibrio(datos)`, `validarEquilibrio(datos)`, `calcularCVU(datos)` → `{ mcu, rmc, peUnidades, peVentas, unidadesMinimas, ventas, mcTotal, uaii, msUnidades, msVentas, msPorcentaje, gao, unidadesObjetivo, … }`, `aplicarCambios(datos, cambios)`, `calcularEscenarios(datos)`, `puntosGrafica(resultado)`, `baseDesdeEstados(estados, configApalancamiento, periodo, unidades)`, `ejemploEquilibrio()` |
 | `flujo/flujo-calculations.js` | `normalizarFlujo(datos)`, `validarMovimientoFlujo(movimiento)`, `calcularFlujo(datos)` → `{ actividades, neto, totalEntradas, totalSalidas, variacionNeta, saldoFinal }`, `conciliarConBalance(resultado, estados, periodoBase)`, `ejemploFlujo()` |
 | `planeacion/planeacion-calculations.js` | `SUPUESTOS`, `normalizarSupuestos(datos)`, `validarSupuestos(s, { parcial = false } = {})`, `ajustarLista(lista, n)`, `calcularPresupuestoMaestro(s)` → `{ ventas, compras, cbv, gastos, caja, resultados, equilibrio, cierre, totales, financiamientoMaximo, periodoFinanciamiento, avisos }`, `ejemploPlaneacion()` |
@@ -941,5 +943,9 @@ Inicio reutiliza la recolección de la proforma: `proforma/index.js` exporta `re
 Códigos de `avisos` del presupuesto maestro: `financiamiento`, `sin-compras`, `bajo-stock-minimo`, `perdida`, `bajo-equilibrio` y `sin-margen`.
 
 `compararResultados(real, proforma)` conserva ambos valores de cada fila. Calcula la variación relativa y la diferencia de márgenes en puntos solo si el periodo real es un año `AAAA` y la proyección cubre 12 meses o 4 trimestres. En los demás casos `variacion` y `puntos` quedan en `null`. Si están presentes ambos resultados y falta comparabilidad temporal, `construirReporte` explica la causa en `motivoComparacion`.
+
+#### `validarInventarioRespaldo(datos)`
+
+Recibe el módulo de Inventario del respaldo y devuelve `{ productos, movimientos }` normalizados. Lanza un error si la normalización descarta registros, una fecha no existe en el calendario, un costo explícito no es un número finito mayor o igual a cero, o cualquier saldo intermedio del kardex cae bajo la tolerancia de existencias. Valida por producto y fecha. Si dos movimientos comparten fecha, respeta el orden del archivo. Una entrada legada con la propiedad `costoUnitario` omitida usa el costo del producto según D-081.
 
 Utilidades: `js/utils/form.js` (`leerNumero(texto)` → `{ vacio, valor }`, `nuevoId(prefijo)`, `fechaHoy()`), `js/utils/estados-guardados.js` (`estadosGuardados(estados)`, `totalesPeriodo(estados, periodo)`). `js/modules/analisis/index.js` exporta ahora `refreshSavedStates()` para que el reporte integrado no use estados en caché.
