@@ -4,18 +4,29 @@
 export function element() {
   const listeners = new Map();
   const children = new Map();
+  const attributes = new Map();
   let html = '';
   return {
-    value: '', textContent: '', className: '', checked: false,
+    value: '', textContent: '', className: '', checked: false, hidden: false,
     get innerHTML() { return html; },
     set innerHTML(value) {
       html = value;
       children.clear();
       for (const [, id] of value.matchAll(/\bid="([^"]+)"/g)) children.set(`#${id}`, element());
     },
-    querySelector(selector) { return children.get(selector) ?? null; },
+    querySelector(selector) {
+      if (children.has(selector)) return children.get(selector);
+      for (const child of children.values()) {
+        const match = child.querySelector(selector);
+        if (match) return match;
+      }
+      return null;
+    },
     // Sin selectores de clase ni de atributo: las pantallas que los usan reciben una lista vacía.
     querySelectorAll() { return []; },
+    focus() {},
+    setAttribute(name, value) { attributes.set(name, String(value)); },
+    getAttribute(name) { return attributes.get(name) ?? null; },
     addEventListener(type, handler) {
       if (!listeners.has(type)) listeners.set(type, []);
       listeners.get(type).push(handler);

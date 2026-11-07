@@ -49,6 +49,7 @@ describe('Planeación con la referencia de Comercial Ejemplo', () => {
     expect(page.innerHTML).toContain('2027-02');
     expect(page.innerHTML).not.toContain('id="planChart"');
     const baseId = store.get('planeacion.activoId');
+    await clic(page, 'planVer-supuestos');
     await clic(page, 'planDuplicarEscenario');
     const copiaId = store.get('planeacion.activoId');
     expect(copiaId).not.toBe(baseId);
@@ -76,6 +77,7 @@ describe('Planeación con la referencia de Comercial Ejemplo', () => {
     expect(page.innerHTML).toMatch(/id="plan-cobrosCredito"[^>]*value="0 100"/);
     await cambiar(page, 'planEscenario', baseId);
     expect(page.innerHTML).toMatch(/id="plan-precio"[^>]*value="220"/);
+    await clic(page, 'planVer-supuestos');
     await clic(page, 'planCargarCaso');
     expect(store.get('planeacion.escenarios')).toHaveLength(3);
   });
@@ -105,11 +107,70 @@ describe('Planeación con la referencia de Comercial Ejemplo', () => {
   it('muestra N/D para un calendario pendiente y mantiene disponibles las compras', async () => {
     const { page, store } = await montar();
     await clic(page, 'planCargarCaso');
+    await clic(page, 'planVer-supuestos');
     await cambiar(page, 'plan-cobrosCredito', '', 'input');
     await enviar(page, 'formPlaneacion');
     expect(store.get('planeacion.escenarios')[0].capitalTrabajo.cobrosCredito).toBeNull();
     expect(page.innerHTML).toContain('<h3>Cobros pendientes</h3><p>N/D.');
     expect(page.innerHTML).toContain('<h3>Pagos pendientes</h3><div');
+    const resumen = page.querySelector('#planResumen');
+    expect(resumen.innerHTML).toContain('Hay resultados pendientes');
+    expect(resumen.innerHTML).toContain('C$ 311,530.00');
+    await clic(resumen, 'planTarjetaCxC');
+    expect(resumen.querySelector('#planDetalleContenido').innerHTML).toContain('N/D.');
+  });
+
+  it('abre el resumen y permite consultar cobros, pagos y vencimientos sin atravesar las tablas', async () => {
+    const { page, escritura } = await montar();
+    await clic(page, 'planCargarCaso');
+    escritura.mockClear();
+    expect(page.innerHTML).toContain('Horizonte 2026-01 a 2026-12');
+    expect(page.querySelector('#planVista-resumen').hidden).toBe(false);
+    expect(page.querySelector('#planVista-supuestos').hidden).toBe(true);
+    expect(page.querySelector('#planVista-tablas').hidden).toBe(true);
+    const resumen = page.querySelector('#planResumen');
+    const detalle = resumen.querySelector('#planDetalleContenido');
+    expect(resumen.innerHTML).toContain('C$ 765,620.00');
+    expect(detalle.innerHTML).toContain('C$ 73,040.00');
+
+    await clic(resumen, 'planTarjetaPagos');
+    await cambiar(resumen, 'planPeriodoConsulta', '0');
+    expect(detalle.innerHTML).toContain('C$ 25,000.00');
+    await clic(resumen, 'planTarjetaCxC');
+    expect(resumen.querySelector('#planDetallePeriodo').hidden).toBe(true);
+    expect(detalle.innerHTML).toContain('2027-02');
+    expect(detalle.innerHTML).toContain('C$ 23,100.00');
+    expect(resumen.querySelector('#planTarjetaCxC').getAttribute('aria-pressed')).toBe('true');
+
+    await clic(page, 'planVer-tablas');
+    expect(page.querySelector('#planVista-resumen').hidden).toBe(true);
+    expect(page.querySelector('#planVista-tablas').hidden).toBe(false);
+    await clic(page, 'planVer-resumen');
+    expect(page.querySelector('#planResumen')).toBe(resumen);
+    expect(detalle.innerHTML).toContain('2027-02');
+    expect(escritura).not.toHaveBeenCalled();
+  });
+
+  it('conserva el borrador entre vistas y actualiza las cifras del resumen al guardar', async () => {
+    const { page, store, escritura } = await montar();
+    await clic(page, 'planCargarCaso');
+    escritura.mockClear();
+    await clic(page, 'planVer-supuestos');
+    const precio = page.querySelector('#plan-precio');
+    await cambiar(page, 'plan-precio', '235', 'input');
+    await clic(page, 'planVer-resumen');
+    expect(page.querySelector('#planBorradorPendiente').hidden).toBe(false);
+    expect(page.querySelector('#planResumen').innerHTML).toContain('C$ 765,620.00');
+    await clic(page, 'planVer-tablas');
+    await clic(page, 'planVer-supuestos');
+    expect(page.querySelector('#plan-precio')).toBe(precio);
+    expect(precio.value).toBe('235');
+    expect(escritura).not.toHaveBeenCalled();
+    await enviar(page, 'formPlaneacion');
+    expect(escritura).toHaveBeenCalledTimes(1);
+    expect(store.get('planeacion.escenarios')[0].supuestos.precio).toBe(235);
+    expect(page.querySelector('#planVista-resumen').hidden).toBe(false);
+    expect(page.querySelector('#planResumen').innerHTML).toContain('C$ 815,885.00');
   });
 
   it('recupera los porcentajes y costos pequeños al guardar un escenario otra vez', async () => {

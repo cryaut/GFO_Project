@@ -17,12 +17,15 @@ Cargar la apertura de Comercial Ejemplo, guardar escenarios independientes y rep
 - Reportes exporta y valida el contexto completo. Un respaldo válido se guarda en una sola escritura y un rechazo conserva el último estado válido.
 - El presupuesto parcial proyecta ventas, existencias físicas, compras, cobros y pagos de los doce meses. Los costos cambian por mes y las cuotas de crédito posteriores a diciembre conservan sus fechas.
 - La ronda de fiabilidad de Proforma e Inventario limita las variaciones a horizontes comparables y verifica el kardex completo antes de restaurar un respaldo.
+- Planeación abre con una cuadrícula y un panel de consulta. Supuestos y Tablas completas permanecen a un clic. Cambiar de vista conserva las ediciones en curso.
 - El siguiente corte del caso necesita valorizar las existencias desde el cierre histórico y derivar el costo de ventas. La proyección de caja y el balance proforma también requieren gastos, inversión, deuda, impuestos y dividendos.
 
 ## Verificación
 
 Las pruebas comparan los doce meses con la referencia independiente, incluidos saldos, cuotas y fechas de vencimiento. El año termina con C$ 67,980 por cobrar y C$ 21,870 por pagar después de diciembre. La suite ejercita la ruta de Planeación, la recarga, la copia y edición de un escenario, los campos pendientes y el guardado fallido. Reportes comprueba respaldos versionados, vínculos y calendarios inválidos, compatibilidad anterior y fallos del almacenamiento.
 
-`npm.cmd test` pasó 2,055 pruebas en 61 archivos. `npm.cmd run lint` dio 0 errores y 10 advertencias preexistentes.
+`npm.cmd test` pasó 2,057 pruebas en 61 archivos. `npm.cmd run lint` dio 0 errores y 10 advertencias preexistentes.
 
-Las decisiones de persistencia y de calendarios están en D-089 y D-090. Las reglas de comparabilidad y de restauración de Inventario están en D-091 y D-092. Las pruebas automatizadas de interfaz ejecutan los manejadores de la pantalla con un DOM simulado.
+En Chrome, el resumen, las tablas y los supuestos se probaron a 320, 390 y 1280 px, incluidos el tema oscuro, la consulta por periodo y la recuperación de los supuestos guardados al recargar. A 390 px de ancho, la primera sección de resultados comenzaba a 2,715 px desde el inicio de la página. La primera tarjeta del resumen comienza a 367 px en el mismo caso.
+
+Las decisiones de persistencia y de calendarios están en D-089 y D-090. Las reglas de comparabilidad y de restauración de Inventario están en D-091 y D-092. El piloto de Planeación está documentado en D-093.

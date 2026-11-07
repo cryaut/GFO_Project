@@ -1,5 +1,5 @@
 import store from '../../store.js';
-import { renderChart } from '../../components/chart.js';
+import { destroyChart, renderChart } from '../../components/chart.js';
 import { estadosGuardados } from '../../utils/estados-guardados.js';
 import { calcularInventario } from '../inventario/inventario-calculations.js';
 import { planeacionUI } from './planeacion-ui.js';
@@ -34,6 +34,7 @@ export function initPlaneacion() {
       datos = store.get('planeacion');
     },
     cargarReferencia,
-    graficar: renderChart
+    graficar: renderChart,
+    destruirGrafica: destroyChart
   });
 }

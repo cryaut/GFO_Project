@@ -138,6 +138,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-090 | Calendarios de crédito y presupuesto parcial mensual | En prueba local |
 | D-091 | Variaciones de Proforma solo con cobertura anual comparable | En prueba local |
 | D-092 | Restaurar Inventario exige un kardex válido | En prueba local |
+| D-093 | Planeación abre en un resumen con detalle | En prueba local |
 
 
 | D-056 | Razones de la app leen el motor | Vigente |
@@ -2074,3 +2075,22 @@ Se retira la prueba histórica de regresión de la demo (caso de ejemplo cargado
 **Para revisar el criterio.** Cualquier política nueva de existencias negativas debe aplicarse conjuntamente a la captura y a la restauración.
 
 **Referencias.** D-011, D-081, D-083, D-089 y las pruebas de Inventario y Reportes.
+
+### D-093 — Planeación abre en un resumen con detalle
+
+- **Fecha**: 2026-11-06
+- **Estado**: En prueba en `test/caso-integrado-excepciones`
+- **Decidió**: Carlos autorizó el piloto de Planeación
+- **Área**: Interfaz de Planeación
+
+**Contexto.** Los supuestos y las tablas completas estaban apilados. Para consultar una cifra guardada, la persona tenía que pasar por el formulario y luego buscar la tabla.
+
+**Opciones.** Abrir una vista por pestaña o mostrar una cuadrícula de cifras con un panel de detalle en la misma vista.
+
+**Decisión.** Abrir Planeación en Resumen. Cada tarjeta consulta cobros, pagos o saldos del presupuesto guardado. El detalle aparece al lado cuando hay espacio y debajo en pantallas estrechas. Supuestos y Tablas completas tienen vistas propias.
+
+**Consecuencias.** La empresa, el horizonte y el escenario quedan arriba. Cambiar de vista conserva el borrador y los resultados disponibles. La gráfica de caja se inicializa cuando se muestran las tablas completas. El aviso del borrador y los resultados N/D siguen visibles al consultar las cifras.
+
+**Para revisar el criterio.** Medir la primera cifra y verificar consulta, edición y guardado con un escenario parcial y con el presupuesto maestro anterior.
+
+**Referencias.** D-089, D-090 y las pruebas de interfaz de Planeación.

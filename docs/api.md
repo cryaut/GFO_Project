@@ -944,6 +944,8 @@ Códigos de `avisos` del presupuesto maestro: `financiamiento`, `sin-compras`, `
 
 `compararResultados(real, proforma)` conserva ambos valores de cada fila. Calcula la variación relativa y la diferencia de márgenes en puntos solo si el periodo real es un año `AAAA` y la proyección cubre 12 meses o 4 trimestres. En los demás casos `variacion` y `puntos` quedan en `null`. Si están presentes ambos resultados y falta comparabilidad temporal, `construirReporte` explica la causa en `motivoComparacion`.
 
+`planeacionUI(page, opciones)` mantiene en la pantalla las vistas Resumen, Supuestos y Tablas completas. El borrador y la selección de consulta se conservan al cambiar de vista. `resumenPlaneacionUI(panel, presupuesto, capital)` presenta la salida de `calcularPresupuestoMaestro` o `calcularCapitalTrabajo`, según `capital`. Planeación puede recibir `destruirGrafica(id)` para retirar una gráfica al reemplazar la pantalla. Invoca `graficar(id, config)` al mostrar las tablas del presupuesto maestro.
+
 #### `validarInventarioRespaldo(datos)`
 
 Recibe el módulo de Inventario del respaldo y devuelve `{ productos, movimientos }` normalizados. Lanza un error si la normalización descarta registros, una fecha no existe en el calendario, un costo explícito no es un número finito mayor o igual a cero, o cualquier saldo intermedio del kardex cae bajo la tolerancia de existencias. Valida por producto y fecha. Si dos movimientos comparten fecha, respeta el orden del archivo. Una entrada legada con la propiedad `costoUnitario` omitida usa el costo del producto según D-081.
