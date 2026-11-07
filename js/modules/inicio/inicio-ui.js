@@ -2,6 +2,7 @@
 // Los datos llegan ya calculados por inicio-calculations.js (panoramaGeneral).
 import { escapeHTML as esc } from '../../utils/html.js';
 import { formatCurrencyND as monto, formatNumberND, formatPercentND as pct } from '../../utils/format.js';
+import { animarEstadisticas } from '../../components/movimiento.js';
 
 const esNumero = valor => typeof valor === 'number' && Number.isFinite(valor);
 const FORMATO = {
@@ -102,8 +103,13 @@ function kpis(lista, periodoAnterior) {
     const chip = esNumero(k.cambio)
       ? `<span class="dash-change ${k.cambio >= 0 ? 'up' : 'down'}">${k.cambio >= 0 ? '▲' : '▼'} ${pct(Math.abs(k.cambio), 1)}${periodoAnterior ? ` vs ${esc(periodoAnterior)}` : ''}</span>`
       : '';
+    const final = FORMATO[k.formato](k.valor);
+    // El lector de pantalla conserva la cifra final durante todo el contador visual.
+    const valor = esNumero(k.valor)
+      ? `<span class="sr-only">${final}</span><span aria-hidden="true" data-estadistica data-valor="${k.valor}" data-formato="${esc(k.formato)}">${final}</span>`
+      : final;
     return `<div class="dash-kpi"><p class="dash-kpi-label">${esc(k.etiqueta)}</p>
-      <p class="dash-kpi-value ${k.tono}">${FORMATO[k.formato](k.valor)}</p>${chip}</div>`;
+      <p class="dash-kpi-value ${k.tono}">${valor}</p>${chip}</div>`;
   }).join('')}</section>`;
 }
 
@@ -188,6 +194,7 @@ export function inicioUI(page, { panorama: p, graficar = null, cargarEjemploEmpr
     ${modulos()}`;
   page.querySelector('#inicioEjemplo')?.addEventListener('click', () => cargarEjemploEmpresa());
   page.querySelector('#inicioEjemploPersonal')?.addEventListener('click', () => cargarEjemploPersonal());
+  animarEstadisticas(page, FORMATO);
   if (graficar && p.tendencia) {
     graficar('inicioTendencia', {
       type: 'bar',

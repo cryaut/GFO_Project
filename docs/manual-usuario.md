@@ -35,6 +35,8 @@ Guía paso a paso con ejemplos numéricos concretos por módulo.
 5. Cambia entre tema claro y oscuro con el botón **Tema** al pie del menú; las gráficas abiertas se recolorean sin perder lo que estés editando.
 6. Todos los datos se guardan automáticamente en localStorage.
 
+El fondo acompaña suavemente al cursor en equipos con ratón. Al aparecer, las estadísticas de Inicio entran en secuencia y sus cifras llegan al valor final. En pantallas táctiles el fondo permanece estático. Si activas «Reducir movimiento» en tu sistema, se omiten estos efectos y las animaciones de las gráficas; las cifras siguen disponibles.
+
 ---
 
 ## 2. Módulo 1: Presupuesto Personal

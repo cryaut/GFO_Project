@@ -24,6 +24,10 @@ export function renderChart(canvasId, config) {
 
   const { text: textColor, grid: gridColor } = themeColors();
 
+  if (typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    config.options = { ...config.options, animation: false };
+  }
+
   if (config.options) {
     config.options.responsive = true;
     config.options.maintainAspectRatio = false;
