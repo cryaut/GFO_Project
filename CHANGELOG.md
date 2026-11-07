@@ -51,6 +51,7 @@ Todos los cambios notables en GFO Toolkit.
 - Botón **Vista previa del reporte** (muestra el reporte en la página) y **Descargar reporte HTML**; antes el botón "Vista Previa HTML" descargaba el archivo.
 
 ### Módulo 3: Análisis Financiero
+- AH/AV completos por cuenta y totales reportados, con nombres propios, ausencias N/D y sin duplicar sumas; DuPont muestra factores, sustituciones, ROA/ROE y comprobación directa desde la misma fuente de Razones (D-095). Navegación agrupada, selector de periodo, métodos desplegables y diseño de las nueve secciones adaptado a móvil y ambos temas. Motor de razones y generado sin cambios.
 - Ronda 18 / D-049 y D-056–D-058: razones de Análisis, Integración y Proforma conectadas al motor JSON; composición de ingresos declarada por periodo, identidad acreditada y N/D con motivos. Catálogo de Estados sincronizado con D-055 y nota maestra alineada, sin cambios en fórmulas JSON ni referencias.
 - Ronda 17 / D-055: las 55 cuentas del motor antes opcionales requieren dato; solo intereses ganados conserva cero si no se reporta. JSON, nota maestra y generado sincronizados, pruebas con ceros explícitos y comparación de ejercicios v2 en ambas lecturas; catálogo de Estados sin cambios.
 - Ronda 16 / D-051: se registra y prueba que la ausencia de línea de intereses ganados vale cero según su política; una línea presente se suma una sola vez desde el JSON. Se conservan las políticas de las demás cuentas y el ejemplo v3.

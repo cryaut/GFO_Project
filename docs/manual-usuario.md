@@ -250,6 +250,12 @@ Efectivo (BG) ──→ Se muestra en el EFE
 
 ## 4. Módulo 3: Análisis Financiero
 
+Elija el **Periodo de análisis** al inicio. La navegación agrupa las nueve secciones por tarea: comparar estados, rentabilidad y lectura, capital y fondos. Cada sección ofrece **Ver método y criterios**. Al cambiar de periodo se conserva la sección abierta; Mercado mantiene la comparación de todos los periodos. Leer o cambiar de sección no modifica los estados guardados.
+
+**AH** presenta todas las cuentas del balance y del estado de resultados entre periodos consecutivos, hasta el periodo seleccionado, con T1, T2, variación absoluta y relativa. Una cuenta ausente en un periodo muestra N/D, no cero. La convención de porcentaje sigue siendo Δ/valor absoluto de T1. **AV** presenta todas las cuentas sobre total activo (BG) o ventas netas (ER); los totales reportados no se suman otra vez. Suplementarios y cuentas sin grupo se identifican aparte, sin inventar una base.
+
+**DuPont** detalla margen neto, rotación y multiplicador: fórmula, importes y resultado. Muestra ROA = margen × rotación y ROE = margen × rotación × multiplicador, con sus cálculos directos y comprobación. Usa los mismos operandos que Razones; si faltan datos, mantiene N/D. No se redondean factores antes de multiplicar. Si ventas es cero, la descomposición puede ser N/D aunque un rendimiento directo sí exista.
+
 Los ejemplos de esta sección usan cifras pequeñas para ilustrar cada fórmula; no son los datos de la demo MUNO MODA.
 
 ### 4.1 Análisis Horizontal (AH)

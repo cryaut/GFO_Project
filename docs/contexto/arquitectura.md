@@ -46,6 +46,8 @@ docs/                      Documentación: contexto, reglas, planificación, API
 
 ### Estado real de cada módulo
 
+Análisis incorpora `analisis-calculations.js`: compone las filas completas de AH/AV y el detalle DuPont sin DOM ni store. `index.js` conserva adaptadores públicos y renderizado. El selector de periodo y la sección activa viven solo en memoria; no cambia el esquema de persistencia ni se toca el motor de razones o su generado.
+
 | Módulo | Dónde está la lógica | Notas |
 |---|---|---|
 | `estados/` | `index.js` (demo, lectura del `store`, `initEstados`), `estados-ui.js` (interfaz), `estados-import.js` (archivos), `estados-normalize.js` (validación), `estados-calculations.js` (tipos y totales) | Único módulo que ya sigue el patrón completo |
