@@ -120,7 +120,8 @@ describe('indicadores, alertas y faltantes', () => {
     expect(alertas).toContain('Liquidez corriente de 0.80');
     expect(alertas).toContain('Endeudamiento de 70.00%');
     expect(alertas).toContain('Margen de seguridad de 10.00%');
-    expect(alertas).toContain('La operación consume C$ 5,000.00');
+    expect(alertas).toContain('El flujo operativo estimado es C$ -5,000.00');
+    expect(alertas).toContain('confirme cobros y pagos');
   });
 
   it('una razón con denominador 0 es N/D, no 0', () => {

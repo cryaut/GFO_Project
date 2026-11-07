@@ -88,6 +88,9 @@ export function conciliarConBalance(resultado, estados, periodoBase) {
   } catch {
     return null;
   }
+  if (!esNumero(efectivo)) {
+    return { periodo, efectivo: null, diferencia: null, cuadra: null, motivo: 'efectivo_no_disponible' };
+  }
   const diferencia = resultado.saldoFinal - efectivo;
   // D-071: misma tolerancia del EFE y del EOAF (un centavo más redondeo), con <=.
   return { periodo, efectivo, diferencia, cuadra: Math.abs(diferencia) <= toleranciaComprobacion(resultado.saldoFinal, efectivo) };

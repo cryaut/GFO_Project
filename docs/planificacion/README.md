@@ -18,6 +18,7 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 | JSON autónomos de razones financieras v3 | Cris Lumbi | En revisión | [razones-json-v3](razones-json-v3/README.md) |
 | Estados financieros: cálculo robusto (R1-R2) | Cris Lumbi | Completada (PR #19) | [estados-calculo-robusto](estados-calculo-robusto/README.md) |
 | Claridad visual de Estados financieros | Diseño solicitado por Cris | Implementada; en revisión | [diseno-estados](diseno-estados/README.md) |
+| Rigor financiero y comparación con AFOD | Carlos | En revisión | [rigor-financiero](rigor-financiero/README.md) |
 
 Agrega una fila cuando empieces una feature y actualiza el estado cuando cambie.
 
