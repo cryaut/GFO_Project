@@ -84,22 +84,37 @@ export function estadosUI(page, { initial, demo, save }) {
       return `<label><input type="checkbox" data-periodo value="${esc(p)}" ${marcado ? 'checked' : ''} ${!marcado && !puedeAgregar ? 'disabled' : ''}> ${esc(p)}</label>`;
     }).join('');
     const selectorPeriodos = ordenados.length > 1
-      ? `<div class="card mb-4" id="periodSelector"><p><strong>Periodos visibles</strong>
+      ? `<div class="states-visible-periods" id="periodSelector"><p><strong>Periodos visibles</strong>
           <span class="text-muted" id="periodSelectorCount">${visibles.length} de ${MAXIMO_PERIODOS_VISIBLES} seleccionados</span></p>
         <div class="flex-gap flex-wrap">${casillas}</div>
         ${!puedeAgregar ? '<p class="text-muted">Máximo 4 periodos</p>' : ''}
         <button type="button" class="btn btn-secondary mt-2" id="defaultPeriods">Predeterminados</button></div>`
       : '';
-    page.innerHTML = `<div class="page-header"><h1 class="page-title">Estados Financieros</h1>
-      <p>1. Cargar o editar → 2. Revisar equilibrio → 3. Guardar → <a href="#/analisis">Analizar datos guardados</a></p></div>
-      <div class="card mb-4"><div class="flex-gap flex-wrap">
-        <button type="button" class="btn btn-secondary" id="newStates">Nuevo conjunto</button>
-        <label class="btn btn-secondary">Importar archivo (.json, .csv, .xlsx) <input id="statesFile" type="file" accept=".json,.csv,.tsv,.txt,.xlsx,.xls,application/json,text/csv"></label>
-        <button type="button" class="btn btn-secondary" id="templateStates">Descargar plantilla CSV</button>
-        <button type="button" class="btn btn-secondary" id="demoStates">Cargar ejemplo</button>
-        <button type="button" class="btn btn-secondary" id="downloadStates">Descargar borrador JSON</button>
-        <button type="button" class="btn btn-primary" id="saveStates">Guardar estados</button>
-      </div><p id="estadoMessage" role="status" aria-live="polite">${dirty ? 'Borrador sin guardar.' : 'Datos guardados. Edite o importe sus estados.'}</p>
+    page.innerHTML = `<div class="states-workspace">
+      <header class="page-header states-header"><div><h1 class="page-title">Estados Financieros</h1>
+        <p class="page-subtitle">Cargue o edite sus datos, revise el equilibrio y guarde los estados.</p></div>
+        <a class="states-analysis-link" href="#/analisis">Analizar datos guardados <span aria-hidden="true">→</span></a>
+      </header>
+      <section class="states-document" aria-label="Empresa y guardado">
+        <div class="states-company"><label class="form-label" for="companyName">Empresa</label>
+          <input class="form-input" id="companyName" maxlength="120" value="${esc(draft.name)}"></div>
+        <div class="states-save"><button type="button" class="btn btn-primary" id="saveStates">Guardar estados</button>
+          <p class="form-hint">Publica el borrador para Análisis.</p></div>
+        <p id="estadoMessage" role="status" aria-live="polite">${dirty ? 'Borrador sin guardar.' : 'Datos guardados. Edite o importe sus estados.'}</p>
+      </section>
+      <div class="states-setup">
+      <details class="states-panel" id="statesImportPanel"${draft.periods.length ? '' : ' open'}>
+        <summary><span>Cargar datos</span><small>Archivo, tabla de Excel o nuevo conjunto</small></summary>
+        <div class="states-panel-body">
+        <div class="states-field"><label class="form-label" for="statesFile">Importar archivo (.json, .csv, .xlsx)</label>
+          <input class="form-input states-file-input" id="statesFile" type="file" accept=".json,.csv,.tsv,.txt,.xlsx,.xls,application/json,text/csv"></div>
+        <div class="states-action-row"><button type="button" class="btn btn-secondary" id="templateStates">Descargar plantilla CSV</button></div>
+        <details class="states-subpanel"><summary>Pegar celdas desde Excel</summary><div class="states-disclosure-content">
+          <label class="form-label" for="pasteStates">Pegue la tabla incluyendo la fila de encabezados</label>
+          <textarea class="form-input" id="pasteStates" rows="5" placeholder="Estado,Grupo,Cuenta,Clasificacion,2023,2024"></textarea>
+          <div class="states-action-row"><button type="button" class="btn btn-secondary" id="importPaste">Importar tabla pegada</button></div>
+        </div></details>
+        <details class="states-subpanel"><summary>Formato de importes y ayuda</summary><div class="states-disclosure-content states-import-help">
       <label class="form-label" for="numberFormat">Formato de importes al importar CSV/Excel</label>
       <select class="form-select" id="numberFormat">
         <option value="auto" ${numberFormat === 'auto' ? 'selected' : ''}>Automático (recomendado)</option>
@@ -107,39 +122,54 @@ export function estadosUI(page, { initial, demo, save }) {
         <option value="," ${numberFormat === ',' ? 'selected' : ''}>Coma decimal: 1.234,50</option>
       </select>
       <p class="text-muted">Automático deduce el formato de todo el archivo y avisa de importes ambiguos como 45.000. Si su archivo usa el punto para miles, elija "Coma decimal".</p>
-      <label class="form-label" for="companyName">Empresa</label><input class="form-input" id="companyName" maxlength="120" value="${esc(draft.name)}">
-      <details class="mt-4"><summary>Formatos de importación admitidos y criterios</summary>
+      <details class="states-subpanel"><summary>Formatos de importación admitidos y criterios</summary><div class="states-disclosure-content">
       <p><strong>Archivos:</strong> JSON (objeto con name, periods, balanceGeneral, estadoResultados y accountTypes, o {estados: …} exportado por Reportes), CSV/TSV delimitado y Excel .xlsx/.xls. La importación reemplaza el borrador, no combina periodos.</p>
       <p><strong>Tabla CSV/Excel (ancha):</strong> una fila por cuenta y una columna por periodo. Cabecera obligatoria <code>Cuenta</code>; opcionales <code>Estado</code> (Balance|Resultados), <code>Grupo</code> (activos|pasivos|patrimonio), <code>Clasificacion</code> e <code>id</code> del catálogo. Descargue la plantilla para verlo.</p>
       <p><strong>Tabla CSV (larga):</strong> columnas <code>Periodo</code>, <code>Estado</code>, <code>Grupo</code>, <code>Cuenta</code> e <code>Importe</code>. También puede pegar celdas copiadas de Excel con tabuladores.</p>
       <p><strong>Importes:</strong> 45.000, 45,000, C$ 12.500,50, (500) o 500- se interpretan correctamente. Gastos positivos; depreciación acumulada negativa. Celdas en blanco omiten la cuenta en ese periodo; las cuentas desconocidas se conservan para revisión.</p>
-      <p>Los periodos se ordenan del más antiguo al más reciente. Moneda de presentación: C$. El equilibrio no garantiza exactitud; EFE y CNO son aproximaciones educativas.</p></details></div>
-      <details class="card mb-4"><summary>Importar pegando celdas desde Excel</summary>
-        <label class="form-label" for="pasteStates">Pegue la tabla incluyendo la fila de encabezados</label>
-        <textarea class="form-input" id="pasteStates" rows="5" placeholder="Estado,Grupo,Cuenta,Clasificacion,2023,2024"></textarea>
-        <button type="button" class="btn btn-secondary mt-2" id="importPaste">Importar tabla pegada</button>
+      <p>Los periodos se ordenan del más antiguo al más reciente. Moneda de presentación: C$. El equilibrio no garantiza exactitud; EFE y CNO son aproximaciones educativas.</p></div></details>
+        </div></details>
+        <details class="states-subpanel"><summary>Nuevo conjunto o ejemplo</summary><div class="states-disclosure-content">
+          <div class="states-action-row"><button type="button" class="btn btn-secondary" id="newStates">Nuevo conjunto</button>
+            <button type="button" class="btn btn-secondary" id="demoStates">Cargar ejemplo</button></div>
+        </div></details>
+        </div>
       </details>
-      <div class="card mb-4"><form id="periodForm" class="flex-gap flex-wrap">
-        <label>Periodo nuevo <input class="form-input" name="period" required maxlength="40" placeholder="2025"></label>
-        <button class="btn btn-secondary">Añadir periodo vacío</button></form>
+      <section class="states-period-panel" aria-labelledby="statesPeriodTitle"><h2 id="statesPeriodTitle">Periodo de trabajo</h2>
         ${draft.periods.length ? `<label class="form-label" for="currentPeriod">Editar periodo</label>
         <select class="form-select" id="currentPeriod">${draft.periods.map((p, i) => `<option value="${i}" ${p === selected ? 'selected' : ''}>${esc(p)}</option>`).join('')}</select>
+        <details class="states-subpanel"><summary>Datos complementarios del periodo</summary><div class="states-disclosure-content">
         <label class="form-label" for="composicionIngresos">Otros ingresos del periodo ${esc(selected)}</label>
         <select class="form-select" id="composicionIngresos">
           <option value="sin_declarar" ${draft.composicionIngresos[selected] === 'sin_declarar' ? 'selected' : ''}>Sin declarar</option>
           <option value="excluye_intereses" ${draft.composicionIngresos[selected] === 'excluye_intereses' ? 'selected' : ''}>Excluyen los intereses ganados</option>
           <option value="incluye_intereses" ${draft.composicionIngresos[selected] === 'incluye_intereses' ? 'selected' : ''}>Incluyen los intereses ganados</option>
         </select>
-        <fieldset class="mt-4"><legend>Datos para las rotaciones — ${esc(selected)}</legend>
+        <fieldset class="states-supplementary"><legend>Datos para las rotaciones — ${esc(selected)}</legend>
           <p>Declare las ventas a crédito y los pagos a proveedores reales de este periodo. Deje vacío lo que no tenga: las razones que lo necesitan mostrarán N/D. Un cero declarado se conserva como cero.</p>
           ${SUPLEMENTARIOS_ROTACION.map(({ id, campo }) => `<label class="form-label" for="${campo}">${esc(obtenerCuenta(id).nombreCanonico)}</label>
             <input class="form-input" id="${campo}" type="number" step="any" value="${consultarMontoCuenta(draft, selected, id).valor ?? ''}">`).join('')}
-        </fieldset>
-        <form id="renamePeriod" class="flex-gap mt-4"><input class="form-input" name="period" aria-label="Nuevo nombre del periodo" required maxlength="40" value="${esc(selected)}"><button class="btn btn-secondary">Renombrar</button></form>
-        <div class="flex-gap mt-4"><button class="btn btn-secondary" id="earlierPeriod">Mover antes</button><button class="btn btn-secondary" id="laterPeriod">Mover después</button><button class="btn btn-danger" id="deletePeriod">Eliminar periodo</button></div>` : '<p>No hay periodos. Añada uno para empezar, sin necesidad de cargar el ejemplo.</p>'}</div>
-      <div id="accountReview"></div><div id="accountEditor"></div><div id="balanceCheck" aria-live="polite"></div>
-      ${selectorPeriodos}
-      <h2 class="mt-4">Vista multiperiodo del borrador</h2><div id="statementPreview"></div>`;
+        </fieldset></div></details>` : '<p class="form-hint">No hay periodos. Añada uno para empezar, sin necesidad de cargar el ejemplo.</p>'}
+        <details class="states-subpanel"${draft.periods.length ? '' : ' open'}><summary>Administrar periodos</summary><div class="states-disclosure-content">
+          <form id="periodForm" class="states-inline-form"><label class="form-label" for="statesNewPeriod">Periodo nuevo
+            <input class="form-input" id="statesNewPeriod" name="period" required maxlength="40" placeholder="2025"></label>
+            <button class="btn btn-secondary">Añadir periodo vacío</button></form>
+          ${draft.periods.length ? `<form id="renamePeriod" class="states-inline-form"><label class="form-label" for="statesRenamePeriod">Nuevo nombre del periodo
+            <input class="form-input" id="statesRenamePeriod" name="period" required maxlength="40" value="${esc(selected)}"></label>
+            <button class="btn btn-secondary">Renombrar</button></form>
+          <div class="states-period-order"><p class="form-label">Orden del periodo</p><div class="states-action-row">
+            <button class="btn btn-secondary" id="earlierPeriod">Mover antes</button><button class="btn btn-secondary" id="laterPeriod">Mover después</button></div></div>
+          <div class="states-danger-zone"><button class="btn btn-danger" id="deletePeriod">Eliminar periodo</button></div>` : ''}
+        </div></details>
+      </section></div>
+      <div id="accountReview"></div><div id="accountEditor"></div>
+      <section class="states-check" aria-labelledby="statesCheckTitle"><h2 id="statesCheckTitle">Revisar equilibrio</h2>
+        <div id="balanceCheck" aria-live="polite"></div></section>
+      <details class="states-panel states-preview"><summary><span>Vista multiperiodo del borrador</span><small>Comparar periodos y descargar</small></summary>
+        <div class="states-panel-body">${selectorPeriodos}
+          <div class="states-action-row states-export-row"><button type="button" class="btn btn-secondary" id="downloadStates">Descargar borrador JSON</button></div>
+          <div id="statementPreview"></div></div>
+      </details></div>`;
     renderAccounts();
     renderReview();
     guard(renderPreview);
@@ -155,7 +185,9 @@ export function estadosUI(page, { initial, demo, save }) {
     if (!selected) { el.innerHTML = ''; return; }
     el.innerHTML = Object.entries(GROUPS).map(([group, label]) => {
       const accounts = accountsFor(draft, selected, group);
-      return `<section class="card mb-4" data-group="${group}"><h2>${label} — ${esc(selected)}</h2>
+      return `<details class="states-account-group" data-group="${group}"${Object.keys(accounts).length ? ' open' : ''}>
+        <summary><span>${label}</span><small>${Object.keys(accounts).length} cuenta(s) · ${esc(selected)}</small></summary>
+        <div class="states-account-body">
         <p>La clasificación de una cuenta se comparte entre periodos.</p>
         <div class="table-wrapper"><table><thead><tr><th>Cuenta</th><th>Importe</th><th>Clasificación</th><th>Acción</th></tr></thead><tbody>
         ${Object.entries(accounts).map(([name, value], i) => `<tr data-account="${i}"><td>${esc(name)}</td>
@@ -163,10 +195,12 @@ export function estadosUI(page, { initial, demo, save }) {
           <td><select class="form-select" data-type aria-label="Clasificación ${esc(name)}"><option value="">Pendiente</option>${options(group, draft.accountTypes[group][name] ?? inferAccountType(group, name))}</select></td>
           <td><button class="btn btn-danger btn-sm" data-remove type="button" aria-label="Eliminar ${esc(name)}">Eliminar</button></td></tr>`).join('')}
         </tbody></table></div>
-        <form class="addAccount flex-gap flex-wrap mt-4"><label>Cuenta nueva <input class="form-input" name="account" required maxlength="120"></label>
+        <details class="states-subpanel states-add-account"><summary>Añadir cuenta</summary><div class="states-disclosure-content">
+        <form class="addAccount states-add-form"><label>Cuenta nueva <input class="form-input" name="account" required maxlength="120"></label>
           <label>Importe <input class="form-input" name="amount" type="number" step="any" required value="0"></label>
           <div data-resolution aria-live="polite">Escriba el nombre para identificar la cuenta.</div>
-          <button class="btn btn-secondary">Añadir cuenta</button></form></section>`;
+          <button class="btn btn-secondary">Añadir cuenta</button></form></div></details>
+        </div></details>`;
     }).join('');
     el.querySelectorAll('[data-group]').forEach(section => {
       const group = section.dataset.group;

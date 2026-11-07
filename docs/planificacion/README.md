@@ -17,6 +17,7 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 | Flujo de efectivo desde los estados (EFE de Análisis) | Henry | En revisión | [flujo-de-efectivo](flujo-de-efectivo/README.md) |
 | JSON autónomos de razones financieras v3 | Cris Lumbi | En revisión | [razones-json-v3](razones-json-v3/README.md) |
 | Estados financieros: cálculo robusto (R1-R2) | Cris Lumbi | Completada (PR #19) | [estados-calculo-robusto](estados-calculo-robusto/README.md) |
+| Claridad visual de Estados financieros | Diseño solicitado por Cris | Implementada; en revisión | [diseno-estados](diseno-estados/README.md) |
 
 Agrega una fila cuando empieces una feature y actualiza el estado cuando cambie.
 
