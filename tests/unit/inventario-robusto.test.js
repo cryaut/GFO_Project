@@ -262,6 +262,51 @@ describe('respaldo de inventario: forma y descartes (ronda 2, T1)', () => {
     expect(() => validarRespaldo({ inventario: conDescartes }, ACTUALES))
       .toThrow(/El inventario del respaldo tiene registros descartados \(Movimiento con fecha inválida: 1\)/);
   });
+
+  it.each(['2026-02-31', '2025-02-29', '2026-04-31', '0000-01-01'])('rechaza la fecha inexistente %s', fecha => {
+    const inventario = BASE();
+    inventario.movimientos[1].fecha = fecha;
+    expect(() => validarRespaldo({ inventario }, ACTUALES)).toThrow(`inventario.movimientos[1] no existe en el calendario (${fecha})`);
+  });
+
+  it.each([-1, '4', null])('rechaza un costo explícito inválido (%j)', costoUnitario => {
+    const inventario = BASE();
+    inventario.movimientos[0].costoUnitario = costoUnitario;
+    expect(() => validarRespaldo({ inventario }, ACTUALES)).toThrow('El costo unitario de inventario.movimientos[0]');
+  });
+
+  it('admite una fecha bisiesta, conserva el costo cero y distingue una entrada legada sin costo', () => {
+    const inventario = BASE();
+    inventario.movimientos[0].fecha = '2024-02-29';
+    inventario.movimientos.push({
+      ...inventario.movimientos[0], id: 'm3', fecha: '2026-01-10', cantidad: 4, costoUnitario: 0
+    });
+    const { modulos } = validarRespaldo({ inventario }, ACTUALES);
+    expect(modulos.inventario.movimientos[0]).not.toHaveProperty('costoUnitario');
+    expect(modulos.inventario.movimientos[2].costoUnitario).toBe(0);
+    const r = calcularInv(modulos.inventario);
+    expect(r.movimientosSinCosto).toBe(1);
+    expect(r.productos[0].existenciaFinal).toBe(12);
+    expect(r.valorTotal).toBeCloseTo(38.4, 6);
+  });
+
+  it('rechaza una salida que deja un saldo negativo aunque luego se reponga', () => {
+    const inventario = BASE();
+    Object.assign(inventario.movimientos[1], { fecha: '2026-01-02', cantidad: 12 });
+    expect(calcularInv(inventario).productos[0].existenciaFinal).toBe(4);
+    expect(() => validarRespaldo({ inventario }, ACTUALES)).toThrow(
+      'Existencia insuficiente en el movimiento "m2". Con ese movimiento la existencia de Producto único queda en -2 unidades el 2026-01-02'
+    );
+  });
+
+  it('ordena por fecha y conserva el orden de registro en movimientos del mismo día', () => {
+    const inventario = BASE();
+    inventario.movimientos[1].cantidad = 12;
+    inventario.movimientos.reverse();
+    expect(validarRespaldo({ inventario }, ACTUALES).modulos.inventario).toEqual(inventario);
+    inventario.movimientos[0].fecha = inventario.movimientos[1].fecha;
+    expect(() => validarRespaldo({ inventario }, ACTUALES)).toThrow('Existencia insuficiente en el movimiento "m2"');
+  });
 });
 
 describe('normalizarInventario con listas no válidas (ronda 2, T1/H2)', () => {

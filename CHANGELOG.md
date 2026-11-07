@@ -51,7 +51,7 @@ Todos los cambios notables en GFO Toolkit.
 ### Módulo 6: Reportes e Integración
 - Ronda 15 (D-053/D-054): la utilidad neta del dashboard usa exclusivamente `computeFinancialTotals`, igual que Análisis con intereses e impuestos; si no hay estados normalizables se muestra N/D. Se verifica que consultar un periodo inexistente devuelve N/D sin sustituirlo ni agregar selector.
 - **Importar JSON validado** (`integracion-respaldo.js`): solo se aceptan módulos que el `store` conoce, con el tipo correcto; `estados` pasa por `normalizeFinancialData`; se rechazan `__proto__`/`constructor`/`prototype`, estructuras muy profundas y archivos de más de 5 MB. Antes se escribía cualquier clave con `store.set` sin validar.
-- La importación pide confirmación, guarda con `setPersisted` y, si el almacenamiento falla a mitad, restaura los módulos ya guardados. Un JSON de Estados (sin módulos reconocibles) se rechaza con la indicación de importarlo desde Estados Financieros.
+- La importación valida el respaldo completo y guarda todos sus módulos en una escritura. Si falla, conserva el último estado válido. Un JSON de Estados se importa desde Estados Financieros.
 - **Reporte HTML corregido** (`integracion-reporte.js`): una columna por periodo (antes las filas tenían 2 celdas bajo N encabezados), agrega Estado de Resultados y Totales por periodo, muestra N/D y "—" en lugar de 0, y **escapa** cuentas, periodos y empresa (antes un nombre de cuenta importado se insertaba como HTML).
 - Botón **Vista previa del reporte** (muestra el reporte en la página) y **Descargar reporte HTML**; antes el botón "Vista Previa HTML" descargaba el archivo.
 
@@ -114,7 +114,11 @@ Todos los cambios notables en GFO Toolkit.
 - Nueva pantalla `#/equilibrio`: margen de contribución, punto de equilibrio en unidades y en C$, margen de seguridad, GAO, unidades para una utilidad objetivo, escenarios de ±10 % en precio, costo variable, costos fijos y volumen (más uno personalizado), gráfica C-V-U y cálculo paso a paso. Puede tomar precio y costos de un periodo de los estados con la clasificación de Apalancamiento.
 - Nueva pantalla `#/flujo`: entradas y salidas de efectivo por actividades de operación, inversión y financiamiento; variación neta y saldo final; saldo inicial tomado del balance y comparación con el efectivo del periodo siguiente.
 - Nueva pantalla `#/planeacion`: presupuesto maestro de una empresa comercial (1 a 12 meses o trimestres) con presupuestos de ventas y cobros, compras y pagos, costo de bienes vendidos, gastos de operación, caja con financiamiento requerido y estado de resultados presupuestado. Toma saldos iniciales del balance y el inventario inicial de un producto de Inventario.
+- **Escenarios de Planeación.** Carga la apertura ficticia de Comercial Ejemplo, guarda borradores con pendientes y permite copiar, editar y recuperar escenarios con una base histórica compartida.
+- **Capital de trabajo mensual de Comercial Ejemplo.** Calcula ventas, cobros, compras, existencias en unidades y pagos con costos mensuales y calendarios editables. Conserva los vencimientos posteriores al horizonte y distingue N/D de cero (D-090).
+- **Resumen de Planeación.** Las tarjetas de cobros, pagos y saldos abren el detalle del periodo o de sus vencimientos. Supuestos y Tablas completas tienen vistas propias. El borrador se conserva al cambiar de vista (D-093).
 - Nueva pantalla `#/proforma`: estado de resultados proforma contra el último periodo real, efectivo proyectado, indicadores de todos los módulos (reutiliza `computeRazones` y `computeDuPont`), alertas con acción sugerida e impresión a PDF.
+- Proforma conserva los importes reales y proyectados y muestra N/D en la variación si el histórico o la proyección carecen de cobertura anual comparable (D-091).
 - Fórmulas nuevas en `calculate.js`, con N/D: `margenContribucionUnitario`, `razonMargenContribucion`, `puntoEquilibrioUnidades`, `puntoEquilibrioVentas`, `unidadesUtilidadObjetivo`, `margenSeguridad`, `existenciaFinal`, `valorInventario`, `necesitaReposicion`, `flujoNeto`, `variacionNetaEfectivo`, `saldoFinalEfectivo`, `comprasPresupuestadas`, `costoBienesVendidos`, `financiamientoRequerido`, `capacidadAhorro` y `tasaAhorro`.
 - `store`: secciones `inventario`, `equilibrio`, `flujo` y `planeacion`, y `presupuesto.ingresos`. Utilidades `js/utils/form.js`, `js/utils/estados-guardados.js` y `formatCurrencyND`, `formatNumberND` y `formatPercentND` en `format.js`. Análisis exporta `refreshSavedStates`.
 - Cada módulo trae un ejemplo ficticio coherente de MUNO MODA 2025: la UAII del primer trimestre del presupuesto (C$ 28,000) es la del punto de equilibrio.
@@ -131,6 +135,7 @@ Todos los cambios notables en GFO Toolkit.
 - La pregunta del quiz sobre los días del PPC da como correcta 365, igual que el cálculo.
 
 ### Módulo 6: Reportes e Integración
+- Al restaurar Inventario se comprueban las fechas de calendario, los costos explícitos y cada saldo del kardex. Un error detiene el respaldo completo antes de guardar (D-092).
 - El dashboard y el CSV dejan de usar nombres de cuenta fijos: consumen el mismo motor normalizado que Análisis.
 - ROA y endeudamiento del dashboard reutilizan `computeRazones` (con `refreshSavedStates`): mismos promedios y semántica N/D que la pestaña Análisis, no un cálculo paralelo con saldo de cierre.
 - El CSV exportado incluye `Estado`, `Grupo`, `Cuenta` y `Clasificacion`, y puede reimportarse en Estados sin edición manual.

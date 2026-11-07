@@ -121,9 +121,15 @@ Secciones de `defaultData` en `js/store.js`:
 | `inventario` | `productos[]` (`{ id, nombre, unidad, existenciaInicial, costoUnitario, stockMinimo }`) y `movimientos[]` (`{ id, productoId, fecha, tipo: 'entrada' \| 'salida', cantidad, concepto }`) |
 | `equilibrio` | `precio`, `costoVariableUnitario`, `costosFijos`, `unidades`, `utilidadObjetivo` (`null` = sin dato) y `escenario` (cambios en fracción: `{ precio, costoVariable, costosFijos, volumen }`) |
 | `flujo` | `saldoInicial`, `periodoBase` (periodo del balance del que salió el saldo, o `''`) y `movimientos[]` (`{ id, concepto, actividad: 'operacion' \| 'inversion' \| 'financiamiento', tipo, monto }`) |
-| `planeacion` | `supuestos`: `null` hasta configurarlos; claves en `SUPUESTOS` (`planeacion-calculations.js`) más `tipoPeriodo`, `periodos`, `ventasUnidades[]`, `otrosDesembolsos[]`, `productoInventario` y `stockMinimo` |
+| `planeacion` | Presupuesto anterior `{ supuestos }` o escenarios `{ versionEscenarios: 1, bases, escenarios, activoId }`. |
 | `razonesMercado` | `periodos`: por periodo `{ acciones, precio, dividendos }` (`null` = sin dato), para las razones de mercado de Análisis |
 | `theme` | `'light'` o `'dark'` |
+
+En Planeación, cada base guarda empresa, moneda, fecha de corte, origen, revisión y apertura. Los escenarios guardan `id`, `nombre`, `baseId`, `origenId` y `supuestos`. La lectura combina los saldos de la base con los supuestos del escenario. `baseId: null` identifica el presupuesto anterior con apertura editable. `null` en un supuesto conserva un dato pendiente.
+
+El campo opcional `escenario.capitalTrabajo` guarda el costo por mes y los calendarios de cobros y pagos de apertura y de crédito nuevo. Requiere una base histórica y periodos mensuales. Los escenarios v1 sin ese campo siguen usando el presupuesto anterior. Los vencimientos y los demás resultados se calculan al leer los supuestos guardados.
+
+El respaldo versionado reemplaza el módulo completo después de validar los vínculos. Restaurar un respaldo antiguo con `{ supuestos }` recupera su presupuesto sin atribuirle una base histórica. Proforma mantiene los presupuestos ligados a la base ficticia en Planeación y muestra un aviso de procedencia.
 
 Forma de `estados`:
 
@@ -159,6 +165,7 @@ API del `store`:
 | `get('estados.periods')` | Lee por ruta con puntos |
 | `set('presupuesto.gastos', valor)` | Escribe y guarda; ignora los errores de `localStorage` |
 | `setPersisted('estados', valor)` | Reemplaza una sección de primer nivel. Si `localStorage` falla, lanza un error y no cambia nada en memoria |
+| `setModulesPersisted(modulos)` | Reemplaza las secciones del lote en una escritura. Publica y notifica el estado después del guardado. |
 | `getAll()` | Copia profunda de todo el estado |
 | `reset()` | Vuelve a los valores iniciales |
 | `subscribe(fn)` | Avisa cada cambio; devuelve la función para desuscribirse |

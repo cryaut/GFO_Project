@@ -568,7 +568,7 @@ Navega al glosario para consultar más de 20 términos financieros definidos: me
 
 1. Navega a `#/reportes`.
 2. Haz clic en **"Exportar JSON"**.
-3. Se descarga un archivo `gfo-export.json` con todos los datos.
+3. Se descarga `gfo-toolkit-export.json` con los módulos guardados, incluidos los escenarios de Planeación.
 
 ### 7.2 Exportar a CSV
 
@@ -586,7 +586,9 @@ Navega al glosario para consultar más de 20 términos financieros definidos: me
 
 1. Haz clic en **"Importar JSON"** y selecciona un archivo `.json` generado con **"Exportar JSON"** (máximo 5 MB).
 2. La aplicación valida el archivo y muestra qué módulos se van a **reemplazar**; confirma para continuar. Si algo no es válido, no se cambia nada y el mensaje explica el motivo.
-3. Si el almacenamiento del navegador se llena a mitad de la importación, se conservan los datos anteriores.
+3. Todos los módulos del respaldo se guardan juntos. Si falla el almacenamiento, se conserva el último estado válido.
+
+Si el respaldo contiene Inventario, Reportes verifica las fechas reales, los costos declarados y los saldos del kardex en orden cronológico. Una salida que deje existencias negativas impide restaurar el archivo aunque una compra posterior recupere el saldo. El mensaje identifica el campo o movimiento que debes corregir. Las entradas de respaldos antiguos con el costo omitido usan el costo del producto.
 
 Para cargar un archivo de estados financieros (JSON, CSV o Excel) usa **Importar archivo** en `#/estados`; un JSON de Estados no es un respaldo y Reportes lo rechaza.
 
@@ -697,11 +699,21 @@ Cuando existe un balance del periodo siguiente, la pantalla puede comparar su ef
 
 ## 12. Presupuesto Maestro
 
-En `#/planeacion` se presupuesta una empresa comercial (un producto o línea) de 1 a 12 meses o trimestres. Pulsa **Cargar ejemplo** o completa los supuestos; con **Tomar efectivo, CxC y CxP del balance** y **Tomar inventario inicial y costo del producto** se reutilizan los datos de otros módulos. Pulsa **Calcular y guardar**.
+En `#/planeacion` se presupuesta una empresa comercial (un producto o línea) de 1 a 12 meses o trimestres. Abre **Supuestos** para completar el presupuesto y pulsa **Calcular y guardar**. Puedes cargar un ejemplo o tomar el efectivo, las cuentas por cobrar y las cuentas por pagar del balance. También puedes tomar el inventario inicial y el costo de un producto de Inventario.
 
-La pantalla arma, en orden: ventas y cobros, compras (unidades = ventas + inventario final deseado − inventario inicial) y pagos, costo de bienes vendidos, gastos de operación, caja y estado de resultados presupuestado.
+**Resumen** muestra cobros, pagos a proveedores y saldos al cierre del horizonte. Selecciona una tarjeta para consultar sus movimientos o vencimientos. Para los cobros y pagos, el selector de periodo cambia el detalle del panel. **Tablas completas** reúne los presupuestos y sus avisos. Cambiar entre vistas conserva las ediciones en curso. El resumen muestra las cifras guardadas hasta que pulses **Calcular y guardar**.
 
 **Ejemplo MUNO MODA 2025:** ventas de 250, 300, 300 y 400 prendas a C$ 800 (C$ 1,000,000), UAII C$ 182,000 y utilidad neta C$ 119,000. La compra de un vehículo de C$ 120,000 en el trimestre 2 deja la caja en C$ 19,200, bajo el mínimo de C$ 40,000: se requieren **C$ 20,800 de financiamiento**. La caja cierra en C$ 122,360. La UAII del trimestre 1 (28,000) coincide con la del punto de equilibrio.
+
+### Escenarios de Comercial Ejemplo
+
+1. Pulsa **Cargar Comercial Ejemplo** en el resumen inicial o desde **Supuestos** si ya tienes un presupuesto calculado. **Base de capital de trabajo** carga la apertura ficticia de 2025 y los supuestos mensuales de 2026. El selector conserva los escenarios previos y muestra el presupuesto previo sin escenarios como **Presupuesto anterior**.
+2. En **Supuestos**, edita las unidades y el costo de compra de cada mes. En los calendarios escribe porcentajes separados por espacios que sumen 100 %. `60 40` en el cobro de saldos iniciales cobra 60 % en enero y 40 % en febrero. `0 100` en el cobro de ventas a crédito cobra todo dos meses después de cada venta.
+3. Pulsa **Calcular y guardar** para actualizar el resumen. Las tarjetas de cuentas por cobrar y por pagar muestran qué importes quedan pendientes y cuándo vencen. En **Tablas completas** puedes consultar ventas, cobros, existencias físicas, compras y pagos de todo el horizonte. Un campo vacío queda pendiente y un cero escrito se conserva como cero.
+4. En **Supuestos**, pulsa **Duplicar escenario** para copiar la versión guardada y probar otra política. Elige el escenario en **Escenario activo**. Los escenarios comparten el cierre histórico y guardan supuestos independientes.
+5. Guarda un respaldo desde **Reportes** para conservar los escenarios y su base. Los respaldos anteriores siguen siendo recuperables.
+
+Consulta este presupuesto parcial en Planeación. La proyección de caja completa, el costo de ventas y los estados proforma del caso corresponden a etapas posteriores.
 
 ---
 
@@ -709,7 +721,7 @@ La pantalla arma, en orden: ventas y cobros, compras (unidades = ventas + invent
 
 `#/proforma` no pide datos: reúne lo que ya calcularon los demás módulos.
 
-1. **Estado de resultados proforma:** el total del presupuesto contra el último periodo real de los estados, con variación y márgenes.
+1. **Estado de resultados proforma.** Muestra el total del presupuesto y el último periodo real de los estados. La variación requiere un histórico anual identificado con el año (`AAAA`) y una proyección de 12 meses o 4 trimestres. Para los demás horizontes, la variación figura como N/D y la pantalla explica el motivo.
 2. **Efectivo proyectado:** saldo inicial, flujo neto, saldo final y financiamiento máximo.
 3. **Indicadores integrados:** liquidez, endeudamiento, ROE (DuPont), GAO, GAF y GAT, punto de equilibrio, flujo de efectivo, presupuesto e inventario, cada uno con su lectura y un enlace al módulo de origen.
 4. **Alertas y decisiones sugeridas:** por ejemplo, gestionar el financiamiento del trimestre 2 o reponer los productos bajo su stock mínimo.

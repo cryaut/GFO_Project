@@ -20,6 +20,7 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 | Claridad visual de Estados financieros | Diseño solicitado por Cris | Implementada; en revisión | [diseno-estados](diseno-estados/README.md) |
 | Análisis completo y presentación docente | Revisión solicitada por Cris | Implementada; en revisión | [analisis-docente](analisis-docente/README.md) |
 | Rigor financiero y comparación con AFOD | Carlos | En revisión | [rigor-financiero](rigor-financiero/README.md) |
+| Caso integrado, contexto y escenarios | Carlos | En revisión | [caso-integrado](caso-integrado/README.md) |
 
 Agrega una fila cuando empieces una feature y actualiza el estado cuando cambie.
 

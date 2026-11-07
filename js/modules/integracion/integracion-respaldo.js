@@ -1,6 +1,7 @@
 import { normalizeFinancialData } from '../estados/estados-normalize.js';
 import { leerEstados } from '../../utils/estados-guardados.js';
-import { normalizarInventario } from '../inventario/inventario-calculations.js';
+import { validarInventarioRespaldo } from '../inventario/inventario-calculations.js';
+import { tieneEscenarios, validarEscenarios } from '../planeacion/planeacion-escenarios.js';
 
 // Validación de un respaldo JSON (el que genera "Exportar JSON" en Reportes) antes de
 // tocar el store. Es pura: recibe el archivo ya parseado y los datos actuales, y devuelve
@@ -50,6 +51,19 @@ function validarTipo(importado, actual, ruta) {
 }
 
 function validarModulo(clave, importado, actual, omitidos) {
+  if (clave === 'planeacion' && esObjeto(importado)) {
+    if (tieneEscenarios(importado)) return structuredClone(validarEscenarios(importado));
+    if (['bases', 'escenarios', 'activoId'].some(campo => Object.hasOwn(importado, campo))) {
+      throw new Error('Falta la versión del respaldo de escenarios de Planeación.');
+    }
+    if (Object.hasOwn(importado, 'supuestos')) {
+      if (importado.supuestos !== null && !esObjeto(importado.supuestos)) {
+        throw new Error('Los supuestos de Planeación deben ser un objeto o N/D.');
+      }
+      // Un respaldo anterior reemplaza Planeación con su presupuesto sin base conocida.
+      if (tieneEscenarios(actual)) actual = { supuestos: null };
+    }
+  }
   if (clave === 'estados') {
     // D-080: si los estados del respaldo no se pueden leer, el respaldo completo
     // se rechaza — un dato que las pantallas no pueden usar no debe quedar guardado.
@@ -61,8 +75,7 @@ function validarModulo(clave, importado, actual, omitidos) {
   }
   if (clave === 'inventario') {
     // D-083 (ronda 2): primero las mismas validaciones de forma que el resto de
-    // módulos, con los mismos mensajes que main (H1); después la normalización
-    // y el rechazo por registros descartados.
+    // módulos y después la validación del kardex.
     if (!esObjeto(importado)) throw new Error(`El módulo "${clave}" debe ser un objeto.`);
     for (const [campo, valor] of Object.entries(importado)) {
       if (!Object.hasOwn(actual, campo)) {
@@ -71,12 +84,7 @@ function validarModulo(clave, importado, actual, omitidos) {
       }
       validarTipo(valor, actual[campo], `${clave}.${campo}`);
     }
-    const normal = normalizarInventario(importado);
-    if (normal.descartados.length) {
-      const detalle = normal.descartados.map(d => `${d.motivo}: ${d.cantidad}`).join('; ');
-      throw new Error(`El inventario del respaldo tiene registros descartados (${detalle}). No se importó nada.`);
-    }
-    return { productos: normal.productos, movimientos: normal.movimientos };
+    return validarInventarioRespaldo(importado);
   }
   if (!esObjeto(importado)) throw new Error(`El módulo "${clave}" debe ser un objeto.`);
   // Lo que el archivo no trae se conserva del módulo actual para que no quede incompleto.

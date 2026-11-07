@@ -8,6 +8,14 @@ import {
 
 export const TIPOS_PERIODO = ['Mes', 'Trimestre'];
 export const MAX_PERIODOS = 12;
+export const CALENDARIOS_CAPITAL_TRABAJO = [
+  ['cobrosApertura', 'Cobro de cuentas por cobrar iniciales'],
+  ['cobrosCredito', 'Cobro de ventas a crédito'],
+  ['pagosApertura', 'Pago de cuentas por pagar iniciales'],
+  ['pagosCredito', 'Pago de compras a crédito']
+];
+// Admite el redondeo de la captura en porcentajes. Al repartir se usa el total real.
+const TOLERANCIA_CALENDARIO = 1e-7;
 
 // Supuestos escalares: [clave, etiqueta, clase]. clase: 'positivo' (> 0), 'monto' (≥ 0),
 // 'libre' (cualquier número), 'unidades' (≥ 0), 'fraccion' (0 a 1), 'tasa' (0 a menos de 1)
@@ -63,8 +71,8 @@ export function normalizarSupuestos(datos) {
   return s;
 }
 
-// Errores de los supuestos (lista vacía si se puede calcular).
-export function validarSupuestos(s) {
+// En un borrador, null conserva un supuesto pendiente de revisión.
+export function validarSupuestos(s, { parcial = false } = {}) {
   if (!s) return ['Configure los supuestos o cargue el ejemplo.'];
   const errores = [];
   if (!TIPOS_PERIODO.includes(s.tipoPeriodo)) errores.push('Elija meses o trimestres.');
@@ -73,6 +81,7 @@ export function validarSupuestos(s) {
   }
   for (const [clave, etiqueta, clase] of SUPUESTOS) {
     const v = s[clave];
+    if (parcial && v === null) continue;
     if (!esNumero(v)) { errores.push(`${etiqueta}: escriba un número.`); continue; }
     if (clase === 'positivo' && v <= 0) errores.push(`${etiqueta}: debe ser mayor que 0.`);
     if (['monto', 'unidades', 'multiplo'].includes(clase) && v < 0) errores.push(`${etiqueta}: no puede ser negativo.`);
@@ -82,11 +91,135 @@ export function validarSupuestos(s) {
   const listas = [['ventasUnidades', 'Unidades a vender'], ['otrosDesembolsos', 'Otros desembolsos']];
   for (const [clave, etiqueta] of listas) {
     const lista = s[clave];
-    if (!Array.isArray(lista) || lista.length !== s.periodos || !lista.every(v => esNumero(v) && v >= 0)) {
+    if (!Array.isArray(lista) || lista.length !== s.periodos
+        || !Array.from(lista).every(v => (parcial && v === null) || (esNumero(v) && v >= 0))) {
       errores.push(`${etiqueta}: indique un número mayor o igual a 0 en cada periodo.`);
     }
   }
   return errores;
+}
+
+export function validarCapitalTrabajo(capital, supuestos) {
+  if (!capital || typeof capital !== 'object' || Array.isArray(capital)) {
+    return ['Los supuestos de capital de trabajo no son válidos.'];
+  }
+  const errores = [];
+  const claves = ['costosCompra', ...CALENDARIOS_CAPITAL_TRABAJO.map(([clave]) => clave)];
+  if (Object.keys(capital).some(clave => !claves.includes(clave))) {
+    errores.push('Hay supuestos de capital de trabajo desconocidos.');
+  }
+  if (supuestos.tipoPeriodo !== 'Mes' || supuestos.costoUnitario !== null) {
+    errores.push('Capital de trabajo requiere periodos mensuales y un costo de compra por mes.');
+  }
+  const { costosCompra } = capital;
+  if (!Array.isArray(costosCompra) || costosCompra.length !== supuestos.periodos
+      || !Array.from(costosCompra).every(v => v === null || (esNumero(v) && v >= 0))) {
+    errores.push('Indique el costo de compra de cada mes, o déjelo pendiente.');
+  }
+  for (const [clave, etiqueta] of CALENDARIOS_CAPITAL_TRABAJO) {
+    const calendario = capital[clave];
+    if (calendario === null) continue;
+    if (!Array.isArray(calendario) || calendario.length < 1 || calendario.length > MAX_PERIODOS
+        || !Array.from(calendario).every(v => esNumero(v) && v >= 0 && v <= 1)
+        || Math.abs(suma(calendario) - 1) > TOLERANCIA_CALENDARIO) {
+      errores.push(`${etiqueta}: indique de 1 a ${MAX_PERIODOS} porcentajes entre 0 y 100 % que sumen 100 %.`);
+    }
+  }
+  return errores;
+}
+
+const finito = valor => esNumero(valor) ? valor : null;
+
+function importeDisponible(unidades, unitario) {
+  if (unidades === 0 || unitario === 0) return 0;
+  return esNumero(unidades) && esNumero(unitario) ? finito(unidades * unitario) : null;
+}
+
+function totalDisponible(valores) {
+  return valores.every(esNumero) ? finito(suma(valores)) : null;
+}
+
+function presupuestarExistencias(s) {
+  let inicial = s.inventarioInicial;
+  return s.ventasUnidades.map((vendidas, i) => {
+    const objetivo = i === s.periodos - 1
+      ? s.inventarioFinalUltimo : importeDisponible(s.ventasUnidades[i + 1], s.pctInventarioFinal);
+    const necesidad = finito(comprasPresupuestadas(vendidas, objetivo, inicial));
+    const compras = necesidad === null ? null : Math.max(0, necesidad);
+    const final = necesidad === null ? null : (necesidad < 0 ? inicial - vendidas : objetivo);
+    const existencia = { inicial, objetivo, compras, final };
+    inicial = final;
+    return existencia;
+  });
+}
+
+// El origen 0 es la apertura. Los créditos nuevos empiezan a vencer a partir del mes siguiente.
+function proyectarCredito(importes, fraccionContado, saldoInicial, calendarioApertura, calendarioCredito, periodo) {
+  const agenda = [];
+  let faltaCalendario = false;
+  function agendar(importe, origen, calendario) {
+    if (importe === 0) return;
+    if (calendario === null) {
+      faltaCalendario = true;
+      return;
+    }
+    const total = suma(calendario);
+    calendario.forEach((fraccion, i) => {
+      if (fraccion > 0) agenda.push({ origen, vence: origen + i + 1, importe: importeDisponible(importe, fraccion / total) });
+    });
+  }
+  const describir = cuotas => cuotas.map(cuota => ({
+    origen: periodo(cuota.origen), vence: periodo(cuota.vence), importe: cuota.importe
+  }));
+
+  agendar(saldoInicial, 0, calendarioApertura);
+  let saldo = saldoInicial;
+  const meses = importes.map((importe, i) => {
+    const mes = i + 1;
+    const contado = importeDisponible(importe, fraccionContado);
+    const credito = fraccionContado === 1 || importe === 0 ? 0
+      : importe === null || contado === null ? null : importe - contado;
+    const cuotas = agenda.filter(cuota => cuota.vence === mes);
+    const liquidado = faltaCalendario ? null : totalDisponible(cuotas.map(cuota => cuota.importe));
+    const apertura = saldo;
+    agendar(credito, mes, calendarioCredito);
+    // El saldo agendado evita arrastrar redondeos. La conciliación permite conocer el
+    // cierre del mes de origen aun cuando todavía falte distribuir ese crédito.
+    const programado = faltaCalendario ? null
+      : totalDisponible(agenda.filter(cuota => cuota.vence > mes).map(cuota => cuota.importe));
+    saldo = programado ?? totalDisponible([apertura, credito, liquidado === null ? null : -liquidado]);
+    return {
+      importe, contado, credito, liquidado, total: totalDisponible([contado, liquidado]),
+      apertura, cierre: saldo, vencimientos: liquidado === null ? null : describir(cuotas)
+    };
+  });
+  const pendientes = agenda.filter(cuota => cuota.vence > importes.length).sort((a, b) => a.vence - b.vence);
+  return {
+    meses,
+    totales: Object.fromEntries(['importe', 'contado', 'credito', 'liquidado', 'total'].map(clave =>
+      [clave, totalDisponible(meses.map(mes => mes[clave]))])),
+    pendientes: faltaCalendario || pendientes.some(cuota => cuota.importe === null) ? null : describir(pendientes)
+  };
+}
+
+// Presupuesto parcial mensual. Recibe un escenario y su apertura validados.
+export function calcularCapitalTrabajo(s, capital, fechaCorte) {
+  const [anio, mes] = fechaCorte.split('-').map(Number);
+  const periodo = desplazamiento => {
+    const indice = anio * 12 + mes - 1 + desplazamiento;
+    return `${String(Math.floor(indice / 12)).padStart(4, '0')}-${String(indice % 12 + 1).padStart(2, '0')}`;
+  };
+  const existencias = presupuestarExistencias(s);
+  const ventas = s.ventasUnidades.map(unidades => importeDisponible(unidades, s.precio));
+  const compras = existencias.map((fila, i) => importeDisponible(fila.compras, capital.costosCompra[i]));
+  return {
+    etiquetas: s.ventasUnidades.map((_, i) => periodo(i + 1)),
+    unidadesVendidas: s.ventasUnidades,
+    existencias,
+    costosCompra: capital.costosCompra,
+    ventas: proyectarCredito(ventas, s.pctContado, s.cxcInicial, capital.cobrosApertura, capital.cobrosCredito, periodo),
+    compras: proyectarCredito(compras, s.pctComprasContado, s.cxpInicial, capital.pagosApertura, capital.pagosCredito, periodo)
+  };
 }
 
 // Todos los presupuestos. Supone supuestos válidos (validarSupuestos vacío).
@@ -115,27 +248,19 @@ export function calcularPresupuestoMaestro(s, inventario = null) {
   const cobros = cada(i => contado[i] + cobroAnterior[i]);
 
   // 2. Compras en unidades: ventas + inventario final deseado − inventario inicial.
-  const invInicialU = [];
-  const invFinalU = [];
-  const deseadoU = [];
-  const comprasU = [];
-  for (let i = 0; i < n; i++) {
-    invInicialU[i] = i === 0 ? s.inventarioInicial : invFinalU[i - 1];
-    deseadoU[i] = i < n - 1 ? s.pctInventarioFinal * unidades[i + 1] : s.inventarioFinalUltimo;
-    const compras = comprasPresupuestadas(unidades[i], deseadoU[i], invInicialU[i]);
-    if (compras < 0) {
-      // El inventario inicial ya cubre las ventas y el inventario deseado: no se compra y sobra existencia.
-      comprasU[i] = 0;
-      invFinalU[i] = invInicialU[i] - unidades[i];
-      avisos.push({ codigo: 'sin-compras', periodo: etiquetas[i], sobrante: invFinalU[i] - deseadoU[i] });
-    } else {
-      comprasU[i] = compras;
-      invFinalU[i] = deseadoU[i];
+  const existencias = presupuestarExistencias(s);
+  const invInicialU = existencias.map(fila => fila.inicial);
+  const invFinalU = existencias.map(fila => fila.final);
+  const deseadoU = existencias.map(fila => fila.objetivo);
+  const comprasU = existencias.map(fila => fila.compras);
+  existencias.forEach(({ final, objetivo }, i) => {
+    if (esNumero(final) && esNumero(objetivo) && final > objetivo) {
+      avisos.push({ codigo: 'sin-compras', periodo: etiquetas[i], sobrante: final - objetivo });
     }
     if (stockMinimo !== null && necesitaReposicion(invFinalU[i], stockMinimo)) {
       avisos.push({ codigo: 'bajo-stock-minimo', periodo: etiquetas[i], inventario: invFinalU[i], stockMinimo });
     }
-  }
+  });
   const comprasImporte = cada(i => comprasU[i] * s.costoUnitario);
   const pagoContado = cada(i => comprasImporte[i] * s.pctComprasContado);
   const pagoCredito = cada(i => comprasImporte[i] - pagoContado[i]);

@@ -233,7 +233,11 @@ function bindExportEvents(page) {
         showToast('Importación cancelada', 'warning');
         return;
       }
-      aplicarRespaldo(modulos);
+      try {
+        store.setModulesPersisted(modulos);
+      } catch (error) {
+        throw new Error(`No se pudo guardar (${error.message}). Se conservaron los datos anteriores.`);
+      }
       const nota = omitidos.length ? ` (se omitieron ${omitidos.length} elementos desconocidos)` : '';
       showToast(`Datos importados correctamente${nota}`, 'success');
       renderDashboard(page);
@@ -243,23 +247,4 @@ function bindExportEvents(page) {
       importInput.value = '';
     }
   });
-}
-
-// Guarda cada módulo con setPersisted (falla si localStorage falla). Si uno falla, restaura
-// los ya guardados para no dejar un respaldo a medias.
-function aplicarRespaldo(modulos) {
-  const previo = store.getAll();
-  const aplicados = [];
-  try {
-    for (const [clave, valor] of Object.entries(modulos)) {
-      store.setPersisted(clave, valor);
-      aplicados.push(clave);
-    }
-  } catch (error) {
-    let restaurado = true;
-    for (const clave of aplicados) {
-      try { store.setPersisted(clave, previo[clave]); } catch { restaurado = false; }
-    }
-    throw new Error(`No se pudo guardar (${error.message}). ${restaurado ? 'Se conservaron los datos anteriores.' : 'Revise los datos: la restauración falló.'}`);
-  }
 }

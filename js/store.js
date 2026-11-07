@@ -101,12 +101,21 @@ export const store = {
     this.save();
   },
 
-  // Publish a complete module only after durable storage succeeds. Unlike the
-  // legacy set(), a quota/access error propagates and leaves memory unchanged.
   setPersisted(key, value) {
-    if (!Object.hasOwn(defaultData, key)) throw new Error('Módulo de datos inválido');
+    this.setModulesPersisted({ [key]: value });
+  },
+
+  // Publica todos los módulos del lote tras una sola escritura de localStorage.
+  setModulesPersisted(modulos) {
+    if (!modulos || typeof modulos !== 'object' || Array.isArray(modulos)) {
+      throw new Error('Módulo de datos inválido');
+    }
+    const claves = Object.keys(modulos);
+    if (!claves.length || claves.some(clave => !Object.hasOwn(defaultData, clave))) {
+      throw new Error('Módulo de datos inválido');
+    }
     if (!this._data) this.load();
-    const next = { ...this._data, [key]: structuredClone(value) };
+    const next = { ...this._data, ...structuredClone(modulos) };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     this._data = next;
     this._notify();
@@ -130,7 +139,13 @@ export const store = {
   },
 
   _notify() {
-    this._listeners.forEach(fn => fn(this._data));
+    this._listeners.forEach(fn => {
+      try {
+        fn(this._data);
+      } catch (error) {
+        console.error('Error al notificar un cambio del almacén.', error);
+      }
+    });
   }
 };
 

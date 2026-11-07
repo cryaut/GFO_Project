@@ -1,0 +1,1599 @@
+{
+  "caso": "Caso ficticio",
+  "empresa": "Comercial Ejemplo, S.A. (ficticia)",
+  "moneda": "C$",
+  "base_main": "255b06823394a947c4c6f8e7f3cd023f39b3ec08",
+  "apertura_2023": {
+    "fecha": "2023-12-31",
+    "efectivo": 40000,
+    "cxc": 50000,
+    "inventario_unidades": 500,
+    "inventario_valor": 50000,
+    "activo_fijo_bruto": 200000,
+    "depreciacion_acumulada": -40000,
+    "cxp": 30000,
+    "impuesto_por_pagar": 6000,
+    "deuda": 80000,
+    "capital": 100000,
+    "resultados_acumulados": 84000,
+    "activos": 300000,
+    "pasivos": 116000,
+    "patrimonio": 184000,
+    "diferencia": 0
+  },
+  "historicos": {
+    "2024": {
+      "periodo": "2024",
+      "apertura": {
+        "fecha": "2023-12-31",
+        "efectivo": 40000,
+        "cxc": 50000,
+        "inventario_unidades": 500,
+        "inventario_valor": 50000,
+        "activo_fijo_bruto": 200000,
+        "depreciacion_acumulada": -40000,
+        "cxp": 30000,
+        "impuesto_por_pagar": 6000,
+        "deuda": 80000,
+        "capital": 100000,
+        "resultados_acumulados": 84000,
+        "activos": 300000,
+        "pasivos": 116000,
+        "patrimonio": 184000,
+        "diferencia": 0
+      },
+      "inventario": {
+        "unidades_disponibles": 3700,
+        "valor_disponible": 370000,
+        "costo_compra_unitario": 100,
+        "costo_promedio": 100.0,
+        "unidades_finales": 700,
+        "valor_final": 70000.0
+      },
+      "movimientos": {
+        "unidades_vendidas": 3000,
+        "ventas_contado": 240000.0,
+        "ventas_credito": 360000.0,
+        "cobros_cxc": 350000,
+        "cobros": 590000.0,
+        "compras_unidades": 3200,
+        "compras_valor": 320000,
+        "compras_contado": 96000.0,
+        "compras_credito": 224000.0,
+        "pagos_cxp": 230000,
+        "pagos_proveedores": 326000.0,
+        "pago_impuesto": 36000,
+        "compra_activo_fijo": 0,
+        "prestamo": 0,
+        "principal": 10000,
+        "dividendos": 20000
+      },
+      "estado_resultados": {
+        "ventas": 600000,
+        "costo_ventas": 300000.0,
+        "utilidad_bruta": 300000.0,
+        "gastos_operativos": 150000,
+        "depreciacion": 20000,
+        "utilidad_operativa": 130000.0,
+        "intereses": 8000.0,
+        "utilidad_antes_impuesto": 122000.0,
+        "impuesto_causado": 36600.0,
+        "utilidad_neta": 85400.0
+      },
+      "flujo": {
+        "operacion": 70000.0,
+        "inversion": 0,
+        "financiamiento": -30000,
+        "variacion": 40000.0
+      },
+      "cierre": {
+        "efectivo": 80000.0,
+        "cxc": 60000.0,
+        "inventario_unidades": 700,
+        "inventario_valor": 70000.0,
+        "activo_fijo_bruto": 200000,
+        "depreciacion_acumulada": -60000,
+        "cxp": 24000.0,
+        "impuesto_por_pagar": 6600.0,
+        "deuda": 70000,
+        "capital": 100000,
+        "resultados_acumulados": 149400.0,
+        "activos": 350000.0,
+        "pasivos": 100600.0,
+        "patrimonio": 249400.0,
+        "diferencia": 0.0
+      }
+    },
+    "2025": {
+      "periodo": "2025",
+      "apertura": {
+        "efectivo": 80000.0,
+        "cxc": 60000.0,
+        "inventario_unidades": 700,
+        "inventario_valor": 70000.0,
+        "activo_fijo_bruto": 200000,
+        "depreciacion_acumulada": -60000,
+        "cxp": 24000.0,
+        "impuesto_por_pagar": 6600.0,
+        "deuda": 70000,
+        "capital": 100000,
+        "resultados_acumulados": 149400.0,
+        "activos": 350000.0,
+        "pasivos": 100600.0,
+        "patrimonio": 249400.0,
+        "diferencia": 0.0
+      },
+      "inventario": {
+        "unidades_disponibles": 4200,
+        "valor_disponible": 420000.0,
+        "costo_compra_unitario": 100,
+        "costo_promedio": 100.0,
+        "unidades_finales": 800,
+        "valor_final": 80000.0
+      },
+      "movimientos": {
+        "unidades_vendidas": 3400,
+        "ventas_contado": 285600.0,
+        "ventas_credito": 428400.0,
+        "cobros_cxc": 460000,
+        "cobros": 745600.0,
+        "compras_unidades": 3500,
+        "compras_valor": 350000,
+        "compras_contado": 105000.0,
+        "compras_credito": 245000.0,
+        "pagos_cxp": 244000,
+        "pagos_proveedores": 349000.0,
+        "pago_impuesto": 46600,
+        "compra_activo_fijo": 0,
+        "prestamo": 0,
+        "principal": 10000,
+        "dividendos": 30000
+      },
+      "estado_resultados": {
+        "ventas": 714000,
+        "costo_ventas": 340000.0,
+        "utilidad_bruta": 374000.0,
+        "gastos_operativos": 170000,
+        "depreciacion": 20000,
+        "utilidad_operativa": 184000.0,
+        "intereses": 7000.0,
+        "utilidad_antes_impuesto": 177000.0,
+        "impuesto_causado": 53100.0,
+        "utilidad_neta": 123900.0
+      },
+      "flujo": {
+        "operacion": 173000.0,
+        "inversion": 0,
+        "financiamiento": -40000,
+        "variacion": 133000.0
+      },
+      "cierre": {
+        "efectivo": 213000.0,
+        "cxc": 28400.0,
+        "inventario_unidades": 800,
+        "inventario_valor": 80000.0,
+        "activo_fijo_bruto": 200000,
+        "depreciacion_acumulada": -80000,
+        "cxp": 25000.0,
+        "impuesto_por_pagar": 13100.0,
+        "deuda": 60000,
+        "capital": 100000,
+        "resultados_acumulados": 243300.0,
+        "activos": 441400.0,
+        "pasivos": 98100.0,
+        "patrimonio": 343300.0,
+        "diferencia": 0.0
+      }
+    }
+  },
+  "proyeccion_2026": {
+    "meses": [
+      {
+        "periodo": "2026-01",
+        "apertura": {
+          "efectivo": 213000.0,
+          "cxc": 28400.0,
+          "inventario_unidades": 800,
+          "inventario_valor": 80000.0,
+          "activo_fijo_bruto": 200000,
+          "depreciacion_acumulada": -80000,
+          "cxp": 25000.0,
+          "impuesto_por_pagar": 13100.0,
+          "deuda": 60000,
+          "capital": 100000,
+          "resultados_acumulados": 243300.0,
+          "activos": 441400.0,
+          "pasivos": 98100.0,
+          "patrimonio": 343300.0,
+          "diferencia": 0.0
+        },
+        "inventario": {
+          "unidades_disponibles": 800,
+          "valor_disponible": 80000.0,
+          "costo_compra_unitario": 100,
+          "costo_promedio": 100.0,
+          "unidades_finales": 520,
+          "valor_final": 52000.0,
+          "objetivo_unidades": 72.5,
+          "sobrante_unidades": 447.5
+        },
+        "movimientos": {
+          "unidades_vendidas": 280,
+          "ventas_contado": 24640.0,
+          "ventas_credito": 36960.0,
+          "cobros_cxc": 17040.0,
+          "cobros": 41680.0,
+          "compras_unidades": 0,
+          "compras_valor": 0,
+          "compras_contado": 0.0,
+          "compras_credito": 0.0,
+          "pagos_cxp": 25000.0,
+          "pagos_proveedores": 25000.0,
+          "pago_impuesto": 13100.0,
+          "compra_activo_fijo": 0,
+          "prestamo": 0,
+          "principal": 1000,
+          "dividendos": 0
+        },
+        "estado_resultados": {
+          "ventas": 61600,
+          "costo_ventas": 28000.0,
+          "utilidad_bruta": 33600.0,
+          "gastos_operativos": 14464.0,
+          "depreciacion": 1666.67,
+          "utilidad_operativa": 17469.33,
+          "intereses": 500.0,
+          "utilidad_antes_impuesto": 16969.33,
+          "impuesto_causado": 5090.8,
+          "utilidad_neta": 11878.53
+        },
+        "flujo": {
+          "operacion": -11384.0,
+          "inversion": 0,
+          "financiamiento": -1000,
+          "variacion": -12384.0
+        },
+        "cierre": {
+          "efectivo": 200616.0,
+          "cxc": 48320.0,
+          "inventario_unidades": 520,
+          "inventario_valor": 52000.0,
+          "activo_fijo_bruto": 200000,
+          "depreciacion_acumulada": -81666.67,
+          "cxp": 0.0,
+          "impuesto_por_pagar": 5090.8,
+          "deuda": 59000,
+          "capital": 100000,
+          "resultados_acumulados": 255178.53,
+          "activos": 419269.33,
+          "pasivos": 64090.8,
+          "patrimonio": 355178.53,
+          "diferencia": 0.0
+        },
+        "mes": 1,
+        "vencimientos_aplicados": {
+          "cobros_cxc": [
+            {
+              "origen": "2025-12",
+              "importe": 17040.0
+            }
+          ],
+          "pagos_cxp": [
+            {
+              "origen": "2025-12",
+              "importe": 25000.0
+            }
+          ],
+          "pago_impuesto": [
+            {
+              "origen": "2025-12",
+              "importe": 13100.0
+            }
+          ]
+        }
+      },
+      {
+        "periodo": "2026-02",
+        "apertura": {
+          "efectivo": 200616.0,
+          "cxc": 48320.0,
+          "inventario_unidades": 520,
+          "inventario_valor": 52000.0,
+          "activo_fijo_bruto": 200000,
+          "depreciacion_acumulada": -81666.67,
+          "cxp": 0.0,
+          "impuesto_por_pagar": 5090.8,
+          "deuda": 59000,
+          "capital": 100000,
+          "resultados_acumulados": 255178.53,
+          "activos": 419269.33,
+          "pasivos": 64090.8,
+          "patrimonio": 355178.53,
+          "diferencia": 0.0
+        },
+        "inventario": {
+          "unidades_disponibles": 520,
+          "valor_disponible": 52000.0,
+          "costo_compra_unitario": 100,
+          "costo_promedio": 100.0,
+          "unidades_finales": 230,
+          "valor_final": 23000.0,
+          "objetivo_unidades": 75.0,
+          "sobrante_unidades": 155.0
+        },
+        "movimientos": {
+          "unidades_vendidas": 290,
+          "ventas_contado": 25520.0,
+          "ventas_credito": 38280.0,
+          "cobros_cxc": 29840.0,
+          "cobros": 55360.0,
+          "compras_unidades": 0,
+          "compras_valor": 0,
+          "compras_contado": 0.0,
+          "compras_credito": 0.0,
+          "pagos_cxp": 0,
+          "pagos_proveedores": 0.0,
+          "pago_impuesto": 5090.8,
+          "compra_activo_fijo": 0,
+          "prestamo": 0,
+          "principal": 1000,
+          "dividendos": 0
+        },
+        "estado_resultados": {
+          "ventas": 63800,
+          "costo_ventas": 29000.0,
+          "utilidad_bruta": 34800.0,
+          "gastos_operativos": 14552.0,
+          "depreciacion": 1666.67,
+          "utilidad_operativa": 18581.33,
+          "intereses": 491.67,
+          "utilidad_antes_impuesto": 18089.67,
+          "impuesto_causado": 5426.9,
+          "utilidad_neta": 12662.77
+        },
+        "flujo": {
+          "operacion": 35225.53,
+          "inversion": 0,
+          "financiamiento": -1000,
+          "variacion": 34225.53
+        },
+        "cierre": {
+          "efectivo": 234841.53,
+          "cxc": 56760.0,
+          "inventario_unidades": 230,
+          "inventario_valor": 23000.0,
+          "activo_fijo_bruto": 200000,
+          "depreciacion_acumulada": -83333.33,
+          "cxp": 0.0,
+          "impuesto_por_pagar": 5426.9,
+          "deuda": 58000,
+          "capital": 100000,
+          "resultados_acumulados": 267841.3,
+          "activos": 431268.2,
+          "pasivos": 63426.9,
+          "patrimonio": 367841.3,
+          "diferencia": 0.0
+        },
+        "mes": 2,
+        "vencimientos_aplicados": {
+          "cobros_cxc": [
+            {
+              "origen": "2025-12",
+              "importe": 11360.0
+            },
+            {
+              "origen": "2026-01",
+              "importe": 18480.0
+            }
+          ],
+          "pagos_cxp": [],
+          "pago_impuesto": [
+            {
+              "origen": "2026-01",
+              "importe": 5090.8
+            }
+          ]
+        }
+      },
+      {
+        "periodo": "2026-03",
+        "apertura": {
+          "efectivo": 234841.53,
+          "cxc": 56760.0,
+          "inventario_unidades": 230,
+          "inventario_valor": 23000.0,
+          "activo_fijo_bruto": 200000,
+          "depreciacion_acumulada": -83333.33,
+          "cxp": 0.0,
+          "impuesto_por_pagar": 5426.9,
+          "deuda": 58000,
+          "capital": 100000,
+          "resultados_acumulados": 267841.3,
+          "activos": 431268.2,
+          "pasivos": 63426.9,
+          "patrimonio": 367841.3,
+          "diferencia": 0.0
+        },
+        "inventario": {
+          "unidades_disponibles": 377.5,
+          "valor_disponible": 37750.0,
+          "costo_compra_unitario": 100,
+          "costo_promedio": 100.0,
+          "unidades_finales": 77.5,
+          "valor_final": 7750.0,
+          "objetivo_unidades": 77.5,
+          "sobrante_unidades": 0.0
+        },
+        "movimientos": {
+          "unidades_vendidas": 300,
+          "ventas_contado": 26400.0,
+          "ventas_credito": 39600.0,
+          "cobros_cxc": 37620.0,
+          "cobros": 64020.0,
+          "compras_unidades": 147.5,
+          "compras_valor": 14750.0,
+          "compras_contado": 5900.0,
+          "compras_credito": 8850.0,
+          "pagos_cxp": 0,
+          "pagos_proveedores": 5900.0,
+          "pago_impuesto": 5426.9,
+          "compra_activo_fijo": 60000,
+          "prestamo": 0,
+          "principal": 1000,
+          "dividendos": 0
+        },
+        "estado_resultados": {
+          "ventas": 66000,
+          "costo_ventas": 30000.0,
+          "utilidad_bruta": 36000.0,
+          "gastos_operativos": 14640.0,
+          "depreciacion": 1666.67,
+          "utilidad_operativa": 19693.33,
+          "intereses": 483.33,
+          "utilidad_antes_impuesto": 19210.0,
+          "impuesto_causado": 5763.0,
+          "utilidad_neta": 13447.0
+        },
+        "flujo": {
+          "operacion": 37569.77,
+          "inversion": -60000,
+          "financiamiento": -1000,
+          "variacion": -23430.23
+        },
+        "cierre": {
+          "efectivo": 211411.3,
+          "cxc": 58740.0,
+          "inventario_unidades": 77.5,
+          "inventario_valor": 7750.0,
+          "activo_fijo_bruto": 260000,
+          "depreciacion_acumulada": -85000.0,
+          "cxp": 8850.0,
+          "impuesto_por_pagar": 5763.0,
+          "deuda": 57000,
+          "capital": 100000,
+          "resultados_acumulados": 281288.3,
+          "activos": 452901.3,
+          "pasivos": 71613.0,
+          "patrimonio": 381288.3,
+          "diferencia": 0.0
+        },
+        "mes": 3,
+        "vencimientos_aplicados": {
+          "cobros_cxc": [
+            {
+              "origen": "2026-01",
+              "importe": 18480.0
+            },
+            {
+              "origen": "2026-02",
+              "importe": 19140.0
+            }
+          ],
+          "pagos_cxp": [],
+          "pago_impuesto": [
+            {
+              "origen": "2026-02",
+              "importe": 5426.9
+            }
+          ]
+        }
+      },
+      {
+        "periodo": "2026-04",
+        "apertura": {
+          "efectivo": 211411.3,
+          "cxc": 58740.0,
+          "inventario_unidades": 77.5,
+          "inventario_valor": 7750.0,
+          "activo_fijo_bruto": 260000,
+          "depreciacion_acumulada": -85000.0,
+          "cxp": 8850.0,
+          "impuesto_por_pagar": 5763.0,
+          "deuda": 57000,
+          "capital": 100000,
+          "resultados_acumulados": 281288.3,
+          "activos": 452901.3,
+          "pasivos": 71613.0,
+          "patrimonio": 381288.3,
+          "diferencia": 0.0
+        },
+        "inventario": {
+          "unidades_disponibles": 390.0,
+          "valor_disponible": 39000.0,
+          "costo_compra_unitario": 100,
+          "costo_promedio": 100.0,
+          "unidades_finales": 80.0,
+          "valor_final": 8000.0,
+          "objetivo_unidades": 80.0,
+          "sobrante_unidades": 0.0
+        },
+        "movimientos": {
+          "unidades_vendidas": 310,
+          "ventas_contado": 27280.0,
+          "ventas_credito": 40920.0,
+          "cobros_cxc": 38940.0,
+          "cobros": 66220.0,
+          "compras_unidades": 312.5,
+          "compras_valor": 31250.0,
+          "compras_contado": 12500.0,
+          "compras_credito": 18750.0,
+          "pagos_cxp": 8850.0,
+          "pagos_proveedores": 21350.0,
+          "pago_impuesto": 5763.0,
+          "compra_activo_fijo": 0,
+          "prestamo": 0,
+          "principal": 1000,
+          "dividendos": 0
+        },
+        "estado_resultados": {
+          "ventas": 68200,
+          "costo_ventas": 31000.0,
+          "utilidad_bruta": 37200.0,
+          "gastos_operativos": 14728.0,
+          "depreciacion": 2166.67,
+          "utilidad_operativa": 20305.33,
+          "intereses": 475.0,
+          "utilidad_antes_impuesto": 19830.33,
+          "impuesto_causado": 5949.1,
+          "utilidad_neta": 13881.23
+        },
+        "flujo": {
+          "operacion": 23904.0,
+          "inversion": 0,
+          "financiamiento": -1000,
+          "variacion": 22904.0
+        },
+        "cierre": {
+          "efectivo": 234315.3,
+          "cxc": 60720.0,
+          "inventario_unidades": 80.0,
+          "inventario_valor": 8000.0,
+          "activo_fijo_bruto": 260000,
+          "depreciacion_acumulada": -87166.67,
+          "cxp": 18750.0,
+          "impuesto_por_pagar": 5949.1,
+          "deuda": 56000,
+          "capital": 100000,
+          "resultados_acumulados": 295169.53,
+          "activos": 475868.63,
+          "pasivos": 80699.1,
+          "patrimonio": 395169.53,
+          "diferencia": 0.0
+        },
+        "mes": 4,
+        "vencimientos_aplicados": {
+          "cobros_cxc": [
+            {
+              "origen": "2026-02",
+              "importe": 19140.0
+            },
+            {
+              "origen": "2026-03",
+              "importe": 19800.0
+            }
+          ],
+          "pagos_cxp": [
+            {
+              "origen": "2026-03",
+              "importe": 8850.0
+            }
+          ],
+          "pago_impuesto": [
+            {
+              "origen": "2026-03",
+              "importe": 5763.0
+            }
+          ]
+        }
+      },
+      {
+        "periodo": "2026-05",
+        "apertura": {
+          "efectivo": 234315.3,
+          "cxc": 60720.0,
+          "inventario_unidades": 80.0,
+          "inventario_valor": 8000.0,
+          "activo_fijo_bruto": 260000,
+          "depreciacion_acumulada": -87166.67,
+          "cxp": 18750.0,
+          "impuesto_por_pagar": 5949.1,
+          "deuda": 56000,
+          "capital": 100000,
+          "resultados_acumulados": 295169.53,
+          "activos": 475868.63,
+          "pasivos": 80699.1,
+          "patrimonio": 395169.53,
+          "diferencia": 0.0
+        },
+        "inventario": {
+          "unidades_disponibles": 395.0,
+          "valor_disponible": 39500.0,
+          "costo_compra_unitario": 100,
+          "costo_promedio": 100.0,
+          "unidades_finales": 75.0,
+          "valor_final": 7500.0,
+          "objetivo_unidades": 75.0,
+          "sobrante_unidades": 0.0
+        },
+        "movimientos": {
+          "unidades_vendidas": 320,
+          "ventas_contado": 28160.0,
+          "ventas_credito": 42240.0,
+          "cobros_cxc": 40260.0,
+          "cobros": 68420.0,
+          "compras_unidades": 315.0,
+          "compras_valor": 31500.0,
+          "compras_contado": 12600.0,
+          "compras_credito": 18900.0,
+          "pagos_cxp": 18750.0,
+          "pagos_proveedores": 31350.0,
+          "pago_impuesto": 5949.1,
+          "compra_activo_fijo": 0,
+          "prestamo": 0,
+          "principal": 1000,
+          "dividendos": 0
+        },
+        "estado_resultados": {
+          "ventas": 70400,
+          "costo_ventas": 32000.0,
+          "utilidad_bruta": 38400.0,
+          "gastos_operativos": 14816.0,
+          "depreciacion": 2166.67,
+          "utilidad_operativa": 21417.33,
+          "intereses": 466.67,
+          "utilidad_antes_impuesto": 20950.67,
+          "impuesto_causado": 6285.2,
+          "utilidad_neta": 14665.47
+        },
+        "flujo": {
+          "operacion": 15838.23,
+          "inversion": 0,
+          "financiamiento": -1000,
+          "variacion": 14838.23
+        },
+        "cierre": {
+          "efectivo": 249153.53,
+          "cxc": 62700.0,
+          "inventario_unidades": 75.0,
+          "inventario_valor": 7500.0,
+          "activo_fijo_bruto": 260000,
+          "depreciacion_acumulada": -89333.33,
+          "cxp": 18900.0,
+          "impuesto_por_pagar": 6285.2,
+          "deuda": 55000,
+          "capital": 100000,
+          "resultados_acumulados": 309835.0,
+          "activos": 490020.2,
+          "pasivos": 80185.2,
+          "patrimonio": 409835.0,
+          "diferencia": 0.0
+        },
+        "mes": 5,
+        "vencimientos_aplicados": {
+          "cobros_cxc": [
+            {
+              "origen": "2026-03",
+              "importe": 19800.0
+            },
+            {
+              "origen": "2026-04",
+              "importe": 20460.0
+            }
+          ],
+          "pagos_cxp": [
+            {
+              "origen": "2026-04",
+              "importe": 18750.0
+            }
+          ],
+          "pago_impuesto": [
+            {
+              "origen": "2026-04",
+              "importe": 5949.1
+            }
+          ]
+        }
+      },
+      {
+        "periodo": "2026-06",
+        "apertura": {
+          "efectivo": 249153.53,
+          "cxc": 62700.0,
+          "inventario_unidades": 75.0,
+          "inventario_valor": 7500.0,
+          "activo_fijo_bruto": 260000,
+          "depreciacion_acumulada": -89333.33,
+          "cxp": 18900.0,
+          "impuesto_por_pagar": 6285.2,
+          "deuda": 55000,
+          "capital": 100000,
+          "resultados_acumulados": 309835.0,
+          "activos": 490020.2,
+          "pasivos": 80185.2,
+          "patrimonio": 409835.0,
+          "diferencia": 0.0
+        },
+        "inventario": {
+          "unidades_disponibles": 372.5,
+          "valor_disponible": 37250.0,
+          "costo_compra_unitario": 100,
+          "costo_promedio": 100.0,
+          "unidades_finales": 72.5,
+          "valor_final": 7250.0,
+          "objetivo_unidades": 72.5,
+          "sobrante_unidades": 0.0
+        },
+        "movimientos": {
+          "unidades_vendidas": 300,
+          "ventas_contado": 26400.0,
+          "ventas_credito": 39600.0,
+          "cobros_cxc": 41580.0,
+          "cobros": 67980.0,
+          "compras_unidades": 297.5,
+          "compras_valor": 29750.0,
+          "compras_contado": 11900.0,
+          "compras_credito": 17850.0,
+          "pagos_cxp": 18900.0,
+          "pagos_proveedores": 30800.0,
+          "pago_impuesto": 6285.2,
+          "compra_activo_fijo": 0,
+          "prestamo": 50000,
+          "principal": 1000,
+          "dividendos": 0
+        },
+        "estado_resultados": {
+          "ventas": 66000,
+          "costo_ventas": 30000.0,
+          "utilidad_bruta": 36000.0,
+          "gastos_operativos": 14640.0,
+          "depreciacion": 2166.67,
+          "utilidad_operativa": 19193.33,
+          "intereses": 458.33,
+          "utilidad_antes_impuesto": 18735.0,
+          "impuesto_causado": 5620.5,
+          "utilidad_neta": 13114.5
+        },
+        "flujo": {
+          "operacion": 15796.47,
+          "inversion": 0,
+          "financiamiento": 49000,
+          "variacion": 64796.47
+        },
+        "cierre": {
+          "efectivo": 313950.0,
+          "cxc": 60720.0,
+          "inventario_unidades": 72.5,
+          "inventario_valor": 7250.0,
+          "activo_fijo_bruto": 260000,
+          "depreciacion_acumulada": -91500.0,
+          "cxp": 17850.0,
+          "impuesto_por_pagar": 5620.5,
+          "deuda": 104000,
+          "capital": 100000,
+          "resultados_acumulados": 322949.5,
+          "activos": 550420.0,
+          "pasivos": 127470.5,
+          "patrimonio": 422949.5,
+          "diferencia": 0.0
+        },
+        "mes": 6,
+        "vencimientos_aplicados": {
+          "cobros_cxc": [
+            {
+              "origen": "2026-04",
+              "importe": 20460.0
+            },
+            {
+              "origen": "2026-05",
+              "importe": 21120.0
+            }
+          ],
+          "pagos_cxp": [
+            {
+              "origen": "2026-05",
+              "importe": 18900.0
+            }
+          ],
+          "pago_impuesto": [
+            {
+              "origen": "2026-05",
+              "importe": 6285.2
+            }
+          ]
+        }
+      },
+      {
+        "periodo": "2026-07",
+        "apertura": {
+          "efectivo": 313950.0,
+          "cxc": 60720.0,
+          "inventario_unidades": 72.5,
+          "inventario_valor": 7250.0,
+          "activo_fijo_bruto": 260000,
+          "depreciacion_acumulada": -91500.0,
+          "cxp": 17850.0,
+          "impuesto_por_pagar": 5620.5,
+          "deuda": 104000,
+          "capital": 100000,
+          "resultados_acumulados": 322949.5,
+          "activos": 550420.0,
+          "pasivos": 127470.5,
+          "patrimonio": 422949.5,
+          "diferencia": 0.0
+        },
+        "inventario": {
+          "unidades_disponibles": 360.0,
+          "valor_disponible": 38300.0,
+          "costo_compra_unitario": 108,
+          "costo_promedio": 106.39,
+          "unidades_finales": 70.0,
+          "valor_final": 7447.22,
+          "objetivo_unidades": 70.0,
+          "sobrante_unidades": 0.0
+        },
+        "movimientos": {
+          "unidades_vendidas": 290,
+          "ventas_contado": 25520.0,
+          "ventas_credito": 38280.0,
+          "cobros_cxc": 40920.0,
+          "cobros": 66440.0,
+          "compras_unidades": 287.5,
+          "compras_valor": 31050.0,
+          "compras_contado": 12420.0,
+          "compras_credito": 18630.0,
+          "pagos_cxp": 17850.0,
+          "pagos_proveedores": 30270.0,
+          "pago_impuesto": 5620.5,
+          "compra_activo_fijo": 0,
+          "prestamo": 0,
+          "principal": 1000,
+          "dividendos": 0
+        },
+        "estado_resultados": {
+          "ventas": 63800,
+          "costo_ventas": 30852.78,
+          "utilidad_bruta": 32947.22,
+          "gastos_operativos": 14552.0,
+          "depreciacion": 2166.67,
+          "utilidad_operativa": 16228.56,
+          "intereses": 866.67,
+          "utilidad_antes_impuesto": 15361.89,
+          "impuesto_causado": 4608.57,
+          "utilidad_neta": 10753.32
+        },
+        "flujo": {
+          "operacion": 15130.83,
+          "inversion": 0,
+          "financiamiento": -1000,
+          "variacion": 14130.83
+        },
+        "cierre": {
+          "efectivo": 328080.83,
+          "cxc": 58080.0,
+          "inventario_unidades": 70.0,
+          "inventario_valor": 7447.22,
+          "activo_fijo_bruto": 260000,
+          "depreciacion_acumulada": -93666.67,
+          "cxp": 18630.0,
+          "impuesto_por_pagar": 4608.57,
+          "deuda": 103000,
+          "capital": 100000,
+          "resultados_acumulados": 333702.82,
+          "activos": 559941.39,
+          "pasivos": 126238.57,
+          "patrimonio": 433702.82,
+          "diferencia": 0.0
+        },
+        "mes": 7,
+        "vencimientos_aplicados": {
+          "cobros_cxc": [
+            {
+              "origen": "2026-05",
+              "importe": 21120.0
+            },
+            {
+              "origen": "2026-06",
+              "importe": 19800.0
+            }
+          ],
+          "pagos_cxp": [
+            {
+              "origen": "2026-06",
+              "importe": 17850.0
+            }
+          ],
+          "pago_impuesto": [
+            {
+              "origen": "2026-06",
+              "importe": 5620.5
+            }
+          ]
+        }
+      },
+      {
+        "periodo": "2026-08",
+        "apertura": {
+          "efectivo": 328080.83,
+          "cxc": 58080.0,
+          "inventario_unidades": 70.0,
+          "inventario_valor": 7447.22,
+          "activo_fijo_bruto": 260000,
+          "depreciacion_acumulada": -93666.67,
+          "cxp": 18630.0,
+          "impuesto_por_pagar": 4608.57,
+          "deuda": 103000,
+          "capital": 100000,
+          "resultados_acumulados": 333702.82,
+          "activos": 559941.39,
+          "pasivos": 126238.57,
+          "patrimonio": 433702.82,
+          "diferencia": 0.0
+        },
+        "inventario": {
+          "unidades_disponibles": 355.0,
+          "valor_disponible": 38227.22,
+          "costo_compra_unitario": 108,
+          "costo_promedio": 107.68,
+          "unidades_finales": 75.0,
+          "valor_final": 8076.17,
+          "objetivo_unidades": 75.0,
+          "sobrante_unidades": 0.0
+        },
+        "movimientos": {
+          "unidades_vendidas": 280,
+          "ventas_contado": 24640.0,
+          "ventas_credito": 36960.0,
+          "cobros_cxc": 38940.0,
+          "cobros": 63580.0,
+          "compras_unidades": 285.0,
+          "compras_valor": 30780.0,
+          "compras_contado": 12312.0,
+          "compras_credito": 18468.0,
+          "pagos_cxp": 18630.0,
+          "pagos_proveedores": 30942.0,
+          "pago_impuesto": 4608.57,
+          "compra_activo_fijo": 0,
+          "prestamo": 0,
+          "principal": 1000,
+          "dividendos": 0
+        },
+        "estado_resultados": {
+          "ventas": 61600,
+          "costo_ventas": 30151.05,
+          "utilidad_bruta": 31448.95,
+          "gastos_operativos": 14464.0,
+          "depreciacion": 2166.67,
+          "utilidad_operativa": 14818.28,
+          "intereses": 858.33,
+          "utilidad_antes_impuesto": 13959.95,
+          "impuesto_causado": 4187.99,
+          "utilidad_neta": 9771.97
+        },
+        "flujo": {
+          "operacion": 12707.1,
+          "inversion": 0,
+          "financiamiento": -1000,
+          "variacion": 11707.1
+        },
+        "cierre": {
+          "efectivo": 339787.93,
+          "cxc": 56100.0,
+          "inventario_unidades": 75.0,
+          "inventario_valor": 8076.17,
+          "activo_fijo_bruto": 260000,
+          "depreciacion_acumulada": -95833.33,
+          "cxp": 18468.0,
+          "impuesto_por_pagar": 4187.99,
+          "deuda": 102000,
+          "capital": 100000,
+          "resultados_acumulados": 343474.79,
+          "activos": 568130.77,
+          "pasivos": 124655.99,
+          "patrimonio": 443474.79,
+          "diferencia": 0.0
+        },
+        "mes": 8,
+        "vencimientos_aplicados": {
+          "cobros_cxc": [
+            {
+              "origen": "2026-06",
+              "importe": 19800.0
+            },
+            {
+              "origen": "2026-07",
+              "importe": 19140.0
+            }
+          ],
+          "pagos_cxp": [
+            {
+              "origen": "2026-07",
+              "importe": 18630.0
+            }
+          ],
+          "pago_impuesto": [
+            {
+              "origen": "2026-07",
+              "importe": 4608.57
+            }
+          ]
+        }
+      },
+      {
+        "periodo": "2026-09",
+        "apertura": {
+          "efectivo": 339787.93,
+          "cxc": 56100.0,
+          "inventario_unidades": 75.0,
+          "inventario_valor": 8076.17,
+          "activo_fijo_bruto": 260000,
+          "depreciacion_acumulada": -95833.33,
+          "cxp": 18468.0,
+          "impuesto_por_pagar": 4187.99,
+          "deuda": 102000,
+          "capital": 100000,
+          "resultados_acumulados": 343474.79,
+          "activos": 568130.77,
+          "pasivos": 124655.99,
+          "patrimonio": 443474.79,
+          "diferencia": 0.0
+        },
+        "inventario": {
+          "unidades_disponibles": 377.5,
+          "valor_disponible": 40746.17,
+          "costo_compra_unitario": 108,
+          "costo_promedio": 107.94,
+          "unidades_finales": 77.5,
+          "valor_final": 8365.11,
+          "objetivo_unidades": 77.5,
+          "sobrante_unidades": 0.0
+        },
+        "movimientos": {
+          "unidades_vendidas": 300,
+          "ventas_contado": 26400.0,
+          "ventas_credito": 39600.0,
+          "cobros_cxc": 37620.0,
+          "cobros": 64020.0,
+          "compras_unidades": 302.5,
+          "compras_valor": 32670.0,
+          "compras_contado": 13068.0,
+          "compras_credito": 19602.0,
+          "pagos_cxp": 18468.0,
+          "pagos_proveedores": 31536.0,
+          "pago_impuesto": 4187.99,
+          "compra_activo_fijo": 0,
+          "prestamo": 0,
+          "principal": 1000,
+          "dividendos": 0
+        },
+        "estado_resultados": {
+          "ventas": 66000,
+          "costo_ventas": 32381.07,
+          "utilidad_bruta": 33618.93,
+          "gastos_operativos": 14640.0,
+          "depreciacion": 2166.67,
+          "utilidad_operativa": 16812.27,
+          "intereses": 850.0,
+          "utilidad_antes_impuesto": 15962.27,
+          "impuesto_causado": 4788.68,
+          "utilidad_neta": 11173.59
+        },
+        "flujo": {
+          "operacion": 12806.01,
+          "inversion": 0,
+          "financiamiento": -1000,
+          "variacion": 11806.01
+        },
+        "cierre": {
+          "efectivo": 351593.95,
+          "cxc": 58080.0,
+          "inventario_unidades": 77.5,
+          "inventario_valor": 8365.11,
+          "activo_fijo_bruto": 260000,
+          "depreciacion_acumulada": -98000.0,
+          "cxp": 19602.0,
+          "impuesto_por_pagar": 4788.68,
+          "deuda": 101000,
+          "capital": 100000,
+          "resultados_acumulados": 354648.38,
+          "activos": 580039.06,
+          "pasivos": 125390.68,
+          "patrimonio": 454648.38,
+          "diferencia": 0.0
+        },
+        "mes": 9,
+        "vencimientos_aplicados": {
+          "cobros_cxc": [
+            {
+              "origen": "2026-07",
+              "importe": 19140.0
+            },
+            {
+              "origen": "2026-08",
+              "importe": 18480.0
+            }
+          ],
+          "pagos_cxp": [
+            {
+              "origen": "2026-08",
+              "importe": 18468.0
+            }
+          ],
+          "pago_impuesto": [
+            {
+              "origen": "2026-08",
+              "importe": 4187.99
+            }
+          ]
+        }
+      },
+      {
+        "periodo": "2026-10",
+        "apertura": {
+          "efectivo": 351593.95,
+          "cxc": 58080.0,
+          "inventario_unidades": 77.5,
+          "inventario_valor": 8365.11,
+          "activo_fijo_bruto": 260000,
+          "depreciacion_acumulada": -98000.0,
+          "cxp": 19602.0,
+          "impuesto_por_pagar": 4788.68,
+          "deuda": 101000,
+          "capital": 100000,
+          "resultados_acumulados": 354648.38,
+          "activos": 580039.06,
+          "pasivos": 125390.68,
+          "patrimonio": 454648.38,
+          "diferencia": 0.0
+        },
+        "inventario": {
+          "unidades_disponibles": 392.5,
+          "valor_disponible": 42385.11,
+          "costo_compra_unitario": 108,
+          "costo_promedio": 107.99,
+          "unidades_finales": 82.5,
+          "valor_final": 8908.97,
+          "objetivo_unidades": 82.5,
+          "sobrante_unidades": 0.0
+        },
+        "movimientos": {
+          "unidades_vendidas": 310,
+          "ventas_contado": 27280.0,
+          "ventas_credito": 40920.0,
+          "cobros_cxc": 38280.0,
+          "cobros": 65560.0,
+          "compras_unidades": 315.0,
+          "compras_valor": 34020.0,
+          "compras_contado": 13608.0,
+          "compras_credito": 20412.0,
+          "pagos_cxp": 19602.0,
+          "pagos_proveedores": 33210.0,
+          "pago_impuesto": 4788.68,
+          "compra_activo_fijo": 0,
+          "prestamo": 0,
+          "principal": 1000,
+          "dividendos": 0
+        },
+        "estado_resultados": {
+          "ventas": 68200,
+          "costo_ventas": 33476.14,
+          "utilidad_bruta": 34723.86,
+          "gastos_operativos": 14728.0,
+          "depreciacion": 2166.67,
+          "utilidad_operativa": 17829.2,
+          "intereses": 841.67,
+          "utilidad_antes_impuesto": 16987.53,
+          "impuesto_causado": 5096.26,
+          "utilidad_neta": 11891.27
+        },
+        "flujo": {
+          "operacion": 11991.65,
+          "inversion": 0,
+          "financiamiento": -1000,
+          "variacion": 10991.65
+        },
+        "cierre": {
+          "efectivo": 362585.6,
+          "cxc": 60720.0,
+          "inventario_unidades": 82.5,
+          "inventario_valor": 8908.97,
+          "activo_fijo_bruto": 260000,
+          "depreciacion_acumulada": -100166.67,
+          "cxp": 20412.0,
+          "impuesto_por_pagar": 5096.26,
+          "deuda": 100000,
+          "capital": 100000,
+          "resultados_acumulados": 366539.65,
+          "activos": 592047.91,
+          "pasivos": 125508.26,
+          "patrimonio": 466539.65,
+          "diferencia": 0.0
+        },
+        "mes": 10,
+        "vencimientos_aplicados": {
+          "cobros_cxc": [
+            {
+              "origen": "2026-08",
+              "importe": 18480.0
+            },
+            {
+              "origen": "2026-09",
+              "importe": 19800.0
+            }
+          ],
+          "pagos_cxp": [
+            {
+              "origen": "2026-09",
+              "importe": 19602.0
+            }
+          ],
+          "pago_impuesto": [
+            {
+              "origen": "2026-09",
+              "importe": 4788.68
+            }
+          ]
+        }
+      },
+      {
+        "periodo": "2026-11",
+        "apertura": {
+          "efectivo": 362585.6,
+          "cxc": 60720.0,
+          "inventario_unidades": 82.5,
+          "inventario_valor": 8908.97,
+          "activo_fijo_bruto": 260000,
+          "depreciacion_acumulada": -100166.67,
+          "cxp": 20412.0,
+          "impuesto_por_pagar": 5096.26,
+          "deuda": 100000,
+          "capital": 100000,
+          "resultados_acumulados": 366539.65,
+          "activos": 592047.91,
+          "pasivos": 125508.26,
+          "patrimonio": 466539.65,
+          "diferencia": 0.0
+        },
+        "inventario": {
+          "unidades_disponibles": 417.5,
+          "valor_disponible": 45088.97,
+          "costo_compra_unitario": 108,
+          "costo_promedio": 108.0,
+          "unidades_finales": 87.5,
+          "valor_final": 9449.78,
+          "objetivo_unidades": 87.5,
+          "sobrante_unidades": 0.0
+        },
+        "movimientos": {
+          "unidades_vendidas": 330,
+          "ventas_contado": 29040.0,
+          "ventas_credito": 43560.0,
+          "cobros_cxc": 40260.0,
+          "cobros": 69300.0,
+          "compras_unidades": 335.0,
+          "compras_valor": 36180.0,
+          "compras_contado": 14472.0,
+          "compras_credito": 21708.0,
+          "pagos_cxp": 20412.0,
+          "pagos_proveedores": 34884.0,
+          "pago_impuesto": 5096.26,
+          "compra_activo_fijo": 0,
+          "prestamo": 0,
+          "principal": 1000,
+          "dividendos": 0
+        },
+        "estado_resultados": {
+          "ventas": 72600,
+          "costo_ventas": 35639.19,
+          "utilidad_bruta": 36960.81,
+          "gastos_operativos": 14904.0,
+          "depreciacion": 2166.67,
+          "utilidad_operativa": 19890.15,
+          "intereses": 833.33,
+          "utilidad_antes_impuesto": 19056.81,
+          "impuesto_causado": 5717.04,
+          "utilidad_neta": 13339.77
+        },
+        "flujo": {
+          "operacion": 13582.41,
+          "inversion": 0,
+          "financiamiento": -1000,
+          "variacion": 12582.41
+        },
+        "cierre": {
+          "efectivo": 375168.01,
+          "cxc": 64020.0,
+          "inventario_unidades": 87.5,
+          "inventario_valor": 9449.78,
+          "activo_fijo_bruto": 260000,
+          "depreciacion_acumulada": -102333.33,
+          "cxp": 21708.0,
+          "impuesto_por_pagar": 5717.04,
+          "deuda": 99000,
+          "capital": 100000,
+          "resultados_acumulados": 379879.42,
+          "activos": 606304.46,
+          "pasivos": 126425.04,
+          "patrimonio": 479879.42,
+          "diferencia": 0.0
+        },
+        "mes": 11,
+        "vencimientos_aplicados": {
+          "cobros_cxc": [
+            {
+              "origen": "2026-09",
+              "importe": 19800.0
+            },
+            {
+              "origen": "2026-10",
+              "importe": 20460.0
+            }
+          ],
+          "pagos_cxp": [
+            {
+              "origen": "2026-10",
+              "importe": 20412.0
+            }
+          ],
+          "pago_impuesto": [
+            {
+              "origen": "2026-10",
+              "importe": 5096.26
+            }
+          ]
+        }
+      },
+      {
+        "periodo": "2026-12",
+        "apertura": {
+          "efectivo": 375168.01,
+          "cxc": 64020.0,
+          "inventario_unidades": 87.5,
+          "inventario_valor": 9449.78,
+          "activo_fijo_bruto": 260000,
+          "depreciacion_acumulada": -102333.33,
+          "cxp": 21708.0,
+          "impuesto_por_pagar": 5717.04,
+          "deuda": 99000,
+          "capital": 100000,
+          "resultados_acumulados": 379879.42,
+          "activos": 606304.46,
+          "pasivos": 126425.04,
+          "patrimonio": 479879.42,
+          "diferencia": 0.0
+        },
+        "inventario": {
+          "unidades_disponibles": 425.0,
+          "valor_disponible": 45899.78,
+          "costo_compra_unitario": 108,
+          "costo_promedio": 108.0,
+          "unidades_finales": 75.0,
+          "valor_final": 8099.96,
+          "objetivo_unidades": 75,
+          "sobrante_unidades": 0.0
+        },
+        "movimientos": {
+          "unidades_vendidas": 350,
+          "ventas_contado": 30800.0,
+          "ventas_credito": 46200.0,
+          "cobros_cxc": 42240.0,
+          "cobros": 73040.0,
+          "compras_unidades": 337.5,
+          "compras_valor": 36450.0,
+          "compras_contado": 14580.0,
+          "compras_credito": 21870.0,
+          "pagos_cxp": 21708.0,
+          "pagos_proveedores": 36288.0,
+          "pago_impuesto": 5717.04,
+          "compra_activo_fijo": 0,
+          "prestamo": 0,
+          "principal": 1000,
+          "dividendos": 20000
+        },
+        "estado_resultados": {
+          "ventas": 77000,
+          "costo_ventas": 37799.82,
+          "utilidad_bruta": 39200.18,
+          "gastos_operativos": 15080.0,
+          "depreciacion": 2166.67,
+          "utilidad_operativa": 21953.51,
+          "intereses": 825.0,
+          "utilidad_antes_impuesto": 21128.51,
+          "impuesto_causado": 6338.55,
+          "utilidad_neta": 14789.96
+        },
+        "flujo": {
+          "operacion": 15129.96,
+          "inversion": 0,
+          "financiamiento": -21000,
+          "variacion": -5870.04
+        },
+        "cierre": {
+          "efectivo": 369297.96,
+          "cxc": 67980.0,
+          "inventario_unidades": 75.0,
+          "inventario_valor": 8099.96,
+          "activo_fijo_bruto": 260000,
+          "depreciacion_acumulada": -104500.0,
+          "cxp": 21870.0,
+          "impuesto_por_pagar": 6338.55,
+          "deuda": 98000,
+          "capital": 100000,
+          "resultados_acumulados": 374669.37,
+          "activos": 600877.93,
+          "pasivos": 126208.55,
+          "patrimonio": 474669.37,
+          "diferencia": 0.0
+        },
+        "mes": 12,
+        "vencimientos_aplicados": {
+          "cobros_cxc": [
+            {
+              "origen": "2026-10",
+              "importe": 20460.0
+            },
+            {
+              "origen": "2026-11",
+              "importe": 21780.0
+            }
+          ],
+          "pagos_cxp": [
+            {
+              "origen": "2026-11",
+              "importe": 21708.0
+            }
+          ],
+          "pago_impuesto": [
+            {
+              "origen": "2026-11",
+              "importe": 5717.04
+            }
+          ]
+        }
+      }
+    ],
+    "anual": {
+      "movimientos": {
+        "unidades_vendidas": 3660,
+        "ventas_contado": 322080.0,
+        "ventas_credito": 483120.0,
+        "cobros_cxc": 443540.0,
+        "cobros": 765620.0,
+        "compras_unidades": 2935.0,
+        "compras_valor": 308400.0,
+        "compras_contado": 123360.0,
+        "compras_credito": 185040.0,
+        "pagos_cxp": 188170.0,
+        "pagos_proveedores": 311530.0,
+        "pago_impuesto": 71634.04,
+        "compra_activo_fijo": 60000,
+        "prestamo": 50000,
+        "principal": 12000,
+        "dividendos": 20000
+      },
+      "estado_resultados": {
+        "ventas": 805200,
+        "costo_ventas": 380300.04,
+        "utilidad_bruta": 424899.96,
+        "gastos_operativos": 176208.0,
+        "depreciacion": 24500.0,
+        "utilidad_operativa": 224191.96,
+        "intereses": 7950.0,
+        "utilidad_antes_impuesto": 216241.96,
+        "impuesto_causado": 64872.59,
+        "utilidad_neta": 151369.37
+      },
+      "flujo": {
+        "operacion": 198297.96,
+        "inversion": -60000,
+        "financiamiento": 18000,
+        "variacion": 156297.96
+      },
+      "apertura": {
+        "efectivo": 213000.0,
+        "cxc": 28400.0,
+        "inventario_unidades": 800,
+        "inventario_valor": 80000.0,
+        "activo_fijo_bruto": 200000,
+        "depreciacion_acumulada": -80000,
+        "cxp": 25000.0,
+        "impuesto_por_pagar": 13100.0,
+        "deuda": 60000,
+        "capital": 100000,
+        "resultados_acumulados": 243300.0,
+        "activos": 441400.0,
+        "pasivos": 98100.0,
+        "patrimonio": 343300.0,
+        "diferencia": 0.0
+      },
+      "cierre": {
+        "efectivo": 369297.96,
+        "cxc": 67980.0,
+        "inventario_unidades": 75.0,
+        "inventario_valor": 8099.96,
+        "activo_fijo_bruto": 260000,
+        "depreciacion_acumulada": -104500.0,
+        "cxp": 21870.0,
+        "impuesto_por_pagar": 6338.55,
+        "deuda": 98000,
+        "capital": 100000,
+        "resultados_acumulados": 374669.37,
+        "activos": 600877.93,
+        "pasivos": 126208.55,
+        "patrimonio": 474669.37,
+        "diferencia": 0.0
+      }
+    },
+    "vencimientos_pendientes": {
+      "cobros_cxc": [
+        {
+          "vence": "2027-01",
+          "origen": "2026-11",
+          "importe": 21780.0
+        },
+        {
+          "vence": "2027-01",
+          "origen": "2026-12",
+          "importe": 23100.0
+        },
+        {
+          "vence": "2027-02",
+          "origen": "2026-12",
+          "importe": 23100.0
+        }
+      ],
+      "pagos_cxp": [
+        {
+          "vence": "2027-01",
+          "origen": "2026-12",
+          "importe": 21870.0
+        }
+      ],
+      "pago_impuesto": [
+        {
+          "vence": "2027-01",
+          "origen": "2026-12",
+          "importe": 6338.55
+        }
+      ]
+    }
+  },
+  "controles": {
+    "E1-01": true,
+    "E1-02": true,
+    "E1-03": true,
+    "E1-04": true,
+    "E1-05": true,
+    "E1-06": true,
+    "E1-07": true,
+    "E1-08": true,
+    "E1-09": true,
+    "E1-10": true,
+    "E1-11": true,
+    "E1-12": true,
+    "E1-13": true,
+    "E1-14": true,
+    "E1-15": true,
+    "E1-16": true,
+    "E1-17": true
+  }
+}
