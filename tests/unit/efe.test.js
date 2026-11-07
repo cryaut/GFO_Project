@@ -190,9 +190,9 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
     // CFO 95, CFI −60, CFF −5: la operación cubre la inversión (95 − 60 = 35 ≥ 0)
     // y el financiamiento devolvió o distribuyó 5 (préstamo +20, dividendos −25).
     const r = construirEFE(estados(bg, er), '2024', '2025');
-    expect(r.interpretacion).toContain('La operación generó C$ 95.00 de efectivo');
-    expect(r.interpretacion).toContain('alcanzó para cubrir la inversión');
-    expect(r.interpretacion).toContain('el financiamiento devolvió o distribuyó C$ 5.00');
+    expect(r.interpretacion).toContain('la operación habría generado C$ 95.00 de efectivo');
+    expect(r.interpretacion).toContain('habría alcanzado para cubrir la inversión');
+    expect(r.interpretacion).toContain('el financiamiento habría devuelto o distribuido C$ 5.00');
 
     // Operación negativa (−30) con inversión (−20) y financiamiento (+50): consume
     // efectivo, no cubre la inversión por 50 y el financiamiento aporta 50.
@@ -206,9 +206,9 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
     expect(c.inversion.total).toBe(-20);
     expect(c.financiamiento.total).toBe(50);
     expect(c.estado).toBe('cuadra-sin-verificar');
-    expect(c.interpretacion).toContain('La operación consumió C$ 30.00 de efectivo');
-    expect(c.interpretacion).toContain('no alcanzó a cubrir la inversión (faltaron C$ 50.00)');
-    expect(c.interpretacion).toContain('el financiamiento aportó C$ 50.00');
+    expect(c.interpretacion).toContain('la operación habría consumido C$ 30.00 de efectivo');
+    expect(c.interpretacion).toContain('no habría alcanzado para cubrir la inversión (faltaron C$ 50.00)');
+    expect(c.interpretacion).toContain('el financiamiento habría aportado C$ 50.00');
   });
 
   it('un cambio de cero no se presenta como menos cero', () => {
@@ -674,7 +674,7 @@ describe('reservas como destino de utilidades (D-068)', () => {
         patrimonio: { 'Capital social': 100, 'Utilidades acumuladas': 30, 'Reservas': 20, 'Resultado del ejercicio': 80 }
       }
     };
-    const r = construirEFE(estados(traspaso, {
+    const datos = estados(traspaso, {
       '2024': {},
       '2025': {
         Ventas: 500,
@@ -682,7 +682,10 @@ describe('reservas como destino de utilidades (D-068)', () => {
         'Costo de Ventas': 300, 'Gastos de Administracion': 80,
         'Gastos por Intereses': 20, 'Impuesto sobre la Renta': 20
       }
-    }), '2024', '2025');
+    });
+    // La reserva genérica es ambigua; el caso confirma expresamente su identidad.
+    datos.accountIdentities = { patrimonio: { Reservas: { idCuenta: 'bs.legal_reserve', estado: 'reconocida', metodo: 'manual', candidatos: [], origen: 'manual' } } };
+    const r = construirEFE(datos, '2024', '2025');
     expect(r.utilidadNeta).toBe(80);
     expect(itemDe(r.financiamiento, 'Dividendos').monto).toBe(-30);
     expect(itemDe(r.financiamiento, 'Aportaciones').monto).toBe(0);
@@ -908,8 +911,8 @@ describe('variantes V0 a V16 y VB (ronda 1, T5)', () => {
     // UA sin cambio (30 → 30), Reservas 0 → 20, resultado 50 → 80:
     // Δdestino = 0 + 20 + 30 = 50 → dividendos 30; Δpatrimonio 50 → aportaciones 0.
     const bg = base();
-    bg['2024'].patrimonio['Reservas'] = 0;
-    bg['2025'].patrimonio['Reservas'] = 20;
+    bg['2024'].patrimonio['Reserva legal'] = 0;
+    bg['2025'].patrimonio['Reserva legal'] = 20;
     bg['2025'].patrimonio['Utilidades acumuladas'] = 30; // los flujos suman 50: efectivo 150
     const r = con(bg);
     expect(r.estado).toBe('cuadra');

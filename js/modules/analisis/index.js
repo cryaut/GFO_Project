@@ -543,7 +543,8 @@ function renderEFESection(period) {
       <td>Total de ${titulo.toLowerCase()}</td>
       ${celda(seccion.total)}
     </tr>`;
-  return `<p class="text-muted mb-4" style="font-size:var(--font-size-sm)">
+  return `<div class="card mb-4" role="note"><strong>Estimación por variaciones de saldos.</strong> Cuadrar con el cambio de efectivo no confirma los cobros, pagos, dividendos ni operaciones no monetarias. Verifique los movimientos reales y las notas del periodo. Para registrar cobros y pagos, use <a href="#/flujo">Flujo de Efectivo</a>.</div>
+  <p class="text-muted mb-4" style="font-size:var(--font-size-sm)">
     Método indirecto desde dos balances: <strong>${escapeHTML(efe.periodos.inicial)}</strong> (inicial) → <strong>${escapeHTML(efe.periodos.final)}</strong> (final).
     Operación = utilidad neta + depreciación + variación de activos y pasivos de operación; Inversión = activos de inversión; Financiamiento = deuda, patrimonio y dividendos.
     Los gastos por intereses e impuestos ya están dentro de la utilidad neta.
@@ -660,29 +661,34 @@ export function initAnalisis() {
   const periods = getPeriods();
   if (!periods.includes(selectedAnalysisPeriod)) selectedAnalysisPeriod = periods.at(-1) || null;
   const period = selectedAnalysisPeriod;
-  const comparables = period ? periods.slice(0, periods.indexOf(period) + 1) : [];
   const menu = [
     ['Comparar estados', [['ah', 'Horizontal (AH)'], ['av', 'Vertical (AV)']]],
     ['Rentabilidad y lectura', [['razones', 'Razones'], ['dupont', 'DuPont'], ['interpretacion', 'Interpretación'], ['mercado', 'Mercado']]],
     ['Capital y fondos', [['cnt-cno', 'CNT / CNO'], ['eoaf', 'Origen y aplicación'], ['efe', 'Flujo de efectivo']]]
   ];
-  const panel = (id, titulo, contenido) => `<section class="tab-content analisis-panel${id === activeAnalysisTab ? ' active' : ''}" id="tab-${id}" aria-labelledby="analysis-tab-${id}">
-    <h2>${titulo}</h2><details class="analisis-method"><summary>Ver método y criterios</summary><p>${METODOS_ANALISIS[id]}</p></details>${contenido}</section>`;
+  const contenidoPanel = (id, titulo, contenido) => `<h2>${titulo}</h2><details class="analisis-method"><summary>Ver método y criterios</summary><p>${METODOS_ANALISIS[id]}</p></details>${contenido}`;
+  const panel = (id, titulo, contenido) => `<section class="tab-content analisis-panel${id === activeAnalysisTab ? ' active' : ''}" id="tab-${id}" aria-labelledby="analysis-tab-${id}">${contenidoPanel(id, titulo, contenido)}</section>`;
   const sinDatos = '<p class="analisis-empty">No hay datos para este periodo. <a href="#/estados">Cargue y guarde los estados financieros</a> para comenzar.</p>';
+  const secciones = periodo => {
+    const comparables = periodo ? periods.slice(0, periods.indexOf(periodo) + 1) : [];
+    return [
+      ['ah', 'Análisis Horizontal', renderAHSection(comparables)],
+      ['av', 'Análisis Vertical', periodo ? renderAVSection(periodo) : sinDatos],
+      ['razones', 'Razones Financieras', periodo ? renderRazonesSection(periodo) : sinDatos],
+      ['cnt-cno', 'Capital Neto de Trabajo y Operativo', periodo ? renderCNTCNOSection(periodo) : sinDatos],
+      ['eoaf', 'Estado de Origen y Aplicación de Fondos', renderEOAFSection(comparables)],
+      ['efe', 'Estado de Flujo de Efectivo · Método indirecto', periodo ? renderEFESection(periodo) : sinDatos],
+      ['dupont', 'Modelo DuPont · ROA y ROE', periodo ? renderDuPontSection(periodo) : sinDatos],
+      ['interpretacion', 'Interpretación de resultados', periodo ? renderInterpretacionSection(periodo) : sinDatos]
+    ];
+  };
   page.innerHTML = `<div class="analisis-workspace">
     <header class="page-header analisis-header"><div><h1 class="page-title">Análisis Financiero</h1><p class="page-subtitle">Compare sus estados, revise los cálculos y relacione los resultados.</p></div><a href="#/estados">Editar estados guardados →</a></header>
     ${avisoEstadosGuardados() ? `<p class="form-hint mb-4 text-danger">${escapeHTML(avisoEstadosGuardados())}</p>` : ''}
     <section class="analisis-context" aria-label="Datos analizados"><div><strong>${escapeHTML(savedCache?.name || 'Sin estados guardados')}</strong><p>Lectura de los datos guardados en Estados. Mercado conserva su comparación de todos los periodos.</p></div>
       <div><label class="form-label" for="analysisPeriod">Periodo de análisis</label><select class="form-select" id="analysisPeriod"${period ? '' : ' disabled'}>${periods.map(p => `<option value="${escapeHTML(p)}"${p === period ? ' selected' : ''}>${escapeHTML(p)}</option>`).join('') || '<option>Sin periodos</option>'}</select></div></section>
     <nav class="analisis-navigation" aria-label="Secciones del análisis">${menu.map(([grupo, opciones]) => `<div class="analisis-nav-group"><p>${grupo}</p><div class="tabs">${opciones.map(([id, nombre]) => `<button type="button" id="analysis-tab-${id}" class="tab-btn${activeAnalysisTab === id ? ' active' : ''}" data-tab="${id}" aria-controls="tab-${id}" aria-pressed="${activeAnalysisTab === id}">${nombre}</button>`).join('')}</div></div>`).join('')}</nav>
-    ${panel('ah', 'Análisis Horizontal', renderAHSection(comparables))}
-    ${panel('av', 'Análisis Vertical', period ? renderAVSection(period) : sinDatos)}
-    ${panel('razones', 'Razones Financieras', period ? renderRazonesSection(period) : sinDatos)}
-    ${panel('cnt-cno', 'Capital Neto de Trabajo y Operativo', period ? renderCNTCNOSection(period) : sinDatos)}
-    ${panel('eoaf', 'Estado de Origen y Aplicación de Fondos', renderEOAFSection(comparables))}
-    ${panel('efe', 'Estado de Flujo de Efectivo · Método indirecto', period ? renderEFESection(period) : sinDatos)}
-    ${panel('dupont', 'Modelo DuPont · ROA y ROE', period ? renderDuPontSection(period) : sinDatos)}
-    ${panel('interpretacion', 'Interpretación de resultados', period ? renderInterpretacionSection(period) : sinDatos)}
+    ${secciones(period).map(fila => panel(...fila)).join('')}
     ${panel('mercado', 'Razones de Mercado', '<div id="mercadoContenido"></div>')}
     </div>`;
 
@@ -697,8 +703,14 @@ export function initAnalisis() {
   }
   const selector = page.querySelector?.('#analysisPeriod');
   if (selector) selector.onchange = event => {
+    if (!periods.includes(event.target.value)) return;
     selectedAnalysisPeriod = event.target.value;
-    initAnalisis();
+    // Mercado compara todos los periodos: conservar su DOM mantiene el borrador,
+    // sus mensajes y los manejadores de Guardar, sin persistir entradas pendientes.
+    for (const [id, titulo, contenido] of secciones(selectedAnalysisPeriod)) {
+      const seccion = page.querySelector(`#tab-${id}`);
+      if (seccion) seccion.innerHTML = contenidoPanel(id, titulo, contenido);
+    }
   };
   page.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {

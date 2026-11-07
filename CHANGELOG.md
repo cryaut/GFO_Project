@@ -6,6 +6,11 @@ Todos los cambios notables en GFO Toolkit.
 
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
+### Rigor financiero
+- DuPont usa utilidad y ventas del motor; Flujo y Proforma mantienen N/D cuando falta un operando en vez de convertirlo en cero (D-087).
+- El EFE indirecto usa identidades para resultados y reservas e indica que sus flujos y dividendos son estimaciones que requieren confirmar movimientos; Proforma conserva esa distinción (D-088).
+- Casos de las presentaciones AFOD y contraste de módulos mínimos documentados en `docs/planificacion/rigor-financiero/`.
+
 ### Integración de razones y lectura segura
 - Análisis conserva el aviso de F8 para estados ilegibles y calcula las razones con el motor; las etiquetas de rotaciones indican ventas y compras a crédito. Reportes obtiene la utilidad neta del motor. Los documentos sin datos acreditados mantienen N/D (D-086).
 
@@ -51,6 +56,7 @@ Todos los cambios notables en GFO Toolkit.
 - Botón **Vista previa del reporte** (muestra el reporte en la página) y **Descargar reporte HTML**; antes el botón "Vista Previa HTML" descargaba el archivo.
 
 ### Módulo 3: Análisis Financiero
+- Cambiar el periodo actualiza únicamente los paneles dependientes y conserva el formulario de Mercado sin guardar, sus mensajes y su acción Guardar; no persiste el borrador al navegar.
 - AH/AV completos por cuenta y totales reportados, con nombres propios, ausencias N/D y sin duplicar sumas; DuPont muestra factores, sustituciones, ROA/ROE y comprobación directa desde la misma fuente de Razones (D-095). Navegación agrupada, selector de periodo, métodos desplegables y diseño de las nueve secciones adaptado a móvil y ambos temas. Motor de razones y generado sin cambios.
 - Ronda 18 / D-049 y D-056–D-058: razones de Análisis, Integración y Proforma conectadas al motor JSON; composición de ingresos declarada por periodo, identidad acreditada y N/D con motivos. Catálogo de Estados sincronizado con D-055 y nota maestra alineada, sin cambios en fórmulas JSON ni referencias.
 - Ronda 17 / D-055: las 55 cuentas del motor antes opcionales requieren dato; solo intereses ganados conserva cero si no se reporta. JSON, nota maestra y generado sincronizados, pruebas con ceros explícitos y comparación de ejercicios v2 en ambas lecturas; catálogo de Estados sin cambios.

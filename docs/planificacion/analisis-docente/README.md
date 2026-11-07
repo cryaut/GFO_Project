@@ -32,8 +32,14 @@ Se inspeccionaron los paneles completos de DuPont en escritorio y Razones en mó
 
 ## Integración
 
-Estados se integró por PR #28 con la excepción de revisión autorizada por Cris solo para esa vez. Esta feature mantiene la revisión normal de equipo; no se publica directamente a main. Los cambios previos de Inicio, auditoría y AFOD quedan fuera de su commit.
+Estados se integró por PR #28 con la excepción de revisión autorizada por Cris solo para esa vez. La integración inicial quedó pendiente de revisión; la excepción posterior de Cris para los PR prioritarios se documenta al final. No se publica directamente a main. Los cambios previos de Inicio, auditoría y AFOD quedan fuera de su commit.
 
 ## Pendientes con causa
 
 El EFE oficial no fue comparado con la clase por falta de BG/ER completos. Compras a crédito estimadas frente a pagos acreditados, composición CNO y condiciones sobre dividendos siguen declaradas en el informe; no se cambian políticas ni se edita el motor para forzar coincidencias.
+
+## Preparación de integración · 2026-11-07
+
+Se incorpora main con PR #26, conservando D-087, D-088 y D-095. DuPont mantiene la fuente del motor y el detalle ROA/ROE; el EFE conserva las advertencias de estimación. Se reproduce y corrige la pérdida del borrador de Mercado al cambiar periodo: ahora se actualizan los ocho paneles dependientes sin reconstruir Mercado. Una regresión confirma valores, cero, campos vacíos y ausencia de escrituras; falla antes de corregir el bug. El navegador comprueba también Guardar después del cambio. Cris autoriza expresamente la excepción puntual de revisión humana para integrar los PR prioritarios, mediante merge normal y sin cambiar protecciones.
+
+Resultado combinado: **2040/2040 pruebas**, 63 archivos; lint 0 errores y 10 advertencias existentes. Edge: 54 escenarios sin errores ni desbordamiento; borrador intacto tras cambios de periodo y Guardar operativo.

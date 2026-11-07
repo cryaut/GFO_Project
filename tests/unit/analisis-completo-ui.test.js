@@ -23,7 +23,9 @@ it('conserva las nueve secciones y cambia de periodo sin escribir estados', asyn
   expect(page.innerHTML).toContain('ROA y ROE: descomposición y comprobación');
   const guardados = structuredClone(store.get('estados'));
   page.querySelector('#analysisPeriod').onchange({ target: { value: datos.periods[0] } });
-  expect(page.innerHTML).toContain(`value="${datos.periods[0]}" selected`);
+  const contenidoPrimero = page.querySelector('#tab-dupont').innerHTML;
+  page.querySelector('#analysisPeriod').onchange({ target: { value: datos.periods.at(-1) } });
+  expect(page.querySelector('#tab-dupont').innerHTML).not.toBe(contenidoPrimero);
   expect(store.get('estados')).toEqual(guardados);
 });
 
@@ -36,4 +38,22 @@ it('escapa los nombres propios en AH y AV en vez de convertirlos en HTML', async
   expect(page.innerHTML).toContain('&lt;script&gt;empresa&lt;/script&gt;');
   expect(page.innerHTML).not.toContain('<img src=x');
   expect(page.innerHTML).not.toContain('<script>empresa');
+});
+
+
+it('conserva Mercado sin guardar al cambiar periodos, incluso con cero o campos vacíos', async () => {
+  const datos = estadosDesdeReferencia(ejemploApp);
+  const { page, store } = await montar(datos);
+  const mercado = page.querySelector('#mercadoContenido');
+  const valores = { 'mer-acciones-0': '12345', 'mer-precio-0': '10', 'mer-dividendos-0': '100',
+    'mer-acciones-1': '0', 'mer-precio-1': '', 'mer-dividendos-1': '25.50' };
+  for (const [id, valor] of Object.entries(valores)) mercado.querySelector(`#${id}`).value = valor;
+  const persistir = vi.spyOn(store, 'setPersisted');
+  for (const periodo of [datos.periods[0], datos.periods.at(-1)]) {
+    page.querySelector('#analysisPeriod').onchange({ target: { value: periodo } });
+    const actual = page.querySelector('#mercadoContenido');
+    for (const [id, valor] of Object.entries(valores)) expect(actual.querySelector(`#${id}`).value).toBe(valor);
+    expect(actual).toBe(mercado);
+  }
+  expect(persistir).not.toHaveBeenCalled();
 });

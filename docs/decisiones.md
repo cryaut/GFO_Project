@@ -135,6 +135,8 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-085 | Supuestos de Planeación guardados sin producto vinculado | Vigente |
 | D-086 | Integrar lectura segura de F8 con el motor de razones | Vigente |
 | D-095 | Completar AH/AV y hacer coherente el procedimiento DuPont | Vigente en rama, pendiente de revisión |
+| D-087 | DuPont y consumidores propagan datos no disponibles | Vigente en rama; pendiente de revisión |
+| D-088 | EFE indirecto por identidad y con alcance explícito | Vigente en rama; pendiente de revisión |
 
 
 | D-056 | Razones de la app leen el motor | Vigente |
@@ -2014,3 +2016,40 @@ Se retira la prueba histórica de regresión de la demo (caso de ejemplo cargado
 **Para revertirla.** Revisar los adaptadores de AH/AV y DuPont, la fuente de operandos y sus regresiones antes de cambiar cobertura o políticas de datos ausentes. No retirar N/D para obtener una cifra visible.
 
 **Referencias.** Guía docente, secciones 6 y 7.1; `Analisis_Dupont.md`, diapositivas 5–11; [revisión por sección](planificacion/analisis-docente/01-revision-docente.md); `tests/unit/analisis-completo.test.js`; D-047, D-048 y D-086.
+### D-087 — DuPont y consumidores propagan datos no disponibles
+
+- **Fecha:** 2026-11-04
+- **Estado:** Vigente en la rama; pendiente de revisión humana
+- **Decidió:** Carlos autorizó corregir los hallazgos financieros y revisar los módulos mínimos.
+- **Área:** Análisis, Flujo y Proforma.
+
+**Contexto.** Con impuestos u otros gastos requeridos ausentes, el motor daba N/D pero DuPont podía dar un ROE numérico. La conciliación directa restaba `null` como cero, y Proforma sumaba gastos N/D como cero.
+
+**Opciones.** Compartir las entradas acreditadas y propagar N/D; o mantener cálculos numéricos incompletos.
+
+**Decisión.** DuPont recibe utilidad neta y ventas del motor, conservando la fórmula. Sin efectivo verificable, la conciliación informa `cuadra: null` y su motivo. Proforma no calcula gastos, UAII u otros ingresos netos si falta un operando. Un cero explícito se conserva.
+
+**Consecuencias.** Algunos resultados anteriormente numéricos pasan a N/D; no cambian los árboles ni fórmulas de los JSON. El saldo no disponible no puede declararse conciliado.
+
+**Para revertirla.** Acordar y probar un contrato de datos faltantes alternativo para todos los consumidores antes de cambiarlo.
+
+**Referencias.** `tests/unit/rigor-financiero.test.js`, `tests/unit/flujo.test.js`, D-047, D-055, D-056 y D-086.
+
+### D-088 — EFE indirecto por identidad y con alcance explícito
+
+- **Fecha:** 2026-11-04
+- **Estado:** Vigente en la rama; pendiente de revisión humana
+- **Decidió:** Carlos autorizó corregir los hallazgos financieros y contrastarlos con AFOD.
+- **Área:** EFE de Análisis y reporte integrado.
+
+**Contexto.** El EFE separaba resultados y reservas por la etiqueta de la cuenta. Una suma que cuadra o la conciliación de la utilidad no prueba por sí sola que los cambios sean movimientos reales de efectivo o dividendos pagados.
+
+**Opciones.** Usar identidades confirmadas y advertir que el EFE es una estimación; o seguir atribuyendo movimientos a partir de nombres y saldos sin esa distinción.
+
+**Decisión.** El EFE usa ids de resultados y reservas; si una variación patrimonial no tiene identidad confirmada no la atribuye a dividendos o aportes y usa el agregado con advertencia. El EFE por saldos se marca `estimacion_por_variaciones`; la interfaz y Proforma advierten sus límites. El módulo de flujo directo registra movimientos reales por actividad.
+
+**Consecuencias.** En casos ambiguos puede dejar de mostrarse el desglose de dividendos. Las variaciones siguen siendo estimaciones: aún se requieren movimientos y ajustes no monetarios para confirmar el estado.
+
+**Para revertirla.** Definir y verificar otra fuente acreditada de identidad y naturaleza de los movimientos, sin presentar estimaciones como cobros o pagos confirmados.
+
+**Referencias.** Presentación `Flujo_Efectivo_GFO_2026.md`, diapositivas 5, 13 y 15–17; D-025, D-066, D-068 a D-070; `tests/unit/rigor-financiero.test.js`.

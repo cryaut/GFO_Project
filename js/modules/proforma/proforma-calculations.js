@@ -37,11 +37,14 @@ export function resultadosReales(estados) {
   } catch {
     return null;
   }
-  const gastosOperacion = t.gastosAdmin + t.gastosVentas;
+  const gastosOperacion = esNumero(t.gastosAdmin) && esNumero(t.gastosVentas)
+    ? t.gastosAdmin + t.gastosVentas : null;
+  const otrosNeto = esNumero(t.otrosIngresos) && esNumero(t.otrosGastos)
+    ? t.otrosIngresos - t.otrosGastos : null;
   return {
     periodo, ventas: t.ventas, cbv: t.costoVentas, utilidadBruta: t.utilidadBruta, gastosOperacion,
-    uaii: esNumero(t.utilidadBruta) ? t.utilidadBruta - gastosOperacion : null,
-    otrosNeto: t.otrosIngresos - t.otrosGastos, intereses: t.intereses, ir: t.impuestos, utilidadNeta: t.utilidadNeta,
+    uaii: esNumero(t.utilidadBruta) && esNumero(gastosOperacion) ? t.utilidadBruta - gastosOperacion : null,
+    otrosNeto, intereses: t.intereses, ir: t.impuestos, utilidadNeta: t.utilidadNeta,
     ...margenes(t.ventas, t.utilidadBruta, t.gastosAdmin, t.gastosVentas, t.utilidadNeta)
   };
 }
@@ -107,7 +110,8 @@ export function flujoDesdeEFE(estados) {
     variacionNeta: efe.variacionEfectivo,
     saldoFinal: efe.efectivoFinal,
     periodos: efe.periodos,
-    estado: efe.estado
+    estado: efe.estado,
+    naturaleza: efe.naturaleza
   };
 }
 
@@ -165,10 +169,10 @@ export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento
   }
   if (flujo?.disponible) {
     // D-070: los renglones de flujo salen del EFE de Análisis, no de la captura manual.
-    const grupo = `Flujo de efectivo (EFE ${flujo.periodos.inicial} → ${flujo.periodos.final})`;
+    const grupo = `Flujo de efectivo estimado (EFE ${flujo.periodos.inicial} → ${flujo.periodos.final})`;
     lista.push(indicador(grupo, 'Flujo de operación', flujo.neto.operacion, 'monto', 'Análisis (EFE)', '#/analisis',
-      flujo.neto.operacion >= 0 ? 'La operación genera efectivo.' : 'La operación consume efectivo.', flujo.neto.operacion >= 0 ? 'ok' : 'alerta'));
-    lista.push(indicador(grupo, 'Variación neta del efectivo', flujo.variacionNeta, 'monto', 'Análisis (EFE)', '#/analisis', 'Operación + inversión + financiamiento.'));
+      'Estimación por variaciones de saldos; confirme los cobros y pagos reales.', flujo.neto.operacion >= 0 ? 'ok' : 'alerta'));
+    lista.push(indicador(grupo, 'Variación neta del efectivo', flujo.variacionNeta, 'monto', 'Análisis (EFE)', '#/analisis', 'Variación entre saldos; no confirma por sí sola los movimientos.'));
     lista.push(indicador(grupo, 'Saldo final de efectivo', flujo.saldoFinal, 'monto', 'Análisis (EFE)', '#/analisis', 'Efectivo al cierre del periodo final.'));
   }
   if (presupuesto) {
@@ -205,7 +209,7 @@ export function alertasIntegradas({ razones, presupuesto, equilibrio, flujo, inv
     agregar('alta', `El presupuesto proyecta una pérdida neta de ${monto(-presupuesto.totales.utilidadNeta)}. Revise precios, volumen o gastos.`, '#/planeacion');
   }
   if (flujo?.disponible && flujo.neto.operacion < 0) {
-    agregar('alta', `La operación consume ${monto(-flujo.neto.operacion)} de efectivo: revise cobros, precios y gastos antes de invertir o repartir dividendos.`, '#/analisis');
+    agregar('alta', `El flujo operativo estimado es ${monto(flujo.neto.operacion)}: confirme cobros y pagos antes de tomar decisiones.`, '#/analisis');
   }
   if (flujo?.disponible && esNumero(flujo.saldoFinal) && flujo.saldoFinal < 0) {
     agregar('alta', `El flujo de efectivo termina con saldo negativo (${monto(flujo.saldoFinal)}).`, '#/analisis');

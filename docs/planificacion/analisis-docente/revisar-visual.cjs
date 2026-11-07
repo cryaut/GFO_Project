@@ -52,6 +52,11 @@ const server = createServer(async (req, res) => {
       (await import('/js/modules/analisis/index.js')).initAnalisis();
     });
     const guardado = await page.evaluate(() => localStorage.getItem('gfo-toolkit-data'));
+    assert.ok(guardado, 'El respaldo de estados existe antes de navegar');
+    await page.locator('[data-tab="mercado"]').click();
+    const borrador = { 'mer-acciones-0': '12345', 'mer-precio-0': '10', 'mer-dividendos-0': '100',
+      'mer-acciones-1': '0', 'mer-precio-1': '', 'mer-dividendos-1': '25.50' };
+    for (const [id, valor] of Object.entries(borrador)) await page.locator('#' + id).fill(valor);
     for (const width of [1440, 390, 320]) {
       await page.setViewportSize({ width, height: width === 1440 ? 1100 : 844 });
       for (const tema of ['light', 'dark']) {
@@ -89,6 +94,20 @@ const server = createServer(async (req, res) => {
     assert.match(await page.locator('#tab-dupont').innerText(), /N\/D/);
     await page.locator('#analysisPeriod').selectOption('2025');
     assert.equal(await page.evaluate(() => localStorage.getItem('gfo-toolkit-data')), guardado);
+    await page.locator('[data-tab="mercado"]').click();
+    for (const [id, valor] of Object.entries(borrador)) assert.equal(await page.locator('#' + id).inputValue(), valor);
+    await page.locator('#analysisPeriod').selectOption('2024');
+    for (const [id, valor] of Object.entries(borrador)) assert.equal(await page.locator('#' + id).inputValue(), valor);
+    assert.equal(await page.locator('#tab-mercado').isVisible(), true);
+    assert.equal(await page.evaluate(() => localStorage.getItem('gfo-toolkit-data')), guardado);
+    resultados.borradorMercadoConservado = true;
+    // Guardar sigue leyendo el mismo formulario después de cambiar periodo.
+    await page.locator('#mer-acciones-1').fill('1000');
+    await page.locator('#mer-precio-1').fill('15');
+    await page.locator('#mercadoGuardar').click();
+    assert.match(await page.locator('#mercadoMensaje').innerText(), /Datos guardados/);
+    assert.equal(await page.evaluate(async () => (await import('/js/store.js')).default.get('razonesMercado').periodos['2024'].acciones), 12345);
+    resultados.guardadoMercadoOperativo = true;
     assert.deepEqual(errores, []);
     resultados.sinErrores = true;
     resultados.sinEscriturasAlNavegar = true;

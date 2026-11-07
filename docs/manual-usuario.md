@@ -258,6 +258,8 @@ Elija el **Periodo de análisis** al inicio. La navegación agrupa las nueve sec
 
 Los ejemplos de esta sección usan cifras pequeñas para ilustrar cada fórmula; no son los datos de la demo MUNO MODA.
 
+El selector de periodo conserva las entradas de Mercado sin guardar, incluso si cambia de sección antes de usarlo. Para persistirlas, pulse **Guardar y calcular** en Mercado.
+
 ### 4.1 Análisis Horizontal (AH)
 
 **Ejemplo con Cuentas por Cobrar:**
@@ -386,6 +388,8 @@ ROA = C$ 10,500 ÷ C$ 98,500 = 10.66%
 
 ### 4.4 Modelo DuPont
 
+DuPont toma la utilidad neta y ventas del motor de razones. Si falta un dato necesario para obtener la utilidad, el margen y el ROE se muestran como N/D, en lugar de tratar esa ausencia como cero.
+
 ```
 PM  = C$ 10,500 ÷ C$ 120,000 = 0.0875
 AT  = C$ 120,000 ÷ C$ 98,500 = 1.218
@@ -445,7 +449,7 @@ Al pie está la comprobación: **Total de orígenes** contra **Total de aplicaci
 
 ### 4.8 Estado de Flujo de Efectivo (EFE)
 
-En la pestaña **EFE** de `#/analisis` se arma el estado de flujo de efectivo por método indirecto a partir de dos balances guardados (el periodo anterior y el último). Con un solo periodo la pestaña explica qué falta.
+En la pestaña **EFE** de `#/analisis` se presenta una **estimación por método indirecto y variaciones de dos balances** (el periodo anterior y el último). Con un solo periodo la pestaña explica qué falta. Las variaciones, por sí solas, no identifican cobros y pagos ni separan todas las transacciones no monetarias. Para capturar movimientos de efectivo utilice `#/flujo` y verifique con los documentos de respaldo.
 
 **Las tres actividades:**
 
@@ -465,9 +469,9 @@ En la pestaña **EFE** de `#/analisis` se arma el estado de flujo de efectivo po
 | **Total de flujos** | 97,775 + 0 − 90,775 | **C$ 7,000** |
 | Variación de efectivo | 52,000 − 45,000 | C$ 7,000 |
 
-La comprobación cuadra. Los dividendos (C$ 40,000) se derivan de la utilidad neta menos el aumento de las utilidades acumuladas (se reconocen cuentas como «Utilidades acumuladas», «Utilidad retenida» o «Utilidad del ejercicio»; si el patrimonio no las tiene, se usa la variación total del patrimonio con una nota). Los gastos por intereses y los impuestos ya están dentro de la utilidad neta.
+La comprobación cuadra aritméticamente. Los dividendos (C$ 40,000) son derivados de la utilidad neta menos el aumento de resultados y reservas con identidad acreditada; si no es posible separar el patrimonio, se utiliza su variación total con una nota. Los gastos por intereses y los impuestos ya están dentro de la utilidad neta.
 
-**Alcance de la comprobación:** cuadrar concilia los flujos con el efectivo; no valida de forma independiente la utilidad neta porque esta también se usa para derivar los dividendos. El pago de C$ 40,000 continúa sin confirmar. Si reservas y resultados cambian en sentidos opuestos, aparece una advertencia de posibles transferencias internas. También se reconoce «pérdida del ejercicio/periodo». Una cuenta sin clasificar con cero en ambos cierres no bloquea EFE ni EOAF; la falta de saldo en uno de ellos sí requiere completar el dato.
+**Alcance de la comprobación:** cuadrar significa que la suma estimada coincide con la variación de efectivo; no confirma las actividades ni los dividendos pagados. La conciliación de la utilidad contra el patrimonio tampoco verifica por sí sola los dividendos. El pago de C$ 40,000 continúa sin confirmar. Si reservas y resultados cambian en sentidos opuestos, aparece una advertencia de posibles transferencias internas. Una cuenta sin clasificar con cero en ambos cierres no bloquea EFE ni EOAF; la falta de saldo en uno de ellos sí requiere completar el dato.
 
 ---
 
@@ -686,6 +690,8 @@ En `#/flujo` indica el saldo inicial (o tómalo del efectivo de un periodo del b
 - **Financiamiento:** préstamos y sus abonos, aportes y dividendos.
 
 Flujo de una actividad = entradas − salidas; variación neta = operación + inversión + financiamiento; saldo final = saldo inicial + variación neta. En el ejemplo: operación +98,000, inversión −30,000 y financiamiento −45,000 → variación +23,000; con saldo inicial 52,000 el saldo final es C$ 75,000.
+
+Cuando existe un balance del periodo siguiente, la pantalla puede comparar su efectivo con el saldo calculado. Si el efectivo del balance está N/D, la conciliación también queda N/D; un cero declarado sí puede compararse.
 
 ---
 

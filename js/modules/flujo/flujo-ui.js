@@ -124,6 +124,7 @@ export function flujoUI(page, opciones) {
   function seccionConciliacion(r) {
     const c = conciliarConBalance(r, estados, datos.periodoBase);
     if (!c) return '';
+    if (c.cuadra === null) return `<p class="text-warning">No se puede conciliar: el efectivo del balance de ${esc(c.periodo)} está N/D.</p>`;
     return c.cuadra
       ? `<p class="text-success">El saldo final coincide con el efectivo del balance de ${esc(c.periodo)} (${monto(c.efectivo)}).</p>`
       : `<p class="text-warning">El saldo final difiere en ${monto(c.diferencia)} del efectivo del balance de ${esc(c.periodo)} (${monto(c.efectivo)}): falta registrar movimientos o hay alguno de más.</p>`;
