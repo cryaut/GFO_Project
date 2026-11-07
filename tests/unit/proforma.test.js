@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
-  alertasIntegradas, construirReporte, flujoDesdeEFE, resultadosProforma, resultadosReales
+  alertasIntegradas, compararResultados, construirReporte, flujoDesdeEFE, resultadosProforma, resultadosReales
 } from '../../js/modules/proforma/proforma-calculations.js';
 import { proformaUI } from '../../js/modules/proforma/proforma-ui.js';
 import { calcularPresupuestoMaestro, ejemploPlaneacion, normalizarSupuestos } from '../../js/modules/planeacion/planeacion-calculations.js';
@@ -83,6 +83,59 @@ describe('estado de resultados proforma frente al real', () => {
     expect(fila('utilidadNeta').variacion).toBeCloseTo(-42000 / 161000, 10);
     expect(fila('margenBruto').puntos).toBeCloseTo(0.4 - 375000 / 920000, 10);
     expect(fila('otrosNeto').proforma).toBeNull();
+  });
+
+  it('muestra los importes y N/D al enfrentar un mes proyectado a un año real', () => {
+    const presupuesto = calcularPresupuestoMaestro(normalizarSupuestos({
+      ...ejemploPlaneacion(), tipoPeriodo: 'Mes', periodos: 1, ventasUnidades: [100], precio: 100, otrosDesembolsos: [0]
+    }));
+    const reporte = construirReporte({ estados: estadosMuno(), presupuesto });
+    expect(reporte.comparacion.find(f => f.clave === 'ventas')).toMatchObject({
+      real: 920000, proforma: 10000, variacion: null
+    });
+    expect(reporte.comparacion.find(f => f.clave === 'margenBruto').puntos).toBeNull();
+    expect(reporte.motivoComparacion).toContain('proyección anual de 12 meses o 4 trimestres');
+
+    const page = element();
+    proformaUI(page, { reporte });
+    const ventas = page.innerHTML.match(/<td>Ventas<\/td>[\s\S]*?<\/tr>/)?.[0];
+    expect(ventas).toContain('C$ 920,000.00');
+    expect(ventas).toContain('C$ 10,000.00');
+    expect(ventas).toContain('>N/D</td>');
+    expect(page.innerHTML).toContain(reporte.motivoComparacion);
+  });
+
+  it.each(['2024-12', '2024-T4', 'Cierre reciente'])('mantiene N/D si %s no identifica un ejercicio anual', periodo => {
+    const real = { ...resultadosReales(estadosMuno()), periodo };
+    const presupuesto = calcularPresupuestoMaestro(normalizarSupuestos(ejemploPlaneacion()));
+    const filas = compararResultados(real, resultadosProforma(presupuesto));
+    expect(filas.find(f => f.clave === 'ventas')).toMatchObject({ real: 920000, proforma: 1000000, variacion: null });
+    expect(filas.every(f => f.variacion === null && f.puntos === null)).toBe(true);
+  });
+
+  it('explica por qué una proyección anual no se compara con un histórico mensual', () => {
+    const estados = estadosMuno();
+    const periodo = '2024-12';
+    const reporte = construirReporte({
+      estados: {
+        ...estados, periods: [periodo],
+        balanceGeneral: { [periodo]: estados.balanceGeneral['2024'] },
+        estadoResultados: { [periodo]: estados.estadoResultados['2024'] }
+      },
+      presupuesto: calcularPresupuestoMaestro(normalizarSupuestos(ejemploPlaneacion()))
+    });
+    expect(reporte.proforma.anual).toBe(true);
+    expect(reporte.motivoComparacion).toContain('El periodo real no identifica un ejercicio anual');
+    expect(reporte.comparacion.find(f => f.clave === 'ventas').variacion).toBeNull();
+  });
+
+  it('compara un horizonte de doce meses con un año histórico acreditado', () => {
+    const presupuesto = calcularPresupuestoMaestro(normalizarSupuestos({
+      ...ejemploPlaneacion(), tipoPeriodo: 'Mes', periodos: 12, ventasUnidades: Array(12).fill(100), precio: 100
+    }));
+    const reporte = construirReporte({ estados: estadosMuno(), presupuesto });
+    expect(reporte.motivoComparacion).toBeNull();
+    expect(reporte.comparacion.find(f => f.clave === 'ventas').variacion).toBeCloseTo(-800000 / 920000, 6);
   });
 });
 

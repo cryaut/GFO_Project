@@ -138,7 +138,9 @@ describe('pantalla del presupuesto maestro', () => {
 
   it('sin supuestos invita a cargar el ejemplo', () => {
     const { page, graficar } = montar();
-    expect(page.innerHTML).toContain('Todavía no hay un presupuesto calculado');
+    expect(page.innerHTML).toContain('Prepare el presupuesto');
+    expect(page.querySelector('#planVista-resumen').hidden).toBe(false);
+    expect(page.querySelector('#planVista-supuestos').hidden).toBe(true);
     expect(graficar).not.toHaveBeenCalled();
   });
 
@@ -155,11 +157,22 @@ describe('pantalla del presupuesto maestro', () => {
     expect(html).toContain('C$ 119,000.00');
     expect(html).toContain('C$ 122,360.00');
     expect(html).toContain('Se requieren C$ 20,800.00 de financiamiento');
+    const resumen = page.querySelector('#planResumen');
+    expect(resumen.querySelector('#planDetalleTitulo').textContent).toBe('Cobros del periodo');
+    expect(resumen.innerHTML).toContain('Trimestre 4');
+    expect(page.querySelector('#planVista-tablas').hidden).toBe(true);
+    expect(graficar).not.toHaveBeenCalled();
+    await clic(page, 'planVer-tablas');
+    expect(page.querySelector('#planVista-tablas').hidden).toBe(false);
     expect(graficar).toHaveBeenLastCalledWith('planChart', expect.objectContaining({ type: 'bar' }));
+    await clic(page, 'planVer-resumen');
+    await clic(page, 'planVer-tablas');
+    expect(graficar).toHaveBeenCalledTimes(1);
   });
 
   it('recalcula al cambiar un supuesto y rechaza valores inválidos', async () => {
     const { page, guardar } = montar({ supuestos: ejemploPlaneacion() });
+    await clic(page, 'planVer-supuestos');
     await cambiar(page, 'plan-precio', '0', 'input');
     await enviar(page, 'formPlaneacion');
     expect(guardar).not.toHaveBeenCalled();
@@ -173,10 +186,15 @@ describe('pantalla del presupuesto maestro', () => {
 
   it('cambia el número de periodos', async () => {
     const { page } = montar({ supuestos: ejemploPlaneacion() });
+    await clic(page, 'planVer-supuestos');
+    const abrirResumen = page.querySelector('#planVer-resumen');
     await cambiar(page, 'planPeriodos', '2');
     expect(page.querySelector('#planVentas-1')).not.toBeNull();
     expect(page.querySelector('#planVentas-2')).toBeNull();
     expect(mensaje(page, 'planMensaje')).toContain('sin guardar');
+    expect(page.querySelector('#planVer-resumen')).toBe(abrirResumen);
+    await clic(page, 'planVer-resumen');
+    expect(page.querySelector('#planVista-resumen').hidden).toBe(false);
   });
 
   it('toma los saldos del balance y el inventario de un producto', async () => {
@@ -191,6 +209,7 @@ describe('pantalla del presupuesto maestro', () => {
     });
     const inventario = calcularInventario(ejemploInventario());
     const { page, guardar } = montar({ supuestos: { ...ejemploPlaneacion(), cxcInicial: 0, saldoInicialCaja: 0 } }, { estados, inventario });
+    await clic(page, 'planVer-supuestos');
     await clic(page, 'planTomarBalance');
     expect(mensaje(page, 'planMensaje')).toContain('efectivo C$ 52,000.00');
     llenar(page, { planProducto: 'demo-camisa' });

@@ -35,8 +35,8 @@ function seccionProforma(r) {
   const tituloProforma = r.proforma ? `Proforma (${esc(r.proforma.horizonte)})` : 'Proforma';
   const filas = r.comparacion.map(f => {
     const cambio = f.formato === 'monto'
-      ? (esNumero(f.variacion) ? `${f.variacion > 0 ? '+' : ''}${pct(f.variacion)}` : '—')
-      : (esNumero(f.puntos) ? `${f.puntos > 0 ? '+' : ''}${formatNumberND(f.puntos * 100)} pts` : '—');
+      ? (esNumero(f.variacion) ? `${f.variacion > 0 ? '+' : ''}${pct(f.variacion)}` : 'N/D')
+      : (esNumero(f.puntos) ? `${f.puntos > 0 ? '+' : ''}${formatNumberND(f.puntos * 100)} pts` : 'N/D');
     const fmt = v => (v === null && f.clave === 'otrosNeto' ? '—' : FORMATO[f.formato](v));
     const destacar = ['utilidadBruta', 'uaii', 'utilidadNeta'].includes(f.clave) ? ' style="font-weight:600"' : '';
     return `<tr${destacar}><td>${f.concepto}</td><td class="text-right font-mono">${r.real ? fmt(f.real) : '—'}</td>
@@ -44,7 +44,7 @@ function seccionProforma(r) {
   }).join('');
   const notas = [];
   if (!r.proforma) notas.push('Configure el <a href="#/planeacion">Presupuesto Maestro</a> para obtener la proforma.');
-  if (r.proforma && !r.proforma.anual) notas.push(`El presupuesto cubre ${esc(r.proforma.horizonte)}: compárelo con un periodo real de la misma duración.`);
+  if (r.motivoComparacion) notas.push(esc(r.motivoComparacion));
   if (r.proforma) notas.push('La proforma sale del presupuesto maestro: no incluye otros ingresos ni otros gastos, y el IR se calcula sobre la UAI positiva de cada periodo.');
   return `<div class="card mb-4"><h2 class="card-title">1. Estado de resultados proforma</h2>
     <div class="table-wrapper"><table class="statement-table">

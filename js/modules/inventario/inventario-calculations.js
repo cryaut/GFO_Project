@@ -11,6 +11,16 @@ function esNumero(valor) {
   return typeof valor === 'number' && Number.isFinite(valor);
 }
 
+function esCostoValido(valor) {
+  return esNumero(valor) && valor >= 0;
+}
+
+function esFechaCalendario(fecha) {
+  if (typeof fecha !== 'string' || !FECHA_ISO.test(fecha) || fecha.startsWith('0000-')) return false;
+  const dia = new Date(`${fecha}T00:00:00Z`);
+  return Number.isFinite(dia.getTime()) && dia.toISOString().slice(0, 10) === fecha;
+}
+
 function texto(valor) {
   return typeof valor === 'string' ? valor.trim() : '';
 }
@@ -78,7 +88,7 @@ export function normalizarInventario(datos) {
     idsMovimiento.add(m.id);
     // D-081: las entradas pueden traer su costo unitario (≥ 0); los datos
     // anteriores sin costo se conservan sin él y usan el costo del producto.
-    const conCosto = esNumero(m.costoUnitario) && m.costoUnitario >= 0;
+    const conCosto = esCostoValido(m.costoUnitario);
     movimientos.push({
       id: m.id, productoId: m.productoId, fecha: m.fecha, tipo: m.tipo,
       cantidad: m.cantidad, concepto: texto(m.concepto),
@@ -111,7 +121,7 @@ export function kardex(producto, movimientos) {
   const filas = movimientos.map(movimiento => {
     let costoMovimiento = null;
     if (movimiento.tipo === 'entrada') {
-      const costoEntrada = esNumero(movimiento.costoUnitario) && movimiento.costoUnitario >= 0
+      const costoEntrada = esCostoValido(movimiento.costoUnitario)
         ? movimiento.costoUnitario : producto.costoUnitario;
       // C = (E × C + q × c) / (E + q); con E = 0 el nuevo promedio es c.
       costoPromedio = saldo <= 0
@@ -188,6 +198,38 @@ function textoNegativo(producto, negativo) {
   return `la existencia de ${producto.nombre} queda en ${negativo.saldo} ${producto.unidad} el ${negativo.fecha}`;
 }
 
+// Reportes valida antes de escribir. La normalización conserva el orden si no hay
+// descartes, lo que permite detectar un costo inválido en la fila original.
+export function validarInventarioRespaldo(datos) {
+  const { productos, movimientos, descartados } = normalizarInventario(datos);
+  if (descartados.length) {
+    const detalle = descartados.map(d => `${d.motivo}: ${d.cantidad}`).join('; ');
+    throw new Error(`El inventario del respaldo tiene registros descartados (${detalle}). No se importó nada.`);
+  }
+
+  const porProducto = new Map();
+  for (const [indice, movimiento] of (datos?.movimientos ?? []).entries()) {
+    const ruta = `inventario.movimientos[${indice}]`;
+    if (!esFechaCalendario(movimiento.fecha)) {
+      throw new Error(`La fecha de ${ruta} no existe en el calendario (${movimiento.fecha}). No se importó nada.`);
+    }
+    if (Object.hasOwn(movimiento, 'costoUnitario') && !esCostoValido(movimiento.costoUnitario)) {
+      throw new Error(`El costo unitario de ${ruta} debe ser un número mayor o igual a 0. No se importó nada.`);
+    }
+    if (!porProducto.has(movimiento.productoId)) porProducto.set(movimiento.productoId, []);
+    porProducto.get(movimiento.productoId).push(movimientos[indice]);
+  }
+  for (const producto of productos) {
+    const propios = porProducto.get(producto.id);
+    if (!propios) continue;
+    const negativo = negativoEn({ movimientos: propios }, producto);
+    if (negativo) {
+      throw new Error(`Existencia insuficiente en el movimiento "${negativo.id}". Con ese movimiento ${textoNegativo(producto, negativo)}. No se importó nada.`);
+    }
+  }
+  return { productos, movimientos };
+}
+
 // Errores de un producto nuevo o editado (lista vacía si es válido). Los números llegan
 // ya leídos: null significa que el campo no era un número.
 export function validarProducto(datos, producto, idEditado = null) {
@@ -220,10 +262,10 @@ export function validarMovimiento(datos, movimiento) {
   if (!producto) errores.push('Elija un producto.');
   if (!TIPOS_MOVIMIENTO.includes(movimiento.tipo)) errores.push('Elija si es una entrada o una salida.');
   if (!esNumero(movimiento.cantidad) || movimiento.cantidad <= 0) errores.push('La cantidad debe ser un número mayor que 0.');
-  if (movimiento.tipo === 'entrada' && (!esNumero(movimiento.costoUnitario) || movimiento.costoUnitario < 0)) {
-    errores.push('La entrada debe indicar un costo unitario mayor o igual a 0.');
+  if ((movimiento.tipo === 'entrada' || Object.hasOwn(movimiento, 'costoUnitario')) && !esCostoValido(movimiento.costoUnitario)) {
+    errores.push('El costo unitario debe ser un número mayor o igual a 0.');
   }
-  if (typeof movimiento.fecha !== 'string' || !FECHA_ISO.test(movimiento.fecha)) errores.push('Indique la fecha del movimiento.');
+  if (!esFechaCalendario(movimiento.fecha)) errores.push('Indique una fecha de calendario válida para el movimiento.');
   if (texto(movimiento.concepto).length > MAX_TEXTO) errores.push(`El concepto admite hasta ${MAX_TEXTO} caracteres.`);
   if (errores.length) return errores;
   const negativo = negativoEn({ ...datos, movimientos: [...datos.movimientos, movimiento] }, producto);

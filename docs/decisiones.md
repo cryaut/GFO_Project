@@ -137,6 +137,11 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-095 | Completar AH/AV y hacer coherente el procedimiento DuPont | Vigente en rama, pendiente de revisión |
 | D-087 | DuPont y consumidores propagan datos no disponibles | Vigente en rama; pendiente de revisión |
 | D-088 | EFE indirecto por identidad y con alcance explícito | Vigente en rama; pendiente de revisión |
+| D-089 | Escenarios con base compartida y respaldo atómico | En prueba local |
+| D-090 | Calendarios de crédito y presupuesto parcial mensual | En prueba local |
+| D-091 | Variaciones de Proforma solo con cobertura anual comparable | En prueba local |
+| D-092 | Restaurar Inventario exige un kardex válido | En prueba local |
+| D-093 | Planeación abre en un resumen con detalle | En prueba local |
 
 
 | D-056 | Razones de la app leen el motor | Vigente |
@@ -2053,3 +2058,97 @@ Se retira la prueba histórica de regresión de la demo (caso de ejemplo cargado
 **Para revertirla.** Definir y verificar otra fuente acreditada de identidad y naturaleza de los movimientos, sin presentar estimaciones como cobros o pagos confirmados.
 
 **Referencias.** Presentación `Flujo_Efectivo_GFO_2026.md`, diapositivas 5, 13 y 15–17; D-025, D-066, D-068 a D-070; `tests/unit/rigor-financiero.test.js`.
+### D-089 — Escenarios con base compartida y respaldo atómico
+
+- **Fecha**: 2026-11-05
+- **Estado**: En prueba en `test/caso-integrado-excepciones`, pendiente de revisión del equipo
+- **Decidió**: Carlos autorizó la rama de prueba y el agente propuso el contrato
+- **Área**: Planeación, `store` y respaldo de Reportes
+
+**Contexto.** Planeación guardaba un solo presupuesto. Reportes reemplazaba cada módulo por separado y la recuperación podía fallar si el almacenamiento seguía inaccesible.
+
+**Opciones.** Guardar la apertura en cada escenario simplifica la lectura y multiplica las copias. Guardar una base compartida identifica el cierre de origen y permite cambios independientes de los supuestos. Para el respaldo, una escritura del estado completo permite publicar el lote después del guardado.
+
+**Decisión.** Versionar Planeación al cargar Comercial Ejemplo. Los escenarios enlazan su base por identificador y guardan los supuestos que pueden editarse. El presupuesto anterior se conserva como escenario sin base al cargar el caso. Reportes valida todo el respaldo y lo persiste en una escritura.
+
+**Consecuencias.** Los escenarios ligados al caso usan su apertura en Planeación. Proforma muestra su procedencia y conserva un contexto coherente con sus propios estados. La validación admite borradores con N/D y señala los vínculos inválidos. Los respaldos antiguos recuperan su presupuesto al confirmar el reemplazo de Planeación.
+
+**Para revertirla.** Registrar una decisión de migración con un criterio explícito para conservar las bases y los escenarios de los respaldos versionados.
+
+**Referencias.** REV-07, el caso ficticio de etapa 1 y las pruebas de Planeación y Reportes.
+
+### D-090 — Calendarios de crédito y presupuesto parcial mensual
+
+- **Fecha**: 2026-11-06
+- **Estado**: En prueba en `test/caso-integrado-excepciones`, pendiente de revisión del equipo
+- **Decidió**: Carlos encargó la rama de prueba y el agente propuso el contrato
+- **Área**: Planeación y respaldo de Reportes
+
+**Contexto.** Comercial Ejemplo cobra parte de sus ventas a crédito a dos meses, tiene saldos iniciales con vencimientos propios y cambia el costo de compra en julio. Parte del crédito de 2026 vence en 2027.
+
+**Opciones.** El desfase único de D-014 permite reproducir el presupuesto sencillo. Calendarios por escenario permiten distribuir la apertura y el crédito nuevo en varios meses y conservar las fechas de cobro y pago que exceden el horizonte.
+
+**Decisión.** Agregar calendarios separados para la apertura y el crédito nuevo en clientes y proveedores. Cada calendario completo reparte 100 % del saldo o del crédito en hasta doce plazos. Un calendario vacío se conserva pendiente. Los costos unitarios de compra se editan por mes. El cálculo conserva precisión interna y la pantalla redondea los importes.
+
+**Consecuencias.** Los vencimientos posteriores al horizonte permanecen en cuentas por cobrar o por pagar. Si faltan datos, se muestra N/D para los cálculos que dependen de ellos y se conservan los cálculos independientes. Los escenarios nuevos cargan sus supuestos declarados desde `inputs.json` y los anteriores conservan su política de D-014. La valorización de inventario y la proyección de caja y estados proforma del caso quedan para cortes posteriores.
+
+**Para revertirla.** Definir una migración de los escenarios con `capitalTrabajo` que conserve los calendarios y costos ya guardados.
+
+**Referencias.** REV-02, D-014, D-089 y la referencia independiente de la etapa 1.
+
+### D-091 — Variaciones de Proforma solo con cobertura anual comparable
+
+- **Fecha**: 2026-11-06
+- **Estado**: En prueba en `test/caso-integrado-excepciones`
+- **Decidió**: Carlos autorizó la corrección y el agente definió el criterio temporal
+- **Área**: Proforma
+
+**Contexto.** La tabla comparaba un mes presupuestado con un ejercicio real y mostraba una caída aparente de ventas. El aviso del horizonte coexistía con el porcentaje. El presupuesto anterior identifica los periodos parciales por su orden y duración.
+
+**Opciones.** Mostrar un aviso junto a la variación, o calcular la variación solo cuando el histórico y la proyección tengan una cobertura anual identificable.
+
+**Decisión.** Exigir un histórico anual identificado con `AAAA` y una proyección de 12 meses o 4 trimestres. En las demás ventanas, las variaciones de montos y de márgenes quedan como N/D con una explicación de cobertura. Ambos valores se muestran en sus columnas.
+
+**Consecuencias.** La comparación anual de MUNO MODA sigue produciendo el cambio esperado. Las etiquetas mensuales, trimestrales o libres conservan sus cifras y la variación queda pendiente de acreditar fechas comparables.
+
+**Para revisar el criterio.** Incorporar fechas explícitas de inicio y cierre antes de habilitar comparaciones de periodos parciales.
+
+**Referencias.** D-014, REV-08 y `tests/unit/proforma.test.js`.
+
+### D-092 — Restaurar Inventario exige un kardex válido
+
+- **Fecha**: 2026-11-06
+- **Estado**: En prueba en `test/caso-integrado-excepciones`
+- **Decidió**: Carlos autorizó la corrección
+- **Área**: Inventario y Reportes
+
+**Contexto.** La restauración validaba la estructura del módulo. Podía aceptar un día inexistente, tratar un costo explícito inválido como omitido y admitir una salida que dejara existencias negativas antes de una reposición.
+
+**Opciones.** Validar el saldo final o recorrer cada movimiento en el orden que usa el kardex. Para costos, usar el costo del producto ante cualquier dato ilegible o reservarlo para entradas legadas con la propiedad omitida.
+
+**Decisión.** Validar fechas de calendario y costos explícitos antes de aceptar el respaldo. Comprobar el saldo de cada producto después de cada movimiento con la tolerancia del kardex. El orden es cronológico y los movimientos del mismo día conservan el orden del archivo. Las entradas legadas sin la propiedad `costoUnitario` conservan la política de D-081.
+
+**Consecuencias.** Un error en Inventario rechaza el lote antes de confirmar o guardar. El mensaje de fecha o costo indica la posición en el archivo. El error de existencia indica el movimiento, el producto y la fecha. La captura de movimientos también valida días reales de calendario.
+
+**Para revisar el criterio.** Cualquier política nueva de existencias negativas debe aplicarse conjuntamente a la captura y a la restauración.
+
+**Referencias.** D-011, D-081, D-083, D-089 y las pruebas de Inventario y Reportes.
+
+### D-093 — Planeación abre en un resumen con detalle
+
+- **Fecha**: 2026-11-06
+- **Estado**: En prueba en `test/caso-integrado-excepciones`
+- **Decidió**: Carlos autorizó el piloto de Planeación
+- **Área**: Interfaz de Planeación
+
+**Contexto.** Los supuestos y las tablas completas estaban apilados. Para consultar una cifra guardada, la persona tenía que pasar por el formulario y luego buscar la tabla.
+
+**Opciones.** Abrir una vista por pestaña o mostrar una cuadrícula de cifras con un panel de detalle en la misma vista.
+
+**Decisión.** Abrir Planeación en Resumen. Cada tarjeta consulta cobros, pagos o saldos del presupuesto guardado. El detalle aparece al lado cuando hay espacio y debajo en pantallas estrechas. Supuestos y Tablas completas tienen vistas propias.
+
+**Consecuencias.** La empresa, el horizonte y el escenario quedan arriba. Cambiar de vista conserva el borrador y los resultados disponibles. La gráfica de caja se inicializa cuando se muestran las tablas completas. El aviso del borrador y los resultados N/D siguen visibles al consultar las cifras.
+
+**Para revisar el criterio.** Medir la primera cifra y verificar consulta, edición y guardado con un escenario parcial y con el presupuesto maestro anterior.
+
+**Referencias.** D-089, D-090 y las pruebas de interfaz de Planeación.

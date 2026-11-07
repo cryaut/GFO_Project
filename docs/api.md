@@ -735,7 +735,9 @@ Deduce el separador decimal de un conjunto de celdas.
 
 ## integracion-respaldo.js e integracion-reporte.js
 
-Lógica pura de Reportes (sin DOM ni `store`); el `index.js` del módulo lee el `store` y guarda con `setPersisted`.
+Lógica pura de Reportes (sin DOM ni `store`). El `index.js` guarda el respaldo validado con `store.setModulesPersisted(modulos)`.
+
+`setModulesPersisted(modulos)` acepta un objeto con secciones de primer nivel reconocidas. Clona los cambios y escribe el estado completo una vez. Lanza un error si falla la escritura y conserva el último estado válido. Notifica a los suscriptores después del guardado.
 
 #### `getSavedTotals(period)` — `js/modules/integracion/index.js`
 Consulta los totales de los estados guardados mediante `computeFinancialTotals`, la misma función usada por Análisis. La utilidad neta incluye intereses e impuestos y conserva N/D.
@@ -751,6 +753,10 @@ Valida un respaldo JSON ya parseado antes de tocar el `store`.
 - **Retorno**: `{ modulos, omitidos }` — `modulos`: módulos validados y copiados (los campos ausentes se completan con los actuales; `estados` sale de `normalizeFinancialData`); `omitidos`: claves o campos desconocidos. `theme` se ignora.
 - **Errores**: `Error` en español si no es un objeto, hay claves peligrosas, es demasiado profundo (más de 12 niveles o 200 000 nodos), un campo tiene el tipo equivocado o no hay ningún módulo reconocible
 - **Ejemplo**: `validarRespaldo({ presupuesto: { ingresoMensual: 900 } }, store.getAll())`
+
+Planeación admite el presupuesto anterior `{ supuestos }` y el contrato de escenarios versionado. Un respaldo versionado se valida completo y las bases referidas deben existir.
+
+Los respaldos con Inventario pasan por `validarInventarioRespaldo` antes de solicitar confirmación o persistir el lote.
 
 #### `construirReporteHTML({ kpis, estados })`
 Cuerpo HTML del reporte (resumen, Balance General, Estado de Resultados y Totales por periodo), con una columna por periodo y todo texto del usuario escapado.
@@ -942,15 +948,36 @@ Lógica pura en `js/modules/<modulo>/<modulo>-calculations.js` (sin DOM ni `stor
 
 | Archivo | Funciones públicas |
 |---|---|
-| `inventario/inventario-calculations.js` | `normalizarInventario(datos)`, `movimientosDeProducto(datos, productoId)`, `kardex(producto, movimientos)` → `{ filas, entradas, salidas, saldoFinal, primerNegativo }`, `resumenProducto(producto, movimientos)`, `calcularInventario(datos)` → `{ productos, valorTotal, unidadesTotales, porReponer, costoReposicionTotal }`, `validarProducto(datos, producto, idEditado)`, `validarMovimiento(datos, movimiento)`, `validarBorradoMovimiento(datos, id)`, `ejemploInventario()` |
+| `inventario/inventario-calculations.js` | `normalizarInventario(datos)`, `movimientosDeProducto(datos, productoId)`, `kardex(producto, movimientos)` → `{ filas, entradas, salidas, saldoFinal, primerNegativo }`, `resumenProducto(producto, movimientos)`, `calcularInventario(datos)` → `{ productos, valorTotal, unidadesTotales, porReponer, costoReposicionTotal }`, `validarProducto(datos, producto, idEditado)`, `validarMovimiento(datos, movimiento)`, `validarBorradoMovimiento(datos, id)`, `validarInventarioRespaldo(datos)`, `ejemploInventario()` |
 | `equilibrio/equilibrio-calculations.js` | `normalizarEquilibrio(datos)`, `validarEquilibrio(datos)`, `calcularCVU(datos)` → `{ mcu, rmc, peUnidades, peVentas, unidadesMinimas, ventas, mcTotal, uaii, msUnidades, msVentas, msPorcentaje, gao, unidadesObjetivo, … }`, `aplicarCambios(datos, cambios)`, `calcularEscenarios(datos)`, `puntosGrafica(resultado)`, `baseDesdeEstados(estados, configApalancamiento, periodo, unidades)`, `ejemploEquilibrio()` |
 | `flujo/flujo-calculations.js` | `normalizarFlujo(datos)`, `validarMovimientoFlujo(movimiento)`, `calcularFlujo(datos)` → `{ actividades, neto, totalEntradas, totalSalidas, variacionNeta, saldoFinal }`, `conciliarConBalance(resultado, estados, periodoBase)`, `ejemploFlujo()` |
-| `planeacion/planeacion-calculations.js` | `SUPUESTOS`, `normalizarSupuestos(datos)`, `validarSupuestos(s)`, `ajustarLista(lista, n)`, `calcularPresupuestoMaestro(s)` → `{ ventas, compras, cbv, gastos, caja, resultados, equilibrio, cierre, totales, financiamientoMaximo, periodoFinanciamiento, avisos }`, `ejemploPlaneacion()` |
-| `proforma/proforma-calculations.js` | `resultadosReales(estados)`, `resultadosProforma(presupuesto)`, `compararResultados(real, proforma)`, `indicadoresIntegrados(entradas, periodo)`, `alertasIntegradas(entradas)`, `construirReporte(entradas)` → `{ real, proforma, comparacion, efectivo, indicadores, alertas, faltantes }`, `razon(razones, clave, denominador?)` (razón de Análisis con N/D si su denominador es 0) |
+| `planeacion/planeacion-calculations.js` | `SUPUESTOS`, `normalizarSupuestos(datos)`, `validarSupuestos(s, { parcial = false } = {})`, `ajustarLista(lista, n)`, `calcularPresupuestoMaestro(s)` → `{ ventas, compras, cbv, gastos, caja, resultados, equilibrio, cierre, totales, financiamientoMaximo, periodoFinanciamiento, avisos }`, `ejemploPlaneacion()` |
+| `planeacion/planeacion-escenarios.js` | `tieneEscenarios(datos)` detecta el discriminante de versión. `validarEscenarios(datos)` verifica la forma, bases y supuestos parciales y devuelve los datos o lanza un error. `leerPlaneacion(datos)` devuelve `{ escenario, base, supuestos, error }` para el formato vigente o anterior. |
+| `proforma/proforma-calculations.js` | `resultadosReales(estados)`, `resultadosProforma(presupuesto)`, `compararResultados(real, proforma)`, `indicadoresIntegrados(entradas, periodo)`, `alertasIntegradas(entradas)`, `construirReporte(entradas)` → `{ real, proforma, comparacion, motivoComparacion, efectivo, indicadores, alertas, faltantes }`, `razon(razones, clave, denominador?)` (razón de Análisis con N/D si su denominador es 0) |
 | `inicio/inicio-calculations.js` | `tendenciaEstados(estados)` → `{ periodos, ventas, utilidadNeta, totalActivos }`, `kpisPrincipales(entradas)`, `areasClave(entradas)` (solo empresa), `resumenActivos(lista)` → `{ cantidad, costoTotal, valorLibros, pctDepreciado, requierenAtencion }`, `finanzasPersonales(presupuesto, activos)` (presupuesto personal y activos del hogar), `saludGeneral(areas, alertas)` → `{ nivel, puntaje, ok, alerta, texto }` (D-017), `panoramaGeneral(entradas, reporte, { presupuesto, activos })` |
+
+`crearCasoComercial(datos, referencia, entradas)` toma el cierre de 2025 de `referencia_resultados.json` y los supuestos proyectados de `inputs.json`. Selecciona el escenario de capital de trabajo si ya existe o lo agrega conservando los anteriores. `seleccionarEscenario(datos, id)`, `duplicarEscenario(datos, id)` y `editarEscenario(datos, nombre, supuestos, capitalTrabajo?)` preparan los datos para que el llamador los guarde. Al omitir `capitalTrabajo` en la edición se conserva su valor guardado. Con `parcial: true`, `validarSupuestos` admite `null` para un dato pendiente y conserva las validaciones de tipo y rango.
+
+#### `validarCapitalTrabajo(capital, supuestos)`
+
+Devuelve una lista de errores. El escenario usa meses y el costo escalar queda en `null`. `capital.costosCompra` contiene un costo no negativo o `null` por mes. Los cuatro calendarios, `cobrosApertura`, `cobrosCredito`, `pagosApertura` y `pagosCredito`, son `null` si están pendientes o listas de 1 a 12 fracciones que suman 1 dentro de una tolerancia de `1e-7`. La primera fracción de apertura se aplica al primer mes del presupuesto. La primera fracción de crédito se aplica al mes siguiente al movimiento. Un cero explícito salta un plazo.
+
+#### `calcularCapitalTrabajo(s, capital, fechaCorte)`
+
+Recibe los supuestos mensuales ya validados con su apertura, la configuración anterior y la fecha de corte `AAAA-MM-DD`. Devuelve `{ etiquetas, unidadesVendidas, existencias, costosCompra, ventas, compras }`. Cada fila de existencias contiene `{ inicial, objetivo, compras, final }` en unidades. Cada bloque de ventas o compras incluye `meses`, `totales` de movimientos y `pendientes` después del horizonte.
+
+Cada mes monetario devuelve `{ importe, contado, credito, liquidado, total, apertura, cierre, vencimientos }`. `liquidado` recoge los vencimientos de los saldos de apertura y del crédito de meses previos. `total` suma el contado del mes y la liquidación de crédito. Los vencimientos tienen `{ origen, vence, importe }`, con meses `AAAA-MM`. Un cálculo pendiente queda en `null`. Una lista de vencimientos vacía indica que se conoce que no hay partidas para ese plazo.
 
 Inicio reutiliza la recolección de la proforma: `proforma/index.js` exporta `reunirEntradas()`, y `inicio/index.js` exporta `initInicio()`, `cargarEjemploEmpresa()` y `cargarEjemploPersonal()` (solo llenan módulos vacíos; devuelven los nombres cargados). Activos exporta `calcularEstado(activo)` y `ejemploActivos()`. `js/components/chart.js` exporta `refreshChartsTheme()`, que recolorea ejes y leyendas de las gráficas abiertas al cambiar de tema.
 
 Códigos de `avisos` del presupuesto maestro: `financiamiento`, `sin-compras`, `bajo-stock-minimo`, `perdida`, `bajo-equilibrio` y `sin-margen`.
+
+`compararResultados(real, proforma)` conserva ambos valores de cada fila. Calcula la variación relativa y la diferencia de márgenes en puntos solo si el periodo real es un año `AAAA` y la proyección cubre 12 meses o 4 trimestres. En los demás casos `variacion` y `puntos` quedan en `null`. Si están presentes ambos resultados y falta comparabilidad temporal, `construirReporte` explica la causa en `motivoComparacion`.
+
+`planeacionUI(page, opciones)` mantiene en la pantalla las vistas Resumen, Supuestos y Tablas completas. El borrador y la selección de consulta se conservan al cambiar de vista. `resumenPlaneacionUI(panel, presupuesto, capital)` presenta la salida de `calcularPresupuestoMaestro` o `calcularCapitalTrabajo`, según `capital`. Planeación puede recibir `destruirGrafica(id)` para retirar una gráfica al reemplazar la pantalla. Invoca `graficar(id, config)` al mostrar las tablas del presupuesto maestro.
+
+#### `validarInventarioRespaldo(datos)`
+
+Recibe el módulo de Inventario del respaldo y devuelve `{ productos, movimientos }` normalizados. Lanza un error si la normalización descarta registros, una fecha no existe en el calendario, un costo explícito no es un número finito mayor o igual a cero, o cualquier saldo intermedio del kardex cae bajo la tolerancia de existencias. Valida por producto y fecha. Si dos movimientos comparten fecha, respeta el orden del archivo. Una entrada legada con la propiedad `costoUnitario` omitida usa el costo del producto según D-081.
 
 Utilidades: `js/utils/form.js` (`leerNumero(texto)` → `{ vacio, valor }`, `nuevoId(prefijo)`, `fechaHoy()`), `js/utils/estados-guardados.js` (`estadosGuardados(estados)`, `totalesPeriodo(estados, periodo)`). `js/modules/analisis/index.js` exporta ahora `refreshSavedStates()` para que el reporte integrado no use estados en caché.

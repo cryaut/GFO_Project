@@ -795,6 +795,120 @@
 .asset-progress-bar.moderate { background: var(--color-warning); }
 .asset-progress-bar.poor { background: var(--color-danger); }
 
+/* Planeación */
+.plan-cabecera {
+  margin-bottom: var(--space-3);
+}
+
+.plan-cabecera .plan-contexto {
+  margin-top: var(--space-2);
+}
+
+.plan-encabezado, .plan-vistas, .plan-carga, .plan-detalle-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.plan-encabezado {
+  align-items: end;
+  justify-content: space-between;
+}
+
+.plan-selector {
+  flex: 0 1 20rem;
+  min-width: 0;
+}
+
+.plan-vistas, .plan-carga {
+  margin-bottom: var(--space-3);
+}
+
+.plan-vistas .btn[aria-pressed="true"], .plan-metrica[aria-pressed="true"] {
+  background: var(--color-primary-light);
+  border-color: var(--ink-primary);
+}
+
+.plan-vista {
+  margin-top: var(--space-3);
+}
+
+.plan-contexto, .plan-aviso, .plan-detalle-periodo {
+  font-size: var(--font-size-sm);
+}
+
+.plan-contexto, .plan-detalle-periodo {
+  color: var(--text-secondary);
+}
+
+.plan-resumen, .plan-cuadricula {
+  display: grid;
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.plan-resumen {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 21rem), 1fr));
+}
+
+.plan-cuadricula {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.plan-metrica {
+  display: grid;
+  align-content: start;
+  gap: var(--space-1);
+  min-width: 0;
+  padding: var(--space-3);
+  text-align: start;
+  font: inherit;
+  cursor: pointer;
+}
+
+.plan-metrica .kpi-value {
+  font-size: clamp(1rem, 2.3vw, var(--font-size-xl));
+  margin-bottom: 0;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.plan-detalle {
+  min-width: 0;
+  padding: var(--space-3);
+}
+
+.plan-detalle-cabecera {
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.plan-detalle-periodo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.plan-detalle-periodo[hidden] {
+  display: none;
+}
+
+.plan-detalle-periodo .form-select {
+  width: auto;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.plan-detalle :is(th, td) {
+  padding: var(--space-2);
+}
+
+.plan-detalle .text-right {
+  white-space: nowrap;
+}
+
 /* Reportes */
 .dashboard-grid {
   display: grid;

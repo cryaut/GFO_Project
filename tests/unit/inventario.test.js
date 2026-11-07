@@ -87,6 +87,12 @@ describe('validaciones', () => {
     }).join(' ')).toContain('costo unitario');
   });
 
+  it('valida el día de calendario al registrar un movimiento', () => {
+    const entrada = { id: 'x', productoId: 'demo-camisa', tipo: 'entrada', cantidad: 1, costoUnitario: 0, concepto: 'Compra' };
+    expect(validarMovimiento(datos, { ...entrada, fecha: '2025-02-29' })).toContain('Indique una fecha de calendario válida para el movimiento.');
+    expect(validarMovimiento(datos, { ...entrada, fecha: '2028-02-29' })).toEqual([]);
+  });
+
   it('no deja borrar una entrada de la que dependen salidas posteriores', () => {
     // Sin la entrada de 60: 120 − 90 = 30 y luego 30 − 55 = −25.
     expect(validarBorradoMovimiento(datos, 'demo-m1').join(' ')).toContain('-25');

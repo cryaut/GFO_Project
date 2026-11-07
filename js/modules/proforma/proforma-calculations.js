@@ -64,7 +64,19 @@ export function resultadosProforma(presupuesto) {
   };
 }
 
+// El presupuesto anterior declara duración. Los periodos parciales no tienen fechas
+// de cobertura que permitan cotejarlos con el histórico.
+function motivoComparacion(real, proforma) {
+  if (!real || !proforma) return null;
+  if (!proforma.anual) return 'La variación requiere una proyección anual de 12 meses o 4 trimestres.';
+  if (!/^[1-9]\d{3}$/.test(real.periodo)) {
+    return 'El periodo real no identifica un ejercicio anual en formato AAAA.';
+  }
+  return null;
+}
+
 export function compararResultados(real, proforma) {
+  const comparable = Boolean(real && proforma && !motivoComparacion(real, proforma));
   const filas = [
     ['Ventas', 'ventas', 'monto'], ['(−) Costo de ventas', 'cbv', 'monto'], ['(=) Utilidad bruta', 'utilidadBruta', 'monto'],
     ['(−) Gastos de operación', 'gastosOperacion', 'monto'], ['(=) UAII', 'uaii', 'monto'],
@@ -75,9 +87,10 @@ export function compararResultados(real, proforma) {
   return filas.map(([concepto, clave, formato]) => {
     const r = real ? real[clave] : null;
     const p = proforma ? proforma[clave] : null;
+    const calcularVariacion = comparable && esNumero(r) && esNumero(p);
     // Variación relativa solo para montos; los márgenes se comparan en puntos.
-    const variacion = formato === 'monto' && esNumero(r) && esNumero(p) ? ahPctDelta(p, r) : null;
-    const puntos = formato === 'pct' && esNumero(r) && esNumero(p) ? p - r : null;
+    const variacion = calcularVariacion && formato === 'monto' ? ahPctDelta(p, r) : null;
+    const puntos = calcularVariacion && formato === 'pct' ? p - r : null;
     return { concepto, clave, formato, real: r, proforma: p, variacion, puntos };
   });
 }
@@ -260,7 +273,10 @@ export function construirReporte(entradas) {
   if (estados && ultimoApal && ultimoApal.grados.gao === null) {
     faltantes.push({ modulo: 'Apalancamiento', ruta: '#/apalancamiento', texto: 'Clasifique los costos como fijos o variables para obtener el GAO y el GAT.' });
   }
-  if (!presupuesto) faltantes.push({ modulo: 'Presupuesto maestro', ruta: '#/planeacion', texto: 'Configure los supuestos para obtener la proforma y la caja proyectada.' });
+  if (!presupuesto) faltantes.push({
+    modulo: 'Presupuesto maestro', ruta: '#/planeacion',
+    texto: entradas.motivoPresupuesto || 'Configure los supuestos para obtener la proforma y la caja proyectada.'
+  });
   if (!equilibrio) faltantes.push({ modulo: 'Punto de equilibrio', ruta: '#/equilibrio', texto: 'Ingrese precio, costos y unidades.' });
   if (!flujo?.disponible) {
     // D-070: sin un EFE utilizable no hay renglones de flujo; el faltante envía a Análisis.
@@ -270,6 +286,7 @@ export function construirReporte(entradas) {
   return {
     real, proforma,
     comparacion: real || proforma ? compararResultados(real, proforma) : [],
+    motivoComparacion: motivoComparacion(real, proforma),
     efectivo: presupuesto ? {
       saldoInicial: presupuesto.caja.saldoInicial[0], flujoNeto: presupuesto.totales.flujoNeto,
       saldoFinal: presupuesto.cierre.efectivo, saldoMinimo: presupuesto.caja.saldoMinimo,
