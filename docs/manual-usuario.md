@@ -37,6 +37,8 @@ Guía paso a paso con ejemplos numéricos concretos por módulo.
 
 ---
 
+Si el EFE aún no se puede calcular, Inicio indica qué falta y permite usar los demás módulos. Si una sección muestra **No se pudo cargar**, pulsa **Volver a intentar** o abre otra sección desde el menú.
+
 ## 2. Módulo 1: Presupuesto Personal
 
 ### 2.1 Definir ingreso y meta de ahorro

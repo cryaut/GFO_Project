@@ -132,6 +132,27 @@ describe('áreas clave e interpretación', () => {
     const ids = areasClave(entradas({ razones: null, presupuesto: null })).map(a => a.id);
     expect(ids).toEqual(['equilibrio', 'flujo', 'inventario']);
   });
+
+  it.each([
+    'El EFE necesita al menos dos periodos.',
+    'El EFE está incompleto.',
+    'El EFE no cuadra.'
+  ])('un EFE no disponible no rompe Inicio ni evalúa su salud: %s', motivo => {
+    const datos = { flujo: { disponible: false, motivo } };
+    const p = panoramaGeneral(datos, construirReporte(datos));
+    expect(p.areas).toEqual([]);
+    expect(p.salud.nivel).toBe('sin-datos');
+    expect(p.faltantes).toContainEqual(expect.objectContaining({ modulo: 'Flujo de efectivo', texto: motivo }));
+  });
+
+  it('conserva los indicadores y la evaluación de un EFE disponible', () => {
+    const flujo = { disponible: true, neto: { operacion: 10 }, variacionNeta: 2, saldoFinal: 12 };
+    const p = panoramaGeneral({ flujo }, { alertas: [], faltantes: [] });
+    expect(area(p.areas, 'flujo')).toMatchObject({ estado: 'ok' });
+    expect(area(p.areas, 'flujo').puntos[0].valor).toBe(10);
+    expect(p.kpis.find(k => k.clave === 'efectivo').valor).toBe(12);
+    expect(p.salud.nivel).toBe('solida');
+  });
 });
 
 describe('activos', () => {
