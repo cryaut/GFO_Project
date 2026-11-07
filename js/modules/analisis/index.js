@@ -1,10 +1,11 @@
 import store from '../../store.js';
 import { mercadoUI } from './mercado-ui.js';
 import { estadosGuardados } from '../../utils/estados-guardados.js';
-import { formatCurrency, formatPercent, formatNumber } from '../../utils/format.js';
-import { computarRazonesDesdeDatos, obtenerUtilidadNetaMotor } from '../razones/razones-app-adapter.js';
+import { formatCurrencyND as formatCurrency, formatPercent, formatNumber, formatCurrencyND } from '../../utils/format.js';
+import { analisisHorizontalCompleto, analisisVerticalCompleto, detalleDuPont } from './analisis-calculations.js';
+import { computarRazonesDesdeDatos } from '../razones/razones-app-adapter.js';
 import {
-  ahDelta, ahPctDelta, av, dupont, capitalNetoTrabajo, capitalNetoOperativo
+  capitalNetoTrabajo, capitalNetoOperativo, DIAS_ANIO
 } from '../../utils/calculate.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
 import { sortPeriods } from '../estados/estados-normalize.js';
@@ -33,6 +34,8 @@ const esNumero = valor => typeof valor === 'number' && Number.isFinite(valor);
 let savedCache = null;
 let savedPeriods = [];
 let savedError = null;
+let selectedAnalysisPeriod = null;
+let activeAnalysisTab = 'ah';
 // Exportada: Reportes refresca la caché antes de reutilizar computeRazones para
 // que el dashboard no lea estados guardados de una navegación anterior.
 // D-078: sin respaldo por nombres — si los estados no se pueden leer, la
@@ -67,29 +70,12 @@ function totalsFor(period) {
 // D-078: sin estados legibles, cada campo sale N/D (null) — nunca 0 ni una
 // lectura por nombres fijos. El motivo del N/D lo explican las razones
 // (estados_no_legibles) y el aviso de la pantalla.
-const ER_ND = () => ({
-  ventas: null, costoVentas: null, gastosAdmin: null, gastosVentas: null,
-  otrosIngresos: null, otrosGastos: null, intereses: null, impuestos: null,
-  utilidadNeta: null
-});
 const BG_ND = () => ({
   efectivo: null, cxC: null, inventario: null, activosCorrientesOtros: null,
   activosCorrientes: null, cuentasPorPagar: null, pasivoCortoPlazo: null,
   provisiones: null, pasivosCorrientes: null, totalActivos: null,
   totalPasivos: null, totalPatrimonio: null, activosFijos: null
 });
-
-function getERData(period) {
-  const shared = totalsFor(period);
-  if (!shared) return ER_ND();
-  return {
-    ventas: shared.ventas, costoVentas: shared.costoVentas,
-    gastosAdmin: shared.gastosAdmin, gastosVentas: shared.gastosVentas,
-    otrosIngresos: shared.otrosIngresos, otrosGastos: shared.otrosGastos,
-    intereses: shared.intereses, impuestos: shared.impuestos,
-    utilidadNeta: shared.utilidadNeta
-  };
-}
 
 function getBGData(period) {
   const shared = totalsFor(period);
@@ -113,40 +99,11 @@ function getPeriods() {
 }
 
 export function computeAVBalanceGeneral(period) {
-  const bg = getBGData(period);
-  const ta = bg.totalActivos;
-  const raw = store.get('estados.balanceGeneral')?.[period] || {};
-  const rows = [];
-  for (const [k, v] of Object.entries(raw.activos || {})) {
-    rows.push({ cuenta: k, valor: v, pctBase: ta === 0 ? null : av(v, ta), tipo: 'Activo', base: 'Total Activos' });
-  }
-  for (const [k, v] of Object.entries(raw.pasivos || {})) {
-    rows.push({ cuenta: k, valor: v, pctBase: ta === 0 ? null : av(v, ta), tipo: 'Pasivo', base: 'Total Activos' });
-  }
-  for (const [k, v] of Object.entries(raw.patrimonio || {})) {
-    rows.push({ cuenta: k, valor: v, pctBase: ta === 0 ? null : av(v, ta), tipo: 'Patrimonio', base: 'Total Activos' });
-  }
-  return { rows, base: 'Total Activos', baseValor: ta };
+  return analisisVerticalCompleto(savedCache || refreshSavedStates(), period).balanceGeneral;
 }
 
 export function computeAVEstadoResultados(period) {
-  const er = getERData(period);
-  const ventas = er.ventas;
-  const items = [
-    ['Ventas', er.ventas],
-    ['Costo de Ventas', er.costoVentas],
-    ['Gastos de Administracion', er.gastosAdmin],
-    ['Gastos de Ventas', er.gastosVentas],
-    ['Otros Ingresos', er.otrosIngresos],
-    ['Otros Gastos', er.otrosGastos],
-    ['Utilidad Neta', er.utilidadNeta]
-  ];
-  const rows = items.map(([cuenta, valor]) => ({
-    cuenta, valor,
-    pctBase: ventas === 0 ? null : av(valor, ventas),
-    base: 'Ventas'
-  }));
-  return { rows, base: 'Ventas', baseValor: ventas };
+  return analisisVerticalCompleto(savedCache || refreshSavedStates(), period).estadoResultados;
 }
 
 // Public AV aggregate: the `av.js` shell re-exports this name.
@@ -171,14 +128,7 @@ export function computeRazones(period, opciones = {}) {
 }
 
 export function computeDuPont(period) {
-  const r = computeRazones(period);
-  const dp = dupont(
-    obtenerUtilidadNetaMotor(store.get('estados'), period).valor,
-    r.denominadores.MN,
-    r.activoProm,
-    r.patrimonioProm
-  );
-  return { ...dp, activoProm: r.activoProm, patrimonioProm: r.patrimonioProm, usaPromedios: r.usaPromedios };
+  return detalleDuPont(store.get('estados'), period);
 }
 
 export function computeCNTCNO(period) {
@@ -303,64 +253,46 @@ function computeEvolucion(periods) {
 function renderAHSection(periods) {
   const ahData = computeAH(periods);
   if (ahData.length === 0) return '<p class="text-muted">Se necesitan al menos 2 periodos.</p>';
-  let html = '<p class="text-muted" style="font-size:var(--font-size-sm)">Variación % = Δ / |valor T1|. Si el periodo base es 0, la variación porcentual no está definida y se muestra N/D.</p>';
+  let html = '<p class="analisis-note">Todas las cuentas del balance y del estado de resultados. Δ = T2 − T1; variación % = Δ / |T1|. Una cuenta ausente no equivale a cero: se muestra N/D. Con base cero, el porcentaje es N/D.</p>';
   for (const ah of ahData) {
-    html += `<h4 class="mb-2">${ah.periodo}</h4>
+    html += `<section class="analisis-sheet"><h4 class="mb-2">${escapeHTML(ah.periodo)}</h4>
       <div class="table-wrapper mb-6"><table>
         <thead><tr><th>Cuenta</th><th class="text-right">Periodo T1</th><th class="text-right">Periodo T2</th><th class="text-right">Δ</th><th class="text-right">%Δ</th></tr></thead>
         <tbody>${ah.rows.map(r => `<tr>
-          <td>${r.cuenta}</td>
-          <td class="text-right font-mono">${formatCurrency(r.t1)}</td>
-          <td class="text-right font-mono">${formatCurrency(r.t2)}</td>
-          <td class="text-right font-mono ${r.delta < 0 ? 'text-danger' : 'text-success'}">${formatCurrency(r.delta)}</td>
+          <td><span class="analisis-account-group">${escapeHTML(r.grupo)}</span>${escapeHTML(r.cuenta)}</td>
+          <td class="text-right font-mono">${formatCurrencyND(r.t1)}</td>
+          <td class="text-right font-mono">${formatCurrencyND(r.t2)}</td>
+          <td class="text-right font-mono ${esNumero(r.delta) && r.delta < 0 ? 'text-danger' : ''}">${formatCurrencyND(r.delta)}</td>
           <td class="text-right font-mono">${r.pctDelta === null ? 'N/D' : formatPercent(r.pctDelta)}</td>
         </tr>`).join('')}</tbody>
-      </table></div>`;
+      </table></div></section>`;
   }
   return html;
 }
 
 export function computeAH(periods) {
-  const results = [];
-  for (let i = 1; i < periods.length; i++) {
-    const t1 = getBGData(periods[i - 1]);
-    const t2 = getBGData(periods[i]);
-    const cuentas = [
-      { nombre: 'Activos Corrientes', v1: t1.activosCorrientes, v2: t2.activosCorrientes },
-      { nombre: 'Inventario', v1: t1.inventario, v2: t2.inventario },
-      { nombre: 'CxC', v1: t1.cxC, v2: t2.cxC },
-      { nombre: 'Total Activos', v1: t1.totalActivos, v2: t2.totalActivos },
-      { nombre: 'Pasivos Corrientes', v1: t1.pasivosCorrientes, v2: t2.pasivosCorrientes },
-      { nombre: 'Total Pasivos', v1: t1.totalPasivos, v2: t2.totalPasivos },
-      { nombre: 'Patrimonio', v1: t1.totalPatrimonio, v2: t2.totalPatrimonio }
-    ];
-    const rows = cuentas.map(c => ({
-      cuenta: c.nombre, t1: c.v1, t2: c.v2,
-      delta: ahDelta(c.v2, c.v1), pctDelta: ahPctDelta(c.v2, c.v1)
-    }));
-    results.push({ periodo: `${periods[i - 1]} → ${periods[i]}`, rows });
-  }
-  return results;
+  return analisisHorizontalCompleto(savedCache || refreshSavedStates(), periods);
 }
 
 function renderAVTable(avData, titulo) {
-  return `<h4>${titulo}</h4>
-    <p class="text-muted" style="font-size:var(--font-size-sm)">Base utilizada: <strong>${avData.base}</strong> = ${formatCurrency(avData.baseValor)}</p>
+  return `<section class="analisis-sheet"><h4>${titulo}</h4>
+    <p class="analisis-note">Cuenta / base × 100. Base utilizada: <strong>${escapeHTML(avData.base)}</strong> = ${formatCurrencyND(avData.baseValor)}</p>
     <div class="table-wrapper mb-6"><table>
       <thead><tr><th>Cuenta</th><th class="text-right">Valor</th><th class="text-right">% Base</th></tr></thead>
       <tbody>${avData.rows.map(r => `<tr>
-        <td>${r.cuenta}</td>
-        <td class="text-right font-mono">${formatCurrency(r.valor)}</td>
-        <td class="text-right font-mono">${r.pctBase === null ? 'N/D (base = 0)' : formatPercent(r.pctBase)}</td>
+        <td><span class="analisis-account-group">${escapeHTML(r.grupo)}</span>${escapeHTML(r.cuenta)}</td>
+        <td class="text-right font-mono">${formatCurrencyND(r.valor)}</td>
+        <td class="text-right font-mono">${r.pctBase === null ? 'N/D' : formatPercent(r.pctBase)}</td>
       </tr>`).join('')}</tbody>
-    </table></div>`;
+    </table></div></section>`;
 }
 
 function renderAVSection(period) {
-  const bgAv = computeAVBalanceGeneral(period);
-  const erAv = computeAVEstadoResultados(period);
-  return renderAVTable(bgAv, 'Análisis Vertical — Balance General') +
-    renderAVTable(erAv, 'Análisis Vertical — Estado de Resultados');
+  const datos = analisisVerticalCompleto(savedCache || refreshSavedStates(), period);
+  return '<p class="analisis-note">Incluye todas las cuentas capturadas y los totales reportados, sin volver a sumarlos. Una base cero o incompleta produce N/D.</p>' +
+    renderAVTable(datos.balanceGeneral, 'Análisis Vertical — Balance General') +
+    renderAVTable(datos.estadoResultados, 'Análisis Vertical — Estado de Resultados') +
+    (datos.complementarios.length ? `<section class="analisis-sheet"><h4>Datos fuera de la base vertical</h4><p class="analisis-note">Los datos suplementarios y las cuentas sin grupo se conservan, pero no se les asigna una base contable sin acreditar su clasificación.</p><div class="table-wrapper"><table><thead><tr><th>Cuenta</th><th>Importe</th><th>% Base</th></tr></thead><tbody>${datos.complementarios.map(fila => `<tr><td>${escapeHTML(fila.cuenta)}</td><td>${formatCurrencyND(fila.valor)}</td><td>N/D · ${escapeHTML(fila.grupo)}</td></tr>`).join('')}</tbody></table></div></section>` : '');
 }
 
 function msgDivisionCero(indicador, denominador) {
@@ -416,13 +348,19 @@ function renderRazonesSection(period) {
   const notaCreditos = r.RotCxC == null
     ? ''
     : 'La rotación de CxC y el plazo de cobro usan las ventas a crédito declaradas.';
+  let grupoAbierto = false;
+  const indicadores = items.map(([label, value, badgeClass]) => {
+    if (!value) {
+      const cierre = grupoAbierto ? '</dl></section>' : '';
+      grupoAbierto = true;
+      return `${cierre}<section class="analisis-ratio-group"><h4>${label}</h4><dl class="analisis-ratio-list">`;
+    }
+    const esError = value.startsWith('No se puede calcular');
+    return `<div><dt>${label}</dt><dd class="${esError ? 'text-danger' : ''}">${value}${!esError && badgeClass && badgeClass !== 'badge-info' ? ` <span class="badge ${badgeClass}">${etiqueta(badgeClass)}</span>` : ''}</dd></div>`;
+  }).join('') + (grupoAbierto ? '</dl></section>' : '');
   return `<p class="text-muted mb-4" style="font-size:var(--font-size-sm)">${notaPromedios}</p>
   ${notaCreditos ? `<p class="text-muted mb-4" style="font-size:var(--font-size-sm)">${notaCreditos}</p>` : ''}
-  <div class="kpi-grid">${items.map(([label, value, badgeClass]) => {
-    if (!value) return `<div class="kpi-card" style="grid-column:1/-1"><div class="kpi-label font-bold">${label}</div></div>`;
-    const esError = value.startsWith('No se puede calcular');
-    return `<div class="kpi-card"><div class="kpi-value" style="${esError ? 'font-size:var(--font-size-sm);color:var(--color-danger)' : ''}">${value}</div><div class="kpi-label">${label}</div>${!esError && badgeClass && badgeClass !== 'badge-info' ? `<span class="badge ${badgeClass}" style="margin-top:var(--space-2)">${etiqueta(badgeClass)}</span>` : ''}</div>`;
-  }).join('')}</div>`;
+  <div class="analisis-ratios">${indicadores}</div>`;
 }
 
 function renderCNTCNOSection(period) {
@@ -638,24 +576,31 @@ function renderEFESection(period) {
 
 function renderDuPontSection(period) {
   const dp = computeDuPont(period);
-  const fmtProm = v => v == null ? 'N/D' : formatCurrency(v);
+  const fmtProm = formatCurrencyND;
   const notaPromedios = dp.usaPromedios
     ? `Activo promedio = ${fmtProm(dp.activoProm)} · Patrimonio promedio = ${fmtProm(dp.patrimonioProm)} ((inicial + final) / 2)`
-    : `Un solo periodo disponible: se usan saldos finales (Activo = ${fmtProm(dp.activoProm)}, Patrimonio = ${fmtProm(dp.patrimonioProm)}). Ingrese dos periodos para promediar.`;
-  return `<div class="kpi-grid">
-    <div class="kpi-card"><div class="kpi-value">${dp.PM == null ? 'N/D' : formatPercent(dp.PM)}</div><div class="kpi-label">Margen Neto (PM)</div></div>
-    <div class="kpi-card"><div class="kpi-value">${dp.AT == null ? 'N/D' : formatNumber(dp.AT)}</div><div class="kpi-label">Rotación Activos (AT)</div></div>
-    <div class="kpi-card"><div class="kpi-value">${dp.EM == null ? 'N/D' : formatNumber(dp.EM)}</div><div class="kpi-label">Multiplicador (EM)</div></div>
-    <div class="kpi-card" style="border-color:var(--color-primary)"><div class="kpi-value" style="color:var(--color-primary)">${dp.ROE == null ? 'N/D' : formatPercent(dp.ROE)}</div><div class="kpi-label font-bold">ROE = PM × AT × EM</div></div>
-  </div>
-  <p class="text-muted mt-4" style="font-size:var(--font-size-sm)">${notaPromedios}</p>
-  <div class="card" style="border-left:4px solid var(--color-primary)">
-    <p style="margin:0;font-size:var(--font-size-sm);color:var(--text-secondary)">
-      <strong>Lectura integrada:</strong> un ROE alto no implica por sí mismo buena salud financiera.
-      Identifique qué componente lo impulsa: PM alto (rentabilidad), AT alta (eficiencia en el uso de activos)
-      o EM alto (apalancamiento, que también amplifica el riesgo).
-    </p>
-  </div>`;
+    : `Sin periodo previo: se conserva la política de saldos finales del sistema. Los factores que requieran un promedio no acreditado permanecen N/D. Activo = ${fmtProm(dp.activoProm)}; patrimonio = ${fmtProm(dp.patrimonioProm)}.`;
+  const pct = v => esNumero(v) ? formatPercent(v) : 'N/D';
+  const veces = v => esNumero(v) ? `${formatNumber(v, 4)} veces` : 'N/D';
+  const factores = [
+    ['Margen neto (PM)', 'Utilidad neta / Ventas netas', dp.utilidadNeta, dp.ventas, dp.PM, pct],
+    ['Rotación de activos (AT)', 'Ventas netas / Activo promedio', dp.ventas, dp.activoProm, dp.AT, veces],
+    ['Multiplicador del capital (EM)', 'Activo promedio / Patrimonio promedio', dp.activoProm, dp.patrimonioProm, dp.EM, veces]
+  ];
+  const comprobar = (producto, directo) => !esNumero(producto) || !esNumero(directo) ? 'N/D · faltan datos o existe un divisor cero'
+    : Math.abs(producto - directo) <= 1e-10 * Math.max(1, Math.abs(directo)) ? 'Coincide con la fórmula directa' : 'Revisar diferencia con la fórmula directa';
+  return `<p class="analisis-note">${notaPromedios}</p>
+    <section class="analisis-sheet"><h4>Cálculo de cada factor</h4>
+      <p class="analisis-note">Se conserva toda la precisión durante el cálculo. Los valores mostrados se redondean al final.</p>
+      <div class="table-wrapper"><table><thead><tr><th>Factor</th><th>Fórmula</th><th>Sustitución</th><th>Resultado</th></tr></thead><tbody>
+        ${factores.map(([nombre, formula, numerador, denominador, resultado, formato]) => `<tr><th scope="row">${nombre}</th><td>${formula}</td><td class="analisis-operation">${fmtProm(numerador)} / ${fmtProm(denominador)}</td><td class="text-right">${formato(resultado)}</td></tr>`).join('')}
+      </tbody></table></div></section>
+    <section class="analisis-sheet"><h4>ROA y ROE: descomposición y comprobación</h4>
+      <div class="table-wrapper"><table><thead><tr><th>Indicador</th><th>DuPont</th><th>Fórmula directa</th><th>Comprobación</th></tr></thead><tbody>
+        <tr><th scope="row">ROA</th><td>PM × AT<br>${pct(dp.PM)} × ${veces(dp.AT)}<br><strong>${pct(dp.ROA)}</strong></td><td>UN / Activo promedio<br>${fmtProm(dp.utilidadNeta)} / ${fmtProm(dp.activoProm)}<br><strong>${pct(dp.roaDirecto)}</strong></td><td>${comprobar(dp.ROA, dp.roaDirecto)}</td></tr>
+        <tr><th scope="row">ROE</th><td>PM × AT × EM<br>${pct(dp.PM)} × ${veces(dp.AT)} × ${veces(dp.EM)}<br><strong>${pct(dp.ROE)}</strong></td><td>UN / Patrimonio promedio<br>${fmtProm(dp.utilidadNeta)} / ${fmtProm(dp.patrimonioProm)}<br><strong>${pct(dp.roeDirecto)}</strong></td><td>${comprobar(dp.ROE, dp.roeDirecto)}</td></tr>
+      </tbody></table></div></section>
+    <p class="analisis-note"><strong>Lectura integrada:</strong> el margen explica la rentabilidad de las ventas; la rotación, la eficiencia de los activos; el multiplicador, la relación activo/patrimonio. Un multiplicador alto no demuestra por sí solo rentabilidad favorable ni deuda conveniente. Fuentes: clase DuPont, diapositivas 5–11.</p>`;
 }
 
 function renderInterpretacionSection(period) {
@@ -680,7 +625,7 @@ function renderInterpretacionSection(period) {
         const celda = v => (typeof v === 'number' && Number.isFinite(v)
           ? (e.indicador.includes('%') ? formatPercent(v) : formatNumber(v)) : 'N/D');
         return `<tr>
-        <td>${e.periodo}</td>
+        <td>${escapeHTML(e.periodo)}</td>
         <td>${e.indicador}</td>
         <td class="text-right font-mono">${celda(e.t1)}</td>
         <td class="text-right font-mono">${celda(e.t2)}</td>
@@ -689,76 +634,64 @@ function renderInterpretacionSection(period) {
       }).join('')}</tbody>
     </table></div>`;
   return niveles + evolucionHtml + hallazgos.map(h => `
-    <div class="card mb-4" style="border-left:4px solid var(--color-warning)">
+    <div class="card mb-4">
       <div class="flex-gap mb-2"><span class="badge badge-warning">Hallazgo</span><strong>${h.hallazgo}</strong></div>
       <p style="font-size:var(--font-size-sm);color:var(--text-secondary);margin:var(--space-2) 0"><strong>Causa:</strong> ${h.causa}</p>
       <p style="font-size:var(--font-size-sm);color:var(--text-secondary);margin:var(--space-2) 0"><strong>Riesgo:</strong> ${h.riesgo}</p>
-      <p style="font-size:var(--font-size-sm);color:var(--color-primary);margin:var(--space-2) 0"><strong>Acción:</strong> ${h.accion}</p>
+      <p style="font-size:var(--font-size-sm);color:var(--ink-primary);margin:var(--space-2) 0"><strong>Acción:</strong> ${h.accion}</p>
     </div>`).join('');
 }
+
+const METODOS_ANALISIS = {
+  ah: 'Comparar cada cuenta entre periodos consecutivos: T2 − T1 y Δ / |T1|. Se conserva la convención actual para bases negativas. Una cuenta ausente no se trata como cero.',
+  av: 'Dividir cada cuenta del balance entre el total de activos, y cada cuenta del estado de resultados entre las ventas netas. Los totales reportados se presentan sin volver a sumarlos. No se asigna base a una cuenta sin grupo.',
+  razones: `Liquidez: AC / PC y (AC − inventario) / PC. Actividad: flujos / saldos promedio; plazos = ${DIAS_ANIO} / rotación exacta. Rentabilidad: UN / ventas, UN / activo promedio y UN / patrimonio promedio. La app exige ventas a crédito declaradas y deriva compras a crédito desde pagos a proveedores y ΔCxP: difiere del ejemplo docente que estima compras como 70 % del costo de ventas. No se inventan pagos para igualarlo.`,
+  'cnt-cno': 'CNT = activo corriente − pasivo corriente. CNO = (CxC + inventario) − (CxP + provisiones), según la clasificación operativa actual de la app. Esta composición es una convención del sistema; no se atribuye al profesor una clasificación que el material no detalla.',
+  eoaf: 'Comparar los balances de dos periodos. Un aumento de activo es aplicación; una disminución es origen. En pasivo y patrimonio se invierte la clasificación. Los totales son comprobaciones, no nuevos movimientos.',
+  efe: 'Método indirecto: utilidad neta + ajustes no monetarios + cambios operativos; añadir inversión y financiamiento. Comprobar operación + inversión + financiamiento = efectivo final − inicial. La clase también desarrolla el método directo, disponible en Flujo de Efectivo. Su ejemplo no aporta balances y ER completos: este EFE no fue comparado con la clase.',
+  dupont: 'DuPont, diapositivas 5–11: margen = UN / ventas; rotación = ventas / activo promedio; multiplicador = activo promedio / patrimonio promedio. ROA = margen × rotación. ROE = margen × rotación × multiplicador. Comprobar ambos contra las fórmulas directas, con precisión completa.',
+  interpretacion: 'Relacionar resultado, causa posible, riesgo y acción. Los umbrales son referencias educativas configuradas por el equipo, no límites universales ni diagnósticos del profesor. N/D no permite concluir que un indicador es favorable.',
+  mercado: 'UPA = (UN − DAP) / acciones comunes; P/U = precio / UPA; valor en libros por acción = patrimonio / acciones; rendimiento = dividendo por acción / precio. Requiere acciones, precio y dividendos acreditados. Es contenido adicional al alcance obligatorio de la guía.'
+};
 
 export function initAnalisis() {
   refreshSavedStates();
   const page = document.getElementById('page-analisis');
   if (!page) return;
-
   const periods = getPeriods();
-
-  page.innerHTML = `
-    <div class="page-header">
-      <h1 class="page-title">Análisis Financiero</h1>
-      <p class="page-subtitle">AH, AV, Razones, CNT/CNO, EOAF, EFE, DuPont, Interpretación y razones de mercado</p>
-    </div>
-    ${avisoEstadosGuardados() ? `<p class="form-hint mb-4" style="color:var(--color-danger)">${escapeHTML(avisoEstadosGuardados())}</p>` : ''}
-    <div class="tabs">
-      <button class="tab-btn active" data-tab="ah">AH</button>
-      <button class="tab-btn" data-tab="av">AV</button>
-      <button class="tab-btn" data-tab="razones">Razones</button>
-      <button class="tab-btn" data-tab="cnt-cno">CNT/CNO</button>
-      <button class="tab-btn" data-tab="eoaf">EOAF</button>
-      <button class="tab-btn" data-tab="efe">EFE</button>
-      <button class="tab-btn" data-tab="dupont">DuPont</button>
-      <button class="tab-btn" data-tab="interpretacion">Interpretación</button>
-      <button class="tab-btn" data-tab="mercado">Mercado</button>
-    </div>
-    <div class="tab-content active" id="tab-ah">
-      <h3 class="mb-4">Análisis Horizontal</h3>
-      ${renderAHSection(periods)}
-    </div>
-    <div class="tab-content" id="tab-av">
-      <h3 class="mb-4">Análisis Vertical (último periodo)</h3>
-      ${periods.length > 0 ? renderAVSection(periods[periods.length - 1]) : '<p class="text-muted">Sin datos.</p>'}
-    </div>
-    <div class="tab-content" id="tab-razones">
-      <h3 class="mb-4">Razones Financieras (último periodo)</h3>
-      ${periods.length > 0 ? renderRazonesSection(periods[periods.length - 1]) : '<p class="text-muted">Sin datos.</p>'}
-    </div>
-    <div class="tab-content" id="tab-cnt-cno">
-      <h3 class="mb-4">Capital Neto de Trabajo y Operativo</h3>
-      ${periods.length > 0 ? renderCNTCNOSection(periods[periods.length - 1]) : '<p class="text-muted">Sin datos.</p>'}
-    </div>
-    <div class="tab-content" id="tab-eoaf">
-      <h3 class="mb-4">Estado de Origen y Aplicación de Fondos</h3>
-      ${renderEOAFSection(periods)}
-    </div>
-    <div class="tab-content" id="tab-efe">
-      <h3 class="mb-4">Estado de Flujo de Efectivo (Método Indirecto)</h3>
-      ${periods.length > 0 ? renderEFESection(periods[periods.length - 1]) : '<p class="text-muted">Sin datos.</p>'}
-    </div>
-    <div class="tab-content" id="tab-dupont">
-      <h3 class="mb-4">Modelo DuPont (3 pasos)</h3>
-      ${periods.length > 0 ? renderDuPontSection(periods[periods.length - 1]) : '<p class="text-muted">Sin datos.</p>'}
-    </div>
-    <div class="tab-content" id="tab-interpretacion">
-      <h3 class="mb-4">Interpretación Heurística</h3>
-      ${periods.length > 0 ? renderInterpretacionSection(periods[periods.length - 1]) : '<p class="text-muted">Sin datos.</p>'}
-    </div>
-    <div class="tab-content" id="tab-mercado">
-      <h3 class="mb-4">Razones de Mercado</h3>
-      <div id="mercadoContenido"></div>
+  if (!periods.includes(selectedAnalysisPeriod)) selectedAnalysisPeriod = periods.at(-1) || null;
+  const period = selectedAnalysisPeriod;
+  const menu = [
+    ['Comparar estados', [['ah', 'Horizontal (AH)'], ['av', 'Vertical (AV)']]],
+    ['Rentabilidad y lectura', [['razones', 'Razones'], ['dupont', 'DuPont'], ['interpretacion', 'Interpretación'], ['mercado', 'Mercado']]],
+    ['Capital y fondos', [['cnt-cno', 'CNT / CNO'], ['eoaf', 'Origen y aplicación'], ['efe', 'Flujo de efectivo']]]
+  ];
+  const contenidoPanel = (id, titulo, contenido) => `<h2>${titulo}</h2><details class="analisis-method"><summary>Ver método y criterios</summary><p>${METODOS_ANALISIS[id]}</p></details>${contenido}`;
+  const panel = (id, titulo, contenido) => `<section class="tab-content analisis-panel${id === activeAnalysisTab ? ' active' : ''}" id="tab-${id}" aria-labelledby="analysis-tab-${id}">${contenidoPanel(id, titulo, contenido)}</section>`;
+  const sinDatos = '<p class="analisis-empty">No hay datos para este periodo. <a href="#/estados">Cargue y guarde los estados financieros</a> para comenzar.</p>';
+  const secciones = periodo => {
+    const comparables = periodo ? periods.slice(0, periods.indexOf(periodo) + 1) : [];
+    return [
+      ['ah', 'Análisis Horizontal', renderAHSection(comparables)],
+      ['av', 'Análisis Vertical', periodo ? renderAVSection(periodo) : sinDatos],
+      ['razones', 'Razones Financieras', periodo ? renderRazonesSection(periodo) : sinDatos],
+      ['cnt-cno', 'Capital Neto de Trabajo y Operativo', periodo ? renderCNTCNOSection(periodo) : sinDatos],
+      ['eoaf', 'Estado de Origen y Aplicación de Fondos', renderEOAFSection(comparables)],
+      ['efe', 'Estado de Flujo de Efectivo · Método indirecto', periodo ? renderEFESection(periodo) : sinDatos],
+      ['dupont', 'Modelo DuPont · ROA y ROE', periodo ? renderDuPontSection(periodo) : sinDatos],
+      ['interpretacion', 'Interpretación de resultados', periodo ? renderInterpretacionSection(periodo) : sinDatos]
+    ];
+  };
+  page.innerHTML = `<div class="analisis-workspace">
+    <header class="page-header analisis-header"><div><h1 class="page-title">Análisis Financiero</h1><p class="page-subtitle">Compare sus estados, revise los cálculos y relacione los resultados.</p></div><a href="#/estados">Editar estados guardados →</a></header>
+    ${avisoEstadosGuardados() ? `<p class="form-hint mb-4 text-danger">${escapeHTML(avisoEstadosGuardados())}</p>` : ''}
+    <section class="analisis-context" aria-label="Datos analizados"><div><strong>${escapeHTML(savedCache?.name || 'Sin estados guardados')}</strong><p>Lectura de los datos guardados en Estados. Mercado conserva su comparación de todos los periodos.</p></div>
+      <div><label class="form-label" for="analysisPeriod">Periodo de análisis</label><select class="form-select" id="analysisPeriod"${period ? '' : ' disabled'}>${periods.map(p => `<option value="${escapeHTML(p)}"${p === period ? ' selected' : ''}>${escapeHTML(p)}</option>`).join('') || '<option>Sin periodos</option>'}</select></div></section>
+    <nav class="analisis-navigation" aria-label="Secciones del análisis">${menu.map(([grupo, opciones]) => `<div class="analisis-nav-group"><p>${grupo}</p><div class="tabs">${opciones.map(([id, nombre]) => `<button type="button" id="analysis-tab-${id}" class="tab-btn${activeAnalysisTab === id ? ' active' : ''}" data-tab="${id}" aria-controls="tab-${id}" aria-pressed="${activeAnalysisTab === id}">${nombre}</button>`).join('')}</div></div>`).join('')}</nav>
+    ${secciones(period).map(fila => panel(...fila)).join('')}
+    ${panel('mercado', 'Razones de Mercado', '<div id="mercadoContenido"></div>')}
     </div>`;
 
-  // Razones de mercado: datos de acciones propios; UN y patrimonio de los estados; DAP de Apalancamiento.
   const mercado = page.querySelector?.('#mercadoContenido');
   if (mercado) {
     mercadoUI(mercado, {
@@ -768,12 +701,27 @@ export function initAnalisis() {
       guardar: datos => store.setPersisted('razonesMercado', datos)
     });
   }
-
+  const selector = page.querySelector?.('#analysisPeriod');
+  if (selector) selector.onchange = event => {
+    if (!periods.includes(event.target.value)) return;
+    selectedAnalysisPeriod = event.target.value;
+    // Mercado compara todos los periodos: conservar su DOM mantiene el borrador,
+    // sus mensajes y los manejadores de Guardar, sin persistir entradas pendientes.
+    for (const [id, titulo, contenido] of secciones(selectedAnalysisPeriod)) {
+      const seccion = page.querySelector(`#tab-${id}`);
+      if (seccion) seccion.innerHTML = contenidoPanel(id, titulo, contenido);
+    }
+  };
   page.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      page.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      activeAnalysisTab = btn.dataset.tab;
+      page.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute?.('aria-pressed', 'false');
+      });
       page.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
       btn.classList.add('active');
+      btn.setAttribute?.('aria-pressed', 'true');
       page.querySelector(`#tab-${btn.dataset.tab}`)?.classList.add('active');
     });
   });

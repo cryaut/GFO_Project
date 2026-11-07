@@ -134,6 +134,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-084 | Totales de existencia solo con una unidad | Vigente |
 | D-085 | Supuestos de Planeación guardados sin producto vinculado | Vigente |
 | D-086 | Integrar lectura segura de F8 con el motor de razones | Vigente |
+| D-095 | Completar AH/AV y hacer coherente el procedimiento DuPont | Vigente en rama, pendiente de revisión |
 | D-087 | DuPont y consumidores propagan datos no disponibles | Vigente en rama; pendiente de revisión |
 | D-088 | EFE indirecto por identidad y con alcance explícito | Vigente en rama; pendiente de revisión |
 
@@ -1997,6 +1998,24 @@ Se retira la prueba histórica de regresión de la demo (caso de ejemplo cargado
 
 **Referencias.** D-049, D-055 a D-060, D-063, D-077 y D-078; `tests/unit/f8-lectura.test.js`; `tests/unit/razones-app-aceptacion-1c.test.js`.
 
+### D-095 — Completar AH/AV y hacer coherente el procedimiento DuPont
+
+- **Fecha**: 2026-11-06
+- **Estado**: Vigente en rama, pendiente de revisión humana
+- **Decidió**: Cris solicitó ampliar todas las cuentas y presentar factores, ROA y ROE; Codex implementa esta interpretación técnica, sin sustituir la aprobación del PR.
+- **Área**: Análisis; no modifica el motor de razones ni su generado.
+
+**Contexto.** AH solo presentaba siete agregados del BG; AV del ER omitía cuentas al usar siete agregados fijos. DuPont combinaba UN y ventas del totalizador de Estados con promedios del motor de Razones, y podía divergir de sus políticas de N/D. La clase exige descomponer y comprobar los rendimientos, sin redondeos intermedios.
+
+**Opciones.** Mantener los resúmenes actuales; ampliar las filas y conservar la mezcla de fuentes; o ampliar las filas sin inventar saldos y alinear exclusivamente DuPont con las fuentes de Razones.
+
+**Decisión.** Se adopta la última opción. AH/AV incluyen todas las cuentas conservadas y los totales reportados, que no se suman otra vez. Una cuenta ausente en un periodo es N/D. Se conserva Δ/abs(T1) y las bases de AV vigentes: activo total y ventas netas; las transcripciones no acreditan cambiarlas. Suplementarios y pendientes se distinguen sin asignarles una base contable no declarada. DuPont obtiene UN, ventas y factores desde las consultas existentes del motor; muestra PM, AT, EM, ROA, ROE y sus comprobaciones directas. No se altera ningún JSON ni la disponibilidad del motor.
+
+**Consecuencias.** DuPont puede pasar de una cifra a N/D cuando faltan datos que el motor exige. Con ventas cero, una fórmula directa puede existir aunque la descomposición sea N/D: se muestran ambos estados. Esta es una excepción acotada al uso del totalizador en DuPont descrito en D-086; los demás consumidores del totalizador no cambian. Los casos completos conservan precisión y deben coincidir con los rendimientos directos. El ejemplo de clase produce ROA 12 % y ROE 20 %. Los cierres usados para simular sus promedios son ficticios y se identifican como tales.
+
+**Para revertirla.** Revisar los adaptadores de AH/AV y DuPont, la fuente de operandos y sus regresiones antes de cambiar cobertura o políticas de datos ausentes. No retirar N/D para obtener una cifra visible.
+
+**Referencias.** Guía docente, secciones 6 y 7.1; `Analisis_Dupont.md`, diapositivas 5–11; [revisión por sección](planificacion/analisis-docente/01-revision-docente.md); `tests/unit/analisis-completo.test.js`; D-047, D-048 y D-086.
 ### D-087 — DuPont y consumidores propagan datos no disponibles
 
 - **Fecha:** 2026-11-04

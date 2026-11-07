@@ -93,6 +93,17 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 
 ## Catálogo de funciones
 
+### Composición de Análisis (`js/modules/analisis/analisis-calculations.js`)
+
+| Función | Qué calcula |
+|---|---|
+| `filasAnalisis(datos, periodo)` | Filas de todas las cuentas conservadas, sin sumar otra vez totales reportados. |
+| `analisisHorizontalCompleto(datos, periodos)` | Pares consecutivos y cuentas individuales BG/ER; delega a `ahDelta`/`ahPctDelta`. Ausencia = N/D. |
+| `analisisVerticalCompleto(datos, periodo)` | Todas las cuentas sobre activo total o ventas netas; delega a `av` con divisor válido. Complementarios aparte. |
+| `detalleDuPont(datos, periodo)` | Factores, operandos, ROA/ROE y comprobaciones desde la misma fuente de Razones; usa `dupont`, sin editar el motor ni el generado. |
+
+D-095 conserva Δ/abs(T1), las bases de AV y las reglas del motor. DuPont cambia la fuente anterior de UN/ventas para evitar resultados incoherentes con Razones. Las convenciones no acreditadas por el material docente se declaran, no se sustituyen.
+
 ### `js/utils/calculate.js`
 
 "Legado" identifica convenciones históricas; D-047 unifica el manejo de operandos ausentes, sin modificar casos completos ni sus excepciones con cero.

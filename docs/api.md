@@ -2,6 +2,33 @@
 
 Referencia completa de las funciones públicas de los módulos utilitarios.
 
+## Análisis completo (`js/modules/analisis/analisis-calculations.js`)
+
+Funciones puras, sin DOM ni store. Los adaptadores públicos `computeAH`, `computeAVBalanceGeneral`, `computeAVEstadoResultados` y `computeDuPont` de `analisis/index.js` delegan aquí (D-095).
+
+#### `filasAnalisis(datos, periodo)`
+- **Parámetros**: `datos`, estados normalizados; `periodo`, clave de periodo.
+- **Retorno**: array de `{ clave, cuenta, grupo, seccion, valor }`. Incluye BG/ER, totales reportados, suplementarios y pendientes, con claves estables y valores finitos o `null`. No suma reportados a sus componentes. Devuelve `[]` sin datos o periodo.
+- **Ejemplo**: una cuenta propia `Banco principal: 100` produce una fila con `cuenta: 'Banco principal'`, `grupo: 'Activos'`, `valor: 100`.
+
+#### `analisisHorizontalCompleto(datos, periodos)`
+- **Parámetros**: estados normalizados y array de periodos en orden de comparación.
+- **Retorno**: array de pares `{ periodo, inicial, final, rows }`; cada fila conserva grupo/nombre y añade `t1`, `t2`, `delta`, `pctDelta`. Una ausencia no se convierte en cero.
+- **Fórmula**: delega Δ y porcentaje a `ahDelta` y `ahPctDelta`; porcentaje = Δ/abs(T1).
+- **Ejemplo**: 100 → 125 produce Δ=25 y `pctDelta=0.25`; 0 → 10 produce Δ=10 y porcentaje `null`.
+
+#### `analisisVerticalCompleto(datos, periodo)`
+- **Parámetros**: estados normalizados y periodo.
+- **Retorno**: `{ balanceGeneral, estadoResultados, complementarios }`. Cada estado tiene `base`, `baseValor` y todas sus `rows` con `pctBase`; complementarios no tienen una base inventada.
+- **Fórmula**: `av(valor, base)` con guarda de datos finitos y divisor distinto de cero. Bases: activo total del totalizador y ventas netas del totalizador.
+- **Ejemplo**: UN reportada 12000 y ventas netas 200000 → `pctBase=0.06`; base cero o ausente → `null`.
+
+#### `detalleDuPont(datos, periodo)`
+- **Parámetros**: estados completos guardados y periodo, con las identidades acreditadas que exige el motor.
+- **Retorno**: `{ PM, AT, EM, ROA, ROE, roaDirecto, roeDirecto, utilidadNeta, ventas, activoProm, patrimonioProm, usaPromedios, motivos }`; resultados numéricos o `null`. `computeDuPont` conserva los campos previos y añade ROA, operandos y comprobaciones.
+- **Fórmula**: factores y operandos del mismo motor de Razones; ROA=PM×AT y ROE usa la función `dupont` con esos operandos. Directos: resultados ROA y ROE de Razones. No completa datos del motor con el totalizador legado.
+- **Ejemplo**: UN=12000, ventas=200000, activo promedio=100000 y patrimonio promedio=60000 → PM=0.06, AT=2, EM=5/3, ROA=0.12, ROE=0.20. Con ventas cero, la descomposición puede ser N/D aunque un directo exista.
+
 ## Colección de cuentas (`js/modules/estados/cuentas-*.js`)
 
 `versionCatalogo = '2026-10-20.1'`. Catálogo de 72 definiciones; las 71 del PR #10 conservan ids, nombres canónicos, clasificación, rol y política de ausencia. D-046 corrige únicamente la definición de intangibles a no monetarios. La auditoría D-045 deja 1 `verified`, 66 `partially_verified` y 5 `ambiguous`: PGC es referencia terminológica, no respaldo para `verified`. La fixture declara 28 rebajas de investigación y la diferencia de definición, aparte de la sincronización v8 pendiente. Véase [cuentas/investigacion.md](planificacion/cuentas/investigacion.md).
