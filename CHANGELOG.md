@@ -6,6 +6,11 @@ Todos los cambios notables en GFO Toolkit.
 
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
+### Rigor financiero
+- DuPont usa utilidad y ventas del motor; Flujo y Proforma mantienen N/D cuando falta un operando en vez de convertirlo en cero (D-087).
+- El EFE indirecto usa identidades para resultados y reservas e indica que sus flujos y dividendos son estimaciones que requieren confirmar movimientos; Proforma conserva esa distinción (D-088).
+- Casos de las presentaciones AFOD y contraste de módulos mínimos documentados en `docs/planificacion/rigor-financiero/`.
+
 ### Integración de razones y lectura segura
 - Análisis conserva el aviso de F8 para estados ilegibles y calcula las razones con el motor; las etiquetas de rotaciones indican ventas y compras a crédito. Reportes obtiene la utilidad neta del motor. Los documentos sin datos acreditados mantienen N/D (D-086).
 

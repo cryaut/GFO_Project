@@ -2,7 +2,7 @@ import store from '../../store.js';
 import { mercadoUI } from './mercado-ui.js';
 import { estadosGuardados } from '../../utils/estados-guardados.js';
 import { formatCurrency, formatPercent, formatNumber } from '../../utils/format.js';
-import { computarRazonesDesdeDatos } from '../razones/razones-app-adapter.js';
+import { computarRazonesDesdeDatos, obtenerUtilidadNetaMotor } from '../razones/razones-app-adapter.js';
 import {
   ahDelta, ahPctDelta, av, dupont, capitalNetoTrabajo, capitalNetoOperativo
 } from '../../utils/calculate.js';
@@ -173,8 +173,8 @@ export function computeRazones(period, opciones = {}) {
 export function computeDuPont(period) {
   const r = computeRazones(period);
   const dp = dupont(
-    getERData(period).utilidadNeta,
-    getERData(period).ventas,
+    obtenerUtilidadNetaMotor(store.get('estados'), period).valor,
+    r.denominadores.MN,
     r.activoProm,
     r.patrimonioProm
   );
@@ -605,7 +605,8 @@ function renderEFESection(period) {
       <td>Total de ${titulo.toLowerCase()}</td>
       ${celda(seccion.total)}
     </tr>`;
-  return `<p class="text-muted mb-4" style="font-size:var(--font-size-sm)">
+  return `<div class="card mb-4" role="note"><strong>Estimación por variaciones de saldos.</strong> Cuadrar con el cambio de efectivo no confirma los cobros, pagos, dividendos ni operaciones no monetarias. Verifique los movimientos reales y las notas del periodo. Para registrar cobros y pagos, use <a href="#/flujo">Flujo de Efectivo</a>.</div>
+  <p class="text-muted mb-4" style="font-size:var(--font-size-sm)">
     Método indirecto desde dos balances: <strong>${escapeHTML(efe.periodos.inicial)}</strong> (inicial) → <strong>${escapeHTML(efe.periodos.final)}</strong> (final).
     Operación = utilidad neta + depreciación + variación de activos y pasivos de operación; Inversión = activos de inversión; Financiamiento = deuda, patrimonio y dividendos.
     Los gastos por intereses e impuestos ya están dentro de la utilidad neta.

@@ -852,26 +852,29 @@ Lectura breve del estado en una o dos frases (mayor fuente, mayor aplicación, o
 `js/modules/analisis/efe-calculations.js`. Lógica pura del Estado de Flujo de Efectivo por método indirecto (D-024), sin DOM ni `store`. Recibe los estados normalizados (o crudos con `accountTypes`) y dos periodos. La interfaz está en `index.js` (`computeEFE(period)`, que compara `period` con el periodo inmediatamente anterior, y `renderEFESection`). Comparte con el EOAF la selección del par de periodos, la tolerancia y la advertencia de balance (`comprobacion-calculations.js`).
 
 #### `esResultadoAcumulado(nombre)`
-`true` si el nombre corresponde a una cuenta de resultados acumulados o del ejercicio: utilidad(es) o resultado(s) acumulado(s), retenida(s), del ejercicio o del periodo; ganancias acumuladas o retenidas; pérdidas acumuladas; resultados de ejercicios anteriores. Inferencia local por nombre: `ACCOUNT_TYPES` no tiene subtipos de patrimonio (D-025).
+`true` si el nombre corresponde a una cuenta de resultados acumulados o del ejercicio: utilidad(es) o resultado(s) acumulado(s), retenida(s), del ejercicio o del periodo; ganancias acumuladas o retenidas; pérdidas acumuladas; resultados de ejercicios anteriores. Es una consulta por nombre conservada por compatibilidad; el cálculo de `construirEFE` utiliza identificadores acreditados (D-088).
 
 - **Ejemplo**: `esResultadoAcumulado('Utilidad acumulada')` → `true`; `esResultadoAcumulado('Reserva legal')` → `false`
 
 #### `construirEFE(datos, periodoInicial, periodoFinal)`
-Arma el estado completo: operación (UN + depreciación + capital de trabajo), inversión (activos fijos), financiamiento (deuda, aportaciones y dividendos) y la comprobación.
+Estima operación, inversión y financiamiento a partir de variaciones entre balances y comprueba su suma con la variación de efectivo. No confirma por sí sola los movimientos de efectivo ni los dividendos.
 
-- **Retorno**: `{ periodos, incompleto?, utilidadNeta, operacion, inversion, financiamiento, totalFlujos, efectivoInicial, efectivoFinal, variacionEfectivo, diferencia, tolerancia, estado, motivos, advertencias, interpretacion }`
+- **Retorno**: `{ periodos, incompleto?, naturaleza?, utilidadNeta, operacion, inversion, financiamiento, totalFlujos, efectivoInicial, efectivoFinal, variacionEfectivo, diferencia, tolerancia, estado, motivos, advertencias, interpretacion }`. Si se construye la estimación, `naturaleza` es `estimacion_por_variaciones`.
   - Cada actividad: `{ items: [{ concepto, monto, falta }], total }`; `monto` es `null` (N/D) si falta un dato. Un cambio de 0 es `0`, nunca `-0`
   - `estado`: `'cuadra'` (|diferencia| ≤ tolerancia), `'no-cuadra'` o `'incompleta'` (motivos: cuenta sin saldo, sin clasificar o con importe inválido, sin estado de resultados del periodo final, sin efectivo)
   - Sin balance de un periodo: `incompleto` y el resto en `null`
   - No lanza con importes que no son números: la cuenta o el estado de resultados quedan como motivo
 - **Identidad**: CFO + CFI + CFF = efectivo final − efectivo inicial (D-024, D-025, D-026)
-- **Advertencias**: balance que no cumple A = P + O por periodo, estado de resultados sin cuentas (la utilidad neta se toma como 0), depreciación, dividendos negativos y ausencia de cuentas de utilidades acumuladas
+- **Advertencias**: límite de la estimación y necesidad de confirmar movimientos reales y no monetarios, además de balance que no cumple A = P + O, estado de resultados vacío, depreciación, dividendos negativos o identidades patrimoniales sin confirmar.
+- **Patrimonio**: resultados y reservas se identifican por id. Una variación sin identidad confirmada impide atribuir su monto a aportaciones o dividendos; se conserva la variación agregada con advertencia (D-088).
 - **Nota**: los nombres de cuenta de `motivos` y `advertencias` vienen del archivo: el llamador debe escaparlos con `escapeHTML`
 
 #### `interpretarEFE(resultado)`
-Lectura del estado: si cuadra o no, y qué dicen los signos de los flujos (la operación genera o consume efectivo, si alcanza para la inversión y si el financiamiento aportó o devolvió fondos). La calcula `construirEFE`; se expone para pruebas.
+Lectura del estado: si la estimación cuadra o no y qué sugieren sus signos. La calcula `construirEFE`; se expone para pruebas. Aun cuando cuadre y la utilidad concilie, los dividendos y movimientos deben confirmarse con datos independientes.
 
 Identifica los dividendos como derivados de las utilidades acumuladas y aclara que cuadrar no valida independientemente la utilidad neta. Se conservan la fórmula y la falta de confirmación del dato de dividendos. `construirEFE` reconoce «pérdida del ejercicio/periodo», omite el motivo sin clasificación cuando ambos saldos son cero y advierte movimientos opuestos entre reservas y resultados, sin redistribuir importes.
+
+`conciliarConBalance(resultado, estados, periodoBase)` devuelve `null` cuando no hay comparación aplicable. Si el efectivo del periodo siguiente no es numérico, devuelve `{ periodo, efectivo: null, diferencia: null, cuadra: null, motivo: 'efectivo_no_disponible' }`; un efectivo declarado en cero sí puede conciliarse (D-087).
 
 ---
 
