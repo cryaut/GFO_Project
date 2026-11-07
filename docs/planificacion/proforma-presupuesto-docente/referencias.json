@@ -1,0 +1,193 @@
+{
+  "euro": {
+    "ventas": 3900000.0,
+    "costo": 2145000.0,
+    "gastos": 468000.0,
+    "bruta": 1755000.0,
+    "uaii": 1287000.0,
+    "uai": 962000.0,
+    "ir": 384800.0,
+    "neta": 577200.0,
+    "dividendos": 320000.0,
+    "retenidas": 257200.0
+  },
+  "metro_porcentaje": {
+    "ventas": 1500000.0,
+    "costo": 975000.0,
+    "gastos": 128571.43,
+    "bruta": 525000.0,
+    "uaii": 396428.57,
+    "uai": 361428.57,
+    "ir": 144571.43,
+    "neta": 216857.14,
+    "dividendos": 70000.0,
+    "retenidas": 146857.14
+  },
+  "metro_fijo_variable": {
+    "ventas": 1500000.0,
+    "costo": 960000.0,
+    "gastos": 126000.0,
+    "bruta": 540000.0,
+    "uaii": 414000.0,
+    "uai": 379000.0,
+    "ir": 151600.0,
+    "neta": 227400.0,
+    "dividendos": 70000.0,
+    "retenidas": 157400.0
+  },
+  "leonard": {
+    "activos": 1383000.0,
+    "pasivos": 860000.0,
+    "patrimonio": 470000.0,
+    "financiamiento": 53000.0,
+    "dividendo_sin_faltante": 17000.0
+  },
+  "pinolera_1": [
+    {
+      "mes": "Julio",
+      "cobros": 307500.0,
+      "proveedores": 222600.0,
+      "salidas": 284350.0,
+      "flujo": 23150.0,
+      "inicial": 15000.0,
+      "final": 38150.0,
+      "minimo": 15000,
+      "financiamiento": 0.0,
+      "exceso": 23150.0
+    },
+    {
+      "mes": "Agosto",
+      "cobros": 416450.0,
+      "proveedores": 282000.0,
+      "salidas": 417000.0,
+      "flujo": -550.0,
+      "inicial": 38150.0,
+      "final": 37600.0,
+      "minimo": 15000,
+      "financiamiento": 0.0,
+      "exceso": 22600.0
+    },
+    {
+      "mes": "Septiembre",
+      "cobros": 502250.0,
+      "proveedores": 336000.0,
+      "salidas": 539000.0,
+      "flujo": -36750.0,
+      "inicial": 37600.0,
+      "final": 850.0,
+      "minimo": 15000,
+      "financiamiento": 14150.0,
+      "exceso": 0.0
+    },
+    {
+      "mes": "Octubre",
+      "cobros": 590000.0,
+      "proveedores": 369000.0,
+      "salidas": 542750.0,
+      "flujo": 47250.0,
+      "inicial": 850.0,
+      "final": 48100.0,
+      "minimo": 15000,
+      "financiamiento": 0.0,
+      "exceso": 33100.0
+    },
+    {
+      "mes": "Noviembre",
+      "cobros": 624750.0,
+      "proveedores": 384000.0,
+      "salidas": 568500.0,
+      "flujo": 56250.0,
+      "inicial": 48100.0,
+      "final": 104350.0,
+      "minimo": 15000,
+      "financiamiento": 0.0,
+      "exceso": 89350.0
+    },
+    {
+      "mes": "Diciembre",
+      "cobros": 652750.0,
+      "proveedores": 408000.0,
+      "salidas": 678000.0,
+      "flujo": -25250.0,
+      "inicial": 104350.0,
+      "final": 79100.0,
+      "minimo": 15000,
+      "financiamiento": 0.0,
+      "exceso": 64100.0
+    }
+  ],
+  "pinolera_2": [
+    {
+      "mes": "Julio",
+      "cobros": 304500.0,
+      "proveedores": 206400.0,
+      "salidas": 268150.0,
+      "flujo": 36350.0,
+      "inicial": 15000.0,
+      "final": 51350.0,
+      "minimo": 15000,
+      "financiamiento": 0.0,
+      "exceso": 36350.0
+    },
+    {
+      "mes": "Agosto",
+      "cobros": 419000.0,
+      "proveedores": 273000.0,
+      "salidas": 353000.0,
+      "flujo": 66000.0,
+      "inicial": 51350.0,
+      "final": 117350.0,
+      "minimo": 15000,
+      "financiamiento": 0.0,
+      "exceso": 102350.0
+    },
+    {
+      "mes": "Septiembre",
+      "cobros": 502500.0,
+      "proveedores": 324000.0,
+      "salidas": 451000.0,
+      "flujo": 51500.0,
+      "inicial": 117350.0,
+      "final": 168850.0,
+      "minimo": 15000,
+      "financiamiento": 0.0,
+      "exceso": 153850.0
+    },
+    {
+      "mes": "Octubre",
+      "cobros": 592500.0,
+      "proveedores": 366000.0,
+      "salidas": 471000.0,
+      "flujo": 121500.0,
+      "inicial": 168850.0,
+      "final": 290350.0,
+      "minimo": 15000,
+      "financiamiento": 0.0,
+      "exceso": 275350.0
+    },
+    {
+      "mes": "Noviembre",
+      "cobros": 625000.0,
+      "proveedores": 381000.0,
+      "salidas": 494000.0,
+      "flujo": 131000.0,
+      "inicial": 290350.0,
+      "final": 421350.0,
+      "minimo": 15000,
+      "financiamiento": 0.0,
+      "exceso": 406350.0
+    },
+    {
+      "mes": "Diciembre",
+      "cobros": 652500.0,
+      "proveedores": 402000.0,
+      "salidas": 585000.0,
+      "flujo": 67500.0,
+      "inicial": 421350.0,
+      "final": 488850.0,
+      "minimo": 15000,
+      "financiamiento": 0.0,
+      "exceso": 473850.0
+    }
+  ]
+}

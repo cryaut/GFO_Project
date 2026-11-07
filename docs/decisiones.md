@@ -135,6 +135,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-085 | Supuestos de Planeación guardados sin producto vinculado | Vigente |
 | D-086 | Integrar lectura segura de F8 con el motor de razones | Vigente |
 | D-094 | Recuperar navegación ante un error de pantalla | Vigente en rama, pendiente de revisión |
+| D-097 | Proforma coherente y desarrollo visible del presupuesto | Implementada localmente; sin publicar |
 | D-096 | Estados resueltos como lectura sin alterar el documento importado | Implementada solo localmente; sin publicar |
 | D-095 | Completar AH/AV y hacer coherente el procedimiento DuPont | Vigente en rama, pendiente de revisión |
 | D-087 | DuPont y consumidores propagan datos no disponibles | Vigente en rama; pendiente de revisión |
@@ -2198,3 +2199,24 @@ El EFE conserva sus cálculos y advertencias; añade el efectivo final calculado
 **Para revertirla.** Desconectar la composición de lectura de Estados y AH/AV y el renglón de cierre calculado del EFE, sin alterar los documentos originales ni borrar esta decisión.
 
 **Referencias.** [Ficha y fuentes leídas antes de editar](planificacion/estados-resueltos-docente/README.md); [comparación y límites](planificacion/estados-resueltos-docente/COMPARACION.md); D-056, D-063, D-087, D-088 y D-095.
+
+### D-097 — Proforma coherente y desarrollo visible del presupuesto
+
+- **Fecha**: 2026-11-07
+- **Estado**: Implementada localmente; sin push ni PR.
+- **Decidió**: Cris pidió conservar Ejercicios AFOD en TEAM.md y revisar la percepción de los cálculos/resultados en Proforma y Presupuesto Maestro.
+- **Área**: Presentación de Planeación y Proforma; fuente del ER real.
+
+**Contexto.** El resumen ocultaba el ER/caja detrás de tablas completas. Proforma omitía UAI y los importes que explican los resultados. El real seguía el totalizador legado y no reconocía algunos gastos operativos por id ya soportados en Estados/Razones. La fuente nueva pide además métodos que la proyección actual no implementa.
+
+**Opciones.** Añadir más cifras de resumen; exponer el desarrollo reutilizando los resultados existentes; o reemplazar el modelo por los métodos docentes. Se opta por el desarrollo y la coherencia de lectura, conservando el alcance vigente del presupuesto.
+
+**Decisión.** El presupuesto completo abre con su resultado y permite consultar caja, horizonte o periodo. `desarrolloPresupuesto` arma la traza desde resultados ya calculados y `tablaDesarrollo` la presenta en ambas pantallas. No hay un segundo cálculo financiero. Se muestra IR del horizonte como suma de IR por periodo, según D-014, y efectivo antes de financiamiento, según D-010. El caso parcial sigue sin ER/caja, con sus pendientes expresos y sin mezclar su base en Proforma (D-089/D-090).
+
+El real de Proforma lee los subtotales del ER resuelto de D-096 y los márgenes del motor actual, sin modificar el motor/generado. Identifica intereses e impuestos mediante consultas existentes por id. Los otros ingresos operativos aparecen antes de UAII; los no operativos, después. Si falta impuesto, UN queda N/D aunque UAI sea calculable. Se conservan las reglas temporales de D-091.
+
+**Consecuencias.** Proforma puede pasar de una cifra a N/D si su fuente anterior suponía un dato no acreditado, o recuperar una cifra cuando el totalizador legado no entendía una identidad válida. Coincide con Estados y Razones. Los tests que acreditan casos completos declaran explícitamente sus ceros sintéticos. No cambian los resultados ni impuestos del presupuesto maestro, las tasas, calendarios, guardado o esquemas del store. La lectura tampoco implementa los nuevos métodos: porcentaje de ventas/fijo-variable, dividendos/retención, balance crítico y pagos de IR por fecha quedan documentados como pendientes.
+
+**Para revertirla.** Retirar el desarrollo compartido o redefinir la fuente del real mediante otra decisión, manteniendo N/D y la consistencia con los estados; no sustituir tasas ni completar movimientos para forzar los ejercicios.
+
+**Referencias.** [Revisión docente y referencias independientes](planificacion/proforma-presupuesto-docente/REVISION-DOCENTE.md); [ficha y verificación](planificacion/proforma-presupuesto-docente/README.md); D-010, D-014, D-089 a D-093 y D-096.

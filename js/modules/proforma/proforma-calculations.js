@@ -1,10 +1,13 @@
+import { desarrolloPresupuesto } from '../planeacion/planeacion-desarrollo-calculations.js';
 // Proforma y reporte integrado: estado de resultados proforma frente al último periodo real,
 // efectivo proyectado, indicadores de todos los módulos y alertas que apoyan decisiones.
 // Lógica pura: recibe los resultados ya calculados por cada módulo (index.js los reúne).
 import { ahPctDelta, margenBruto, margenNeto, margenOperativo } from '../../utils/calculate.js';
 import { formatCurrencyND as monto, formatNumberND, formatPercentND as pct } from '../../utils/format.js';
 import { construirEFE } from '../analisis/efe-calculations.js';
-import { computeFinancialTotals } from '../estados/estados-calculations.js';
+import { estadosResueltos } from '../estados/estados-presentacion-calculations.js';
+import { consultarMontoCuenta } from '../estados/cuentas-identificador.js';
+import { computarRazonesDesdeDatos } from '../razones/razones-app-adapter.js';
 import { ordenarPeriodos } from '../estados/estados-normalize.js';
 import { descripcionReposicion } from '../inventario/inventario-calculations.js';
 
@@ -31,22 +34,24 @@ function margenes(ventas, utilidadBruta, gastosAdmin, gastosVentas, utilidadNeta
 export function resultadosReales(estados) {
   const periodo = estados?.periods?.[estados.periods.length - 1];
   if (!periodo) return null;
-  let t;
   try {
-    t = computeFinancialTotals(estados, periodo);
+    const lectura = estadosResueltos(estados, periodo).estadoResultados;
+    const subtotal = id => lectura.find(f => f.id === id)?.valorCalculo ?? null;
+    const cuenta = id => consultarMontoCuenta(estados, periodo, id).valor;
+    const otros = [cuenta('is.nonoperating_income'), cuenta('is.interest_income'), cuenta('is.noninterest_nonoperating_expenses')];
+    const r = computarRazonesDesdeDatos(estados, periodo);
+    return {
+      periodo, ventas: subtotal('is.net_sales_reported'), cbv: subtotal('is.cost_of_sales_reported'),
+      utilidadBruta: subtotal('is.gross_profit_reported'), gastosOperacion: subtotal('presentacion.gastos_operativos'),
+      otrosOperativos: cuenta('is.other_operating_income'),
+      uaii: subtotal('is.operating_profit_reported'), uai: subtotal('presentacion.uai'),
+      otrosNeto: otros.every(esNumero) ? otros[0] + otros[1] - otros[2] : null,
+      intereses: cuenta('is.interest_expense'), ir: cuenta('is.income_tax_expense'), utilidadNeta: subtotal('is.net_income_reported'),
+      margenBruto: r.margenBruto, margenOperativo: r.margenOperativo, margenNeto: r.MN
+    };
   } catch {
     return null;
   }
-  const gastosOperacion = esNumero(t.gastosAdmin) && esNumero(t.gastosVentas)
-    ? t.gastosAdmin + t.gastosVentas : null;
-  const otrosNeto = esNumero(t.otrosIngresos) && esNumero(t.otrosGastos)
-    ? t.otrosIngresos - t.otrosGastos : null;
-  return {
-    periodo, ventas: t.ventas, cbv: t.costoVentas, utilidadBruta: t.utilidadBruta, gastosOperacion,
-    uaii: esNumero(t.utilidadBruta) && esNumero(gastosOperacion) ? t.utilidadBruta - gastosOperacion : null,
-    otrosNeto, intereses: t.intereses, ir: t.impuestos, utilidadNeta: t.utilidadNeta,
-    ...margenes(t.ventas, t.utilidadBruta, t.gastosAdmin, t.gastosVentas, t.utilidadNeta)
-  };
 }
 
 // Estado de resultados proforma: el total del horizonte del presupuesto maestro.
@@ -59,7 +64,7 @@ export function resultadosProforma(presupuesto) {
     // Un año: 12 meses o 4 trimestres. Solo así se compara sin ajustar con un periodo anual.
     anual: (s.tipoPeriodo === 'Mes' && s.periodos === 12) || (s.tipoPeriodo === 'Trimestre' && s.periodos === 4),
     ventas: t.ventas, cbv: t.cbv, utilidadBruta: t.utilidadBruta, gastosOperacion: t.gastosOperacion,
-    uaii: t.uaii, otrosNeto: null, intereses: t.intereses, ir: t.ir, utilidadNeta: t.utilidadNeta,
+    uaii: t.uaii, uai: t.uai, otrosOperativos: null, otrosNeto: null, intereses: t.intereses, ir: t.ir, utilidadNeta: t.utilidadNeta,
     ...margenes(t.ventas, t.utilidadBruta, t.gastosOperacion, 0, t.utilidadNeta)
   };
 }
@@ -79,8 +84,10 @@ export function compararResultados(real, proforma) {
   const comparable = Boolean(real && proforma && !motivoComparacion(real, proforma));
   const filas = [
     ['Ventas', 'ventas', 'monto'], ['(−) Costo de ventas', 'cbv', 'monto'], ['(=) Utilidad bruta', 'utilidadBruta', 'monto'],
-    ['(−) Gastos de operación', 'gastosOperacion', 'monto'], ['(=) UAII', 'uaii', 'monto'],
+    ['(−) Gastos de operación', 'gastosOperacion', 'monto'],
+    ['(+) Otros ingresos operativos', 'otrosOperativos', 'monto'], ['(=) Utilidad operativa (UAII)', 'uaii', 'monto'],
     ['(+) Otros ingresos − otros gastos', 'otrosNeto', 'monto'], ['(−) Intereses', 'intereses', 'monto'],
+    ['(=) Utilidad antes de impuestos (UAI)', 'uai', 'monto'],
     ['(−) Impuesto sobre la renta', 'ir', 'monto'], ['(=) Utilidad neta', 'utilidadNeta', 'monto'],
     ['Margen bruto', 'margenBruto', 'pct'], ['Margen operativo', 'margenOperativo', 'pct'], ['Margen neto', 'margenNeto', 'pct']
   ];
@@ -285,6 +292,8 @@ export function construirReporte(entradas) {
   if (!inventario) faltantes.push({ modulo: 'Inventario', ruta: '#/inventario', texto: 'Registre productos y movimientos.' });
   return {
     real, proforma,
+    desarrollo: desarrolloPresupuesto(presupuesto),
+    motivoPresupuesto: entradas.motivoPresupuesto || null,
     comparacion: real || proforma ? compararResultados(real, proforma) : [],
     motivoComparacion: motivoComparacion(real, proforma),
     efectivo: presupuesto ? {

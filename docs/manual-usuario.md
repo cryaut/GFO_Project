@@ -737,3 +737,12 @@ Consulta este presupuesto parcial en Planeación. La proyección de caja complet
 4. **Alertas y decisiones sugeridas:** por ejemplo, gestionar el financiamiento del trimestre 2 o reponer los productos bajo su stock mínimo.
 
 Si falta algún módulo, el reporte indica qué cargar. **Imprimir o guardar como PDF** sirve como evidencia para el informe.
+
+
+### Consultar los cálculos del presupuesto y la Proforma
+
+En Presupuesto Maestro, el resumen del presupuesto completo abre en **Utilidad neta presupuestada**. Puede elegir **Efectivo final antes de financiamiento**, Cobros, Pagos o saldos. El selector permite consultar **Horizonte completo** o un periodo; el detalle muestra fórmula, datos usados y resultado. Los cambios sin guardar siguen marcados y las consultas no los persisten.
+
+En Proforma, la utilidad proyectada y UAI aparecen primero. **Desarrollo del estado de resultados proyectado** muestra los renglones completos; **Ver cálculo del presupuesto de caja** explica entradas, desembolsos, flujo y cierre. Los resultados reales proceden de los mismos datos acreditados que Estados/Razones. Una entrada requerida ausente produce N/D; no se completa con una tasa o un cero supuesto.
+
+El IR del modelo actual se devenga por periodo y queda por pagar. El financiamiento requerido se informa, todavía no se suma al efectivo. El escenario de Comercial Ejemplo tiene alcance parcial de capital de trabajo: sus cobros/pagos no representan una caja completa y su ER/caja siguen pendientes. Los ejercicios de porcentaje de ventas, fijo-variable, dividendos y balance crítico requieren las capacidades señaladas en la revisión docente; esta vista no los convierte automáticamente en proyecciones resueltas.

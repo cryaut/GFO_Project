@@ -6,6 +6,9 @@ Todos los cambios notables en GFO Toolkit.
 
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
+### Planeación y Proforma
+- Presupuesto completo: utilidad y caja visibles desde el resumen; desarrollo con fórmulas, operandos y resultados por horizonte/periodo. Proforma incorpora UAI, comparte la lectura del ER real de Estados/Razones y expone sus cálculos. El caso parcial muestra sus pendientes sin inventar resultados; comparación con Ejercicios AFOD documentada (D-097).
+
 ### Rigor financiero
 - DuPont usa utilidad y ventas del motor; Flujo y Proforma mantienen N/D cuando falta un operando en vez de convertirlo en cero (D-087).
 - El EFE indirecto usa identidades para resultados y reservas e indica que sus flujos y dividendos son estimaciones que requieren confirmar movimientos; Proforma conserva esa distinción (D-088).

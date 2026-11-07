@@ -942,3 +942,26 @@
 #page-estados .statement-solved .statement-subtotal th { font-weight: 600; }
 
 :is(#page-estados, #page-analisis) td > .statement-source { display: block; font-family: var(--font-sans); white-space: normal; }
+
+/* Procedimiento y resultados de Proforma y Presupuesto Maestro. */
+:is(#page-planeacion, #page-proforma) .desarrollo-formula { display: block; color: var(--text-secondary); font-size: var(--font-size-sm); margin-bottom: var(--space-2); }
+:is(#page-planeacion, #page-proforma) .desarrollo-operacion { display: block; font-variant-numeric: tabular-nums; }
+:is(#page-planeacion, #page-proforma) .desarrollo-total > * { font-weight: 600; border-top: 1px solid var(--border-color-strong); background: var(--bg-tertiary); }
+:is(#page-planeacion, #page-proforma) .desarrollo-table th[scope="row"] { text-align: left; }
+#page-planeacion .plan-alcance { padding: var(--space-4); margin-bottom: var(--space-4); border: 1px solid var(--border-color); border-radius: var(--radius-md); }
+#page-planeacion .plan-alcance h2 { font-size: var(--font-size-lg); margin-bottom: var(--space-2); }
+#page-proforma .proforma-desarrollo { margin-block: var(--space-6); padding: var(--space-4); border: 1px solid var(--border-color); border-radius: var(--radius-md); }
+#page-proforma .proforma-desarrollo summary { cursor: pointer; font-weight: 600; padding-block: var(--space-2); }
+#page-proforma .proforma-desarrollo[open] summary { margin-bottom: var(--space-4); }
+#page-proforma .proforma-origen { color: var(--text-secondary); margin-bottom: var(--space-4); }
+
+#page-proforma .proforma-resultado { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-6); padding: var(--space-4); background: var(--bg-tertiary); margin-bottom: var(--space-4); }
+:is(#page-planeacion, #page-proforma) .desarrollo-mobile { display: none; }
+@media (max-width: 640px) {
+  :is(#page-planeacion, #page-proforma) .desarrollo-mobile { display: block; font-weight: 400; margin-top: var(--space-2); }
+  :is(#page-planeacion, #page-proforma) .desarrollo-col-calculo { display: none; }
+  :is(#page-planeacion, #page-proforma) .desarrollo-table table { table-layout: fixed; min-width: 0; }
+  :is(#page-planeacion, #page-proforma) .desarrollo-table th:first-child { width: 60%; }
+  :is(#page-planeacion, #page-proforma) .desarrollo-table td.text-right { white-space: normal; font-size: var(--font-size-xs); }
+  :is(#page-planeacion, #page-proforma) .desarrollo-operacion { overflow-wrap: anywhere; }
+}

@@ -1002,3 +1002,14 @@ Ejemplo docente de julio con partidas complementarias acreditadas explícitament
 ### `construirEFE`: cierre calculado
 
 Añade `efectivoFinalCalculado`, igual a efectivo inicial + total de flujos cuando ambos son finitos; si falta un operando, `null`. Se presenta por separado de `efectivoFinal`, que sigue siendo el saldo observado del balance. `diferencia`, conciliación, tolerancia, naturaleza estimada y actividades conservan su contrato.
+
+
+## Desarrollo de Planeación y fuente de Proforma (D-097)
+
+`desarrolloPresupuesto(presupuesto, indice = null)` en `planeacion-desarrollo-calculations.js` devuelve `{ etiqueta, resultados, caja }` para un presupuesto completo ya calculado. `null` selecciona el horizonte; un índice válido, su periodo. Cada paso incluye clave, concepto, fórmula descriptiva, expresión con operandos/formato y valor existente; un valor no finito se conserva N/D. No calcula ni persiste otro presupuesto. Devuelve `null` sin presupuesto completo o con índice fuera de rango. El IR agregado suma periodos y los saldos de caja usan apertura/cierre, no sumas de saldos.
+
+`tablaDesarrollo(pasos)` en `planeacion-desarrollo-ui.js` genera HTML escapado, con concepto, cálculo y resultado; en móvil el cálculo queda bajo el concepto. La usan Planeación y Proforma. `resumenPlaneacionUI` ofrece Resultado/Caja en el modelo completo y consulta de horizonte/periodo; el modelo parcial conserva cobros/pagos y saldos, con pendientes declarados.
+
+`resultadosReales` ahora consume `estadosResueltos` y los márgenes de `computarRazonesDesdeDatos`. Expone `uai` y `otrosOperativos`, además de los campos previos, y conserva N/D según las mismas identidades/entradas que Estados y Razones. `resultadosProforma` conserva los totales de Planeación y añade su `uai`. Los otros ingresos operativos y no operativos no están modelados en la proyección y quedan `null`, que la comparación identifica como no aplicables a esa columna.
+
+`construirReporte` añade `desarrollo` (o `null`) y `motivoPresupuesto` para explicar una proyección ausente. El real y la proyección permanecen separados y las variaciones siguen limitadas a coberturas anuales comparables. La traza no altera el estado guardado ni el reporte de financiamiento requerido.

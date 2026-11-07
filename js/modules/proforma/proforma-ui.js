@@ -1,3 +1,4 @@
+import { tablaDesarrollo } from '../planeacion/planeacion-desarrollo-ui.js';
 // Pantalla #/proforma: estado de resultados proforma, efectivo proyectado, indicadores integrados
 // y alertas. Los datos llegan ya calculados por proforma-calculations.js.
 import { escapeHTML as esc } from '../../utils/html.js';
@@ -29,7 +30,7 @@ function seccionFaltantes(faltantes) {
 
 function seccionProforma(r) {
   if (!r.proforma && !r.real) {
-    return '<div class="card mb-4"><h2 class="card-title">1. Estado de resultados proforma</h2><p class="text-muted">Sin estados ni presupuesto todavía.</p></div>';
+    return `<div class="card mb-4"><h2 class="card-title">1. Estado de resultados proforma</h2><p class="text-muted">${esc(r.motivoPresupuesto || 'Sin estados ni presupuesto todavía.')} <a href="#/planeacion">Revisar Planeación</a></p></div>`;
   }
   const tituloReal = r.real ? `Real ${esc(r.real.periodo)}` : 'Real';
   const tituloProforma = r.proforma ? `Proforma (${esc(r.proforma.horizonte)})` : 'Proforma';
@@ -37,32 +38,39 @@ function seccionProforma(r) {
     const cambio = f.formato === 'monto'
       ? (esNumero(f.variacion) ? `${f.variacion > 0 ? '+' : ''}${pct(f.variacion)}` : 'N/D')
       : (esNumero(f.puntos) ? `${f.puntos > 0 ? '+' : ''}${formatNumberND(f.puntos * 100)} pts` : 'N/D');
-    const fmt = v => (v === null && f.clave === 'otrosNeto' ? '—' : FORMATO[f.formato](v));
-    const destacar = ['utilidadBruta', 'uaii', 'utilidadNeta'].includes(f.clave) ? ' style="font-weight:600"' : '';
+    const fmt = v => (v === null && ['otrosNeto', 'otrosOperativos'].includes(f.clave) ? '—' : FORMATO[f.formato](v));
+    const destacar = ['utilidadBruta', 'uaii', 'uai', 'utilidadNeta'].includes(f.clave) ? ' style="font-weight:600"' : '';
     return `<tr${destacar}><td>${f.concepto}</td><td class="text-right font-mono">${r.real ? fmt(f.real) : '—'}</td>
       <td class="text-right font-mono">${r.proforma ? fmt(f.proforma) : '—'}</td><td class="text-right font-mono">${cambio}</td></tr>`;
   }).join('');
   const notas = [];
-  if (!r.proforma) notas.push('Configure el <a href="#/planeacion">Presupuesto Maestro</a> para obtener la proforma.');
+  if (!r.proforma && r.motivoPresupuesto) notas.push(esc(r.motivoPresupuesto));
+  else if (!r.proforma) notas.push('Configure el <a href="#/planeacion">Presupuesto Maestro</a> para obtener la proforma.');
+  if (r.real && [r.real.uaii, r.real.utilidadNeta].some(v => v === null)) notas.push('Los resultados reales N/D requieren completar los datos acreditados en Estados; se conserva la misma lectura que en Estados y Razones.');
   if (r.motivoComparacion) notas.push(esc(r.motivoComparacion));
-  if (r.proforma) notas.push('La proforma sale del presupuesto maestro: no incluye otros ingresos ni otros gastos, y el IR se calcula sobre la UAI positiva de cada periodo.');
+  if (r.proforma) notas.push('La proforma sale del presupuesto maestro: no incluye otros ingresos operativos ni otros ingresos o gastos no operativos, y el IR se calcula sobre la UAI positiva de cada periodo.');
   return `<div class="card mb-4"><h2 class="card-title">1. Estado de resultados proforma</h2>
+    ${r.proforma ? `<p class="proforma-resultado"><strong>Utilidad neta proyectada: ${monto(r.proforma.utilidadNeta)}</strong><span>Utilidad antes de impuestos (UAI): ${monto(r.proforma.uai)}</span></p>` : ''}
+    ${r.proforma ? `<p class="proforma-origen">Fuente: presupuesto maestro guardado · ${esc(r.proforma.horizonte)}. Las ventas se proyectan desde unidades y precio; los costos y gastos usan sus supuestos declarados.</p>` : ''}
     <div class="table-wrapper"><table class="statement-table">
       <thead><tr><th scope="col">Concepto</th><th scope="col" class="text-right">${tituloReal}</th><th scope="col" class="text-right">${tituloProforma}</th><th scope="col" class="text-right">Variación</th></tr></thead>
       <tbody>${filas}</tbody></table></div>
+    ${r.desarrollo ? `<details class="proforma-desarrollo" open><summary>Desarrollo del estado de resultados proyectado</summary><p>${esc(r.desarrollo.etiqueta)}</p>${tablaDesarrollo(r.desarrollo.resultados)}</details>` : ''}
     ${notas.map(n => `<p class="form-hint">${n}</p>`).join('')}</div>`;
 }
 
-function seccionEfectivo(e) {
+function seccionEfectivo(e, desarrollo) {
   if (!e) return '';
   const kpi = (valor, etiqueta, clase = '') => `<div class="kpi-card"><div class="kpi-value ${clase}">${valor}</div><div class="kpi-label">${etiqueta}</div></div>`;
   return `<div class="card mb-4"><h2 class="card-title">2. Efectivo proyectado</h2>
     <div class="kpi-grid mb-4">
       ${kpi(monto(e.saldoInicial), 'Saldo inicial de caja')}
       ${kpi(monto(e.flujoNeto), 'Flujo neto del horizonte', e.flujoNeto < 0 ? 'text-danger' : 'text-success')}
-      ${kpi(monto(e.saldoFinal), 'Saldo final proyectado', e.saldoFinal < e.saldoMinimo ? 'text-danger' : '')}
+      ${kpi(monto(e.saldoFinal), 'Efectivo final antes de financiamiento', e.saldoFinal < e.saldoMinimo ? 'text-danger' : '')}
       ${kpi(e.financiamientoMaximo > 0 ? monto(e.financiamientoMaximo) : 'No se requiere', e.periodoFinanciamiento ? `Financiamiento máximo (${esc(e.periodoFinanciamiento)})` : 'Financiamiento requerido', e.financiamientoMaximo > 0 ? 'text-danger' : 'text-success')}
     </div>
+    ${desarrollo ? `<details class="proforma-desarrollo"><summary>Ver cálculo del presupuesto de caja</summary>${tablaDesarrollo(desarrollo.caja)}</details>` : ''}
+    <p class="form-hint">El financiamiento requerido todavía no se suma al efectivo. El IR devengado permanece por pagar según los supuestos del modelo.</p>
     <p class="form-hint">Saldos al cierre: cuentas por cobrar ${monto(e.cierre.cxc)}, inventario ${monto(e.cierre.inventarioValor)}, cuentas por pagar ${monto(e.cierre.cxp)} e IR por pagar ${monto(e.cierre.irPorPagar)}.</p></div>`;
 }
 
@@ -92,9 +100,9 @@ export function proformaUI(page, { reporte, imprimir = null }) {
   page.innerHTML = `<div class="page-header"><h1 class="page-title">Proforma y Reporte Integrado</h1>
       <p class="page-subtitle">Resumen de todos los módulos para apoyar decisiones: resultados proyectados, efectivo, indicadores y alertas.</p></div>
     <div class="flex-gap flex-wrap mb-4">${imprimir ? '<button type="button" class="btn btn-secondary" id="proformaImprimir">Imprimir o guardar como PDF</button>' : ''}</div>
-    ${seccionFaltantes(reporte.faltantes)}
     ${seccionProforma(reporte)}
-    ${seccionEfectivo(reporte.efectivo)}
+    ${seccionEfectivo(reporte.efectivo, reporte.desarrollo)}
+    ${seccionFaltantes(reporte.faltantes)}
     ${seccionIndicadores(reporte.indicadores)}
     ${seccionAlertas(reporte.alertas)}
     <div class="card mb-4"><h2 class="card-title">Cómo se integra</h2>

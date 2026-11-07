@@ -158,7 +158,8 @@ describe('pantalla del presupuesto maestro', () => {
     expect(html).toContain('C$ 122,360.00');
     expect(html).toContain('Se requieren C$ 20,800.00 de financiamiento');
     const resumen = page.querySelector('#planResumen');
-    expect(resumen.querySelector('#planDetalleTitulo').textContent).toBe('Cobros del periodo');
+    expect(resumen.querySelector('#planDetalleTitulo').textContent).toBe('Estado de resultados presupuestado');
+    expect(resumen.querySelector('#planDetalleContenido').innerHTML).toContain('UAI');
     expect(resumen.innerHTML).toContain('Trimestre 4');
     expect(page.querySelector('#planVista-tablas').hidden).toBe(true);
     expect(graficar).not.toHaveBeenCalled();

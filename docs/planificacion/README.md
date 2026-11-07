@@ -23,6 +23,7 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 | Caso integrado, contexto y escenarios | Carlos | En revisión | [caso-integrado](caso-integrado/README.md) |
 | Inicio en blanco y navegación ante errores | Corrección solicitada por Cris | Implementada; en validación | [inicio-navegacion](inicio-navegacion/README.md) |
 | Estados resueltos según presentación docente | Solicitud de Cris | Implementada localmente; sin publicar | [estados-resueltos-docente](estados-resueltos-docente/README.md) |
+| Proforma y Presupuesto: procedimiento visible y revisión AFOD | Solicitud de Cris | Verificada localmente; sin publicar | [proforma-presupuesto-docente](proforma-presupuesto-docente/README.md) |
 
 Agrega una fila cuando empieces una feature y actualiza el estado cuando cambie.
 

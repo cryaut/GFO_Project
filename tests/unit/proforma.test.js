@@ -1,3 +1,4 @@
+import { registrarCuenta } from '../../js/modules/estados/cuentas-registro.js';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   alertasIntegradas, compararResultados, construirReporte, flujoDesdeEFE, resultadosProforma, resultadosReales
@@ -22,7 +23,7 @@ function estadosMuno() {
     'Ventas': v, 'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
     'Costo de Ventas': cv, 'Gastos de Administracion': ga, 'Gastos de Ventas': gv, 'Otros Ingresos': oi, 'Otros Gastos': og
   });
-  return normalizeFinancialData({
+  const datos = normalizeFinancialData({
     name: 'MUNO MODA S.A.', periods: ['2023', '2024'],
     balanceGeneral: {
       2023: balance(45000, 120000, 180000, 25000, -98525, 85000, 60000, 15000, 80000, 31475),
@@ -44,6 +45,13 @@ function estadosMuno() {
       }
     }
   });
+  // Ceros sintéticos explícitos: el caso completo no omite entradas requeridas.
+  const completos = registrarCuenta(datos, datos.periods.flatMap(periodo => [
+    'is.operating_depreciation', 'is.operating_amortization', 'is.other_operating_expenses',
+    'is.other_operating_income', 'is.interest_expense', 'is.income_tax_expense'
+  ].map(id => ({ id, periodo, nombre: `Cero de prueba ${id}`, importe: 0, confirmado: true }))));
+  completos.composicionIngresos = Object.fromEntries(completos.periods.map(p => [p, 'excluye_intereses']));
+  return completos;
 }
 
 const CONFIG_APALANCAMIENTO = { comportamiento: { 'Gastos de Ventas': { tipo: 'fijo' } }, dap: {}, tasaDefecto: null };

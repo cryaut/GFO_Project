@@ -93,6 +93,10 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 
 ## Catálogo de funciones
 
+### Traza de presupuestos (`js/modules/planeacion/planeacion-desarrollo-calculations.js`)
+
+`desarrolloPresupuesto(presupuesto, indice = null)` compone operaciones y resultados ya calculados para ER/caja del horizonte o de un periodo. No duplica fórmulas ni cambia resultados. IR del horizonte = suma de los IR por periodo (D-014); efectivo final = cierre antes de financiamiento (D-010). Proforma reutiliza esta traza y lee el real con la composición de Estados/Razones (D-097); los datos ausentes conservan N/D.
+
 ### Lectura de estados (`js/modules/estados/estados-presentacion-calculations.js`)
 
 `estadosResueltos(datos, periodo)` compone balance y ER completos, con detalle, subtotales y origen reportado/calculado/pendiente, sin mutar datos. Reutiliza `computeFinancialTotals` para el balance y los derivados del ER del motor; no define otro motor ni modifica las fórmulas de Razones. La consulta de UAI evalúa la expresión existente antes de IR; la omisión de IR no se suple con una tasa o con cero. Los campos incompletos conservan N/D sin anular operaciones independientes. D-096 registra el orden docente y la lectura sin persistencia.
