@@ -983,3 +983,22 @@ Códigos de `avisos` del presupuesto maestro: `financiamiento`, `sin-compras`, `
 Recibe el módulo de Inventario del respaldo y devuelve `{ productos, movimientos }` normalizados. Lanza un error si la normalización descarta registros, una fecha no existe en el calendario, un costo explícito no es un número finito mayor o igual a cero, o cualquier saldo intermedio del kardex cae bajo la tolerancia de existencias. Valida por producto y fecha. Si dos movimientos comparten fecha, respeta el orden del archivo. Una entrada legada con la propiedad `costoUnitario` omitida usa el costo del producto según D-081.
 
 Utilidades: `js/utils/form.js` (`leerNumero(texto)` → `{ vacio, valor }`, `nuevoId(prefijo)`, `fechaHoy()`), `js/utils/estados-guardados.js` (`estadosGuardados(estados)`, `totalesPeriodo(estados, periodo)`). `js/modules/analisis/index.js` exporta ahora `refreshSavedStates()` para que el reporte integrado no use estados en caché.
+
+
+## Presentación de estados resueltos (D-096)
+
+### `estadosResueltos(datos, periodo)`
+
+Composición pura en `js/modules/estados/estados-presentacion-calculations.js`. Recibe los estados o su borrador estructurado y devuelve `{ balanceGeneral, estadoResultados }`, listas ordenadas con detalle y subtotales. Cada fila conserva `cuenta`, `valor`, `grupo`, `seccion`, `clave` y, cuando corresponde, `id`, `concepto`, `operador`, `origen`, `subtotal`, `orden`, `valorCalculo` y `motivos`. `valor` preserva un reportado, mientras `valorCalculo` expresa su disponibilidad para operar; AV toma de él la base de ventas netas. Una fila calculada no modifica datos, identidades, reportados ni store. Valor faltante = `null`; periodo inexistente = listas vacías. Los grupos de balance sin datos no se convierten en cero. Usa totales existentes y los derivados del ER del motor; la consulta temporal de UAI conserva su expresión antes del impuesto. Un importe incompleto del borrador no invalida subtotales independientes ni elude la validación de guardado.
+
+Ejemplo docente de julio con partidas complementarias acreditadas explícitamente: ventas 72000, costo 42000 y gastos 19000 producen UB 30000 y UAII 11000; intereses 1000 dan UAI 10000; impuesto 3000 da UN 7000. Sin el impuesto, UN = `null` y UAI sigue en 10000.
+
+### Renderizado común
+
+`js/modules/estados/estados-presentacion-ui.js` exporta `etiquetaFilaEstado(fila, { mostrarOrigen = true } = {})`, `origenFilaEstado(fila, cuentaVisible = fila?.cuenta)` y `tablasEstadosResueltos(datos, periodos)`. Devuelven HTML escapado con nombres originales, concepto canónico, signos y procedencia. La tabla distingue reportado/calculado por periodo. No persisten información.
+
+`filasAnalisis`, `analisisHorizontalCompleto` y `analisisVerticalCompleto` consumen esta lectura. AH añade `fuenteT1` y `fuenteT2` para distinguir procedencia y nombres por columna; no modifica Δ/abs(T1). Los datos suplementarios y pendientes se conservan. Los valores reportados discordantes no se sustituyen: se señalan para revisión.
+
+### `construirEFE`: cierre calculado
+
+Añade `efectivoFinalCalculado`, igual a efectivo inicial + total de flujos cuando ambos son finitos; si falta un operando, `null`. Se presenta por separado de `efectivoFinal`, que sigue siendo el saldo observado del balance. `diferencia`, conciliación, tolerancia, naturaleza estimada y actividades conservan su contrato.

@@ -1,8 +1,10 @@
-import { ACCOUNT_TYPES, computeFinancialTotals, validateFinancialData, inferAccountType,
+import { estadosResueltos } from './estados-presentacion-calculations.js';
+import { etiquetaFilaEstado, tablasEstadosResueltos } from './estados-presentacion-ui.js';
+import { ACCOUNT_TYPES, validateFinancialData, inferAccountType,
   seleccionarPeriodos, MAXIMO_PERIODOS_VISIBLES } from './estados-calculations.js';
 import { normalizeFinancialData, ordenarPeriodos } from './estados-normalize.js';
 import { escapeHTML as esc } from '../../utils/html.js';
-import { formatCurrency } from '../../utils/format.js';
+import { formatCurrency, formatCurrencyND } from '../../utils/format.js';
 import { exportJSON, exportCSV } from '../../utils/export.js';
 import { importStatementFile, tableTextToFinancialData, TABULAR_TEMPLATE_ROWS } from './estados-import.js';
 import { identificarCuenta, resumenIdentificacion, obtenerCuenta, consultarMontoCuenta } from './cuentas-identificador.js';
@@ -183,17 +185,25 @@ export function estadosUI(page, { initial, demo, save }) {
   function renderAccounts() {
     const el = page.querySelector('#accountEditor');
     if (!selected) { el.innerHTML = ''; return; }
+    const resueltos = estadosResueltos(draft, selected);
     el.innerHTML = Object.entries(GROUPS).map(([group, label]) => {
       const accounts = accountsFor(draft, selected, group);
-      return `<details class="states-account-group" data-group="${group}"${Object.keys(accounts).length ? ' open' : ''}>
+      const filasGrupo = [...resueltos.balanceGeneral, ...resueltos.estadoResultados].filter(f => f.grupoId === group);
+      return `<details class="states-account-group" data-group="${group}"${filasGrupo.length ? ' open' : ''}>
         <summary><span>${label}</span><small>${Object.keys(accounts).length} cuenta(s) · ${esc(selected)}</small></summary>
         <div class="states-account-body">
         <p>La clasificación de una cuenta se comparte entre periodos.</p>
         <div class="table-wrapper"><table><thead><tr><th>Cuenta</th><th>Importe</th><th>Clasificación</th><th>Acción</th></tr></thead><tbody>
-        ${Object.entries(accounts).map(([name, value], i) => `<tr data-account="${i}"><td>${esc(name)}</td>
-          <td><input class="form-input" data-amount type="number" step="any" required aria-label="Importe ${esc(name)}" value="${value}"></td>
-          <td><select class="form-select" data-type aria-label="Clasificación ${esc(name)}"><option value="">Pendiente</option>${options(group, draft.accountTypes[group][name] ?? inferAccountType(group, name))}</select></td>
-          <td><button class="btn btn-danger btn-sm" data-remove type="button" aria-label="Eliminar ${esc(name)}">Eliminar</button></td></tr>`).join('')}
+        ${filasGrupo.map(fila => {
+          const i = ['calculado', 'pendiente'].includes(fila.origen) ? -1 : Object.keys(accounts).indexOf(fila.cuenta);
+          if (i < 0) return `<tr class="${fila.subtotal ? 'statement-subtotal' : ''}" data-readonly-key="${esc(fila.clave)}">${filaLectura(fila)}</tr>`;
+          const catalogada = fila.id ? obtenerCuenta(fila.id) : null;
+          const sinTipo = catalogada && !catalogada.tipoApp ? `Identificada: ${catalogada.clasificacion.replaceAll('_', ' ')}` : 'Pendiente';
+          return `<tr data-account="${i}" class="${fila.subtotal ? 'statement-subtotal' : ''}"><td><span class="statement-label">${etiquetaFilaEstado(fila)}</span></td>
+          <td><input class="form-input" data-amount type="number" step="any" required aria-label="Importe ${esc(fila.cuenta)}" value="${accounts[fila.cuenta]}"></td>
+          <td><select class="form-select" data-type aria-label="Clasificación ${esc(fila.cuenta)}"><option value="">${esc(sinTipo)}</option>${options(group, draft.accountTypes[group][fila.cuenta] ?? inferAccountType(group, fila.cuenta))}</select></td>
+          <td><button class="btn btn-danger btn-sm" data-remove type="button" aria-label="Eliminar ${esc(fila.cuenta)}">Eliminar</button></td></tr>`;
+        }).join('')}
         </tbody></table></div>
         <details class="states-subpanel states-add-account"><summary>Añadir cuenta</summary><div class="states-disclosure-content">
         <form class="addAccount states-add-form"><label>Cuenta nueva <input class="form-input" name="account" required maxlength="120"></label>
@@ -217,7 +227,7 @@ export function estadosUI(page, { initial, demo, save }) {
               .map(periodo => ({ nombre: name, grupo: group, periodo, importe: accountsFor(draft, periodo, group)[name],
                 clasificacion: event.target.value, reemplazar: true }));
             draft = registrarCuenta(draft, registros);
-            markDirty(); renderReview(); renderPreview();
+            markDirty(); renderAccounts(); renderReview(); renderPreview();
           });
         };
         row.querySelector('[data-remove]').onclick = () => {
@@ -424,32 +434,44 @@ export function estadosUI(page, { initial, demo, save }) {
     if (initialError) message(initialError, true);
   }
 
+  function filaLectura(fila) {
+    return `<td><span class="statement-label">${etiquetaFilaEstado(fila)}</span></td><td class="text-right font-mono">${formatCurrencyND(fila.valor)}</td><td colspan="2" class="text-muted">Resultado de lectura</td>`;
+  }
+
   function renderPreview() {
     const preview = page.querySelector('#statementPreview');
     const check = page.querySelector('#balanceCheck');
     preview.innerHTML = '';
+    // Un importe incompleto no debe dejar visible el subtotal anterior.
+    page.querySelectorAll('[data-readonly-key]').forEach(row => {
+      const cell = row.querySelector('td:nth-child(2)');
+      if (cell) cell.textContent = 'N/D';
+    });
     check.textContent = 'Complete importes válidos para calcular el borrador.';
-    const normalized = normalizeFinancialData(draft);
-    const validation = validateFinancialData(normalized);
+    let normalized = draft;
+    let validation = [];
+    try {
+      normalized = normalizeFinancialData(draft);
+      validation = validateFinancialData(normalized);
+    } catch (error) {
+      check.textContent = `Complete los importes para guardar: ${error.message}`;
+    }
+    const actual = estadosResueltos(normalized, selected);
+    const porClave = new Map([...actual.balanceGeneral, ...actual.estadoResultados].map(f => [f.clave, f]));
+    page.querySelectorAll('[data-readonly-key]').forEach(row => {
+      const fila = porClave.get(row.dataset.readonlyKey);
+      if (fila) row.innerHTML = filaLectura(fila);
+    });
     // La selección solo filtra las columnas; cada total se calcula igual con cualquier selección (D-065).
     const { visibles } = periodosVisibles();
     const mostrarMonto = valor => valor === null ? 'N/D' : formatCurrency(valor);
     if (validation.length) check.innerHTML = validation.map(row => `<p class="${row.balanced ? 'text-success' : 'text-danger'}">${esc(row.period)}: ${row.difference === null ? 'Comprobación incompleta: revise las cuentas pendientes' : row.balanced ? 'Balance equilibrado' : 'Balance descuadrado'} — Activos ${mostrarMonto(row.totalActivos)}; Pasivos + Patrimonio ${mostrarMonto(row.totalPasivos === null || row.totalPatrimonio === null ? null : row.totalPasivos + row.totalPatrimonio)}; diferencia ${mostrarMonto(row.difference)}${row.diagnostico ? `; ${esc(row.diagnostico)}` : ''}</p>`).join('');
     const table = (label, rows) => `<h3>${label}</h3><div class="table-wrapper mb-4"><table><thead><tr><th>Cuenta</th>${visibles.map(p => `<th>${esc(p)}</th>`).join('')}</tr></thead><tbody>${rows.map(([name, values]) => `<tr><td>${esc(name)}</td>${values.map(v => `<td>${mostrarMonto(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
-    preview.innerHTML = Object.entries(GROUPS).map(([group, label]) => {
-      const names = [...new Set(draft.periods.flatMap(p => Object.keys(accountsFor(normalized, p, group))))];
-      return table(label, names.map(name => [name, visibles.map(p => accountsFor(normalized, p, group)[name] ?? null)]));
-    }).join('') + table('Totales reportados conservados', [...new Set(Object.values(normalized.reportedTotals || {}).flatMap(totales => Object.keys(totales)))].map(id => [
-      Object.values(normalized.reportedTotals).find(totales => totales[id])?.[id].nombre || id,
-      visibles.map(periodo => normalized.reportedTotals?.[periodo]?.[id]?.importe ?? null)
-    ])) + table('Datos suplementarios', [...new Set(Object.values(normalized.supplementaryAccounts || {}).flatMap(cuentas => Object.keys(cuentas)))].map(nombre => [
+    preview.innerHTML = tablasEstadosResueltos(normalized, visibles) + table('Datos suplementarios', [...new Set(Object.values(normalized.supplementaryAccounts || {}).flatMap(cuentas => Object.keys(cuentas)))].map(nombre => [
       nombre, visibles.map(periodo => normalized.supplementaryAccounts?.[periodo]?.[nombre] ?? null)
     ])) + table('Cuentas pendientes de grupo', (normalized.pendingAccounts || []).map(fila => [
       fila.nombre, visibles.map(periodo => fila.importes[periodo] ?? null)
-    ])) + table('Totales compartidos', [
-      ['Total activos', 'totalActivos'], ['Total pasivos', 'totalPasivos'],
-      ['Total patrimonio', 'totalPatrimonio'], ['Utilidad bruta', 'utilidadBruta'], ['Utilidad neta', 'utilidadNeta']
-    ].map(([label, key]) => [label, visibles.map(p => computeFinancialTotals(normalized, p)[key])]));
+    ]));
   }
 
   render();

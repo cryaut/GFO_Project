@@ -1,3 +1,4 @@
+import { etiquetaFilaEstado, origenFilaEstado } from '../estados/estados-presentacion-ui.js';
 import store from '../../store.js';
 import { mercadoUI } from './mercado-ui.js';
 import { estadosGuardados } from '../../utils/estados-guardados.js';
@@ -258,10 +259,10 @@ function renderAHSection(periods) {
     html += `<section class="analisis-sheet"><h4 class="mb-2">${escapeHTML(ah.periodo)}</h4>
       <div class="table-wrapper mb-6"><table>
         <thead><tr><th>Cuenta</th><th class="text-right">Periodo T1</th><th class="text-right">Periodo T2</th><th class="text-right">Δ</th><th class="text-right">%Δ</th></tr></thead>
-        <tbody>${ah.rows.map(r => `<tr>
-          <td><span class="analisis-account-group">${escapeHTML(r.grupo)}</span>${escapeHTML(r.cuenta)}</td>
-          <td class="text-right font-mono">${formatCurrencyND(r.t1)}</td>
-          <td class="text-right font-mono">${formatCurrencyND(r.t2)}</td>
+        <tbody>${ah.rows.map(r => `<tr class="${r.subtotal ? 'statement-subtotal' : ''}">
+          <td><span class="analisis-account-group">${escapeHTML(r.grupo)}</span><span class="statement-label">${etiquetaFilaEstado(r, { mostrarOrigen: false })}</span></td>
+          <td class="text-right font-mono">${formatCurrencyND(r.t1)}${origenFilaEstado(r.fuenteT1, r.cuenta)}</td>
+          <td class="text-right font-mono">${formatCurrencyND(r.t2)}${origenFilaEstado(r.fuenteT2, r.cuenta)}</td>
           <td class="text-right font-mono ${esNumero(r.delta) && r.delta < 0 ? 'text-danger' : ''}">${formatCurrencyND(r.delta)}</td>
           <td class="text-right font-mono">${r.pctDelta === null ? 'N/D' : formatPercent(r.pctDelta)}</td>
         </tr>`).join('')}</tbody>
@@ -279,8 +280,8 @@ function renderAVTable(avData, titulo) {
     <p class="analisis-note">Cuenta / base × 100. Base utilizada: <strong>${escapeHTML(avData.base)}</strong> = ${formatCurrencyND(avData.baseValor)}</p>
     <div class="table-wrapper mb-6"><table>
       <thead><tr><th>Cuenta</th><th class="text-right">Valor</th><th class="text-right">% Base</th></tr></thead>
-      <tbody>${avData.rows.map(r => `<tr>
-        <td><span class="analisis-account-group">${escapeHTML(r.grupo)}</span>${escapeHTML(r.cuenta)}</td>
+      <tbody>${avData.rows.map(r => `<tr class="${r.subtotal ? 'statement-subtotal' : ''}">
+        <td><span class="analisis-account-group">${escapeHTML(r.grupo)}</span><span class="statement-label">${etiquetaFilaEstado(r)}</span></td>
         <td class="text-right font-mono">${formatCurrencyND(r.valor)}</td>
         <td class="text-right font-mono">${r.pctBase === null ? 'N/D' : formatPercent(r.pctBase)}</td>
       </tr>`).join('')}</tbody>
@@ -289,7 +290,7 @@ function renderAVTable(avData, titulo) {
 
 function renderAVSection(period) {
   const datos = analisisVerticalCompleto(savedCache || refreshSavedStates(), period);
-  return '<p class="analisis-note">Incluye todas las cuentas capturadas y los totales reportados, sin volver a sumarlos. Una base cero o incompleta produce N/D.</p>' +
+  return '<p class="analisis-note">Incluye todas las cuentas y los subtotales resueltos en orden. Los importados conservan sus nombres; los calculados no se suman de nuevo. Una base cero o incompleta produce N/D.</p>' +
     renderAVTable(datos.balanceGeneral, 'Análisis Vertical — Balance General') +
     renderAVTable(datos.estadoResultados, 'Análisis Vertical — Estado de Resultados') +
     (datos.complementarios.length ? `<section class="analisis-sheet"><h4>Datos fuera de la base vertical</h4><p class="analisis-note">Los datos suplementarios y las cuentas sin grupo se conservan, pero no se les asigna una base contable sin acreditar su clasificación.</p><div class="table-wrapper"><table><thead><tr><th>Cuenta</th><th>Importe</th><th>% Base</th></tr></thead><tbody>${datos.complementarios.map(fila => `<tr><td>${escapeHTML(fila.cuenta)}</td><td>${formatCurrencyND(fila.valor)}</td><td>N/D · ${escapeHTML(fila.grupo)}</td></tr>`).join('')}</tbody></table></div></section>` : '');
@@ -540,7 +541,7 @@ function renderEFESection(period) {
       ${celda(fila.monto)}
     </tr>`).join('')}
     <tr class="font-bold" style="border-top:2px solid var(--border-color-strong)">
-      <td>Total de ${titulo.toLowerCase()}</td>
+      <td>(=) Flujo neto de ${titulo.toLowerCase()}</td>
       ${celda(seccion.total)}
     </tr>`;
   return `<div class="card mb-4" role="note"><strong>Estimación por variaciones de saldos.</strong> Cuadrar con el cambio de efectivo no confirma los cobros, pagos, dividendos ni operaciones no monetarias. Verifique los movimientos reales y las notas del periodo. Para registrar cobros y pagos, use <a href="#/flujo">Flujo de Efectivo</a>.</div>
@@ -555,10 +556,11 @@ function renderEFESection(period) {
       ${filas(efe.operacion, 'Operación')}
       ${filas(efe.inversion, 'Inversión')}
       ${filas(efe.financiamiento, 'Financiamiento')}
-      <tr class="font-bold"><td>Efectivo al inicio</td>${celda(efe.efectivoInicial)}</tr>
-      <tr class="font-bold"><td>Efectivo al final</td>${celda(efe.efectivoFinal)}</tr>
-      <tr class="font-bold"><td>Variación de efectivo</td>${celda(efe.variacionEfectivo)}</tr>
-      <tr class="font-bold" style="border-top:2px solid var(--border-color-strong)"><td>Total de flujos (CFO + CFI + CFF)</td>${celda(efe.totalFlujos)}</tr>
+      <tr class="font-bold" style="border-top:2px solid var(--border-color-strong)"><td>(=) Total de flujos (CFO + CFI + CFF) · variación neta calculada</td>${celda(efe.totalFlujos)}</tr>
+      <tr class="font-bold"><td>(+) Efectivo al inicio</td>${celda(efe.efectivoInicial)}</tr>
+      <tr class="font-bold"><td>(=) Efectivo final calculado (inicial + flujos)</td>${celda(efe.efectivoFinalCalculado)}</tr>
+      <tr class="font-bold"><td>Efectivo al final · saldo del balance</td>${celda(efe.efectivoFinal)}</tr>
+      <tr class="font-bold"><td>Variación de efectivo según balances</td>${celda(efe.variacionEfectivo)}</tr>
       <tr class="font-bold"><td>Diferencia (flujos − variación de efectivo)</td>${celda(efe.diferencia)}</tr>
     </tbody>
   </table></div>

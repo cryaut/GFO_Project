@@ -250,6 +250,14 @@ Efectivo (BG) ──→ Se muestra en el EFE
 
 ---
 
+### Lectura de los ejercicios resueltos
+
+En Estados, las cuentas originales siguen siendo editables. Entre ellas aparecen los subtotales de lectura en su lugar: activos corrientes, activos fijos netos, totales del balance y, en Resultados, utilidad bruta, utilidad operativa (UAII), utilidad antes de impuestos (UAI) y utilidad neta (UN). **Calculado** indica un resultado obtenido con los datos disponibles; **Reportado**, un importe del archivo; **Faltan datos / N/D**, una operación que no se puede completar. **Revisar** junto a un reportado indica motivos de comprobación, sin reemplazar su importe. Los signos +, − y = ayudan a leer; los subtotales no son nuevas operaciones que deban sumarse otra vez.
+
+Los resultados se actualizan al editar. Si vacía el impuesto, por ejemplo, UAI puede seguir calculándose y UN queda N/D; para guardar/exportar deberá completar los importes válidos. Los renglones calculados no se añaden al JSON original. La vista multiperiodo distingue su origen en cada columna.
+
+AH y AV muestran las mismas cuentas y subtotales ordenados, manteniendo las convenciones de variación y las bases vigentes. El EFE de Análisis distingue el efectivo final calculado del saldo observado: una diferencia queda visible y no se compensa automáticamente.
+
 ## 4. Módulo 3: Análisis Financiero
 
 Elija el **Periodo de análisis** al inicio. La navegación agrupa las nueve secciones por tarea: comparar estados, rentabilidad y lectura, capital y fondos. Cada sección ofrece **Ver método y criterios**. Al cambiar de periodo se conserva la sección abierta; Mercado mantiene la comparación de todos los periodos. Leer o cambiar de sección no modifica los estados guardados.

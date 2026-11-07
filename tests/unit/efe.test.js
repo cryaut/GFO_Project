@@ -1041,3 +1041,25 @@ describe('variantes V0 a V16 y VB (ronda 1, T5)', () => {
     expect(r.interpretacion).toContain('utilidad_no_conciliada');
   });
 });
+
+
+it('presenta efectivo final calculado separado del saldo observado y propaga N/D', () => {
+  const a3 = ENTRADA_BLOQUE_A.conjuntos.find(conjunto => conjunto.id === 'A3');
+  const datos = parseFinancialJSON(JSON.stringify(a3.entrada));
+  const r = construirEFE(datos, '2024', '2025');
+  expect(r.efectivoFinalCalculado).toBeCloseTo(r.efectivoFinal, 8);
+  expect(r.efectivoFinalCalculado).not.toBeNull();
+  expect(construirEFE(null, '2024', '2025').efectivoFinalCalculado).toBeNull();
+});
+
+
+it('el cierre calculado no se sustituye por el balance cuando hay diferencia', () => {
+  const a3 = ENTRADA_BLOQUE_A.conjuntos.find(conjunto => conjunto.id === 'A3');
+  const datos = parseFinancialJSON(JSON.stringify(a3.entrada));
+  const patrimonio = datos.balanceGeneral['2025'].patrimonio;
+  const cuenta = Object.keys(patrimonio)[0];
+  patrimonio[cuenta] += 100;
+  const r = construirEFE(datos, '2024', '2025');
+  expect(r.efectivoFinalCalculado).toBeCloseTo(r.efectivoFinal + 100, 8);
+  expect(r.diferencia).toBeCloseTo(100, 8);
+});

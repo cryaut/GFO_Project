@@ -83,7 +83,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
   const sinDatos = incompleto => ({
     periodos, incompleto, utilidadNeta: null,
     operacion: null, inversion: null, financiamiento: null,
-    totalFlujos: null, efectivoInicial: null, efectivoFinal: null,
+    totalFlujos: null, efectivoInicial: null, efectivoFinal: null, efectivoFinalCalculado: null,
     variacionEfectivo: null, diferencia: null, tolerancia: toleranciaComprobacion(),
     conciliacionUtilidad: null,
     estado: 'incompleta', motivos, advertencias, interpretacion: ''
@@ -273,6 +273,8 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
 
   const totalFlujos = [CFO, CFI, CFF].every(v => typeof v === 'number' && Number.isFinite(v))
     ? CFO + CFI + CFF : null;
+  const efectivoFinalCalculado = Number.isFinite(efectivoInicial) && Number.isFinite(totalFlujos)
+    ? efectivoInicial + totalFlujos : null;
   const variacionEfectivo = efectivoInicial !== null && efectivoFinal !== null
     ? efectivoFinal - efectivoInicial : null;
   const diferencia = totalFlujos !== null && variacionEfectivo !== null
@@ -308,6 +310,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     inversion,
     financiamiento,
     totalFlujos,
+    efectivoFinalCalculado,
     efectivoInicial,
     efectivoFinal,
     variacionEfectivo,

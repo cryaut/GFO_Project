@@ -46,6 +46,8 @@ docs/                      Documentación: contexto, reglas, planificación, API
 
 ### Estado real de cada módulo
 
+La lectura ordenada de balance y ER vive en `estados/estados-presentacion-calculations.js`, con el render común en `estados-presentacion-ui.js`. Estados y AH/AV la consumen sin insertar cuentas ni cambiar el store. Durante la edición, los renglones de lectura se actualizan sin reconstruir los inputs; el guardado/exportación conservan la normalización original. El EFE expone por separado el cierre calculado y el saldo del balance (D-096).
+
 Análisis incorpora `analisis-calculations.js`: compone las filas completas de AH/AV y el detalle DuPont sin DOM ni store. `index.js` conserva adaptadores públicos y renderizado. El selector de periodo y la sección activa viven solo en memoria; no cambia el esquema de persistencia ni se toca el motor de razones o su generado.
 
 | Módulo | Dónde está la lógica | Notas |

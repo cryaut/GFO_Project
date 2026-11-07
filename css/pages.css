@@ -930,3 +930,15 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Lectura contable común: detalle, signo y subtotal en Estados y AH/AV. */
+:is(#page-estados, #page-analisis) .statement-label { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--space-2); text-align: left; }
+:is(#page-estados, #page-analisis) .statement-operator { flex: 0 0 1rem; text-align: center; font-weight: 600; }
+:is(#page-estados, #page-analisis) .statement-source { font-size: var(--font-size-xs); font-weight: 400; color: var(--text-secondary); }
+:is(#page-estados, #page-analisis) .statement-concept { display: block; font-size: var(--font-size-xs); font-weight: 400; color: var(--text-secondary); }
+:is(#page-estados, #page-analisis) .statement-subtotal > * { border-top: 1px solid var(--border-color-strong); background: var(--bg-tertiary); font-weight: 600; }
+#page-estados .statement-solved { margin-block: var(--space-6); }
+#page-estados .statement-solved th[scope="row"] { text-align: left; font-weight: 400; }
+#page-estados .statement-solved .statement-subtotal th { font-weight: 600; }
+
+:is(#page-estados, #page-analisis) td > .statement-source { display: block; font-family: var(--font-sans); white-space: normal; }

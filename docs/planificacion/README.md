@@ -21,8 +21,8 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 | Análisis completo y presentación docente | Revisión solicitada por Cris | Implementada; en revisión | [analisis-docente](analisis-docente/README.md) |
 | Rigor financiero y comparación con AFOD | Carlos | En revisión | [rigor-financiero](rigor-financiero/README.md) |
 | Caso integrado, contexto y escenarios | Carlos | En revisión | [caso-integrado](caso-integrado/README.md) |
-
 | Inicio en blanco y navegación ante errores | Corrección solicitada por Cris | Implementada; en validación | [inicio-navegacion](inicio-navegacion/README.md) |
+| Estados resueltos según presentación docente | Solicitud de Cris | Implementada localmente; sin publicar | [estados-resueltos-docente](estados-resueltos-docente/README.md) |
 
 Agrega una fila cuando empieces una feature y actualiza el estado cuando cambie.
 

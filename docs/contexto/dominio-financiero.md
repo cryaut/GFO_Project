@@ -93,6 +93,10 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 
 ## Catálogo de funciones
 
+### Lectura de estados (`js/modules/estados/estados-presentacion-calculations.js`)
+
+`estadosResueltos(datos, periodo)` compone balance y ER completos, con detalle, subtotales y origen reportado/calculado/pendiente, sin mutar datos. Reutiliza `computeFinancialTotals` para el balance y los derivados del ER del motor; no define otro motor ni modifica las fórmulas de Razones. La consulta de UAI evalúa la expresión existente antes de IR; la omisión de IR no se suple con una tasa o con cero. Los campos incompletos conservan N/D sin anular operaciones independientes. D-096 registra el orden docente y la lectura sin persistencia.
+
 ### Composición de Análisis (`js/modules/analisis/analisis-calculations.js`)
 
 | Función | Qué calcula |

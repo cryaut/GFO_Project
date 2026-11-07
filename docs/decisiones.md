@@ -135,6 +135,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-085 | Supuestos de Planeación guardados sin producto vinculado | Vigente |
 | D-086 | Integrar lectura segura de F8 con el motor de razones | Vigente |
 | D-094 | Recuperar navegación ante un error de pantalla | Vigente en rama, pendiente de revisión |
+| D-096 | Estados resueltos como lectura sin alterar el documento importado | Implementada solo localmente; sin publicar |
 | D-095 | Completar AH/AV y hacer coherente el procedimiento DuPont | Vigente en rama, pendiente de revisión |
 | D-087 | DuPont y consumidores propagan datos no disponibles | Vigente en rama; pendiente de revisión |
 | D-088 | EFE indirecto por identidad y con alcance explícito | Vigente en rama; pendiente de revisión |
@@ -2174,3 +2175,26 @@ Se retira la prueba histórica de regresión de la demo (caso de ejemplo cargado
 **Para revertirla.** Revisar el control de error y el orden de registro en `js/app.js`, la guarda de flujo de `areasClave`, y sus pruebas de regresión antes de retirar el comportamiento.
 
 **Referencias.** `docs/planificacion/inicio-navegacion/README.md`; `tests/unit/inicio-navegacion.test.js`; `tests/unit/inicio.test.js`.
+
+### D-096 — Estados resueltos como lectura sin alterar el documento importado
+
+- **Fecha**: 2026-11-07
+- **Estado**: Implementada solo localmente; pendiente de verificación del usuario, sin push ni PR.
+- **Decidió**: Cris solicitó completar los estados según las presentaciones y verificar la rama antes de publicarla.
+- **Área**: Estados, AH/AV y presentación del cierre del EFE.
+
+**Contexto.** Estados mostraba los subtotales en tablas aparte y el editor conservaba el orden de llegada. AH/AV solo comparaban las filas importadas. Esto omitía UB, UAII, UAI o UN si el archivo no los traía, aunque pudieran calcularse. Las fuentes docentes acreditan una secuencia y distinguen subtotal de detalle; no acreditan asumir tasas o movimientos ausentes.
+
+**Opciones.** Mantener totales aparte; insertar cuentas calculadas en los datos guardados; o componer una lectura ordenada sin mutar el documento. Para el ER se consideró reutilizar el totalizador legado o las consultas estrictas ya usadas por Razones y DuPont.
+
+**Decisión.** Lectura compartida en `estados-presentacion-calculations.js`, con filas y claves estables de subtotal. El balance reutiliza `computeFinancialTotals` y deja N/D si el grupo o un importe necesario no está disponible. El ER consulta los derivados existentes del motor: ventas, costo, utilidad bruta, gastos operativos, UAII y UN. UAI usa el mismo intérprete sobre la expresión de UN antes del impuesto: una consulta temporal elimina exclusivamente ese operando, sin cambiar el motor, el generado, los JSON ni los datos. Se preservan las políticas de ausencia del catálogo y la composición de ingresos; no se aplica una tasa automática.
+
+Un subtotal reportado aparece una sola vez, con su nombre e importe originales, y su etiqueta canónica como ayuda. Los motivos de discrepancia se muestran con «Revisar». Sus componentes permanecen visibles; el subtotal no se vuelve a sumar. AH alinea el concepto aunque un periodo lo reporte y otro lo calcule, y conserva las procedencias por columna. La disponibilidad de ventas netas como base de AV proviene de la lectura del ER; evita que un ingreso operativo acreditado por id la anule por carecer de tipoApp. Se conservan Δ/abs(T1), los conceptos de base de AV, los signos y todas las cuentas, incluidos los pendientes de clasificación.
+
+**Consecuencias.** El ER resuelto comparte la disponibilidad de Razones/DuPont, que puede ser más estricta que el totalizador legado de otros consumidores. Depreciación, amortización y otros gastos operativos con identidad acreditada sí entran en su lugar, aunque el selector de tipos generales no tenga tipoApp para ellos. La etiqueta de estos selectores indica «Identificada», sin asignarles un tipo nuevo. Las tasas 15 % o 30 % son supuestos de ejemplos concretos, no defaults para los importados. Dividendos no se convierten en gastos. Un borrador con un importe vacío conserva sus filas N/D; una proyección de lectura omite ese valor al consultar los cálculos, conservando los subtotales independientes. Guardar/exportar siguen usando la validación original.
+
+El EFE conserva sus cálculos y advertencias; añade el efectivo final calculado (inicial + flujos), separado del saldo observado del balance. Un descuadre no se rellena ni se oculta. EOAF, Flujo directo y Proforma ya tienen sus secciones/subtotales y se preservan; no se crea un estado de cambios de patrimonio sin movimientos suficientes. El EFE oficial no fue comparado con la clase por falta de BG/ER completos.
+
+**Para revertirla.** Desconectar la composición de lectura de Estados y AH/AV y el renglón de cierre calculado del EFE, sin alterar los documentos originales ni borrar esta decisión.
+
+**Referencias.** [Ficha y fuentes leídas antes de editar](planificacion/estados-resueltos-docente/README.md); [comparación y límites](planificacion/estados-resueltos-docente/COMPARACION.md); D-056, D-063, D-087, D-088 y D-095.
