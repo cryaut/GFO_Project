@@ -13,6 +13,7 @@ import { initPlaneacion } from './modules/planeacion/index.js';
 import { initProforma } from './modules/proforma/index.js';
 import { initInicio } from './modules/inicio/index.js';
 import { refreshChartsTheme } from './components/chart.js';
+import { escapeHTML } from './utils/html.js';
 
 const routes = {
   'home': { init: initInicio, label: 'Inicio' },
@@ -46,7 +47,21 @@ function navigate(route) {
   if (nav) nav.classList.add('active');
 
   const r = routes[route];
-  if (r && r.init) r.init();
+  if (r && r.init) {
+    try {
+      r.init();
+    } catch (error) {
+      console.error(`No se pudo cargar la sección ${r.label}`, error);
+      if (page) {
+        page.innerHTML = `<div class="card" role="alert">
+          <h1 class="page-title">No se pudo cargar ${escapeHTML(r.label)}</h1>
+          <p>Vuelve a intentarlo o abre otra sección desde el menú.</p>
+          <button type="button" class="btn btn-primary" id="reintentarRuta">Volver a intentar</button>
+        </div>`;
+        page.querySelector('#reintentarRuta')?.addEventListener('click', () => navigate(route));
+      }
+    }
+  }
 }
 
 function initGlosario() {
@@ -95,8 +110,8 @@ function init() {
   store.load();
   initThemeToggle();
   initMobileMenu();
-  navigate(getRoute());
   window.addEventListener('hashchange', () => navigate(getRoute()));
+  navigate(getRoute());
 }
 
 document.addEventListener('DOMContentLoaded', init);

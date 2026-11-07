@@ -225,7 +225,9 @@ export function areasClave(entradas) {
   }
   if (apalancamiento?.periodos?.length) lista.push(areaApalancamiento(apalancamiento));
   if (equilibrio) lista.push(areaEquilibrio(equilibrio));
-  if (flujo) lista.push(areaFlujo(flujo));
+  // El EFE no disponible trae un motivo, pero no totales. El reporte ya muestra
+  // ese faltante; no se evalúa como si fuera un flujo calculado.
+  if (flujo && flujo.disponible !== false) lista.push(areaFlujo(flujo));
   if (presupuesto) lista.push(areaPresupuesto(presupuesto));
   if (inventario) lista.push(areaInventario(inventario));
   return lista;

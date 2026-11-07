@@ -79,6 +79,8 @@ Estos archivos están vacíos (devuelven `{}`) y ningún módulo los usa: `activ
 
 Cada vez que se entra a una ruta, su `init` vuelve a dibujar la página completa.
 
+El router registra `hashchange` antes de dibujar la primera ruta. Si un `init` lanza un error síncrono, la sección muestra un aviso con «Volver a intentar» y el menú permite cambiar de ruta; el detalle técnico queda en la consola. Inicio omite la evaluación del flujo cuando el EFE trae `disponible: false` y conserva el motivo en los faltantes del reporte.
+
 Para agregar una ruta:
 
 1. Crea `js/modules/<modulo>/index.js` con `export function init<Modulo>()`.

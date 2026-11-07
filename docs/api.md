@@ -970,6 +970,8 @@ Cada mes monetario devuelve `{ importe, contado, credito, liquidado, total, aper
 
 Inicio reutiliza la recolección de la proforma: `proforma/index.js` exporta `reunirEntradas()`, y `inicio/index.js` exporta `initInicio()`, `cargarEjemploEmpresa()` y `cargarEjemploPersonal()` (solo llenan módulos vacíos; devuelven los nombres cargados). Activos exporta `calcularEstado(activo)` y `ejemploActivos()`. `js/components/chart.js` exporta `refreshChartsTheme()`, que recolorea ejes y leyendas de las gráficas abiertas al cambiar de tema.
 
+`areasClave(entradas)` omite el área de flujo si `entradas.flujo.disponible === false`: ese estado solo contiene un motivo y no totales. `panoramaGeneral` conserva el motivo entre los faltantes del reporte, sin evaluar ese flujo como salud financiera ni impedir que Inicio cargue.
+
 Códigos de `avisos` del presupuesto maestro: `financiamiento`, `sin-compras`, `bajo-stock-minimo`, `perdida`, `bajo-equilibrio` y `sin-margen`.
 
 `compararResultados(real, proforma)` conserva ambos valores de cada fila. Calcula la variación relativa y la diferencia de márgenes en puntos solo si el periodo real es un año `AAAA` y la proyección cubre 12 meses o 4 trimestres. En los demás casos `variacion` y `puntos` quedan en `null`. Si están presentes ambos resultados y falta comparabilidad temporal, `construirReporte` explica la causa en `motivoComparacion`.

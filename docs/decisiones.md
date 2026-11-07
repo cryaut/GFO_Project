@@ -134,6 +134,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-084 | Totales de existencia solo con una unidad | Vigente |
 | D-085 | Supuestos de Planeación guardados sin producto vinculado | Vigente |
 | D-086 | Integrar lectura segura de F8 con el motor de razones | Vigente |
+| D-094 | Recuperar navegación ante un error de pantalla | Vigente en rama, pendiente de revisión |
 | D-095 | Completar AH/AV y hacer coherente el procedimiento DuPont | Vigente en rama, pendiente de revisión |
 | D-087 | DuPont y consumidores propagan datos no disponibles | Vigente en rama; pendiente de revisión |
 | D-088 | EFE indirecto por identidad y con alcance explícito | Vigente en rama; pendiente de revisión |
@@ -2152,3 +2153,24 @@ Se retira la prueba histórica de regresión de la demo (caso de ejemplo cargado
 **Para revisar el criterio.** Medir la primera cifra y verificar consulta, edición y guardado con un escenario parcial y con el presupuesto maestro anterior.
 
 **Referencias.** D-089, D-090 y las pruebas de interfaz de Planeación.
+
+### D-094 — Recuperar navegación ante un error de pantalla
+
+- **Fecha**: 2026-11-06
+- **Estado**: Vigente en rama, pendiente de revisión humana
+- **Decidió**: Codex como solución técnica al fallo reportado por Cris; no constituye aprobación humana del PR
+- **Área**: `js/app.js`, Inicio y navegación entre módulos
+
+**Contexto.** Inicio intentaba leer totales de un EFE marcado como no disponible y lanzaba antes de renderizar. El registro de `hashchange` ocurría después de abrir Inicio, por lo que ese error impedía navegar sin recargar. El problema afecta al router compartido. Se usa D-094 porque D-087 a D-093 ya aparecen en otras ramas remotas consultadas.
+
+**Opciones.**
+1. Corregir la lectura del EFE y contener errores síncronos de cada pantalla en el router, conservando navegación y un reintento.
+2. Corregir solo el EFE: arregla el disparador actual, pero cualquier otro error de pantalla puede volver a dejar una sección en blanco.
+
+**Decisión.** Opción 1. Inicio omite la evaluación de un flujo con `disponible: false`; el motivo permanece entre los faltantes existentes. El router registra el cambio de hash antes del primer render, captura errores síncronos de los inicializadores y ofrece «Volver a intentar» o navegar a otra sección. El detalle técnico se registra en consola, sin insertarlo como HTML del usuario.
+
+**Consecuencias.** Inicio sin EFE utilizable carga normalmente; un fallo de otra pantalla no obliga a refrescar para recuperar el menú. No se alteran fórmulas, datos guardados, cifras calculables ni la fuente EFE de D-070. Los rechazos asíncronos internos de un módulo no forman parte de esta captura síncrona.
+
+**Para revertirla.** Revisar el control de error y el orden de registro en `js/app.js`, la guarda de flujo de `areasClave`, y sus pruebas de regresión antes de retirar el comportamiento.
+
+**Referencias.** `docs/planificacion/inicio-navegacion/README.md`; `tests/unit/inicio-navegacion.test.js`; `tests/unit/inicio.test.js`.

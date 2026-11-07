@@ -22,6 +22,8 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 | Rigor financiero y comparación con AFOD | Carlos | En revisión | [rigor-financiero](rigor-financiero/README.md) |
 | Caso integrado, contexto y escenarios | Carlos | En revisión | [caso-integrado](caso-integrado/README.md) |
 
+| Inicio en blanco y navegación ante errores | Corrección solicitada por Cris | Implementada; en validación | [inicio-navegacion](inicio-navegacion/README.md) |
+
 Agrega una fila cuando empieces una feature y actualiza el estado cuando cambie.
 
 ## Convenciones
