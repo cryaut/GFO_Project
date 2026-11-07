@@ -10,6 +10,8 @@ Todos los cambios notables en GFO Toolkit.
 - Análisis conserva el aviso de F8 para estados ilegibles y calcula las razones con el motor; las etiquetas de rotaciones indican ventas y compras a crédito. Reportes obtiene la utilidad neta del motor. Los documentos sin datos acreditados mantienen N/D (D-086).
 
 ### Módulo 2: Estados Financieros
+- Ajuste visual de Activos, Pasivos, Patrimonio y Resultados: contenedores con borde completo, esquinas redondeadas, margen y espacio interior; etiquetas y campos editables alineados a la izquierda, incluido el nombre de cuenta.
+- Diseño: acciones separadas en carga, periodo de trabajo, cuentas y vista multiperiodo; opciones secundarias en paneles desplegables, guardado destacado, formularios etiquetados y más espacio entre botones. Ajustes de contraste y navegación móvil, sin cambios a cálculos, validación ni persistencia.
 - R1/R2 del plan de reparación (D-061 a D-065): la compuerta de datos rechaza los importes con el signo contrario a `convencionSigno` del catálogo (los mensajes indican fila, cuenta y periodo) y nunca invierte un signo en silencio; los datos guardados que no pasan la compuerta se muestran en modo lectura, sin borrarse.
 - R1/R2 (D-062): un total reportado es el valor de su tipo y se compara con sus detalles; si no cuadra (diferencia mayor de 0.01) se registra `reported_subtotal_mismatch` con la diferencia (reemplaza a `overlapping_account_aggregation`). Todos los totales con `rol: reported_total` se guardan en `reportedTotals`, también los que tienen tipo; un subtotal sin detalles ni total propio en un grupo con total reportado es N/D, nunca 0.
 - R1/R2: una sola regla de identidad para todas las vías: el mismo dato da el mismo resultado desde la interfaz, la importación o un JSON.

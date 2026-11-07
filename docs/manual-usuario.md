@@ -143,6 +143,10 @@ La sección Estados Financieros (`#/estados`) es la puerta de entrada de la info
 
 El botón **"Cargar ejemplo"** inserta la empresa de demostración MUNO MODA S.A. con dos periodos, útil para explorar la herramienta sin datos propios.
 
+Los controles se agrupan por tarea. **Empresa** y **Guardar estados** están al inicio, con el estado del borrador. En **Cargar datos** están el archivo, la plantilla CSV y los paneles **Pegar celdas desde Excel**, **Formato de importes y ayuda** y **Nuevo conjunto o ejemplo**. Este panel comienza abierto cuando no hay periodos.
+
+En **Periodo de trabajo**, seleccione el periodo que va a editar. Despliegue **Datos complementarios del periodo** para capturar composición de ingresos y datos de rotaciones, o **Administrar periodos** para añadir, renombrar, ordenar o eliminar. Las cuentas se organizan en grupos plegables; cada grupo incluye **Añadir cuenta**. Debajo están **Revisar equilibrio** y **Vista multiperiodo del borrador**, que contiene los periodos visibles y la descarga JSON. Los encabezados desplegables se pueden abrir con Enter o Espacio al navegar con teclado. En móvil, las tablas se desplazan horizontalmente dentro de su recuadro.
+
 > Importante: la importación **reemplaza** el borrador completo; no combina periodos ni cuentas. Sus datos guardados no cambian hasta pulsar **Guardar estados**.
 
 ### 3.2 Importar estados financieros externos (JSON, CSV, Excel)
@@ -167,13 +171,13 @@ El botón **"Cargar ejemplo"** inserta la empresa de demostración MUNO MODA S.A
 
 **Tabla larga (una fila por periodo).** Columnas `Periodo`, `Estado`, `Grupo`, `Cuenta` e `Importe`.
 
-**Pegar desde Excel.** Abra "Importar pegando celdas desde Excel", copie el rango (incluidos los encabezados), péguelo y pulse **"Importar tabla pegada"**. Los tabuladores se detectan solos.
+**Pegar desde Excel.** Abra **Cargar datos → Pegar celdas desde Excel**, copie el rango (incluidos los encabezados), péguelo y pulse **"Importar tabla pegada"**. Los tabuladores se detectan solos.
 
 **Excel con varias hojas.** Si el libro tiene hojas separadas por estado (`Activos`, `Pasivos`, `Patrimonio`, `Resultados`), cada hoja puede contener solo una columna `Cuenta` y una columna por periodo; el nombre de la hoja aporta el estado y el grupo.
 
 **Importes admitidos.** `45000`, `45,000`, `C$ 12.500,50`, `(500)` y `500-` se interpretan correctamente. Una celda en blanco **omite** la cuenta en ese periodo (no la convierte en cero). Las cuentas cuyo nombre no se reconoce exigen indicar `Clasificacion`; el error indica el número de fila.
 
-**Formato de importes (punto o coma).** Elija en **"Formato de importes al importar CSV/Excel"** cómo escribe sus números:
+**Formato de importes (punto o coma).** Abra **Cargar datos → Formato de importes y ayuda**. Elija en **"Formato de importes al importar CSV/Excel"** cómo escribe sus números:
 
 - **Automático (recomendado):** mira todos los importes del archivo. Si alguno demuestra el formato (`1.234.567` o `12,50` indican coma decimal; `1,234.50`, punto decimal), lo aplica a todo el archivo.
 - **Punto decimal** (`1,234.50`) o **Coma decimal** (`1.234,50`): fuerza el formato y rechaza lo que no encaje, con la fila del error.
