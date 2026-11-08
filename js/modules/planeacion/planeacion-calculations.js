@@ -3,7 +3,8 @@
 // Lógica pura: sin DOM, window ni store. Plan: docs/planificacion/modulos-guia/01-modulos-obligatorios.md.
 import {
   comprasPresupuestadas, costoBienesVendidos, financiamientoRequerido, margenContribucionUnitario,
-  margenSeguridad, necesitaReposicion, puntoEquilibrioUnidades, puntoEquilibrioVentas, razonMargenContribucion
+  margenSeguridad, necesitaReposicion, puntoEquilibrioUnidades, puntoEquilibrioVentas, razonMargenContribucion,
+  valorInventario
 } from '../../utils/calculate.js';
 
 export const TIPOS_PERIODO = ['Mes', 'Trimestre'];
@@ -153,6 +154,27 @@ function presupuestarExistencias(s) {
   });
 }
 
+function valorarExistencias(existencias, compras, unidadesVendidas, valorInicial) {
+  let inicial = finito(valorInicial);
+  // Un importe positivo sin unidades no acredita el valor de apertura.
+  if (existencias[0]?.inicial === 0) inicial = inicial > 0 ? null : 0;
+  const meses = existencias.map((fila, i) => {
+    const compra = compras[i];
+    const unidades = totalDisponible([fila.inicial, fila.compras]);
+    const disponible = totalDisponible([inicial, compra]);
+    const promedio = unidades > 0 && disponible !== null ? disponible / unidades : null;
+    const vendidas = unidadesVendidas[i];
+    let final = finito(valorInventario(fila.final, promedio));
+    if (vendidas === 0) final = disponible;
+    if (fila.final === 0) final = 0;
+    const costoVentas = vendidas === 0 ? 0 : finito(costoBienesVendidos(inicial, compra, final));
+    const mes = { inicial, compras: compra, costoVentas, final };
+    inicial = final;
+    return mes;
+  });
+  return { meses, costoVentasTotal: totalDisponible(meses.map(mes => mes.costoVentas)) };
+}
+
 // El origen 0 es la apertura. Los créditos nuevos empiezan a vencer a partir del mes siguiente.
 function proyectarCredito(importes, fraccionContado, saldoInicial, calendarioApertura, calendarioCredito, periodo) {
   const agenda = [];
@@ -203,7 +225,7 @@ function proyectarCredito(importes, fraccionContado, saldoInicial, calendarioApe
 }
 
 // Presupuesto parcial mensual. Recibe un escenario y su apertura validados.
-export function calcularCapitalTrabajo(s, capital, fechaCorte) {
+export function calcularCapitalTrabajo(s, capital, fechaCorte, valorInventarioInicial = null) {
   const [anio, mes] = fechaCorte.split('-').map(Number);
   const periodo = desplazamiento => {
     const indice = anio * 12 + mes - 1 + desplazamiento;
@@ -217,6 +239,7 @@ export function calcularCapitalTrabajo(s, capital, fechaCorte) {
     unidadesVendidas: s.ventasUnidades,
     existencias,
     costosCompra: capital.costosCompra,
+    valoracion: valorarExistencias(existencias, compras, s.ventasUnidades, valorInventarioInicial),
     ventas: proyectarCredito(ventas, s.pctContado, s.cxcInicial, capital.cobrosApertura, capital.cobrosCredito, periodo),
     compras: proyectarCredito(compras, s.pctComprasContado, s.cxpInicial, capital.pagosApertura, capital.pagosCredito, periodo)
   };

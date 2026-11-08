@@ -18,7 +18,7 @@ Cargar la apertura de Comercial Ejemplo, guardar escenarios independientes y rep
 - El presupuesto parcial proyecta ventas, existencias físicas, compras, cobros y pagos de los doce meses. Los costos cambian por mes y las cuotas de crédito posteriores a diciembre conservan sus fechas.
 - La ronda de fiabilidad de Proforma e Inventario limita las variaciones a horizontes comparables y verifica el kardex completo antes de restaurar un respaldo.
 - Planeación abre con una cuadrícula y un panel de consulta. Supuestos y Tablas completas permanecen a un clic. Cambiar de vista conserva las ediciones en curso.
-- El siguiente corte del caso necesita valorizar las existencias desde el cierre histórico y derivar el costo de ventas. La proyección de caja y el balance proforma también requieren gastos, inversión, deuda, impuestos y dividendos.
+- El costo de ventas y la valoración mensual de existencias parten del cierre de 2025, con 800 unidades por C$80,000. Se aplica promedio ponderado mensual, con los costos de compra de cada escenario. La proyección de caja y el balance proforma también requieren gastos, inversión, deuda, impuestos y dividendos.
 
 ## Verificación
 
@@ -29,6 +29,12 @@ Las pruebas comparan los doce meses con la referencia independiente, incluidos s
 En Chrome, el resumen, las tablas y los supuestos se probaron a 320, 390 y 1280 px, incluidos el tema oscuro, la consulta por periodo y la recuperación de los supuestos guardados al recargar. A 390 px de ancho, la primera sección de resultados comenzaba a 2,715 px desde el inicio de la página. La primera tarjeta del resumen comienza a 367 px en el mismo caso.
 
 Las decisiones de persistencia y de calendarios están en D-089 y D-090. Las reglas de comparabilidad y de restauración de Inventario están en D-091 y D-092. El piloto de Planeación está documentado en D-093.
+
+## Valoración mensual y costo de ventas · 2026-11-08
+
+Se muestran el costo de ventas y el inventario valorizado en Resumen y el detalle de apertura, compras, costo de ventas y cierre en Tablas completas. Al guardar y recargar, Planeación vuelve a calcular desde el valor histórico y los supuestos del escenario. D-104 documenta la política de valoración.
+
+La referencia independiente compara los doce meses. En enero, C$80,000 más C$0 de compras menos C$28,000 de costo dejan C$52,000 de inventario. El horizonte termina con C$380,300.04 de costo de ventas y C$8,099.96 de inventario. Las pruebas también cubren la propagación de N/D, los ceros conocidos y la recuperación de la valoración al quedar sin existencias.
 
 ## Preparación de integración · 2026-11-07
 
