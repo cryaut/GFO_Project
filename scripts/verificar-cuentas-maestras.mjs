@@ -36,7 +36,7 @@ for (const [id, cuenta] of cuentas) {
   }
 }
 for (const id of maestras.keys()) if (!cuentas.has(id)) errores.push(`${id}: no existe en los JSON.`);
-if (cuentas.size !== 72 || maestras.size !== 72) errores.push(`Conteos inesperados: JSON=${cuentas.size}, nota=${maestras.size}; se esperan 72.`);
+if (cuentas.size !== 73 || maestras.size !== 73) errores.push(`Conteos inesperados: JSON=${cuentas.size}, nota=${maestras.size}; se esperan 73.`);
 console.log(`Cuentas únicas: JSON=${cuentas.size}; nota=${maestras.size}.`);
 console.log(`Campos comparados: research y definition. Diferencias: ${errores.length}.`);
 for (const error of errores) console.log(error);

@@ -1,0 +1,771 @@
+{
+  "base": "de788b7ebc2d340f962613f4c74bf1cf3808bd59",
+  "erroresOriginales": 70,
+  "erroresCorregidos": 70,
+  "premisasDocentesResueltas": 5,
+  "diferenciasPendientes": 0,
+  "celdas": [
+    {
+      "caso": "baker",
+      "seccion": "EOAF",
+      "periodo": "comparativo",
+      "concepto": "totalOrigenes",
+      "independiente": 1000000.0,
+      "antes": 700000,
+      "despues": 1000000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "baker",
+      "seccion": "EOAF",
+      "periodo": "comparativo",
+      "concepto": "diferencia",
+      "independiente": 0.0,
+      "antes": -300000,
+      "despues": 0,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "baker",
+      "seccion": "Inicio",
+      "periodo": "2012",
+      "concepto": "Utilidad neta",
+      "independiente": 180000.0,
+      "antes": null,
+      "despues": 180000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett",
+      "seccion": "EOAF",
+      "periodo": "comparativo",
+      "concepto": "totalOrigenes",
+      "independiente": 636000.0,
+      "antes": 625000,
+      "despues": 636000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett",
+      "seccion": "EOAF",
+      "periodo": "comparativo",
+      "concepto": "diferencia",
+      "independiente": 0.0,
+      "antes": -11000,
+      "despues": 0,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett",
+      "seccion": "Inicio",
+      "periodo": "2012",
+      "concepto": "Utilidad neta",
+      "independiente": 231000.0,
+      "antes": null,
+      "despues": 231000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2",
+      "seccion": "EOAF",
+      "periodo": "comparativo",
+      "concepto": "totalOrigenes",
+      "independiente": 95000.0,
+      "antes": 50000,
+      "despues": 95000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2",
+      "seccion": "EOAF",
+      "periodo": "comparativo",
+      "concepto": "totalAplicaciones",
+      "independiente": 95000.0,
+      "antes": 35000,
+      "despues": 95000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2",
+      "seccion": "EOAF",
+      "periodo": "comparativo",
+      "concepto": "diferencia",
+      "independiente": 0.0,
+      "antes": 15000,
+      "despues": 0,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2",
+      "seccion": "Inicio",
+      "periodo": "2024",
+      "concepto": "Utilidad neta",
+      "independiente": 77000.0,
+      "antes": null,
+      "despues": 77000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "baker",
+      "seccion": "AV",
+      "periodo": "2012",
+      "concepto": "resuelto:is.sales_total",
+      "independiente": null,
+      "antes": 0,
+      "despues": null,
+      "estado": "ND_JUSTIFICADO"
+    },
+    {
+      "caso": "bartlett",
+      "seccion": "AV",
+      "periodo": "2011",
+      "concepto": "resuelto:is.sales_total",
+      "independiente": null,
+      "antes": 0,
+      "despues": null,
+      "estado": "ND_JUSTIFICADO"
+    },
+    {
+      "caso": "bartlett",
+      "seccion": "AV",
+      "periodo": "2012",
+      "concepto": "resuelto:is.sales_total",
+      "independiente": null,
+      "antes": 0,
+      "despues": null,
+      "estado": "ND_JUSTIFICADO"
+    },
+    {
+      "caso": "bartlett",
+      "seccion": "AH diferencia",
+      "periodo": "2011→2012",
+      "concepto": "resuelto:is.sales_total",
+      "independiente": null,
+      "antes": 0,
+      "despues": null,
+      "estado": "ND_JUSTIFICADO"
+    },
+    {
+      "caso": "practico2",
+      "seccion": "AV",
+      "periodo": "2023",
+      "concepto": "resuelto:is.sales_total",
+      "independiente": null,
+      "antes": 0,
+      "despues": null,
+      "estado": "ND_JUSTIFICADO"
+    },
+    {
+      "caso": "practico2",
+      "seccion": "AV",
+      "periodo": "2024",
+      "concepto": "resuelto:is.sales_total",
+      "independiente": null,
+      "antes": 0,
+      "despues": null,
+      "estado": "ND_JUSTIFICADO"
+    },
+    {
+      "caso": "practico2",
+      "seccion": "AH diferencia",
+      "periodo": "2023→2024",
+      "concepto": "resuelto:is.sales_total",
+      "independiente": null,
+      "antes": 0,
+      "despues": null,
+      "estado": "ND_JUSTIFICADO"
+    },
+    {
+      "caso": "baker",
+      "seccion": "EFE indirecto",
+      "periodo": "2012",
+      "concepto": "un",
+      "independiente": 180000,
+      "antes": null,
+      "despues": 180000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "baker",
+      "seccion": "EFE indirecto",
+      "periodo": "2012",
+      "concepto": "cfo",
+      "independiente": 780000,
+      "antes": null,
+      "despues": 780000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "baker",
+      "seccion": "EFE indirecto",
+      "periodo": "2012",
+      "concepto": "cff",
+      "independiente": 20000,
+      "antes": null,
+      "despues": 20000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett",
+      "seccion": "EFE indirecto",
+      "periodo": "2012",
+      "concepto": "un",
+      "independiente": 231000,
+      "antes": null,
+      "despues": 231000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett",
+      "seccion": "EFE indirecto",
+      "periodo": "2012",
+      "concepto": "cfo",
+      "independiente": 500000,
+      "antes": null,
+      "despues": 500000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett",
+      "seccion": "EFE indirecto",
+      "periodo": "2012",
+      "concepto": "cff",
+      "independiente": -61000,
+      "antes": null,
+      "despues": -61000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2",
+      "seccion": "EFE indirecto",
+      "periodo": "2024",
+      "concepto": "un",
+      "independiente": 77000,
+      "antes": null,
+      "despues": 77000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "baker/actual",
+      "seccion": "Mercado",
+      "periodo": "2011",
+      "concepto": "un",
+      "independiente": null,
+      "antes": 0,
+      "despues": null,
+      "estado": "ND_JUSTIFICADO"
+    },
+    {
+      "caso": "baker/actual",
+      "seccion": "Mercado",
+      "periodo": "2011",
+      "concepto": "upa",
+      "independiente": null,
+      "antes": 0,
+      "despues": null,
+      "estado": "ND_JUSTIFICADO"
+    },
+    {
+      "caso": "baker/actual",
+      "seccion": "Mercado",
+      "periodo": "2012",
+      "concepto": "un",
+      "independiente": 180000.0,
+      "antes": null,
+      "despues": 180000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "baker/actual",
+      "seccion": "Mercado",
+      "periodo": "2012",
+      "concepto": "upa",
+      "independiente": 6.0,
+      "antes": null,
+      "despues": 6,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "baker/actual",
+      "seccion": "Mercado",
+      "periodo": "2012",
+      "concepto": "pu",
+      "independiente": 8.666666666666666,
+      "antes": null,
+      "despues": 8.666666666666666,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "baker/actual",
+      "seccion": "Mercado",
+      "periodo": "2012",
+      "concepto": "pago",
+      "independiente": 0.2222222222222222,
+      "antes": null,
+      "despues": 0.2222222222222222,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "baker/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2011",
+      "concepto": "un",
+      "independiente": null,
+      "antes": 0,
+      "despues": null,
+      "estado": "ND_JUSTIFICADO"
+    },
+    {
+      "caso": "baker/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2011",
+      "concepto": "upa",
+      "independiente": null,
+      "antes": 0,
+      "despues": null,
+      "estado": "ND_JUSTIFICADO"
+    },
+    {
+      "caso": "baker/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2012",
+      "concepto": "un",
+      "independiente": 180000.0,
+      "antes": null,
+      "despues": 180000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "baker/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2012",
+      "concepto": "upa",
+      "independiente": 6.0,
+      "antes": null,
+      "despues": 6,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "baker/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2012",
+      "concepto": "pu",
+      "independiente": 8.666666666666666,
+      "antes": null,
+      "despues": 8.666666666666666,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "baker/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2012",
+      "concepto": "pago",
+      "independiente": 0.0,
+      "antes": null,
+      "despues": 0,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett/actual",
+      "seccion": "Mercado",
+      "periodo": "2011",
+      "concepto": "un",
+      "independiente": 148000.0,
+      "antes": null,
+      "despues": 148000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett/actual",
+      "seccion": "Mercado",
+      "periodo": "2011",
+      "concepto": "upa",
+      "independiente": 4.933333333333334,
+      "antes": null,
+      "despues": 4.933333333333334,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett/actual",
+      "seccion": "Mercado",
+      "periodo": "2011",
+      "concepto": "pu",
+      "independiente": 9.121621621621621,
+      "antes": null,
+      "despues": 9.121621621621621,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett/actual",
+      "seccion": "Mercado",
+      "periodo": "2011",
+      "concepto": "pago",
+      "independiente": 0.23648648648648649,
+      "antes": null,
+      "despues": 0.23648648648648649,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett/actual",
+      "seccion": "Mercado",
+      "periodo": "2012",
+      "concepto": "un",
+      "independiente": 231000.0,
+      "antes": null,
+      "despues": 231000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett/actual",
+      "seccion": "Mercado",
+      "periodo": "2012",
+      "concepto": "upa",
+      "independiente": 7.7,
+      "antes": null,
+      "despues": 7.7,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett/actual",
+      "seccion": "Mercado",
+      "periodo": "2012",
+      "concepto": "pu",
+      "independiente": 6.753246753246753,
+      "antes": null,
+      "despues": 6.753246753246753,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett/actual",
+      "seccion": "Mercado",
+      "periodo": "2012",
+      "concepto": "pago",
+      "independiente": 0.17316017316017315,
+      "antes": null,
+      "despues": 0.17316017316017315,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2011",
+      "concepto": "un",
+      "independiente": 148000.0,
+      "antes": null,
+      "despues": 148000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2011",
+      "concepto": "upa",
+      "independiente": 4.933333333333334,
+      "antes": null,
+      "despues": 4.933333333333334,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2011",
+      "concepto": "pu",
+      "independiente": 9.121621621621621,
+      "antes": null,
+      "despues": 9.121621621621621,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2011",
+      "concepto": "pago",
+      "independiente": 0.0,
+      "antes": null,
+      "despues": 0,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2012",
+      "concepto": "un",
+      "independiente": 231000.0,
+      "antes": null,
+      "despues": 231000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2012",
+      "concepto": "upa",
+      "independiente": 7.7,
+      "antes": null,
+      "despues": 7.7,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2012",
+      "concepto": "pu",
+      "independiente": 6.753246753246753,
+      "antes": null,
+      "despues": 6.753246753246753,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2012",
+      "concepto": "pago",
+      "independiente": 0.0,
+      "antes": null,
+      "despues": 0,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2/actual",
+      "seccion": "Mercado",
+      "periodo": "2023",
+      "concepto": "un",
+      "independiente": 63000.0,
+      "antes": null,
+      "despues": 63000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2/actual",
+      "seccion": "Mercado",
+      "periodo": "2023",
+      "concepto": "upa",
+      "independiente": 2.1,
+      "antes": null,
+      "despues": 2.1,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2/actual",
+      "seccion": "Mercado",
+      "periodo": "2023",
+      "concepto": "pu",
+      "independiente": 21.428571428571427,
+      "antes": null,
+      "despues": 21.428571428571427,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2/actual",
+      "seccion": "Mercado",
+      "periodo": "2023",
+      "concepto": "pago",
+      "independiente": 0.5555555555555556,
+      "antes": null,
+      "despues": 0.5555555555555556,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2/actual",
+      "seccion": "Mercado",
+      "periodo": "2024",
+      "concepto": "un",
+      "independiente": 77000.0,
+      "antes": null,
+      "despues": 77000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2/actual",
+      "seccion": "Mercado",
+      "periodo": "2024",
+      "concepto": "upa",
+      "independiente": 2.566666666666667,
+      "antes": null,
+      "despues": 2.566666666666667,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2/actual",
+      "seccion": "Mercado",
+      "periodo": "2024",
+      "concepto": "pu",
+      "independiente": 20.25974025974026,
+      "antes": null,
+      "despues": 20.25974025974026,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2/actual",
+      "seccion": "Mercado",
+      "periodo": "2024",
+      "concepto": "pago",
+      "independiente": 0.5194805194805194,
+      "antes": null,
+      "despues": 0.5194805194805194,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2023",
+      "concepto": "un",
+      "independiente": 63000.0,
+      "antes": null,
+      "despues": 63000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2023",
+      "concepto": "upa",
+      "independiente": 2.1,
+      "antes": null,
+      "despues": 2.1,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2023",
+      "concepto": "pu",
+      "independiente": 21.428571428571427,
+      "antes": null,
+      "despues": 21.428571428571427,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2023",
+      "concepto": "pago",
+      "independiente": 0.0,
+      "antes": null,
+      "despues": 0,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2024",
+      "concepto": "un",
+      "independiente": 77000.0,
+      "antes": null,
+      "despues": 77000,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2024",
+      "concepto": "upa",
+      "independiente": 2.566666666666667,
+      "antes": null,
+      "despues": 2.566666666666667,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2024",
+      "concepto": "pu",
+      "independiente": 20.25974025974026,
+      "antes": null,
+      "despues": 20.25974025974026,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "practico2/sin-dividendos",
+      "seccion": "Mercado",
+      "periodo": "2024",
+      "concepto": "pago",
+      "independiente": 0.0,
+      "antes": null,
+      "despues": 0,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "baker",
+      "seccion": "UPA docente (diagnóstico)",
+      "periodo": "2012",
+      "concepto": "upa",
+      "independiente": 1.7,
+      "antes": null,
+      "despues": 1.7,
+      "estado": "COINCIDE"
+    },
+    {
+      "caso": "bartlett",
+      "seccion": "UPA docente (diagnóstico)",
+      "periodo": "2012",
+      "concepto": "upa",
+      "independiente": 2.8979045920642,
+      "antes": null,
+      "despues": 2.8979045920642,
+      "estado": "COINCIDE"
+    }
+  ],
+  "docente": [
+    {
+      "caso": "bartlett-clase",
+      "seccion": "Premisas docentes explícitas",
+      "periodo": "2012",
+      "concepto": "RotCxC",
+      "independiente": 7.082949308755761,
+      "app": 7.082949308755761,
+      "diferencia": 0.0,
+      "estado": "COINCIDE",
+      "formula": "Ventas 100% crédito y compras estimadas 70% del costo, diapositivas 14–15; escenario histórico separado",
+      "nota": ""
+    },
+    {
+      "caso": "bartlett-clase",
+      "seccion": "Premisas docentes explícitas",
+      "periodo": "2012",
+      "concepto": "PPC",
+      "independiente": 51.53220559531555,
+      "app": 51.532205595315546,
+      "diferencia": -7.105427357601002e-15,
+      "estado": "COINCIDE",
+      "formula": "Ventas 100% crédito y compras estimadas 70% del costo, diapositivas 14–15; escenario histórico separado",
+      "nota": ""
+    },
+    {
+      "caso": "bartlett-clase",
+      "seccion": "Premisas docentes explícitas",
+      "periodo": "2012",
+      "concepto": "rotacionCxP",
+      "independiente": 4.483435582822086,
+      "app": 4.483435582822086,
+      "diferencia": 0.0,
+      "estado": "COINCIDE",
+      "formula": "Ventas 100% crédito y compras estimadas 70% del costo, diapositivas 14–15; escenario histórico separado",
+      "nota": ""
+    },
+    {
+      "caso": "bartlett-clase",
+      "seccion": "Premisas docentes explícitas",
+      "periodo": "2012",
+      "concepto": "plazoPago",
+      "independiente": 81.41078270388616,
+      "app": 81.41078270388616,
+      "diferencia": 0.0,
+      "estado": "COINCIDE",
+      "formula": "Ventas 100% crédito y compras estimadas 70% del costo, diapositivas 14–15; escenario histórico separado",
+      "nota": ""
+    },
+    {
+      "caso": "bartlett-clase",
+      "seccion": "Premisas docentes explícitas",
+      "periodo": "2012",
+      "concepto": "cicloConversion",
+      "independiente": 21.602505266908324,
+      "app": 21.60250526690831,
+      "diferencia": -1.4210854715202004e-14,
+      "estado": "COINCIDE",
+      "formula": "Ventas 100% crédito y compras estimadas 70% del costo, diapositivas 14–15; escenario histórico separado",
+      "nota": ""
+    }
+  ]
+}

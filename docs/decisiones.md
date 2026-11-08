@@ -2283,3 +2283,45 @@ El motor conserva un total reportado válido aunque no pueda comprobar su desglo
 **Para revertirla.** Retirar opciones mediante otra decisión manteniendo exportables los datos y su moneda; no convertir importes ni borrar archivos del usuario.
 
 **Referencias.** [Informe y contraste docente](planificacion/catalogo-ejemplos-afod/INFORME-FINAL.md); [ficha](planificacion/catalogo-ejemplos-afod/README.md); D-096 a D-099.
+
+### D-101 — Totales acreditados y una misma utilidad en los consumidores
+
+- **Fecha**: 2026-11-07.
+- **Estado**: Implementada; pendiente de revisión humana.
+- **Decidió**: Cris autoriza reparar cuidadosamente los cinco fallos reproducidos, antes de ampliar métodos.
+- **Área**: EOAF, EFE, Inicio, Mercado y disponibilidad del ER.
+
+**Contexto.** La auditoría independiente reproduce inventarios/PPE/patrimonio omitidos al quedar en `reportedTotals`, UN distinta entre módulos y ventas brutas cero sin fuente. El EOAF puede cuadrar con cifras equivocadas si omite ambos lados; el EFE puede cuadrar algebraicamente sin acreditar movimientos.
+
+**Opciones.** Volver a insertar totales en las cuentas, completar ausencias con cero o reunir ambas representaciones sin mutar el documento. Se elige la tercera. Para ER se reutilizan los derivados existentes del motor en vez de crear otra fórmula de UN.
+
+**Decisión.** Reemplaza la selección financiera de D-072: un subtotal se elimina únicamente si su detalle disponible concilia dentro de tolerancia. Si no concilia, se conserva el total y se excluyen componentes de esa agregación, con aviso. Los totales anidados se resuelven desde inventario hasta activo/pasivo/patrimonio; un inventario total puede ser cuenta hoja. Se conserva identidad por id para totales aunque cambie la etiqueta. Importe inválido, contradicción entre representaciones o periodo ausente producen N/D. Los totales mixtos sin desglose no se asignan íntegramente a una actividad del EFE; PPE neto no acredita depreciación cero ni inversión bruta.
+
+Inicio y Mercado reutilizan el ER resuelto; EFE consulta `obtenerUtilidadNetaMotor`. Un ER vacío no acredita UN cero. Una venta neta reportada tampoco acredita un bruto cero: se mantiene N/D al no existir bruto ni componentes, incluso con cobertura completa. Un cero explícito sigue siendo válido. Se preservan el balance y los cálculos independientes disponibles.
+
+**Consecuencias.** Delimita D-099: completo confirma partidas no aplicables, no permite reconstruir una magnitud bruta no reportada hacia atrás desde su neto. Se conserva D-088: el EFE sigue siendo estimación por variaciones, no prueba de cobros/pagos. Los casos sintéticos anteriores declaran expresamente cobertura/composición; los casos que requerían UN cero ahora la reportan. No se modifica ningún dato real para hacer pasar pruebas.
+
+**Para revertirla.** Registrar decisión posterior, conservar los documentos originales/exportables y repetir el contraste independiente; no volver a convertir desconocidos en ceros.
+
+**Referencias.** [Informe por hallazgo](planificacion/reparacion-auditoria-ejemplos/INFORME-FINAL.md); [regresiones](../tests/unit/auditoria-ejemplos-regresiones.test.js).
+
+### D-102 — Compras declaradas y escenario Bartlett con premisas de clase
+
+- **Fecha**: 2026-11-07.
+- **Estado**: Implementada; pendiente de revisión humana.
+- **Decidió**: Solicitud de Cris de corregir H-05 sin asumir convenciones ni mezclar ejercicios.
+- **Área**: Catálogo de ejemplos y entrada de compras para actividad.
+
+**Contexto.** Diapositivas 14–15 de `Razones_Financieras_Liquidez_Actividad.md`: todas las ventas 2012 se suponen a crédito y las compras se estiman como 70 % de CBV. El caso histórico no declara esas premisas; exigir pagos e inventarlos para obtener las compras docentes falsificaría caja.
+
+**Opciones.** Aplicar porcentajes automáticamente a todos los casos, simular pagos o admitir una base declarada en un escenario separado. Se elige la tercera.
+
+**Decisión.** Añadir `supp.credit_purchases` (requiere dato, magnitud positiva, cero explícito válido). En los tres JSON que definen `derived.credit_purchases`, `reported_or_calculate` usa la base declarada y conserva como alternativa la fórmula existente: pagos + CxP final − CxP inicial. Los cocientes y promedios no cambian. El generado se regenera con el script, nunca a mano; cuenta maestra y catálogo se sincronizan. Un dato ausente no usa CBV ni un porcentaje supuesto.
+
+`bartlett-clase` registra para 2012 ventas a crédito 3074000 y compras estimadas 1461600; etiquetas y selector hacen explícita la estimación. Conserva BG/ER, moneda USD, promedios y DIAS_ANIO. El ejemplo histórico Bartlett no cambia ni recibe pagos ficticios. El EFE ignora estos suplementos y conserva sus cifras; no compara las compras estimadas con pagos de caja. El año 2011 no recibe premisas que la fuente solo declara para 2012.
+
+**Consecuencias.** Amplía D10 de `razones_financieras/notas/01_decisiones.md` y D-055 para una base de compras explícita, sin activar aproximaciones automáticas. El catálogo pasa a 73 cuentas (59 `requires_data`); no añade dependencias ni cambia el esquema del store. La investigación de esta entrada interna es parcial, sin atribuirle verificación externa. Son convenciones docentes, no prueba de compras reales. Los métodos nuevos de Proforma y calendarios completos de caja quedan fuera por elección expresa de Cris. Los plazos de cobro/pago y el ciclo se muestran con dos decimales conforme a la especificación y el docente, sin redondear los operandos.
+
+**Para revertirla.** Conservar exportables los suplementos declarados y registrar otra decisión antes de retirar su lectura. No reinterpretarlos como pagos.
+
+**Referencias.** [Informe y contraste](planificacion/reparacion-auditoria-ejemplos/INFORME-FINAL.md), diapositivas 14–15 proporcionadas por el usuario.

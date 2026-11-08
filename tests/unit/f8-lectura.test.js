@@ -97,9 +97,9 @@ describe('matriz de casos F8', () => {
     expect(t.utilidadNeta).toBe(110);
     const { computeRazones } = await montarF8(estados);
     const r = computeRazones('2025');
-    // Este fixture no declara todos los componentes exigidos por el motor.
-    expect(r.MN).toBeNull();
-    expect(r.notAvailableReasons.some(m => m.campo === 'MN')).toBe(true);
+    // El fixture sintético declara ER completo; EFE y razones comparten UN.
+    expect(r.MN).toBeCloseTo(110 / 960, 12);
+    expect(r.notAvailableReasons.some(m => m.campo === 'MN')).toBe(false);
     expect(flujoDesdeEFE(estados)).toMatchObject({
       disponible: true, neto: { operacion: 116 }, variacionNeta: 18, saldoFinal: 180
     });

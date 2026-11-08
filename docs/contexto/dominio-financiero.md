@@ -305,3 +305,11 @@ D-099 implementa posteriormente la cobertura explícita: un grupo completo confi
 ## Datos de ejemplo y unidades (D-100)
 
 Las fábricas de `js/examples/ejemplos-estados.js` registran datos por identidad y el catálogo de `js/examples/catalogo.js` selecciona casos, sin introducir una segunda fórmula para ningún concepto financiero. Los valores de referencia y las convenciones docentes están en `docs/planificacion/catalogo-ejemplos-afod/INFORME-FINAL.md`. La metadata opcional `moneda` se valida en `utils/moneda.js`; USD miles pasa a USD multiplicando por 1000 y UM indica moneda no identificada, sin asumir conversión. Véanse firmas en `docs/api.md`.
+
+## Corrección del contraste independiente (D-101/D-102)
+
+EOAF/EFE reúnen saldos de cuentas y totales reportados; un inventario total sin detalle puede ser hoja. El detalle sustituye un total solo si concilia: de lo contrario se conserva el reportado sin duplicar componentes. En EFE un agregado mixto o PPE neto sin desglose no acredita la separación de actividades ni depreciación cero. La selección no modifica los documentos.
+
+Inicio/Mercado usan `totalesPeriodo` con ER resuelto; EFE usa `obtenerUtilidadNetaMotor`. ER ausente/vacío significa UN N/D. Cobertura completa tampoco reconstruye un bruto desconocido desde ventas netas reportadas. Los ceros explícitos se conservan.
+
+`ejemploBartlettClase()` incorpora únicamente las premisas de diapositivas 14–15 para 2012: ventas a crédito 3074000 y compras estimadas 1461600. `supp.credit_purchases` declara la base de compras para rotación de CxP; los JSON usan el dato si está disponible y conservan pagos + ΔCxP si falta. No se aproxima automáticamente con CBV ni se considera caja. La base 365 sigue proveniente de DIAS_ANIO. Se mantienen separado el Bartlett histórico y sus flujos. Fuentes, resultados y límites en `docs/planificacion/reparacion-auditoria-ejemplos/INFORME-FINAL.md`.

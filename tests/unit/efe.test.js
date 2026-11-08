@@ -76,13 +76,26 @@ describe('totales reportados fuera del EFE (D-067)', () => {
 // accountTypes explícito.
 function estados(bg, er = {}) {
   const periodos = Object.keys(bg);
-  return {
+  const datos = {
     name: 'Prueba EFE',
     periods: periodos,
     balanceGeneral: bg,
     estadoResultados: er,
-    accountTypes: undefined
+    accountTypes: undefined,
+    coberturaEstados: Object.fromEntries(Object.keys(er).filter(p => Object.keys(er[p]).length)
+      .map(p => [p, { estadoResultados: 'completo' }])),
+    composicionIngresos: Object.fromEntries(periodos.map(p => [p, 'excluye_intereses']))
   };
+  // Casos sintéticos resueltos: se declaran completos y se acreditan las
+  // identidades conocidas. Los importes inválidos siguen llegando al EFE.
+  try { datos.accountIdentities = normalizeFinancialData(datos).accountIdentities; } catch { /* prueba de importe inválido */ }
+  const confirmadas = { Capital: 'bs.share_capital', 'Otros Ingresos': 'is.nonoperating_income', 'Otros Gastos': 'is.noninterest_nonoperating_expenses' };
+  for (const identidades of Object.values(datos.accountIdentities || {})) {
+    for (const nombre of Object.keys(identidades)) if (confirmadas[nombre]) {
+      identidades[nombre] = { idCuenta: confirmadas[nombre], estado: 'reconocida', metodo: 'confirmacion_manual', candidatos: [], origen: 'manual' };
+    }
+  }
+  return datos;
 }
 
 function itemDe(seccion, concepto) {
@@ -200,7 +213,7 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
       '2024': { activos: { Efectivo: 100, 'Inventario de mercaderías': 0, 'Maquinaria y equipo': 100 }, pasivos: { 'Deudas de largo plazo': 0 }, patrimonio: { Capital: 200 } },
       '2025': { activos: { Efectivo: 100, 'Inventario de mercaderías': 30, 'Maquinaria y equipo': 120 }, pasivos: { 'Deudas de largo plazo': 50 }, patrimonio: { Capital: 200 } }
     };
-    const c = construirEFE(estados(consume, { '2024': {}, '2025': {} }), '2024', '2025');
+    const c = construirEFE(estados(consume, { '2024': {}, '2025': { 'Utilidad neta': 0 } }), '2024', '2025');
     // UN 0; CFO = 0 − 30 (inventario) = −30; CFI = −20; CFF = +50 (préstamo); total 0 = Δ efectivo.
     expect(c.operacion.total).toBe(-30);
     expect(c.inversion.total).toBe(-20);
@@ -218,7 +231,7 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
       '2024': { activos: { Efectivo: 100, 'Inventario de mercaderías': 50, 'Cuentas por Cobrar': 20, 'Maquinaria y equipo': 100 }, pasivos: { 'Cuentas por Pagar': 70 }, patrimonio: { Capital: 200 } },
       '2025': { activos: { Efectivo: 100, 'Inventario de mercaderías': 50, 'Cuentas por Cobrar': 20, 'Maquinaria y equipo': 100 }, pasivos: { 'Cuentas por Pagar': 70 }, patrimonio: { Capital: 200 } }
     };
-    const r = construirEFE(estados(sinCambios, { '2024': {}, '2025': {} }), '2024', '2025');
+    const r = construirEFE(estados(sinCambios, { '2024': {}, '2025': { 'Utilidad neta': 0 } }), '2024', '2025');
     const todos = [...r.operacion.items, ...r.inversion.items, ...r.financiamiento.items];
     expect(todos.length).toBeGreaterThan(0);
     for (const fila of todos) {
@@ -284,8 +297,10 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
     }), '2024', '2025');
     expect(itemDe(r.operacion, 'Depreciación').monto).toBe(24);
     expect(r.advertencias.join(' ')).toContain('signo positivo');
-    expect(r.estado).toBe('no-cuadra');
-    expect(r.diferencia).toBe(48);
+    // El documento no pasa la validación de signos del motor: no se fabrica UN.
+    expect(r.estado).toBe('incompleta');
+    expect(r.utilidadNeta).toBeNull();
+    expect(r.diferencia).toBeNull();
   });
 
   it('baja de activos fijos: el reembolso entra en inversión y la depreciación en operación', () => {
@@ -304,7 +319,7 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
         patrimonio: { Capital: 100, 'Utilidades Acumuladas': 50 }
       }
     };
-    const r = construirEFE(estados(baja, { '2024': {}, '2025': {} }), '2024', '2025');
+    const r = construirEFE(estados(baja, { '2024': {}, '2025': { 'Utilidad neta': 0 } }), '2024', '2025');
     expect(itemDe(r.operacion, 'Depreciación').monto).toBe(-80);
     expect(itemDe(r.inversion, 'activos de inversión').monto).toBe(100);
     expect(r.advertencias.join(' ')).toContain('disminuyó');
@@ -390,10 +405,9 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
     expect(sinER.motivos.join(' ')).not.toContain('sin clasificar');
 
     const erVacio = construirEFE(estados(balanceado, { '2024': {}, '2025': {} }), '2024', '2025');
-    expect(erVacio.utilidadNeta).toBe(0);
-    expect(erVacio.estado).toBe('cuadra-sin-verificar');
-    expect(erVacio.advertencias.join(' ')).toContain('no tiene cuentas');
-    expect(erVacio.advertencias.join(' ')).toContain('No hay cuenta de resultado del periodo');
+    expect(erVacio.utilidadNeta).toBeNull();
+    expect(erVacio.estado).toBe('incompleta');
+    expect(erVacio.motivos.join(' ')).toContain('no se puede determinar');
   });
 
   it('un balance descuadrado se avisa por periodo, igual que en el EOAF', () => {
@@ -405,7 +419,7 @@ describe('estado de flujo de efectivo (método indirecto)', () => {
     // 2025: activos 130 contra 100 de patrimonio → descuadre de 30.
     expect(r.advertencias.join(' ')).toContain('El balance del periodo 2025 no cumple A = P + O');
     expect(r.advertencias.join(' ')).not.toContain('El balance del periodo 2024');
-    expect(r.estado).toBe('no-cuadra');
+    expect(r.estado).toBe('incompleta');
   });
 
   it('las cuentas del resultado del ejercicio no se confunden con aportaciones ni con dividendos', () => {
@@ -684,7 +698,7 @@ describe('reservas como destino de utilidades (D-068)', () => {
       }
     });
     // La reserva genérica es ambigua; el caso confirma expresamente su identidad.
-    datos.accountIdentities = { patrimonio: { Reservas: { idCuenta: 'bs.legal_reserve', estado: 'reconocida', metodo: 'manual', candidatos: [], origen: 'manual' } } };
+    datos.accountIdentities.patrimonio.Reservas = { idCuenta: 'bs.legal_reserve', estado: 'reconocida', metodo: 'confirmacion_manual', candidatos: [], origen: 'manual' };
     const r = construirEFE(datos, '2024', '2025');
     expect(r.utilidadNeta).toBe(80);
     expect(itemDe(r.financiamiento, 'Dividendos').monto).toBe(-30);
@@ -745,6 +759,7 @@ describe('conciliación de la utilidad contra el balance (D-069)', () => {
     const { default: store } = await import('../../js/store.js');
     store.setPersisted('estados', normalizeFinancialData({
       name: 'Sin verificar',
+      coberturaEstados: { '2024': { estadoResultados: 'completo' }, '2025': { estadoResultados: 'completo' } },
       periods: ['2024', '2025'],
       balanceGeneral: {
         '2024': { activos: { Efectivo: 100 }, pasivos: {}, patrimonio: { 'Capital social': 100 } },

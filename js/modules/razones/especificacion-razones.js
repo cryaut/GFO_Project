@@ -1,5 +1,5 @@
 // GENERADO: no editar a mano.
-// SHA-256: 467f6ae671855897125bb1965efa935b2ff89636e790aa8729d95db27c6d7b75
+// SHA-256: ea164e69ab20a8ff6574b10f895d8aab02281efb37a3d0923ca750aa544130ec
 // Fuente: 20 JSON de docs/razones_financieras; LF normalizado en la huella.
 export const ESPECIFICACION_RAZONES = {
   'actividad_ciclo_conversion_efectivo': {
@@ -31,7 +31,9 @@ export const ESPECIFICACION_RAZONES = {
           'id': 'actividad_periodo_promedio_pago'
         }
       },
-      'notes': []
+      'notes': [
+        'D-102: se usa la base de compras declarada; si falta, se conserva pagos a proveedores + CxP final − CxP inicial. Las estimaciones solo se admiten como datos explícitos del escenario, nunca automáticas.'
+      ]
     },
     'razones_dependientes': [
       {
@@ -193,25 +195,29 @@ export const ESPECIFICACION_RAZONES = {
         'id': 'derived.credit_purchases',
         'kind': 'flow',
         'formula': {
-          'op': 'subtract',
-          'left': {
-            'op': 'add',
-            'operands': [
-              {
-                'op': 'account',
-                'id': 'supp.supplier_payments'
-              },
-              {
-                'op': 'account',
-                'id': 'bs.trade_payables',
-                'period': 'current'
-              }
-            ]
-          },
-          'right': {
-            'op': 'account',
-            'id': 'bs.trade_payables',
-            'period': 'previous'
+          'op': 'reported_or_calculate',
+          'reported': 'supp.credit_purchases',
+          'calculation': {
+            'op': 'subtract',
+            'left': {
+              'op': 'add',
+              'operands': [
+                {
+                  'op': 'account',
+                  'id': 'supp.supplier_payments'
+                },
+                {
+                  'op': 'account',
+                  'id': 'bs.trade_payables',
+                  'period': 'current'
+                }
+              ]
+            },
+            'right': {
+              'op': 'account',
+              'id': 'bs.trade_payables',
+              'period': 'previous'
+            }
           }
         }
       }
@@ -560,6 +566,28 @@ export const ESPECIFICACION_RAZONES = {
         'doubtful_synonyms': [],
         'ambiguities': [
           'Dato suplementario del caso (D10): pagos a proveedores reportados solo por el caso; sin fuente externa. Se usa con requires_data para derivar compras a crédito.'
+        ],
+        'research': {
+          'status': 'partially_verified',
+          'sources': []
+        }
+      },
+      {
+        'id': 'supp.credit_purchases',
+        'canonical_name': 'Compras a crédito declaradas',
+        'definition': 'Base de compras del periodo declarada para rotación de CxP. Si es una estimación docente, debe declararse expresamente; no se infiere del costo de ventas ni representa pagos de caja (D-102).',
+        'statement': 'supplemental_data',
+        'classification': 'suplementario',
+        'account_role': 'detail',
+        'normal_balance': 'deudor',
+        'value_semantics': 'positive_magnitude',
+        'absence_policy': 'requires_data',
+        'synonyms': [
+          'Compras a crédito del periodo'
+        ],
+        'doubtful_synonyms': [],
+        'ambiguities': [
+          'La estimación del 70 % pertenece al escenario docente Bartlett 2012; no se aplica a otros ejercicios.'
         ],
         'research': {
           'status': 'partially_verified',
@@ -1247,7 +1275,9 @@ export const ESPECIFICACION_RAZONES = {
           'id': 'actividad_rotacion_cuentas_por_pagar'
         }
       },
-      'notes': []
+      'notes': [
+        'D-102: se usa la base de compras declarada; si falta, se conserva pagos a proveedores + CxP final − CxP inicial. Las estimaciones solo se admiten como datos explícitos del escenario, nunca automáticas.'
+      ]
     },
     'razones_dependientes': [
       {
@@ -1279,25 +1309,29 @@ export const ESPECIFICACION_RAZONES = {
         'id': 'derived.credit_purchases',
         'kind': 'flow',
         'formula': {
-          'op': 'subtract',
-          'left': {
-            'op': 'add',
-            'operands': [
-              {
-                'op': 'account',
-                'id': 'supp.supplier_payments'
-              },
-              {
-                'op': 'account',
-                'id': 'bs.trade_payables',
-                'period': 'current'
-              }
-            ]
-          },
-          'right': {
-            'op': 'account',
-            'id': 'bs.trade_payables',
-            'period': 'previous'
+          'op': 'reported_or_calculate',
+          'reported': 'supp.credit_purchases',
+          'calculation': {
+            'op': 'subtract',
+            'left': {
+              'op': 'add',
+              'operands': [
+                {
+                  'op': 'account',
+                  'id': 'supp.supplier_payments'
+                },
+                {
+                  'op': 'account',
+                  'id': 'bs.trade_payables',
+                  'period': 'current'
+                }
+              ]
+            },
+            'right': {
+              'op': 'account',
+              'id': 'bs.trade_payables',
+              'period': 'previous'
+            }
           }
         }
       }
@@ -1342,6 +1376,28 @@ export const ESPECIFICACION_RAZONES = {
         'doubtful_synonyms': [],
         'ambiguities': [
           'Dato suplementario del caso (D10): pagos a proveedores reportados solo por el caso; sin fuente externa. Se usa con requires_data para derivar compras a crédito.'
+        ],
+        'research': {
+          'status': 'partially_verified',
+          'sources': []
+        }
+      },
+      {
+        'id': 'supp.credit_purchases',
+        'canonical_name': 'Compras a crédito declaradas',
+        'definition': 'Base de compras del periodo declarada para rotación de CxP. Si es una estimación docente, debe declararse expresamente; no se infiere del costo de ventas ni representa pagos de caja (D-102).',
+        'statement': 'supplemental_data',
+        'classification': 'suplementario',
+        'account_role': 'detail',
+        'normal_balance': 'deudor',
+        'value_semantics': 'positive_magnitude',
+        'absence_policy': 'requires_data',
+        'synonyms': [
+          'Compras a crédito del periodo'
+        ],
+        'doubtful_synonyms': [],
+        'ambiguities': [
+          'La estimación del 70 % pertenece al escenario docente Bartlett 2012; no se aplica a otros ejercicios.'
         ],
         'research': {
           'status': 'partially_verified',
@@ -3278,7 +3334,9 @@ export const ESPECIFICACION_RAZONES = {
           }
         }
       },
-      'notes': []
+      'notes': [
+        'D-102: se usa la base de compras declarada; si falta, se conserva pagos a proveedores + CxP final − CxP inicial. Las estimaciones solo se admiten como datos explícitos del escenario, nunca automáticas.'
+      ]
     },
     'razones_dependientes': [],
     'derivados': [
@@ -3286,25 +3344,29 @@ export const ESPECIFICACION_RAZONES = {
         'id': 'derived.credit_purchases',
         'kind': 'flow',
         'formula': {
-          'op': 'subtract',
-          'left': {
-            'op': 'add',
-            'operands': [
-              {
-                'op': 'account',
-                'id': 'supp.supplier_payments'
-              },
-              {
-                'op': 'account',
-                'id': 'bs.trade_payables',
-                'period': 'current'
-              }
-            ]
-          },
-          'right': {
-            'op': 'account',
-            'id': 'bs.trade_payables',
-            'period': 'previous'
+          'op': 'reported_or_calculate',
+          'reported': 'supp.credit_purchases',
+          'calculation': {
+            'op': 'subtract',
+            'left': {
+              'op': 'add',
+              'operands': [
+                {
+                  'op': 'account',
+                  'id': 'supp.supplier_payments'
+                },
+                {
+                  'op': 'account',
+                  'id': 'bs.trade_payables',
+                  'period': 'current'
+                }
+              ]
+            },
+            'right': {
+              'op': 'account',
+              'id': 'bs.trade_payables',
+              'period': 'previous'
+            }
           }
         }
       }
@@ -3349,6 +3411,28 @@ export const ESPECIFICACION_RAZONES = {
         'doubtful_synonyms': [],
         'ambiguities': [
           'Dato suplementario del caso (D10): pagos a proveedores reportados solo por el caso; sin fuente externa. Se usa con requires_data para derivar compras a crédito.'
+        ],
+        'research': {
+          'status': 'partially_verified',
+          'sources': []
+        }
+      },
+      {
+        'id': 'supp.credit_purchases',
+        'canonical_name': 'Compras a crédito declaradas',
+        'definition': 'Base de compras del periodo declarada para rotación de CxP. Si es una estimación docente, debe declararse expresamente; no se infiere del costo de ventas ni representa pagos de caja (D-102).',
+        'statement': 'supplemental_data',
+        'classification': 'suplementario',
+        'account_role': 'detail',
+        'normal_balance': 'deudor',
+        'value_semantics': 'positive_magnitude',
+        'absence_policy': 'requires_data',
+        'synonyms': [
+          'Compras a crédito del periodo'
+        ],
+        'doubtful_synonyms': [],
+        'ambiguities': [
+          'La estimación del 70 % pertenece al escenario docente Bartlett 2012; no se aplica a otros ejercicios.'
         ],
         'research': {
           'status': 'partially_verified',

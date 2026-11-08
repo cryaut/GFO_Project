@@ -133,7 +133,7 @@ it('conserva las 71 identidades del PR #10 y enumera cada diferencia de investig
   // Al integrarse el PR #10 también se contrastan los JSON vivos, sin sustituir
   // la referencia fijada usada mientras todavía viven en otra rama.
   const documentos = Object.values(import.meta.glob('../../docs/razones_financieras/*.json', { eager: true, import: 'default' }));
-  expect(new Set(documentos.flatMap(documento => documento.cuentas.map(cuenta => cuenta.id))).size).toBe(72);
+  expect(new Set(documentos.flatMap(documento => documento.cuentas.map(cuenta => cuenta.id))).size).toBe(73);
   for (const documento of documentos) for (const cuenta of documento.cuentas) {
     expect(obtenerCuenta(cuenta.id)).toMatchObject({
       nombreCanonico: cuenta.canonical_name, clasificacion: cuenta.classification,
@@ -237,7 +237,7 @@ describe('montos por id y políticas de ausencia', () => {
   });
   it('solo intereses ganados conserva cero por ausencia tras D-057', () => {
     expect(listarCuentas().filter(cuenta => cuenta.politicaAusencia === 'zero_if_not_reported').map(cuenta => cuenta.id)).toEqual(['is.interest_income']);
-    expect(listarCuentas().filter(cuenta => cuenta.politicaAusencia === 'requires_data')).toHaveLength(58);
+    expect(listarCuentas().filter(cuenta => cuenta.politicaAusencia === 'requires_data')).toHaveLength(59);
     expect(consultarMontoCuenta(datos, '2024', 'is.interest_income')).toEqual({ valor:0, motivo:null });
   });
   it.each(listarCuentas().filter(cuenta => cuenta.politicaAusencia === 'requires_data').map(cuenta => cuenta.id))('D-057: %s ausente da N/D con motivo y con cero explícito conserva cero', id => {

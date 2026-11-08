@@ -76,6 +76,17 @@ export function ejemploPractico2() {
   ]);
 }
 
+// Diapositivas 14–15 de Razones_Financieras_Liquidez_Actividad.md.
+// Las premisas se declaran solo para 2012, no para el caso histórico de flujo.
+export function ejemploBartlettClase() {
+  const datos = registrarCuenta(ejemploBartlett(), [
+    { id:'supp.credit_sales', nombre:'Ventas a crédito: todas las ventas, supuesto docente', periodo:'2012', importe:3074000, confirmado:true },
+    { id:'supp.credit_purchases', nombre:'Compras estimadas para CxP: 70 % del costo, supuesto docente', periodo:'2012', importe:1461600, confirmado:true }
+  ]);
+  datos.name = 'Bartlett Company · razones de clase';
+  return datos;
+}
+
 export function completarEjemploMuno(base) {
   if (!base.periods.includes('2023') || !base.periods.includes('2024')) return structuredClone(base);
   return registrarCuenta(normalizeFinancialData(base), [

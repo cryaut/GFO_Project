@@ -5,6 +5,8 @@
       "id": "A1",
       "descripcion": "Comercio minorista, 2 periodos, con devoluciones y descuentos",
       "entrada": {
+        "composicionIngresos": {"2024": "excluye_intereses", "2025": "excluye_intereses"},
+        "coberturaEstados": {"2024": {"estadoResultados": "completo"}, "2025": {"estadoResultados": "completo"}},
         "periods": [
           "2024",
           "2025"
@@ -121,6 +123,8 @@
       "id": "A2",
       "descripcion": "Empresa de servicios, 3 periodos, sin inventario, con préstamo de corto plazo",
       "entrada": {
+        "composicionIngresos": {"2023": "excluye_intereses", "2024": "excluye_intereses", "2025": "excluye_intereses"},
+        "coberturaEstados": {"2023": {"estadoResultados": "completo"}, "2024": {"estadoResultados": "completo"}, "2025": {"estadoResultados": "completo"}},
         "periods": [
           "2023",
           "2024",
@@ -288,6 +292,8 @@
       "id": "A3",
       "descripcion": "Manufactura, 2 periodos, inventario por etapas, totales reportados y ventas netas reportadas consistentes",
       "entrada": {
+        "composicionIngresos": {"2024": "excluye_intereses", "2025": "excluye_intereses"},
+        "coberturaEstados": {"2024": {"estadoResultados": "completo"}, "2025": {"estadoResultados": "completo"}},
         "periods": [
           "2024",
           "2025"
@@ -408,6 +414,8 @@
       "id": "A4",
       "descripcion": "Empresa con pérdida neta, 2 periodos, solo terrenos, otros ingresos y gastos no operativos",
       "entrada": {
+        "composicionIngresos": {"2024": "excluye_intereses", "2025": "excluye_intereses"},
+        "coberturaEstados": {"2024": {"estadoResultados": "completo"}, "2025": {"estadoResultados": "completo"}},
         "periods": [
           "2024",
           "2025"
@@ -522,6 +530,8 @@
       "id": "A5",
       "descripcion": "Histórico de 5 periodos de un comercio: orden y balance en cada periodo",
       "entrada": {
+        "composicionIngresos": {"2021": "excluye_intereses", "2022": "excluye_intereses", "2023": "excluye_intereses", "2024": "excluye_intereses", "2025": "excluye_intereses"},
+        "coberturaEstados": {"2021": {"estadoResultados": "completo"}, "2022": {"estadoResultados": "completo"}, "2023": {"estadoResultados": "completo"}, "2024": {"estadoResultados": "completo"}, "2025": {"estadoResultados": "completo"}},
         "periods": [
           "2021",
           "2022",

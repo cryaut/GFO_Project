@@ -1,4 +1,4 @@
-import { ejemploBaker, ejemploBartlett, ejemploPractico2, completarEjemploMuno } from './ejemplos-estados.js';
+import { ejemploBaker, ejemploBartlett, ejemploBartlettClase, ejemploPractico2, completarEjemploMuno } from './ejemplos-estados.js';
 
 const propio = (id, nombre, detalle) => ({ id, nombre, fuente:'Ejemplo ficticio de la app', detalle });
 const docente = (id, nombre, fuente, detalle) => ({ id, nombre, fuente:`Ejercicios_AFOD.zip · ${fuente}`, detalle });
@@ -6,6 +6,8 @@ const estados = [
   propio('actual','MUNO MODA · integral','Incluye ventas a crédito y pagos ficticios declarados. Las 24 razones están disponibles en 2024; 2023 es la base comparativa. C$.'),
   docente('baker','Baker Corporation','Baker Completo.md','BG 2011–2012 y ER 2012. USD: se multiplican por 1000 las cifras en miles de la fuente. Documentos corrientes según su ubicación en la fuente; no hay ER 2011 ni datos de ventas a crédito. DAP 10000 no es gasto del ER.'),
   docente('bartlett','Bartlett Company','Bartlley Company.md','BG/ER 2011–2012. USD convertidos desde miles. Valores negociables incluidos en equivalentes según la comprobación de efectivo de la fuente. No se inventan datos de crédito. DAP 10000 no es gasto.'),
+  { id:'bartlett-clase', nombre:'Bartlett · razones de clase', fuente:'Diapositivas AFOD · Liquidez y actividad, 14–15',
+    detalle:'Mismos BG/ER en USD. Premisas docentes SOLO para 2012: todas las ventas a crédito (3074000) y compras estimadas = 70 % del costo (1461600). Base de 365 días y saldos promedio. No son pagos a proveedores ni flujos de caja; 2011 conserva N/D donde falta información.' },
   docente('practico2','Ejercicio práctico 2','Ejercicio practico 2.md','BG y ER 2023–2024. UM: la fuente usa $ sin identificar moneda. PPE ya neto; no se añade depreciación. No da ventas a crédito ni pagos a proveedores.')
 ];
 const LISTAS = {
@@ -37,6 +39,7 @@ export function crearEjemplo(modulo, id, actual) {
   if (['estados','inicioEmpresa'].includes(modulo)) {
     if (id === 'baker') return ejemploBaker();
     if (id === 'bartlett') return ejemploBartlett();
+    if (id === 'bartlett-clase') return ejemploBartlettClase();
     if (id === 'practico2') return ejemploPractico2();
     if (modulo === 'estados') return completarEjemploMuno(actual());
   }

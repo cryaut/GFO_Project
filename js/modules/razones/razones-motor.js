@@ -193,6 +193,16 @@ function leerBase(id, periodo, ctx) {
     return numero(suma) ? valido(suma) : nd('missing_required_account_data', { id, periodo });
   }
   const politica = cuenta?.absence_policy || meta?.politicaAusencia;
+  // Una venta neta reportada no acredita un bruto cero ni sus componentes.
+  // La cobertura completa confirma partidas no aplicables, pero no permite
+  // reconstruir hacia atrás una magnitud que la fuente no informa.
+  const ventasBrutas = ['is.sales_total', 'is.product_sales', 'is.service_revenue', 'is.other_sales_revenue'];
+  if (ventasBrutas.includes(id)) {
+    const presentes = ctx.entrada.cuentas.filter(c => c.estado === 'reconocida' && Object.hasOwn(c, periodo));
+    if (presentes.some(c => c.id === 'is.net_sales_reported') && !presentes.some(c => ventasBrutas.includes(c.id))) {
+      return nd('missing_required_account_data', { id, periodo });
+    }
+  }
   // Una fuente completa confirma que una partida de detalle no listada no
   // aplica. No se rellena un total reportado ni un suplemento ausente.
   const grupo = meta?.grupo;

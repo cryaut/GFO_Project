@@ -1,0 +1,123 @@
+{
+  "baseAuditada": "de788b7ebc2d340f962613f4c74bf1cf3808bd59",
+  "originMain": "19c5c6f81607d8794938880640034e737fea67af",
+  "ramaReparacion": "codex/reparacion-auditoria-ejemplos",
+  "fuentes": [
+    {
+      "archivo": "Razones_Financieras_Liquidez_Actividad.md",
+      "sha256": "8e7a6cf2d92f9b7f430d87f81ee9d17bfe3d090dc6d0d71cbe27700ec676285f",
+      "naturaleza": "transcripción de presentación; puede contener marcadores de imágenes"
+    },
+    {
+      "archivo": "Analisis_Dupont.md",
+      "sha256": "2855c92841e604a55617d9dc7da4677286e435740424ac6a768e55422837b59a",
+      "naturaleza": "transcripción de presentación; puede contener marcadores de imágenes"
+    },
+    {
+      "archivo": "Analisis_apalancamiento_y_C-V-U.md",
+      "sha256": "720e2d382f1f14ce3df18753d9887b2532cd29e1287bb3cccd60ad046b615c97",
+      "naturaleza": "transcripción de presentación; puede contener marcadores de imágenes"
+    },
+    {
+      "archivo": "Presupuesto_estudiantil_actualizado.md",
+      "sha256": "7e0ebe11c6591ec1ce593e63cd0c89cd481bd10b28016ef8c5beb6d181957a48",
+      "naturaleza": "transcripción de presentación; puede contener marcadores de imágenes"
+    },
+    {
+      "archivo": "Presentacion_Sesion1_Planeacion_Presupuesto_Maestro.md",
+      "sha256": "5c76bf08e057400ec212b4efdf413f7d78f19716a8cc295f4c6b9b8f49de560a",
+      "naturaleza": "transcripción de presentación; puede contener marcadores de imágenes"
+    },
+    {
+      "archivo": "Presentacion_Sesion2_Ventas_y_Compras_Comercial_El_Progreso.md",
+      "sha256": "fe3d85a0d2db02481a5dfb179cb8a25e67869a8d499bf8f37202af16d64faebf",
+      "naturaleza": "transcripción de presentación; puede contener marcadores de imágenes"
+    },
+    {
+      "archivo": "GFO_Presentacion_Sesion3_Costo_Ventas_Gastos_Estado_Resultados.md",
+      "sha256": "9b8bbddcc43fecaa7a32d170a5181e6565bf5207f104d7ee4a7d367790da410b",
+      "naturaleza": "transcripción de presentación; puede contener marcadores de imágenes"
+    },
+    {
+      "archivo": "Estados_financieros_proforma.md",
+      "sha256": "50e2541bddf5abdb11e4e176b70798a26ba868376c5081fcfc447c05cd63f8bd",
+      "naturaleza": "transcripción de presentación; puede contener marcadores de imágenes"
+    },
+    {
+      "archivo": "Presupuesto_de_Caja 2026.md",
+      "sha256": "802e97d2089e5b22157eaf3bc071107ec0df63a5ffecb6fddb8f24d88655e3b7",
+      "naturaleza": "transcripción de presentación; puede contener marcadores de imágenes"
+    },
+    {
+      "archivo": "Flujo_Efectivo_GFO_2026.md",
+      "sha256": "42022b3d798ffceb5807dddad5f2ef119eb43ce71de7d3abeba37112e89c3d61",
+      "naturaleza": "transcripción de presentación; puede contener marcadores de imágenes"
+    },
+    {
+      "archivo": "Baker Completo.md",
+      "sha256": "ed5d3341f70e2133b95835cc07907f617db8ce6abb38aebe538482896ebdb93b",
+      "naturaleza": "transcripción del ejercicio"
+    },
+    {
+      "archivo": "Bartlley Company.md",
+      "sha256": "67f3e23ffd686c56625372c461af121bc0932777341c9c643b37c69cef6c4b05",
+      "naturaleza": "transcripción del ejercicio"
+    },
+    {
+      "archivo": "Ejercicio practico 2.md",
+      "sha256": "874bed546467b76550d7e1014a3d13f6a0eda0c2ad42e4b899bcc305093e6955",
+      "naturaleza": "transcripción del ejercicio"
+    },
+    {
+      "archivo": "Practica_clase_TOR_Gitman_Resuelto.md",
+      "sha256": "59eb5d8892fcb7da4302a312a3e83e438ef41ea3aedbab1c4d1d0012e53f57c9",
+      "naturaleza": "transcripción del ejercicio"
+    }
+  ],
+  "codigoVerificado": [
+    {
+      "archivo": "js/examples/catalogo.js",
+      "sha256LF": "c63e4a63e9605276ad2de2616ada2eadd9bf1a5a512738ca6add9a12ee082589"
+    },
+    {
+      "archivo": "js/examples/ejemplos-estados.js",
+      "sha256LF": "b4942aa044008f4d47f0d00087f645cfcee7ae154da6426fc583c0a812543bcf"
+    },
+    {
+      "archivo": "js/modules/analisis/comprobacion-calculations.js",
+      "sha256LF": "2e179af9741823447f681748c7ac7eb92960fd7851c7df879941b3984a8381ef"
+    },
+    {
+      "archivo": "js/modules/analisis/efe-calculations.js",
+      "sha256LF": "324acfc1ea49b2aa828e96bf67e14575a729a29776a6215a852641ccbb48730e"
+    },
+    {
+      "archivo": "js/modules/analisis/index.js",
+      "sha256LF": "7e4e9c0801004155fb55d65db23c7c836daa879e34e691541b5431b0254b3a44"
+    },
+    {
+      "archivo": "js/modules/analisis/mercado-calculations.js",
+      "sha256LF": "4e5e30be4f5d7025d3c29b012383c916b84db0be2c30d8ff279d00c7f99ea8c5"
+    },
+    {
+      "archivo": "js/modules/estados/cuentas-catalogo.js",
+      "sha256LF": "c82d08d4d3060ea67253932e51eff0df22725f5340aa3bb9aefb133e08d2b606"
+    },
+    {
+      "archivo": "js/modules/razones/especificacion-razones.js",
+      "sha256LF": "6c58b852aab5512051a5c24ef00103e0c819d248ac64f2707ea10f3c6bf9ea37"
+    },
+    {
+      "archivo": "js/modules/razones/razones-motor.js",
+      "sha256LF": "7062ac6dc2eb75706f50e9aa766da9589eb9ec9f2ed36d12eea0aea63ee778cc"
+    },
+    {
+      "archivo": "js/modules/razones/razones-app-adapter.js",
+      "sha256LF": "b0d7aa57d7905461cc02e53dc4ff37f7996ea40027cf51def3ec758cd9fe30a8"
+    },
+    {
+      "archivo": "js/utils/estados-guardados.js",
+      "sha256LF": "7bc4777409a736e1f4233f81d36ff55126dd6ce783c6e9e4d3b01c86810ee894"
+    }
+  ]
+}

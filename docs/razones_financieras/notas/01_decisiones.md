@@ -27,6 +27,8 @@ de D-030 (H1) y D-031 (H2) se aplican allí en el bloque B4.
 
 ## Reglas de periodo
 
+**Ampliación D-102 (2026-11-07) de D10.** Si está disponible `supp.credit_purchases`, se usa como base declarada para rotación/plazo de CxP y ciclo. Si falta, se conserva la fórmula anterior pagos + ΔCxP y sus requisitos de periodo. No se aproxima automáticamente con CBV. Una estimación docente debe declararse en el escenario y no representa pagos de caja. Bartlett de clase declara compras 1461600 (70 % de 2088000) y ventas a crédito 3074000 solo para 2012; el histórico no cambia. Los promedios y políticas del primer periodo se conservan. La regla histórica D10 queda arriba para trazabilidad.
+
 | Id | Regla |
 |---|---|
 | R1 | **Razones de flujo** (7, 8 y 12 a 20). Si el estado trae **un solo periodo**, todas se calculan en directo con saldos de cierre, marcadas, sin control. Si trae **dos o más periodos**, cada periodo desde el segundo usa promedio. El primer periodo muestra N/D por defecto. Un **control global**, apagado por defecto, muestra el cálculo directo **solo del primer periodo**, marcado. Ese control afecta a todas las razones de flujo a la vez. |

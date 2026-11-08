@@ -2,6 +2,7 @@
 // (inventario, equilibrio, flujo, planeación y proforma). Recibe store.get('estados').
 import { normalizeFinancialData } from '../modules/estados/estados-normalize.js';
 import { computeFinancialTotals } from '../modules/estados/estados-calculations.js';
+import { estadosResueltos } from '../modules/estados/estados-presentacion-calculations.js';
 
 // D-077: una sola lectura de estados. Devuelve { estados, error }:
 // - sin periodos: { estados: null, error: null } (no hay datos);
@@ -32,7 +33,14 @@ export function totalesPeriodo(estados, periodo = null) {
   const elegido = periodo ?? estados.periods[estados.periods.length - 1];
   if (!estados.periods.includes(elegido)) return null;
   try {
-    return { periodo: elegido, ...computeFinancialTotals(estados, elegido) };
+    const totales = computeFinancialTotals(estados, elegido);
+    const filas = estadosResueltos(estados, elegido).estadoResultados;
+    const subtotal = id => filas.find(f => f.id === id)?.valorCalculo ?? null;
+    // Una sola lectura acreditada del ER para Inicio, Mercado y sus consumidores.
+    // Un ER vacío no acredita ventas ni utilidad cero. El balance sigue disponible.
+    return { periodo: elegido, ...totales,
+      ventasBrutas: subtotal('is.sales_total'), ventas: subtotal('is.net_sales_reported'),
+      utilidadBruta: subtotal('is.gross_profit_reported'), utilidadNeta: subtotal('is.net_income_reported') };
   } catch {
     return null;
   }

@@ -932,10 +932,10 @@ El par de periodos a comparar. Sin `periodoFinal`: los dos más recientes en ord
 #### `variacionesDeCuentas(datos, grupo, periodoInicial, periodoFinal)`
 Variación de cada cuenta de un grupo del balance (`'activos'`, `'pasivos'` o `'patrimonio'`) entre dos periodos: primero las cuentas del periodo inicial y después las que solo aparecen en el final.
 
-- **Retorno**: `[{ cuenta, grupo, tipo, saldoInicial, saldoFinal, variacion }]`; `tipo` es `''` si la cuenta no se reconoce
+- **Retorno**: `[{ cuenta, grupo, id, tipo, requiereDesglose, saldoInicial, saldoFinal, variacion }]`; `tipo` es `''` si la cuenta no se reconoce. D-101 reúne cuentas y `reportedTotals` y conserva una sola representación acreditada; `requiereDesglose` impide clasificar totales mixtos o PPE neto como una actividad de caja.
 - **N/D**: un saldo ausente o que no es un número finito queda en `null` y la variación también; nunca se completa con 0 ni se suma como texto
 
-#### `advertenciasDeBalance(periodos, bgInicial, bgFinal)`
+#### `advertenciasDeBalance(datos, periodos, bgInicial, bgFinal)`
 Una advertencia por periodo cuyo balance no cumple A = P + O (más allá de la tolerancia), con la diferencia exacta. `periodos` es `{ inicial, final }`.
 
 - **Retorno**: `string[]`
@@ -1041,3 +1041,12 @@ Añade `efectivoFinalCalculado`, igual a efectivo inicial + total de flujos cuan
 - `panelEjemplos(modulo, boton, opciones?)`, `vincularEjemplos(page, modulo)` y `ejemploSeleccionado(page, modulo, actual)` en `components/ejemplos.js`: HTML escapado, actualización de metadatos y lectura explícita de selección. El selector no escribe en el store; WeakMap conserva su estado durante redibujados de un contenedor.
 - `monedaDe(datos)` y `normalizarMoneda(datos)` en `utils/moneda.js`: C$ por compatibilidad, USD o UM explícitos; el normalizador rechaza otras unidades y conserva la ausencia del campo. Se propaga en los normalizadores de Estados, Flujo y Equilibrio y sus resultados. El formato usa el segundo argumento ya existente de `formatCurrency`/`formatCurrencyND`, sin conversión de divisas.
 - `resultadosReales` declara su moneda. La comparación de Proforma conserva cada columna y sus importes, pero no calcula variaciones entre monedas distintas. Los indicadores monetarios de Mercado/EFE llevan su moneda cuando está declarada. `interpretarEOAF` e `interpretarEFE` aceptan un segundo argumento opcional de moneda (C$ por defecto), sin cambiar el cálculo.
+
+## Reparación del contraste independiente (D-101 y D-102)
+
+- `totalesPeriodo(estados, periodo?)` conserva la validación y los totales del balance; ventas brutas, ventas netas, UB y UN se leen de `estadosResueltos`. Devuelve N/D para ER vacío sin perder el balance. Ejemplo: Baker 2011 conserva A 2900000 y devuelve `utilidadNeta: null`; Baker 2012 devuelve 180000. Inicio y Mercado comparten esa lectura.
+- `construirEFE` usa `obtenerUtilidadNetaMotor`. Un ER vacío no acredita cero. PPE neto sin desglose deja depreciación/inversión N/D; UN y efectivo disponibles se conservan. Los resultados siguen siendo estimaciones de saldos, incluso cuando cuadran.
+- `esTotalDuplicado` se conserva como consulta estructural de ids por compatibilidad. No certifica que el detalle concilie; la selección de `variacionesDeCuentas` comprueba importes y evita sumar reportado y componentes juntos. Los avisos de balance explican cuándo el detalle no puede comprobar un total.
+- `ejemploBartlettClase()` devuelve un documento nuevo identificado como razones de clase, con los BG/ER de Bartlett y suplementos solo en 2012. Se ofrece como `bartlett-clase` en Estados e Inicio empresa. No muta el histórico.
+- `supp.credit_purchases`: base de compras declarada, suplementaria y positiva, requiere dato; ausencia N/D y cero explícito válido. Los tres derivados JSON de compras usan `reported_or_calculate`: dato declarado primero, fórmula anterior de pagos + ΔCxP si falta. No hay porcentaje automático de CBV. `usaComprasReales` conserva su uso legado para compras derivadas y es falso para una base declarada que podría ser estimada.
+- El motor no deduce ventas brutas cero desde una venta neta reportada sin bruto ni componentes, aunque ER esté completo. Un bruto cero explícito se conserva; sus discrepancias con el neto no se corrigen silenciosamente.

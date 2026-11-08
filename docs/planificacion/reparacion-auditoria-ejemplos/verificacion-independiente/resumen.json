@@ -1,0 +1,110 @@
+{
+  "totalComprobaciones": 2391,
+  "estados": {
+    "COINCIDE": 2252,
+    "ND_JUSTIFICADO": 139
+  },
+  "porSeccion": {
+    "AH diferencia": {
+      "COINCIDE": 163,
+      "ND_JUSTIFICADO": 17
+    },
+    "AH porcentaje": {
+      "COINCIDE": 160,
+      "ND_JUSTIFICADO": 20
+    },
+    "AV": {
+      "COINCIDE": 333,
+      "ND_JUSTIFICADO": 7
+    },
+    "Activo hogar": {
+      "COINCIDE": 16
+    },
+    "BG/ER": {
+      "COINCIDE": 163,
+      "ND_JUSTIFICADO": 7
+    },
+    "C-V-U": {
+      "COINCIDE": 57,
+      "ND_JUSTIFICADO": 6
+    },
+    "C-V-U escenario": {
+      "COINCIDE": 534,
+      "ND_JUSTIFICADO": 54
+    },
+    "CTN/CNO": {
+      "COINCIDE": 30
+    },
+    "DuPont": {
+      "COINCIDE": 25
+    },
+    "EFE estimado (condicional)": {
+      "COINCIDE": 4
+    },
+    "EFE indirecto": {
+      "COINCIDE": 9
+    },
+    "EOAF": {
+      "COINCIDE": 15
+    },
+    "Flujo directo": {
+      "COINCIDE": 15
+    },
+    "Flujo directo vs fuente": {
+      "COINCIDE": 6
+    },
+    "Funciones públicas (diagnóstico)": {
+      "COINCIDE": 8
+    },
+    "Histórico de referencia": {
+      "COINCIDE": 14
+    },
+    "Inicio": {
+      "COINCIDE": 5
+    },
+    "Inventario": {
+      "COINCIDE": 64
+    },
+    "Inventario total": {
+      "COINCIDE": 6
+    },
+    "Mercado": {
+      "COINCIDE": 152,
+      "ND_JUSTIFICADO": 8
+    },
+    "Personal": {
+      "COINCIDE": 14
+    },
+    "Premisas docentes explícitas": {
+      "COINCIDE": 5
+    },
+    "Presupuesto ER": {
+      "COINCIDE": 64
+    },
+    "Presupuesto caja": {
+      "COINCIDE": 56
+    },
+    "Presupuesto cierre": {
+      "COINCIDE": 12
+    },
+    "Presupuesto compras": {
+      "COINCIDE": 8
+    },
+    "Proforma": {
+      "COINCIDE": 16
+    },
+    "Razones": {
+      "COINCIDE": 160,
+      "ND_JUSTIFICADO": 20
+    },
+    "Real de Proforma": {
+      "COINCIDE": 40
+    },
+    "Referencia parcial": {
+      "COINCIDE": 96
+    },
+    "UPA docente (diagnóstico)": {
+      "COINCIDE": 2
+    }
+  }
+}

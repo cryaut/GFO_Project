@@ -13,6 +13,7 @@ import { monedaDe } from '../../utils/moneda.js';
 
 import { formatCurrency as monedaBase } from '../../utils/format.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
+import { obtenerUtilidadNetaMotor } from '../razones/razones-app-adapter.js';
 import { rolEFE } from './efe-roles.js';
 import {
   variacionesDeCuentas, advertenciasDeBalance, toleranciaComprobacion
@@ -44,7 +45,7 @@ function opuesto(monto) {
 function deltaRol(filas, rol, excluirId = null) {
   const relevantes = filas.filter(fila => rolEFE(fila.id) === rol && fila.id !== excluirId);
   if (relevantes.length === 0) return { delta: 0, presente: false, completo: true, filas: [] };
-  const completo = relevantes.every(fila => fila.saldoInicial !== null && fila.saldoFinal !== null);
+  const completo = relevantes.every(fila => fila.saldoInicial !== null && fila.saldoFinal !== null && !fila.requiereDesglose);
   const delta = completo
     ? relevantes.reduce((suma, fila) => suma + fila.variacion, 0)
     : null;
@@ -54,6 +55,9 @@ function deltaRol(filas, rol, excluirId = null) {
 // Δ de depreciación acumulada medida en magnitud (|final| − |inicial|): un
 // crecimiento es el gasto no efectivo del periodo; una baja puede ser un retiro.
 function deltaDepreciacion(filas) {
+  if (filas.some(fila => fila.id === 'bs.fixed_assets_net_total' && fila.requiereDesglose)) {
+    return { delta: null, presente: true, completo: false, filas: [] };
+  }
   const relevantes = filas.filter(fila => fila.id === 'bs.accumulated_depreciation');
   if (relevantes.length === 0) return { delta: 0, presente: false, completo: true, filas: [] };
   const completo = relevantes.every(fila => fila.saldoInicial !== null && fila.saldoFinal !== null);
@@ -98,8 +102,8 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     return sinDatos(`No hay balance general del periodo ${faltante}. Capture o importe los estados de ambos periodos en Estados Financieros.`);
   }
 
-  // D-067/D-072: los totales reportados con componentes en los datos no entran;
-  // la regla vive en variacionesDeCuentas (compartida con el EOAF).
+  // D-101: se conserva el total cuando no está acreditado su desglose. La
+  // selección, compartida con EOAF, nunca suma total y componentes juntos.
   const activos = variacionesDeCuentas(datos, 'activos', periodoInicial, periodoFinal);
   const pasivos = variacionesDeCuentas(datos, 'pasivos', periodoInicial, periodoFinal);
   const patrimonio = variacionesDeCuentas(datos, 'patrimonio', periodoInicial, periodoFinal);
@@ -107,6 +111,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
   advertencias.push(...advertenciasDeBalance(datos, periodos, bgInicial, bgFinal));
 
   for (const fila of [...activos, ...pasivos, ...patrimonio]) {
+    if (fila.requiereDesglose) motivos.push(`El total «${fila.cuenta}» necesita desglose para separar las actividades del EFE; su importe no se clasifica íntegramente como un flujo.`);
     if (fila.saldoInicial === null || fila.saldoFinal === null) {
       const faltante = fila.saldoInicial === null ? periodoInicial : periodoFinal;
       motivos.push(`La cuenta «${fila.cuenta}» no tiene saldo en el periodo ${faltante}; su variación no entra en el EFE.`);
@@ -130,24 +135,25 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
   const efectivoFinal = efectivo.completo && efectivo.presente
     ? efectivo.filas.reduce((suma, fila) => suma + fila.saldoFinal, 0) : null;
 
-  // Utilidad neta del periodo final. computeFinancialTotals lanza si algún
-  // importe del balance o del estado de resultados no es un número: en ese caso
-  // el estado queda incompleto en lugar de dejar la pantalla de Análisis vacía.
+  // Se conserva la validación de importes y se consulta la misma UN acreditada
+  // del motor que Estados/Razones. La comprobación del detalle no anula un
+  // total reportado válido; un ER vacío no se convierte en cero.
   const erFinal = datos?.estadoResultados && Object.hasOwn(datos.estadoResultados, periodoFinal)
     ? datos.estadoResultados[periodoFinal] : null;
   let utilidadNeta = null;
   if (!erFinal) {
     motivos.push(`No hay estado de resultados del periodo ${periodoFinal}: sin utilidad neta no se puede armar la operación.`);
   } else {
+    let importesValidos = false;
     try {
-      utilidadNeta = computeFinancialTotals(datos, periodoFinal).utilidadNeta;
-      if (utilidadNeta === null) {
-        motivos.push('La utilidad neta no se puede determinar: el estado de resultados tiene cuentas sin clasificar.');
-      } else if (Object.keys(erFinal).length === 0) {
-        advertencias.push(`El estado de resultados del periodo ${periodoFinal} no tiene cuentas: la utilidad neta se toma como 0 y la operación parte de ahí.`);
-      }
+      computeFinancialTotals(datos, periodoFinal);
+      importesValidos = true;
     } catch (error) {
       motivos.push(`No se pudo calcular la utilidad neta del periodo ${periodoFinal} (${error.message}). Corrija el importe en Estados Financieros.`);
+    }
+    if (importesValidos) {
+      utilidadNeta = obtenerUtilidadNetaMotor(datos, periodoFinal).valor;
+      if (utilidadNeta === null) motivos.push(`La utilidad neta no se puede determinar con los datos acreditados del ER ${periodoFinal}; revise las cuentas y su composición en Estados Financieros.`);
     }
   }
 
@@ -188,7 +194,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
       }
     }
   }
-  if (depreciacion.presente) {
+  if (depreciacion.presente && depreciacion.filas.length) {
     const signoPositivo = depreciacion.filas.some(fila =>
       (typeof fila.saldoInicial === 'number' && fila.saldoInicial > 0)
       || (typeof fila.saldoFinal === 'number' && fila.saldoFinal > 0));

@@ -7,6 +7,7 @@ Todos los cambios notables en GFO Toolkit.
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
 ### Catálogo de ejemplos y presentación de monedas
+- Bartlett de clase separado del histórico: declara crédito total y compras estimadas docentes para 2012. Nueva base de compras declaradas para rotaciones, con la fórmula anterior como alternativa y sin pagos ficticios (D-102).
 - Paneles con selección, fuente y alcance en todos los puntos de carga existentes; MUNO integral completa sus suplementos y añade Baker, Bartlett, Práctico 2 y TOR, además de variantes ficticias. Casos docentes contrastados, sin inventar crédito ni moneda; unidad opcional preservada al guardar/exportar, y comparación de Proforma bloqueada entre monedas distintas (D-100).
 - Referencia parcial de Planeación identificada por separado; cargar un presupuesto completo confirma el reemplazo de sus escenarios. Inventario conserva el desplazamiento de tablas dentro del ancho móvil.
 
@@ -14,6 +15,7 @@ Todos los cambios notables en GFO Toolkit.
 - Presupuesto completo: utilidad y caja visibles desde el resumen; desarrollo con fórmulas, operandos y resultados por horizonte/periodo. Proforma incorpora UAI, comparte la lectura del ER real de Estados/Razones y expone sus cálculos. El caso parcial muestra sus pendientes sin inventar resultados; comparación con Ejercicios AFOD documentada (D-097).
 
 ### Rigor financiero
+- Reparados los cinco hallazgos de la auditoría de ejemplos: EOAF/EFE conservan cuentas reportadas sin duplicar subtotales; Inicio/Mercado/EFE comparten UN; ER vacío y bruto desconocido conservan N/D. PPE neto sin desglose no fabrica depreciación ni inversión. Informe, regresiones y contraste independiente documentados (D-101).
 - DuPont usa utilidad y ventas del motor; Flujo y Proforma mantienen N/D cuando falta un operando en vez de convertirlo en cero (D-087).
 - El EFE indirecto usa identidades para resultados y reservas e indica que sus flujos y dividendos son estimaciones que requieren confirmar movimientos; Proforma conserva esa distinción (D-088).
 - Casos de las presentaciones AFOD y contraste de módulos mínimos documentados en `docs/planificacion/rigor-financiero/`.

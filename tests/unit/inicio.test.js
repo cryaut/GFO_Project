@@ -24,6 +24,8 @@ function estadosMuno() {
   });
   return normalizeFinancialData({
     name: 'MUNO MODA S.A.', periods: ['2023', '2024'],
+    coberturaEstados: { '2023': { estadoResultados: 'completo' }, '2024': { estadoResultados: 'completo' } },
+    composicionIngresos: { '2023': 'excluye_intereses', '2024': 'excluye_intereses' },
     balanceGeneral: {
       2023: balance(45000, 120000, 180000, 25000, -98525, 85000, 60000, 15000, 80000, 31475),
       2024: balance(52000, 135000, 195000, 30000, -116475, 92000, 65000, 18000, 75000, 45525)

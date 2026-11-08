@@ -1,7 +1,7 @@
 import { normalizarMoneda } from '../../utils/moneda.js';
 // Razones de mercado por periodo: UPA, P/U, valor en libros por acción, P/VL, DPA, pago y
 // rendimiento del dividendo. Lógica pura: sin DOM ni store. Las fórmulas están en calculate.js.
-import { computeFinancialTotals } from '../estados/estados-calculations.js';
+import { totalesPeriodo } from '../../utils/estados-guardados.js';
 import {
   dividendoPorAccion, precioUtilidad, precioValorLibros, razonPagoDividendos,
   rendimientoDividendo, utilidadPorAccion, valorLibrosPorAccion
@@ -45,11 +45,7 @@ export function validarDatosMercado(periodo, valores) {
 }
 
 function totales(estados, periodo) {
-  try {
-    return computeFinancialTotals(estados, periodo);
-  } catch {
-    return null;
-  }
+  return totalesPeriodo(estados, periodo);
 }
 
 // Razones de cada periodo. dap: DAP por periodo, como lo guarda Apalancamiento (0 si no hay).

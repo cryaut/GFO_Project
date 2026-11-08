@@ -1,0 +1,129 @@
+{
+  "escenarios": [
+    {
+      "id": "actual",
+      "un": 104825,
+      "origenes": null,
+      "cfo": 102775,
+      "rutas": [
+        "estados",
+        "home",
+        "analisis"
+      ],
+      "paneles": [
+        "ah",
+        "av",
+        "razones",
+        "dupont",
+        "eoaf",
+        "efe",
+        "mercado"
+      ]
+    },
+    {
+      "id": "baker",
+      "un": 180000,
+      "origenes": 1000000,
+      "cfo": 780000,
+      "rutas": [
+        "estados",
+        "home",
+        "analisis"
+      ],
+      "paneles": [
+        "ah",
+        "av",
+        "razones",
+        "dupont",
+        "eoaf",
+        "efe",
+        "mercado"
+      ]
+    },
+    {
+      "id": "bartlett",
+      "un": 231000,
+      "origenes": 636000,
+      "cfo": 500000,
+      "rutas": [
+        "estados",
+        "home",
+        "analisis"
+      ],
+      "paneles": [
+        "ah",
+        "av",
+        "razones",
+        "dupont",
+        "eoaf",
+        "efe",
+        "mercado"
+      ]
+    },
+    {
+      "id": "bartlett-clase",
+      "un": 231000,
+      "origenes": 636000,
+      "cfo": 500000,
+      "rutas": [
+        "estados",
+        "home",
+        "analisis"
+      ],
+      "paneles": [
+        "ah",
+        "av",
+        "razones",
+        "dupont",
+        "eoaf",
+        "efe",
+        "mercado"
+      ]
+    },
+    {
+      "id": "practico2",
+      "un": 77000,
+      "origenes": 95000,
+      "cfo": null,
+      "rutas": [
+        "estados",
+        "home",
+        "analisis"
+      ],
+      "paneles": [
+        "ah",
+        "av",
+        "razones",
+        "dupont",
+        "eoaf",
+        "efe",
+        "mercado"
+      ]
+    },
+    {
+      "width": 1440,
+      "tema": "light",
+      "panel": "efe",
+      "desborde": false
+    },
+    {
+      "width": 1440,
+      "tema": "dark",
+      "panel": "efe",
+      "desborde": false
+    },
+    {
+      "width": 390,
+      "tema": "light",
+      "panel": "efe",
+      "desborde": false
+    },
+    {
+      "width": 390,
+      "tema": "dark",
+      "panel": "efe",
+      "desborde": false
+    }
+  ],
+  "errores": []
+}
