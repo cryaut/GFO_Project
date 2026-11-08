@@ -32,6 +32,12 @@ Carlos debe revisar el PR #31 y sus entregas dependientes; no hay merge automát
 
 ## Entrega y validación
 
+### Seguimiento de Carlos, 2026-11-08
+
+Se leyó su revisión `5816728981` y se verificaron las cuatro solicitudes contra `021ef67`. Dos P1 ya estaban cubiertos; se añaden el bloqueo de copias monetarias incompatibles en Flujo/Planeación y la conservación del activo reportado como base de AV. [Respuesta por punto](REVISION-CARLOS.md). Diez regresiones nuevas más las 22 anteriores pasan en la ejecución dirigida; revisión humana sigue pendiente.
+
+Validación actual: **2202 pruebas / 75 archivos**, lint **0 errores / 10 advertencias anteriores**; tres casos dirigidos de Edge y 44 escenarios del catálogo, sin errores JS. [Constancia](revision-carlos-validacion.json). Las cifras de 2192 pruebas listadas debajo corresponden a la entrega anterior `021ef67`.
+
 - [Informe por hallazgo y contraste docente](INFORME-FINAL.md).
 - [Constancia](validacion.json): **2192 pruebas / 74 archivos**, 22 regresiones focalizadas y una prueba adicional de política de la nueva cuenta; lint **0 errores / 10 advertencias anteriores**.
 - [Contraste independiente](verificacion-independiente/resumen.json): **2391 comprobaciones**, 2252 coincidencias y 139 N/D justificados, sin diferencias.

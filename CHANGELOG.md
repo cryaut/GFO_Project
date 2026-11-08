@@ -15,6 +15,7 @@ Todos los cambios notables en GFO Toolkit.
 - Presupuesto completo: utilidad y caja visibles desde el resumen; desarrollo con fórmulas, operandos y resultados por horizonte/periodo. Proforma incorpora UAI, comparte la lectura del ER real de Estados/Razones y expone sus cálculos. El caso parcial muestra sus pendientes sin inventar resultados; comparación con Ejercicios AFOD documentada (D-097).
 
 ### Rigor financiero
+- Revisión de Carlos, PR #31: bloqueo de copias de saldos entre monedas distintas en Flujo y Planeación, conservando datos y borrador; AV conserva el activo total reportado aunque falte depreciación para comprobar el detalle. Diez regresiones y respuesta por punto documentadas.
 - Reparados los cinco hallazgos de la auditoría de ejemplos: EOAF/EFE conservan cuentas reportadas sin duplicar subtotales; Inicio/Mercado/EFE comparten UN; ER vacío y bruto desconocido conservan N/D. PPE neto sin desglose no fabrica depreciación ni inversión. Informe, regresiones y contraste independiente documentados (D-101).
 - DuPont usa utilidad y ventas del motor; Flujo y Proforma mantienen N/D cuando falta un operando en vez de convertirlo en cero (D-087).
 - El EFE indirecto usa identidades para resultados y reservas e indica que sus flujos y dividendos son estimaciones que requieren confirmar movimientos; Proforma conserva esa distinción (D-088).

@@ -189,6 +189,10 @@ export function flujoUI(page, opciones) {
     });
     page.querySelector('#flujoTomarSaldo')?.addEventListener('click', () => {
       const periodo = campo('flujoPeriodo');
+      if (monedaDe(estados) !== monedaDe(datos)) {
+        mensaje(`Moneda incompatible: Estados usa ${monedaDe(estados)} y Flujo usa ${monedaDe(datos)}. Se conservan los saldos; no se realiza conversión automática.`, true);
+        return;
+      }
       const totales = totalesPeriodo(estados, periodo);
       if (!totales) { mensaje('Elija un periodo de los estados guardados.', true); return; }
       persistir({ ...datos, saldoInicial: totales.efectivo, periodoBase: periodo },

@@ -763,6 +763,8 @@ Si el ejercicio proporciona AC y PC totales identificados, la razón corriente s
 
 ### Bartlett con premisas de clase y comprobaciones corregidas
 
+Al tomar saldos de Estados hacia Flujo o Planeación, ambas secciones deben usar la misma moneda. Si difieren, la aplicación avisa y conserva los saldos y las ediciones pendientes del destino. No se convierte moneda automáticamente. Un total de activo reportado válido puede usarse en AV aunque no se pueda comprobar su desglose por faltar depreciación; revise los avisos del detalle.
+
 En el selector de Estados o Inicio empresa, **Bartlett · razones de clase** añade las premisas de las diapositivas 14–15 solo para 2012: todas las ventas a crédito y compras estimadas como 70 % del costo. Revise la procedencia, cargue y guarde el borrador. Los suplementos se muestran en la vista previa de Estados. Los resultados son 7.08 veces / 51.53 días para cobro, 4.48 veces / 81.41 días para pago y 21.60 días de ciclo. El ejemplo **Bartlett Company** conserva los datos históricos sin esas suposiciones, por lo que puede mostrar N/D en crédito. Una base de compras declarada permite calcular sin pagos a proveedores; no es un pago de caja ni una prueba de compras reales.
 
 Inicio, Mercado y EFE ahora conservan la UN disponible del mismo ER. Baker 2011 no tiene ER: sus utilidades y UPA son N/D, aunque su balance siga disponible. Las ventas netas no se presentan como ventas brutas cero. En Práctico 2 la UN 77000 sí está disponible; el EFE explica que PPE neto requiere desglose y mantiene N/D en los flujos que no puede separar. Para introducir cobros/pagos conocidos use el módulo Flujo de Efectivo.

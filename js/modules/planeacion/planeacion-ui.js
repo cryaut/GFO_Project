@@ -1,4 +1,5 @@
 import { panelEjemplos, vincularEjemplos, ejemploSeleccionado } from '../../components/ejemplos.js';
+import { monedaDe } from '../../utils/moneda.js';
 // Pantalla #/planeacion: supuestos, presupuestos de ventas, compras, CBV, gastos de operación y caja,
 // y estado de resultados presupuestado. El cálculo está en planeacion-calculations.js.
 import { escapeHTML as esc } from '../../utils/html.js';
@@ -600,6 +601,10 @@ export function planeacionUI(page, opciones) {
       guardarFormulario(false);
     });
     page.querySelector('#planTomarBalance')?.addEventListener('click', () => {
+      if (monedaDe(estados) !== monedaDe(lectura.base || lectura.supuestos)) {
+        mensaje(`Moneda incompatible: Estados usa ${monedaDe(estados)} y Planeación usa ${monedaDe(lectura.base || lectura.supuestos)}. Se conserva el borrador; no se realiza conversión automática.`, true);
+        return;
+      }
       const totales = totalesPeriodo(estados);
       if (!totales) { mensaje('No se pudieron leer los estados guardados.', true); return; }
       borrador.campos.saldoInicialCaja = String(totales.efectivo ?? '');

@@ -180,18 +180,21 @@ export function computeFinancialTotals(data, period) {
   const activosCorrientes = subtotal(activosCorrientesDetalle, hayCorrientes, 'activos', 'bs.current_assets_total');
   const activosFijosDetalle = detail.activosFijos + detail.depreciacionAcumulada;
   const hayFijos = present.has('activosFijos') || present.has('depreciacionAcumulada');
-  const activosFijos = subtotal(activosFijosDetalle, hayFijos, 'activos', 'bs.fixed_assets_net_total');
+  const activosFijos = faltaDepreciacion
+    ? (hayReportado('bs.fixed_assets_net_total') ? usarReportado('bs.fixed_assets_net_total', null) : null)
+    : subtotal(activosFijosDetalle, hayFijos, 'activos', 'bs.fixed_assets_net_total');
   const totalActivosCalculado = activosCorrientes === null || activosFijos === null ? null : activosCorrientes + activosFijos;
   let totalActivos = hayReportado('bs.total_assets')
     ? usarReportado('bs.total_assets', totalActivosCalculado)
     : (totalActivosCalculado !== null ? totalActivosCalculado : (groupReported.has('activos') ? null : 0));
   let activosFijosFinal = activosFijos;
   if (faltaDepreciacion) {
-    activosFijosFinal = null;
-    totalActivos = null;
+    if (!hayReportado('bs.fixed_assets_net_total')) activosFijosFinal = null;
+    if (!hayReportado('bs.total_assets')) totalActivos = null;
     reasons.push({
       group: 'activos', name: 'Depreciación acumulada', motivo: 'missing_required_account_data',
-      campos: ['activosFijos', 'totalActivos']
+      campos: [...(!hayReportado('bs.fixed_assets_net_total') ? ['activosFijos'] : []),
+        ...(!hayReportado('bs.total_assets') ? ['totalActivos'] : [])]
     });
   }
 

@@ -1044,6 +1044,8 @@ Añade `efectivoFinalCalculado`, igual a efectivo inicial + total de flujos cuan
 
 ## Reparación del contraste independiente (D-101 y D-102)
 
+Revisión de Carlos (2026-11-08): `computeFinancialTotals` conserva activos totales/PPE neto reportados cuando falta depreciación para reconstruirlos; los avisos identifican únicamente las magnitudes no disponibles. AV utiliza el activo reportado como base sin exigir cobertura completa. Las acciones de tomar saldos en `flujoUI` y `planeacionUI` verifican `monedaDe` antes de modificar o persistir; un rechazo conserva el destino y las ediciones del borrador.
+
 - `totalesPeriodo(estados, periodo?)` conserva la validación y los totales del balance; ventas brutas, ventas netas, UB y UN se leen de `estadosResueltos`. Devuelve N/D para ER vacío sin perder el balance. Ejemplo: Baker 2011 conserva A 2900000 y devuelve `utilidadNeta: null`; Baker 2012 devuelve 180000. Inicio y Mercado comparten esa lectura.
 - `construirEFE` usa `obtenerUtilidadNetaMotor`. Un ER vacío no acredita cero. PPE neto sin desglose deja depreciación/inversión N/D; UN y efectivo disponibles se conservan. Los resultados siguen siendo estimaciones de saldos, incluso cuando cuadran.
 - `esTotalDuplicado` se conserva como consulta estructural de ids por compatibilidad. No certifica que el detalle concilie; la selección de `variacionesDeCuentas` comprueba importes y evita sumar reportado y componentes juntos. Los avisos de balance explican cuándo el detalle no puede comprobar un total.

@@ -308,6 +308,8 @@ Las fábricas de `js/examples/ejemplos-estados.js` registran datos por identidad
 
 ## Corrección del contraste independiente (D-101/D-102)
 
+Seguimiento de revisión de Carlos (2026-11-08): la depreciación requerida limita la reconstrucción de activos fijos/activo total, pero no anula importes reportados válidos. Con edificio 1000 y activo reportado 1200, AV = 1000/1200 = 83.333333… %, sin confirmar cobertura ni inventar depreciación. Las transferencias Estados→Flujo/Planeación se bloquean si las monedas difieren; no constituyen conversión ni reinterpretan USD/UM como C$.
+
 EOAF/EFE reúnen saldos de cuentas y totales reportados; un inventario total sin detalle puede ser hoja. El detalle sustituye un total solo si concilia: de lo contrario se conserva el reportado sin duplicar componentes. En EFE un agregado mixto o PPE neto sin desglose no acredita la separación de actividades ni depreciación cero. La selección no modifica los documentos.
 
 Inicio/Mercado usan `totalesPeriodo` con ER resuelto; EFE usa `obtenerUtilidadNetaMotor`. ER ausente/vacío significa UN N/D. Cobertura completa tampoco reconstruye un bruto desconocido desde ventas netas reportadas. Los ceros explícitos se conservan.

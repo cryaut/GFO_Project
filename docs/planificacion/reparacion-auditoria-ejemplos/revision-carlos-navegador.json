@@ -1,0 +1,19 @@
+{
+  "escenarios": [
+    {
+      "caso": "Flujo USD a C$",
+      "escritura": false
+    },
+    {
+      "caso": "Planeación USD a C$",
+      "borradorConservado": true,
+      "guardadoPosterior": 777
+    },
+    {
+      "caso": "AV activo reportado",
+      "participacion": "83.33 %",
+      "base": 1200
+    }
+  ],
+  "errores": []
+}
