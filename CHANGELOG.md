@@ -6,6 +6,10 @@ Todos los cambios notables en GFO Toolkit.
 
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
+### Catálogo de ejemplos y presentación de monedas
+- Paneles con selección, fuente y alcance en todos los puntos de carga existentes; MUNO integral completa sus suplementos y añade Baker, Bartlett, Práctico 2 y TOR, además de variantes ficticias. Casos docentes contrastados, sin inventar crédito ni moneda; unidad opcional preservada al guardar/exportar, y comparación de Proforma bloqueada entre monedas distintas (D-100).
+- Referencia parcial de Planeación identificada por separado; cargar un presupuesto completo confirma el reemplazo de sus escenarios. Inventario conserva el desplazamiento de tablas dentro del ancho móvil.
+
 ### Planeación y Proforma
 - Presupuesto completo: utilidad y caja visibles desde el resumen; desarrollo con fórmulas, operandos y resultados por horizonte/periodo. Proforma incorpora UAI, comparte la lectura del ER real de Estados/Razones y expone sus cálculos. El caso parcial muestra sus pendientes sin inventar resultados; comparación con Ejercicios AFOD documentada (D-097).
 

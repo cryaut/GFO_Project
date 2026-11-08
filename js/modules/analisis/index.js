@@ -1,9 +1,10 @@
+import { monedaDe } from '../../utils/moneda.js';
 import { etiquetaFilaEstado, origenFilaEstado, separarCuentasOpcionales, desplegableCuentasOpcionales } from '../estados/estados-presentacion-ui.js';
 import { disponibilidadRazones } from './analisis-disponibilidad-ui.js';
 import store from '../../store.js';
 import { mercadoUI } from './mercado-ui.js';
 import { estadosGuardados } from '../../utils/estados-guardados.js';
-import { formatCurrencyND as formatCurrency, formatPercent, formatNumber, formatCurrencyND } from '../../utils/format.js';
+import { formatCurrencyND as formatearMoneda, formatPercent, formatNumber } from '../../utils/format.js';
 import { analisisHorizontalCompleto, analisisVerticalCompleto, detalleDuPont, filasAnalisis } from './analisis-calculations.js';
 import { computarRazonesDesdeDatos } from '../razones/razones-app-adapter.js';
 import {
@@ -34,6 +35,8 @@ export const UMBRALES = {
 const esNumero = valor => typeof valor === 'number' && Number.isFinite(valor);
 
 let savedCache = null;
+const formatCurrency = v => formatearMoneda(v, monedaDe(savedCache));
+const formatCurrencyND = formatCurrency;
 let savedPeriods = [];
 let savedError = null;
 let selectedAnalysisPeriod = null;

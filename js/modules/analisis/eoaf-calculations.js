@@ -1,3 +1,4 @@
+import { monedaDe } from '../../utils/moneda.js';
 // Estado de Origen y Aplicación de Fondos (EOAF): lógica pura, sin DOM ni store.
 // Recibe los estados financieros, arma el balance comparado de dos periodos,
 // clasifica cada variación de cuenta como origen o aplicación y comprueba que
@@ -5,7 +6,7 @@
 // calculate.js; aquí se aplica el grupo y el tipo de ACCOUNT_TYPES.
 
 import { eoaf } from '../../utils/calculate.js';
-import { formatCurrency } from '../../utils/format.js';
+import { formatCurrency as monedaBase } from '../../utils/format.js';
 import {
   variacionesDeCuentas, advertenciasDeBalance, toleranciaComprobacion
 } from './comprobacion-calculations.js';
@@ -177,13 +178,14 @@ export function construirEOAF(datos, periodoInicial, periodoFinal) {
     advertencias,
     interpretacion: ''
   };
-  resultado.interpretacion = interpretarEOAF(resultado);
+  resultado.interpretacion = interpretarEOAF(resultado, monedaDe(datos));
   return resultado;
 }
 
 // Lectura breve del estado. Los nombres de cuenta que aparecen aquí pueden venir
 // de un archivo importado: el llamador debe escaparlos antes de insertarlos en HTML.
-export function interpretarEOAF(resultado) {
+export function interpretarEOAF(resultado, moneda = 'C$') {
+  const formatCurrency = v => monedaBase(v, moneda);
   const { resumen, secciones } = resultado;
   if (!resumen) return '';
   if (resumen.estado === 'incompleta') {

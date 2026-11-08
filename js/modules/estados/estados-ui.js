@@ -5,7 +5,9 @@ import { ACCOUNT_TYPES, validateFinancialData, inferAccountType,
   seleccionarPeriodos, MAXIMO_PERIODOS_VISIBLES } from './estados-calculations.js';
 import { normalizeFinancialData, ordenarPeriodos } from './estados-normalize.js';
 import { escapeHTML as esc } from '../../utils/html.js';
-import { formatCurrency, formatCurrencyND } from '../../utils/format.js';
+import { formatCurrency as monedaBase, formatCurrencyND as monedaND } from '../../utils/format.js';
+import { monedaDe } from '../../utils/moneda.js';
+import { panelEjemplos, vincularEjemplos, ejemploSeleccionado } from '../../components/ejemplos.js';
 import { exportJSON, exportCSV } from '../../utils/export.js';
 import { importStatementFile, tableTextToFinancialData, TABULAR_TEMPLATE_ROWS } from './estados-import.js';
 import { identificarCuenta, resumenIdentificacion, obtenerCuenta, consultarMontoCuenta } from './cuentas-identificador.js';
@@ -34,6 +36,8 @@ const accountsFor = (data, period, group) => group === 'estadoResultados'
 
 export function estadosUI(page, { initial, demo, save }) {
   let draft;
+  const formatCurrency = v => monedaBase(v, monedaDe(draft));
+  const formatCurrencyND = v => monedaND(v, monedaDe(draft));
   let initialError = '';
   try { draft = normalizeFinancialData(initial); }
   catch (error) { draft = emptyData(); initialError = `No se pudieron editar los datos guardados: ${error.message}. No se han borrado.`; }
@@ -134,7 +138,7 @@ export function estadosUI(page, { initial, demo, save }) {
         </div></details>
         <details class="states-subpanel"><summary>Nuevo conjunto o ejemplo</summary><div class="states-disclosure-content">
           <div class="states-action-row"><button type="button" class="btn btn-secondary" id="newStates">Nuevo conjunto</button>
-            <button type="button" class="btn btn-secondary" id="demoStates">Cargar ejemplo</button></div>
+            </div>${panelEjemplos('estados', 'demoStates')}
         </div></details>
         </div>
       </details>
@@ -301,6 +305,7 @@ export function estadosUI(page, { initial, demo, save }) {
   }
 
   function bind() {
+    vincularEjemplos(page, 'estados');
     page.querySelector('#companyName').oninput = event => {
       draft.name = event.target.value.trim() || 'Mi empresa';
       markDirty();
@@ -408,7 +413,7 @@ export function estadosUI(page, { initial, demo, save }) {
     page.querySelector('#newStates').onclick = () => replaceDraft(emptyData(), 'Borrador nuevo.');
     const formatSelect = page.querySelector('#numberFormat');
     if (formatSelect) formatSelect.onchange = event => { numberFormat = event.target.value || 'auto'; };
-    page.querySelector('#demoStates').onclick = () => replaceDraft(normalizeFinancialData(demo), 'Ejemplo cargado como borrador. Recuerde revisar el equilibrio antes de guardar.');
+    page.querySelector('#demoStates').onclick = () => guard(() => replaceDraft(normalizeFinancialData(ejemploSeleccionado(page, 'estados', () => demo)), 'Ejemplo seleccionado cargado como borrador. Revise la fuente y el alcance antes de guardar.'));
     page.querySelector('#downloadStates').onclick = () => {
       try { exportJSON(normalizeFinancialData(draft), 'gfo-estados-borrador.json'); }
       catch (error) { message(error.message, true); }

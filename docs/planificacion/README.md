@@ -27,6 +27,8 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 | Cuentas opcionales y diagnóstico de N/D de la demo | Solicitud de Cris | Verificada localmente; sin publicar | [cuentas-opcionales-nd](cuentas-opcionales-nd/README.md) |
 | Reparación de totales y disponibilidad del motor | Solicitud de Cris | Verificada localmente; sin publicar | [reparacion-totales-motor](reparacion-totales-motor/README.md) |
 
+| Catálogo de ejemplos seleccionables AFOD | Solicitud de Cris | Verificada; pendiente de revisión de Carlos | [catalogo-ejemplos-afod](catalogo-ejemplos-afod/README.md) |
+
 Agrega una fila cuando empieces una feature y actualiza el estado cuando cambie.
 
 ## Convenciones

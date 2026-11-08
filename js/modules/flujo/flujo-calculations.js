@@ -1,3 +1,4 @@
+import { normalizarMoneda } from '../../utils/moneda.js';
 // Estado de flujo de efectivo por actividades (método directo: entradas y salidas de efectivo).
 // Lógica pura: sin DOM, window ni store. Plan: docs/planificacion/modulos-guia/01-modulos-obligatorios.md.
 import { flujoNeto, saldoFinalEfectivo, variacionNetaEfectivo } from '../../utils/calculate.js';
@@ -33,6 +34,7 @@ export function normalizarFlujo(datos) {
     movimientos.push({ id: m.id, concepto: texto(m.concepto), actividad: m.actividad, tipo: m.tipo, monto: m.monto });
   }
   return {
+    ...normalizarMoneda(datos),
     saldoInicial: esNumero(datos?.saldoInicial) ? datos.saldoInicial : null,
     periodoBase: texto(datos?.periodoBase),
     movimientos
@@ -67,6 +69,7 @@ export function calcularFlujo(datos) {
     periodoBase: normal.periodoBase,
     actividades,
     neto,
+    ...normalizarMoneda(normal),
     totalEntradas: actividades.reduce((total, a) => total + a.entradas, 0),
     totalSalidas: actividades.reduce((total, a) => total + a.salidas, 0),
     variacionNeta,

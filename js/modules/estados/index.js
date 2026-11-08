@@ -1,6 +1,7 @@
 import store from '../../store.js';
 import { normalizeFinancialData } from './estados-normalize.js';
 import { estadosUI } from './estados-ui.js';
+import { crearEjemplo } from '../../examples/catalogo.js';
 
 export const DEMO_MUNOMODA = {
   name: 'MUNO MODA S.A.',
@@ -116,12 +117,13 @@ export const DEMO_MUNOMODA = {
 };
 
 export function getDemoData() {
-  return DEMO_MUNOMODA;
+  return crearEjemplo('estados', 'actual', () => DEMO_MUNOMODA);
 }
 
 export function loadDemo() {
-  store.setPersisted('estados', normalizeFinancialData(DEMO_MUNOMODA));
-  return DEMO_MUNOMODA;
+  const demo = getDemoData();
+  store.setPersisted('estados', normalizeFinancialData(demo));
+  return demo;
 }
 
 export function getSavedStates() {

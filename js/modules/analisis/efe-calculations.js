@@ -1,3 +1,4 @@
+import { monedaDe } from '../../utils/moneda.js';
 // Estado de Flujo de Efectivo (EFE) por método indirecto: lógica pura, sin DOM
 // ni store. Deriva las tres actividades desde dos balances y comprueba que la
 // suma de los flujos iguale la variación de efectivo entre los dos periodos.
@@ -10,7 +11,7 @@
 // por intereses e impuestos quedan dentro de la utilidad neta, como en el
 // método indirecto clásico.
 
-import { formatCurrency } from '../../utils/format.js';
+import { formatCurrency as monedaBase } from '../../utils/format.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
 import { rolEFE } from './efe-roles.js';
 import {
@@ -75,6 +76,7 @@ function totalDe(items) {
 // Estado completo: las tres actividades, la comprobación contra la variación de
 // efectivo, motivos (datos faltantes), advertencias e interpretación.
 export function construirEFE(datos, periodoInicial, periodoFinal) {
+  const formatCurrency = v => monedaBase(v, monedaDe(datos));
   const periodos = { inicial: periodoInicial, final: periodoFinal };
   const motivos = [];
   const advertencias = [
@@ -322,14 +324,15 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     advertencias,
     interpretacion: ''
   };
-  resultado.interpretacion = interpretarEFE(resultado);
+  resultado.interpretacion = interpretarEFE(resultado, monedaDe(datos));
   return resultado;
 }
 
 // Qué dicen los signos de los tres flujos (sin umbrales: solo si la operación
 // genera o consume efectivo, si alcanza para la inversión y de dónde viene o a
 // dónde va el financiamiento). Solo se llama con los tres totales presentes.
-function lecturaFlujos({ operacion, inversion, financiamiento }) {
+function lecturaFlujos({ operacion, inversion, financiamiento }, moneda) {
+  const formatCurrency = v => monedaBase(v, moneda);
   const cfo = operacion.total;
   const cfi = inversion.total;
   const cff = financiamiento.total;
@@ -352,14 +355,15 @@ function lecturaFlujos({ operacion, inversion, financiamiento }) {
 
 // Lectura breve del estado. Los motivos y advertencias pueden traer nombres de
 // cuenta del archivo importado: el llamador debe escaparlos antes de HTML.
-export function interpretarEFE(resultado) {
+export function interpretarEFE(resultado, moneda = 'C$') {
+  const formatCurrency = v => monedaBase(v, moneda);
   const { estado, totalFlujos, variacionEfectivo, diferencia, operacion, inversion, financiamiento, motivos, conciliacionUtilidad } = resultado;
   if (estado === 'incompleta') {
     return `El EFE está incompleto: ${motivos.join(' ')} Complete los datos en Estados Financieros y vuelva a comprobar el estado.`;
   }
   const fmt = valor => formatCurrency(valor);
   const partes = `Operación ${fmt(operacion.total)}, inversión ${fmt(inversion.total)} y financiamiento ${fmt(financiamiento.total)}`;
-  const lectura = lecturaFlujos(resultado);
+  const lectura = lecturaFlujos(resultado, moneda);
   if (estado === 'cuadra') {
     // D-069: con la cuenta de resultado del periodo presente y coincidente, la
     // utilidad quedó verificada contra el balance.

@@ -1,7 +1,9 @@
+import { monedaDe } from '../../utils/moneda.js';
+import { panelEjemplos, vincularEjemplos, ejemploSeleccionado } from '../../components/ejemplos.js';
 // Pantalla #/flujo: estado de flujo de efectivo por actividades, variación neta y saldo final.
 // El cálculo está en flujo-calculations.js; aquí solo se arma el HTML y se atienden los eventos.
 import { escapeHTML as esc } from '../../utils/html.js';
-import { formatCurrencyND as monto } from '../../utils/format.js';
+import { formatCurrencyND as montoBase } from '../../utils/format.js';
 import { leerNumero, nuevoId } from '../../utils/form.js';
 import { totalesPeriodo } from '../../utils/estados-guardados.js';
 import {
@@ -22,6 +24,7 @@ function claseSigno(valor) {
 }
 
 function interpretacion(r) {
+  const monto = v => montoBase(v, monedaDe(r));
   const frases = [];
   const { operacion, inversion, financiamiento } = r.neto;
   if (operacion > 0) frases.push(`<li>La operación <strong>genera</strong> ${monto(operacion)}: el negocio produce efectivo con sus actividades principales.</li>`);
@@ -44,6 +47,7 @@ function interpretacion(r) {
 export function flujoUI(page, opciones) {
   const { guardar, graficar = null, confirmar = () => true, estados = null } = opciones;
   let datos = normalizarFlujo(opciones.datos);
+  const monto = v => montoBase(v, monedaDe(datos));
 
   const campo = id => page.querySelector(`#${id}`)?.value ?? '';
 
@@ -75,7 +79,7 @@ export function flujoUI(page, opciones) {
       : '';
     return `<div class="card mb-4"><h2 class="card-title">1. Saldo inicial de efectivo</h2>
       <form id="formSaldo" novalidate><div class="form-row">
-        <div class="form-group"><label class="form-label" for="flujoSaldoInicial">Saldo inicial (C$)</label>
+        <div class="form-group"><label class="form-label" for="flujoSaldoInicial">Saldo inicial (moneda del caso)</label>
           <input class="form-input" id="flujoSaldoInicial" type="number" step="any" value="${esNumero(datos.saldoInicial) ? datos.saldoInicial : ''}"></div>
         <div class="form-group" style="display:flex;align-items:flex-end"><button type="submit" class="btn btn-primary">Guardar saldo</button></div>
         ${tomar}
@@ -93,7 +97,7 @@ export function flujoUI(page, opciones) {
           <select class="form-select" id="flujoActividad">${opciones}</select></div>
         <div class="form-group"><label class="form-label" for="flujoTipo">Tipo</label>
           <select class="form-select" id="flujoTipo"><option value="entrada">Entrada (+)</option><option value="salida">Salida (−)</option></select></div>
-        <div class="form-group"><label class="form-label" for="flujoMonto">Monto (C$)</label>
+        <div class="form-group"><label class="form-label" for="flujoMonto">Monto (moneda del caso)</label>
           <input class="form-input" id="flujoMonto" type="number" min="0" step="any"></div>
       </div><button type="submit" class="btn btn-primary">Agregar movimiento</button></form>
       <ul class="form-hint mt-4">${ACTIVIDADES.map(a => `<li><strong>${ETIQUETA_ACTIVIDAD[a]}</strong>: ${EJEMPLOS_ACTIVIDAD[a]}.</li>`).join('')}</ul></div>`;
@@ -138,7 +142,7 @@ export function flujoUI(page, opciones) {
         <p class="page-subtitle">Entradas y salidas de efectivo clasificadas en operación, inversión y financiamiento.</p></div>
       <p class="text-muted" style="font-size:var(--font-size-sm)">Captura no oficial: el flujo que presentan Proforma y el panorama de Inicio sale del EFE de Análisis. Esta pantalla sirve para registrar y explorar movimientos de efectivo con fines didácticos.</p>
       <p id="flujoMensaje" role="status" aria-live="polite" class="text-muted">Indique el saldo inicial y registre las entradas y salidas de efectivo.</p>
-      <div class="flex-gap flex-wrap mb-4"><button type="button" class="btn btn-secondary" id="flujoEjemplo">Cargar ejemplo</button>
+      ${panelEjemplos('flujo', 'flujoEjemplo')}<div class="flex-gap flex-wrap mb-4">
         ${r.cantidadMovimientos ? '<button type="button" class="btn btn-danger" id="flujoVaciar">Borrar movimientos</button>' : ''}</div>
       <div class="kpi-grid mb-6">
         ${kpi(r.neto.operacion, 'Flujo de operación')}${kpi(r.neto.inversion, 'Flujo de inversión')}
@@ -168,9 +172,10 @@ export function flujoUI(page, opciones) {
   }
 
   function bind() {
+    vincularEjemplos(page, 'flujo');
     page.querySelector('#flujoEjemplo')?.addEventListener('click', () => {
       if (datos.movimientos.length && !confirmar('¿Reemplazar los movimientos actuales por el ejemplo?')) return;
-      persistir(normalizarFlujo(ejemploFlujo()), 'Ejemplo cargado: flujo de efectivo de un año de MUNO MODA (datos ficticios).');
+      persistir(normalizarFlujo(ejemploSeleccionado(page, 'flujo', ejemploFlujo)), 'Ejemplo seleccionado cargado. Revise su fuente y unidad en el panel.');
     });
     page.querySelector('#flujoVaciar')?.addEventListener('click', () => {
       if (!confirmar('¿Borrar todos los movimientos de efectivo?')) return;

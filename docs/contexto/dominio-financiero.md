@@ -301,3 +301,7 @@ D-099 implementa posteriormente la cobertura explícita: un grupo completo confi
 |---|---|
 | `js/modules/estados/estados-cobertura.js` | `GRUPOS_COBERTURA`, `ESTADOS_COBERTURA`, `coberturaCompleta(coberturaDelPeriodo, grupo)` |
 | `js/modules/razones/razones-motor.js` | `motivoComposicion(error, entrada)` (clasificación de errores de dominio compartida con el adaptador); `calcularRazonConTraza` expone procedencia del cero confirmado |
+
+## Datos de ejemplo y unidades (D-100)
+
+Las fábricas de `js/examples/ejemplos-estados.js` registran datos por identidad y el catálogo de `js/examples/catalogo.js` selecciona casos, sin introducir una segunda fórmula para ningún concepto financiero. Los valores de referencia y las convenciones docentes están en `docs/planificacion/catalogo-ejemplos-afod/INFORME-FINAL.md`. La metadata opcional `moneda` se valida en `utils/moneda.js`; USD miles pasa a USD multiplicando por 1000 y UM indica moneda no identificada, sin asumir conversión. Véanse firmas en `docs/api.md`.

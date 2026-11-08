@@ -1,0 +1,214 @@
+{
+  "escenarios": [
+    {
+      "modulo": "estados",
+      "id": "actual",
+      "moneda": "C$",
+      "utilidadNeta": 104825
+    },
+    {
+      "modulo": "estados",
+      "id": "baker",
+      "moneda": "USD",
+      "utilidadNeta": 180000
+    },
+    {
+      "modulo": "estados",
+      "id": "bartlett",
+      "moneda": "USD",
+      "utilidadNeta": 231000
+    },
+    {
+      "modulo": "estados",
+      "id": "practico2",
+      "moneda": "UM",
+      "utilidadNeta": 77000
+    },
+    {
+      "modulo": "flujo",
+      "id": "actual"
+    },
+    {
+      "modulo": "flujo",
+      "id": "baker-directo"
+    },
+    {
+      "modulo": "flujo",
+      "id": "bartlett-directo"
+    },
+    {
+      "modulo": "equilibrio",
+      "id": "actual"
+    },
+    {
+      "modulo": "equilibrio",
+      "id": "tor-base"
+    },
+    {
+      "modulo": "equilibrio",
+      "id": "tor-alto"
+    },
+    {
+      "modulo": "inventario",
+      "id": "actual"
+    },
+    {
+      "modulo": "inventario",
+      "id": "bodega"
+    },
+    {
+      "modulo": "planeacion",
+      "id": "actual"
+    },
+    {
+      "modulo": "planeacion",
+      "id": "contado"
+    },
+    {
+      "modulo": "presupuesto",
+      "id": "actual"
+    },
+    {
+      "modulo": "presupuesto",
+      "id": "salario"
+    },
+    {
+      "modulo": "mercado",
+      "id": "sin-dividendos"
+    },
+    {
+      "modulo": "planeacion",
+      "id": "parcial-cancelar-reemplazar"
+    },
+    {
+      "modulo": "estados",
+      "width": 1440,
+      "tema": "light"
+    },
+    {
+      "modulo": "flujo",
+      "width": 1440,
+      "tema": "light"
+    },
+    {
+      "modulo": "equilibrio",
+      "width": 1440,
+      "tema": "light"
+    },
+    {
+      "modulo": "inventario",
+      "width": 1440,
+      "tema": "light"
+    },
+    {
+      "modulo": "planeacion",
+      "width": 1440,
+      "tema": "light"
+    },
+    {
+      "modulo": "presupuesto",
+      "width": 1440,
+      "tema": "light"
+    },
+    {
+      "modulo": "estados",
+      "width": 1440,
+      "tema": "dark"
+    },
+    {
+      "modulo": "flujo",
+      "width": 1440,
+      "tema": "dark"
+    },
+    {
+      "modulo": "equilibrio",
+      "width": 1440,
+      "tema": "dark"
+    },
+    {
+      "modulo": "inventario",
+      "width": 1440,
+      "tema": "dark"
+    },
+    {
+      "modulo": "planeacion",
+      "width": 1440,
+      "tema": "dark"
+    },
+    {
+      "modulo": "presupuesto",
+      "width": 1440,
+      "tema": "dark"
+    },
+    {
+      "modulo": "estados",
+      "width": 390,
+      "tema": "light"
+    },
+    {
+      "modulo": "flujo",
+      "width": 390,
+      "tema": "light"
+    },
+    {
+      "modulo": "equilibrio",
+      "width": 390,
+      "tema": "light"
+    },
+    {
+      "modulo": "inventario",
+      "width": 390,
+      "tema": "light"
+    },
+    {
+      "modulo": "planeacion",
+      "width": 390,
+      "tema": "light"
+    },
+    {
+      "modulo": "presupuesto",
+      "width": 390,
+      "tema": "light"
+    },
+    {
+      "modulo": "estados",
+      "width": 390,
+      "tema": "dark"
+    },
+    {
+      "modulo": "flujo",
+      "width": 390,
+      "tema": "dark"
+    },
+    {
+      "modulo": "equilibrio",
+      "width": 390,
+      "tema": "dark"
+    },
+    {
+      "modulo": "inventario",
+      "width": 390,
+      "tema": "dark"
+    },
+    {
+      "modulo": "planeacion",
+      "width": 390,
+      "tema": "dark"
+    },
+    {
+      "modulo": "presupuesto",
+      "width": 390,
+      "tema": "dark"
+    },
+    {
+      "modulo": "inicioEmpresa",
+      "id": "baker",
+      "alcance": "solo Estados"
+    },
+    {
+      "modulo": "inicioPersonal",
+      "id": "salario"
+    }
+  ],
+  "errores": []
+}

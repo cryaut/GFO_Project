@@ -1,6 +1,7 @@
 import { escapeHTML } from '../../utils/html.js';
 import { formatCurrencyND } from '../../utils/format.js';
 import { estadosResueltos } from './estados-presentacion-calculations.js';
+import { monedaDe } from '../../utils/moneda.js';
 
 // Accesorias en la presentación, NO una política de ausencia financiera.
 // Una cuenta desconocida, un importe vacío o un subtotal nunca se compactan.
@@ -61,7 +62,7 @@ export function tablasEstadosResueltos(datos, periodos) {
       <tbody>${lista.map(fila => `<tr class="${fila.subtotal ? 'statement-subtotal' : ''}" data-statement-row="${escapeHTML(fila.clave)}">
         <th scope="row"><span class="statement-label">${etiquetaFilaEstado(fila, { mostrarOrigen: false })}</span></th>${periodos.map(p => {
           const propia = porPeriodo.get(p).get(fila.clave);
-          return `<td class="text-right font-mono">${formatCurrencyND(propia?.valor ?? null)}${origenFilaEstado(propia, fila.cuenta)}</td>`;
+          return `<td class="text-right font-mono">${formatCurrencyND(propia?.valor ?? null, monedaDe(datos))}${origenFilaEstado(propia, fila.cuenta)}</td>`;
         }).join('')}</tr>`).join('')}</tbody>
       </table></div>`;
     return `<section class="statement-solved"><h3>${titulo}</h3>${renderTabla(visibles)}${desplegableCuentasOpcionales(opcionales, opcionales.length ? renderTabla(opcionales) : '')}</section>`;

@@ -1,3 +1,4 @@
+import { monedaDe } from '../../utils/moneda.js';
 import { desarrolloPresupuesto } from '../planeacion/planeacion-desarrollo-calculations.js';
 // Proforma y reporte integrado: estado de resultados proforma frente al último periodo real,
 // efectivo proyectado, indicadores de todos los módulos y alertas que apoyan decisiones.
@@ -41,7 +42,7 @@ export function resultadosReales(estados) {
     const otros = [cuenta('is.nonoperating_income'), cuenta('is.interest_income'), cuenta('is.noninterest_nonoperating_expenses')];
     const r = computarRazonesDesdeDatos(estados, periodo);
     return {
-      periodo, ventas: subtotal('is.net_sales_reported'), cbv: subtotal('is.cost_of_sales_reported'),
+      periodo, moneda:monedaDe(estados), ventas: subtotal('is.net_sales_reported'), cbv: subtotal('is.cost_of_sales_reported'),
       utilidadBruta: subtotal('is.gross_profit_reported'), gastosOperacion: subtotal('presentacion.gastos_operativos'),
       otrosOperativos: cuenta('is.other_operating_income'),
       uaii: subtotal('is.operating_profit_reported'), uai: subtotal('presentacion.uai'),
@@ -73,6 +74,7 @@ export function resultadosProforma(presupuesto) {
 // de cobertura que permitan cotejarlos con el histórico.
 function motivoComparacion(real, proforma) {
   if (!real || !proforma) return null;
+  if (monedaDe(real) !== monedaDe(proforma)) return 'Las monedas difieren; no se comparan ni se convierten sin un tipo de cambio declarado.';
   if (!proforma.anual) return 'La variación requiere una proyección anual de 12 meses o 4 trimestres.';
   if (!/^[1-9]\d{3}$/.test(real.periodo)) {
     return 'El periodo real no identifica un ejercicio anual en formato AAAA.';
@@ -125,7 +127,7 @@ export function flujoDesdeEFE(estados) {
     };
   }
   return {
-    disponible: true,
+    disponible: true, ...(estados?.moneda ? { moneda:monedaDe(estados) } : {}),
     neto: { operacion: efe.operacion.total },
     variacionNeta: efe.variacionEfectivo,
     saldoFinal: efe.efectivoFinal,
@@ -164,9 +166,9 @@ export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento
     lista.push(indicador(grupo, 'Utilidad por acción (UPA)', mercado.upa, 'monto', 'Análisis', '#/analisis', '(UN − DAP) / acciones comunes.'));
     lista.push(indicador(grupo, 'Precio / utilidad (P/U)', mercado.pu, 'veces', 'Análisis', '#/analisis', 'Veces que el mercado paga la utilidad por acción.'));
     lista.push(indicador(grupo, 'Precio / valor en libros (P/VL)', mercado.pvl, 'veces', 'Análisis', '#/analisis',
-      esNumero(mercado.vlpa) ? `Valor en libros de ${monto(mercado.vlpa)} por acción.` : ''));
+      esNumero(mercado.vlpa) ? `Valor en libros de ${monto(mercado.vlpa, monedaDe(mercado))} por acción.` : ''));
     if (esNumero(mercado.pago)) {
-      lista.push(indicador(grupo, 'Pago de dividendos', mercado.pago, 'pct', 'Análisis', '#/analisis', `DPA de ${monto(mercado.dpa)}.`));
+      lista.push(indicador(grupo, 'Pago de dividendos', mercado.pago, 'pct', 'Análisis', '#/analisis', `DPA de ${monto(mercado.dpa, monedaDe(mercado))}.`));
     }
   }
   const ultimoApal = apalancamiento?.periodos?.[apalancamiento.periodos.length - 1];
@@ -182,7 +184,7 @@ export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento
   if (equilibrio) {
     const grupo = 'Punto de equilibrio (C-V-U)';
     lista.push(indicador(grupo, 'Punto de equilibrio', equilibrio.peUnidades, 'unidades', 'Punto de Equilibrio', '#/equilibrio',
-      esNumero(equilibrio.peVentas) ? `Equivale a ${monto(equilibrio.peVentas)} de ventas.` : 'Sin margen de contribución positivo.'));
+      esNumero(equilibrio.peVentas) ? `Equivale a ${monto(equilibrio.peVentas, monedaDe(equilibrio))} de ventas.` : 'Sin margen de contribución positivo.'));
     lista.push(indicador(grupo, 'Margen de seguridad', equilibrio.msPorcentaje, 'pct', 'Punto de Equilibrio', '#/equilibrio',
       esNumero(equilibrio.msPorcentaje) ? `Las ventas pueden caer ${pct(Math.max(0, equilibrio.msPorcentaje))} antes de tener pérdida.` : '',
       esNumero(equilibrio.msPorcentaje) ? (equilibrio.msPorcentaje >= 0.2 ? 'ok' : 'alerta') : 'info'));
@@ -215,7 +217,8 @@ export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento
       lecturaReposicion,
       inventario.porReponer.length ? 'alerta' : 'ok'));
   }
-  return lista;
+  return lista.map(i => i.formato === 'monto' && (i.fuente === 'Análisis' ? mercado?.moneda : i.fuente === 'Análisis (EFE)' ? flujo?.moneda : false)
+    ? { ...i, moneda:monedaDe(i.fuente === 'Análisis' ? mercado : flujo) } : i);
 }
 
 // Alertas con una acción sugerida, de mayor a menor urgencia. Texto plano: la pantalla lo escapa.
@@ -229,10 +232,10 @@ export function alertasIntegradas({ razones, presupuesto, equilibrio, flujo, inv
     agregar('alta', `El presupuesto proyecta una pérdida neta de ${monto(-presupuesto.totales.utilidadNeta)}. Revise precios, volumen o gastos.`, '#/planeacion');
   }
   if (flujo?.disponible && flujo.neto.operacion < 0) {
-    agregar('alta', `El flujo operativo estimado es ${monto(flujo.neto.operacion)}: confirme cobros y pagos antes de tomar decisiones.`, '#/analisis');
+    agregar('alta', `El flujo operativo estimado es ${monto(flujo.neto.operacion, monedaDe(flujo))}: confirme cobros y pagos antes de tomar decisiones.`, '#/analisis');
   }
   if (flujo?.disponible && esNumero(flujo.saldoFinal) && flujo.saldoFinal < 0) {
-    agregar('alta', `El flujo de efectivo termina con saldo negativo (${monto(flujo.saldoFinal)}).`, '#/analisis');
+    agregar('alta', `El flujo de efectivo termina con saldo negativo (${monto(flujo.saldoFinal, monedaDe(flujo))}).`, '#/analisis');
   }
   const rc = razon(razones, 'RC');
   if (esNumero(rc) && rc < (umbrales.ratioCorrienteMin ?? 1)) {

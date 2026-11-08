@@ -2264,3 +2264,22 @@ El motor conserva un total reportado válido aunque no pueda comprobar su desglo
 **Para revertirla.** Conservar/exportar las declaraciones de cobertura; retirar su interpretación mediante una decisión posterior y revisar todas las nuevas pruebas. No borrar datos del usuario ni restaurar silenciosamente cuentas sintéticas para hacer pasar los ejercicios.
 
 **Referencias.** [Informe final](planificacion/reparacion-totales-motor/INFORME-FINAL.md); [plan y verificación](planificacion/reparacion-totales-motor/README.md); diagnóstico de `cuentas-opcionales-nd`.
+
+### D-100 — Catálogo docente seleccionable, ejemplo integral y unidad explícita
+
+- **Fecha**: 2026-11-07.
+- **Estado**: Implementada; pendiente de revisión de Carlos.
+- **Decidió**: Cris solicita completar el ejemplo y añadir casos del ZIP, paneles de selección y PR con revisión humana.
+- **Área**: Ejemplos y presentación de los módulos financieros.
+
+**Contexto.** Una carga única sin fuente ni alcance no permite distinguir un ejemplo ficticio completo de un ejercicio docente que no informa crédito, otro periodo o moneda. El caso ficticio anterior carecía de suplementos para varias razones.
+
+**Opciones.** Inventar datos para cada ejercicio; importar todas las transcripciones sin verificar; o preparar casos contrastados y conservar sus límites. Se elige la tercera, completando únicamente el ejemplo ficticio con suplementos declarados.
+
+**Decisión.** Catálogo compartido con selector, fuente, alcance y carga explícita. MUNO integral añade ventas a crédito/pagos ficticios; los casos docentes no reciben suplementos inventados. Baker y Bartlett convierten miles de USD a USD completos; Práctico 2 y TOR usan UM por no identificar moneda. Se conserva la ubicación corriente de documentos de Baker y los equivalentes de Bartlett según la fuente, con nota visible. `moneda` es opcional y validada; no hay tipo de cambio implícito ni comparación monetaria entre unidades distintas. Los estados existentes no se migran ni sobrescriben. Los paneles de Inicio delimitan qué módulos cargan. Sustituir un caso parcial por un presupuesto completo confirma el reemplazo del conjunto.
+
+**Consecuencias.** Las 24 razones de MUNO 2024 quedan disponibles. Los N/D legítimos del docente permanecen. No se modifica la fórmula de razones, C-V-U o flujo para acomodar el material. Los casos que necesitan otro modelo quedan pendientes documentados. Los datos anteriores sin unidad explícita mantienen C$. El EFE derivado conserva sus limitaciones y no se presenta como reproducción del método directo docente.
+
+**Para revertirla.** Retirar opciones mediante otra decisión manteniendo exportables los datos y su moneda; no convertir importes ni borrar archivos del usuario.
+
+**Referencias.** [Informe y contraste docente](planificacion/catalogo-ejemplos-afod/INFORME-FINAL.md); [ficha](planificacion/catalogo-ejemplos-afod/README.md); D-096 a D-099.

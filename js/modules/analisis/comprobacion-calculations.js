@@ -1,10 +1,11 @@
+import { monedaDe } from '../../utils/moneda.js';
 // Piezas comunes de las comprobaciones del EOAF y del EFE: lógica pura, sin DOM
 // ni store. Los dos estados comparan dos balances y verifican una identidad
 // (Σ orígenes = Σ aplicaciones; CFO + CFI + CFF = Δ efectivo), así que eligen el
 // par de periodos, miden la variación de cada cuenta y toleran el redondeo de
 // la misma manera. Un solo lugar evita que las reglas se separen con el tiempo.
 
-import { formatCurrency } from '../../utils/format.js';
+import { formatCurrency as monedaBase } from '../../utils/format.js';
 import { resolveAccountType } from '../estados/estados-calculations.js';
 import { identificarCuenta, obtenerCuenta } from '../estados/cuentas-identificador.js';
 import { ordenarPeriodos } from '../estados/estados-normalize.js';
@@ -165,6 +166,7 @@ function totalGrupo(datos, bg, grupo) {
 // error del estado. D-072: los totales reportados con componentes en los datos
 // no suman (duplicarían a sus componentes).
 export function advertenciasDeBalance(datos, periodos, bgInicial, bgFinal) {
+  const formatCurrency = v => monedaBase(v, monedaDe(datos));
   const advertencias = [];
   for (const [etiqueta, bg] of [[periodos.inicial, bgInicial], [periodos.final, bgFinal]]) {
     const descuadre = totalGrupo(datos, bg, 'activos') - totalGrupo(datos, bg, 'pasivos') - totalGrupo(datos, bg, 'patrimonio');

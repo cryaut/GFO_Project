@@ -217,3 +217,9 @@ No la corrijas dentro de otra tarea: abre una rama propia y avísalo al equipo.
 ## Conexión de razones — ronda 18
 
 Estados persiste `composicionIngresos[periodo]` con `sin_declarar`, `excluye_intereses` o `incluye_intereses`; los datos previos sin el campo se leen como `sin_declarar`, sin migrar importes. Se conservan `accountIdentities`, `accountTypes`, `pendingAccounts`, `reportedTotals` y `supplementaryAccounts` al guardar y normalizar. El adaptador enlaza por identidad acreditada y construye la entrada de ambos periodos desde el mismo documento. Un documento no normalizable no aporta cifras; un concepto sin identidad afecta a sus consumidores. Análisis, Integración y Proforma comparten las razones del motor y el derivado de utilidad neta. La lectura global mantiene los motivos y la UI conserva su contrato. Los JSON y el generado no cambian en esta conexión.
+
+## Ejemplos seleccionables y moneda
+
+`js/examples/catalogo.js` coordina metadatos y fábricas de ejemplos. `ejemplos-estados.js` registra casos docentes por identidad de cuenta; no contiene fórmulas financieras. Los módulos pasan su fábrica propia al catálogo para evitar ciclos entre índices. `components/ejemplos.js` presenta la selección y procedencia; la carga y el guardado siguen perteneciendo al módulo. Inicio reutiliza ese catálogo y explicita su alcance.
+
+Los documentos de Estados, Flujo y Equilibrio admiten `moneda` opcional, validada con `utils/moneda.js`. No se modifica el esquema global del store. El guardado completo conserva la unidad; los renders usan los formateadores existentes. Un archivo anterior sin moneda conserva C$. No hay conversión de divisas automática. D-100 e informe `catalogo-ejemplos-afod` documentan casos, fuentes y limitaciones.

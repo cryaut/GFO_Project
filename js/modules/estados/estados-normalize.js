@@ -1,6 +1,7 @@
 import { ACCOUNT_TYPES, inferAccountType } from './estados-calculations.js';
 import { identificarCuenta, obtenerCuenta } from './cuentas-identificador.js';
 import { GRUPOS_COBERTURA, ESTADOS_COBERTURA } from './estados-cobertura.js';
+import { normalizarMoneda } from '../../utils/moneda.js';
 
 const MAX_PERIODS = 100;
 const MAX_ACCOUNTS_PER_GROUP = 200;
@@ -249,6 +250,7 @@ export function normalizeFinancialData(input, { filas = {} } = {}) {
   return {
     name: typeof raw.name === 'string' && raw.name.trim() ? raw.name.trim() : typeof source.name === 'string' && source.name.trim() ? source.name.trim() : 'Datos importados',
     periods: ordenarPeriodos(periods),
+    ...normalizarMoneda(source),
     balanceGeneral,
     estadoResultados,
     accountTypes, accountIdentities, composicionIngresos,

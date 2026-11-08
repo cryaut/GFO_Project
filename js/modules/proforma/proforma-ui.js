@@ -38,10 +38,10 @@ function seccionProforma(r) {
     const cambio = f.formato === 'monto'
       ? (esNumero(f.variacion) ? `${f.variacion > 0 ? '+' : ''}${pct(f.variacion)}` : 'N/D')
       : (esNumero(f.puntos) ? `${f.puntos > 0 ? '+' : ''}${formatNumberND(f.puntos * 100)} pts` : 'N/D');
-    const fmt = v => (v === null && ['otrosNeto', 'otrosOperativos'].includes(f.clave) ? '—' : FORMATO[f.formato](v));
+    const fmt = (v, moneda) => (v === null && ['otrosNeto', 'otrosOperativos'].includes(f.clave) ? '—' : f.formato === 'monto' ? monto(v, moneda) : FORMATO[f.formato](v));
     const destacar = ['utilidadBruta', 'uaii', 'uai', 'utilidadNeta'].includes(f.clave) ? ' style="font-weight:600"' : '';
-    return `<tr${destacar}><td>${f.concepto}</td><td class="text-right font-mono">${r.real ? fmt(f.real) : '—'}</td>
-      <td class="text-right font-mono">${r.proforma ? fmt(f.proforma) : '—'}</td><td class="text-right font-mono">${cambio}</td></tr>`;
+    return `<tr${destacar}><td>${f.concepto}</td><td class="text-right font-mono">${r.real ? fmt(f.real, r.real?.moneda) : '—'}</td>
+      <td class="text-right font-mono">${r.proforma ? fmt(f.proforma, r.proforma?.moneda) : '—'}</td><td class="text-right font-mono">${cambio}</td></tr>`;
   }).join('');
   const notas = [];
   if (!r.proforma && r.motivoPresupuesto) notas.push(esc(r.motivoPresupuesto));
@@ -79,7 +79,7 @@ function seccionIndicadores(indicadores) {
   const grupos = [...new Set(indicadores.map(i => i.grupo))];
   const filas = grupos.map(grupo => `<tr><th scope="rowgroup" colspan="4">${esc(grupo)}</th></tr>${indicadores
     .filter(i => i.grupo === grupo)
-    .map(i => `<tr><td>${esc(i.nombre)} ${ESTADO[i.estado]}</td><td class="text-right font-mono" style="white-space:nowrap">${FORMATO[i.formato](i.valor)}</td>
+    .map(i => `<tr><td>${esc(i.nombre)} ${ESTADO[i.estado]}</td><td class="text-right font-mono" style="white-space:nowrap">${i.formato === 'monto' ? monto(i.valor, i.moneda) : FORMATO[i.formato](i.valor)}</td>
       <td>${esc(i.lectura)}</td><td><a href="${i.ruta}">${esc(i.fuente)}</a></td></tr>`).join('')}`).join('');
   return `<div class="card mb-4"><h2 class="card-title">3. Indicadores integrados</h2>
     <div class="table-wrapper"><table class="statement-table">

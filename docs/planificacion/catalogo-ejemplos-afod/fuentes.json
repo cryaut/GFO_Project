@@ -1,0 +1,22 @@
+{
+  "zip": "Ejercicios_AFOD.zip",
+  "sha256Zip": "6fd39159eaca96013eda5f49b3ccd031c63e01eb0f37c4fcf5b84bcddbd552c4",
+  "transcripciones": [
+    {
+      "archivo": "Baker Completo.md",
+      "sha256": "ed5d3341f70e2133b95835cc07907f617db8ce6abb38aebe538482896ebdb93b"
+    },
+    {
+      "archivo": "Bartlley Company.md",
+      "sha256": "67f3e23ffd686c56625372c461af121bc0932777341c9c643b37c69cef6c4b05"
+    },
+    {
+      "archivo": "Ejercicio practico 2.md",
+      "sha256": "874bed546467b76550d7e1014a3d13f6a0eda0c2ad42e4b899bcc305093e6955"
+    },
+    {
+      "archivo": "Practica_clase_TOR_Gitman_Resuelto.md",
+      "sha256": "59eb5d8892fcb7da4302a312a3e83e438ef41ea3aedbab1c4d1d0012e53f57c9"
+    }
+  ]
+}
