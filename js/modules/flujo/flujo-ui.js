@@ -5,7 +5,7 @@ import { panelEjemplos, vincularEjemplos, ejemploSeleccionado } from '../../comp
 import { escapeHTML as esc } from '../../utils/html.js';
 import { formatCurrencyND as montoBase } from '../../utils/format.js';
 import { leerNumero, nuevoId } from '../../utils/form.js';
-import { totalesPeriodo } from '../../utils/estados-guardados.js';
+import { consultarMontoCuenta } from '../estados/cuentas-identificador.js';
 import {
   ACTIVIDADES, ETIQUETA_ACTIVIDAD, MAX_TEXTO, calcularFlujo, conciliarConBalance, ejemploFlujo,
   normalizarFlujo, validarMovimientoFlujo
@@ -128,6 +128,7 @@ export function flujoUI(page, opciones) {
   function seccionConciliacion(r) {
     const c = conciliarConBalance(r, estados, datos.periodoBase);
     if (!c) return '';
+    if (c.motivo === 'moneda_incompatible') return '<p class="text-warning">No se puede conciliar el flujo y el balance porque sus monedas son distintas.</p>';
     if (c.cuadra === null) return `<p class="text-warning">No se puede conciliar: el efectivo del balance de ${esc(c.periodo)} está N/D.</p>`;
     return c.cuadra
       ? `<p class="text-success">El saldo final coincide con el efectivo del balance de ${esc(c.periodo)} (${monto(c.efectivo)}).</p>`
@@ -189,14 +190,15 @@ export function flujoUI(page, opciones) {
     });
     page.querySelector('#flujoTomarSaldo')?.addEventListener('click', () => {
       const periodo = campo('flujoPeriodo');
+      if (!estados?.periods?.includes(periodo)) { mensaje('Elija un periodo de los estados guardados.', true); return; }
       if (monedaDe(estados) !== monedaDe(datos)) {
         mensaje(`Moneda incompatible: Estados usa ${monedaDe(estados)} y Flujo usa ${monedaDe(datos)}. Se conservan los saldos; no se realiza conversión automática.`, true);
         return;
       }
-      const totales = totalesPeriodo(estados, periodo);
-      if (!totales) { mensaje('Elija un periodo de los estados guardados.', true); return; }
-      persistir({ ...datos, saldoInicial: totales.efectivo, periodoBase: periodo },
-        `Saldo inicial tomado del efectivo del balance de ${periodo}: ${monto(totales.efectivo)}.`);
+      const { valor: efectivo } = consultarMontoCuenta(estados, periodo, 'bs.cash_and_equivalents');
+      if (!esNumero(efectivo)) { mensaje(`El efectivo del balance de ${periodo} está N/D. Se conserva el saldo inicial.`, true); return; }
+      persistir({ ...datos, saldoInicial: efectivo, periodoBase: periodo },
+        `Saldo inicial tomado del efectivo del balance de ${periodo}: ${monto(efectivo)}.`);
     });
     page.querySelector('#formFlujo')?.addEventListener('submit', event => {
       event.preventDefault();

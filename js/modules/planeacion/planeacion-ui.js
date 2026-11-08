@@ -5,7 +5,7 @@ import { monedaDe } from '../../utils/moneda.js';
 import { escapeHTML as esc } from '../../utils/html.js';
 import { formatCurrencyND as monto, formatNumberND, formatPercentND as pct } from '../../utils/format.js';
 import { leerNumero, nuevoId } from '../../utils/form.js';
-import { totalesPeriodo } from '../../utils/estados-guardados.js';
+import { consultarMontoCuenta } from '../estados/cuentas-identificador.js';
 import {
   CALENDARIOS_CAPITAL_TRABAJO, MAX_PERIODOS, SUPUESTOS, TIPOS_PERIODO,
   calcularCapitalTrabajo, calcularPresupuestoMaestro, ejemploPlaneacion, normalizarSupuestos, validarSupuestos
@@ -601,18 +601,29 @@ export function planeacionUI(page, opciones) {
       guardarFormulario(false);
     });
     page.querySelector('#planTomarBalance')?.addEventListener('click', () => {
+      const periodo = estados?.periods?.at(-1);
+      if (!periodo) { mensaje('No se pudieron leer los estados guardados.', true); return; }
       if (monedaDe(estados) !== monedaDe(lectura.base || lectura.supuestos)) {
         mensaje(`Moneda incompatible: Estados usa ${monedaDe(estados)} y Planeación usa ${monedaDe(lectura.base || lectura.supuestos)}. Se conserva el borrador; no se realiza conversión automática.`, true);
         return;
       }
-      const totales = totalesPeriodo(estados);
-      if (!totales) { mensaje('No se pudieron leer los estados guardados.', true); return; }
-      borrador.campos.saldoInicialCaja = String(totales.efectivo ?? '');
-      borrador.campos.cxcInicial = String(totales.cxC ?? '');
-      borrador.campos.cxpInicial = String(totales.cuentasPorPagar ?? '');
+      const campos = [
+        ['saldoInicialCaja', 'bs.cash_and_equivalents', 'efectivo'],
+        ['cxcInicial', 'bs.trade_receivables', 'CxC'],
+        ['cxpInicial', 'bs.trade_payables', 'CxP']
+      ];
+      const saldos = campos.map(([destino, id, etiqueta]) => ({
+        destino, etiqueta, valor: consultarMontoCuenta(estados, periodo, id).valor
+      }));
+      const disponibles = saldos.filter(({ valor }) => esNumero(valor));
+      if (!disponibles.length) { mensaje(`Los saldos de apertura del balance ${periodo} están N/D.`, true); return; }
+      for (const { destino, valor } of disponibles) borrador.campos[destino] = String(valor);
       marcarCambios();
       render();
-      mensaje(`Tomados del balance ${totales.periodo}: efectivo ${monto(totales.efectivo)}, CxC ${monto(totales.cxC)} y CxP ${monto(totales.cuentasPorPagar)}. Pulse Calcular y guardar.`);
+      const aplicados = disponibles.map(({ etiqueta, valor }) => `${etiqueta} ${monto(valor)}`);
+      const pendientes = saldos.filter(({ valor }) => !esNumero(valor)).map(({ etiqueta }) => etiqueta);
+      const aviso = pendientes.length ? ` Se conservaron los campos ${pendientes.join(', ')} porque el balance los tiene N/D.` : '';
+      mensaje(`Del balance ${periodo} se tomaron ${aplicados.join(', ')}.${aviso} Pulse Calcular y guardar.`);
     });
     page.querySelector('#planTomarInventario')?.addEventListener('click', () => {
       const id = page.querySelector('#planProducto')?.value;

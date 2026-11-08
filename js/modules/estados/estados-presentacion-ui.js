@@ -36,7 +36,11 @@ export function desplegableCuentasOpcionales(filas, contenido) {
 export function origenFilaEstado(fila, cuentaVisible = fila?.cuenta) {
   if (!fila) return '';
   const origen = { calculado: 'Calculado', reportado: 'Reportado', pendiente: 'Faltan datos' }[fila.origen];
-  const aviso = fila.motivos?.length && fila.origen === 'reportado' ? ' · Revisar' : '';
+  let aviso = '';
+  if (fila.origen === 'reportado' && fila.motivos?.length) {
+    const incompleto = fila.motivos.some(motivo => motivo.codigo === 'reported_subtotal_unverifiable');
+    aviso = incompleto ? ' · Desglose no comprobable' : ' · Revisar';
+  }
   const nombre = fila.cuenta !== cuentaVisible ? ` · ${escapeHTML(fila.cuenta)}` : '';
   return origen ? `<small class="statement-source">${origen}${aviso}${nombre}</small>` : '';
 }

@@ -20,7 +20,7 @@ Funciones puras, sin DOM ni store. Los adaptadores públicos `computeAH`, `compu
 #### `analisisVerticalCompleto(datos, periodo)`
 - **Parámetros**: estados normalizados y periodo.
 - **Retorno**: `{ balanceGeneral, estadoResultados, complementarios }`. Cada estado tiene `base`, `baseValor` y todas sus `rows` con `pctBase`; complementarios no tienen una base inventada.
-- **Fórmula**: `av(valor, base)` con guarda de datos finitos y divisor distinto de cero. Bases: activo total del totalizador y ventas netas del totalizador.
+- **Fórmula**: `av(valor, base)` con guarda de datos finitos y divisor distinto de cero. La base del balance es el activo total. Si está reportado, se conserva y se indica si el desglose es insuficiente o discrepa. La base del ER es ventas netas.
 - **Ejemplo**: UN reportada 12000 y ventas netas 200000 → `pctBase=0.06`; base cero o ausente → `null`.
 
 #### `detalleDuPont(datos, periodo)`
@@ -907,7 +907,7 @@ Lectura del estado: si la estimación cuadra o no y qué sugieren sus signos. La
 
 Identifica los dividendos como derivados de las utilidades acumuladas y aclara que cuadrar no valida independientemente la utilidad neta. Se conservan la fórmula y la falta de confirmación del dato de dividendos. `construirEFE` reconoce «pérdida del ejercicio/periodo», omite el motivo sin clasificación cuando ambos saldos son cero y advierte movimientos opuestos entre reservas y resultados, sin redistribuir importes.
 
-`conciliarConBalance(resultado, estados, periodoBase)` devuelve `null` cuando no hay comparación aplicable. Si el efectivo del periodo siguiente no es numérico, devuelve `{ periodo, efectivo: null, diferencia: null, cuadra: null, motivo: 'efectivo_no_disponible' }`; un efectivo declarado en cero sí puede conciliarse (D-087).
+`conciliarConBalance(resultado, estados, periodoBase)` devuelve `null` cuando no hay comparación aplicable. Si las monedas difieren o falta efectivo acreditado en el periodo siguiente, devuelve `{ periodo, efectivo: null, diferencia: null, cuadra: null, motivo }` con `moneda_incompatible` o `efectivo_no_disponible`, respectivamente. Un efectivo declarado en cero puede conciliarse cuando coincide la moneda (D-087 y D-100).
 
 ---
 

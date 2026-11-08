@@ -703,13 +703,15 @@ En `#/flujo` indica el saldo inicial (o tómalo del efectivo de un periodo del b
 
 Flujo de una actividad = entradas − salidas; variación neta = operación + inversión + financiamiento; saldo final = saldo inicial + variación neta. En el ejemplo: operación +98,000, inversión −30,000 y financiamiento −45,000 → variación +23,000; con saldo inicial 52,000 el saldo final es C$ 75,000.
 
-Cuando existe un balance del periodo siguiente, la pantalla puede comparar su efectivo con el saldo calculado. Si el efectivo del balance está N/D, la conciliación también queda N/D; un cero declarado sí puede compararse.
+Flujo toma el saldo inicial y compara el efectivo del periodo siguiente cuando el balance usa la misma moneda. Si falta el efectivo, la copia conserva el saldo inicial y la conciliación queda N/D. Un cero declarado sí puede copiarse y compararse.
 
 ---
 
 ## 12. Presupuesto Maestro
 
 En `#/planeacion` se presupuesta una empresa comercial (un producto o línea) de 1 a 12 meses o trimestres. Abre **Supuestos** para completar el presupuesto y pulsa **Calcular y guardar**. Puedes cargar un ejemplo o tomar el efectivo, las cuentas por cobrar y las cuentas por pagar del balance. También puedes tomar el inventario inicial y el costo de un producto de Inventario.
+
+Al tomar los saldos del balance, Planeación copia los importes disponibles en la misma moneda y conserva los valores del borrador donde el balance tiene N/D.
 
 **Resumen** muestra cobros, pagos a proveedores y saldos al cierre del horizonte. Selecciona una tarjeta para consultar sus movimientos o vencimientos. Para los cobros y pagos, el selector de periodo cambia el detalle del panel. **Tablas completas** reúne los presupuestos y sus avisos. Cambiar entre vistas conserva las ediciones en curso. El resumen muestra las cifras guardadas hasta que pulses **Calcular y guardar**.
 
@@ -763,7 +765,7 @@ Si el ejercicio proporciona AC y PC totales identificados, la razón corriente s
 
 ### Bartlett con premisas de clase y comprobaciones corregidas
 
-Al tomar saldos de Estados hacia Flujo o Planeación, ambas secciones deben usar la misma moneda. Si difieren, la aplicación avisa y conserva los saldos y las ediciones pendientes del destino. No se convierte moneda automáticamente. Un total de activo reportado válido puede usarse en AV aunque no se pueda comprobar su desglose por faltar depreciación; revise los avisos del detalle.
+Al tomar saldos de Estados hacia Flujo o Planeación, ambas secciones deben usar la misma moneda. Si difieren, la aplicación avisa y conserva los saldos y las ediciones pendientes del destino. En AV, el activo reportado puede servir de base aunque falte depreciación. En ese caso, la fila muestra «Desglose no comprobable».
 
 En el selector de Estados o Inicio empresa, **Bartlett · razones de clase** añade las premisas de las diapositivas 14–15 solo para 2012: todas las ventas a crédito y compras estimadas como 70 % del costo. Revise la procedencia, cargue y guarde el borrador. Los suplementos se muestran en la vista previa de Estados. Los resultados son 7.08 veces / 51.53 días para cobro, 4.48 veces / 81.41 días para pago y 21.60 días de ciclo. El ejemplo **Bartlett Company** conserva los datos históricos sin esas suposiciones, por lo que puede mostrar N/D en crédito. Una base de compras declarada permite calcular sin pagos a proveedores; no es un pago de caja ni una prueba de compras reales.
 

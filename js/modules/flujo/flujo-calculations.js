@@ -1,9 +1,9 @@
-import { normalizarMoneda } from '../../utils/moneda.js';
+import { monedaDe, normalizarMoneda } from '../../utils/moneda.js';
 // Estado de flujo de efectivo por actividades (método directo: entradas y salidas de efectivo).
 // Lógica pura: sin DOM, window ni store. Plan: docs/planificacion/modulos-guia/01-modulos-obligatorios.md.
 import { flujoNeto, saldoFinalEfectivo, variacionNetaEfectivo } from '../../utils/calculate.js';
 import { toleranciaComprobacion } from '../analisis/comprobacion-calculations.js';
-import { computeFinancialTotals } from '../estados/estados-calculations.js';
+import { consultarMontoCuenta } from '../estados/cuentas-identificador.js';
 
 export const ACTIVIDADES = ['operacion', 'inversion', 'financiamiento'];
 export const ETIQUETA_ACTIVIDAD = { operacion: 'Operación', inversion: 'Inversión', financiamiento: 'Financiamiento' };
@@ -81,16 +81,15 @@ export function calcularFlujo(datos) {
 // Si el saldo inicial se tomó del efectivo de un periodo y los estados tienen el periodo
 // siguiente, compara el saldo final con el efectivo de ese periodo (null si no aplica).
 export function conciliarConBalance(resultado, estados, periodoBase) {
-  if (!estados || !periodoBase || !esNumero(resultado.saldoFinal)) return null;
-  const k = estados.periods.indexOf(periodoBase);
-  if (k < 0 || k === estados.periods.length - 1) return null;
-  const periodo = estados.periods[k + 1];
-  let efectivo;
-  try {
-    efectivo = computeFinancialTotals(estados, periodo).efectivo;
-  } catch {
-    return null;
+  const periodos = estados?.periods;
+  if (!Array.isArray(periodos) || !periodoBase || !esNumero(resultado?.saldoFinal)) return null;
+  const k = periodos.indexOf(periodoBase);
+  if (k < 0 || k === periodos.length - 1) return null;
+  const periodo = periodos[k + 1];
+  if (monedaDe(resultado) !== monedaDe(estados)) {
+    return { periodo, efectivo: null, diferencia: null, cuadra: null, motivo: 'moneda_incompatible' };
   }
+  const { valor: efectivo } = consultarMontoCuenta(estados, periodo, 'bs.cash_and_equivalents');
   if (!esNumero(efectivo)) {
     return { periodo, efectivo: null, diferencia: null, cuadra: null, motivo: 'efectivo_no_disponible' };
   }

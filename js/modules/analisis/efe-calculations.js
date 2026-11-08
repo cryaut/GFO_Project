@@ -152,8 +152,16 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
       motivos.push(`No se pudo calcular la utilidad neta del periodo ${periodoFinal} (${error.message}). Corrija el importe en Estados Financieros.`);
     }
     if (importesValidos) {
-      utilidadNeta = obtenerUtilidadNetaMotor(datos, periodoFinal).valor;
-      if (utilidadNeta === null) motivos.push(`La utilidad neta no se puede determinar con los datos acreditados del ER ${periodoFinal}; revise las cuentas y su composición en Estados Financieros.`);
+      const lectura = obtenerUtilidadNetaMotor(datos, periodoFinal);
+      utilidadNeta = lectura.valor;
+      const aviso = lectura.motivos.find(m => m.id === 'is.net_income_reported');
+      if (utilidadNeta === null) {
+        motivos.push(`La utilidad neta no se puede determinar con los datos acreditados del ER ${periodoFinal}. Revise las cuentas y su composición en Estados Financieros.`);
+      } else if (aviso?.codigo === 'reported_subtotal_mismatch') {
+        advertencias.push(`La utilidad neta reportada (${formatCurrency(aviso.reportado)}) no coincide con su desglose (${formatCurrency(aviso.calculado)}).`);
+      } else if (aviso?.codigo === 'reported_subtotal_unverifiable') {
+        advertencias.push('El desglose disponible no permite comprobar la utilidad neta reportada.');
+      }
     }
   }
 

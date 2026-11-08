@@ -279,7 +279,7 @@ Disponibilidad de cuentas (D-043 y excepción limitada D-047/D-048 a D-044): una
 | `js/utils/html.js` | `escapeHTML(valor)` |
 | `js/modules/inventario/inventario-calculations.js` | `calcularInventario`, `kardex`, `resumenProducto`, `validarMovimiento`, `validarInventarioRespaldo` y el resto en `docs/api.md` |
 | `js/modules/equilibrio/equilibrio-calculations.js` | `calcularCVU`, `calcularEscenarios`, `puntosGrafica`, `baseDesdeEstados` (P, CVu y CF desde Estados y Apalancamiento) |
-| `js/modules/flujo/flujo-calculations.js` | `calcularFlujo`, `conciliarConBalance` |
+| `js/modules/flujo/flujo-calculations.js` | `calcularFlujo`, `conciliarConBalance` (requiere efectivo acreditado en la misma moneda) |
 | `js/modules/planeacion/planeacion-calculations.js` | `calcularPresupuestoMaestro`, `validarSupuestos`, `SUPUESTOS`, `calcularCapitalTrabajo`, `validarCapitalTrabajo`, `CALENDARIOS_CAPITAL_TRABAJO` |
 | `js/modules/proforma/proforma-calculations.js` | `construirReporte`, `resultadosReales`, `resultadosProforma`, `compararResultados`, `alertasIntegradas` |
 | `js/utils/form.js`, `js/utils/estados-guardados.js` | `leerNumero`, `nuevoId`, `fechaHoy`; `estadosGuardados`, `totalesPeriodo` |

@@ -2,7 +2,7 @@
 import { ahDelta, ahPctDelta, av, dupont } from '../../utils/calculate.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
 import { estadosResueltos } from '../estados/estados-presentacion-calculations.js';
-import { computarRazonesDesdeDatos, obtenerUtilidadNetaMotor } from '../razones/razones-app-adapter.js';
+import { computarRazonesDesdeDatos, MAPA_RAZONES_APP, obtenerUtilidadNetaMotor } from '../razones/razones-app-adapter.js';
 import { crearContextoRazonesGuardadas, evaluarConComposicion } from '../razones/razones-app-entrada.js';
 import { evaluarDerivado } from '../razones/razones-motor.js';
 
@@ -43,10 +43,19 @@ export function analisisHorizontalCompleto(datos, periodos) {
 export function analisisVerticalCompleto(datos, periodo) {
   const totales = datos?.periods?.includes(periodo) ? computeFinancialTotals(datos, periodo) : null;
   const filas = filasAnalisis(datos, periodo);
+  // La disponibilidad del activo reportado es independiente de su desglose.
+  const reportado = filas.find(f => f.id === 'bs.total_assets' && f.origen === 'reportado');
+  const contexto = reportado && crearContextoRazonesGuardadas(datos, periodo);
+  const lectura = contexto?.entrada && evaluarDerivado(MAPA_RAZONES_APP.endeudamiento, 'derived.total_assets', contexto.entrada);
+  if (numero(lectura?.valor) && lectura.valor === reportado.valor) {
+    reportado.valorCalculo = lectura.valor;
+    reportado.motivos = lectura.motivos;
+  }
+  const activos = reportado?.valorCalculo ?? totales?.totalActivos ?? null;
   // Misma base (ventas netas), con la disponibilidad de la lectura del ER.
   // Un ingreso operativo acreditado no debe invalidarla por carecer de tipoApp.
   const ventas = filas.find(f => f.id === 'is.net_sales_reported')?.valorCalculo ?? null;
-  const bases = { balance: ['Total Activos', totales?.totalActivos ?? null], resultados: ['Ventas netas', ventas] };
+  const bases = { balance: ['Total Activos', activos], resultados: ['Ventas netas', ventas] };
   const seccion = nombre => {
     const [base, baseValor] = bases[nombre];
     return { base, baseValor, rows: filas.filter(fila => fila.seccion === nombre).map(fila => ({ ...fila, base,

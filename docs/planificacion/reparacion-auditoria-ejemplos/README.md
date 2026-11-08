@@ -32,6 +32,10 @@ Carlos debe revisar el PR #31 y sus entregas dependientes; no hay merge automát
 
 ## Entrega y validación
 
+### Corrección del seguimiento en PR #31
+
+La conciliación de Flujo exige efectivo acreditado en la misma moneda. Flujo conserva el saldo previo cuando el efectivo está N/D y Planeación aplica únicamente los importes disponibles al borrador. AV conserva el activo reportado y distingue un desglose incompleto de una discrepancia. EFE conserva la utilidad neta reportada, incluso cero, y muestra el diagnóstico del motor. Las regresiones reproducen los fallos de `e6a33b`. [Casos de prueba](../../../tests/unit/revision-carlos-pr31.test.js).
+
 ### Seguimiento de Carlos, 2026-11-08
 
 Se leyó su revisión `5816728981` y se verificaron las cuatro solicitudes contra `021ef67`. Dos P1 ya estaban cubiertos; se añaden el bloqueo de copias monetarias incompatibles en Flujo/Planeación y la conservación del activo reportado como base de AV. [Respuesta por punto](REVISION-CARLOS.md). Diez regresiones nuevas más las 22 anteriores pasan en la ejecución dirigida; revisión humana sigue pendiente.
