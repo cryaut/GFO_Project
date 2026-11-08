@@ -6,6 +6,9 @@ Todos los cambios notables en GFO Toolkit.
 
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
+### Reglas de trabajo
+- Revisión de PR opcional por solicitud de Cris (D-103): se elimina la aprobación ajena obligatoria y se mantienen PR, tests/lint, atención de comentarios existentes y autorización para merges con IA.
+
 ### Rigor financiero
 - DuPont usa utilidad y ventas del motor; Flujo y Proforma mantienen N/D cuando falta un operando en vez de convertirlo en cero (D-087).
 - El EFE indirecto usa identidades para resultados y reservas e indica que sus flujos y dividendos son estimaciones que requieren confirmar movimientos; Proforma conserva esa distinción (D-088).

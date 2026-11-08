@@ -38,7 +38,7 @@ En Windows PowerShell, si `npm` o `npx` fallan por la política de ejecución, u
 6. **No leas cuentas por nombre fijo** como `er['Ventas']`. Los archivos importados traen nombres propios: usa `computeFinancialTotals` y los tipos de `ACCOUNT_TYPES` en `js/modules/estados/estados-calculations.js`.
 7. **Escapa lo que venga del usuario o de un archivo** con `escapeHTML` (`js/utils/html.js`) antes de insertarlo con `innerHTML`.
 8. **Guarda módulos completos con `store.setPersisted`.** Lanza un error si `localStorage` falla; `store.set` lo ignora en silencio.
-9. **Tests y lint en verde antes de pedir revisión.** Cada fórmula nueva lleva un test con un caso resuelto a mano.
+9. **Tests y lint en verde antes de integrar.** Si se solicita revisión opcional, también deben pasar antes de pedirla. Cada fórmula nueva lleva un test con un caso resuelto a mano.
 10. **No toques lo que no es de tu tarea.** Sin refactors, renombres, reformateos ni cambios de fin de línea en código ajeno. Si ves un problema fuera de tu alcance, anótalo en el PR.
 11. **Sin dependencias nuevas sin acuerdo del equipo.** Si se aprueba una, con versión exacta.
 12. **Si una regla te impide terminar, detente y pregunta.** No la saltes ni la "arregles" por tu cuenta.
@@ -80,4 +80,4 @@ Lee solo lo que la tarea necesita.
 - [ ] Ficha de la feature actualizada: qué se hizo, qué falta y qué se decidió.
 - [ ] Decisiones discutibles registradas en `docs/decisiones.md`.
 - [ ] Commits con el formato `tipo: descripción` y archivos agregados por nombre (nunca `git add .`).
-- [ ] PR hacia `main` con la plantilla completa. Lo aprueba otra persona del equipo, nunca el autor ni una IA. El agente solo hace el merge si se lo piden y se cumplen las condiciones de "Integrar con una IA" en `docs/reglas/flujo-de-trabajo.md`.
+- [ ] PR hacia `main` con la plantilla completa. La revisión de otra persona es opcional: no se exige aprobación para hacer merge. Antes de integrar, lee y atiende las observaciones vigentes que existan. El agente solo hace el merge si se lo piden y se cumplen las condiciones de "Integrar con una IA" en `docs/reglas/flujo-de-trabajo.md`.

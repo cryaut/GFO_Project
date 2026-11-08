@@ -29,7 +29,7 @@ Cómo trabajar en paralelo sin pisarnos. Aplica a las personas y a sus IAs por i
 1. Abre el PR como borrador (draft) apenas tengas algo que mostrar. Así el equipo ve qué archivos estás tocando.
 2. Completa la plantilla (`.github/pull_request_template.md`).
 3. Antes de marcarlo como listo: `git merge origin/main`, `npm test` y `npm run lint`.
-4. Lo revisa otra persona del equipo. El autor no aprueba su propio PR, y una IA no reemplaza la revisión: puede revisar como apoyo, pero la aprobación la da una persona.
+4. La revisión de otra persona es opcional y no se exige aprobación para integrar. Si hay revisiones o comentarios, se leen y atienden las observaciones vigentes antes del merge. Una IA puede apoyar la revisión sin presentarla como aprobación humana.
 5. Se integra con **Create a merge commit**, que conserva cada commit con su autor y muestra quién hizo qué. No uses squash ni rebase si el PR tiene commits de varias personas. El merge lo hace una persona del equipo o una IA, con las condiciones de "Integrar con una IA".
 6. Después de integrar, borra la rama.
 
@@ -38,7 +38,7 @@ Cómo trabajar en paralelo sin pisarnos. Aplica a las personas y a sus IAs por i
 Una IA puede hacer el merge de un PR con la cuenta de la persona que la usa. Antes de integrarlo comprueba cada condición; si una no se cumple, se detiene y avisa:
 
 - La persona se lo pidió para ese PR.
-- El PR ya no es borrador y lo aprobó otra persona del equipo. No cuenta la aprobación del autor ni la de una IA.
+- El PR ya no es borrador. No necesita aprobación de otra persona; se leen y atienden las observaciones vigentes si existen.
 - GitHub no marca conflictos, y `npm test` y `npm run lint` pasan en la rama del PR.
 - Usa "Create a merge commit" (`gh pr merge <número> --merge`), como en el punto 5.
 - Nunca usa `--admin` ni cambia la protección de `main` para esquivar un bloqueo.
@@ -54,7 +54,7 @@ Una IA puede hacer el merge de un PR con la cuenta de la persona que la usa. Ant
 
 ## Responsables por área (propuesta)
 
-Basada en quién escribió cada parte; el equipo la confirma en el PR que agrega estas guías. El responsable revisa los PRs que tocan su área.
+Basada en quién escribió cada parte; el equipo la confirma en el PR que agrega estas guías. El responsable puede revisar los PRs que tocan su área; su revisión no es requisito para integrar.
 
 | Área | Archivos | Responsable |
 |---|---|---|
@@ -63,7 +63,7 @@ Basada en quién escribió cada parte; el equipo la confirma en el PR que agrega
 | Razones e interpretación | `js/modules/analisis/` | Henry |
 | Apalancamiento (GAO, GAF, GAT) | `js/modules/apalancamiento/` (planificado) | Carlos |
 | Guías y reglas | `AGENTS.md`, `docs/reglas/`, `docs/contexto/` | Carlos |
-| Compartidos | `js/utils/calculate.js`, `js/store.js`, `js/app.js`, `index.html` | Todo el equipo: avisar antes y revisar entre dos |
+| Compartidos | `js/utils/calculate.js`, `js/store.js`, `js/app.js`, `index.html` | Todo el equipo: avisar antes; revisión entre dos opcional |
 
 ## Lo que nadie hace sin permiso explícito del equipo
 
@@ -76,7 +76,7 @@ Basada en quién escribió cada parte; el equipo la confirma en el PR que agrega
 
 Lo configura el dueño del repositorio (cuenta `cryaut`) en GitHub, en Settings → Rules → Rulesets (o Settings → Branches), con una regla para `main` que:
 
-- exija Pull Request con al menos una aprobación;
+- exija Pull Request con cero aprobaciones obligatorias (`required_approving_review_count: 0`); la revisión queda opcional;
 - bloquee el force push y el borrado de la rama;
 - cuando exista integración continua, exija que los tests pasen.
 
