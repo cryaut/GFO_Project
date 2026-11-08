@@ -21,24 +21,33 @@ const MOTIVOS = {
   zero_denominator: 'El denominador es cero; esta razón conserva N/D.',
   documento_no_normalizable: 'Revise el formato de los estados guardados.',
   periodo_no_disponible: 'El periodo solicitado no está disponible.',
-  estados_no_legibles: 'Revise el aviso de lectura de los estados guardados.'
+  estados_no_legibles: 'Revise el aviso de lectura de los estados guardados.',
+  reported_subtotal_unverifiable: 'Se usa el total reportado. Su desglose está incompleto o no permite comprobarlo.',
+  reported_subtotal_mismatch: 'Se usa el total reportado, pero difiere del desglose calculable. Revise la fuente.'
 };
 
 export function disponibilidadRazones(razones) {
   const pendientes = Object.keys(NOMBRES).filter(c => razones[c] === null);
-  if (!pendientes.length) return '';
   const causas = new Map();
+  const avisos = new Map();
   for (const m of razones.notAvailableReasons || []) {
-    if (!pendientes.includes(m.campo)) continue;
+    const advertencia = ['reported_subtotal_unverifiable', 'reported_subtotal_mismatch'].includes(m.motivo);
+    const grupo = advertencia && typeof razones[m.campo] === 'number' && NOMBRES[m.campo] ? avisos
+      : !advertencia && pendientes.includes(m.campo) ? causas : null;
+    if (!grupo) continue;
     const cuentas = (m.operandos || []).map(id => obtenerCuenta(id)?.nombreCanonico).filter(Boolean);
     const mensaje = MOTIVOS[m.motivo] || 'El cálculo requiere revisar sus datos de origen.';
     const clave = JSON.stringify([mensaje, cuentas, m.periodo]);
-    if (!causas.has(clave)) causas.set(clave, { mensaje, cuentas, periodo: m.periodo, campos: new Set() });
-    causas.get(clave).campos.add(NOMBRES[m.campo]);
+    if (!grupo.has(clave)) grupo.set(clave, { mensaje, cuentas, periodo: m.periodo, campos: new Set() });
+    grupo.get(clave).campos.add(NOMBRES[m.campo]);
   }
-  return `<details class="analisis-availability"><summary>Por qué hay resultados N/D (${pendientes.length})</summary>
-    <p>N/D no significa cero. Esta lista explica los datos requeridos por el motor; no agrega cuentas ni supone importes.</p>
+  const detalle = (titulo, descripcion, filas) => `<details class="analisis-availability"><summary>${titulo}</summary>
+    <p>${descripcion}</p>
     <div class="table-wrapper"><table><thead><tr><th>Qué revisar</th><th>Periodo</th><th>Indicadores afectados</th></tr></thead>
-    <tbody>${[...causas.values()].map(c => `<tr><td>${escapeHTML(c.mensaje)}${c.cuentas.length ? `<br><strong>${c.cuentas.map(escapeHTML).join(', ')}</strong>` : ''}</td>
+    <tbody>${[...filas.values()].map(c => `<tr><td>${escapeHTML(c.mensaje)}${c.cuentas.length ? `<br><strong>${c.cuentas.map(escapeHTML).join(', ')}</strong>` : ''}</td>
       <td>${escapeHTML(c.periodo ?? 'N/D')}</td><td>${[...c.campos].map(escapeHTML).join(', ')}</td></tr>`).join('')}</tbody></table></div></details>`;
+  return (pendientes.length ? detalle(`Por qué hay resultados N/D (${pendientes.length})`,
+    'N/D no significa cero. Esta lista explica los datos requeridos por el motor; no agrega cuentas ni supone importes.', causas) : '')
+    + (avisos.size ? detalle('Resultados con advertencias',
+      'Estos resultados están disponibles. Los avisos de comprobación no los convierten en N/D.', avisos) : '');
 }

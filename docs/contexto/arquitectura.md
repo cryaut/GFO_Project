@@ -54,6 +54,8 @@ Análisis incorpora `analisis-calculations.js`: compone las filas completas de A
 
 `analisis-disponibilidad-ui.js` traduce y agrupa los motivos N/D existentes para su consulta en Razones. La compactación de cuentas accesorias sin movimiento se comparte desde `estados-presentacion-ui.js`; solo afecta a la lectura, preservando los datos y eventos de edición (D-098).
 
+D-099 añade `estados-cobertura.js` y el campo opcional `estados.coberturaEstados[periodo][grupo]`. El normalizador valida las declaraciones y el editor permite cambiarlas; JSON, respaldo y renombre/eliminación de periodos las conservan. Sin campo se mantiene el estado anterior sin confirmar. No se modifica `store.js` ni se migra localStorage automáticamente. El motor recibe la cobertura por token de periodo y solo la usa para detalle ausente confirmado. Una proyección no persistente de importes vaciados mantiene N/D al editar. Los totales reportados y sus advertencias se resuelven por separado; Análisis presenta avisos de resultados disponibles sin ocultarlos.
+
 | Módulo | Dónde está la lógica | Notas |
 |---|---|---|
 | `estados/` | `index.js` (demo, lectura del `store`, `initEstados`), `estados-ui.js` (interfaz), `estados-import.js` (archivos), `estados-normalize.js` (validación), `estados-calculations.js` (tipos y totales) | Único módulo que ya sigue el patrón completo |

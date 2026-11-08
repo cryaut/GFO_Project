@@ -5,6 +5,12 @@ import { estadosUI } from './estados-ui.js';
 export const DEMO_MUNOMODA = {
   name: 'MUNO MODA S.A.',
   periods: ['2023', '2024'],
+  // Ejemplo didáctico completo de la app: las partidas no listadas no aplican;
+  // otros ingresos no incluyen intereses ganados. No es una inferencia al importar.
+  coberturaEstados: Object.fromEntries(['2023', '2024'].map(p => [p, {
+    activos:'completo', pasivos:'completo', patrimonio:'completo', estadoResultados:'completo'
+  }])),
+  composicionIngresos: { '2023':'excluye_intereses', '2024':'excluye_intereses' },
   // La demo conserva sus nombres y cifras; estas identidades confirman el
   // candidato compatible con el tipo que ya usaba cada cuenta ambigua.
   accountIdentities: {
@@ -114,10 +120,7 @@ export function getDemoData() {
 }
 
 export function loadDemo() {
-  store.set('estados.balanceGeneral', DEMO_MUNOMODA.balanceGeneral);
-  store.set('estados.estadoResultados', DEMO_MUNOMODA.estadoResultados);
-  store.set('estados.periods', DEMO_MUNOMODA.periods);
-  store.set('estados.accountIdentities', DEMO_MUNOMODA.accountIdentities);
+  store.setPersisted('estados', normalizeFinancialData(DEMO_MUNOMODA));
   return DEMO_MUNOMODA;
 }
 

@@ -25,6 +25,7 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 | Estados resueltos según presentación docente | Solicitud de Cris | Implementada localmente; sin publicar | [estados-resueltos-docente](estados-resueltos-docente/README.md) |
 | Proforma y Presupuesto: procedimiento visible y revisión AFOD | Solicitud de Cris | Verificada localmente; sin publicar | [proforma-presupuesto-docente](proforma-presupuesto-docente/README.md) |
 | Cuentas opcionales y diagnóstico de N/D de la demo | Solicitud de Cris | Verificada localmente; sin publicar | [cuentas-opcionales-nd](cuentas-opcionales-nd/README.md) |
+| Reparación de totales y disponibilidad del motor | Solicitud de Cris | Verificada localmente; sin publicar | [reparacion-totales-motor](reparacion-totales-motor/README.md) |
 
 Agrega una fila cuando empieces una feature y actualiza el estado cuando cambie.
 

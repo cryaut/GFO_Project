@@ -752,3 +752,11 @@ El IR del modelo actual se devenga por periodo y queda por pagar. El financiamie
 Estados y AH/AV muestran las cuentas accesorias sin movimiento en **Ver cuentas opcionales en cero**. Abra el desplegable para consultarlas; en el editor también puede modificarlas. Los datos y los archivos descargados conservan sus cuentas. Un cero no acredita que la cuenta estuviera ausente del ejercicio. Si tiene movimiento en otro periodo, se mantiene visible en el editor y AV; AH y la vista multiperiodo conservan el movimiento entre sus columnas comparadas.
 
 Los subtotales y las razones siguen visibles aunque den cero o N/D. AH presenta el balance y el estado de resultados en tablas separadas. En Razones, **Por qué hay resultados N/D** identifica las cuentas/datos y los indicadores afectados. Declare en Estados la composición de otros ingresos y los datos de crédito cuando disponga de ellos; no introduzca cero para completar datos que desconoce. El primer periodo conserva las restricciones del modo normal del motor.
+
+### Alcance del ejercicio y totales suficientes
+
+En Estados, dentro de **Periodo de trabajo → Alcance del ejercicio**, indique por separado si Activos, Pasivos, Patrimonio y ER están completos. **Completo** significa que se incluyeron todas las partidas de ese grupo y las no listadas no aplican; no lo elija para ocultar un dato desconocido. Si el archivo está incompleto, use **Parcial** o **Sin confirmar**. La declaración se guarda por periodo y no añade cuentas en cero. Una celda vacía sigue N/D.
+
+Los archivos guardados anteriormente conservan sus importes y abren sin confirmar el alcance. Para revisar el ejemplo actualizado, use **Cargar datos → Nuevo conjunto o ejemplo → Cargar ejemplo**, revise el borrador y guarde. Este ejemplo didáctico propio ya declara sus grupos completos; no sustituye ni convierte automáticamente los datos que usted tenía guardados.
+
+Si el ejercicio proporciona AC y PC totales identificados, la razón corriente se calcula con ellos sin pedir todo el desglose. Un total válido puede dar un resultado disponible aunque no pueda comprobarse su detalle: consulte **Resultados con advertencias** en Razones. Sin ventas a crédito/pagos reales, las cinco razones dependientes siguen N/D. El primer periodo de una serie conserva su modo normal; con un único periodo se usa cierre conforme a la convención existente.

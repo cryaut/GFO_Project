@@ -358,7 +358,8 @@ function renderRazonesSection(period) {
   ];
   const notaPromedios = r.usaPromedios
     ? 'Rotaciones, ROA y DuPont usan saldos promedio ((inicial + final) / 2).'
-    : 'Sin un periodo anterior, las razones de flujo del motor permanecen N/D con el modo directo desactivado; los indicadores de punto usan el saldo disponible.';
+    : getPeriods().length === 1 ? 'Con un único periodo, las razones de flujo usan saldos de cierre; no hay promedio de dos periodos.'
+      : 'En el primer periodo de la serie, las razones de flujo permanecen N/D con el modo directo desactivado; los indicadores de punto usan el saldo disponible.';
   const notaCreditos = r.RotCxC == null
     ? ''
     : 'La rotación de CxC y el plazo de cobro usan las ventas a crédito declaradas.';

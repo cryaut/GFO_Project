@@ -18,6 +18,7 @@ Todos los cambios notables en GFO Toolkit.
 - Análisis conserva el aviso de F8 para estados ilegibles y calcula las razones con el motor; las etiquetas de rotaciones indican ventas y compras a crédito. Reportes obtiene la utilidad neta del motor. Los documentos sin datos acreditados mantienen N/D (D-086).
 
 ### Módulo 2: Estados Financieros
+- Alcance por periodo/grupo: Completo, Parcial o Sin confirmar, con persistencia/exportación y compatibilidad con archivos anteriores. La demo declara su alcance y composición sin añadir partidas; campos vacíos siguen N/D (D-099).
 - Cuentas accesorias en cero dentro de un desplegable cerrado, conservando edición, guardado y exportación. Subtotales y N/D permanecen visibles; una cuenta con movimiento en otro periodo no se compacta (D-098).
 - Lectura resuelta en orden docente: balance con subtotales y ER con utilidad bruta, UAII, UAI y UN en su lugar; signos y procedencia reportada/calculada. Los originales siguen editables y los resultados se actualizan sin guardar ni insertar cuentas. Un campo vacío conserva los cálculos independientes y muestra N/D donde falta información (D-096).
 - Ajuste visual de Activos, Pasivos, Patrimonio y Resultados: contenedores con borde completo, esquinas redondeadas, margen y espacio interior; etiquetas y campos editables alineados a la izquierda, incluido el nombre de cuenta.
@@ -61,6 +62,8 @@ Todos los cambios notables en GFO Toolkit.
 - Botón **Vista previa del reporte** (muestra el reporte en la página) y **Descargar reporte HTML**; antes el botón "Vista Previa HTML" descargaba el archivo.
 
 ### Módulo 3: Análisis Financiero
+- Motor reparado: conserva totales reportados aunque el desglose no sea verificable y resuelve partidas no aplicables solo con cobertura completa confirmada. Avisos separados de N/D, traza de procedencia y coherencia con las consultas de Estados/Proforma; fórmulas/JSON/generado intactos (D-099).
+- Informe de N/D ampliado: distingue totales reportados de sumas de detalle, reproduce RC sin desglose y el bloqueo de UN reportada por su comprobación; propone resolver agregados suficientes sin exigir cuentas no aplicables. Solo documentación y diagnóstico, sin cambios al motor.
 - AH separa BG y ER en tablas con títulos propios; AH/AV compactan únicamente cuentas accesorias sin movimiento. Razones conserva todos sus indicadores y explica los N/D con sus causas. Diagnóstico de la demo MUNO MODA y propuesta financiera documentados, sin cambiar motor ni supuestos (D-098).
 - AH/AV incluyen las mismas filas resueltas y ordenadas de Estados, alinean subtotales calculados/reportados sin duplicarlos y conservan nombres, signos, bases y Δ/abs(T1). El EFE separa el cierre calculado del saldo observado para no ocultar diferencias (D-096).
 - Cambiar el periodo actualiza únicamente los paneles dependientes y conserva el formulario de Mercado sin guardar, sus mensajes y su acción Guardar; no persiste el borrador al navegar.

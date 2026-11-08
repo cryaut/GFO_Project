@@ -1,4 +1,5 @@
 import { estadosResueltos } from './estados-presentacion-calculations.js';
+import { GRUPOS_COBERTURA } from './estados-cobertura.js';
 import { etiquetaFilaEstado, tablasEstadosResueltos, separarCuentasOpcionales, desplegableCuentasOpcionales } from './estados-presentacion-ui.js';
 import { ACCOUNT_TYPES, validateFinancialData, inferAccountType,
   seleccionarPeriodos, MAXIMO_PERIODOS_VISIBLES } from './estados-calculations.js';
@@ -140,6 +141,15 @@ export function estadosUI(page, { initial, demo, save }) {
       <section class="states-period-panel" aria-labelledby="statesPeriodTitle"><h2 id="statesPeriodTitle">Periodo de trabajo</h2>
         ${draft.periods.length ? `<label class="form-label" for="currentPeriod">Editar periodo</label>
         <select class="form-select" id="currentPeriod">${draft.periods.map((p, i) => `<option value="${i}" ${p === selected ? 'selected' : ''}>${esc(p)}</option>`).join('')}</select>
+        <details class="states-subpanel" id="statesCoveragePanel"><summary>Alcance del ejercicio</summary><div class="states-disclosure-content">
+          <p class="form-hint">Marque Completo solo si están todas las partidas de ese grupo: las no listadas no aplican. Si faltan importes, elija Parcial o Sin confirmar. Las celdas vacías siguen siendo N/D.</p>
+          <div class="states-coverage-grid">${GRUPOS_COBERTURA.map(grupo => {
+            const valor = draft.coberturaEstados?.[selected]?.[grupo] || 'sin_confirmar';
+            return `<div><label class="form-label" for="coverage-${grupo}">${GROUPS[grupo]}</label><select class="form-select" id="coverage-${grupo}">
+              ${[['sin_confirmar', 'Sin confirmar'], ['parcial', 'Parcial'], ['completo', 'Completo']].map(([v, texto]) => `<option value="${v}"${v === valor ? ' selected' : ''}>${texto}</option>`).join('')}</select></div>`;
+          }).join('')}</div>
+          <p class="form-hint">La declaración se guarda por periodo. No añade cuentas ni convierte un subtotal calculado en reportado.</p>
+        </div></details>
         <details class="states-subpanel"><summary>Datos complementarios del periodo</summary><div class="states-disclosure-content">
         <label class="form-label" for="composicionIngresos">Otros ingresos del periodo ${esc(selected)}</label>
         <select class="form-select" id="composicionIngresos">
@@ -331,7 +341,7 @@ export function estadosUI(page, { initial, demo, save }) {
           statement[period] = statement[selected];
           delete statement[selected];
         }
-        for (const key of ['supplementaryAccounts', 'reportedTotals', 'composicionIngresos']) {
+        for (const key of ['supplementaryAccounts', 'reportedTotals', 'composicionIngresos', 'coberturaEstados']) {
           if (candidate[key]?.[selected]) { candidate[key][period] = candidate[key][selected]; delete candidate[key][selected]; }
         }
         for (const fila of candidate.pendingAccounts || []) {
@@ -351,7 +361,7 @@ export function estadosUI(page, { initial, demo, save }) {
         candidate.periods = candidate.periods.filter(p => p !== selected);
         delete candidate.balanceGeneral[selected];
         delete candidate.estadoResultados[selected];
-        for (const key of ['supplementaryAccounts', 'reportedTotals', 'composicionIngresos']) if (candidate[key]) delete candidate[key][selected];
+        for (const key of ['supplementaryAccounts', 'reportedTotals', 'composicionIngresos', 'coberturaEstados']) if (candidate[key]) delete candidate[key][selected];
         for (const fila of candidate.pendingAccounts || []) delete fila.importes[selected];
         candidate.pendingAccounts = candidate.pendingAccounts?.filter(fila => Object.keys(fila.importes).length);
         draft = normalizeFinancialData(candidate);
@@ -367,8 +377,19 @@ export function estadosUI(page, { initial, demo, save }) {
     const composicionSelect = page.querySelector('#composicionIngresos');
     if (composicionSelect) composicionSelect.onchange = event => {
       draft.composicionIngresos[selected] = event.target.value;
-      markDirty();
+      markDirty(); renderAccounts(); guard(renderPreview);
     };
+    for (const grupo of GRUPOS_COBERTURA) {
+      const select = page.querySelector(`#coverage-${grupo}`);
+      if (select) select.onchange = event => guard(() => {
+        const candidate = structuredClone(draft);
+        candidate.coberturaEstados ??= {};
+        candidate.coberturaEstados[selected] ??= {};
+        candidate.coberturaEstados[selected][grupo] = event.target.value;
+        draft = normalizeFinancialData(candidate);
+        markDirty(); renderAccounts(); renderPreview();
+      });
+    }
     for (const { id, campo } of SUPLEMENTARIOS_ROTACION) {
       const entrada = page.querySelector(`#${campo}`);
       if (entrada) entrada.onchange = event => guard(() => {

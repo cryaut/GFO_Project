@@ -1,12 +1,83 @@
 # Diagnóstico del ejemplo predeterminado y propuesta de solución
 
+> Registro del diagnóstico previo a la reparación. La implementación local posterior, sus cambios de contrato, resultados y límites se documentan en [Reparación de totales del motor](../reparacion-totales-motor/INFORME-FINAL.md). Las tablas de este diagnóstico conservan el comportamiento anterior para poder compararlo.
+
 Fecha: 2026-11-07. Base examinada: `8197215`, continuación local de Estados resueltos y Proforma. El usuario confirmó que observa el ejemplo predeterminado del botón **Cargar ejemplo** de Estados: `DEMO_MUNOMODA`, no los fixtures de pruebas ni un ejercicio importado externo.
 
 ## Veredicto
 
-El problema se reproduce. La demo y el contrato estricto del motor no están alineados: el ejemplo omite partidas que el motor exige individualmente y tampoco declara la composición de otros ingresos. No es un fallo general de divisiones ni un motivo para transformar N/D en cero. Hay además N/D correctos por falta de información de crédito, cotización/acciones y periodo anterior.
+El problema se reproduce. Hay una deficiencia del modelo de disponibilidad del motor y de su integración con Estados: al reconstruir agregados exige cuentas de un desglose universal que un ejercicio no tiene por qué proporcionar. No se limita a una demo incompleta y no se corrige simplemente rellenándola con ceros. La demo tampoco declara la composición de otros ingresos. No es un fallo general de divisiones ni un motivo para transformar N/D en cero. Hay además N/D correctos por falta de información de crédito, cotización/acciones y periodo anterior.
 
 La presentación anterior tampoco ayudaba: AH mezclaba los estados y Razones mostraba N/D sin sus motivos. Estas dos partes se corrigen en esta rama. **La solución financiera que se propone más abajo todavía no está aplicada.** No se modificaron el motor, la especificación generada, los JSON ni las cifras de la demo.
+
+## Ampliación: totales suficientes y dependencias innecesarias
+
+Ampliación solicitada por Cris el 2026-11-07. Que el código cumpla una decisión anterior sobre datos faltantes no demuestra que el diseño resuelva correctamente los ejercicios. Se registra como **problema funcional prioritario de cálculo/disponibilidad**, además de la inconsistencia entre pantallas. Las pruebas anteriores que terminan en N/D caracterizan el comportamiento actual; no lo validan como resultado deseado para un ejercicio con información suficiente.
+
+### Razón corriente: se necesitan AC y PC, no todas las cuentas del catálogo
+
+La fórmula existente es `AC / PC`. Por ejemplo, si el ejercicio proporciona total de activo corriente 1000 y total de pasivo corriente 400, la razón es **2.5 veces**. Franquicias, inversiones temporales, anticipos o impuestos por pagar individuales no son operandos adicionales de esa división. Los intangibles ni siquiera pertenecen al activo corriente.
+
+Se comprobaron dos rutas diferentes del motor:
+
+1. **Totales reportados con identidad acreditada.** `derived.current_assets` consulta `bs.current_assets_total`; `derived.current_liabilities`, `bs.current_liabilities_total`. Ambos usan `reported_or_calculate`. En una prueba con solo esos dos totales, sin completar el resto del catálogo, la razón corriente **sí devuelve 2.5**. También lo hace con detalle parcial reconocido. Por tanto, no es exacto afirmar que este motor siempre exige todas las cuentas incluso cuando recibe esos dos totales válidos.
+2. **Reconstrucción desde las cuentas.** Si no encuentra esos totales como datos acreditados, entra en los conjuntos de detalle. `sum_accounts` exige cada miembro con `requires_data`, y `combinar` propaga cualquier `null`. En esta ruta confunde demasiadas veces «no existe esa cuenta en este ejercicio» con «falta información necesaria para el agregado». Aquí está el bloqueo reproducido de la demo.
+
+En la demo, `reportedTotals` no contiene los dos ids anteriores, aunque Estados muestre subtotales calculados por otro lector:
+
+| Periodo | AC mostrado por Estados | PC mostrado por Estados | RC del motor | Cociente si se acredita la cobertura de esos totales |
+|---|---:|---:|---|---:|
+| 2023 | 370000 | 160000 | N/D | 2.3125 |
+| 2024 | 412000 | 175000 | N/D | 2.3542857143 |
+
+Para RC faltan específicamente tres componentes de AC —inversiones temporales, otras CxC y anticipos— y cuatro de PC —préstamos de corto plazo, porción corriente de deuda a largo plazo, impuestos y gastos acumulados por pagar—. No falta una operación de división. **Los siete faltantes de RC no deben confundirse con los 17 faltantes de BG del conjunto de indicadores.**
+
+El subtotal visible de Estados no se transmite como un agregado calculado con cobertura acreditada al motor. Este vuelve a resolver el grupo bajo otro contrato y termina en N/D. Es una falla de integración y de representación de suficiencia de datos. Sin embargo, copiar automáticamente cualquier subtotal visible a `reportedTotals` tampoco es correcto: un subtotal calculado de un archivo parcial podría omitir importes reales y no fue reportado por la fuente. La solución debe conservar su procedencia y comprobar su cobertura.
+
+### Otro fallo confirmado: un total reportado puede bloquearse al evaluar su desglose
+
+Se reprodujo un caso distinto con **utilidad neta reportada 100** y **ventas netas reportadas 1000**:
+
+| Entrada controlada | Margen neto actual | Resultado esperado usando esos dos totales acreditados |
+|---|---|---|
+| Solo los totales UN y VN | 10 % | 10 % |
+| Mismos totales, más otro ingreso no operativo 20 sin declarar composición | N/D: `composicion_no_declarada` | 10 %, con la limitación de la comprobación del detalle indicada por separado |
+| Mismos importes, declarando que otros ingresos excluyen intereses | 10 % | 10 % |
+
+La causa está en `reported_or_calculate`: después de leer un total reportado numérico, también ejecuta `hijo(nodo.calculation, ...)` para compararlo con el desglose. Esa evaluación puede lanzar el error de composición. El adaptador lo convierte en N/D y se pierde un resultado que podía obtenerse del total sin reconstruir la utilidad. El caso es independiente de los siete componentes de RC y no se resuelve cambiando su fórmula.
+
+La comprobación del detalle debe tener su propia disponibilidad. Si falta información para reconstruir un total ya acreditado, la futura corrección debe conservar el total y advertir «desglose no verificable». Una discrepancia numérica comprobable debe seguir señalándose, como exige el contrato actual; no se propone silenciar cuentas ambiguas, errores estructurales ni conflictos de identidad que comprometan la validez del propio total.
+
+### Principio de corrección: pedir los operandos que necesita cada fórmula
+
+| Cálculo | Información mínima pertinente | Detalle que no se debe exigir si los agregados ya están acreditados |
+|---|---|---|
+| Razón corriente | AC y PC; PC distinto de cero | Desglose universal de todos los activos/pasivos corrientes |
+| Capital neto de trabajo | AC y PC | Ese mismo desglose universal |
+| Endeudamiento | Pasivo total y activo total | Cada préstamo, provisión, intangible o activo individual |
+| Deuda / patrimonio | Pasivo total y patrimonio | Cada componente de capital y reservas |
+| Margen bruto | UB y ventas netas, o datos suficientes para derivar UB | Todos los tipos de ventas y costos simultáneamente si hay totales utilizables |
+| Margen neto | UN y ventas netas | Desglose íntegro del ER para volver a calcular una UN acreditada |
+| ROA / ROE | UN y activos/patrimonio del periodo o promedio según el modo vigente | Cada cuenta individual bajo los saldos acreditados |
+| DuPont | UN, ventas netas, activos y patrimonio según el modo vigente | Desgloses que no intervienen en esos factores |
+
+«Información mínima» no modifica las fórmulas aprobadas ni el modo temporal, y no convierte un total de ventas brutas en ventas netas. La prueba ácida necesita además el inventario pertinente; las razones de crédito siguen necesitando los datos específicos de D-059. La unidad de validación debe ser el operando requerido y su suficiencia, no la existencia de todas las cuentas imaginables de una empresa.
+
+### Orden propuesto para arreglarlo
+
+1. Resolver cada agregado con procedencia: **total reportado válido**, o **total calculable con cobertura acreditada**, o **no disponible**. Reutilizar el mismo resultado entre Estados y Análisis sin etiquetar un cálculo como reportado. Un agregado válido no debe anularse solo por faltar detalle accesorio.
+2. Separar la evaluación del resultado de la comprobación de su desglose. La ruta de comparación no debe bloquear un total válido por datos que solo necesita para contrastarlo. Conservar los avisos de discrepancia y de detalle incompleto.
+3. Para reconstruir un grupo sin total, exigir únicamente sus componentes aplicables al ejercicio y los datos realmente desconocidos. Acreditar «no aplica» o la cobertura completa del grupo; no insertar cuentas ficticias en cero ni tratar toda omisión como cero.
+4. Propagar N/D solo a resultados dependientes de un operando indispensable que siga sin conocerse. Mantener 0 como valor válido y N/D para denominadores cero.
+5. Después, ajustar la demo y las importaciones a ese contrato común. **Completar la demo por sí solo no cierra este hallazgo.** La nueva regla requiere coordinar las decisiones de ausencia y los archivos del motor/generado; no se implementa en esta ampliación documental.
+
+### Comprobación añadida
+
+```powershell
+node docs/planificacion/cuentas-opcionales-nd/comprobar-totales.mjs
+```
+
+[Evidencia anterior por totales](evidencia-totales-antes.json): ocho casos sintéticos, más ambos periodos de la demo. Incluye total sin detalle, total con detalle parcial, PC desconocido, PC cero, AC cero y el bloqueo del margen neto descrito arriba. Después de D-099, `comprobar-totales.mjs` verifica los resultados corregidos y escribe [la evidencia actual](evidencia-totales.json). No agrega ceros para completar catálogos y no escribe en el store. Los N/D que documentaban el defecto no se mantienen como resultados deseados de aceptación.
 
 ## Evidencia reproducible
 
@@ -127,7 +198,9 @@ La fuente `TEAM.md/Ejercicios_AFOD/Mundo_Moda_analisis_financiero.md` sí report
 
 ## Solución propuesta, después del diagnóstico
 
-### Prioridad 1 — Alinear la demo y declarar el alcance de cada ejercicio
+### Prioridad 1 — Resolver agregados suficientes y declarar el alcance de cada ejercicio
+
+La ampliación anterior tiene prioridad: resolver los agregados y separar cálculo/comprobación antes de limitar el trabajo a completar la demo. Los pasos siguientes complementan ese arreglo del motor y su integración.
 
 1. Revisar la demo como **ejemplo didáctico propio de la app**, separado de los ejercicios docentes. Documentar sus supuestos y qué totales/composición están acreditados. Su botón debería ofrecer un caso utilizable para demostrar los módulos y señalar expresamente los indicadores que no puede resolver.
 2. Añadir una declaración de cobertura por estado/grupo: «completo», «parcial» o «sin confirmar». Para las partidas, distinguir **reportada** —incluido cero—, **no aplica confirmado** y **no informada**. Omitir una fila en un archivo parcial debe conservar N/D. No basta con esconderla.

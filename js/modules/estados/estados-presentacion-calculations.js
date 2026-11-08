@@ -24,6 +24,7 @@ const consultasER = { ...ESPECIFICACION_RAZONES, [RAZON_ER]: {
 
 function lecturaBorrador(datos) {
   const lectura = structuredClone(datos), calculo = structuredClone(datos);
+  const cuentasNoDisponibles = [];
   for (const periodo of datos.periods) for (const grupo of Object.keys(TITULOS)) {
     const cuentas = grupo === 'estadoResultados' ? lectura.estadoResultados?.[periodo] : lectura.balanceGeneral?.[periodo]?.[grupo];
     const destino = grupo === 'estadoResultados' ? calculo.estadoResultados?.[periodo] : calculo.balanceGeneral?.[periodo]?.[grupo];
@@ -32,11 +33,15 @@ function lecturaBorrador(datos) {
       cuentas[nombre] = valor;
       // La consulta recibe ausencia, nunca un 0 inventado. La fila de lectura
       // permanece con N/D y el guardado continúa usando la validación original.
-      if (valor === null) delete destino[nombre];
+      if (valor === null) {
+        delete destino[nombre];
+        const identidad = datos.accountIdentities?.[grupo]?.[nombre];
+        if (identidad?.estado === 'reconocida') cuentasNoDisponibles.push({ id:identidad.idCuenta, periodo });
+      }
       else destino[nombre] = valor;
     }
   }
-  return { lectura, calculo };
+  return { lectura, calculo, cuentasNoDisponibles };
 }
 
 function cuentasPeriodo(datos, periodo) {
@@ -133,10 +138,10 @@ const BLOQUES_ER = [
   ['derived.net_income', 'is.net_income_reported', 'Utilidad neta (UN)', null, [], []]
 ];
 
-function resultadosResueltos(datos, periodo, filas) {
+function resultadosResueltos(datos, periodo, filas, cuentasNoDisponibles) {
   const delGrupo = filas.filter(f => f.grupoId === 'estadoResultados');
   if (!delGrupo.length) return [];
-  const contexto = crearContextoRazonesGuardadas(datos, periodo);
+  const contexto = crearContextoRazonesGuardadas(datos, periodo, { cuentasNoDisponibles });
   const restantes = new Set(delGrupo);
   const salida = [];
   const idsSubtotales = new Set(BLOQUES_ER.map(b => b[1]).filter(Boolean));
@@ -160,11 +165,11 @@ function resultadosResueltos(datos, periodo, filas) {
 
 export function estadosResueltos(datos, periodo) {
   if (!datos?.periods?.includes(periodo)) return { balanceGeneral: [], estadoResultados: [] };
-  const { lectura, calculo } = lecturaBorrador(datos);
+  const { lectura, calculo, cuentasNoDisponibles } = lecturaBorrador(datos);
   const filas = cuentasPeriodo(lectura, periodo);
   const compatibles = { ...calculo, pendingAccounts: (calculo.pendingAccounts || []).map(f => ({
     ...f, identificacion: f.identificacion || { estado: 'no_reconocida' }
   })) };
   return { balanceGeneral: balanceResuelto(filas, computeFinancialTotals(compatibles, periodo)),
-    estadoResultados: resultadosResueltos(calculo, periodo, filas) };
+    estadoResultados: resultadosResueltos(calculo, periodo, filas, cuentasNoDisponibles) };
 }

@@ -1,5 +1,6 @@
 import { TIPOS_APP } from './cuentas-catalogo.js';
 import { tipoCuentaLegada, obtenerCuenta, identificarCuenta } from './cuentas-identificador.js';
+import { coberturaCompleta } from './estados-cobertura.js';
 export const ACCOUNT_TYPES = TIPOS_APP;
 
 // Explicit mappings take precedence. Unrecognized names are never silently
@@ -143,10 +144,12 @@ export function computeFinancialTotals(data, period) {
   // las deducciones se exigen si hay actividad de ventas y no hay ventas netas
   // reportadas. Un cero declarado cuenta como dato presente.
   const ppeSinTerreno = [...idsPresentes].some(id => id.startsWith('bs.ppe_') && id !== CUENTA_TERRENOS);
-  const faltaDepreciacion = ppeSinTerreno && !idsPresentes.has(CUENTA_DEPRECIACION);
+  const faltaDepreciacion = ppeSinTerreno && !idsPresentes.has(CUENTA_DEPRECIACION)
+    && !coberturaCompleta(data.coberturaEstados?.[period], 'activos');
   const hayActividadVentas = present.has('ventas') || hayReportado('is.sales_total')
     || hayReportado('is.net_sales_reported');
   const faltanDeducciones = hayActividadVentas && !hayReportado('is.net_sales_reported')
+    && !coberturaCompleta(data.coberturaEstados?.[period], 'estadoResultados')
     ? CUENTAS_DEDUCCION.filter(id => !idsPresentes.has(id)) : [];
   const excedeTolerancia = (a, b) => Math.abs(a - b) > TOLERANCIA + Number.EPSILON * Math.max(1, Math.abs(a), Math.abs(b));
   const usarReportado = (id, calculado) => {

@@ -2241,3 +2241,26 @@ AH separa tablas de BG/ER y conserva suplementarios/pendientes. Razones mantiene
 **Para revertirla.** Retirar la compactación y el desplegable de diagnóstico, manteniendo los datos y el informe. No deshacer las políticas de ausencia financiera para cambiar la apariencia.
 
 **Referencias.** [Diagnóstico y propuesta](planificacion/cuentas-opcionales-nd/DIAGNOSTICO-Y-PROPUESTA.md); [ficha y evidencia](planificacion/cuentas-opcionales-nd/README.md); D-096/D-097.
+
+### D-099 — Totales suficientes y cobertura explícita de los estados
+
+- **Fecha**: 2026-11-07.
+- **Estado**: Implementada localmente; pendiente de revisión, sin push ni PR.
+- **Decidió**: Cris autorizó comenzar la reparación del motor a partir del diagnóstico de totales y pidió un informe final.
+- **Área**: Resolución de datos del motor, normalización y edición de Estados, presentación de advertencias.
+
+**Contexto.** Un grupo calculable no debe necesitar cuentas que no aplican al ejercicio. A la vez, una omisión en una fuente parcial no acredita cero. Se confirmó además que el cálculo de comprobación podía lanzar un error de composición y anular una UN reportada válida.
+
+**Opciones.** Convertir todas las ausencias en cero; copiar sumas visibles como totales reportados; completar únicamente la demo; o declarar cobertura y separar resultado de comprobación. Se elige la última. Las tres primeras ocultan datos desconocidos, atribuyen procedencia incorrecta o dejan el defecto en los importados.
+
+**Decisión.** Campo opcional `coberturaEstados[periodo][grupo]`, para activos, pasivos, patrimonio y ER, con `sin_confirmar`, `parcial` o `completo`. Sin campo se conserva el contrato anterior. Completo declara que las partidas no listadas no aplican. Solo permite aportar cero al leer detalle ausente de un grupo con datos; no fabrica filas, totales reportados ni suplementos. Un importe presente inválido, una identidad pendiente con monto o un grupo sin datos siguen N/D. La declaración se valida, guarda/exporta y edita por periodo/grupo. El borrador conserva como desconocidos los campos vaciados, independientemente de la cobertura.
+
+El motor conserva un total reportado válido aunque no pueda comprobar su desglose. Si hay detalle comparable, registra `reported_subtotal_unverifiable` al faltar información o composición; si hay discrepancia numérica, conserva `reported_subtotal_mismatch` y su tolerancia. Los errores inesperados del intérprete siguen lanzándose. El cálculo de detalle sigue exigiendo composición cuando el ingreso no operativo está presente. Se limpia la resolución temporal de derivados incluso al lanzar una excepción, evitando falsos ciclos tras recuperarla.
+
+`consultarMontoCuenta` y las guardas de depreciación/deducciones del totalizador respetan la misma cobertura. La demo propia de la app declara sus cuatro grupos completos y otros ingresos excluyendo intereses, conservando sus importes y cuentas. Su carga pública persiste el módulo normalizado completo para no heredar metadatos de otra empresa. No se migra ni declara completo automáticamente ningún documento anterior o importado.
+
+**Consecuencias.** Delimita D-055/D-057/D-063 solo para ausencias confirmadas por cobertura, y D-056 en la comprobación de un total que ya es válido. Se conservan sus reglas para datos desconocidos y reconstrucción sin cobertura; se conservan D-032, D-049, D-051 en reconstrucción, D-059, fórmulas, signos y días. Los 20 JSON, su generado y el catálogo no cambian. La nueva procedencia de un cero por cobertura aparece en la traza; no se transforma un calculado en reportado. Las advertencias de resultados disponibles se presentan separadas de los N/D. El totalizador legado no se reemplaza entero en esta tarea.
+
+**Para revertirla.** Conservar/exportar las declaraciones de cobertura; retirar su interpretación mediante una decisión posterior y revisar todas las nuevas pruebas. No borrar datos del usuario ni restaurar silenciosamente cuentas sintéticas para hacer pasar los ejercicios.
+
+**Referencias.** [Informe final](planificacion/reparacion-totales-motor/INFORME-FINAL.md); [plan y verificación](planificacion/reparacion-totales-motor/README.md); diagnóstico de `cuentas-opcionales-nd`.

@@ -8,6 +8,11 @@ import { computarRazonesDesdeDatos, MAPA_RAZONES_APP } from '../../js/modules/ra
 import { estadosResueltos } from '../../js/modules/estados/estados-presentacion-calculations.js';
 
 const detalle = (valor = 0, extra = {}) => ({ id: 'is.sales_returns', clave: 'devoluciones', origen: 'importado', valor, ...extra });
+const demoHistorica = () => {
+  const datos = structuredClone(DEMO_MUNOMODA);
+  delete datos.coberturaEstados; delete datos.composicionIngresos;
+  return normalizeFinancialData(datos);
+};
 
 it('compacta una devolución en cero; conserva cero en cuentas principales, subtotales y pendientes', () => {
   const filas = [detalle(), detalle(0, { id: 'bs.cash_and_equivalents' }), detalle(0, { subtotal: true }),
@@ -59,8 +64,8 @@ it('agrupa causas repetidas por periodo y escapa textos de los datos', () => {
   expect(html).not.toContain('<img');
 });
 
-it('reproduce la demo real sin completar campos: 1/20 y 3/20 razones del motor disponibles', () => {
-  const datos = normalizeFinancialData(DEMO_MUNOMODA), copia = structuredClone(datos);
+it('conserva el diagnóstico histórico del archivo sin cobertura: 1/20 y 3/20 disponibles', () => {
+  const datos = demoHistorica(), copia = structuredClone(datos);
   const primero = computarRazonesDesdeDatos(datos, '2023'), segundo = computarRazonesDesdeDatos(datos, '2024');
   const contar = r => Object.keys(MAPA_RAZONES_APP).filter(c => r[c] !== null).length;
   expect(contar(primero)).toBe(1);
@@ -78,7 +83,7 @@ it('reproduce la demo real sin completar campos: 1/20 y 3/20 razones del motor d
 });
 
 it('aisla el bloqueo del ER con cuatro ceros expresamente sintéticos y composición explícita', () => {
-  let datos = normalizeFinancialData(DEMO_MUNOMODA);
+  let datos = demoHistorica();
   datos.composicionIngresos = { '2023': 'excluye_intereses', '2024': 'excluye_intereses' };
   const sinCompletar = estadosResueltos(datos, '2024').estadoResultados;
   expect(sinCompletar.find(f => f.id === 'is.net_income_reported').valor).toBeNull();

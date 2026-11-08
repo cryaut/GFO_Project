@@ -13,7 +13,10 @@ import { calcularRazonesMercado } from '../../../js/modules/analisis/mercado-cal
 import { computeFinancialTotals } from '../../../js/modules/estados/estados-calculations.js';
 
 const campos = [...Object.keys(MAPA_RAZONES_APP), 'pruebaDefensiva', 'rotacionCapitalTrabajo', 'apalancamiento', 'solvencia'];
-const demo = normalizeFinancialData(DEMO_MUNOMODA);
+// Conserva el caso histórico sin las declaraciones incorporadas por D-099.
+const anterior = structuredClone(DEMO_MUNOMODA);
+delete anterior.coberturaEstados; delete anterior.composicionIngresos;
+const demo = normalizeFinancialData(anterior);
 const escenarios = { demo_normalizada: demo, solo_composicion_declarada: structuredClone(demo) };
 escenarios.solo_composicion_declarada.composicionIngresos = Object.fromEntries(demo.periods.map(p => [p, 'excluye_intereses']));
 // Contrafactuales sintéticos para aislar bloqueos; NO corrigen el ejemplo.

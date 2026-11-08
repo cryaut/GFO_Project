@@ -1,0 +1,1019 @@
+{
+  "alcance": "Solo diagnóstico: no cambia app, motor, JSON, demo ni datos guardados.",
+  "advertencia": "Los totales de la demo calculados por otro lector no se convierten automáticamente en reportados.",
+  "casos": {
+    "solo_totales": {
+      "RC": 2.5,
+      "MN": null,
+      "motivos": [
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.product_sales"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.service_revenue"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.other_sales_revenue"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.sales_returns"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.sales_discounts"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.sales_allowances"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.merchandise_cost"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.product_cost"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.service_cost"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.other_operating_income"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.selling_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.administrative_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.operating_depreciation"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.operating_amortization"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.other_operating_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.nonoperating_income"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.noninterest_nonoperating_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.interest_expense"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.income_tax_expense"
+          ]
+        }
+      ]
+    },
+    "totales_con_detalle_parcial": {
+      "RC": 2.5,
+      "MN": null,
+      "motivos": [
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.product_sales"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.service_revenue"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.other_sales_revenue"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.sales_returns"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.sales_discounts"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.sales_allowances"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.merchandise_cost"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.product_cost"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.service_cost"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.other_operating_income"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.selling_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.administrative_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.operating_depreciation"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.operating_amortization"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.other_operating_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.nonoperating_income"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.noninterest_nonoperating_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.interest_expense"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.income_tax_expense"
+          ]
+        }
+      ]
+    },
+    "sin_total_PC_ni_detalle_suficiente": {
+      "RC": null,
+      "MN": null,
+      "motivos": [
+        {
+          "campo": "RC",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.trade_payables"
+          ]
+        },
+        {
+          "campo": "RC",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.short_term_borrowings"
+          ]
+        },
+        {
+          "campo": "RC",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.current_portion_long_term_debt"
+          ]
+        },
+        {
+          "campo": "RC",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.taxes_payable"
+          ]
+        },
+        {
+          "campo": "RC",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.accrued_expenses_payable"
+          ]
+        },
+        {
+          "campo": "RC",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.current_provisions"
+          ]
+        },
+        {
+          "campo": "RC",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.other_current_liabilities"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.product_sales"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.service_revenue"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.other_sales_revenue"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.sales_returns"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.sales_discounts"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.sales_allowances"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.merchandise_cost"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.product_cost"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.service_cost"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.other_operating_income"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.selling_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.administrative_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.operating_depreciation"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.operating_amortization"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.other_operating_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.nonoperating_income"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.noninterest_nonoperating_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.interest_expense"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.income_tax_expense"
+          ]
+        }
+      ]
+    },
+    "PC_cero": {
+      "RC": null,
+      "MN": null,
+      "motivos": [
+        {
+          "campo": "RC",
+          "periodo": "2024",
+          "motivo": "zero_denominator",
+          "operandos": [
+            "$.razon.formula"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.product_sales"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.service_revenue"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.other_sales_revenue"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.sales_returns"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.sales_discounts"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.sales_allowances"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.merchandise_cost"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.product_cost"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.service_cost"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.other_operating_income"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.selling_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.administrative_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.operating_depreciation"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.operating_amortization"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.other_operating_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.nonoperating_income"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.noninterest_nonoperating_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.interest_expense"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.income_tax_expense"
+          ]
+        }
+      ]
+    },
+    "AC_cero": {
+      "RC": 0,
+      "MN": null,
+      "motivos": [
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.product_sales"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.service_revenue"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.other_sales_revenue"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.sales_returns"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.sales_discounts"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.sales_allowances"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.merchandise_cost"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.product_cost"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.service_cost"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.other_operating_income"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.selling_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.administrative_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.operating_depreciation"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.operating_amortization"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.other_operating_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.nonoperating_income"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.noninterest_nonoperating_expenses"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.interest_expense"
+          ]
+        },
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "is.income_tax_expense"
+          ]
+        }
+      ]
+    },
+    "utilidad_y_ventas_netas_reportadas": {
+      "RC": 2.5,
+      "MN": 0.1,
+      "motivos": []
+    },
+    "UN_reportada_con_ingreso_sin_composicion": {
+      "RC": 2.5,
+      "MN": null,
+      "motivos": [
+        {
+          "campo": "MN",
+          "periodo": "2024",
+          "motivo": "composicion_no_declarada",
+          "operandos": [
+            "is.nonoperating_income"
+          ]
+        }
+      ]
+    },
+    "mismos_totales_con_composicion_declarada": {
+      "RC": 2.5,
+      "MN": 0.1,
+      "motivos": []
+    }
+  },
+  "comparacionDemo": {
+    "2023": {
+      "AC_visible_calculado": 370000,
+      "PC_visible_calculado": 160000,
+      "AC_reportado": null,
+      "PC_reportado": null,
+      "RC_motor": null,
+      "cociente_si_se_acreditan_ambos_totales": 2.3125,
+      "motivos": [
+        {
+          "campo": "RC",
+          "periodo": "2023",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.short_term_investments"
+          ]
+        },
+        {
+          "campo": "RC",
+          "periodo": "2023",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.other_current_receivables"
+          ]
+        },
+        {
+          "campo": "RC",
+          "periodo": "2023",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.prepaid_expenses"
+          ]
+        },
+        {
+          "campo": "RC",
+          "periodo": "2023",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.short_term_borrowings"
+          ]
+        },
+        {
+          "campo": "RC",
+          "periodo": "2023",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.current_portion_long_term_debt"
+          ]
+        },
+        {
+          "campo": "RC",
+          "periodo": "2023",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.taxes_payable"
+          ]
+        },
+        {
+          "campo": "RC",
+          "periodo": "2023",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.accrued_expenses_payable"
+          ]
+        }
+      ]
+    },
+    "2024": {
+      "AC_visible_calculado": 412000,
+      "PC_visible_calculado": 175000,
+      "AC_reportado": null,
+      "PC_reportado": null,
+      "RC_motor": null,
+      "cociente_si_se_acreditan_ambos_totales": 2.354285714285714,
+      "motivos": [
+        {
+          "campo": "RC",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.short_term_investments"
+          ]
+        },
+        {
+          "campo": "RC",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.other_current_receivables"
+          ]
+        },
+        {
+          "campo": "RC",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.prepaid_expenses"
+          ]
+        },
+        {
+          "campo": "RC",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.short_term_borrowings"
+          ]
+        },
+        {
+          "campo": "RC",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.current_portion_long_term_debt"
+          ]
+        },
+        {
+          "campo": "RC",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.taxes_payable"
+          ]
+        },
+        {
+          "campo": "RC",
+          "periodo": "2024",
+          "motivo": "missing_required_account_data",
+          "operandos": [
+            "bs.accrued_expenses_payable"
+          ]
+        }
+      ]
+    }
+  },
+  "casosVerificados": 8
+}

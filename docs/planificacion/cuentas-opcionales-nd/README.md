@@ -1,5 +1,7 @@
 # Cuentas opcionales y diagnóstico de N/D
 
+El diagnóstico histórico de esta carpeta se continúa en la [reparación del motor y su informe final](../reparacion-totales-motor/INFORME-FINAL.md). Los conteos y el alcance siguientes corresponden a la entrega de diagnóstico anterior a D-099.
+
 - **Estado**: Verificada localmente; sin push ni PR.
 - **Responsable**: Solicitud de Cris.
 - **Rama**: `codex/cuentas-opcionales-diagnostico-nd`.
@@ -25,6 +27,12 @@ Rama creada desde `origin/main` (`19c5c6f`), seguida de avance rápido a la rama
 
 Revisar la [propuesta financiera posterior al diagnóstico](DIAGNOSTICO-Y-PROPUESTA.md). Las políticas de cobertura/no-aplica/no-informado, una demo completa acreditada y el control del primer periodo no se implementan en esta entrega. El motor y sus archivos siguen intactos.
 
+## Ampliación solicitada: totales suficientes
+
+2026-11-07: se amplió el mismo reporte para registrar el problema como deficiencia funcional del motor y su integración, no solo de la demo. Se verificó que RC sí usa AC/PC reportados sin exigir detalle; la demo muestra totales calculados por otro lector que no llegan al motor con cobertura acreditada. También se reprodujo UN reportada bloqueada por la evaluación innecesaria de su desglose. Se propone resolver agregados suficientes y separar cálculo de comprobación antes de completar la demo. Solo se modifican documentación y scripts de diagnóstico; la app conserva los cálculos anteriores.
+
+`comprobar-totales.mjs` verifica ocho casos controlados y los dos periodos de la demo, con resultados en `evidencia-totales.json`. Todos los casos pasaron sus aserciones de caracterización actual; no equivalen a aprobar como deseados los N/D que documentan el defecto. Esta ampliación no requiere repetir la suite de la app porque no cambia su código.
+
 ## Resultado y validación
 
 - D-098: cuentas accesorias sin movimiento en desplegable cerrado; se conservan edición y datos. Subtotales y razones cero/N/D siempre visibles. Si hay movimiento en otro periodo, se conserva la cuenta en el editor y AV; AH y la vista multiperiodo examinan sus columnas.
@@ -37,6 +45,7 @@ Revisar la [propuesta financiera posterior al diagnóstico](DIAGNOSTICO-Y-PROPUE
 
 ```powershell
 node docs/planificacion/cuentas-opcionales-nd/diagnosticar.mjs
+node docs/planificacion/cuentas-opcionales-nd/comprobar-totales.mjs
 node docs/planificacion/cuentas-opcionales-nd/revisar-visual.cjs --antes
 node docs/planificacion/cuentas-opcionales-nd/revisar-visual.cjs
 ```

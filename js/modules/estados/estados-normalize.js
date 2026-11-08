@@ -1,5 +1,6 @@
 import { ACCOUNT_TYPES, inferAccountType } from './estados-calculations.js';
 import { identificarCuenta, obtenerCuenta } from './cuentas-identificador.js';
+import { GRUPOS_COBERTURA, ESTADOS_COBERTURA } from './estados-cobertura.js';
 
 const MAX_PERIODS = 100;
 const MAX_ACCOUNTS_PER_GROUP = 200;
@@ -128,6 +129,19 @@ export function normalizeFinancialData(input, { filas = {} } = {}) {
       || period.length > 40 || DANGEROUS_KEYS.has(period)) throw new Error('Periodo inválido');
   }
   const composicionIngresos = {};
+  const coberturaEstados = {};
+  if (source.coberturaEstados !== undefined) {
+    const cobertura = assertPlainObject(source.coberturaEstados, 'coberturaEstados');
+    for (const [period, grupos] of Object.entries(cobertura)) {
+      if (!periods.includes(period)) throw new Error('Periodo de cobertura inconsistente');
+      assertPlainObject(grupos, 'cobertura del periodo');
+      coberturaEstados[period] = {};
+      for (const [grupo, estado] of Object.entries(grupos)) {
+        if (!GRUPOS_COBERTURA.includes(grupo) || !ESTADOS_COBERTURA.includes(estado)) throw new Error('Cobertura de estados inválida');
+        coberturaEstados[period][grupo] = estado;
+      }
+    }
+  }
   const composiciones = source.composicionIngresos === undefined ? {} : assertPlainObject(source.composicionIngresos, 'composicionIngresos');
   if (Object.keys(composiciones).some(period => !periods.includes(period))) throw new Error('Periodo de composición inconsistente');
   for (const period of periods) {
@@ -238,6 +252,7 @@ export function normalizeFinancialData(input, { filas = {} } = {}) {
     balanceGeneral,
     estadoResultados,
     accountTypes, accountIdentities, composicionIngresos,
+    ...(source.coberturaEstados !== undefined ? { coberturaEstados } : {}),
     ...(Object.keys(supplementaryAccounts).length ? { supplementaryAccounts } : {}),
     ...(Object.keys(reportedTotals).length ? { reportedTotals } : {}),
     ...(pendientes.length ? { pendingAccounts: pendientes } : {})

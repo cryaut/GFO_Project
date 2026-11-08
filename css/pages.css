@@ -497,6 +497,7 @@
 }
 
 #page-estados .states-account-body { padding: 0 var(--space-6) var(--space-6); }
+#page-estados .states-coverage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: var(--space-4); margin: var(--space-4) 0; }
 #page-estados .states-account-body > p { margin-bottom: var(--space-4); color: var(--text-secondary); font-size: var(--font-size-sm); }
 #page-estados .states-account-body table { min-width: 660px; }
 #page-estados .states-account-body th { font-size: var(--font-size-sm); }
