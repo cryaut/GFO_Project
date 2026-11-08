@@ -1,6 +1,6 @@
 # Catálogo seleccionable de ejemplos AFOD
 
-- **Estado**: Implementada y verificada; publicación en preparación.
+- **Estado**: Implementada y verificada; [PR #31](https://github.com/cryaut/GFO_Project/pull/31) listo, revisión solicitada a Carlos (`char-lie17`).
 - **Rama**: `codex/catalogo-ejemplos-afod`, creada desde origin/main e incorporando las cuatro entregas locales anteriores, necesarias para los estados resueltos y su motor.
 - **Responsable**: Solicitud de Cris, 2026-11-07.
 
@@ -18,8 +18,8 @@ Estados, Inicio, Flujo, Equilibrio, Inventario, Planeación, Presupuesto persona
 |---|---|---|
 | 1 | Catálogo y trazabilidad con las fuentes | Completado |
 | 2 | Paneles de selección en todos los puntos de carga | Completado |
-| 3 | Cálculos, pruebas y revisión visual | 2169 pruebas; lint sin errores; matriz Edge |
-| 4 | PR y solicitud de revisión a Carlos | Pendiente |
+| 3 | Cálculos, pruebas y revisión visual | 2169 pruebas; lint sin errores; 44 escenarios Edge |
+| 4 | PR y solicitud de revisión a Carlos | PR #31 abierto; revisión solicitada por API y verificada |
 
 ## Publicación
 

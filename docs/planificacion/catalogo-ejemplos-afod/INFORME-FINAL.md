@@ -1,6 +1,6 @@
 # Catálogo de ejemplos: cambios, comparación docente y verificación
 
-Fecha: 2026-11-07. Rama: `codex/catalogo-ejemplos-afod`. Revisión solicitada: Carlos (`char-lie17`). El merge requiere su revisión humana.
+Fecha: 2026-11-07. Rama: `codex/catalogo-ejemplos-afod`. [PR #31](https://github.com/cryaut/GFO_Project/pull/31), listo para revisión. Solicitud enviada y verificada en GitHub: Carlos (`char-lie17`). El merge requiere su revisión humana.
 
 ## Qué cambió y por qué
 

@@ -22,12 +22,12 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 | Rigor financiero y comparación con AFOD | Carlos | En revisión | [rigor-financiero](rigor-financiero/README.md) |
 | Caso integrado, contexto y escenarios | Carlos | En revisión | [caso-integrado](caso-integrado/README.md) |
 | Inicio en blanco y navegación ante errores | Corrección solicitada por Cris | Implementada; en validación | [inicio-navegacion](inicio-navegacion/README.md) |
-| Estados resueltos según presentación docente | Solicitud de Cris | Implementada localmente; sin publicar | [estados-resueltos-docente](estados-resueltos-docente/README.md) |
-| Proforma y Presupuesto: procedimiento visible y revisión AFOD | Solicitud de Cris | Verificada localmente; sin publicar | [proforma-presupuesto-docente](proforma-presupuesto-docente/README.md) |
-| Cuentas opcionales y diagnóstico de N/D de la demo | Solicitud de Cris | Verificada localmente; sin publicar | [cuentas-opcionales-nd](cuentas-opcionales-nd/README.md) |
-| Reparación de totales y disponibilidad del motor | Solicitud de Cris | Verificada localmente; sin publicar | [reparacion-totales-motor](reparacion-totales-motor/README.md) |
+| Estados resueltos según presentación docente | Solicitud de Cris | En revisión (PR #31) | [estados-resueltos-docente](estados-resueltos-docente/README.md) |
+| Proforma y Presupuesto: procedimiento visible y revisión AFOD | Solicitud de Cris | En revisión (PR #31) | [proforma-presupuesto-docente](proforma-presupuesto-docente/README.md) |
+| Cuentas opcionales y diagnóstico de N/D de la demo | Solicitud de Cris | En revisión (PR #31) | [cuentas-opcionales-nd](cuentas-opcionales-nd/README.md) |
+| Reparación de totales y disponibilidad del motor | Solicitud de Cris | En revisión (PR #31) | [reparacion-totales-motor](reparacion-totales-motor/README.md) |
 
-| Catálogo de ejemplos seleccionables AFOD | Solicitud de Cris | Verificada; pendiente de revisión de Carlos | [catalogo-ejemplos-afod](catalogo-ejemplos-afod/README.md) |
+| Catálogo de ejemplos seleccionables AFOD | Solicitud de Cris | En revisión de Carlos (PR #31) | [catalogo-ejemplos-afod](catalogo-ejemplos-afod/README.md) |
 
 Agrega una fila cuando empieces una feature y actualiza el estado cuando cambie.
 
