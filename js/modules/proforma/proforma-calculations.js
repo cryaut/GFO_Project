@@ -1,10 +1,14 @@
+import { monedaDe } from '../../utils/moneda.js';
+import { desarrolloPresupuesto } from '../planeacion/planeacion-desarrollo-calculations.js';
 // Proforma y reporte integrado: estado de resultados proforma frente al último periodo real,
 // efectivo proyectado, indicadores de todos los módulos y alertas que apoyan decisiones.
 // Lógica pura: recibe los resultados ya calculados por cada módulo (index.js los reúne).
 import { ahPctDelta, margenBruto, margenNeto, margenOperativo } from '../../utils/calculate.js';
 import { formatCurrencyND as monto, formatNumberND, formatPercentND as pct } from '../../utils/format.js';
 import { construirEFE } from '../analisis/efe-calculations.js';
-import { computeFinancialTotals } from '../estados/estados-calculations.js';
+import { estadosResueltos } from '../estados/estados-presentacion-calculations.js';
+import { consultarMontoCuenta } from '../estados/cuentas-identificador.js';
+import { computarRazonesDesdeDatos } from '../razones/razones-app-adapter.js';
 import { ordenarPeriodos } from '../estados/estados-normalize.js';
 import { descripcionReposicion } from '../inventario/inventario-calculations.js';
 
@@ -31,22 +35,24 @@ function margenes(ventas, utilidadBruta, gastosAdmin, gastosVentas, utilidadNeta
 export function resultadosReales(estados) {
   const periodo = estados?.periods?.[estados.periods.length - 1];
   if (!periodo) return null;
-  let t;
   try {
-    t = computeFinancialTotals(estados, periodo);
+    const lectura = estadosResueltos(estados, periodo).estadoResultados;
+    const subtotal = id => lectura.find(f => f.id === id)?.valorCalculo ?? null;
+    const cuenta = id => consultarMontoCuenta(estados, periodo, id).valor;
+    const otros = [cuenta('is.nonoperating_income'), cuenta('is.interest_income'), cuenta('is.noninterest_nonoperating_expenses')];
+    const r = computarRazonesDesdeDatos(estados, periodo);
+    return {
+      periodo, moneda:monedaDe(estados), ventas: subtotal('is.net_sales_reported'), cbv: subtotal('is.cost_of_sales_reported'),
+      utilidadBruta: subtotal('is.gross_profit_reported'), gastosOperacion: subtotal('presentacion.gastos_operativos'),
+      otrosOperativos: cuenta('is.other_operating_income'),
+      uaii: subtotal('is.operating_profit_reported'), uai: subtotal('presentacion.uai'),
+      otrosNeto: otros.every(esNumero) ? otros[0] + otros[1] - otros[2] : null,
+      intereses: cuenta('is.interest_expense'), ir: cuenta('is.income_tax_expense'), utilidadNeta: subtotal('is.net_income_reported'),
+      margenBruto: r.margenBruto, margenOperativo: r.margenOperativo, margenNeto: r.MN
+    };
   } catch {
     return null;
   }
-  const gastosOperacion = esNumero(t.gastosAdmin) && esNumero(t.gastosVentas)
-    ? t.gastosAdmin + t.gastosVentas : null;
-  const otrosNeto = esNumero(t.otrosIngresos) && esNumero(t.otrosGastos)
-    ? t.otrosIngresos - t.otrosGastos : null;
-  return {
-    periodo, ventas: t.ventas, cbv: t.costoVentas, utilidadBruta: t.utilidadBruta, gastosOperacion,
-    uaii: esNumero(t.utilidadBruta) && esNumero(gastosOperacion) ? t.utilidadBruta - gastosOperacion : null,
-    otrosNeto, intereses: t.intereses, ir: t.impuestos, utilidadNeta: t.utilidadNeta,
-    ...margenes(t.ventas, t.utilidadBruta, t.gastosAdmin, t.gastosVentas, t.utilidadNeta)
-  };
 }
 
 // Estado de resultados proforma: el total del horizonte del presupuesto maestro.
@@ -59,7 +65,7 @@ export function resultadosProforma(presupuesto) {
     // Un año: 12 meses o 4 trimestres. Solo así se compara sin ajustar con un periodo anual.
     anual: (s.tipoPeriodo === 'Mes' && s.periodos === 12) || (s.tipoPeriodo === 'Trimestre' && s.periodos === 4),
     ventas: t.ventas, cbv: t.cbv, utilidadBruta: t.utilidadBruta, gastosOperacion: t.gastosOperacion,
-    uaii: t.uaii, otrosNeto: null, intereses: t.intereses, ir: t.ir, utilidadNeta: t.utilidadNeta,
+    uaii: t.uaii, uai: t.uai, otrosOperativos: null, otrosNeto: null, intereses: t.intereses, ir: t.ir, utilidadNeta: t.utilidadNeta,
     ...margenes(t.ventas, t.utilidadBruta, t.gastosOperacion, 0, t.utilidadNeta)
   };
 }
@@ -68,6 +74,7 @@ export function resultadosProforma(presupuesto) {
 // de cobertura que permitan cotejarlos con el histórico.
 function motivoComparacion(real, proforma) {
   if (!real || !proforma) return null;
+  if (monedaDe(real) !== monedaDe(proforma)) return 'Las monedas difieren; no se comparan ni se convierten sin un tipo de cambio declarado.';
   if (!proforma.anual) return 'La variación requiere una proyección anual de 12 meses o 4 trimestres.';
   if (!/^[1-9]\d{3}$/.test(real.periodo)) {
     return 'El periodo real no identifica un ejercicio anual en formato AAAA.';
@@ -79,8 +86,10 @@ export function compararResultados(real, proforma) {
   const comparable = Boolean(real && proforma && !motivoComparacion(real, proforma));
   const filas = [
     ['Ventas', 'ventas', 'monto'], ['(−) Costo de ventas', 'cbv', 'monto'], ['(=) Utilidad bruta', 'utilidadBruta', 'monto'],
-    ['(−) Gastos de operación', 'gastosOperacion', 'monto'], ['(=) UAII', 'uaii', 'monto'],
+    ['(−) Gastos de operación', 'gastosOperacion', 'monto'],
+    ['(+) Otros ingresos operativos', 'otrosOperativos', 'monto'], ['(=) Utilidad operativa (UAII)', 'uaii', 'monto'],
     ['(+) Otros ingresos − otros gastos', 'otrosNeto', 'monto'], ['(−) Intereses', 'intereses', 'monto'],
+    ['(=) Utilidad antes de impuestos (UAI)', 'uai', 'monto'],
     ['(−) Impuesto sobre la renta', 'ir', 'monto'], ['(=) Utilidad neta', 'utilidadNeta', 'monto'],
     ['Margen bruto', 'margenBruto', 'pct'], ['Margen operativo', 'margenOperativo', 'pct'], ['Margen neto', 'margenNeto', 'pct']
   ];
@@ -118,7 +127,7 @@ export function flujoDesdeEFE(estados) {
     };
   }
   return {
-    disponible: true,
+    disponible: true, ...(estados?.moneda ? { moneda:monedaDe(estados) } : {}),
     neto: { operacion: efe.operacion.total },
     variacionNeta: efe.variacionEfectivo,
     saldoFinal: efe.efectivoFinal,
@@ -157,9 +166,9 @@ export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento
     lista.push(indicador(grupo, 'Utilidad por acción (UPA)', mercado.upa, 'monto', 'Análisis', '#/analisis', '(UN − DAP) / acciones comunes.'));
     lista.push(indicador(grupo, 'Precio / utilidad (P/U)', mercado.pu, 'veces', 'Análisis', '#/analisis', 'Veces que el mercado paga la utilidad por acción.'));
     lista.push(indicador(grupo, 'Precio / valor en libros (P/VL)', mercado.pvl, 'veces', 'Análisis', '#/analisis',
-      esNumero(mercado.vlpa) ? `Valor en libros de ${monto(mercado.vlpa)} por acción.` : ''));
+      esNumero(mercado.vlpa) ? `Valor en libros de ${monto(mercado.vlpa, monedaDe(mercado))} por acción.` : ''));
     if (esNumero(mercado.pago)) {
-      lista.push(indicador(grupo, 'Pago de dividendos', mercado.pago, 'pct', 'Análisis', '#/analisis', `DPA de ${monto(mercado.dpa)}.`));
+      lista.push(indicador(grupo, 'Pago de dividendos', mercado.pago, 'pct', 'Análisis', '#/analisis', `DPA de ${monto(mercado.dpa, monedaDe(mercado))}.`));
     }
   }
   const ultimoApal = apalancamiento?.periodos?.[apalancamiento.periodos.length - 1];
@@ -175,7 +184,7 @@ export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento
   if (equilibrio) {
     const grupo = 'Punto de equilibrio (C-V-U)';
     lista.push(indicador(grupo, 'Punto de equilibrio', equilibrio.peUnidades, 'unidades', 'Punto de Equilibrio', '#/equilibrio',
-      esNumero(equilibrio.peVentas) ? `Equivale a ${monto(equilibrio.peVentas)} de ventas.` : 'Sin margen de contribución positivo.'));
+      esNumero(equilibrio.peVentas) ? `Equivale a ${monto(equilibrio.peVentas, monedaDe(equilibrio))} de ventas.` : 'Sin margen de contribución positivo.'));
     lista.push(indicador(grupo, 'Margen de seguridad', equilibrio.msPorcentaje, 'pct', 'Punto de Equilibrio', '#/equilibrio',
       esNumero(equilibrio.msPorcentaje) ? `Las ventas pueden caer ${pct(Math.max(0, equilibrio.msPorcentaje))} antes de tener pérdida.` : '',
       esNumero(equilibrio.msPorcentaje) ? (equilibrio.msPorcentaje >= 0.2 ? 'ok' : 'alerta') : 'info'));
@@ -208,7 +217,8 @@ export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento
       lecturaReposicion,
       inventario.porReponer.length ? 'alerta' : 'ok'));
   }
-  return lista;
+  return lista.map(i => i.formato === 'monto' && (i.fuente === 'Análisis' ? mercado?.moneda : i.fuente === 'Análisis (EFE)' ? flujo?.moneda : false)
+    ? { ...i, moneda:monedaDe(i.fuente === 'Análisis' ? mercado : flujo) } : i);
 }
 
 // Alertas con una acción sugerida, de mayor a menor urgencia. Texto plano: la pantalla lo escapa.
@@ -222,10 +232,10 @@ export function alertasIntegradas({ razones, presupuesto, equilibrio, flujo, inv
     agregar('alta', `El presupuesto proyecta una pérdida neta de ${monto(-presupuesto.totales.utilidadNeta)}. Revise precios, volumen o gastos.`, '#/planeacion');
   }
   if (flujo?.disponible && flujo.neto.operacion < 0) {
-    agregar('alta', `El flujo operativo estimado es ${monto(flujo.neto.operacion)}: confirme cobros y pagos antes de tomar decisiones.`, '#/analisis');
+    agregar('alta', `El flujo operativo estimado es ${monto(flujo.neto.operacion, monedaDe(flujo))}: confirme cobros y pagos antes de tomar decisiones.`, '#/analisis');
   }
   if (flujo?.disponible && esNumero(flujo.saldoFinal) && flujo.saldoFinal < 0) {
-    agregar('alta', `El flujo de efectivo termina con saldo negativo (${monto(flujo.saldoFinal)}).`, '#/analisis');
+    agregar('alta', `El flujo de efectivo termina con saldo negativo (${monto(flujo.saldoFinal, monedaDe(flujo))}).`, '#/analisis');
   }
   const rc = razon(razones, 'RC');
   if (esNumero(rc) && rc < (umbrales.ratioCorrienteMin ?? 1)) {
@@ -285,6 +295,8 @@ export function construirReporte(entradas) {
   if (!inventario) faltantes.push({ modulo: 'Inventario', ruta: '#/inventario', texto: 'Registre productos y movimientos.' });
   return {
     real, proforma,
+    desarrollo: desarrolloPresupuesto(presupuesto),
+    motivoPresupuesto: entradas.motivoPresupuesto || null,
     comparacion: real || proforma ? compararResultados(real, proforma) : [],
     motivoComparacion: motivoComparacion(real, proforma),
     efectivo: presupuesto ? {

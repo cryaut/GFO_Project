@@ -1,12 +1,14 @@
+import { monedaDe } from '../../utils/moneda.js';
 // Panorama general de Inicio: KPIs, salud general, puntos clave por área e interpretaciones.
 // Lógica pura: recibe las entradas de proforma/index.js (reunirEntradas) y el reporte integrado
 // ya construido; no recalcula fórmulas, solo las lee y las explica. Texto plano: la UI lo escapa.
 import { ahPctDelta, ahorroMensual, capacidadAhorro, depAcumulada, depAnualLineaRecta, tasaAhorro, valorEnLibros } from '../../utils/calculate.js';
 import { totalesPeriodo } from '../../utils/estados-guardados.js';
-import { formatCurrencyND as monto, formatNumberND, formatPercentND as pct } from '../../utils/format.js';
+import { formatCurrencyND as montoBase, formatNumberND, formatPercentND as pct } from '../../utils/format.js';
 import { razon } from '../proforma/proforma-calculations.js';
 import { descripcionReposicion } from '../inventario/inventario-calculations.js';
 
+const monto = montoBase;
 const esNumero = valor => typeof valor === 'number' && Number.isFinite(valor);
 const veces = valor => formatNumberND(valor);
 // Mismo umbral que usa la proforma para el margen de seguridad (alertasIntegradas).
@@ -157,7 +159,8 @@ function areaEquilibrio(equilibrio) {
     `Las ventas pueden caer ${pct(ms)} antes de tener pérdida${ms >= MARGEN_SEGURIDAD_MIN ? '.' : ': colchón estrecho.'}`);
 }
 
-function areaFlujo(flujo) {
+function areaFlujo(flujo, moneda = 'C$') {
+  const monto = v => montoBase(v, moneda);
   const op = flujo.neto.operacion;
   const puntos = [punto('Flujo de operación', op, 'monto'), punto('Variación neta', flujo.variacionNeta, 'monto'), punto('Saldo final', flujo.saldoFinal, 'monto')];
   if (esNumero(flujo.saldoFinal) && flujo.saldoFinal < 0) {
@@ -227,7 +230,7 @@ export function areasClave(entradas) {
   if (equilibrio) lista.push(areaEquilibrio(equilibrio));
   // El EFE no disponible trae un motivo, pero no totales. El reporte ya muestra
   // ese faltante; no se evalúa como si fuera un flujo calculado.
-  if (flujo && flujo.disponible !== false) lista.push(areaFlujo(flujo));
+  if (flujo && flujo.disponible !== false) lista.push(areaFlujo(flujo, monedaDe(entradas.estados)));
   if (presupuesto) lista.push(areaPresupuesto(presupuesto));
   if (inventario) lista.push(areaInventario(inventario));
   return lista;
@@ -305,9 +308,9 @@ export function panoramaGeneral(entradas, reporte, personal = {}) {
   return {
     empresa: entradas.estados?.name || null,
     periodo: entradas.estados?.periods?.at(-1) ?? null,
-    kpis: kpisPrincipales(entradas),
+    kpis: kpisPrincipales(entradas).map(k => ({ ...k, ...(entradas.estados?.moneda && k.etiqueta !== 'Caja proyectada' ? { moneda:monedaDe(entradas.estados) } : {}) })),
     tendencia: tendenciaEstados(entradas.estados),
-    areas,
+    areas: areas.map(a => ({ ...a, ...(['flujo','liquidez','rentabilidad','endeudamiento'].includes(a.id) && entradas.estados?.moneda ? { moneda:monedaDe(entradas.estados) } : {}) })),
     salud: saludGeneral(areas, alertas),
     alertas: alertas.slice(0, 5),
     totalAlertas: alertas.length,

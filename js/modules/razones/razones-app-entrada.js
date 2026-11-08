@@ -1,8 +1,7 @@
 import { normalizeFinancialData } from '../estados/estados-normalize.js';
 import { ESPECIFICACION_RAZONES } from './especificacion-razones.js';
-import { crearEntradaRazones, calcularRazones, calcularRazon, revisarEntradaRazones } from './razones-motor.js';
+import { crearEntradaRazones, calcularRazones, calcularRazon, revisarEntradaRazones, motivoComposicion } from './razones-motor.js';
 
-const numero = valor => typeof valor === 'number' && Number.isFinite(valor);
 const noDisponible = motivo => ({ valor:null, metodo:'not_applicable', motivos:[motivo] });
 
 // La normalización estructural existente valida el documento. Sus inferencias
@@ -26,7 +25,7 @@ function normalizarConIdentidadesGuardadas(datos) {
   return normalizados;
 }
 
-export function crearContextoRazonesGuardadas(datos, periodo) {
+export function crearContextoRazonesGuardadas(datos, periodo, { cuentasNoDisponibles = [] } = {}) {
   let normalizados;
   try {
     normalizados = normalizarConIdentidadesGuardadas(datos);
@@ -44,18 +43,16 @@ export function crearContextoRazonesGuardadas(datos, periodo) {
     current:composicion[periodo] ?? 'sin_declarar',
     previous:anterior === null ? 'sin_declarar' : composicion[anterior] ?? 'sin_declarar'
   } });
-  return { datos:normalizados, entrada, fallo:null };
-}
-
-function motivoComposicion(error, entrada) {
-  const faltante = /^is\.nonoperating_income: falta declarar composición excluye_intereses para (current|previous); no se infiere de nombres ni importes\.$/.exec(error.message);
-  if (faltante) return { codigo:'composicion_no_declarada', id:'is.nonoperating_income', periodo:faltante[1] };
-  if (error.message === 'is.nonoperating_income: entrada inválida; otros ingresos ya incluye intereses (D-051 opción A).') {
-    const periodo = ['current', 'previous'].find(token => entrada.composicionIngresos[token] === 'incluye_intereses'
-      && entrada.cuentas.some(fila => fila.id === 'is.nonoperating_income' && numero(fila[token]))) || 'current';
-    return { codigo:'composicion_incluye_intereses', id:'is.nonoperating_income', periodo };
+  // Lectura del borrador: vaciar un campo mantiene desconocido su importe,
+  // aunque el grupo completo confirme la ausencia de otras partidas.
+  for (const cuenta of cuentasNoDisponibles) {
+    const token = cuenta.periodo === periodo ? 'current' : cuenta.periodo === anterior ? 'previous' : null;
+    if (!token) continue;
+    let fila = entrada.cuentas.find(c => c.id === cuenta.id && c.estado === 'reconocida');
+    if (!fila) { fila = { id:cuenta.id, estado:'reconocida', candidatos:[] }; entrada.cuentas.push(fila); }
+    fila[token] = null;
   }
-  return null;
+  return { datos:normalizados, entrada, fallo:null };
 }
 
 // Solo los dos errores contractuales de D-056 se convierten a N/D. Un error

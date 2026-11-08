@@ -1,3 +1,4 @@
+import { panelEjemplos, vincularEjemplos, ejemploSeleccionado } from '../../components/ejemplos.js';
 import store from '../../store.js';
 import { ahorroMensual, saldoSemanal, capacidadAhorro, tasaAhorro } from '../../utils/calculate.js';
 import { formatCurrency, formatPercent } from '../../utils/format.js';
@@ -94,7 +95,7 @@ export function initPresupuesto() {
       <h1 class="page-title">Presupuesto Personal</h1>
       <p class="page-subtitle">Ingresos, gastos por categoría, capacidad de ahorro y saldo disponible. Es independiente del presupuesto maestro de la empresa.</p>
     </div>
-    <div class="flex-gap flex-wrap mb-4"><button class="btn btn-secondary" id="btnEjemploPresupuesto">Cargar ejemplo ficticio</button></div>
+    ${panelEjemplos('presupuesto', 'btnEjemploPresupuesto')}
     <div class="tabs">
       <button class="tab-btn active" data-tab="config">Configuración</button>
       <button class="tab-btn" data-tab="ingresos">Ingresos</button>
@@ -230,10 +231,11 @@ function bindPresupuestoEvents(page) {
   page.querySelector('#metaAhorro')?.addEventListener('change', saveConfig);
   page.querySelector('#mesesDisponibles')?.addEventListener('change', saveConfig);
 
+  vincularEjemplos(page, 'presupuesto');
   page.querySelector('#btnEjemploPresupuesto')?.addEventListener('click', () => {
     const tieneDatos = (store.get('presupuesto.gastos') || []).length || (store.get('presupuesto.ingresoMensual') || 0) > 0;
     if (tieneDatos && !window.confirm('¿Reemplazar su presupuesto personal por el ejemplo ficticio?')) return;
-    guardarPresupuesto(page, ejemploPresupuestoPersonal(), 'Ejemplo ficticio cargado');
+    guardarPresupuesto(page, ejemploSeleccionado(page, 'presupuesto', ejemploPresupuestoPersonal), 'Ejemplo ficticio seleccionado cargado');
   });
 
   page.querySelector('#btnAddIngreso')?.addEventListener('click', () => {

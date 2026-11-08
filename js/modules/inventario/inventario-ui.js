@@ -1,3 +1,4 @@
+import { panelEjemplos, vincularEjemplos, ejemploSeleccionado } from '../../components/ejemplos.js';
 // Pantalla #/inventario: productos, movimientos de entrada y salida, kardex y alertas de reposición.
 // El cálculo está en inventario-calculations.js; aquí solo se arma el HTML y se atienden los eventos.
 import { escapeHTML as esc } from '../../utils/html.js';
@@ -195,7 +196,7 @@ export function inventarioUI(page, opciones) {
         <p class="page-subtitle">Existencias, valor del inventario y alertas de reposición por producto.</p></div>
       <p id="inventarioMensaje" role="status" aria-live="polite" class="text-muted">Registre productos y sus movimientos de entrada y salida.</p>
       <div class="flex-gap flex-wrap mb-4">
-        <button type="button" class="btn btn-secondary" id="invEjemplo">Cargar ejemplo</button>
+        </div>${panelEjemplos('inventario', 'invEjemplo')}<div class="flex-gap flex-wrap mb-4">
         ${datos.productos.length ? '<button type="button" class="btn btn-danger" id="invVaciar">Borrar inventario</button>' : ''}
       </div>
       ${seccionKPIs(r)}
@@ -227,12 +228,13 @@ export function inventarioUI(page, opciones) {
   }
 
   function bind(r) {
+    vincularEjemplos(page, 'inventario');
     page.querySelector('#invEjemplo')?.addEventListener('click', () => {
       if (datos.productos.length && !confirmar('¿Reemplazar el inventario actual por el ejemplo?')) return;
-      const ejemplo = normalizarInventario(ejemploInventario());
+      const ejemplo = normalizarInventario(ejemploSeleccionado(page, 'inventario', ejemploInventario));
       seleccionado = ejemplo.productos[0].id;
       editando = null;
-      persistir(ejemplo, 'Ejemplo cargado: 4 productos y 8 movimientos de enero de 2025 (datos ficticios).');
+      persistir(ejemplo, 'Ejemplo seleccionado cargado. Consulte los productos y movimientos.');
     });
     page.querySelector('#invVaciar')?.addEventListener('click', () => {
       if (!confirmar('¿Borrar todos los productos y movimientos?')) return;

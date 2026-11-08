@@ -1,5 +1,6 @@
 import { TIPOS_APP } from './cuentas-catalogo.js';
 import { tipoCuentaLegada, obtenerCuenta, identificarCuenta } from './cuentas-identificador.js';
+import { coberturaCompleta } from './estados-cobertura.js';
 export const ACCOUNT_TYPES = TIPOS_APP;
 
 // Explicit mappings take precedence. Unrecognized names are never silently
@@ -143,10 +144,12 @@ export function computeFinancialTotals(data, period) {
   // las deducciones se exigen si hay actividad de ventas y no hay ventas netas
   // reportadas. Un cero declarado cuenta como dato presente.
   const ppeSinTerreno = [...idsPresentes].some(id => id.startsWith('bs.ppe_') && id !== CUENTA_TERRENOS);
-  const faltaDepreciacion = ppeSinTerreno && !idsPresentes.has(CUENTA_DEPRECIACION);
+  const faltaDepreciacion = ppeSinTerreno && !idsPresentes.has(CUENTA_DEPRECIACION)
+    && !coberturaCompleta(data.coberturaEstados?.[period], 'activos');
   const hayActividadVentas = present.has('ventas') || hayReportado('is.sales_total')
     || hayReportado('is.net_sales_reported');
   const faltanDeducciones = hayActividadVentas && !hayReportado('is.net_sales_reported')
+    && !coberturaCompleta(data.coberturaEstados?.[period], 'estadoResultados')
     ? CUENTAS_DEDUCCION.filter(id => !idsPresentes.has(id)) : [];
   const excedeTolerancia = (a, b) => Math.abs(a - b) > TOLERANCIA + Number.EPSILON * Math.max(1, Math.abs(a), Math.abs(b));
   const usarReportado = (id, calculado) => {
@@ -177,18 +180,21 @@ export function computeFinancialTotals(data, period) {
   const activosCorrientes = subtotal(activosCorrientesDetalle, hayCorrientes, 'activos', 'bs.current_assets_total');
   const activosFijosDetalle = detail.activosFijos + detail.depreciacionAcumulada;
   const hayFijos = present.has('activosFijos') || present.has('depreciacionAcumulada');
-  const activosFijos = subtotal(activosFijosDetalle, hayFijos, 'activos', 'bs.fixed_assets_net_total');
+  const activosFijos = faltaDepreciacion
+    ? (hayReportado('bs.fixed_assets_net_total') ? usarReportado('bs.fixed_assets_net_total', null) : null)
+    : subtotal(activosFijosDetalle, hayFijos, 'activos', 'bs.fixed_assets_net_total');
   const totalActivosCalculado = activosCorrientes === null || activosFijos === null ? null : activosCorrientes + activosFijos;
   let totalActivos = hayReportado('bs.total_assets')
     ? usarReportado('bs.total_assets', totalActivosCalculado)
     : (totalActivosCalculado !== null ? totalActivosCalculado : (groupReported.has('activos') ? null : 0));
   let activosFijosFinal = activosFijos;
   if (faltaDepreciacion) {
-    activosFijosFinal = null;
-    totalActivos = null;
+    if (!hayReportado('bs.fixed_assets_net_total')) activosFijosFinal = null;
+    if (!hayReportado('bs.total_assets')) totalActivos = null;
     reasons.push({
       group: 'activos', name: 'Depreciación acumulada', motivo: 'missing_required_account_data',
-      campos: ['activosFijos', 'totalActivos']
+      campos: [...(!hayReportado('bs.fixed_assets_net_total') ? ['activosFijos'] : []),
+        ...(!hayReportado('bs.total_assets') ? ['totalActivos'] : [])]
     });
   }
 

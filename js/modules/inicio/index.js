@@ -6,7 +6,8 @@ import { showToast } from '../../components/toast.js';
 import { calcularEstado, ejemploActivos } from '../activos/index.js';
 import { ejemploMercado } from '../analisis/mercado-calculations.js';
 import { ejemploEquilibrio, normalizarEquilibrio } from '../equilibrio/equilibrio-calculations.js';
-import { DEMO_MUNOMODA } from '../estados/index.js';
+import { getDemoData } from '../estados/index.js';
+import { crearEjemplo } from '../../examples/catalogo.js';
 import { normalizeFinancialData } from '../estados/estados-normalize.js';
 import { ejemploFlujo, normalizarFlujo } from '../flujo/flujo-calculations.js';
 import { ejemploInventario, normalizarInventario } from '../inventario/inventario-calculations.js';
@@ -31,11 +32,15 @@ function registro() {
 
 // Carga el ejemplo ficticio de MUNO MODA en los módulos de la empresa, con los mismos datos
 // que el botón "Cargar ejemplo" de cada uno. Solo escribe en los módulos vacíos.
-export function cargarEjemploEmpresa() {
+export function cargarEjemploEmpresa(id = 'actual') {
   const { cargados, guardar } = registro();
+  if (id !== 'actual') {
+    guardar('estados', normalizeFinancialData(crearEjemplo('inicioEmpresa', id, getDemoData)), 'Estados financieros');
+    return cargados;
+  }
   let periodos = store.get('estados')?.periods;
   if (vacio(periodos)) {
-    const estados = normalizeFinancialData(DEMO_MUNOMODA);
+    const estados = normalizeFinancialData(getDemoData());
     guardar('estados', estados, 'Estados financieros');
     periodos = estados.periods;
   }
@@ -51,10 +56,10 @@ export function cargarEjemploEmpresa() {
 }
 
 // Ejemplo de finanzas personales (presupuesto personal y activos del hogar), solo si están vacíos.
-export function cargarEjemploPersonal() {
+export function cargarEjemploPersonal(id = 'actual') {
   const { cargados, guardar } = registro();
   const personal = store.get('presupuesto');
-  if (vacio(personal?.gastos) && vacio(personal?.ingresos)) guardar('presupuesto', { ...personal, ...ejemploPresupuestoPersonal() }, 'Presupuesto personal');
+  if (vacio(personal?.gastos) && vacio(personal?.ingresos)) guardar('presupuesto', { ...personal, ...crearEjemplo('inicioPersonal', id, ejemploPresupuestoPersonal) }, 'Presupuesto personal');
   if (vacio(store.get('activos')?.inventario)) guardar('activos', { ...store.get('activos'), inventario: ejemploActivos() }, 'Activos del hogar');
   return cargados;
 }
@@ -72,10 +77,10 @@ function totalesPersonales() {
 }
 
 function conAviso(cargar, nombre) {
-  return () => {
+  return (id = 'actual') => {
     try {
-      const cargados = cargar();
-      showToast(cargados.length ? `Ejemplo ${nombre} cargado (datos ficticios): ${cargados.join(', ')}.` : 'Esos módulos ya tenían datos.', 'success');
+      const cargados = cargar(id);
+      showToast(cargados.length ? `Ejemplo ${nombre} seleccionado cargado: ${cargados.join(', ')}.` : 'Esos módulos ya tenían datos; no se reemplazaron.', 'success');
     } catch (error) {
       showToast(`No se pudo cargar el ejemplo: ${error.message}`, 'error');
     }

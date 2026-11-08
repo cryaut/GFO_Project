@@ -46,7 +46,15 @@ docs/                      Documentación: contexto, reglas, planificación, API
 
 ### Estado real de cada módulo
 
+Planeación y Proforma comparten `planeacion-desarrollo-calculations.js` (traza pura de resultados existentes) y `planeacion-desarrollo-ui.js` (tabla de lectura). Proforma usa también la lectura de ER de `estados-presentacion-calculations.js` para el real. Los escenarios, bases, guardado y esquema del store no cambian (D-097).
+
+La lectura ordenada de balance y ER vive en `estados/estados-presentacion-calculations.js`, con el render común en `estados-presentacion-ui.js`. Estados y AH/AV la consumen sin insertar cuentas ni cambiar el store. Durante la edición, los renglones de lectura se actualizan sin reconstruir los inputs; el guardado/exportación conservan la normalización original. El EFE expone por separado el cierre calculado y el saldo del balance (D-096).
+
 Análisis incorpora `analisis-calculations.js`: compone las filas completas de AH/AV y el detalle DuPont sin DOM ni store. `index.js` conserva adaptadores públicos y renderizado. El selector de periodo y la sección activa viven solo en memoria; no cambia el esquema de persistencia ni se toca el motor de razones o su generado.
+
+`analisis-disponibilidad-ui.js` traduce y agrupa los motivos N/D existentes para su consulta en Razones. La compactación de cuentas accesorias sin movimiento se comparte desde `estados-presentacion-ui.js`; solo afecta a la lectura, preservando los datos y eventos de edición (D-098).
+
+D-099 añade `estados-cobertura.js` y el campo opcional `estados.coberturaEstados[periodo][grupo]`. El normalizador valida las declaraciones y el editor permite cambiarlas; JSON, respaldo y renombre/eliminación de periodos las conservan. Sin campo se mantiene el estado anterior sin confirmar. No se modifica `store.js` ni se migra localStorage automáticamente. El motor recibe la cobertura por token de periodo y solo la usa para detalle ausente confirmado. Una proyección no persistente de importes vaciados mantiene N/D al editar. Los totales reportados y sus advertencias se resuelven por separado; Análisis presenta avisos de resultados disponibles sin ocultarlos.
 
 | Módulo | Dónde está la lógica | Notas |
 |---|---|---|
@@ -209,3 +217,11 @@ No la corrijas dentro de otra tarea: abre una rama propia y avísalo al equipo.
 ## Conexión de razones — ronda 18
 
 Estados persiste `composicionIngresos[periodo]` con `sin_declarar`, `excluye_intereses` o `incluye_intereses`; los datos previos sin el campo se leen como `sin_declarar`, sin migrar importes. Se conservan `accountIdentities`, `accountTypes`, `pendingAccounts`, `reportedTotals` y `supplementaryAccounts` al guardar y normalizar. El adaptador enlaza por identidad acreditada y construye la entrada de ambos periodos desde el mismo documento. Un documento no normalizable no aporta cifras; un concepto sin identidad afecta a sus consumidores. Análisis, Integración y Proforma comparten las razones del motor y el derivado de utilidad neta. La lectura global mantiene los motivos y la UI conserva su contrato. Los JSON y el generado no cambian en esta conexión.
+
+## Ejemplos seleccionables y moneda
+
+`js/examples/catalogo.js` coordina metadatos y fábricas de ejemplos. `ejemplos-estados.js` registra casos docentes por identidad de cuenta; no contiene fórmulas financieras. Los módulos pasan su fábrica propia al catálogo para evitar ciclos entre índices. `components/ejemplos.js` presenta la selección y procedencia; la carga y el guardado siguen perteneciendo al módulo. Inicio reutiliza ese catálogo y explicita su alcance.
+
+Los documentos de Estados, Flujo y Equilibrio admiten `moneda` opcional, validada con `utils/moneda.js`. No se modifica el esquema global del store. El guardado completo conserva la unidad; los renders usan los formateadores existentes. Un archivo anterior sin moneda conserva C$. No hay conversión de divisas automática. D-100 e informe `catalogo-ejemplos-afod` documentan casos, fuentes y limitaciones.
+
+La reparación D-101/D-102 conserva ese esquema. EOAF/EFE reúnen `balanceGeneral` y `reportedTotals` sin escribir cuentas sintéticas. `totalesPeriodo` comparte el ER resuelto con Inicio/Mercado; el EFE lee UN del adaptador del motor. El nuevo id `supp.credit_purchases` utiliza `supplementaryAccounts` y sus identidades existentes; no requiere migración ni modifica `store.js`. El escenario docente Bartlett se genera por separado del histórico y no altera sus movimientos.

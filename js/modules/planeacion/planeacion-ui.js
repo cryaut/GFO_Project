@@ -1,9 +1,11 @@
+import { panelEjemplos, vincularEjemplos, ejemploSeleccionado } from '../../components/ejemplos.js';
+import { monedaDe } from '../../utils/moneda.js';
 // Pantalla #/planeacion: supuestos, presupuestos de ventas, compras, CBV, gastos de operación y caja,
 // y estado de resultados presupuestado. El cálculo está en planeacion-calculations.js.
 import { escapeHTML as esc } from '../../utils/html.js';
 import { formatCurrencyND as monto, formatNumberND, formatPercentND as pct } from '../../utils/format.js';
 import { leerNumero, nuevoId } from '../../utils/form.js';
-import { totalesPeriodo } from '../../utils/estados-guardados.js';
+import { consultarMontoCuenta } from '../estados/cuentas-identificador.js';
 import {
   CALENDARIOS_CAPITAL_TRABAJO, MAX_PERIODOS, SUPUESTOS, TIPOS_PERIODO,
   calcularCapitalTrabajo, calcularPresupuestoMaestro, ejemploPlaneacion, normalizarSupuestos, validarSupuestos
@@ -462,8 +464,8 @@ export function planeacionUI(page, opciones) {
     const contexto = [base?.empresa, horizonte, base ? `Corte ${base.fechaCorte}` : ''].filter(Boolean).join(' · ');
     const aviso = resultado?.avisos.find(a => a.codigo === 'financiamiento') ?? resultado?.avisos[0];
     const carga = `<div class="plan-carga">
-      ${cargarReferencia ? '<button id="planCargarCaso" type="button" class="btn btn-secondary">Cargar Comercial Ejemplo</button>' : ''}
-      ${lectura.escenario ? '' : '<button type="button" class="btn btn-secondary" id="planEjemplo">Cargar ejemplo</button>'}
+      ${cargarReferencia ? '<section class="example-picker"><h3>Caso integrado de referencia</h3><label for="planReferenciaEjemplo">Referencia disponible</label><select id="planReferenciaEjemplo" class="form-select"><option>Comercial Ejemplo · capital de trabajo parcial</option></select><p class="example-picker-source">Referencia propia del repositorio. Su alcance es cobros, pagos e inventario; no es un presupuesto maestro completo.</p><button id="planCargarCaso" type="button" class="btn btn-secondary">Cargar referencia seleccionada</button></section>' : ''}
+      ${panelEjemplos('planeacion', 'planEjemplo')}
     </div>`;
     page.innerHTML = `<header class="page-header plan-cabecera">
       <div class="plan-encabezado">
@@ -528,6 +530,7 @@ export function planeacionUI(page, opciones) {
   }
 
   function bind() {
+    vincularEjemplos(page, 'planeacion');
     const botonCaso = page.querySelector('#planCargarCaso');
     botonCaso?.addEventListener('click', async () => {
       if (botonCaso.disabled) return;
@@ -565,8 +568,9 @@ export function planeacionUI(page, opciones) {
     page.querySelector('#planGuardarBorrador')?.addEventListener('click', () => guardarFormulario(true));
     page.querySelector('#planEjemplo')?.addEventListener('click', () => {
       if (!confirmarCambio()) return;
-      guardarSupuestos(normalizarSupuestos(ejemploPlaneacion()),
-        'Ejemplo cargado: MUNO MODA 2025 por trimestres (datos ficticios, saldos iniciales del balance 2024 de la demo).');
+      if (lectura.escenario && !window.confirm('¿Reemplazar el presupuesto actual y sus escenarios por el ejemplo seleccionado?')) return;
+      guardarDatos({ supuestos:normalizarSupuestos(ejemploSeleccionado(page, 'planeacion', ejemploPlaneacion)) },
+        'Ejemplo seleccionado cargado. Revise los supuestos y el horizonte.', 'resumen');
     });
     page.querySelector('#planTipoPeriodo')?.addEventListener('change', event => {
       borrador.tipoPeriodo = event.target.value;
@@ -597,14 +601,29 @@ export function planeacionUI(page, opciones) {
       guardarFormulario(false);
     });
     page.querySelector('#planTomarBalance')?.addEventListener('click', () => {
-      const totales = totalesPeriodo(estados);
-      if (!totales) { mensaje('No se pudieron leer los estados guardados.', true); return; }
-      borrador.campos.saldoInicialCaja = String(totales.efectivo ?? '');
-      borrador.campos.cxcInicial = String(totales.cxC ?? '');
-      borrador.campos.cxpInicial = String(totales.cuentasPorPagar ?? '');
+      const periodo = estados?.periods?.at(-1);
+      if (!periodo) { mensaje('No se pudieron leer los estados guardados.', true); return; }
+      if (monedaDe(estados) !== monedaDe(lectura.base || lectura.supuestos)) {
+        mensaje(`Moneda incompatible: Estados usa ${monedaDe(estados)} y Planeación usa ${monedaDe(lectura.base || lectura.supuestos)}. Se conserva el borrador; no se realiza conversión automática.`, true);
+        return;
+      }
+      const campos = [
+        ['saldoInicialCaja', 'bs.cash_and_equivalents', 'efectivo'],
+        ['cxcInicial', 'bs.trade_receivables', 'CxC'],
+        ['cxpInicial', 'bs.trade_payables', 'CxP']
+      ];
+      const saldos = campos.map(([destino, id, etiqueta]) => ({
+        destino, etiqueta, valor: consultarMontoCuenta(estados, periodo, id).valor
+      }));
+      const disponibles = saldos.filter(({ valor }) => esNumero(valor));
+      if (!disponibles.length) { mensaje(`Los saldos de apertura del balance ${periodo} están N/D.`, true); return; }
+      for (const { destino, valor } of disponibles) borrador.campos[destino] = String(valor);
       marcarCambios();
       render();
-      mensaje(`Tomados del balance ${totales.periodo}: efectivo ${monto(totales.efectivo)}, CxC ${monto(totales.cxC)} y CxP ${monto(totales.cuentasPorPagar)}. Pulse Calcular y guardar.`);
+      const aplicados = disponibles.map(({ etiqueta, valor }) => `${etiqueta} ${monto(valor)}`);
+      const pendientes = saldos.filter(({ valor }) => !esNumero(valor)).map(({ etiqueta }) => etiqueta);
+      const aviso = pendientes.length ? ` Se conservaron los campos ${pendientes.join(', ')} porque el balance los tiene N/D.` : '';
+      mensaje(`Del balance ${periodo} se tomaron ${aplicados.join(', ')}.${aviso} Pulse Calcular y guardar.`);
     });
     page.querySelector('#planTomarInventario')?.addEventListener('click', () => {
       const id = page.querySelector('#planProducto')?.value;

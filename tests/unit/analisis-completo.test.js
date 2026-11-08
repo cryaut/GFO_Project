@@ -48,7 +48,7 @@ describe('AH y AV de todas las cuentas', () => {
     datos.balanceGeneral['2024'].activos.Depreciación = -100;
     datos.balanceGeneral['2025'].activos.Depreciación = -150;
     const [ah] = analisisHorizontalCompleto(datos, datos.periods);
-    expect(ah.rows[0]).toMatchObject({ delta: -50, pctDelta: -0.5 });
+    expect(ah.rows.find(f => f.cuenta === 'Depreciación')).toMatchObject({ delta: -50, pctDelta: -0.5 });
   });
 
   it('incluye cuentas con nombres propios y cada total reportado sin sumar ni duplicar', () => {

@@ -250,6 +250,14 @@ Efectivo (BG) ──→ Se muestra en el EFE
 
 ---
 
+### Lectura de los ejercicios resueltos
+
+En Estados, las cuentas originales siguen siendo editables. Entre ellas aparecen los subtotales de lectura en su lugar: activos corrientes, activos fijos netos, totales del balance y, en Resultados, utilidad bruta, utilidad operativa (UAII), utilidad antes de impuestos (UAI) y utilidad neta (UN). **Calculado** indica un resultado obtenido con los datos disponibles; **Reportado**, un importe del archivo; **Faltan datos / N/D**, una operación que no se puede completar. **Revisar** junto a un reportado indica motivos de comprobación, sin reemplazar su importe. Los signos +, − y = ayudan a leer; los subtotales no son nuevas operaciones que deban sumarse otra vez.
+
+Los resultados se actualizan al editar. Si vacía el impuesto, por ejemplo, UAI puede seguir calculándose y UN queda N/D; para guardar/exportar deberá completar los importes válidos. Los renglones calculados no se añaden al JSON original. La vista multiperiodo distingue su origen en cada columna.
+
+AH y AV muestran las mismas cuentas y subtotales ordenados, manteniendo las convenciones de variación y las bases vigentes. El EFE de Análisis distingue el efectivo final calculado del saldo observado: una diferencia queda visible y no se compensa automáticamente.
+
 ## 4. Módulo 3: Análisis Financiero
 
 Elija el **Periodo de análisis** al inicio. La navegación agrupa las nueve secciones por tarea: comparar estados, rentabilidad y lectura, capital y fondos. Cada sección ofrece **Ver método y criterios**. Al cambiar de periodo se conserva la sección abierta; Mercado mantiene la comparación de todos los periodos. Leer o cambiar de sección no modifica los estados guardados.
@@ -695,13 +703,15 @@ En `#/flujo` indica el saldo inicial (o tómalo del efectivo de un periodo del b
 
 Flujo de una actividad = entradas − salidas; variación neta = operación + inversión + financiamiento; saldo final = saldo inicial + variación neta. En el ejemplo: operación +98,000, inversión −30,000 y financiamiento −45,000 → variación +23,000; con saldo inicial 52,000 el saldo final es C$ 75,000.
 
-Cuando existe un balance del periodo siguiente, la pantalla puede comparar su efectivo con el saldo calculado. Si el efectivo del balance está N/D, la conciliación también queda N/D; un cero declarado sí puede compararse.
+Flujo toma el saldo inicial y compara el efectivo del periodo siguiente cuando el balance usa la misma moneda. Si falta el efectivo, la copia conserva el saldo inicial y la conciliación queda N/D. Un cero declarado sí puede copiarse y compararse.
 
 ---
 
 ## 12. Presupuesto Maestro
 
 En `#/planeacion` se presupuesta una empresa comercial (un producto o línea) de 1 a 12 meses o trimestres. Abre **Supuestos** para completar el presupuesto y pulsa **Calcular y guardar**. Puedes cargar un ejemplo o tomar el efectivo, las cuentas por cobrar y las cuentas por pagar del balance. También puedes tomar el inventario inicial y el costo de un producto de Inventario.
+
+Al tomar los saldos del balance, Planeación copia los importes disponibles en la misma moneda y conserva los valores del borrador donde el balance tiene N/D.
 
 **Resumen** muestra cobros, pagos a proveedores y saldos al cierre del horizonte. Selecciona una tarjeta para consultar sus movimientos o vencimientos. Para los cobros y pagos, el selector de periodo cambia el detalle del panel. **Tablas completas** reúne los presupuestos y sus avisos. Cambiar entre vistas conserva las ediciones en curso. El resumen muestra las cifras guardadas hasta que pulses **Calcular y guardar**.
 
@@ -729,3 +739,34 @@ Consulta este presupuesto parcial en Planeación. La proyección de caja complet
 4. **Alertas y decisiones sugeridas:** por ejemplo, gestionar el financiamiento del trimestre 2 o reponer los productos bajo su stock mínimo.
 
 Si falta algún módulo, el reporte indica qué cargar. **Imprimir o guardar como PDF** sirve como evidencia para el informe.
+
+
+### Consultar los cálculos del presupuesto y la Proforma
+
+En Presupuesto Maestro, el resumen del presupuesto completo abre en **Utilidad neta presupuestada**. Puede elegir **Efectivo final antes de financiamiento**, Cobros, Pagos o saldos. El selector permite consultar **Horizonte completo** o un periodo; el detalle muestra fórmula, datos usados y resultado. Los cambios sin guardar siguen marcados y las consultas no los persisten.
+
+En Proforma, la utilidad proyectada y UAI aparecen primero. **Desarrollo del estado de resultados proyectado** muestra los renglones completos; **Ver cálculo del presupuesto de caja** explica entradas, desembolsos, flujo y cierre. Los resultados reales proceden de los mismos datos acreditados que Estados/Razones. Una entrada requerida ausente produce N/D; no se completa con una tasa o un cero supuesto.
+
+El IR del modelo actual se devenga por periodo y queda por pagar. El financiamiento requerido se informa, todavía no se suma al efectivo. El escenario de Comercial Ejemplo tiene alcance parcial de capital de trabajo: sus cobros/pagos no representan una caja completa y su ER/caja siguen pendientes. Los ejercicios de porcentaje de ventas, fijo-variable, dividendos y balance crítico requieren las capacidades señaladas en la revisión docente; esta vista no los convierte automáticamente en proyecciones resueltas.
+
+### Cuentas opcionales y resultados N/D
+
+Estados y AH/AV muestran las cuentas accesorias sin movimiento en **Ver cuentas opcionales en cero**. Abra el desplegable para consultarlas; en el editor también puede modificarlas. Los datos y los archivos descargados conservan sus cuentas. Un cero no acredita que la cuenta estuviera ausente del ejercicio. Si tiene movimiento en otro periodo, se mantiene visible en el editor y AV; AH y la vista multiperiodo conservan el movimiento entre sus columnas comparadas.
+
+Los subtotales y las razones siguen visibles aunque den cero o N/D. AH presenta el balance y el estado de resultados en tablas separadas. En Razones, **Por qué hay resultados N/D** identifica las cuentas/datos y los indicadores afectados. Declare en Estados la composición de otros ingresos y los datos de crédito cuando disponga de ellos; no introduzca cero para completar datos que desconoce. El primer periodo conserva las restricciones del modo normal del motor.
+
+### Alcance del ejercicio y totales suficientes
+
+En Estados, dentro de **Periodo de trabajo → Alcance del ejercicio**, indique por separado si Activos, Pasivos, Patrimonio y ER están completos. **Completo** significa que se incluyeron todas las partidas de ese grupo y las no listadas no aplican; no lo elija para ocultar un dato desconocido. Si el archivo está incompleto, use **Parcial** o **Sin confirmar**. La declaración se guarda por periodo y no añade cuentas en cero. Una celda vacía sigue N/D.
+
+Los archivos guardados anteriormente conservan sus importes y abren sin confirmar el alcance. Para revisar el ejemplo actualizado, use **Cargar datos → Nuevo conjunto o ejemplo → Cargar ejemplo**, revise el borrador y guarde. Este ejemplo didáctico propio ya declara sus grupos completos; no sustituye ni convierte automáticamente los datos que usted tenía guardados.
+
+Si el ejercicio proporciona AC y PC totales identificados, la razón corriente se calcula con ellos sin pedir todo el desglose. Un total válido puede dar un resultado disponible aunque no pueda comprobarse su detalle: consulte **Resultados con advertencias** en Razones. Sin ventas a crédito/pagos reales, las cinco razones dependientes siguen N/D. El primer periodo de una serie conserva su modo normal; con un único periodo se usa cierre conforme a la convención existente.
+
+### Bartlett con premisas de clase y comprobaciones corregidas
+
+Al tomar saldos de Estados hacia Flujo o Planeación, ambas secciones deben usar la misma moneda. Si difieren, la aplicación avisa y conserva los saldos y las ediciones pendientes del destino. En AV, el activo reportado puede servir de base aunque falte depreciación. En ese caso, la fila muestra «Desglose no comprobable».
+
+En el selector de Estados o Inicio empresa, **Bartlett · razones de clase** añade las premisas de las diapositivas 14–15 solo para 2012: todas las ventas a crédito y compras estimadas como 70 % del costo. Revise la procedencia, cargue y guarde el borrador. Los suplementos se muestran en la vista previa de Estados. Los resultados son 7.08 veces / 51.53 días para cobro, 4.48 veces / 81.41 días para pago y 21.60 días de ciclo. El ejemplo **Bartlett Company** conserva los datos históricos sin esas suposiciones, por lo que puede mostrar N/D en crédito. Una base de compras declarada permite calcular sin pagos a proveedores; no es un pago de caja ni una prueba de compras reales.
+
+Inicio, Mercado y EFE ahora conservan la UN disponible del mismo ER. Baker 2011 no tiene ER: sus utilidades y UPA son N/D, aunque su balance siga disponible. Las ventas netas no se presentan como ventas brutas cero. En Práctico 2 la UN 77000 sí está disponible; el EFE explica que PPE neto requiere desglose y mantiene N/D en los flujos que no puede separar. Para introducir cobros/pagos conocidos use el módulo Flujo de Efectivo.

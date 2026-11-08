@@ -135,6 +135,8 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 | D-085 | Supuestos de Planeación guardados sin producto vinculado | Vigente |
 | D-086 | Integrar lectura segura de F8 con el motor de razones | Vigente |
 | D-094 | Recuperar navegación ante un error de pantalla | Vigente en rama, pendiente de revisión |
+| D-097 | Proforma coherente y desarrollo visible del presupuesto | Implementada localmente; sin publicar |
+| D-096 | Estados resueltos como lectura sin alterar el documento importado | Implementada solo localmente; sin publicar |
 | D-095 | Completar AH/AV y hacer coherente el procedimiento DuPont | Vigente en rama, pendiente de revisión |
 | D-087 | DuPont y consumidores propagan datos no disponibles | Vigente en rama; pendiente de revisión |
 | D-088 | EFE indirecto por identidad y con alcance explícito | Vigente en rama; pendiente de revisión |
@@ -2174,6 +2176,155 @@ Se retira la prueba histórica de regresión de la demo (caso de ejemplo cargado
 **Para revertirla.** Revisar el control de error y el orden de registro en `js/app.js`, la guarda de flujo de `areasClave`, y sus pruebas de regresión antes de retirar el comportamiento.
 
 **Referencias.** `docs/planificacion/inicio-navegacion/README.md`; `tests/unit/inicio-navegacion.test.js`; `tests/unit/inicio.test.js`.
+
+### D-096 — Estados resueltos como lectura sin alterar el documento importado
+
+- **Fecha**: 2026-11-07
+- **Estado**: Implementada solo localmente; pendiente de verificación del usuario, sin push ni PR.
+- **Decidió**: Cris solicitó completar los estados según las presentaciones y verificar la rama antes de publicarla.
+- **Área**: Estados, AH/AV y presentación del cierre del EFE.
+
+**Contexto.** Estados mostraba los subtotales en tablas aparte y el editor conservaba el orden de llegada. AH/AV solo comparaban las filas importadas. Esto omitía UB, UAII, UAI o UN si el archivo no los traía, aunque pudieran calcularse. Las fuentes docentes acreditan una secuencia y distinguen subtotal de detalle; no acreditan asumir tasas o movimientos ausentes.
+
+**Opciones.** Mantener totales aparte; insertar cuentas calculadas en los datos guardados; o componer una lectura ordenada sin mutar el documento. Para el ER se consideró reutilizar el totalizador legado o las consultas estrictas ya usadas por Razones y DuPont.
+
+**Decisión.** Lectura compartida en `estados-presentacion-calculations.js`, con filas y claves estables de subtotal. El balance reutiliza `computeFinancialTotals` y deja N/D si el grupo o un importe necesario no está disponible. El ER consulta los derivados existentes del motor: ventas, costo, utilidad bruta, gastos operativos, UAII y UN. UAI usa el mismo intérprete sobre la expresión de UN antes del impuesto: una consulta temporal elimina exclusivamente ese operando, sin cambiar el motor, el generado, los JSON ni los datos. Se preservan las políticas de ausencia del catálogo y la composición de ingresos; no se aplica una tasa automática.
+
+Un subtotal reportado aparece una sola vez, con su nombre e importe originales, y su etiqueta canónica como ayuda. Los motivos de discrepancia se muestran con «Revisar». Sus componentes permanecen visibles; el subtotal no se vuelve a sumar. AH alinea el concepto aunque un periodo lo reporte y otro lo calcule, y conserva las procedencias por columna. La disponibilidad de ventas netas como base de AV proviene de la lectura del ER; evita que un ingreso operativo acreditado por id la anule por carecer de tipoApp. Se conservan Δ/abs(T1), los conceptos de base de AV, los signos y todas las cuentas, incluidos los pendientes de clasificación.
+
+**Consecuencias.** El ER resuelto comparte la disponibilidad de Razones/DuPont, que puede ser más estricta que el totalizador legado de otros consumidores. Depreciación, amortización y otros gastos operativos con identidad acreditada sí entran en su lugar, aunque el selector de tipos generales no tenga tipoApp para ellos. La etiqueta de estos selectores indica «Identificada», sin asignarles un tipo nuevo. Las tasas 15 % o 30 % son supuestos de ejemplos concretos, no defaults para los importados. Dividendos no se convierten en gastos. Un borrador con un importe vacío conserva sus filas N/D; una proyección de lectura omite ese valor al consultar los cálculos, conservando los subtotales independientes. Guardar/exportar siguen usando la validación original.
+
+El EFE conserva sus cálculos y advertencias; añade el efectivo final calculado (inicial + flujos), separado del saldo observado del balance. Un descuadre no se rellena ni se oculta. EOAF, Flujo directo y Proforma ya tienen sus secciones/subtotales y se preservan; no se crea un estado de cambios de patrimonio sin movimientos suficientes. El EFE oficial no fue comparado con la clase por falta de BG/ER completos.
+
+**Para revertirla.** Desconectar la composición de lectura de Estados y AH/AV y el renglón de cierre calculado del EFE, sin alterar los documentos originales ni borrar esta decisión.
+
+**Referencias.** [Ficha y fuentes leídas antes de editar](planificacion/estados-resueltos-docente/README.md); [comparación y límites](planificacion/estados-resueltos-docente/COMPARACION.md); D-056, D-063, D-087, D-088 y D-095.
+
+### D-097 — Proforma coherente y desarrollo visible del presupuesto
+
+- **Fecha**: 2026-11-07
+- **Estado**: Implementada localmente; sin push ni PR.
+- **Decidió**: Cris pidió conservar Ejercicios AFOD en TEAM.md y revisar la percepción de los cálculos/resultados en Proforma y Presupuesto Maestro.
+- **Área**: Presentación de Planeación y Proforma; fuente del ER real.
+
+**Contexto.** El resumen ocultaba el ER/caja detrás de tablas completas. Proforma omitía UAI y los importes que explican los resultados. El real seguía el totalizador legado y no reconocía algunos gastos operativos por id ya soportados en Estados/Razones. La fuente nueva pide además métodos que la proyección actual no implementa.
+
+**Opciones.** Añadir más cifras de resumen; exponer el desarrollo reutilizando los resultados existentes; o reemplazar el modelo por los métodos docentes. Se opta por el desarrollo y la coherencia de lectura, conservando el alcance vigente del presupuesto.
+
+**Decisión.** El presupuesto completo abre con su resultado y permite consultar caja, horizonte o periodo. `desarrolloPresupuesto` arma la traza desde resultados ya calculados y `tablaDesarrollo` la presenta en ambas pantallas. No hay un segundo cálculo financiero. Se muestra IR del horizonte como suma de IR por periodo, según D-014, y efectivo antes de financiamiento, según D-010. El caso parcial sigue sin ER/caja, con sus pendientes expresos y sin mezclar su base en Proforma (D-089/D-090).
+
+El real de Proforma lee los subtotales del ER resuelto de D-096 y los márgenes del motor actual, sin modificar el motor/generado. Identifica intereses e impuestos mediante consultas existentes por id. Los otros ingresos operativos aparecen antes de UAII; los no operativos, después. Si falta impuesto, UN queda N/D aunque UAI sea calculable. Se conservan las reglas temporales de D-091.
+
+**Consecuencias.** Proforma puede pasar de una cifra a N/D si su fuente anterior suponía un dato no acreditado, o recuperar una cifra cuando el totalizador legado no entendía una identidad válida. Coincide con Estados y Razones. Los tests que acreditan casos completos declaran explícitamente sus ceros sintéticos. No cambian los resultados ni impuestos del presupuesto maestro, las tasas, calendarios, guardado o esquemas del store. La lectura tampoco implementa los nuevos métodos: porcentaje de ventas/fijo-variable, dividendos/retención, balance crítico y pagos de IR por fecha quedan documentados como pendientes.
+
+**Para revertirla.** Retirar el desarrollo compartido o redefinir la fuente del real mediante otra decisión, manteniendo N/D y la consistencia con los estados; no sustituir tasas ni completar movimientos para forzar los ejercicios.
+
+**Referencias.** [Revisión docente y referencias independientes](planificacion/proforma-presupuesto-docente/REVISION-DOCENTE.md); [ficha y verificación](planificacion/proforma-presupuesto-docente/README.md); D-010, D-014, D-089 a D-093 y D-096.
+
+### D-098 — Compactar cuentas accesorias sin cambiar la ausencia financiera
+
+- **Fecha**: 2026-11-07.
+- **Estado**: Implementada localmente; sin push ni PR.
+- **Decidió**: Cris pidió retirar cuentas opcionales añadidas en cero, conservar resultados internos y diagnosticar los N/D del ejemplo predeterminado.
+- **Área**: Presentación de Estados y Análisis.
+
+**Contexto.** La demo tiene tres deducciones con cero explícito; el formato no acredita si un cero fue añadido por una herramienta o vino del ejercicio. Borrarlo o equipararlo a ausencia alteraría datos. AH mezcla BG/ER; el motor conserva motivos N/D que la interfaz no explica.
+
+**Opciones.** Borrar cuentas por valor; filtrar todos los ceros; mantenerlos todos; o compactar únicamente cuentas accesorias reconocidas, conservando acceso y datos. Se elige la última para no ocultar subtotales/razones ni alterar cifras.
+
+**Decisión.** Una lista explícita de ids de presentación, independiente de `absence_policy`, permite compactar detalle importado cuando todas las fuentes examinadas son cero. Se usa un desplegable cerrado, editable en Estados, sin persistir preferencias ni cambiar documentos. Desconocidas, N/D, cuentas principales y subtotales se conservan. El editor y AV examinan todos los periodos; AH su par y la vista multiperiodo sus columnas. Franquicias 60000/0 conserva el movimiento. No se infieren identidades por nombre.
+
+AH separa tablas de BG/ER y conserva suplementarios/pendientes. Razones mantiene sus 23 indicadores y añade causas existentes agrupadas por cuenta/periodo, con nombres legibles. La nota del primer periodo explica el modo directo apagado en vez de afirmar que ya usa saldos finales.
+
+**Consecuencias.** La limpieza es visual y reversible. No se resuelve la incompatibilidad financiera de la demo con los componentes `requires_data`; el informe propone cobertura/no-aplica/no-informado y una demo acreditada. Esa política necesita otra decisión; D-032/D-055/D-057/D-059/D-063 permanecen vigentes. Motor, generado, JSON y store no cambian. Los ceros genuinos permanecen accesibles y exportables.
+
+**Para revertirla.** Retirar la compactación y el desplegable de diagnóstico, manteniendo los datos y el informe. No deshacer las políticas de ausencia financiera para cambiar la apariencia.
+
+**Referencias.** [Diagnóstico y propuesta](planificacion/cuentas-opcionales-nd/DIAGNOSTICO-Y-PROPUESTA.md); [ficha y evidencia](planificacion/cuentas-opcionales-nd/README.md); D-096/D-097.
+
+### D-099 — Totales suficientes y cobertura explícita de los estados
+
+- **Fecha**: 2026-11-07.
+- **Estado**: Implementada localmente; pendiente de revisión, sin push ni PR.
+- **Decidió**: Cris autorizó comenzar la reparación del motor a partir del diagnóstico de totales y pidió un informe final.
+- **Área**: Resolución de datos del motor, normalización y edición de Estados, presentación de advertencias.
+
+**Contexto.** Un grupo calculable no debe necesitar cuentas que no aplican al ejercicio. A la vez, una omisión en una fuente parcial no acredita cero. Se confirmó además que el cálculo de comprobación podía lanzar un error de composición y anular una UN reportada válida.
+
+**Opciones.** Convertir todas las ausencias en cero; copiar sumas visibles como totales reportados; completar únicamente la demo; o declarar cobertura y separar resultado de comprobación. Se elige la última. Las tres primeras ocultan datos desconocidos, atribuyen procedencia incorrecta o dejan el defecto en los importados.
+
+**Decisión.** Campo opcional `coberturaEstados[periodo][grupo]`, para activos, pasivos, patrimonio y ER, con `sin_confirmar`, `parcial` o `completo`. Sin campo se conserva el contrato anterior. Completo declara que las partidas no listadas no aplican. Solo permite aportar cero al leer detalle ausente de un grupo con datos; no fabrica filas, totales reportados ni suplementos. Un importe presente inválido, una identidad pendiente con monto o un grupo sin datos siguen N/D. La declaración se valida, guarda/exporta y edita por periodo/grupo. El borrador conserva como desconocidos los campos vaciados, independientemente de la cobertura.
+
+El motor conserva un total reportado válido aunque no pueda comprobar su desglose. Si hay detalle comparable, registra `reported_subtotal_unverifiable` al faltar información o composición; si hay discrepancia numérica, conserva `reported_subtotal_mismatch` y su tolerancia. Los errores inesperados del intérprete siguen lanzándose. El cálculo de detalle sigue exigiendo composición cuando el ingreso no operativo está presente. Se limpia la resolución temporal de derivados incluso al lanzar una excepción, evitando falsos ciclos tras recuperarla.
+
+`consultarMontoCuenta` y las guardas de depreciación/deducciones del totalizador respetan la misma cobertura. La demo propia de la app declara sus cuatro grupos completos y otros ingresos excluyendo intereses, conservando sus importes y cuentas. Su carga pública persiste el módulo normalizado completo para no heredar metadatos de otra empresa. No se migra ni declara completo automáticamente ningún documento anterior o importado.
+
+**Consecuencias.** Delimita D-055/D-057/D-063 solo para ausencias confirmadas por cobertura, y D-056 en la comprobación de un total que ya es válido. Se conservan sus reglas para datos desconocidos y reconstrucción sin cobertura; se conservan D-032, D-049, D-051 en reconstrucción, D-059, fórmulas, signos y días. Los 20 JSON, su generado y el catálogo no cambian. La nueva procedencia de un cero por cobertura aparece en la traza; no se transforma un calculado en reportado. Las advertencias de resultados disponibles se presentan separadas de los N/D. El totalizador legado no se reemplaza entero en esta tarea.
+
+**Para revertirla.** Conservar/exportar las declaraciones de cobertura; retirar su interpretación mediante una decisión posterior y revisar todas las nuevas pruebas. No borrar datos del usuario ni restaurar silenciosamente cuentas sintéticas para hacer pasar los ejercicios.
+
+**Referencias.** [Informe final](planificacion/reparacion-totales-motor/INFORME-FINAL.md); [plan y verificación](planificacion/reparacion-totales-motor/README.md); diagnóstico de `cuentas-opcionales-nd`.
+
+### D-100 — Catálogo docente seleccionable, ejemplo integral y unidad explícita
+
+- **Fecha**: 2026-11-07.
+- **Estado**: Implementada; pendiente de revisión de Carlos.
+- **Decidió**: Cris solicita completar el ejemplo y añadir casos del ZIP, paneles de selección y PR con revisión humana.
+- **Área**: Ejemplos y presentación de los módulos financieros.
+
+**Contexto.** Una carga única sin fuente ni alcance no permite distinguir un ejemplo ficticio completo de un ejercicio docente que no informa crédito, otro periodo o moneda. El caso ficticio anterior carecía de suplementos para varias razones.
+
+**Opciones.** Inventar datos para cada ejercicio; importar todas las transcripciones sin verificar; o preparar casos contrastados y conservar sus límites. Se elige la tercera, completando únicamente el ejemplo ficticio con suplementos declarados.
+
+**Decisión.** Catálogo compartido con selector, fuente, alcance y carga explícita. MUNO integral añade ventas a crédito/pagos ficticios; los casos docentes no reciben suplementos inventados. Baker y Bartlett convierten miles de USD a USD completos; Práctico 2 y TOR usan UM por no identificar moneda. Se conserva la ubicación corriente de documentos de Baker y los equivalentes de Bartlett según la fuente, con nota visible. `moneda` es opcional y validada; no hay tipo de cambio implícito ni comparación monetaria entre unidades distintas. Los estados existentes no se migran ni sobrescriben. Los paneles de Inicio delimitan qué módulos cargan. Sustituir un caso parcial por un presupuesto completo confirma el reemplazo del conjunto.
+
+**Consecuencias.** Las 24 razones de MUNO 2024 quedan disponibles. Los N/D legítimos del docente permanecen. No se modifica la fórmula de razones, C-V-U o flujo para acomodar el material. Los casos que necesitan otro modelo quedan pendientes documentados. Los datos anteriores sin unidad explícita mantienen C$. El EFE derivado conserva sus limitaciones y no se presenta como reproducción del método directo docente.
+
+**Para revertirla.** Retirar opciones mediante otra decisión manteniendo exportables los datos y su moneda; no convertir importes ni borrar archivos del usuario.
+
+**Referencias.** [Informe y contraste docente](planificacion/catalogo-ejemplos-afod/INFORME-FINAL.md); [ficha](planificacion/catalogo-ejemplos-afod/README.md); D-096 a D-099.
+
+### D-101 — Totales acreditados y una misma utilidad en los consumidores
+
+- **Fecha**: 2026-11-07.
+- **Estado**: Implementada; pendiente de revisión humana.
+- **Decidió**: Cris autoriza reparar cuidadosamente los cinco fallos reproducidos, antes de ampliar métodos.
+- **Área**: EOAF, EFE, Inicio, Mercado y disponibilidad del ER.
+
+**Contexto.** La auditoría independiente reproduce inventarios/PPE/patrimonio omitidos al quedar en `reportedTotals`, UN distinta entre módulos y ventas brutas cero sin fuente. El EOAF puede cuadrar con cifras equivocadas si omite ambos lados; el EFE puede cuadrar algebraicamente sin acreditar movimientos.
+
+**Opciones.** Volver a insertar totales en las cuentas, completar ausencias con cero o reunir ambas representaciones sin mutar el documento. Se elige la tercera. Para ER se reutilizan los derivados existentes del motor en vez de crear otra fórmula de UN.
+
+**Decisión.** Reemplaza la selección financiera de D-072: un subtotal se elimina únicamente si su detalle disponible concilia dentro de tolerancia. Si no concilia, se conserva el total y se excluyen componentes de esa agregación, con aviso. Los totales anidados se resuelven desde inventario hasta activo/pasivo/patrimonio; un inventario total puede ser cuenta hoja. Se conserva identidad por id para totales aunque cambie la etiqueta. Importe inválido, contradicción entre representaciones o periodo ausente producen N/D. Los totales mixtos sin desglose no se asignan íntegramente a una actividad del EFE; PPE neto no acredita depreciación cero ni inversión bruta.
+
+Inicio y Mercado reutilizan el ER resuelto; EFE consulta `obtenerUtilidadNetaMotor`. Un ER vacío no acredita UN cero. Una venta neta reportada tampoco acredita un bruto cero: se mantiene N/D al no existir bruto ni componentes, incluso con cobertura completa. Un cero explícito sigue siendo válido. Se preservan el balance y los cálculos independientes disponibles.
+
+**Consecuencias.** Delimita D-099: completo confirma partidas no aplicables, no permite reconstruir una magnitud bruta no reportada hacia atrás desde su neto. Se conserva D-088: el EFE sigue siendo estimación por variaciones, no prueba de cobros/pagos. Los casos sintéticos anteriores declaran expresamente cobertura/composición; los casos que requerían UN cero ahora la reportan. No se modifica ningún dato real para hacer pasar pruebas.
+
+**Para revertirla.** Registrar decisión posterior, conservar los documentos originales/exportables y repetir el contraste independiente; no volver a convertir desconocidos en ceros.
+
+**Referencias.** [Informe por hallazgo](planificacion/reparacion-auditoria-ejemplos/INFORME-FINAL.md); [regresiones](../tests/unit/auditoria-ejemplos-regresiones.test.js).
+
+### D-102 — Compras declaradas y escenario Bartlett con premisas de clase
+
+- **Fecha**: 2026-11-07.
+- **Estado**: Implementada; pendiente de revisión humana.
+- **Decidió**: Solicitud de Cris de corregir H-05 sin asumir convenciones ni mezclar ejercicios.
+- **Área**: Catálogo de ejemplos y entrada de compras para actividad.
+
+**Contexto.** Diapositivas 14–15 de `Razones_Financieras_Liquidez_Actividad.md`: todas las ventas 2012 se suponen a crédito y las compras se estiman como 70 % de CBV. El caso histórico no declara esas premisas; exigir pagos e inventarlos para obtener las compras docentes falsificaría caja.
+
+**Opciones.** Aplicar porcentajes automáticamente a todos los casos, simular pagos o admitir una base declarada en un escenario separado. Se elige la tercera.
+
+**Decisión.** Añadir `supp.credit_purchases` (requiere dato, magnitud positiva, cero explícito válido). En los tres JSON que definen `derived.credit_purchases`, `reported_or_calculate` usa la base declarada y conserva como alternativa la fórmula existente: pagos + CxP final − CxP inicial. Los cocientes y promedios no cambian. El generado se regenera con el script, nunca a mano; cuenta maestra y catálogo se sincronizan. Un dato ausente no usa CBV ni un porcentaje supuesto.
+
+`bartlett-clase` registra para 2012 ventas a crédito 3074000 y compras estimadas 1461600; etiquetas y selector hacen explícita la estimación. Conserva BG/ER, moneda USD, promedios y DIAS_ANIO. El ejemplo histórico Bartlett no cambia ni recibe pagos ficticios. El EFE ignora estos suplementos y conserva sus cifras; no compara las compras estimadas con pagos de caja. El año 2011 no recibe premisas que la fuente solo declara para 2012.
+
+**Consecuencias.** Amplía D10 de `razones_financieras/notas/01_decisiones.md` y D-055 para una base de compras explícita, sin activar aproximaciones automáticas. El catálogo pasa a 73 cuentas (59 `requires_data`); no añade dependencias ni cambia el esquema del store. La investigación de esta entrada interna es parcial, sin atribuirle verificación externa. Son convenciones docentes, no prueba de compras reales. Los métodos nuevos de Proforma y calendarios completos de caja quedan fuera por elección expresa de Cris. Los plazos de cobro/pago y el ciclo se muestran con dos decimales conforme a la especificación y el docente, sin redondear los operandos.
+
+**Para revertirla.** Conservar exportables los suplementos declarados y registrar otra decisión antes de retirar su lectura. No reinterpretarlos como pagos.
+
+**Referencias.** [Informe y contraste](planificacion/reparacion-auditoria-ejemplos/INFORME-FINAL.md), diapositivas 14–15 proporcionadas por el usuario.
 
 ### D-103 — Revisión opcional antes del merge
 

@@ -1,5 +1,6 @@
 import { CUENTAS_CATALOGO, TIPOS_APP, ALIAS_CLASIFICACION, COMPATIBILIDAD_LEGADA, versionCatalogo } from './cuentas-catalogo.js';
 import { normalizarCuenta, sugerirCuentas } from './cuentas-similitud.js';
+import { coberturaCompleta } from './estados-cobertura.js';
 
 export { versionCatalogo };
 const catalogo = new Map(CUENTAS_CATALOGO.map(cuenta => [cuenta.id, cuenta]));
@@ -102,8 +103,11 @@ export function consultarMontoCuenta(datos, periodo, id) {
     return { valor: null, motivo: afecta.some(identidad => identidad.estado === 'sugerida')
       || sinGrupo.some(fila => fila.identificacion.estado === 'sugerida') ? 'ambiguous_account_match' : 'unrecognized_imported_account' };
   }
-  return { valor: cuenta.rol !== 'reported_total' && cuenta.politicaAusencia === 'zero_if_not_reported' ? 0 : null,
-    motivo: cuenta.rol !== 'reported_total' && cuenta.politicaAusencia === 'zero_if_not_reported' ? null : 'missing_required_account_data' };
+  const grupoConDatos = identidades.some(fila => typeof fila.valor === 'number' && Number.isFinite(fila.valor))
+    || Object.keys(datos.reportedTotals?.[periodo] || {}).some(idTotal => catalogo.get(idTotal)?.grupo === cuenta.grupo);
+  const ausenciaConfirmada = grupoConDatos && coberturaCompleta(datos.coberturaEstados?.[periodo], cuenta.grupo);
+  const cero = cuenta.rol !== 'reported_total' && (cuenta.politicaAusencia === 'zero_if_not_reported' || ausenciaConfirmada);
+  return { valor:cero ? 0 : null, motivo:cero ? null : 'missing_required_account_data' };
 }
 
 export function montoCuenta(datos, periodo, id) { return consultarMontoCuenta(datos, periodo, id).valor; }

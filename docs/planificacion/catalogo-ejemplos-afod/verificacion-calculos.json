@@ -1,0 +1,55 @@
+{
+  "rama": "codex/catalogo-ejemplos-afod",
+  "baseOriginMain": "19c5c6f81607d8794938880640034e737fea67af",
+  "pruebas": {
+    "comando": "npm test -- --maxWorkers=2 --reporter=json",
+    "archivos": 73,
+    "total": 2169,
+    "aprobadas": 2169,
+    "fallidas": 0,
+    "exito": true
+  },
+  "lint": {
+    "comando": "npm run lint",
+    "errores": 0,
+    "advertencias": 10,
+    "archivosConAdvertencias": [
+      {
+        "archivo": "js/components/tabla.js",
+        "reglas": [
+          "no-unused-vars"
+        ]
+      },
+      {
+        "archivo": "js/modules/activos/index.js",
+        "reglas": [
+          "no-unused-vars",
+          "no-unused-vars"
+        ]
+      },
+      {
+        "archivo": "js/modules/presupuesto/index.js",
+        "reglas": [
+          "no-unused-vars"
+        ]
+      },
+      {
+        "archivo": "js/utils/export.js",
+        "reglas": [
+          "no-unused-vars"
+        ]
+      },
+      {
+        "archivo": "tests/unit/calculate.test.js",
+        "reglas": [
+          "no-unused-vars",
+          "no-unused-vars",
+          "no-unused-vars",
+          "no-unused-vars",
+          "no-unused-vars"
+        ]
+      }
+    ]
+  },
+  "referenciasNumericas": "tests/unit/catalogo-ejemplos.test.js: 14 pruebas, importes contrastados con los resueltos docentes; no tipos de cambio implícitos."
+}

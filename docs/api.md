@@ -20,7 +20,7 @@ Funciones puras, sin DOM ni store. Los adaptadores públicos `computeAH`, `compu
 #### `analisisVerticalCompleto(datos, periodo)`
 - **Parámetros**: estados normalizados y periodo.
 - **Retorno**: `{ balanceGeneral, estadoResultados, complementarios }`. Cada estado tiene `base`, `baseValor` y todas sus `rows` con `pctBase`; complementarios no tienen una base inventada.
-- **Fórmula**: `av(valor, base)` con guarda de datos finitos y divisor distinto de cero. Bases: activo total del totalizador y ventas netas del totalizador.
+- **Fórmula**: `av(valor, base)` con guarda de datos finitos y divisor distinto de cero. La base del balance es el activo total. Si está reportado, se conserva y se indica si el desglose es insuficiente o discrepa. La base del ER es ventas netas.
 - **Ejemplo**: UN reportada 12000 y ventas netas 200000 → `pctBase=0.06`; base cero o ausente → `null`.
 
 #### `detalleDuPont(datos, periodo)`
@@ -907,7 +907,7 @@ Lectura del estado: si la estimación cuadra o no y qué sugieren sus signos. La
 
 Identifica los dividendos como derivados de las utilidades acumuladas y aclara que cuadrar no valida independientemente la utilidad neta. Se conservan la fórmula y la falta de confirmación del dato de dividendos. `construirEFE` reconoce «pérdida del ejercicio/periodo», omite el motivo sin clasificación cuando ambos saldos son cero y advierte movimientos opuestos entre reservas y resultados, sin redistribuir importes.
 
-`conciliarConBalance(resultado, estados, periodoBase)` devuelve `null` cuando no hay comparación aplicable. Si el efectivo del periodo siguiente no es numérico, devuelve `{ periodo, efectivo: null, diferencia: null, cuadra: null, motivo: 'efectivo_no_disponible' }`; un efectivo declarado en cero sí puede conciliarse (D-087).
+`conciliarConBalance(resultado, estados, periodoBase)` devuelve `null` cuando no hay comparación aplicable. Si las monedas difieren o falta efectivo acreditado en el periodo siguiente, devuelve `{ periodo, efectivo: null, diferencia: null, cuadra: null, motivo }` con `moneda_incompatible` o `efectivo_no_disponible`, respectivamente. Un efectivo declarado en cero puede conciliarse cuando coincide la moneda (D-087 y D-100).
 
 ---
 
@@ -932,10 +932,10 @@ El par de periodos a comparar. Sin `periodoFinal`: los dos más recientes en ord
 #### `variacionesDeCuentas(datos, grupo, periodoInicial, periodoFinal)`
 Variación de cada cuenta de un grupo del balance (`'activos'`, `'pasivos'` o `'patrimonio'`) entre dos periodos: primero las cuentas del periodo inicial y después las que solo aparecen en el final.
 
-- **Retorno**: `[{ cuenta, grupo, tipo, saldoInicial, saldoFinal, variacion }]`; `tipo` es `''` si la cuenta no se reconoce
+- **Retorno**: `[{ cuenta, grupo, id, tipo, requiereDesglose, saldoInicial, saldoFinal, variacion }]`; `tipo` es `''` si la cuenta no se reconoce. D-101 reúne cuentas y `reportedTotals` y conserva una sola representación acreditada; `requiereDesglose` impide clasificar totales mixtos o PPE neto como una actividad de caja.
 - **N/D**: un saldo ausente o que no es un número finito queda en `null` y la variación también; nunca se completa con 0 ni se suma como texto
 
-#### `advertenciasDeBalance(periodos, bgInicial, bgFinal)`
+#### `advertenciasDeBalance(datos, periodos, bgInicial, bgFinal)`
 Una advertencia por periodo cuyo balance no cumple A = P + O (más allá de la tolerancia), con la diferencia exacta. `periodos` es `{ inicial, final }`.
 
 - **Retorno**: `string[]`
@@ -983,3 +983,72 @@ Códigos de `avisos` del presupuesto maestro: `financiamiento`, `sin-compras`, `
 Recibe el módulo de Inventario del respaldo y devuelve `{ productos, movimientos }` normalizados. Lanza un error si la normalización descarta registros, una fecha no existe en el calendario, un costo explícito no es un número finito mayor o igual a cero, o cualquier saldo intermedio del kardex cae bajo la tolerancia de existencias. Valida por producto y fecha. Si dos movimientos comparten fecha, respeta el orden del archivo. Una entrada legada con la propiedad `costoUnitario` omitida usa el costo del producto según D-081.
 
 Utilidades: `js/utils/form.js` (`leerNumero(texto)` → `{ vacio, valor }`, `nuevoId(prefijo)`, `fechaHoy()`), `js/utils/estados-guardados.js` (`estadosGuardados(estados)`, `totalesPeriodo(estados, periodo)`). `js/modules/analisis/index.js` exporta ahora `refreshSavedStates()` para que el reporte integrado no use estados en caché.
+
+
+## Presentación de estados resueltos (D-096)
+
+### `estadosResueltos(datos, periodo)`
+
+Composición pura en `js/modules/estados/estados-presentacion-calculations.js`. Recibe los estados o su borrador estructurado y devuelve `{ balanceGeneral, estadoResultados }`, listas ordenadas con detalle y subtotales. Cada fila conserva `cuenta`, `valor`, `grupo`, `seccion`, `clave` y, cuando corresponde, `id`, `concepto`, `operador`, `origen`, `subtotal`, `orden`, `valorCalculo` y `motivos`. `valor` preserva un reportado, mientras `valorCalculo` expresa su disponibilidad para operar; AV toma de él la base de ventas netas. Una fila calculada no modifica datos, identidades, reportados ni store. Valor faltante = `null`; periodo inexistente = listas vacías. Los grupos de balance sin datos no se convierten en cero. Usa totales existentes y los derivados del ER del motor; la consulta temporal de UAI conserva su expresión antes del impuesto. Un importe incompleto del borrador no invalida subtotales independientes ni elude la validación de guardado.
+
+Ejemplo docente de julio con partidas complementarias acreditadas explícitamente: ventas 72000, costo 42000 y gastos 19000 producen UB 30000 y UAII 11000; intereses 1000 dan UAI 10000; impuesto 3000 da UN 7000. Sin el impuesto, UN = `null` y UAI sigue en 10000.
+
+### Renderizado común
+
+`js/modules/estados/estados-presentacion-ui.js` exporta `etiquetaFilaEstado(fila, { mostrarOrigen = true } = {})`, `origenFilaEstado(fila, cuentaVisible = fila?.cuenta)` y `tablasEstadosResueltos(datos, periodos)`. Devuelven HTML escapado con nombres originales, concepto canónico, signos y procedencia. La tabla distingue reportado/calculado por periodo. No persisten información.
+
+`filasAnalisis`, `analisisHorizontalCompleto` y `analisisVerticalCompleto` consumen esta lectura. AH añade `fuenteT1` y `fuenteT2` para distinguir procedencia y nombres por columna; no modifica Δ/abs(T1). Los datos suplementarios y pendientes se conservan. Los valores reportados discordantes no se sustituyen: se señalan para revisión.
+
+### `construirEFE`: cierre calculado
+
+Añade `efectivoFinalCalculado`, igual a efectivo inicial + total de flujos cuando ambos son finitos; si falta un operando, `null`. Se presenta por separado de `efectivoFinal`, que sigue siendo el saldo observado del balance. `diferencia`, conciliación, tolerancia, naturaleza estimada y actividades conservan su contrato.
+
+
+## Desarrollo de Planeación y fuente de Proforma (D-097)
+
+`desarrolloPresupuesto(presupuesto, indice = null)` en `planeacion-desarrollo-calculations.js` devuelve `{ etiqueta, resultados, caja }` para un presupuesto completo ya calculado. `null` selecciona el horizonte; un índice válido, su periodo. Cada paso incluye clave, concepto, fórmula descriptiva, expresión con operandos/formato y valor existente; un valor no finito se conserva N/D. No calcula ni persiste otro presupuesto. Devuelve `null` sin presupuesto completo o con índice fuera de rango. El IR agregado suma periodos y los saldos de caja usan apertura/cierre, no sumas de saldos.
+
+`tablaDesarrollo(pasos)` en `planeacion-desarrollo-ui.js` genera HTML escapado, con concepto, cálculo y resultado; en móvil el cálculo queda bajo el concepto. La usan Planeación y Proforma. `resumenPlaneacionUI` ofrece Resultado/Caja en el modelo completo y consulta de horizonte/periodo; el modelo parcial conserva cobros/pagos y saldos, con pendientes declarados.
+
+`resultadosReales` ahora consume `estadosResueltos` y los márgenes de `computarRazonesDesdeDatos`. Expone `uai` y `otrosOperativos`, además de los campos previos, y conserva N/D según las mismas identidades/entradas que Estados y Razones. `resultadosProforma` conserva los totales de Planeación y añade su `uai`. Los otros ingresos operativos y no operativos no están modelados en la proyección y quedan `null`, que la comparación identifica como no aplicables a esa columna.
+
+`construirReporte` añade `desarrollo` (o `null`) y `motivoPresupuesto` para explicar una proyección ausente. El real y la proyección permanecen separados y las variaciones siguen limitadas a coberturas anuales comparables. La traza no altera el estado guardado ni el reporte de financiamiento requerido.
+
+## Cuentas opcionales y disponibilidad (D-098)
+
+`separarCuentasOpcionales(filas, fuentes = fila => [fila])`, en `estados-presentacion-ui.js`, devuelve `{ visibles, opcionales }` preservando orden y referencias, sin mutarlas. Solo compacta ids accesorios enumerados en ese archivo cuando todas las fuentes existen, tienen origen `importado`, valor exactamente cero y no son subtotales. Un dato ausente, N/D, desconocido, principal o calculado conserva su fila. El callback permite examinar todos los periodos en el editor/AV, las columnas elegidas en la vista multiperiodo y el par de AH. Ejemplo: una devolución importada con cero en ambos periodos se compacta; Franquicias 60000/0 conserva ambos valores. No interpreta ni cambia `absence_policy`.
+
+`desplegableCuentasOpcionales(filas, contenido)` devuelve el HTML de un `<details>` cerrado, con cantidad y explicación, o cadena vacía sin filas. `contenido` debe ser HTML ya escapado por el render de tablas. No modifica ni elimina datos; en el editor las filas conservan sus manejadores e índices.
+
+`disponibilidadRazones(razones)`, en `analisis-disponibilidad-ui.js`, presenta los motivos existentes de los indicadores N/D de la pestaña Razones (23, sin CNT). Agrupa causa/cuenta/periodo, traduce ids conocidos a nombres de catálogo y lista indicadores afectados. Conserva cero como resultado calculable; devuelve cadena vacía sin N/D. Escapa todos los textos de los datos. No consulta el store ni ejecuta fórmulas.
+
+## Reparación de disponibilidad del motor (D-099)
+
+- `normalizeFinancialData` conserva y valida `coberturaEstados?: { [periodo]: { activos?, pasivos?, patrimonio?, estadoResultados? } }`. Valores permitidos: `sin_confirmar`, `parcial`, `completo`. Rechaza periodos/grupos adicionales, arrays y valores desconocidos. Sin el campo no lo agrega; mantiene compatibilidad con archivos anteriores.
+- `GRUPOS_COBERTURA`, `ESTADOS_COBERTURA` y `coberturaCompleta(coberturaDelPeriodo, grupo)` en `estados-cobertura.js` comparten el vocabulario. La función devuelve booleano y solo reconoce el literal `completo`.
+- `crearEntradaRazones` traduce la cobertura a `current`/`previous`, sin añadir cuentas. El intérprete conserva N/D en importe explícito inválido, grupo sin datos, suplemento desconocido o pendiente con monto. Solo el detalle realmente ausente en un grupo completo con datos puede aportar cero confirmado. Las cuentas reportadas no se rellenan con cero.
+- `calcularRazon`/`evaluarDerivado` conservan el total reportado si solo falla su comprobación. Motivo nuevo `reported_subtotal_unverifiable`, con `id`, `periodo`, `causas`; no es una indisponibilidad del resultado. `reported_subtotal_mismatch` conserva su contrato y tolerancia. `calcularRazonConTraza` añade `origen: 'no_aplica_por_cobertura'` únicamente a las lecturas cuyo cero provenga de esa declaración.
+- `motivoComposicion(error, entrada)` se traslada del adaptador al motor y se exporta para compartir la clasificación de los dos errores contractuales de composición. Devuelve motivo o `null`; no clasifica ni silencia errores inesperados.
+- `crearContextoRazonesGuardadas(datos, periodo, { cuentasNoDisponibles = [] } = {})` admite la proyección del editor: entradas `{ id, periodo }` marcan importes explícitamente desconocidos de un borrador con campos vaciados. No se persiste esa proyección. La cobertura no convierte estos campos en cero.
+- `consultarMontoCuenta` y `montoCuenta` aceptan la cobertura para detalle ausente, con las mismas restricciones de grupo con datos; no cambian importes presentes, reportados ni pendientes. `computeFinancialTotals` aplica la declaración también a depreciación/deducciones ausentes; no reemplaza todo su algoritmo de sumas.
+- `loadDemo` guarda mediante `setPersisted('estados', normalizeFinancialData(getDemoData()))`, módulo completo con sus metadatos, y propaga el fallo de persistencia. Los importes originales de la demo no cambian.
+- `disponibilidadRazones` ahora puede devolver un panel **Resultados con advertencias** aunque no haya N/D, sin contar avisos de totales como indisponibilidades. El resto de su contrato y el escape de textos se mantienen.
+
+## Catálogo y unidad monetaria (D-100)
+
+- `listarEjemplos(modulo)` y `crearEjemplo(modulo, id, actual)`, en `js/examples/catalogo.js`: metadatos clonados y datos nuevos por selección; id desconocido lanza error. `actual` aporta la fábrica existente del módulo, sin dependencia circular con sus pantallas. Los datos docentes se registran con `registrarCuenta`, identidades y cobertura explícita.
+- `ejemploBaker`, `ejemploBartlett`, `ejemploPractico2`, `completarEjemploMuno(base)` en `ejemplos-estados.js` generan documentos nuevos; la última conserva BG/ER y declara suplementos ficticios sin mutar la base. `getDemoData` y `loadDemo` ofrecen esta versión integral.
+- `panelEjemplos(modulo, boton, opciones?)`, `vincularEjemplos(page, modulo)` y `ejemploSeleccionado(page, modulo, actual)` en `components/ejemplos.js`: HTML escapado, actualización de metadatos y lectura explícita de selección. El selector no escribe en el store; WeakMap conserva su estado durante redibujados de un contenedor.
+- `monedaDe(datos)` y `normalizarMoneda(datos)` en `utils/moneda.js`: C$ por compatibilidad, USD o UM explícitos; el normalizador rechaza otras unidades y conserva la ausencia del campo. Se propaga en los normalizadores de Estados, Flujo y Equilibrio y sus resultados. El formato usa el segundo argumento ya existente de `formatCurrency`/`formatCurrencyND`, sin conversión de divisas.
+- `resultadosReales` declara su moneda. La comparación de Proforma conserva cada columna y sus importes, pero no calcula variaciones entre monedas distintas. Los indicadores monetarios de Mercado/EFE llevan su moneda cuando está declarada. `interpretarEOAF` e `interpretarEFE` aceptan un segundo argumento opcional de moneda (C$ por defecto), sin cambiar el cálculo.
+
+## Reparación del contraste independiente (D-101 y D-102)
+
+Revisión de Carlos (2026-11-08): `computeFinancialTotals` conserva activos totales/PPE neto reportados cuando falta depreciación para reconstruirlos; los avisos identifican únicamente las magnitudes no disponibles. AV utiliza el activo reportado como base sin exigir cobertura completa. Las acciones de tomar saldos en `flujoUI` y `planeacionUI` verifican `monedaDe` antes de modificar o persistir; un rechazo conserva el destino y las ediciones del borrador.
+
+- `totalesPeriodo(estados, periodo?)` conserva la validación y los totales del balance; ventas brutas, ventas netas, UB y UN se leen de `estadosResueltos`. Devuelve N/D para ER vacío sin perder el balance. Ejemplo: Baker 2011 conserva A 2900000 y devuelve `utilidadNeta: null`; Baker 2012 devuelve 180000. Inicio y Mercado comparten esa lectura.
+- `construirEFE` usa `obtenerUtilidadNetaMotor`. Un ER vacío no acredita cero. PPE neto sin desglose deja depreciación/inversión N/D; UN y efectivo disponibles se conservan. Los resultados siguen siendo estimaciones de saldos, incluso cuando cuadran.
+- `esTotalDuplicado` se conserva como consulta estructural de ids por compatibilidad. No certifica que el detalle concilie; la selección de `variacionesDeCuentas` comprueba importes y evita sumar reportado y componentes juntos. Los avisos de balance explican cuándo el detalle no puede comprobar un total.
+- `ejemploBartlettClase()` devuelve un documento nuevo identificado como razones de clase, con los BG/ER de Bartlett y suplementos solo en 2012. Se ofrece como `bartlett-clase` en Estados e Inicio empresa. No muta el histórico.
+- `supp.credit_purchases`: base de compras declarada, suplementaria y positiva, requiere dato; ausencia N/D y cero explícito válido. Los tres derivados JSON de compras usan `reported_or_calculate`: dato declarado primero, fórmula anterior de pagos + ΔCxP si falta. No hay porcentaje automático de CBV. `usaComprasReales` conserva su uso legado para compras derivadas y es falso para una base declarada que podría ser estimada.
+- El motor no deduce ventas brutas cero desde una venta neta reportada sin bruto ni componentes, aunque ER esté completo. Un bruto cero explícito se conserva; sus discrepancias con el neto no se corrigen silenciosamente.

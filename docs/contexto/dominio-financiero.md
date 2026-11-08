@@ -93,6 +93,14 @@ Agregar un tipo (por ejemplo, dividendos preferentes) toca cuatro lugares: `ACCO
 
 ## Catálogo de funciones
 
+### Traza de presupuestos (`js/modules/planeacion/planeacion-desarrollo-calculations.js`)
+
+`desarrolloPresupuesto(presupuesto, indice = null)` compone operaciones y resultados ya calculados para ER/caja del horizonte o de un periodo. No duplica fórmulas ni cambia resultados. IR del horizonte = suma de los IR por periodo (D-014); efectivo final = cierre antes de financiamiento (D-010). Proforma reutiliza esta traza y lee el real con la composición de Estados/Razones (D-097); los datos ausentes conservan N/D.
+
+### Lectura de estados (`js/modules/estados/estados-presentacion-calculations.js`)
+
+`estadosResueltos(datos, periodo)` compone balance y ER completos, con detalle, subtotales y origen reportado/calculado/pendiente, sin mutar datos. Reutiliza `computeFinancialTotals` para el balance y los derivados del ER del motor; no define otro motor ni modifica las fórmulas de Razones. La consulta de UAI evalúa la expresión existente antes de IR; la omisión de IR no se suple con una tasa o con cero. Los campos incompletos conservan N/D sin anular operaciones independientes. D-096 registra el orden docente y la lectura sin persistencia.
+
 ### Composición de Análisis (`js/modules/analisis/analisis-calculations.js`)
 
 | Función | Qué calcula |
@@ -271,7 +279,7 @@ Disponibilidad de cuentas (D-043 y excepción limitada D-047/D-048 a D-044): una
 | `js/utils/html.js` | `escapeHTML(valor)` |
 | `js/modules/inventario/inventario-calculations.js` | `calcularInventario`, `kardex`, `resumenProducto`, `validarMovimiento`, `validarInventarioRespaldo` y el resto en `docs/api.md` |
 | `js/modules/equilibrio/equilibrio-calculations.js` | `calcularCVU`, `calcularEscenarios`, `puntosGrafica`, `baseDesdeEstados` (P, CVu y CF desde Estados y Apalancamiento) |
-| `js/modules/flujo/flujo-calculations.js` | `calcularFlujo`, `conciliarConBalance` |
+| `js/modules/flujo/flujo-calculations.js` | `calcularFlujo`, `conciliarConBalance` (requiere efectivo acreditado en la misma moneda) |
 | `js/modules/planeacion/planeacion-calculations.js` | `calcularPresupuestoMaestro`, `validarSupuestos`, `SUPUESTOS`, `calcularCapitalTrabajo`, `validarCapitalTrabajo`, `CALENDARIOS_CAPITAL_TRABAJO` |
 | `js/modules/proforma/proforma-calculations.js` | `construirReporte`, `resultadosReales`, `resultadosProforma`, `compararResultados`, `alertasIntegradas` |
 | `js/utils/form.js`, `js/utils/estados-guardados.js` | `leerNumero`, `nuevoId`, `fechaHoy`; `estadosGuardados`, `totalesPeriodo` |
@@ -284,3 +292,26 @@ En Proforma, las variaciones entre histórico y presupuesto se calculan entre ej
 ## Razones de la app — D-049 y D-056
 
 `js/modules/razones/razones-app-entrada.js` prepara el documento acreditado y su contexto de periodos; `razones-app-adapter.js` exporta `computarRazonesDesdeDatos(datos, periodo, opciones)` y `obtenerUtilidadNetaMotor(datos, periodo)`. Análisis ofrece `computeRazones`; Integración y Proforma reutilizan esa salida. La composición se declara en Estados, sin inferirla de nombres. Las fórmulas de las 20 razones siguen exclusivamente en los JSON; los indicadores complementarios conservan sus funciones actuales. Los contratos y motivos N/D están en `docs/api.md`.
+
+La presentación D-098 no cambia este contrato: `separarCuentasOpcionales` y `desplegableCuentasOpcionales` (`estados-presentacion-ui.js`) compactan filas accesorias con cero explícito en un desplegable; no convierten una ausencia en cero ni ocultan subtotales/razones. `disponibilidadRazones` (`analisis-disponibilidad-ui.js`) explica los motivos ya calculados. El diagnóstico y la propuesta de cobertura de ejercicios están en `docs/planificacion/cuentas-opcionales-nd/DIAGNOSTICO-Y-PROPUESTA.md`; esa propuesta financiera todavía no está implementada.
+
+D-099 implementa posteriormente la cobertura explícita: un grupo completo confirma que las partidas de detalle no listadas no aplican; los grupos parciales/sin confirmar y los importes explícitos desconocidos conservan N/D. No se completa el catálogo con cuentas ficticias. Un total reportado válido se usa sin depender de reconstruir su desglose: una comprobación incompleta genera aviso, no anula el total. La composición sigue siendo obligatoria al reconstruir ingresos presentes. Los suplementos de crédito, signos, periodos y DIAS_ANIO no cambian. La implementación y sus límites están en `docs/planificacion/reparacion-totales-motor/INFORME-FINAL.md`.
+
+| Archivo | API de cobertura/validación |
+|---|---|
+| `js/modules/estados/estados-cobertura.js` | `GRUPOS_COBERTURA`, `ESTADOS_COBERTURA`, `coberturaCompleta(coberturaDelPeriodo, grupo)` |
+| `js/modules/razones/razones-motor.js` | `motivoComposicion(error, entrada)` (clasificación de errores de dominio compartida con el adaptador); `calcularRazonConTraza` expone procedencia del cero confirmado |
+
+## Datos de ejemplo y unidades (D-100)
+
+Las fábricas de `js/examples/ejemplos-estados.js` registran datos por identidad y el catálogo de `js/examples/catalogo.js` selecciona casos, sin introducir una segunda fórmula para ningún concepto financiero. Los valores de referencia y las convenciones docentes están en `docs/planificacion/catalogo-ejemplos-afod/INFORME-FINAL.md`. La metadata opcional `moneda` se valida en `utils/moneda.js`; USD miles pasa a USD multiplicando por 1000 y UM indica moneda no identificada, sin asumir conversión. Véanse firmas en `docs/api.md`.
+
+## Corrección del contraste independiente (D-101/D-102)
+
+Seguimiento de revisión de Carlos (2026-11-08): la depreciación requerida limita la reconstrucción de activos fijos/activo total, pero no anula importes reportados válidos. Con edificio 1000 y activo reportado 1200, AV = 1000/1200 = 83.333333… %, sin confirmar cobertura ni inventar depreciación. Las transferencias Estados→Flujo/Planeación se bloquean si las monedas difieren; no constituyen conversión ni reinterpretan USD/UM como C$.
+
+EOAF/EFE reúnen saldos de cuentas y totales reportados; un inventario total sin detalle puede ser hoja. El detalle sustituye un total solo si concilia: de lo contrario se conserva el reportado sin duplicar componentes. En EFE un agregado mixto o PPE neto sin desglose no acredita la separación de actividades ni depreciación cero. La selección no modifica los documentos.
+
+Inicio/Mercado usan `totalesPeriodo` con ER resuelto; EFE usa `obtenerUtilidadNetaMotor`. ER ausente/vacío significa UN N/D. Cobertura completa tampoco reconstruye un bruto desconocido desde ventas netas reportadas. Los ceros explícitos se conservan.
+
+`ejemploBartlettClase()` incorpora únicamente las premisas de diapositivas 14–15 para 2012: ventas a crédito 3074000 y compras estimadas 1461600. `supp.credit_purchases` declara la base de compras para rotación de CxP; los JSON usan el dato si está disponible y conservan pagos + ΔCxP si falta. No se aproxima automáticamente con CBV ni se considera caja. La base 365 sigue proveniente de DIAS_ANIO. Se mantienen separado el Bartlett histórico y sus flujos. Fuentes, resultados y límites en `docs/planificacion/reparacion-auditoria-ejemplos/INFORME-FINAL.md`.

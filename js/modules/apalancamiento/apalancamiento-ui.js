@@ -1,5 +1,6 @@
 // Pantalla #/apalancamiento: clasificación de costos, DAP, tasa por defecto, grados y traza.
 // Plan: docs/planificacion/apalancamiento/04-pantalla.md. El cálculo está en apalancamiento-calculations.js.
+import { monedaDe } from '../../utils/moneda.js';
 import { normalizeFinancialData } from '../estados/estados-normalize.js';
 import { TASA_IR_DEFECTO } from '../../utils/calculate.js';
 import { escapeHTML as esc } from '../../utils/html.js';
@@ -36,7 +37,7 @@ function aTextoPorcentaje(fraccion) {
   return String(Number((fraccion * 100).toFixed(6)));
 }
 
-const fmtMonto = valor => (esNumero(valor) ? formatCurrency(valor) : 'N/D');
+const fmtMonto = (valor, moneda = 'C$') => (esNumero(valor) ? formatCurrency(valor, moneda) : 'N/D');
 const fmtTasa = valor => (esNumero(valor) ? formatPercent(valor, 2) : 'N/D');
 function fmtGrado(valor) {
   if (!esNumero(valor)) return 'N/D';
@@ -44,11 +45,11 @@ function fmtGrado(valor) {
   return valor < 0 ? `<span class="text-danger" title="Bajo el punto de equilibrio">${texto}</span>` : texto;
 }
 
-function fmtConcepto(fila) {
+function fmtConcepto(fila, moneda) {
   const clase = CONCEPTOS_SIN_MONTO[fila.concepto];
   if (clase === 'tasa') return fmtTasa(fila.valor);
   if (clase === 'grado') return fmtGrado(fila.valor);
-  return fmtMonto(fila.valor);
+  return fmtMonto(fila.valor, moneda);
 }
 
 function textoAdvertencia(aviso, tasaMostrada) {
@@ -104,14 +105,14 @@ function interpretacion(periodo) {
     : `<p class="text-muted">No hay grados positivos para interpretar en ${esc(periodo.periodo)}.</p>`;
 }
 
-function trazaPeriodo(periodo) {
+function trazaPeriodo(periodo, moneda) {
   const filas = periodo.traza.map(fila => {
     const cuentas = fila.cuentas.map(cuenta => {
       const detalle = cuenta.comportamiento ? ` (${esc(cuenta.comportamiento)}, ${esc(cuenta.origen)})` : '';
-      return `${esc(cuenta.nombre)}${detalle}: ${fmtMonto(cuenta.importe)}`;
+      return `${esc(cuenta.nombre)}${detalle}: ${fmtMonto(cuenta.importe, moneda)}`;
     }).join('<br>');
     return `<tr><td>${esc(fila.concepto)}</td><td>${esc(fila.formula)}</td><td>${cuentas || '—'}</td>
-      <td class="text-right font-mono" style="white-space:nowrap">${fmtConcepto(fila)}</td></tr>`;
+      <td class="text-right font-mono" style="white-space:nowrap">${fmtConcepto(fila, moneda)}</td></tr>`;
   }).join('');
   return `<details class="mt-4"><summary>Traza de ${esc(periodo.periodo)}: cuenta → concepto → fórmula → resultado</summary>
     <div class="table-wrapper"><table class="statement-table">
@@ -220,7 +221,7 @@ export function apalancamientoUI(page, { estados: guardados, config, guardar }) 
            <input class="form-input" id="pct-${k}" inputmode="decimal" maxlength="10" placeholder="% variable" value="${esc(borrador.pct[cuenta.nombre] ?? '')}">`
         : '';
       return `<tr><td>${esc(cuenta.nombre)}${propuesto ? ' <span class="badge badge-warning">sugerido</span>' : ''}</td>
-        <td>${TIPO_CUENTA[cuenta.tipo]}</td><td class="text-right font-mono">${esNumero(importe) ? formatCurrency(importe) : '—'}</td>
+        <td>${TIPO_CUENTA[cuenta.tipo]}</td><td class="text-right font-mono">${esNumero(importe) ? formatCurrency(importe, monedaDe(estados)) : '—'}</td>
         <td><label class="sr-only" for="comp-${k}">Comportamiento de ${esc(cuenta.nombre)}</label>
           <select class="form-select" id="comp-${k}">${opciones}</select>${pct}</td></tr>`;
     }).join('');
@@ -265,7 +266,7 @@ export function apalancamientoUI(page, { estados: guardados, config, guardar }) 
             <th scope="col" class="text-right">GAT</th><th scope="col" class="text-right">GAO estructural del periodo base</th></tr></thead>
           <tbody>${filasVariacion}</tbody></table></div>` : '<p class="text-muted">Hace falta más de un periodo.</p>'}</div>
       <div class="card mb-4"><h2 class="card-title">Cómo leer ${esc(ultimo.periodo)}</h2>${interpretacion(ultimo)}</div>
-      <div class="card mb-4"><h2 class="card-title">Traza</h2>${resultado.periodos.map(trazaPeriodo).join('')}</div>`;
+      <div class="card mb-4"><h2 class="card-title">Traza</h2>${resultado.periodos.map(p => trazaPeriodo(p, monedaDe(estados))).join('')}</div>`;
   }
 
   function render() {
@@ -292,7 +293,7 @@ export function apalancamientoUI(page, { estados: guardados, config, guardar }) 
         <input class="form-input" id="tasaDefecto" inputmode="decimal" maxlength="10" placeholder="${aTextoPorcentaje(TASA_IR_DEFECTO)}" value="${esc(borrador.tasa)}">
         <p class="form-hint">Se usa solo si la tasa efectiva (IR / UAI) no tiene sentido. Vacío = ${aTextoPorcentaje(TASA_IR_DEFECTO)} %.</p>
         <p class="form-label mt-4">Dividendos de acciones preferentes (DAP) por periodo</p>
-        <div class="table-wrapper"><table class="statement-table"><thead><tr><th scope="col">Periodo</th><th scope="col">DAP (C$, vacío = 0)</th></tr></thead>
+        <div class="table-wrapper"><table class="statement-table"><thead><tr><th scope="col">Periodo</th><th scope="col">DAP (${esc(monedaDe(estados))}, vacío = 0)</th></tr></thead>
           <tbody>${filasDap}</tbody></table></div>
         <button type="button" class="btn btn-primary mt-4" id="guardarApalancamiento">Guardar y recalcular</button></div>
       ${resultadosHTML}`;

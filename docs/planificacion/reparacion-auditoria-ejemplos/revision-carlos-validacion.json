@@ -1,0 +1,14 @@
+{
+  "revision": 5816728981,
+  "base": "021ef6754016cd76250e5fbc6e0ebc32962a0d5d",
+  "tests": 2202,
+  "fallos": 0,
+  "archivos": 75,
+  "lintErrores": 0,
+  "lintAdvertencias": 10,
+  "regresionesNuevas": 10,
+  "dirigidasAprobadas": 32,
+  "edgeDirigidos": 3,
+  "edgeCatalogo": 44,
+  "erroresJS": 0
+}

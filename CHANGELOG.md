@@ -9,7 +9,17 @@ Todos los cambios notables en GFO Toolkit.
 ### Reglas de trabajo
 - Revisión de PR opcional por solicitud de Cris (D-103): se elimina la aprobación ajena obligatoria y se mantienen PR, tests/lint, atención de comentarios existentes y autorización para merges con IA.
 
+### Catálogo de ejemplos y presentación de monedas
+- Bartlett de clase separado del histórico: declara crédito total y compras estimadas docentes para 2012. Nueva base de compras declaradas para rotaciones, con la fórmula anterior como alternativa y sin pagos ficticios (D-102).
+- Paneles con selección, fuente y alcance en todos los puntos de carga existentes; MUNO integral completa sus suplementos y añade Baker, Bartlett, Práctico 2 y TOR, además de variantes ficticias. Casos docentes contrastados, sin inventar crédito ni moneda; unidad opcional preservada al guardar/exportar, y comparación de Proforma bloqueada entre monedas distintas (D-100).
+- Referencia parcial de Planeación identificada por separado; cargar un presupuesto completo confirma el reemplazo de sus escenarios. Inventario conserva el desplazamiento de tablas dentro del ancho móvil.
+
+### Planeación y Proforma
+- Presupuesto completo: utilidad y caja visibles desde el resumen; desarrollo con fórmulas, operandos y resultados por horizonte/periodo. Proforma incorpora UAI, comparte la lectura del ER real de Estados/Razones y expone sus cálculos. El caso parcial muestra sus pendientes sin inventar resultados; comparación con Ejercicios AFOD documentada (D-097).
+
 ### Rigor financiero
+- Revisión de Carlos, PR #31: bloqueo de copias de saldos entre monedas distintas en Flujo y Planeación, conservando datos y borrador; AV conserva el activo total reportado aunque falte depreciación para comprobar el detalle. Diez regresiones y respuesta por punto documentadas.
+- Reparados los cinco hallazgos de la auditoría de ejemplos: EOAF/EFE conservan cuentas reportadas sin duplicar subtotales; Inicio/Mercado/EFE comparten UN; ER vacío y bruto desconocido conservan N/D. PPE neto sin desglose no fabrica depreciación ni inversión. Informe, regresiones y contraste independiente documentados (D-101).
 - DuPont usa utilidad y ventas del motor; Flujo y Proforma mantienen N/D cuando falta un operando en vez de convertirlo en cero (D-087).
 - El EFE indirecto usa identidades para resultados y reservas e indica que sus flujos y dividendos son estimaciones que requieren confirmar movimientos; Proforma conserva esa distinción (D-088).
 - Casos de las presentaciones AFOD y contraste de módulos mínimos documentados en `docs/planificacion/rigor-financiero/`.
@@ -18,6 +28,9 @@ Todos los cambios notables en GFO Toolkit.
 - Análisis conserva el aviso de F8 para estados ilegibles y calcula las razones con el motor; las etiquetas de rotaciones indican ventas y compras a crédito. Reportes obtiene la utilidad neta del motor. Los documentos sin datos acreditados mantienen N/D (D-086).
 
 ### Módulo 2: Estados Financieros
+- Alcance por periodo/grupo: Completo, Parcial o Sin confirmar, con persistencia/exportación y compatibilidad con archivos anteriores. La demo declara su alcance y composición sin añadir partidas; campos vacíos siguen N/D (D-099).
+- Cuentas accesorias en cero dentro de un desplegable cerrado, conservando edición, guardado y exportación. Subtotales y N/D permanecen visibles; una cuenta con movimiento en otro periodo no se compacta (D-098).
+- Lectura resuelta en orden docente: balance con subtotales y ER con utilidad bruta, UAII, UAI y UN en su lugar; signos y procedencia reportada/calculada. Los originales siguen editables y los resultados se actualizan sin guardar ni insertar cuentas. Un campo vacío conserva los cálculos independientes y muestra N/D donde falta información (D-096).
 - Ajuste visual de Activos, Pasivos, Patrimonio y Resultados: contenedores con borde completo, esquinas redondeadas, margen y espacio interior; etiquetas y campos editables alineados a la izquierda, incluido el nombre de cuenta.
 - Diseño: acciones separadas en carga, periodo de trabajo, cuentas y vista multiperiodo; opciones secundarias en paneles desplegables, guardado destacado, formularios etiquetados y más espacio entre botones. Ajustes de contraste y navegación móvil, sin cambios a cálculos, validación ni persistencia.
 - R1/R2 del plan de reparación (D-061 a D-065): la compuerta de datos rechaza los importes con el signo contrario a `convencionSigno` del catálogo (los mensajes indican fila, cuenta y periodo) y nunca invierte un signo en silencio; los datos guardados que no pasan la compuerta se muestran en modo lectura, sin borrarse.
@@ -59,6 +72,10 @@ Todos los cambios notables en GFO Toolkit.
 - Botón **Vista previa del reporte** (muestra el reporte en la página) y **Descargar reporte HTML**; antes el botón "Vista Previa HTML" descargaba el archivo.
 
 ### Módulo 3: Análisis Financiero
+- Motor reparado: conserva totales reportados aunque el desglose no sea verificable y resuelve partidas no aplicables solo con cobertura completa confirmada. Avisos separados de N/D, traza de procedencia y coherencia con las consultas de Estados/Proforma; fórmulas/JSON/generado intactos (D-099).
+- Informe de N/D ampliado: distingue totales reportados de sumas de detalle, reproduce RC sin desglose y el bloqueo de UN reportada por su comprobación; propone resolver agregados suficientes sin exigir cuentas no aplicables. Solo documentación y diagnóstico, sin cambios al motor.
+- AH separa BG y ER en tablas con títulos propios; AH/AV compactan únicamente cuentas accesorias sin movimiento. Razones conserva todos sus indicadores y explica los N/D con sus causas. Diagnóstico de la demo MUNO MODA y propuesta financiera documentados, sin cambiar motor ni supuestos (D-098).
+- AH/AV incluyen las mismas filas resueltas y ordenadas de Estados, alinean subtotales calculados/reportados sin duplicarlos y conservan nombres, signos, bases y Δ/abs(T1). El EFE separa el cierre calculado del saldo observado para no ocultar diferencias (D-096).
 - Cambiar el periodo actualiza únicamente los paneles dependientes y conserva el formulario de Mercado sin guardar, sus mensajes y su acción Guardar; no persiste el borrador al navegar.
 - AH/AV completos por cuenta y totales reportados, con nombres propios, ausencias N/D y sin duplicar sumas; DuPont muestra factores, sustituciones, ROA/ROE y comprobación directa desde la misma fuente de Razones (D-095). Navegación agrupada, selector de periodo, métodos desplegables y diseño de las nueve secciones adaptado a móvil y ambos temas. Motor de razones y generado sin cambios.
 - Ronda 18 / D-049 y D-056–D-058: razones de Análisis, Integración y Proforma conectadas al motor JSON; composición de ingresos declarada por periodo, identidad acreditada y N/D con motivos. Catálogo de Estados sincronizado con D-055 y nota maestra alineada, sin cambios en fórmulas JSON ni referencias.

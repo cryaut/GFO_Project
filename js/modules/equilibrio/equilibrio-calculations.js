@@ -1,3 +1,4 @@
+import { normalizarMoneda } from '../../utils/moneda.js';
 // Punto de equilibrio y análisis costo-volumen-utilidad (C-V-U).
 // Lógica pura: sin DOM, window ni store. Plan: docs/planificacion/modulos-guia/01-modulos-obligatorios.md.
 import {
@@ -41,6 +42,7 @@ export function normalizarEquilibrio(datos) {
       : esNumero(valor) ? valor : null;
   }
   return {
+    ...normalizarMoneda(datos),
     origen: datos?.origen === 'estados' ? 'estados' : 'manual',
     periodo: typeof datos?.periodo === 'string' ? datos.periodo : '',
     precio: numeroONull(datos?.precio),
@@ -101,6 +103,7 @@ export function calcularCVU(datos) {
     else motivoGao = 'dato-faltante';
   }
   return {
+    ...normalizarMoneda(datos),
     precio, cvu, cf, q, mcu, rmc, peUnidades, peVentas,
     // Unidades enteras que hay que vender para no perder.
     unidadesMinimas: peUnidades === null ? null : Math.ceil(peUnidades - 1e-9),

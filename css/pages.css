@@ -497,6 +497,7 @@
 }
 
 #page-estados .states-account-body { padding: 0 var(--space-6) var(--space-6); }
+#page-estados .states-coverage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: var(--space-4); margin: var(--space-4) 0; }
 #page-estados .states-account-body > p { margin-bottom: var(--space-4); color: var(--text-secondary); font-size: var(--font-size-sm); }
 #page-estados .states-account-body table { min-width: 660px; }
 #page-estados .states-account-body th { font-size: var(--font-size-sm); }
@@ -579,6 +580,18 @@
 #page-analisis .analisis-empty { padding-block: var(--space-6); color: var(--text-secondary); }
 #page-analisis .analisis-sheet { margin-top: var(--space-6); padding-top: var(--space-6); border-top: 1px solid var(--border-color); }
 #page-analisis .analisis-sheet > h4 { margin-bottom: var(--space-4); }
+#page-analisis .analisis-sheet > h5 { margin-bottom: var(--space-4); font-size: var(--font-size-lg); }
+#page-analisis .analisis-comparison-title { margin-top: var(--space-6); }
+#page-estados .statement-optional,
+#page-analisis .statement-optional,
+#page-analisis .analisis-availability { margin: var(--space-5) 0; padding: var(--space-4); border: 1px solid var(--border-color); border-radius: var(--radius-md); }
+#page-estados .statement-optional > summary,
+#page-analisis .statement-optional > summary,
+#page-analisis .analisis-availability > summary { cursor: pointer; font-weight: 600; }
+#page-estados .statement-optional[open] > summary,
+#page-analisis .statement-optional[open] > summary,
+#page-analisis .analisis-availability[open] > summary { margin-bottom: var(--space-4); }
+#page-analisis .analisis-availability table { min-width: 620px; }
 #page-analisis .analisis-sheet > .table-wrapper { margin-bottom: 0; }
 #page-analisis .analisis-account-group { display: block; color: var(--text-secondary); font-size: var(--font-size-xs); margin-bottom: var(--space-1); }
 #page-analisis .table-wrapper { position: relative; width: 100%; max-width: 100%; overflow-x: auto; }
@@ -930,3 +943,51 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Lectura contable común: detalle, signo y subtotal en Estados y AH/AV. */
+:is(#page-estados, #page-analisis) .statement-label { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--space-2); text-align: left; }
+:is(#page-estados, #page-analisis) .statement-operator { flex: 0 0 1rem; text-align: center; font-weight: 600; }
+:is(#page-estados, #page-analisis) .statement-source { font-size: var(--font-size-xs); font-weight: 400; color: var(--text-secondary); }
+:is(#page-estados, #page-analisis) .statement-concept { display: block; font-size: var(--font-size-xs); font-weight: 400; color: var(--text-secondary); }
+:is(#page-estados, #page-analisis) .statement-subtotal > * { border-top: 1px solid var(--border-color-strong); background: var(--bg-tertiary); font-weight: 600; }
+#page-estados .statement-solved { margin-block: var(--space-6); }
+#page-estados .statement-solved th[scope="row"] { text-align: left; font-weight: 400; }
+#page-estados .statement-solved .statement-subtotal th { font-weight: 600; }
+
+:is(#page-estados, #page-analisis) td > .statement-source { display: block; font-family: var(--font-sans); white-space: normal; }
+
+/* Procedimiento y resultados de Proforma y Presupuesto Maestro. */
+:is(#page-planeacion, #page-proforma) .desarrollo-formula { display: block; color: var(--text-secondary); font-size: var(--font-size-sm); margin-bottom: var(--space-2); }
+:is(#page-planeacion, #page-proforma) .desarrollo-operacion { display: block; font-variant-numeric: tabular-nums; }
+:is(#page-planeacion, #page-proforma) .desarrollo-total > * { font-weight: 600; border-top: 1px solid var(--border-color-strong); background: var(--bg-tertiary); }
+:is(#page-planeacion, #page-proforma) .desarrollo-table th[scope="row"] { text-align: left; }
+#page-planeacion .plan-alcance { padding: var(--space-4); margin-bottom: var(--space-4); border: 1px solid var(--border-color); border-radius: var(--radius-md); }
+#page-planeacion .plan-alcance h2 { font-size: var(--font-size-lg); margin-bottom: var(--space-2); }
+#page-proforma .proforma-desarrollo { margin-block: var(--space-6); padding: var(--space-4); border: 1px solid var(--border-color); border-radius: var(--radius-md); }
+#page-proforma .proforma-desarrollo summary { cursor: pointer; font-weight: 600; padding-block: var(--space-2); }
+#page-proforma .proforma-desarrollo[open] summary { margin-bottom: var(--space-4); }
+#page-proforma .proforma-origen { color: var(--text-secondary); margin-bottom: var(--space-4); }
+
+#page-proforma .proforma-resultado { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-6); padding: var(--space-4); background: var(--bg-tertiary); margin-bottom: var(--space-4); }
+:is(#page-planeacion, #page-proforma) .desarrollo-mobile { display: none; }
+@media (max-width: 640px) {
+  :is(#page-planeacion, #page-proforma) .desarrollo-mobile { display: block; font-weight: 400; margin-top: var(--space-2); }
+  :is(#page-planeacion, #page-proforma) .desarrollo-col-calculo { display: none; }
+  :is(#page-planeacion, #page-proforma) .desarrollo-table table { table-layout: fixed; min-width: 0; }
+  :is(#page-planeacion, #page-proforma) .desarrollo-table th:first-child { width: 60%; }
+  :is(#page-planeacion, #page-proforma) .desarrollo-table td.text-right { white-space: normal; font-size: var(--font-size-xs); }
+  :is(#page-planeacion, #page-proforma) .desarrollo-operacion { overflow-wrap: anywhere; }
+}
+
+/* Panel compartido de ejemplos: selección, procedencia y carga deliberada. */
+.example-picker { margin: var(--space-4) 0 var(--space-6); padding: var(--space-5); border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-secondary); width: 100%; min-width: 0; }
+.example-picker h3 { margin-bottom: var(--space-4); font-size: var(--font-size-lg); }
+.example-picker-controls { display: flex; align-items: end; gap: var(--space-4); flex-wrap: wrap; }
+.example-picker-controls label { flex: 1 1 15rem; min-width: 0; font-weight: 600; }
+.example-picker-controls select { margin-top: var(--space-2); width: 100%; }
+.example-picker-source { margin-top: var(--space-4); color: var(--text-secondary); font-size: var(--font-size-sm); line-height: 1.65; max-width: 75ch; overflow-wrap: anywhere; }
+.example-picker-controls .btn { flex-shrink: 0; }
+@media (max-width: 600px) { .example-picker-controls .btn { width: 100%; } .example-picker { padding: var(--space-4); } }
+
+/* El encabezado accesible de acciones permanece dentro de la tabla desplazable. */
+#page-inventario .table-wrapper { position: relative; }

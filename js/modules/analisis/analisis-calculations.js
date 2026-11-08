@@ -1,29 +1,17 @@
 // Composición de las tablas de Análisis; no modifica los estados ni suma totales reportados.
 import { ahDelta, ahPctDelta, av, dupont } from '../../utils/calculate.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
-import { computarRazonesDesdeDatos, obtenerUtilidadNetaMotor } from '../razones/razones-app-adapter.js';
+import { estadosResueltos } from '../estados/estados-presentacion-calculations.js';
+import { computarRazonesDesdeDatos, MAPA_RAZONES_APP, obtenerUtilidadNetaMotor } from '../razones/razones-app-adapter.js';
 import { crearContextoRazonesGuardadas, evaluarConComposicion } from '../razones/razones-app-entrada.js';
 import { evaluarDerivado } from '../razones/razones-motor.js';
 
 const numero = valor => typeof valor === 'number' && Number.isFinite(valor);
-const GRUPOS = { activos: 'Activos', pasivos: 'Pasivos', patrimonio: 'Patrimonio', estadoResultados: 'Estado de resultados' };
-const TIPOS = { activos: 'Activo', pasivos: 'Pasivo', patrimonio: 'Patrimonio' };
 
 export function filasAnalisis(datos, periodo) {
   if (!datos?.periods?.includes(periodo)) return [];
-  const filas = [];
-  for (const [grupo, titulo] of Object.entries(GRUPOS)) {
-    const cuentas = grupo === 'estadoResultados' ? datos.estadoResultados?.[periodo] : datos.balanceGeneral?.[periodo]?.[grupo];
-    for (const [cuenta, valor] of Object.entries(cuentas || {})) {
-      filas.push({ clave: `${grupo}:${cuenta}`, cuenta, grupo: titulo, tipo: TIPOS[grupo], seccion: grupo === 'estadoResultados' ? 'resultados' : 'balance', valor: numero(valor) ? valor : null });
-    }
-  }
-  for (const [id, total] of Object.entries(datos.reportedTotals?.[periodo] || {})) {
-    const duplicada = filas.find(fila => fila.clave === `${total.grupo}:${total.nombre}`);
-    if (duplicada) continue;
-    filas.push({ clave: `reportado:${id}`, cuenta: total.nombre, grupo: GRUPOS[total.grupo] || 'Totales reportados', tipo: TIPOS[total.grupo],
-      seccion: total.grupo === 'estadoResultados' ? 'resultados' : 'balance', valor: numero(total.importe) ? total.importe : null });
-  }
+  const resueltos = estadosResueltos(datos, periodo);
+  const filas = [...resueltos.balanceGeneral, ...resueltos.estadoResultados];
   for (const [cuenta, valor] of Object.entries(datos.supplementaryAccounts?.[periodo] || {})) {
     filas.push({ clave: `suplementario:${cuenta}`, cuenta, grupo: 'Datos suplementarios', seccion: 'complementarios', valor: numero(valor) ? valor : null });
   }
@@ -40,11 +28,12 @@ export function analisisHorizontalCompleto(datos, periodos) {
     const inicial = periodos[i - 1], final = periodos[i];
     const t1 = new Map(filasAnalisis(datos, inicial).map(fila => [fila.clave, fila]));
     const t2 = new Map(filasAnalisis(datos, final).map(fila => [fila.clave, fila]));
-    const claves = [...new Set([...t1.keys(), ...t2.keys()])];
+    const claves = [...new Set([...t1.keys(), ...t2.keys()])].sort((a, b) =>
+      ((t2.get(a) || t1.get(a)).orden ?? 2000) - ((t2.get(b) || t1.get(b)).orden ?? 2000));
     const rows = claves.map(clave => {
       const fila = t2.get(clave) || t1.get(clave);
       const v1 = t1.get(clave)?.valor ?? null, v2 = t2.get(clave)?.valor ?? null;
-      return { ...fila, t1: v1, t2: v2, delta: ahDelta(v2, v1), pctDelta: ahPctDelta(v2, v1) };
+      return { ...fila, fuenteT1: t1.get(clave), fuenteT2: t2.get(clave), t1: v1, t2: v2, delta: ahDelta(v2, v1), pctDelta: ahPctDelta(v2, v1) };
     });
     resultados.push({ periodo: `${inicial} → ${final}`, inicial, final, rows });
   }
@@ -53,8 +42,20 @@ export function analisisHorizontalCompleto(datos, periodos) {
 
 export function analisisVerticalCompleto(datos, periodo) {
   const totales = datos?.periods?.includes(periodo) ? computeFinancialTotals(datos, periodo) : null;
-  const bases = { balance: ['Total Activos', totales?.totalActivos ?? null], resultados: ['Ventas netas', totales?.ventas ?? null] };
   const filas = filasAnalisis(datos, periodo);
+  // La disponibilidad del activo reportado es independiente de su desglose.
+  const reportado = filas.find(f => f.id === 'bs.total_assets' && f.origen === 'reportado');
+  const contexto = reportado && crearContextoRazonesGuardadas(datos, periodo);
+  const lectura = contexto?.entrada && evaluarDerivado(MAPA_RAZONES_APP.endeudamiento, 'derived.total_assets', contexto.entrada);
+  if (numero(lectura?.valor) && lectura.valor === reportado.valor) {
+    reportado.valorCalculo = lectura.valor;
+    reportado.motivos = lectura.motivos;
+  }
+  const activos = reportado?.valorCalculo ?? totales?.totalActivos ?? null;
+  // Misma base (ventas netas), con la disponibilidad de la lectura del ER.
+  // Un ingreso operativo acreditado no debe invalidarla por carecer de tipoApp.
+  const ventas = filas.find(f => f.id === 'is.net_sales_reported')?.valorCalculo ?? null;
+  const bases = { balance: ['Total Activos', activos], resultados: ['Ventas netas', ventas] };
   const seccion = nombre => {
     const [base, baseValor] = bases[nombre];
     return { base, baseValor, rows: filas.filter(fila => fila.seccion === nombre).map(fila => ({ ...fila, base,

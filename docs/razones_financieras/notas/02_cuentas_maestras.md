@@ -1,4 +1,4 @@
-# 02 — Cuentas maestras (72)
+# 02 — Cuentas maestras (73)
 
 Fuente única de verdad de los objetos `cuenta`. Cada cuenta se define aquí antes de copiarse
 a los archivos (el generador escribe esta nota primero y luego los 20 JSON desde el mismo dato).
@@ -81,6 +81,7 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
 | `bs.current_year_result_equity` | patrimonio | detail | requires_data |  |
 | `bs.other_equity_components` | patrimonio | detail | requires_data |  |
 | `supp.credit_sales` | suplementario | detail | requires_data | interna |
+| `supp.credit_purchases` | suplementario | detail | requires_data | D-102, interna |
 | `supp.supplier_payments` | suplementario | detail | requires_data | interna |
 
 ## Objetos completos
@@ -2350,6 +2351,35 @@ Formato compacto: `id — clasificación — rol — política de ausencia`.
         "consulted_on": "2026-10-17"
       }
     ]
+  }
+}
+```
+
+### supp.credit_purchases
+
+Base declarada para rotación de CxP (D-102). Una estimación se declara en el escenario y no se interpreta como pagos de caja.
+
+```json
+{
+  "id": "supp.credit_purchases",
+  "canonical_name": "Compras a crédito declaradas",
+  "definition": "Base de compras del periodo declarada para rotación de CxP. Si es una estimación docente, debe declararse expresamente; no se infiere del costo de ventas ni representa pagos de caja (D-102).",
+  "statement": "supplemental_data",
+  "classification": "suplementario",
+  "account_role": "detail",
+  "normal_balance": "deudor",
+  "value_semantics": "positive_magnitude",
+  "absence_policy": "requires_data",
+  "synonyms": [
+    "Compras a crédito del periodo"
+  ],
+  "doubtful_synonyms": [],
+  "ambiguities": [
+    "La estimación del 70 % pertenece al escenario docente Bartlett 2012; no se aplica a otros ejercicios."
+  ],
+  "research": {
+    "status": "partially_verified",
+    "sources": []
   }
 }
 ```

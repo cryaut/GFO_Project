@@ -1,5 +1,5 @@
 // Datos de la colección. Investigación y procedencia: docs/planificacion/cuentas/investigacion.md.
-export const versionCatalogo = '2026-10-24.1';
+export const versionCatalogo = '2026-11-07.1';
 export const TIPOS_APP = {
   'activos': [
     'efectivo',
@@ -2105,6 +2105,22 @@ export const CUENTAS_CATALOGO = [
     'ambiguedades': [
       'Dato suplementario del caso (D8): ventas a crédito reportadas solo por el caso; sin fuente externa. Se usa con requires_data y nunca se iguala a ventas netas.'
     ],
+    'estadoInvestigacion': 'partially_verified',
+    'fuentes': []
+  },
+  {
+    'id': 'supp.credit_purchases',
+    'nombreCanonico': 'Compras a crédito declaradas',
+    'definicion': 'Base de compras del periodo declarada para rotación de CxP. Si es una estimación docente, debe declararse expresamente; no se infiere del costo de ventas ni representa pagos de caja (D-102).',
+    'grupo': 'suplementario',
+    'clasificacion': 'suplementario',
+    'rol': 'detail',
+    'politicaAusencia': 'requires_data',
+    'convencionSigno': 'positivo',
+    'sinonimos': ['Compras a crédito del periodo'],
+    'sinonimosDudosos': [],
+    'tipoApp': null,
+    'ambiguedades': ['El escenario docente debe declarar si esta base es estimada. No se interpreta como pagos efectivos ni se aplica el 70 % a otros ejercicios.'],
     'estadoInvestigacion': 'partially_verified',
     'fuentes': []
   },

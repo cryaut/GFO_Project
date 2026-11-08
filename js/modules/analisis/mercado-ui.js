@@ -1,7 +1,9 @@
+import { monedaDe } from '../../utils/moneda.js';
+import { panelEjemplos, vincularEjemplos, ejemploSeleccionado } from '../../components/ejemplos.js';
 // Pestaña "Mercado" de Análisis: datos de acciones por periodo y razones de mercado.
 // El cálculo está en mercado-calculations.js; aquí solo se arma el HTML y se atienden los eventos.
 import { escapeHTML as esc } from '../../utils/html.js';
-import { formatCurrencyND as monto, formatNumberND, formatPercentND as pct } from '../../utils/format.js';
+import { formatCurrencyND as montoBase, formatNumberND, formatPercentND as pct } from '../../utils/format.js';
 import { leerNumero } from '../../utils/form.js';
 import {
   CAMPOS_MERCADO, calcularRazonesMercado, ejemploMercado, normalizarDatosMercado, validarDatosMercado
@@ -9,9 +11,10 @@ import {
 
 const esNumero = valor => typeof valor === 'number' && Number.isFinite(valor);
 const veces = valor => (esNumero(valor) ? `${formatNumberND(valor)} veces` : 'N/D');
-const porAccion = valor => (esNumero(valor) ? `${monto(valor)} por acción` : 'N/D');
+const porAccion = (valor, moneda = 'C$') => (esNumero(valor) ? `${montoBase(valor, moneda)} por acción` : 'N/D');
 
 function interpretacion(r) {
+  const monto = v => montoBase(v, monedaDe(r));
   const frases = [];
   if (esNumero(r.upa)) {
     frases.push(`<li>Cada acción común generó ${monto(r.upa)} de utilidad en ${esc(r.periodo)} (UPA).</li>`);
@@ -34,6 +37,7 @@ function interpretacion(r) {
 
 // opciones: { estados, datos, dap, guardar }. guardar lanza un error si no se pudo guardar.
 export function mercadoUI(contenedor, { estados, datos, dap = {}, guardar }) {
+  const monto = v => montoBase(v, monedaDe(estados));
   if (!estados) {
     contenedor.innerHTML = '<p class="text-muted">Sin estados guardados. <a href="#/estados">Cárguelos en Estados</a> para calcular las razones de mercado.</p>';
     return;
@@ -85,18 +89,18 @@ export function mercadoUI(contenedor, { estados, datos, dap = {}, guardar }) {
     contenedor.innerHTML = `<p id="mercadoMensaje" role="status" aria-live="polite" class="text-muted">Ingrese los datos de las acciones por periodo y pulse Guardar.</p>
       <div class="card mb-4"><h4 class="mb-2">Datos de las acciones</h4>
         <div class="table-wrapper"><table class="statement-table">
-          <thead><tr><th scope="col">Periodo</th>${CAMPOS_MERCADO.map(([, etiqueta]) => `<th scope="col">${etiqueta}</th>`).join('')}</tr></thead>
+          <thead><tr><th scope="col">Periodo</th>${CAMPOS_MERCADO.map(([, etiqueta]) => `<th scope="col">${esc(etiqueta.replace('(C$)', `(${monedaDe(estados)})`))}</th>`).join('')}</tr></thead>
           <tbody>${entradas}</tbody></table></div>
         <div class="flex-gap flex-wrap mt-4">
           <button type="button" class="btn btn-primary" id="mercadoGuardar">Guardar y calcular</button>
-          <button type="button" class="btn btn-secondary" id="mercadoEjemplo">Cargar ejemplo de la demo</button></div>
+          </div>${panelEjemplos('mercado', 'mercadoEjemplo')}
         <p class="form-hint">La utilidad neta y el patrimonio salen de los estados guardados; los dividendos de acciones preferentes (DAP), de Apalancamiento.${implicitos ? ` Dividendos que explican el cambio del patrimonio (UN − ΔPatrimonio, sin aportes de capital): ${implicitos}.` : ''}</p></div>
       <div class="table-wrapper mb-4"><table class="statement-table">
         <thead><tr><th scope="col">Periodo</th><th scope="col" class="text-right">UDAC</th><th scope="col" class="text-right">UPA</th>
           <th scope="col" class="text-right">P/U</th><th scope="col" class="text-right">VL por acción</th><th scope="col" class="text-right">P/VL</th>
           <th scope="col" class="text-right">DPA</th><th scope="col" class="text-right">Pago</th><th scope="col" class="text-right">Rendimiento</th></tr></thead>
         <tbody>${filas}</tbody></table></div>
-      <div class="card mb-4"><h4 class="mb-2">Interpretación (${esc(ultimo.periodo)}): ${porAccion(ultimo.upa)}</h4>${interpretacion(ultimo)}</div>
+      <div class="card mb-4"><h4 class="mb-2">Interpretación (${esc(ultimo.periodo)}): ${porAccion(ultimo.upa, monedaDe(estados))}</h4>${interpretacion(ultimo)}</div>
       <ul class="form-hint">
         <li>UDAC = utilidad disponible para accionistas comunes = UN − DAP</li>
         <li>UPA = UDAC / acciones comunes · P/U = precio / UPA</li>
@@ -122,15 +126,16 @@ export function mercadoUI(contenedor, { estados, datos, dap = {}, guardar }) {
   }
 
   function bind() {
+    vincularEjemplos(contenedor, 'mercado');
     contenedor.querySelector('#mercadoGuardar')?.addEventListener('click', () => {
       const { errores, datos: nuevos } = leerFormulario();
       if (errores.length) { mensaje(errores.join(' '), true); return; }
       persistir(nuevos, 'Datos guardados. Razones de mercado recalculadas.');
     });
     contenedor.querySelector('#mercadoEjemplo')?.addEventListener('click', () => {
-      const ejemplo = ejemploMercado(estados.periods);
+      const ejemplo = ejemploSeleccionado(contenedor, 'mercado', () => ejemploMercado(estados.periods));
       persistir({ periodos: { ...guardado.periodos, ...ejemplo.periodos } },
-        'Ejemplo cargado: 30,000 acciones de C$ 10 nominal y los dividendos que explican el cambio del patrimonio (datos ficticios).');
+        'Datos ficticios de mercado seleccionados cargados. No proceden del ejercicio docente.');
     });
   }
 

@@ -107,8 +107,10 @@ export function computarRazonesDesdeDatos(datos, periodo, opciones = {}) {
   const patrimonioProm = promedio(patrimonio,
     anterior ? derivado(MAPA_RAZONES_APP.roe, 'derived.total_equity', 'previous') : null);
   const compras = derivado(MAPA_RAZONES_APP.rotacionCxP, 'derived.credit_purchases');
+  const comprasDeclaradas = cuenta(MAPA_RAZONES_APP.rotacionCxP, 'supp.credit_purchases');
+  // La base declarada puede ser estimada; su presencia no acredita compras reales.
   const usaComprasReales = anterior && numero(inventario.valor) && numero(inventarioPrevio.valor)
-    && numero(compras.valor) && compras.valor >= 0;
+    && numero(compras.valor) && compras.valor >= 0 && !numero(comprasDeclaradas.valor);
 
   // Cuatro indicadores ajenos a los 20 JSON conservan sus funciones actuales.
   resultados.pruebaDefensiva = evaluarExtra(pruebaDefensiva, [efectivo,pasivoCorriente]);

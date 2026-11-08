@@ -28,9 +28,11 @@ export function reunirEntradas() {
   const { estados, error: errorEstados } = leerEstados(store.get('estados'));
   const ultimo = estados ? estados.periods[estados.periods.length - 1] : null;
   if (estados) refreshSavedStates();
-  const { supuestos, base, error: errorPlaneacion } = leerPlaneacion(store.get('planeacion'));
+  const { supuestos, base, escenario, error: errorPlaneacion } = leerPlaneacion(store.get('planeacion'));
   const motivoPresupuesto = errorPlaneacion || (base
-    ? 'El escenario activo tiene su propia base histórica. Consulte el presupuesto de ese caso en Planeación.' : null);
+    ? (escenario?.capitalTrabajo
+      ? 'El escenario activo tiene su propia base histórica. Su presupuesto parcial de capital de trabajo está en Planeación; aún faltan la valorización del costo de ventas, los gastos y la caja para elaborar una proforma completa.'
+      : 'El escenario activo tiene su propia base histórica. Consulte sus resultados en Planeación; no se comparan con los estados de otra base en la proforma integrada.') : null);
   const equilibrio = normalizarEquilibrio(store.get('equilibrio'));
   // D-070: el flujo viene del EFE de Análisis (último par de periodos), no de la
   // captura manual del flujo directo, que queda como captura no oficial.

@@ -1,3 +1,4 @@
+import { panelEjemplos, vincularEjemplos } from '../../components/ejemplos.js';
 // Pantalla #/home: panorama general de la empresa y accesos a los módulos.
 // Los datos llegan ya calculados por inicio-calculations.js (panoramaGeneral).
 import { escapeHTML as esc } from '../../utils/html.js';
@@ -103,7 +104,7 @@ function kpis(lista, periodoAnterior) {
       ? `<span class="dash-change ${k.cambio >= 0 ? 'up' : 'down'}">${k.cambio >= 0 ? '▲' : '▼'} ${pct(Math.abs(k.cambio), 1)}${periodoAnterior ? ` vs ${esc(periodoAnterior)}` : ''}</span>`
       : '';
     return `<div class="dash-kpi"><p class="dash-kpi-label">${esc(k.etiqueta)}</p>
-      <p class="dash-kpi-value ${k.tono}">${FORMATO[k.formato](k.valor)}</p>${chip}</div>`;
+      <p class="dash-kpi-value ${k.tono}">${k.formato === 'monto' ? monto(k.valor, k.moneda) : FORMATO[k.formato](k.valor)}</p>${chip}</div>`;
   }).join('')}</section>`;
 }
 
@@ -129,7 +130,7 @@ function tarjetaArea(a) {
         <span class="dash-icon tone-${TONO_AREA[a.id] || 'blue'}">${icono(ICONO_AREA[a.id] || a.id)}</span>
         <h3>${esc(a.titulo)}</h3>${INSIGNIA_ESTADO[a.estado]}
       </header>
-      <dl class="dash-points">${a.puntos.map(pt => `<div><dt>${esc(pt.etiqueta)}</dt><dd class="font-mono">${FORMATO[pt.formato](pt.valor)}</dd></div>`).join('')}</dl>
+      <dl class="dash-points">${a.puntos.map(pt => `<div><dt>${esc(pt.etiqueta)}</dt><dd class="font-mono">${pt.formato === 'monto' ? monto(pt.valor, a.moneda) : FORMATO[pt.formato](pt.valor)}</dd></div>`).join('')}</dl>
       <p class="dash-reading">${esc(a.interpretacion)}</p>
       <a class="dash-link" href="${a.ruta}">Ver detalle →</a>
     </article>`;
@@ -147,7 +148,7 @@ function personal(lista, conEjemplo) {
     ? `<div class="dash-areas dash-areas--personal">${lista.map(tarjetaArea).join('')}</div>`
     : `<div class="dash-demo"><p>Registre su presupuesto personal y los bienes del hogar para ver aquí su capacidad de ahorro y el estado de sus activos.</p>
         <div class="flex-gap flex-wrap"><a class="btn btn-secondary" href="#/presupuesto">Ir a Presupuesto personal</a>${conEjemplo
-    ? '<button type="button" class="btn btn-personal" id="inicioEjemploPersonal">Cargar ejemplo personal</button>' : ''}</div></div>`;
+    ? panelEjemplos('inicioPersonal', 'inicioEjemploPersonal', { titulo:'Ejemplos personales' }) : ''}</div></div>`;
   return `<section class="dash-personal" aria-labelledby="dashPersonal">
     <div class="dash-personal-header"><p class="page-eyebrow">Finanzas personales</p>
       <h2 id="dashPersonal" class="dash-section-title">Mis finanzas personales</h2>
@@ -160,7 +161,7 @@ function faltantes(lista, hayDatos, conEjemplo) {
   const titulo = hayDatos ? 'Para completar el panorama' : 'Cómo empezar';
   const ejemplo = !hayDatos && conEjemplo
     ? `<div class="dash-demo"><p>¿Solo quiere ver cómo funciona? Cargue el caso ficticio de MUNO MODA en los módulos de la empresa que estén vacíos. No reemplaza datos existentes.</p>
-        <button type="button" class="btn btn-primary" id="inicioEjemplo">Cargar ejemplo de empresa</button></div>`
+        ${panelEjemplos('inicioEmpresa', 'inicioEjemplo', { titulo:'Ejemplos de empresa' })}</div>`
     : '';
   return `<div class="card dash-todo"><h2 class="card-title mb-4">${titulo}</h2>
     <ol>${lista.map(f => `<li><a href="${f.ruta}">${esc(f.modulo)}</a>: ${esc(f.texto)}</li>`).join('')}</ol>${ejemplo}</div>`;
@@ -186,8 +187,14 @@ export function inicioUI(page, { panorama: p, graficar = null, cargarEjemploEmpr
     ${faltantes(p.faltantes, hayDatos, Boolean(cargarEjemploEmpresa))}
     ${personal(p.personal || [], Boolean(cargarEjemploPersonal))}
     ${modulos()}`;
-  page.querySelector('#inicioEjemplo')?.addEventListener('click', () => cargarEjemploEmpresa());
-  page.querySelector('#inicioEjemploPersonal')?.addEventListener('click', () => cargarEjemploPersonal());
+  vincularEjemplos(page, 'inicioEmpresa');
+  vincularEjemplos(page, 'inicioPersonal');
+  page.querySelector('#inicioEjemplo')?.addEventListener('click', () => {
+    const id = page.querySelector('#example-inicioEmpresa')?.value || 'actual';
+    if (id !== 'actual' && !window.confirm('¿Cargar los estados del ejercicio seleccionado? Reemplaza Estados; los demás módulos no cambian.')) return;
+    cargarEjemploEmpresa(id);
+  });
+  page.querySelector('#inicioEjemploPersonal')?.addEventListener('click', () => cargarEjemploPersonal(page.querySelector('#example-inicioPersonal')?.value || 'actual'));
   if (graficar && p.tendencia) {
     graficar('inicioTendencia', {
       type: 'bar',

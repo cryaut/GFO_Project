@@ -1,0 +1,3763 @@
+{
+  "actual": {
+    "2023": {
+      "cash": {
+        "exacto": "45000",
+        "decimal": 45000.0
+      },
+      "cxc": {
+        "exacto": "120000",
+        "decimal": 120000.0
+      },
+      "inv": {
+        "exacto": "180000",
+        "decimal": 180000.0
+      },
+      "oca": {
+        "exacto": "25000",
+        "decimal": 25000.0
+      },
+      "dep": {
+        "exacto": "-98525",
+        "decimal": -98525.0
+      },
+      "pay": {
+        "exacto": "85000",
+        "decimal": 85000.0
+      },
+      "sales": {
+        "exacto": "850000",
+        "decimal": 850000.0
+      },
+      "cost": {
+        "exacto": "510000",
+        "decimal": 510000.0
+      },
+      "other": {
+        "exacto": "15000",
+        "decimal": 15000.0
+      },
+      "otherexp": {
+        "exacto": "10000",
+        "decimal": 10000.0
+      },
+      "interest": {
+        "exacto": "12600",
+        "decimal": 12600.0
+      },
+      "tax": {
+        "exacto": "38220",
+        "decimal": 38220.0
+      },
+      "credit": {
+        "exacto": "680000",
+        "decimal": 680000.0
+      },
+      "AC": {
+        "exacto": "370000",
+        "decimal": 370000.0
+      },
+      "AF": {
+        "exacto": "431475",
+        "decimal": 431475.0
+      },
+      "A": {
+        "exacto": "801475",
+        "decimal": 801475.0
+      },
+      "PC": {
+        "exacto": "160000",
+        "decimal": 160000.0
+      },
+      "P": {
+        "exacto": "283860",
+        "decimal": 283860.0
+      },
+      "E": {
+        "exacto": "517615",
+        "decimal": 517615.0
+      },
+      "PE": {
+        "exacto": "801475",
+        "decimal": 801475.0
+      },
+      "UB": {
+        "exacto": "340000",
+        "decimal": 340000.0
+      },
+      "GOp": {
+        "exacto": "205000",
+        "decimal": 205000.0
+      },
+      "UAII": {
+        "exacto": "135000",
+        "decimal": 135000.0
+      },
+      "UAI": {
+        "exacto": "127400",
+        "decimal": 127400.0
+      },
+      "UN": {
+        "exacto": "89180",
+        "decimal": 89180.0
+      }
+    },
+    "2024": {
+      "cash": {
+        "exacto": "52000",
+        "decimal": 52000.0
+      },
+      "cxc": {
+        "exacto": "135000",
+        "decimal": 135000.0
+      },
+      "inv": {
+        "exacto": "195000",
+        "decimal": 195000.0
+      },
+      "oca": {
+        "exacto": "30000",
+        "decimal": 30000.0
+      },
+      "dep": {
+        "exacto": "-116475",
+        "decimal": -116475.0
+      },
+      "pay": {
+        "exacto": "92000",
+        "decimal": 92000.0
+      },
+      "sales": {
+        "exacto": "920000",
+        "decimal": 920000.0
+      },
+      "cost": {
+        "exacto": "545000",
+        "decimal": 545000.0
+      },
+      "other": {
+        "exacto": "18000",
+        "decimal": 18000.0
+      },
+      "otherexp": {
+        "exacto": "12000",
+        "decimal": 12000.0
+      },
+      "interest": {
+        "exacto": "11250",
+        "decimal": 11250.0
+      },
+      "tax": {
+        "exacto": "44925",
+        "decimal": 44925.0
+      },
+      "credit": {
+        "exacto": "736000",
+        "decimal": 736000.0
+      },
+      "purchases": {
+        "exacto": "560000",
+        "decimal": 560000.0
+      },
+      "AC": {
+        "exacto": "412000",
+        "decimal": 412000.0
+      },
+      "AF": {
+        "exacto": "413525",
+        "decimal": 413525.0
+      },
+      "A": {
+        "exacto": "825525",
+        "decimal": 825525.0
+      },
+      "PC": {
+        "exacto": "175000",
+        "decimal": 175000.0
+      },
+      "P": {
+        "exacto": "243085",
+        "decimal": 243085.0
+      },
+      "E": {
+        "exacto": "582440",
+        "decimal": 582440.0
+      },
+      "PE": {
+        "exacto": "825525",
+        "decimal": 825525.0
+      },
+      "UB": {
+        "exacto": "375000",
+        "decimal": 375000.0
+      },
+      "GOp": {
+        "exacto": "220000",
+        "decimal": 220000.0
+      },
+      "UAII": {
+        "exacto": "155000",
+        "decimal": 155000.0
+      },
+      "UAI": {
+        "exacto": "149750",
+        "decimal": 149750.0
+      },
+      "UN": {
+        "exacto": "104825",
+        "decimal": 104825.0
+      }
+    }
+  },
+  "baker": {
+    "2011": {
+      "cash": {
+        "exacto": "500000",
+        "decimal": 500000.0
+      },
+      "cxc": {
+        "exacto": "500000",
+        "decimal": 500000.0
+      },
+      "inv": {
+        "exacto": "900000",
+        "decimal": 900000.0
+      },
+      "oca": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "dep": {
+        "exacto": "-1200000",
+        "decimal": -1200000.0
+      },
+      "pay": {
+        "exacto": "500000",
+        "decimal": 500000.0
+      },
+      "AC": {
+        "exacto": "1900000",
+        "decimal": 1900000.0
+      },
+      "AF": {
+        "exacto": "1000000",
+        "decimal": 1000000.0
+      },
+      "A": {
+        "exacto": "2900000",
+        "decimal": 2900000.0
+      },
+      "PC": {
+        "exacto": "1400000",
+        "decimal": 1400000.0
+      },
+      "P": {
+        "exacto": "1800000",
+        "decimal": 1800000.0
+      },
+      "E": {
+        "exacto": "1100000",
+        "decimal": 1100000.0
+      },
+      "PE": {
+        "exacto": "2900000",
+        "decimal": 2900000.0
+      }
+    },
+    "2012": {
+      "cash": {
+        "exacto": "1000000",
+        "decimal": 1000000.0
+      },
+      "cxc": {
+        "exacto": "400000",
+        "decimal": 400000.0
+      },
+      "inv": {
+        "exacto": "600000",
+        "decimal": 600000.0
+      },
+      "oca": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "dep": {
+        "exacto": "-1300000",
+        "decimal": -1300000.0
+      },
+      "pay": {
+        "exacto": "700000",
+        "decimal": 700000.0
+      },
+      "sales": {
+        "exacto": "1700000",
+        "decimal": 1700000.0
+      },
+      "cost": {
+        "exacto": "1000000",
+        "decimal": 1000000.0
+      },
+      "other": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "otherexp": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "interest": {
+        "exacto": "70000",
+        "decimal": 70000.0
+      },
+      "tax": {
+        "exacto": "120000",
+        "decimal": 120000.0
+      },
+      "AC": {
+        "exacto": "2000000",
+        "decimal": 2000000.0
+      },
+      "AF": {
+        "exacto": "1200000",
+        "decimal": 1200000.0
+      },
+      "A": {
+        "exacto": "3200000",
+        "decimal": 3200000.0
+      },
+      "PC": {
+        "exacto": "1400000",
+        "decimal": 1400000.0
+      },
+      "P": {
+        "exacto": "2000000",
+        "decimal": 2000000.0
+      },
+      "E": {
+        "exacto": "1200000",
+        "decimal": 1200000.0
+      },
+      "PE": {
+        "exacto": "3200000",
+        "decimal": 3200000.0
+      },
+      "UB": {
+        "exacto": "700000",
+        "decimal": 700000.0
+      },
+      "GOp": {
+        "exacto": "330000",
+        "decimal": 330000.0
+      },
+      "UAII": {
+        "exacto": "370000",
+        "decimal": 370000.0
+      },
+      "UAI": {
+        "exacto": "300000",
+        "decimal": 300000.0
+      },
+      "UN": {
+        "exacto": "180000",
+        "decimal": 180000.0
+      }
+    }
+  },
+  "bartlett": {
+    "2011": {
+      "cash": {
+        "exacto": "339000",
+        "decimal": 339000.0
+      },
+      "cxc": {
+        "exacto": "365000",
+        "decimal": 365000.0
+      },
+      "inv": {
+        "exacto": "300000",
+        "decimal": 300000.0
+      },
+      "oca": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "dep": {
+        "exacto": "-2056000",
+        "decimal": -2056000.0
+      },
+      "pay": {
+        "exacto": "270000",
+        "decimal": 270000.0
+      },
+      "sales": {
+        "exacto": "2567000",
+        "decimal": 2567000.0
+      },
+      "cost": {
+        "exacto": "1711000",
+        "decimal": 1711000.0
+      },
+      "other": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "otherexp": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "interest": {
+        "exacto": "91000",
+        "decimal": 91000.0
+      },
+      "tax": {
+        "exacto": "64000",
+        "decimal": 64000.0
+      },
+      "AC": {
+        "exacto": "1004000",
+        "decimal": 1004000.0
+      },
+      "AF": {
+        "exacto": "2266000",
+        "decimal": 2266000.0
+      },
+      "A": {
+        "exacto": "3270000",
+        "decimal": 3270000.0
+      },
+      "PC": {
+        "exacto": "483000",
+        "decimal": 483000.0
+      },
+      "P": {
+        "exacto": "1450000",
+        "decimal": 1450000.0
+      },
+      "E": {
+        "exacto": "1820000",
+        "decimal": 1820000.0
+      },
+      "PE": {
+        "exacto": "3270000",
+        "decimal": 3270000.0
+      },
+      "UB": {
+        "exacto": "856000",
+        "decimal": 856000.0
+      },
+      "GOp": {
+        "exacto": "553000",
+        "decimal": 553000.0
+      },
+      "UAII": {
+        "exacto": "303000",
+        "decimal": 303000.0
+      },
+      "UAI": {
+        "exacto": "212000",
+        "decimal": 212000.0
+      },
+      "UN": {
+        "exacto": "148000",
+        "decimal": 148000.0
+      }
+    },
+    "2012": {
+      "cash": {
+        "exacto": "431000",
+        "decimal": 431000.0
+      },
+      "cxc": {
+        "exacto": "503000",
+        "decimal": 503000.0
+      },
+      "inv": {
+        "exacto": "289000",
+        "decimal": 289000.0
+      },
+      "oca": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "dep": {
+        "exacto": "-2295000",
+        "decimal": -2295000.0
+      },
+      "pay": {
+        "exacto": "382000",
+        "decimal": 382000.0
+      },
+      "sales": {
+        "exacto": "3074000",
+        "decimal": 3074000.0
+      },
+      "cost": {
+        "exacto": "2088000",
+        "decimal": 2088000.0
+      },
+      "other": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "otherexp": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "interest": {
+        "exacto": "93000",
+        "decimal": 93000.0
+      },
+      "tax": {
+        "exacto": "94000",
+        "decimal": 94000.0
+      },
+      "AC": {
+        "exacto": "1223000",
+        "decimal": 1223000.0
+      },
+      "AF": {
+        "exacto": "2374000",
+        "decimal": 2374000.0
+      },
+      "A": {
+        "exacto": "3597000",
+        "decimal": 3597000.0
+      },
+      "PC": {
+        "exacto": "620000",
+        "decimal": 620000.0
+      },
+      "P": {
+        "exacto": "1643000",
+        "decimal": 1643000.0
+      },
+      "E": {
+        "exacto": "1954000",
+        "decimal": 1954000.0
+      },
+      "PE": {
+        "exacto": "3597000",
+        "decimal": 3597000.0
+      },
+      "UB": {
+        "exacto": "986000",
+        "decimal": 986000.0
+      },
+      "GOp": {
+        "exacto": "568000",
+        "decimal": 568000.0
+      },
+      "UAII": {
+        "exacto": "418000",
+        "decimal": 418000.0
+      },
+      "UAI": {
+        "exacto": "325000",
+        "decimal": 325000.0
+      },
+      "UN": {
+        "exacto": "231000",
+        "decimal": 231000.0
+      }
+    }
+  },
+  "practico2": {
+    "2023": {
+      "cash": {
+        "exacto": "50000",
+        "decimal": 50000.0
+      },
+      "cxc": {
+        "exacto": "80000",
+        "decimal": 80000.0
+      },
+      "inv": {
+        "exacto": "120000",
+        "decimal": 120000.0
+      },
+      "oca": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "net": {
+        "exacto": "250000",
+        "decimal": 250000.0
+      },
+      "pay": {
+        "exacto": "70000",
+        "decimal": 70000.0
+      },
+      "sales": {
+        "exacto": "600000",
+        "decimal": 600000.0
+      },
+      "cost": {
+        "exacto": "360000",
+        "decimal": 360000.0
+      },
+      "other": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "otherexp": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "interest": {
+        "exacto": "30000",
+        "decimal": 30000.0
+      },
+      "tax": {
+        "exacto": "27000",
+        "decimal": 27000.0
+      },
+      "AC": {
+        "exacto": "250000",
+        "decimal": 250000.0
+      },
+      "AF": {
+        "exacto": "250000",
+        "decimal": 250000.0
+      },
+      "A": {
+        "exacto": "500000",
+        "decimal": 500000.0
+      },
+      "PC": {
+        "exacto": "100000",
+        "decimal": 100000.0
+      },
+      "P": {
+        "exacto": "200000",
+        "decimal": 200000.0
+      },
+      "E": {
+        "exacto": "300000",
+        "decimal": 300000.0
+      },
+      "PE": {
+        "exacto": "500000",
+        "decimal": 500000.0
+      },
+      "UB": {
+        "exacto": "240000",
+        "decimal": 240000.0
+      },
+      "GOp": {
+        "exacto": "120000",
+        "decimal": 120000.0
+      },
+      "UAII": {
+        "exacto": "120000",
+        "decimal": 120000.0
+      },
+      "UAI": {
+        "exacto": "90000",
+        "decimal": 90000.0
+      },
+      "UN": {
+        "exacto": "63000",
+        "decimal": 63000.0
+      }
+    },
+    "2024": {
+      "cash": {
+        "exacto": "65000",
+        "decimal": 65000.0
+      },
+      "cxc": {
+        "exacto": "100000",
+        "decimal": 100000.0
+      },
+      "inv": {
+        "exacto": "150000",
+        "decimal": 150000.0
+      },
+      "oca": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "net": {
+        "exacto": "280000",
+        "decimal": 280000.0
+      },
+      "pay": {
+        "exacto": "95000",
+        "decimal": 95000.0
+      },
+      "sales": {
+        "exacto": "750000",
+        "decimal": 750000.0
+      },
+      "cost": {
+        "exacto": "450000",
+        "decimal": 450000.0
+      },
+      "other": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "otherexp": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "interest": {
+        "exacto": "40000",
+        "decimal": 40000.0
+      },
+      "tax": {
+        "exacto": "33000",
+        "decimal": 33000.0
+      },
+      "AC": {
+        "exacto": "315000",
+        "decimal": 315000.0
+      },
+      "AF": {
+        "exacto": "280000",
+        "decimal": 280000.0
+      },
+      "A": {
+        "exacto": "595000",
+        "decimal": 595000.0
+      },
+      "PC": {
+        "exacto": "135000",
+        "decimal": 135000.0
+      },
+      "P": {
+        "exacto": "250000",
+        "decimal": 250000.0
+      },
+      "E": {
+        "exacto": "345000",
+        "decimal": 345000.0
+      },
+      "PE": {
+        "exacto": "595000",
+        "decimal": 595000.0
+      },
+      "UB": {
+        "exacto": "300000",
+        "decimal": 300000.0
+      },
+      "GOp": {
+        "exacto": "150000",
+        "decimal": 150000.0
+      },
+      "UAII": {
+        "exacto": "150000",
+        "decimal": 150000.0
+      },
+      "UAI": {
+        "exacto": "110000",
+        "decimal": 110000.0
+      },
+      "UN": {
+        "exacto": "77000",
+        "decimal": 77000.0
+      }
+    }
+  },
+  "bartlett-clase": {
+    "2011": {
+      "cash": {
+        "exacto": "339000",
+        "decimal": 339000.0
+      },
+      "cxc": {
+        "exacto": "365000",
+        "decimal": 365000.0
+      },
+      "inv": {
+        "exacto": "300000",
+        "decimal": 300000.0
+      },
+      "oca": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "dep": {
+        "exacto": "-2056000",
+        "decimal": -2056000.0
+      },
+      "pay": {
+        "exacto": "270000",
+        "decimal": 270000.0
+      },
+      "sales": {
+        "exacto": "2567000",
+        "decimal": 2567000.0
+      },
+      "cost": {
+        "exacto": "1711000",
+        "decimal": 1711000.0
+      },
+      "other": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "otherexp": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "interest": {
+        "exacto": "91000",
+        "decimal": 91000.0
+      },
+      "tax": {
+        "exacto": "64000",
+        "decimal": 64000.0
+      },
+      "AC": {
+        "exacto": "1004000",
+        "decimal": 1004000.0
+      },
+      "AF": {
+        "exacto": "2266000",
+        "decimal": 2266000.0
+      },
+      "A": {
+        "exacto": "3270000",
+        "decimal": 3270000.0
+      },
+      "PC": {
+        "exacto": "483000",
+        "decimal": 483000.0
+      },
+      "P": {
+        "exacto": "1450000",
+        "decimal": 1450000.0
+      },
+      "E": {
+        "exacto": "1820000",
+        "decimal": 1820000.0
+      },
+      "PE": {
+        "exacto": "3270000",
+        "decimal": 3270000.0
+      },
+      "UB": {
+        "exacto": "856000",
+        "decimal": 856000.0
+      },
+      "GOp": {
+        "exacto": "553000",
+        "decimal": 553000.0
+      },
+      "UAII": {
+        "exacto": "303000",
+        "decimal": 303000.0
+      },
+      "UAI": {
+        "exacto": "212000",
+        "decimal": 212000.0
+      },
+      "UN": {
+        "exacto": "148000",
+        "decimal": 148000.0
+      }
+    },
+    "2012": {
+      "cash": {
+        "exacto": "431000",
+        "decimal": 431000.0
+      },
+      "cxc": {
+        "exacto": "503000",
+        "decimal": 503000.0
+      },
+      "inv": {
+        "exacto": "289000",
+        "decimal": 289000.0
+      },
+      "oca": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "dep": {
+        "exacto": "-2295000",
+        "decimal": -2295000.0
+      },
+      "pay": {
+        "exacto": "382000",
+        "decimal": 382000.0
+      },
+      "sales": {
+        "exacto": "3074000",
+        "decimal": 3074000.0
+      },
+      "cost": {
+        "exacto": "2088000",
+        "decimal": 2088000.0
+      },
+      "other": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "otherexp": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "interest": {
+        "exacto": "93000",
+        "decimal": 93000.0
+      },
+      "tax": {
+        "exacto": "94000",
+        "decimal": 94000.0
+      },
+      "credit": {
+        "exacto": "3074000",
+        "decimal": 3074000.0
+      },
+      "purchases": {
+        "exacto": "1461600",
+        "decimal": 1461600.0
+      },
+      "AC": {
+        "exacto": "1223000",
+        "decimal": 1223000.0
+      },
+      "AF": {
+        "exacto": "2374000",
+        "decimal": 2374000.0
+      },
+      "A": {
+        "exacto": "3597000",
+        "decimal": 3597000.0
+      },
+      "PC": {
+        "exacto": "620000",
+        "decimal": 620000.0
+      },
+      "P": {
+        "exacto": "1643000",
+        "decimal": 1643000.0
+      },
+      "E": {
+        "exacto": "1954000",
+        "decimal": 1954000.0
+      },
+      "PE": {
+        "exacto": "3597000",
+        "decimal": 3597000.0
+      },
+      "UB": {
+        "exacto": "986000",
+        "decimal": 986000.0
+      },
+      "GOp": {
+        "exacto": "568000",
+        "decimal": 568000.0
+      },
+      "UAII": {
+        "exacto": "418000",
+        "decimal": 418000.0
+      },
+      "UAI": {
+        "exacto": "325000",
+        "decimal": 325000.0
+      },
+      "UN": {
+        "exacto": "231000",
+        "decimal": 231000.0
+      }
+    }
+  },
+  "flujo/actual": {
+    "operacion": {
+      "exacto": "98000",
+      "decimal": 98000.0
+    },
+    "inversion": {
+      "exacto": "-30000",
+      "decimal": -30000.0
+    },
+    "financiamiento": {
+      "exacto": "-45000",
+      "decimal": -45000.0
+    },
+    "variacionNeta": {
+      "exacto": "23000",
+      "decimal": 23000.0
+    },
+    "saldoFinal": {
+      "exacto": "75000",
+      "decimal": 75000.0
+    }
+  },
+  "flujo/baker-directo": {
+    "operacion": {
+      "exacto": "780000",
+      "decimal": 780000.0
+    },
+    "inversion": {
+      "exacto": "-300000",
+      "decimal": -300000.0
+    },
+    "financiamiento": {
+      "exacto": "20000",
+      "decimal": 20000.0
+    },
+    "variacionNeta": {
+      "exacto": "500000",
+      "decimal": 500000.0
+    },
+    "saldoFinal": {
+      "exacto": "1000000",
+      "decimal": 1000000.0
+    }
+  },
+  "flujo/bartlett-directo": {
+    "operacion": {
+      "exacto": "500000",
+      "decimal": 500000.0
+    },
+    "inversion": {
+      "exacto": "-347000",
+      "decimal": -347000.0
+    },
+    "financiamiento": {
+      "exacto": "-61000",
+      "decimal": -61000.0
+    },
+    "variacionNeta": {
+      "exacto": "92000",
+      "decimal": 92000.0
+    },
+    "saldoFinal": {
+      "exacto": "431000",
+      "decimal": 431000.0
+    }
+  },
+  "EFE/baker": {
+    "un": 180000,
+    "cfo": 780000,
+    "cfi": -300000,
+    "cff": 20000
+  },
+  "EFE/bartlett": {
+    "un": 231000,
+    "cfo": 500000,
+    "cfi": -347000,
+    "cff": -61000
+  },
+  "EFE/actual": {
+    "un": {
+      "exacto": "104825",
+      "decimal": 104825.0
+    },
+    "cfo": {
+      "exacto": "102775",
+      "decimal": 102775.0
+    },
+    "cfi": {
+      "exacto": "0",
+      "decimal": 0.0
+    },
+    "cff": {
+      "exacto": "-95775",
+      "decimal": -95775.0
+    }
+  },
+  "CVU/actual": {
+    "precio": {
+      "exacto": "800",
+      "decimal": 800.0
+    },
+    "cvu": {
+      "exacto": "520",
+      "decimal": 520.0
+    },
+    "cf": {
+      "exacto": "42000",
+      "decimal": 42000.0
+    },
+    "q": {
+      "exacto": "250",
+      "decimal": 250.0
+    },
+    "mcu": {
+      "exacto": "280",
+      "decimal": 280.0
+    },
+    "rmc": {
+      "exacto": "7/20",
+      "decimal": 0.35
+    },
+    "peUnidades": {
+      "exacto": "150",
+      "decimal": 150.0
+    },
+    "peVentas": {
+      "exacto": "120000",
+      "decimal": 120000.0
+    },
+    "unidadesMinimas": 150,
+    "ventas": {
+      "exacto": "200000",
+      "decimal": 200000.0
+    },
+    "costoVariableTotal": {
+      "exacto": "130000",
+      "decimal": 130000.0
+    },
+    "mcTotal": {
+      "exacto": "70000",
+      "decimal": 70000.0
+    },
+    "costoTotal": {
+      "exacto": "172000",
+      "decimal": 172000.0
+    },
+    "uaii": {
+      "exacto": "28000",
+      "decimal": 28000.0
+    },
+    "msUnidades": {
+      "exacto": "100",
+      "decimal": 100.0
+    },
+    "msVentas": {
+      "exacto": "80000",
+      "decimal": 80000.0
+    },
+    "msPorcentaje": {
+      "exacto": "2/5",
+      "decimal": 0.4
+    },
+    "gao": {
+      "exacto": "5/2",
+      "decimal": 2.5
+    },
+    "utilidadObjetivo": {
+      "exacto": "42000",
+      "decimal": 42000.0
+    },
+    "unidadesObjetivo": {
+      "exacto": "300",
+      "decimal": 300.0
+    },
+    "ventasObjetivo": {
+      "exacto": "240000",
+      "decimal": 240000.0
+    }
+  },
+  "CVU/tor-base": {
+    "precio": {
+      "exacto": "15/2",
+      "decimal": 7.5
+    },
+    "cvu": {
+      "exacto": "3",
+      "decimal": 3.0
+    },
+    "cf": {
+      "exacto": "250000",
+      "decimal": 250000.0
+    },
+    "q": {
+      "exacto": "100000",
+      "decimal": 100000.0
+    },
+    "mcu": {
+      "exacto": "9/2",
+      "decimal": 4.5
+    },
+    "rmc": {
+      "exacto": "3/5",
+      "decimal": 0.6
+    },
+    "peUnidades": {
+      "exacto": "500000/9",
+      "decimal": 55555.555555555555
+    },
+    "peVentas": {
+      "exacto": "1250000/3",
+      "decimal": 416666.6666666667
+    },
+    "unidadesMinimas": 55556,
+    "ventas": {
+      "exacto": "750000",
+      "decimal": 750000.0
+    },
+    "costoVariableTotal": {
+      "exacto": "300000",
+      "decimal": 300000.0
+    },
+    "mcTotal": {
+      "exacto": "450000",
+      "decimal": 450000.0
+    },
+    "costoTotal": {
+      "exacto": "550000",
+      "decimal": 550000.0
+    },
+    "uaii": {
+      "exacto": "200000",
+      "decimal": 200000.0
+    },
+    "msUnidades": {
+      "exacto": "400000/9",
+      "decimal": 44444.444444444445
+    },
+    "msVentas": {
+      "exacto": "1000000/3",
+      "decimal": 333333.3333333333
+    },
+    "msPorcentaje": {
+      "exacto": "4/9",
+      "decimal": 0.4444444444444444
+    },
+    "gao": {
+      "exacto": "9/4",
+      "decimal": 2.25
+    },
+    "utilidadObjetivo": null,
+    "unidadesObjetivo": null,
+    "ventasObjetivo": null
+  },
+  "CVU/tor-alto": {
+    "precio": {
+      "exacto": "15/2",
+      "decimal": 7.5
+    },
+    "cvu": {
+      "exacto": "3",
+      "decimal": 3.0
+    },
+    "cf": {
+      "exacto": "250000",
+      "decimal": 250000.0
+    },
+    "q": {
+      "exacto": "120000",
+      "decimal": 120000.0
+    },
+    "mcu": {
+      "exacto": "9/2",
+      "decimal": 4.5
+    },
+    "rmc": {
+      "exacto": "3/5",
+      "decimal": 0.6
+    },
+    "peUnidades": {
+      "exacto": "500000/9",
+      "decimal": 55555.555555555555
+    },
+    "peVentas": {
+      "exacto": "1250000/3",
+      "decimal": 416666.6666666667
+    },
+    "unidadesMinimas": 55556,
+    "ventas": {
+      "exacto": "900000",
+      "decimal": 900000.0
+    },
+    "costoVariableTotal": {
+      "exacto": "360000",
+      "decimal": 360000.0
+    },
+    "mcTotal": {
+      "exacto": "540000",
+      "decimal": 540000.0
+    },
+    "costoTotal": {
+      "exacto": "610000",
+      "decimal": 610000.0
+    },
+    "uaii": {
+      "exacto": "290000",
+      "decimal": 290000.0
+    },
+    "msUnidades": {
+      "exacto": "580000/9",
+      "decimal": 64444.444444444445
+    },
+    "msVentas": {
+      "exacto": "1450000/3",
+      "decimal": 483333.3333333333
+    },
+    "msPorcentaje": {
+      "exacto": "29/54",
+      "decimal": 0.5370370370370371
+    },
+    "gao": {
+      "exacto": "54/29",
+      "decimal": 1.8620689655172413
+    },
+    "utilidadObjetivo": null,
+    "unidadesObjetivo": null,
+    "ventasObjetivo": null
+  },
+  "Presupuesto/actual": [
+    {
+      "ventas": {
+        "exacto": "200000",
+        "decimal": 200000.0
+      },
+      "cbv": {
+        "exacto": "120000",
+        "decimal": 120000.0
+      },
+      "utilidadBruta": {
+        "exacto": "80000",
+        "decimal": 80000.0
+      },
+      "gastosOperacion": {
+        "exacto": "52000",
+        "decimal": 52000.0
+      },
+      "uaii": {
+        "exacto": "28000",
+        "decimal": 28000.0
+      },
+      "uai": {
+        "exacto": "25000",
+        "decimal": 25000.0
+      },
+      "ir": {
+        "exacto": "7500",
+        "decimal": 7500.0
+      },
+      "utilidadNeta": {
+        "exacto": "17500",
+        "decimal": 17500.0
+      },
+      "cobros": {
+        "exacto": "255000",
+        "decimal": 255000.0
+      },
+      "comprasUnidades": {
+        "exacto": "260",
+        "decimal": 260.0
+      },
+      "compras": {
+        "exacto": "124800",
+        "decimal": 124800.0
+      },
+      "pagosProveedores": {
+        "exacto": "154400",
+        "decimal": 154400.0
+      },
+      "inventarioInicial": {
+        "exacto": "50",
+        "decimal": 50.0
+      },
+      "inventarioFinal": {
+        "exacto": "60",
+        "decimal": 60.0
+      },
+      "saldoInicial": {
+        "exacto": "52000",
+        "decimal": 52000.0
+      },
+      "saldoFinal": {
+        "exacto": "102100",
+        "decimal": 102100.0
+      },
+      "desembolsos": {
+        "exacto": "204900",
+        "decimal": 204900.0
+      },
+      "flujoNeto": {
+        "exacto": "50100",
+        "decimal": 50100.0
+      },
+      "financiamiento": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "cxc": {
+        "exacto": "80000",
+        "decimal": 80000.0
+      },
+      "cxp": {
+        "exacto": "62400",
+        "decimal": 62400.0
+      }
+    },
+    {
+      "ventas": {
+        "exacto": "240000",
+        "decimal": 240000.0
+      },
+      "cbv": {
+        "exacto": "144000",
+        "decimal": 144000.0
+      },
+      "utilidadBruta": {
+        "exacto": "96000",
+        "decimal": 96000.0
+      },
+      "gastosOperacion": {
+        "exacto": "54000",
+        "decimal": 54000.0
+      },
+      "uaii": {
+        "exacto": "42000",
+        "decimal": 42000.0
+      },
+      "uai": {
+        "exacto": "39000",
+        "decimal": 39000.0
+      },
+      "ir": {
+        "exacto": "11700",
+        "decimal": 11700.0
+      },
+      "utilidadNeta": {
+        "exacto": "27300",
+        "decimal": 27300.0
+      },
+      "cobros": {
+        "exacto": "224000",
+        "decimal": 224000.0
+      },
+      "comprasUnidades": {
+        "exacto": "300",
+        "decimal": 300.0
+      },
+      "compras": {
+        "exacto": "144000",
+        "decimal": 144000.0
+      },
+      "pagosProveedores": {
+        "exacto": "134400",
+        "decimal": 134400.0
+      },
+      "inventarioInicial": {
+        "exacto": "60",
+        "decimal": 60.0
+      },
+      "inventarioFinal": {
+        "exacto": "60",
+        "decimal": 60.0
+      },
+      "saldoInicial": {
+        "exacto": "102100",
+        "decimal": 102100.0
+      },
+      "saldoFinal": {
+        "exacto": "19200",
+        "decimal": 19200.0
+      },
+      "desembolsos": {
+        "exacto": "306900",
+        "decimal": 306900.0
+      },
+      "flujoNeto": {
+        "exacto": "-82900",
+        "decimal": -82900.0
+      },
+      "financiamiento": {
+        "exacto": "20800",
+        "decimal": 20800.0
+      },
+      "cxc": {
+        "exacto": "96000",
+        "decimal": 96000.0
+      },
+      "cxp": {
+        "exacto": "72000",
+        "decimal": 72000.0
+      }
+    },
+    {
+      "ventas": {
+        "exacto": "240000",
+        "decimal": 240000.0
+      },
+      "cbv": {
+        "exacto": "144000",
+        "decimal": 144000.0
+      },
+      "utilidadBruta": {
+        "exacto": "96000",
+        "decimal": 96000.0
+      },
+      "gastosOperacion": {
+        "exacto": "54000",
+        "decimal": 54000.0
+      },
+      "uaii": {
+        "exacto": "42000",
+        "decimal": 42000.0
+      },
+      "uai": {
+        "exacto": "39000",
+        "decimal": 39000.0
+      },
+      "ir": {
+        "exacto": "11700",
+        "decimal": 11700.0
+      },
+      "utilidadNeta": {
+        "exacto": "27300",
+        "decimal": 27300.0
+      },
+      "cobros": {
+        "exacto": "240000",
+        "decimal": 240000.0
+      },
+      "comprasUnidades": {
+        "exacto": "320",
+        "decimal": 320.0
+      },
+      "compras": {
+        "exacto": "153600",
+        "decimal": 153600.0
+      },
+      "pagosProveedores": {
+        "exacto": "148800",
+        "decimal": 148800.0
+      },
+      "inventarioInicial": {
+        "exacto": "60",
+        "decimal": 60.0
+      },
+      "inventarioFinal": {
+        "exacto": "80",
+        "decimal": 80.0
+      },
+      "saldoInicial": {
+        "exacto": "19200",
+        "decimal": 19200.0
+      },
+      "saldoFinal": {
+        "exacto": "57900",
+        "decimal": 57900.0
+      },
+      "desembolsos": {
+        "exacto": "201300",
+        "decimal": 201300.0
+      },
+      "flujoNeto": {
+        "exacto": "38700",
+        "decimal": 38700.0
+      },
+      "financiamiento": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "cxc": {
+        "exacto": "96000",
+        "decimal": 96000.0
+      },
+      "cxp": {
+        "exacto": "76800",
+        "decimal": 76800.0
+      }
+    },
+    {
+      "ventas": {
+        "exacto": "320000",
+        "decimal": 320000.0
+      },
+      "cbv": {
+        "exacto": "192000",
+        "decimal": 192000.0
+      },
+      "utilidadBruta": {
+        "exacto": "128000",
+        "decimal": 128000.0
+      },
+      "gastosOperacion": {
+        "exacto": "58000",
+        "decimal": 58000.0
+      },
+      "uaii": {
+        "exacto": "70000",
+        "decimal": 70000.0
+      },
+      "uai": {
+        "exacto": "67000",
+        "decimal": 67000.0
+      },
+      "ir": {
+        "exacto": "20100",
+        "decimal": 20100.0
+      },
+      "utilidadNeta": {
+        "exacto": "46900",
+        "decimal": 46900.0
+      },
+      "cobros": {
+        "exacto": "288000",
+        "decimal": 288000.0
+      },
+      "comprasUnidades": {
+        "exacto": "376",
+        "decimal": 376.0
+      },
+      "compras": {
+        "exacto": "180480",
+        "decimal": 180480.0
+      },
+      "pagosProveedores": {
+        "exacto": "167040",
+        "decimal": 167040.0
+      },
+      "inventarioInicial": {
+        "exacto": "80",
+        "decimal": 80.0
+      },
+      "inventarioFinal": {
+        "exacto": "56",
+        "decimal": 56.0
+      },
+      "saldoInicial": {
+        "exacto": "57900",
+        "decimal": 57900.0
+      },
+      "saldoFinal": {
+        "exacto": "122360",
+        "decimal": 122360.0
+      },
+      "desembolsos": {
+        "exacto": "223540",
+        "decimal": 223540.0
+      },
+      "flujoNeto": {
+        "exacto": "64460",
+        "decimal": 64460.0
+      },
+      "financiamiento": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "cxc": {
+        "exacto": "128000",
+        "decimal": 128000.0
+      },
+      "cxp": {
+        "exacto": "90240",
+        "decimal": 90240.0
+      }
+    }
+  ],
+  "Presupuesto/contado": [
+    {
+      "ventas": {
+        "exacto": "200000",
+        "decimal": 200000.0
+      },
+      "cbv": {
+        "exacto": "120000",
+        "decimal": 120000.0
+      },
+      "utilidadBruta": {
+        "exacto": "80000",
+        "decimal": 80000.0
+      },
+      "gastosOperacion": {
+        "exacto": "52000",
+        "decimal": 52000.0
+      },
+      "uaii": {
+        "exacto": "28000",
+        "decimal": 28000.0
+      },
+      "uai": {
+        "exacto": "25000",
+        "decimal": 25000.0
+      },
+      "ir": {
+        "exacto": "7500",
+        "decimal": 7500.0
+      },
+      "utilidadNeta": {
+        "exacto": "17500",
+        "decimal": 17500.0
+      },
+      "cobros": {
+        "exacto": "335000",
+        "decimal": 335000.0
+      },
+      "comprasUnidades": {
+        "exacto": "260",
+        "decimal": 260.0
+      },
+      "compras": {
+        "exacto": "124800",
+        "decimal": 124800.0
+      },
+      "pagosProveedores": {
+        "exacto": "154400",
+        "decimal": 154400.0
+      },
+      "inventarioInicial": {
+        "exacto": "50",
+        "decimal": 50.0
+      },
+      "inventarioFinal": {
+        "exacto": "60",
+        "decimal": 60.0
+      },
+      "saldoInicial": {
+        "exacto": "52000",
+        "decimal": 52000.0
+      },
+      "saldoFinal": {
+        "exacto": "182100",
+        "decimal": 182100.0
+      },
+      "desembolsos": {
+        "exacto": "204900",
+        "decimal": 204900.0
+      },
+      "flujoNeto": {
+        "exacto": "130100",
+        "decimal": 130100.0
+      },
+      "financiamiento": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "cxc": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "cxp": {
+        "exacto": "62400",
+        "decimal": 62400.0
+      }
+    },
+    {
+      "ventas": {
+        "exacto": "240000",
+        "decimal": 240000.0
+      },
+      "cbv": {
+        "exacto": "144000",
+        "decimal": 144000.0
+      },
+      "utilidadBruta": {
+        "exacto": "96000",
+        "decimal": 96000.0
+      },
+      "gastosOperacion": {
+        "exacto": "54000",
+        "decimal": 54000.0
+      },
+      "uaii": {
+        "exacto": "42000",
+        "decimal": 42000.0
+      },
+      "uai": {
+        "exacto": "39000",
+        "decimal": 39000.0
+      },
+      "ir": {
+        "exacto": "11700",
+        "decimal": 11700.0
+      },
+      "utilidadNeta": {
+        "exacto": "27300",
+        "decimal": 27300.0
+      },
+      "cobros": {
+        "exacto": "240000",
+        "decimal": 240000.0
+      },
+      "comprasUnidades": {
+        "exacto": "300",
+        "decimal": 300.0
+      },
+      "compras": {
+        "exacto": "144000",
+        "decimal": 144000.0
+      },
+      "pagosProveedores": {
+        "exacto": "134400",
+        "decimal": 134400.0
+      },
+      "inventarioInicial": {
+        "exacto": "60",
+        "decimal": 60.0
+      },
+      "inventarioFinal": {
+        "exacto": "60",
+        "decimal": 60.0
+      },
+      "saldoInicial": {
+        "exacto": "182100",
+        "decimal": 182100.0
+      },
+      "saldoFinal": {
+        "exacto": "115200",
+        "decimal": 115200.0
+      },
+      "desembolsos": {
+        "exacto": "306900",
+        "decimal": 306900.0
+      },
+      "flujoNeto": {
+        "exacto": "-66900",
+        "decimal": -66900.0
+      },
+      "financiamiento": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "cxc": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "cxp": {
+        "exacto": "72000",
+        "decimal": 72000.0
+      }
+    },
+    {
+      "ventas": {
+        "exacto": "240000",
+        "decimal": 240000.0
+      },
+      "cbv": {
+        "exacto": "144000",
+        "decimal": 144000.0
+      },
+      "utilidadBruta": {
+        "exacto": "96000",
+        "decimal": 96000.0
+      },
+      "gastosOperacion": {
+        "exacto": "54000",
+        "decimal": 54000.0
+      },
+      "uaii": {
+        "exacto": "42000",
+        "decimal": 42000.0
+      },
+      "uai": {
+        "exacto": "39000",
+        "decimal": 39000.0
+      },
+      "ir": {
+        "exacto": "11700",
+        "decimal": 11700.0
+      },
+      "utilidadNeta": {
+        "exacto": "27300",
+        "decimal": 27300.0
+      },
+      "cobros": {
+        "exacto": "240000",
+        "decimal": 240000.0
+      },
+      "comprasUnidades": {
+        "exacto": "320",
+        "decimal": 320.0
+      },
+      "compras": {
+        "exacto": "153600",
+        "decimal": 153600.0
+      },
+      "pagosProveedores": {
+        "exacto": "148800",
+        "decimal": 148800.0
+      },
+      "inventarioInicial": {
+        "exacto": "60",
+        "decimal": 60.0
+      },
+      "inventarioFinal": {
+        "exacto": "80",
+        "decimal": 80.0
+      },
+      "saldoInicial": {
+        "exacto": "115200",
+        "decimal": 115200.0
+      },
+      "saldoFinal": {
+        "exacto": "153900",
+        "decimal": 153900.0
+      },
+      "desembolsos": {
+        "exacto": "201300",
+        "decimal": 201300.0
+      },
+      "flujoNeto": {
+        "exacto": "38700",
+        "decimal": 38700.0
+      },
+      "financiamiento": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "cxc": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "cxp": {
+        "exacto": "76800",
+        "decimal": 76800.0
+      }
+    },
+    {
+      "ventas": {
+        "exacto": "320000",
+        "decimal": 320000.0
+      },
+      "cbv": {
+        "exacto": "192000",
+        "decimal": 192000.0
+      },
+      "utilidadBruta": {
+        "exacto": "128000",
+        "decimal": 128000.0
+      },
+      "gastosOperacion": {
+        "exacto": "58000",
+        "decimal": 58000.0
+      },
+      "uaii": {
+        "exacto": "70000",
+        "decimal": 70000.0
+      },
+      "uai": {
+        "exacto": "67000",
+        "decimal": 67000.0
+      },
+      "ir": {
+        "exacto": "20100",
+        "decimal": 20100.0
+      },
+      "utilidadNeta": {
+        "exacto": "46900",
+        "decimal": 46900.0
+      },
+      "cobros": {
+        "exacto": "320000",
+        "decimal": 320000.0
+      },
+      "comprasUnidades": {
+        "exacto": "376",
+        "decimal": 376.0
+      },
+      "compras": {
+        "exacto": "180480",
+        "decimal": 180480.0
+      },
+      "pagosProveedores": {
+        "exacto": "167040",
+        "decimal": 167040.0
+      },
+      "inventarioInicial": {
+        "exacto": "80",
+        "decimal": 80.0
+      },
+      "inventarioFinal": {
+        "exacto": "56",
+        "decimal": 56.0
+      },
+      "saldoInicial": {
+        "exacto": "153900",
+        "decimal": 153900.0
+      },
+      "saldoFinal": {
+        "exacto": "250360",
+        "decimal": 250360.0
+      },
+      "desembolsos": {
+        "exacto": "223540",
+        "decimal": 223540.0
+      },
+      "flujoNeto": {
+        "exacto": "96460",
+        "decimal": 96460.0
+      },
+      "financiamiento": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "cxc": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "cxp": {
+        "exacto": "90240",
+        "decimal": 90240.0
+      }
+    }
+  ],
+  "Inventario/actual": [
+    {
+      "nombre": "Camisa casual",
+      "existenciaFinal": {
+        "exacto": "35",
+        "decimal": 35.0
+      },
+      "entradas": {
+        "exacto": "60",
+        "decimal": 60.0
+      },
+      "salidas": {
+        "exacto": "145",
+        "decimal": 145.0
+      },
+      "costoPromedio": {
+        "exacto": "350",
+        "decimal": 350.0
+      },
+      "costoSalidas": {
+        "exacto": "50750",
+        "decimal": 50750.0
+      },
+      "valor": {
+        "exacto": "12250",
+        "decimal": 12250.0
+      },
+      "faltante": {
+        "exacto": "5",
+        "decimal": 5.0
+      },
+      "costoReposicion": {
+        "exacto": "1750",
+        "decimal": 1750.0
+      }
+    },
+    {
+      "nombre": "Pantalón jean",
+      "existenciaFinal": {
+        "exacto": "50",
+        "decimal": 50.0
+      },
+      "entradas": {
+        "exacto": "40",
+        "decimal": 40.0
+      },
+      "salidas": {
+        "exacto": "70",
+        "decimal": 70.0
+      },
+      "costoPromedio": {
+        "exacto": "520",
+        "decimal": 520.0
+      },
+      "costoSalidas": {
+        "exacto": "36400",
+        "decimal": 36400.0
+      },
+      "valor": {
+        "exacto": "26000",
+        "decimal": 26000.0
+      },
+      "faltante": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "costoReposicion": {
+        "exacto": "0",
+        "decimal": 0.0
+      }
+    },
+    {
+      "nombre": "Vestido de verano",
+      "existenciaFinal": {
+        "exacto": "13",
+        "decimal": 13.0
+      },
+      "entradas": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "salidas": {
+        "exacto": "32",
+        "decimal": 32.0
+      },
+      "costoPromedio": {
+        "exacto": "780",
+        "decimal": 780.0
+      },
+      "costoSalidas": {
+        "exacto": "24960",
+        "decimal": 24960.0
+      },
+      "valor": {
+        "exacto": "10140",
+        "decimal": 10140.0
+      },
+      "faltante": {
+        "exacto": "2",
+        "decimal": 2.0
+      },
+      "costoReposicion": {
+        "exacto": "1560",
+        "decimal": 1560.0
+      }
+    },
+    {
+      "nombre": "Chaqueta",
+      "existenciaFinal": {
+        "exacto": "32",
+        "decimal": 32.0
+      },
+      "entradas": {
+        "exacto": "20",
+        "decimal": 20.0
+      },
+      "salidas": {
+        "exacto": "18",
+        "decimal": 18.0
+      },
+      "costoPromedio": {
+        "exacto": "950",
+        "decimal": 950.0
+      },
+      "costoSalidas": {
+        "exacto": "17100",
+        "decimal": 17100.0
+      },
+      "valor": {
+        "exacto": "30400",
+        "decimal": 30400.0
+      },
+      "faltante": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "costoReposicion": {
+        "exacto": "0",
+        "decimal": 0.0
+      }
+    }
+  ],
+  "Inventario/bodega": [
+    {
+      "nombre": "Camisa casual",
+      "existenciaFinal": {
+        "exacto": "120",
+        "decimal": 120.0
+      },
+      "entradas": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "salidas": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "costoPromedio": {
+        "exacto": "350",
+        "decimal": 350.0
+      },
+      "costoSalidas": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "valor": {
+        "exacto": "42000",
+        "decimal": 42000.0
+      },
+      "faltante": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "costoReposicion": {
+        "exacto": "0",
+        "decimal": 0.0
+      }
+    },
+    {
+      "nombre": "Pantalón jean",
+      "existenciaFinal": {
+        "exacto": "80",
+        "decimal": 80.0
+      },
+      "entradas": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "salidas": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "costoPromedio": {
+        "exacto": "520",
+        "decimal": 520.0
+      },
+      "costoSalidas": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "valor": {
+        "exacto": "41600",
+        "decimal": 41600.0
+      },
+      "faltante": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "costoReposicion": {
+        "exacto": "0",
+        "decimal": 0.0
+      }
+    },
+    {
+      "nombre": "Vestido de verano",
+      "existenciaFinal": {
+        "exacto": "45",
+        "decimal": 45.0
+      },
+      "entradas": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "salidas": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "costoPromedio": {
+        "exacto": "780",
+        "decimal": 780.0
+      },
+      "costoSalidas": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "valor": {
+        "exacto": "35100",
+        "decimal": 35100.0
+      },
+      "faltante": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "costoReposicion": {
+        "exacto": "0",
+        "decimal": 0.0
+      }
+    },
+    {
+      "nombre": "Chaqueta",
+      "existenciaFinal": {
+        "exacto": "30",
+        "decimal": 30.0
+      },
+      "entradas": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "salidas": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "costoPromedio": {
+        "exacto": "950",
+        "decimal": 950.0
+      },
+      "costoSalidas": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "valor": {
+        "exacto": "28500",
+        "decimal": 28500.0
+      },
+      "faltante": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "costoReposicion": {
+        "exacto": "0",
+        "decimal": 0.0
+      }
+    }
+  ],
+  "Personal/actual": {
+    "ingresos": {
+      "exacto": "22500",
+      "decimal": 22500.0
+    },
+    "gastos": {
+      "exacto": "17200",
+      "decimal": 17200.0
+    },
+    "ahorroMensual": {
+      "exacto": "3000",
+      "decimal": 3000.0
+    },
+    "capacidad": {
+      "exacto": "5300",
+      "decimal": 5300.0
+    },
+    "tasaAhorro": {
+      "exacto": "53/225",
+      "decimal": 0.23555555555555555
+    },
+    "saldoDisponible": {
+      "exacto": "2300",
+      "decimal": 2300.0
+    },
+    "balance": false,
+    "limiteSemanalSinReserva": {
+      "exacto": "4875",
+      "decimal": 4875.0
+    }
+  },
+  "Personal/salario": {
+    "ingresos": {
+      "exacto": "18000",
+      "decimal": 18000.0
+    },
+    "gastos": {
+      "exacto": "17200",
+      "decimal": 17200.0
+    },
+    "ahorroMensual": {
+      "exacto": "3000",
+      "decimal": 3000.0
+    },
+    "capacidad": {
+      "exacto": "800",
+      "decimal": 800.0
+    },
+    "tasaAhorro": {
+      "exacto": "2/45",
+      "decimal": 0.044444444444444446
+    },
+    "saldoDisponible": {
+      "exacto": "-2200",
+      "decimal": -2200.0
+    },
+    "balance": false,
+    "limiteSemanalSinReserva": {
+      "exacto": "3750",
+      "decimal": 3750.0
+    }
+  },
+  "Mercado/actual/actual": [
+    {
+      "periodo": "2023",
+      "un": {
+        "exacto": "89180",
+        "decimal": 89180.0
+      },
+      "upa": {
+        "exacto": "4459/1500",
+        "decimal": 2.9726666666666666
+      },
+      "pu": {
+        "exacto": "67500/4459",
+        "decimal": 15.137923301188607
+      },
+      "vlpa": {
+        "exacto": "103523/6000",
+        "decimal": 17.253833333333333
+      },
+      "pvl": {
+        "exacto": "270000/103523",
+        "decimal": 2.608116070824841
+      },
+      "dpa": {
+        "exacto": "7/6",
+        "decimal": 1.1666666666666667
+      },
+      "pago": {
+        "exacto": "250/637",
+        "decimal": 0.3924646781789639
+      },
+      "rendimiento": {
+        "exacto": "7/270",
+        "decimal": 0.025925925925925925
+      }
+    },
+    {
+      "periodo": "2024",
+      "un": {
+        "exacto": "104825",
+        "decimal": 104825.0
+      },
+      "upa": {
+        "exacto": "4193/1200",
+        "decimal": 3.4941666666666666
+      },
+      "pu": {
+        "exacto": "62400/4193",
+        "decimal": 14.88194610064393
+      },
+      "vlpa": {
+        "exacto": "14561/750",
+        "decimal": 19.414666666666665
+      },
+      "pvl": {
+        "exacto": "39000/14561",
+        "decimal": 2.678387473387817
+      },
+      "dpa": {
+        "exacto": "4/3",
+        "decimal": 1.3333333333333333
+      },
+      "pago": {
+        "exacto": "1600/4193",
+        "decimal": 0.38158836155497255
+      },
+      "rendimiento": {
+        "exacto": "1/39",
+        "decimal": 0.02564102564102564
+      }
+    }
+  ],
+  "Mercado/actual/sin-dividendos": [
+    {
+      "periodo": "2023",
+      "un": {
+        "exacto": "89180",
+        "decimal": 89180.0
+      },
+      "upa": {
+        "exacto": "4459/1500",
+        "decimal": 2.9726666666666666
+      },
+      "pu": {
+        "exacto": "67500/4459",
+        "decimal": 15.137923301188607
+      },
+      "vlpa": {
+        "exacto": "103523/6000",
+        "decimal": 17.253833333333333
+      },
+      "pvl": {
+        "exacto": "270000/103523",
+        "decimal": 2.608116070824841
+      },
+      "dpa": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "pago": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "rendimiento": {
+        "exacto": "0",
+        "decimal": 0.0
+      }
+    },
+    {
+      "periodo": "2024",
+      "un": {
+        "exacto": "104825",
+        "decimal": 104825.0
+      },
+      "upa": {
+        "exacto": "4193/1200",
+        "decimal": 3.4941666666666666
+      },
+      "pu": {
+        "exacto": "62400/4193",
+        "decimal": 14.88194610064393
+      },
+      "vlpa": {
+        "exacto": "14561/750",
+        "decimal": 19.414666666666665
+      },
+      "pvl": {
+        "exacto": "39000/14561",
+        "decimal": 2.678387473387817
+      },
+      "dpa": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "pago": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "rendimiento": {
+        "exacto": "0",
+        "decimal": 0.0
+      }
+    }
+  ],
+  "Mercado/baker/actual": [
+    {
+      "periodo": "2011",
+      "un": null,
+      "upa": null,
+      "pu": null,
+      "vlpa": {
+        "exacto": "110/3",
+        "decimal": 36.666666666666664
+      },
+      "pvl": {
+        "exacto": "27/22",
+        "decimal": 1.2272727272727273
+      },
+      "dpa": {
+        "exacto": "7/6",
+        "decimal": 1.1666666666666667
+      },
+      "pago": null,
+      "rendimiento": {
+        "exacto": "7/270",
+        "decimal": 0.025925925925925925
+      }
+    },
+    {
+      "periodo": "2012",
+      "un": {
+        "exacto": "180000",
+        "decimal": 180000.0
+      },
+      "upa": {
+        "exacto": "6",
+        "decimal": 6.0
+      },
+      "pu": {
+        "exacto": "26/3",
+        "decimal": 8.666666666666666
+      },
+      "vlpa": {
+        "exacto": "40",
+        "decimal": 40.0
+      },
+      "pvl": {
+        "exacto": "13/10",
+        "decimal": 1.3
+      },
+      "dpa": {
+        "exacto": "4/3",
+        "decimal": 1.3333333333333333
+      },
+      "pago": {
+        "exacto": "2/9",
+        "decimal": 0.2222222222222222
+      },
+      "rendimiento": {
+        "exacto": "1/39",
+        "decimal": 0.02564102564102564
+      }
+    }
+  ],
+  "Mercado/baker/sin-dividendos": [
+    {
+      "periodo": "2011",
+      "un": null,
+      "upa": null,
+      "pu": null,
+      "vlpa": {
+        "exacto": "110/3",
+        "decimal": 36.666666666666664
+      },
+      "pvl": {
+        "exacto": "27/22",
+        "decimal": 1.2272727272727273
+      },
+      "dpa": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "pago": null,
+      "rendimiento": {
+        "exacto": "0",
+        "decimal": 0.0
+      }
+    },
+    {
+      "periodo": "2012",
+      "un": {
+        "exacto": "180000",
+        "decimal": 180000.0
+      },
+      "upa": {
+        "exacto": "6",
+        "decimal": 6.0
+      },
+      "pu": {
+        "exacto": "26/3",
+        "decimal": 8.666666666666666
+      },
+      "vlpa": {
+        "exacto": "40",
+        "decimal": 40.0
+      },
+      "pvl": {
+        "exacto": "13/10",
+        "decimal": 1.3
+      },
+      "dpa": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "pago": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "rendimiento": {
+        "exacto": "0",
+        "decimal": 0.0
+      }
+    }
+  ],
+  "Mercado/bartlett/actual": [
+    {
+      "periodo": "2011",
+      "un": {
+        "exacto": "148000",
+        "decimal": 148000.0
+      },
+      "upa": {
+        "exacto": "74/15",
+        "decimal": 4.933333333333334
+      },
+      "pu": {
+        "exacto": "675/74",
+        "decimal": 9.121621621621621
+      },
+      "vlpa": {
+        "exacto": "182/3",
+        "decimal": 60.666666666666664
+      },
+      "pvl": {
+        "exacto": "135/182",
+        "decimal": 0.7417582417582418
+      },
+      "dpa": {
+        "exacto": "7/6",
+        "decimal": 1.1666666666666667
+      },
+      "pago": {
+        "exacto": "35/148",
+        "decimal": 0.23648648648648649
+      },
+      "rendimiento": {
+        "exacto": "7/270",
+        "decimal": 0.025925925925925925
+      }
+    },
+    {
+      "periodo": "2012",
+      "un": {
+        "exacto": "231000",
+        "decimal": 231000.0
+      },
+      "upa": {
+        "exacto": "77/10",
+        "decimal": 7.7
+      },
+      "pu": {
+        "exacto": "520/77",
+        "decimal": 6.753246753246753
+      },
+      "vlpa": {
+        "exacto": "977/15",
+        "decimal": 65.13333333333334
+      },
+      "pvl": {
+        "exacto": "780/977",
+        "decimal": 0.7983623336745138
+      },
+      "dpa": {
+        "exacto": "4/3",
+        "decimal": 1.3333333333333333
+      },
+      "pago": {
+        "exacto": "40/231",
+        "decimal": 0.17316017316017315
+      },
+      "rendimiento": {
+        "exacto": "1/39",
+        "decimal": 0.02564102564102564
+      }
+    }
+  ],
+  "Mercado/bartlett/sin-dividendos": [
+    {
+      "periodo": "2011",
+      "un": {
+        "exacto": "148000",
+        "decimal": 148000.0
+      },
+      "upa": {
+        "exacto": "74/15",
+        "decimal": 4.933333333333334
+      },
+      "pu": {
+        "exacto": "675/74",
+        "decimal": 9.121621621621621
+      },
+      "vlpa": {
+        "exacto": "182/3",
+        "decimal": 60.666666666666664
+      },
+      "pvl": {
+        "exacto": "135/182",
+        "decimal": 0.7417582417582418
+      },
+      "dpa": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "pago": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "rendimiento": {
+        "exacto": "0",
+        "decimal": 0.0
+      }
+    },
+    {
+      "periodo": "2012",
+      "un": {
+        "exacto": "231000",
+        "decimal": 231000.0
+      },
+      "upa": {
+        "exacto": "77/10",
+        "decimal": 7.7
+      },
+      "pu": {
+        "exacto": "520/77",
+        "decimal": 6.753246753246753
+      },
+      "vlpa": {
+        "exacto": "977/15",
+        "decimal": 65.13333333333334
+      },
+      "pvl": {
+        "exacto": "780/977",
+        "decimal": 0.7983623336745138
+      },
+      "dpa": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "pago": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "rendimiento": {
+        "exacto": "0",
+        "decimal": 0.0
+      }
+    }
+  ],
+  "Mercado/bartlett-clase/actual": [
+    {
+      "periodo": "2011",
+      "un": {
+        "exacto": "148000",
+        "decimal": 148000.0
+      },
+      "upa": {
+        "exacto": "74/15",
+        "decimal": 4.933333333333334
+      },
+      "pu": {
+        "exacto": "675/74",
+        "decimal": 9.121621621621621
+      },
+      "vlpa": {
+        "exacto": "182/3",
+        "decimal": 60.666666666666664
+      },
+      "pvl": {
+        "exacto": "135/182",
+        "decimal": 0.7417582417582418
+      },
+      "dpa": {
+        "exacto": "7/6",
+        "decimal": 1.1666666666666667
+      },
+      "pago": {
+        "exacto": "35/148",
+        "decimal": 0.23648648648648649
+      },
+      "rendimiento": {
+        "exacto": "7/270",
+        "decimal": 0.025925925925925925
+      }
+    },
+    {
+      "periodo": "2012",
+      "un": {
+        "exacto": "231000",
+        "decimal": 231000.0
+      },
+      "upa": {
+        "exacto": "77/10",
+        "decimal": 7.7
+      },
+      "pu": {
+        "exacto": "520/77",
+        "decimal": 6.753246753246753
+      },
+      "vlpa": {
+        "exacto": "977/15",
+        "decimal": 65.13333333333334
+      },
+      "pvl": {
+        "exacto": "780/977",
+        "decimal": 0.7983623336745138
+      },
+      "dpa": {
+        "exacto": "4/3",
+        "decimal": 1.3333333333333333
+      },
+      "pago": {
+        "exacto": "40/231",
+        "decimal": 0.17316017316017315
+      },
+      "rendimiento": {
+        "exacto": "1/39",
+        "decimal": 0.02564102564102564
+      }
+    }
+  ],
+  "Mercado/bartlett-clase/sin-dividendos": [
+    {
+      "periodo": "2011",
+      "un": {
+        "exacto": "148000",
+        "decimal": 148000.0
+      },
+      "upa": {
+        "exacto": "74/15",
+        "decimal": 4.933333333333334
+      },
+      "pu": {
+        "exacto": "675/74",
+        "decimal": 9.121621621621621
+      },
+      "vlpa": {
+        "exacto": "182/3",
+        "decimal": 60.666666666666664
+      },
+      "pvl": {
+        "exacto": "135/182",
+        "decimal": 0.7417582417582418
+      },
+      "dpa": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "pago": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "rendimiento": {
+        "exacto": "0",
+        "decimal": 0.0
+      }
+    },
+    {
+      "periodo": "2012",
+      "un": {
+        "exacto": "231000",
+        "decimal": 231000.0
+      },
+      "upa": {
+        "exacto": "77/10",
+        "decimal": 7.7
+      },
+      "pu": {
+        "exacto": "520/77",
+        "decimal": 6.753246753246753
+      },
+      "vlpa": {
+        "exacto": "977/15",
+        "decimal": 65.13333333333334
+      },
+      "pvl": {
+        "exacto": "780/977",
+        "decimal": 0.7983623336745138
+      },
+      "dpa": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "pago": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "rendimiento": {
+        "exacto": "0",
+        "decimal": 0.0
+      }
+    }
+  ],
+  "Mercado/practico2/actual": [
+    {
+      "periodo": "2023",
+      "un": {
+        "exacto": "63000",
+        "decimal": 63000.0
+      },
+      "upa": {
+        "exacto": "21/10",
+        "decimal": 2.1
+      },
+      "pu": {
+        "exacto": "150/7",
+        "decimal": 21.428571428571427
+      },
+      "vlpa": {
+        "exacto": "10",
+        "decimal": 10.0
+      },
+      "pvl": {
+        "exacto": "9/2",
+        "decimal": 4.5
+      },
+      "dpa": {
+        "exacto": "7/6",
+        "decimal": 1.1666666666666667
+      },
+      "pago": {
+        "exacto": "5/9",
+        "decimal": 0.5555555555555556
+      },
+      "rendimiento": {
+        "exacto": "7/270",
+        "decimal": 0.025925925925925925
+      }
+    },
+    {
+      "periodo": "2024",
+      "un": {
+        "exacto": "77000",
+        "decimal": 77000.0
+      },
+      "upa": {
+        "exacto": "77/30",
+        "decimal": 2.566666666666667
+      },
+      "pu": {
+        "exacto": "1560/77",
+        "decimal": 20.25974025974026
+      },
+      "vlpa": {
+        "exacto": "23/2",
+        "decimal": 11.5
+      },
+      "pvl": {
+        "exacto": "104/23",
+        "decimal": 4.521739130434782
+      },
+      "dpa": {
+        "exacto": "4/3",
+        "decimal": 1.3333333333333333
+      },
+      "pago": {
+        "exacto": "40/77",
+        "decimal": 0.5194805194805194
+      },
+      "rendimiento": {
+        "exacto": "1/39",
+        "decimal": 0.02564102564102564
+      }
+    }
+  ],
+  "Mercado/practico2/sin-dividendos": [
+    {
+      "periodo": "2023",
+      "un": {
+        "exacto": "63000",
+        "decimal": 63000.0
+      },
+      "upa": {
+        "exacto": "21/10",
+        "decimal": 2.1
+      },
+      "pu": {
+        "exacto": "150/7",
+        "decimal": 21.428571428571427
+      },
+      "vlpa": {
+        "exacto": "10",
+        "decimal": 10.0
+      },
+      "pvl": {
+        "exacto": "9/2",
+        "decimal": 4.5
+      },
+      "dpa": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "pago": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "rendimiento": {
+        "exacto": "0",
+        "decimal": 0.0
+      }
+    },
+    {
+      "periodo": "2024",
+      "un": {
+        "exacto": "77000",
+        "decimal": 77000.0
+      },
+      "upa": {
+        "exacto": "77/30",
+        "decimal": 2.566666666666667
+      },
+      "pu": {
+        "exacto": "1560/77",
+        "decimal": 20.25974025974026
+      },
+      "vlpa": {
+        "exacto": "23/2",
+        "decimal": 11.5
+      },
+      "pvl": {
+        "exacto": "104/23",
+        "decimal": 4.521739130434782
+      },
+      "dpa": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "pago": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "rendimiento": {
+        "exacto": "0",
+        "decimal": 0.0
+      }
+    }
+  ],
+  "TOR/100000": {
+    "ventas": {
+      "exacto": "750000",
+      "decimal": 750000.0
+    },
+    "mc": {
+      "exacto": "450000",
+      "decimal": 450000.0
+    },
+    "uaii": {
+      "exacto": "200000",
+      "decimal": 200000.0
+    },
+    "uai": {
+      "exacto": "120000",
+      "decimal": 120000.0
+    },
+    "ir": {
+      "exacto": "48000",
+      "decimal": 48000.0
+    },
+    "un": {
+      "exacto": "72000",
+      "decimal": 72000.0
+    },
+    "udac": {
+      "exacto": "32000",
+      "decimal": 32000.0
+    },
+    "upa": {
+      "exacto": "8/5",
+      "decimal": 1.6
+    },
+    "gao": {
+      "exacto": "9/4",
+      "decimal": 2.25
+    },
+    "gaf": {
+      "exacto": "15/4",
+      "decimal": 3.75
+    },
+    "gat": {
+      "exacto": "135/16",
+      "decimal": 8.4375
+    }
+  },
+  "TOR/120000": {
+    "ventas": {
+      "exacto": "900000",
+      "decimal": 900000.0
+    },
+    "mc": {
+      "exacto": "540000",
+      "decimal": 540000.0
+    },
+    "uaii": {
+      "exacto": "290000",
+      "decimal": 290000.0
+    },
+    "uai": {
+      "exacto": "210000",
+      "decimal": 210000.0
+    },
+    "ir": {
+      "exacto": "84000",
+      "decimal": 84000.0
+    },
+    "un": {
+      "exacto": "126000",
+      "decimal": 126000.0
+    },
+    "udac": {
+      "exacto": "86000",
+      "decimal": 86000.0
+    },
+    "upa": {
+      "exacto": "43/10",
+      "decimal": 4.3
+    },
+    "gao": {
+      "exacto": "54/29",
+      "decimal": 1.8620689655172413
+    },
+    "gaf": {
+      "exacto": "87/43",
+      "decimal": 2.0232558139534884
+    },
+    "gat": {
+      "exacto": "162/43",
+      "decimal": 3.7674418604651163
+    }
+  },
+  "Bartlett/diapositivas14-15": {
+    "comprasEstimadas": {
+      "exacto": "1461600",
+      "decimal": 1461600.0
+    },
+    "RotCxC": {
+      "exacto": "1537/217",
+      "decimal": 7.082949308755761
+    },
+    "PPC": {
+      "exacto": "79205/1537",
+      "decimal": 51.53220559531555
+    },
+    "rotacionCxP": {
+      "exacto": "3654/815",
+      "decimal": 4.483435582822086
+    },
+    "plazoPago": {
+      "exacto": "297475/3654",
+      "decimal": 81.41078270388616
+    },
+    "cicloConversion": {
+      "exacto": "11156225/516432",
+      "decimal": 21.602505266908324
+    }
+  },
+  "Activo/Laptop": {
+    "anual": {
+      "exacto": "6250",
+      "decimal": 6250.0
+    },
+    "acumulada": {
+      "exacto": "12500",
+      "decimal": 12500.0
+    },
+    "libros": {
+      "exacto": "15500",
+      "decimal": 15500.0
+    },
+    "score": {
+      "exacto": "75",
+      "decimal": 75.0
+    }
+  },
+  "Activo/Refrigeradora": {
+    "anual": {
+      "exacto": "2000",
+      "decimal": 2000.0
+    },
+    "acumulada": {
+      "exacto": "12000",
+      "decimal": 12000.0
+    },
+    "libros": {
+      "exacto": "10000",
+      "decimal": 10000.0
+    },
+    "score": {
+      "exacto": "70",
+      "decimal": 70.0
+    }
+  },
+  "Activo/Motocicleta": {
+    "anual": {
+      "exacto": "6250",
+      "decimal": 6250.0
+    },
+    "acumulada": {
+      "exacto": "43750",
+      "decimal": 43750.0
+    },
+    "libros": {
+      "exacto": "21250",
+      "decimal": 21250.0
+    },
+    "score": {
+      "exacto": "165/4",
+      "decimal": 41.25
+    }
+  },
+  "Activo/Juego de sala": {
+    "anual": {
+      "exacto": "2125",
+      "decimal": 2125.0
+    },
+    "acumulada": {
+      "exacto": "6375",
+      "decimal": 6375.0
+    },
+    "libros": {
+      "exacto": "11625",
+      "decimal": 11625.0
+    },
+    "score": {
+      "exacto": "165/2",
+      "decimal": 82.5
+    }
+  },
+  "Comercial Ejemplo históricos": {
+    "2024": {
+      "efectivo": {
+        "exacto": "80000",
+        "decimal": 80000.0
+      },
+      "cxc": {
+        "exacto": "60000",
+        "decimal": 60000.0
+      },
+      "inventario_unidades": {
+        "exacto": "700",
+        "decimal": 700.0
+      },
+      "inventario_valor": {
+        "exacto": "70000",
+        "decimal": 70000.0
+      },
+      "activo_fijo_bruto": {
+        "exacto": "200000",
+        "decimal": 200000.0
+      },
+      "depreciacion_acumulada": {
+        "exacto": "-60000",
+        "decimal": -60000.0
+      },
+      "cxp": {
+        "exacto": "24000",
+        "decimal": 24000.0
+      },
+      "impuesto_por_pagar": {
+        "exacto": "6600",
+        "decimal": 6600.0
+      },
+      "deuda": {
+        "exacto": "70000",
+        "decimal": 70000.0
+      },
+      "capital": {
+        "exacto": "100000",
+        "decimal": 100000.0
+      },
+      "resultados_acumulados": {
+        "exacto": "149400",
+        "decimal": 149400.0
+      },
+      "ventas": {
+        "exacto": "600000",
+        "decimal": 600000.0
+      },
+      "cbv": {
+        "exacto": "300000",
+        "decimal": 300000.0
+      },
+      "uai": {
+        "exacto": "122000",
+        "decimal": 122000.0
+      },
+      "ir": {
+        "exacto": "36600",
+        "decimal": 36600.0
+      },
+      "un": {
+        "exacto": "85400",
+        "decimal": 85400.0
+      }
+    },
+    "2025": {
+      "efectivo": {
+        "exacto": "213000",
+        "decimal": 213000.0
+      },
+      "cxc": {
+        "exacto": "28400",
+        "decimal": 28400.0
+      },
+      "inventario_unidades": {
+        "exacto": "800",
+        "decimal": 800.0
+      },
+      "inventario_valor": {
+        "exacto": "80000",
+        "decimal": 80000.0
+      },
+      "activo_fijo_bruto": {
+        "exacto": "200000",
+        "decimal": 200000.0
+      },
+      "depreciacion_acumulada": {
+        "exacto": "-80000",
+        "decimal": -80000.0
+      },
+      "cxp": {
+        "exacto": "25000",
+        "decimal": 25000.0
+      },
+      "impuesto_por_pagar": {
+        "exacto": "13100",
+        "decimal": 13100.0
+      },
+      "deuda": {
+        "exacto": "60000",
+        "decimal": 60000.0
+      },
+      "capital": {
+        "exacto": "100000",
+        "decimal": 100000.0
+      },
+      "resultados_acumulados": {
+        "exacto": "243300",
+        "decimal": 243300.0
+      },
+      "ventas": {
+        "exacto": "714000",
+        "decimal": 714000.0
+      },
+      "cbv": {
+        "exacto": "340000",
+        "decimal": 340000.0
+      },
+      "uai": {
+        "exacto": "177000",
+        "decimal": 177000.0
+      },
+      "ir": {
+        "exacto": "53100",
+        "decimal": 53100.0
+      },
+      "un": {
+        "exacto": "123900",
+        "decimal": 123900.0
+      }
+    }
+  },
+  "Comercial Ejemplo": [
+    {
+      "ventas": {
+        "exacto": "61600",
+        "decimal": 61600.0
+      },
+      "compras": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "unidadesCompras": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "inventarioFinal": {
+        "exacto": "520",
+        "decimal": 520.0
+      },
+      "cobros": {
+        "exacto": "41680",
+        "decimal": 41680.0
+      },
+      "pagos": {
+        "exacto": "25000",
+        "decimal": 25000.0
+      },
+      "cxc": {
+        "exacto": "48320",
+        "decimal": 48320.0
+      },
+      "cxp": {
+        "exacto": "0",
+        "decimal": 0.0
+      }
+    },
+    {
+      "ventas": {
+        "exacto": "63800",
+        "decimal": 63800.0
+      },
+      "compras": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "unidadesCompras": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "inventarioFinal": {
+        "exacto": "230",
+        "decimal": 230.0
+      },
+      "cobros": {
+        "exacto": "55360",
+        "decimal": 55360.0
+      },
+      "pagos": {
+        "exacto": "0",
+        "decimal": 0.0
+      },
+      "cxc": {
+        "exacto": "56760",
+        "decimal": 56760.0
+      },
+      "cxp": {
+        "exacto": "0",
+        "decimal": 0.0
+      }
+    },
+    {
+      "ventas": {
+        "exacto": "66000",
+        "decimal": 66000.0
+      },
+      "compras": {
+        "exacto": "14750",
+        "decimal": 14750.0
+      },
+      "unidadesCompras": {
+        "exacto": "295/2",
+        "decimal": 147.5
+      },
+      "inventarioFinal": {
+        "exacto": "155/2",
+        "decimal": 77.5
+      },
+      "cobros": {
+        "exacto": "64020",
+        "decimal": 64020.0
+      },
+      "pagos": {
+        "exacto": "5900",
+        "decimal": 5900.0
+      },
+      "cxc": {
+        "exacto": "58740",
+        "decimal": 58740.0
+      },
+      "cxp": {
+        "exacto": "8850",
+        "decimal": 8850.0
+      }
+    },
+    {
+      "ventas": {
+        "exacto": "68200",
+        "decimal": 68200.0
+      },
+      "compras": {
+        "exacto": "31250",
+        "decimal": 31250.0
+      },
+      "unidadesCompras": {
+        "exacto": "625/2",
+        "decimal": 312.5
+      },
+      "inventarioFinal": {
+        "exacto": "80",
+        "decimal": 80.0
+      },
+      "cobros": {
+        "exacto": "66220",
+        "decimal": 66220.0
+      },
+      "pagos": {
+        "exacto": "21350",
+        "decimal": 21350.0
+      },
+      "cxc": {
+        "exacto": "60720",
+        "decimal": 60720.0
+      },
+      "cxp": {
+        "exacto": "18750",
+        "decimal": 18750.0
+      }
+    },
+    {
+      "ventas": {
+        "exacto": "70400",
+        "decimal": 70400.0
+      },
+      "compras": {
+        "exacto": "31500",
+        "decimal": 31500.0
+      },
+      "unidadesCompras": {
+        "exacto": "315",
+        "decimal": 315.0
+      },
+      "inventarioFinal": {
+        "exacto": "75",
+        "decimal": 75.0
+      },
+      "cobros": {
+        "exacto": "68420",
+        "decimal": 68420.0
+      },
+      "pagos": {
+        "exacto": "31350",
+        "decimal": 31350.0
+      },
+      "cxc": {
+        "exacto": "62700",
+        "decimal": 62700.0
+      },
+      "cxp": {
+        "exacto": "18900",
+        "decimal": 18900.0
+      }
+    },
+    {
+      "ventas": {
+        "exacto": "66000",
+        "decimal": 66000.0
+      },
+      "compras": {
+        "exacto": "29750",
+        "decimal": 29750.0
+      },
+      "unidadesCompras": {
+        "exacto": "595/2",
+        "decimal": 297.5
+      },
+      "inventarioFinal": {
+        "exacto": "145/2",
+        "decimal": 72.5
+      },
+      "cobros": {
+        "exacto": "67980",
+        "decimal": 67980.0
+      },
+      "pagos": {
+        "exacto": "30800",
+        "decimal": 30800.0
+      },
+      "cxc": {
+        "exacto": "60720",
+        "decimal": 60720.0
+      },
+      "cxp": {
+        "exacto": "17850",
+        "decimal": 17850.0
+      }
+    },
+    {
+      "ventas": {
+        "exacto": "63800",
+        "decimal": 63800.0
+      },
+      "compras": {
+        "exacto": "31050",
+        "decimal": 31050.0
+      },
+      "unidadesCompras": {
+        "exacto": "575/2",
+        "decimal": 287.5
+      },
+      "inventarioFinal": {
+        "exacto": "70",
+        "decimal": 70.0
+      },
+      "cobros": {
+        "exacto": "66440",
+        "decimal": 66440.0
+      },
+      "pagos": {
+        "exacto": "30270",
+        "decimal": 30270.0
+      },
+      "cxc": {
+        "exacto": "58080",
+        "decimal": 58080.0
+      },
+      "cxp": {
+        "exacto": "18630",
+        "decimal": 18630.0
+      }
+    },
+    {
+      "ventas": {
+        "exacto": "61600",
+        "decimal": 61600.0
+      },
+      "compras": {
+        "exacto": "30780",
+        "decimal": 30780.0
+      },
+      "unidadesCompras": {
+        "exacto": "285",
+        "decimal": 285.0
+      },
+      "inventarioFinal": {
+        "exacto": "75",
+        "decimal": 75.0
+      },
+      "cobros": {
+        "exacto": "63580",
+        "decimal": 63580.0
+      },
+      "pagos": {
+        "exacto": "30942",
+        "decimal": 30942.0
+      },
+      "cxc": {
+        "exacto": "56100",
+        "decimal": 56100.0
+      },
+      "cxp": {
+        "exacto": "18468",
+        "decimal": 18468.0
+      }
+    },
+    {
+      "ventas": {
+        "exacto": "66000",
+        "decimal": 66000.0
+      },
+      "compras": {
+        "exacto": "32670",
+        "decimal": 32670.0
+      },
+      "unidadesCompras": {
+        "exacto": "605/2",
+        "decimal": 302.5
+      },
+      "inventarioFinal": {
+        "exacto": "155/2",
+        "decimal": 77.5
+      },
+      "cobros": {
+        "exacto": "64020",
+        "decimal": 64020.0
+      },
+      "pagos": {
+        "exacto": "31536",
+        "decimal": 31536.0
+      },
+      "cxc": {
+        "exacto": "58080",
+        "decimal": 58080.0
+      },
+      "cxp": {
+        "exacto": "19602",
+        "decimal": 19602.0
+      }
+    },
+    {
+      "ventas": {
+        "exacto": "68200",
+        "decimal": 68200.0
+      },
+      "compras": {
+        "exacto": "34020",
+        "decimal": 34020.0
+      },
+      "unidadesCompras": {
+        "exacto": "315",
+        "decimal": 315.0
+      },
+      "inventarioFinal": {
+        "exacto": "165/2",
+        "decimal": 82.5
+      },
+      "cobros": {
+        "exacto": "65560",
+        "decimal": 65560.0
+      },
+      "pagos": {
+        "exacto": "33210",
+        "decimal": 33210.0
+      },
+      "cxc": {
+        "exacto": "60720",
+        "decimal": 60720.0
+      },
+      "cxp": {
+        "exacto": "20412",
+        "decimal": 20412.0
+      }
+    },
+    {
+      "ventas": {
+        "exacto": "72600",
+        "decimal": 72600.0
+      },
+      "compras": {
+        "exacto": "36180",
+        "decimal": 36180.0
+      },
+      "unidadesCompras": {
+        "exacto": "335",
+        "decimal": 335.0
+      },
+      "inventarioFinal": {
+        "exacto": "175/2",
+        "decimal": 87.5
+      },
+      "cobros": {
+        "exacto": "69300",
+        "decimal": 69300.0
+      },
+      "pagos": {
+        "exacto": "34884",
+        "decimal": 34884.0
+      },
+      "cxc": {
+        "exacto": "64020",
+        "decimal": 64020.0
+      },
+      "cxp": {
+        "exacto": "21708",
+        "decimal": 21708.0
+      }
+    },
+    {
+      "ventas": {
+        "exacto": "77000",
+        "decimal": 77000.0
+      },
+      "compras": {
+        "exacto": "36450",
+        "decimal": 36450.0
+      },
+      "unidadesCompras": {
+        "exacto": "675/2",
+        "decimal": 337.5
+      },
+      "inventarioFinal": {
+        "exacto": "75",
+        "decimal": 75.0
+      },
+      "cobros": {
+        "exacto": "73040",
+        "decimal": 73040.0
+      },
+      "pagos": {
+        "exacto": "36288",
+        "decimal": 36288.0
+      },
+      "cxc": {
+        "exacto": "67980",
+        "decimal": 67980.0
+      },
+      "cxp": {
+        "exacto": "21870",
+        "decimal": 21870.0
+      }
+    }
+  ]
+}

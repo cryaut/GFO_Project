@@ -1,3 +1,4 @@
+import { monedaDe } from '../../utils/moneda.js';
 // Estado de Flujo de Efectivo (EFE) por método indirecto: lógica pura, sin DOM
 // ni store. Deriva las tres actividades desde dos balances y comprueba que la
 // suma de los flujos iguale la variación de efectivo entre los dos periodos.
@@ -10,8 +11,9 @@
 // por intereses e impuestos quedan dentro de la utilidad neta, como en el
 // método indirecto clásico.
 
-import { formatCurrency } from '../../utils/format.js';
+import { formatCurrency as monedaBase } from '../../utils/format.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
+import { obtenerUtilidadNetaMotor } from '../razones/razones-app-adapter.js';
 import { rolEFE } from './efe-roles.js';
 import {
   variacionesDeCuentas, advertenciasDeBalance, toleranciaComprobacion
@@ -43,7 +45,7 @@ function opuesto(monto) {
 function deltaRol(filas, rol, excluirId = null) {
   const relevantes = filas.filter(fila => rolEFE(fila.id) === rol && fila.id !== excluirId);
   if (relevantes.length === 0) return { delta: 0, presente: false, completo: true, filas: [] };
-  const completo = relevantes.every(fila => fila.saldoInicial !== null && fila.saldoFinal !== null);
+  const completo = relevantes.every(fila => fila.saldoInicial !== null && fila.saldoFinal !== null && !fila.requiereDesglose);
   const delta = completo
     ? relevantes.reduce((suma, fila) => suma + fila.variacion, 0)
     : null;
@@ -53,6 +55,9 @@ function deltaRol(filas, rol, excluirId = null) {
 // Δ de depreciación acumulada medida en magnitud (|final| − |inicial|): un
 // crecimiento es el gasto no efectivo del periodo; una baja puede ser un retiro.
 function deltaDepreciacion(filas) {
+  if (filas.some(fila => fila.id === 'bs.fixed_assets_net_total' && fila.requiereDesglose)) {
+    return { delta: null, presente: true, completo: false, filas: [] };
+  }
   const relevantes = filas.filter(fila => fila.id === 'bs.accumulated_depreciation');
   if (relevantes.length === 0) return { delta: 0, presente: false, completo: true, filas: [] };
   const completo = relevantes.every(fila => fila.saldoInicial !== null && fila.saldoFinal !== null);
@@ -75,6 +80,7 @@ function totalDe(items) {
 // Estado completo: las tres actividades, la comprobación contra la variación de
 // efectivo, motivos (datos faltantes), advertencias e interpretación.
 export function construirEFE(datos, periodoInicial, periodoFinal) {
+  const formatCurrency = v => monedaBase(v, monedaDe(datos));
   const periodos = { inicial: periodoInicial, final: periodoFinal };
   const motivos = [];
   const advertencias = [
@@ -83,7 +89,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
   const sinDatos = incompleto => ({
     periodos, incompleto, utilidadNeta: null,
     operacion: null, inversion: null, financiamiento: null,
-    totalFlujos: null, efectivoInicial: null, efectivoFinal: null,
+    totalFlujos: null, efectivoInicial: null, efectivoFinal: null, efectivoFinalCalculado: null,
     variacionEfectivo: null, diferencia: null, tolerancia: toleranciaComprobacion(),
     conciliacionUtilidad: null,
     estado: 'incompleta', motivos, advertencias, interpretacion: ''
@@ -96,8 +102,8 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     return sinDatos(`No hay balance general del periodo ${faltante}. Capture o importe los estados de ambos periodos en Estados Financieros.`);
   }
 
-  // D-067/D-072: los totales reportados con componentes en los datos no entran;
-  // la regla vive en variacionesDeCuentas (compartida con el EOAF).
+  // D-101: se conserva el total cuando no está acreditado su desglose. La
+  // selección, compartida con EOAF, nunca suma total y componentes juntos.
   const activos = variacionesDeCuentas(datos, 'activos', periodoInicial, periodoFinal);
   const pasivos = variacionesDeCuentas(datos, 'pasivos', periodoInicial, periodoFinal);
   const patrimonio = variacionesDeCuentas(datos, 'patrimonio', periodoInicial, periodoFinal);
@@ -105,6 +111,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
   advertencias.push(...advertenciasDeBalance(datos, periodos, bgInicial, bgFinal));
 
   for (const fila of [...activos, ...pasivos, ...patrimonio]) {
+    if (fila.requiereDesglose) motivos.push(`El total «${fila.cuenta}» necesita desglose para separar las actividades del EFE; su importe no se clasifica íntegramente como un flujo.`);
     if (fila.saldoInicial === null || fila.saldoFinal === null) {
       const faltante = fila.saldoInicial === null ? periodoInicial : periodoFinal;
       motivos.push(`La cuenta «${fila.cuenta}» no tiene saldo en el periodo ${faltante}; su variación no entra en el EFE.`);
@@ -128,24 +135,33 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
   const efectivoFinal = efectivo.completo && efectivo.presente
     ? efectivo.filas.reduce((suma, fila) => suma + fila.saldoFinal, 0) : null;
 
-  // Utilidad neta del periodo final. computeFinancialTotals lanza si algún
-  // importe del balance o del estado de resultados no es un número: en ese caso
-  // el estado queda incompleto en lugar de dejar la pantalla de Análisis vacía.
+  // Se conserva la validación de importes y se consulta la misma UN acreditada
+  // del motor que Estados/Razones. La comprobación del detalle no anula un
+  // total reportado válido; un ER vacío no se convierte en cero.
   const erFinal = datos?.estadoResultados && Object.hasOwn(datos.estadoResultados, periodoFinal)
     ? datos.estadoResultados[periodoFinal] : null;
   let utilidadNeta = null;
   if (!erFinal) {
     motivos.push(`No hay estado de resultados del periodo ${periodoFinal}: sin utilidad neta no se puede armar la operación.`);
   } else {
+    let importesValidos = false;
     try {
-      utilidadNeta = computeFinancialTotals(datos, periodoFinal).utilidadNeta;
-      if (utilidadNeta === null) {
-        motivos.push('La utilidad neta no se puede determinar: el estado de resultados tiene cuentas sin clasificar.');
-      } else if (Object.keys(erFinal).length === 0) {
-        advertencias.push(`El estado de resultados del periodo ${periodoFinal} no tiene cuentas: la utilidad neta se toma como 0 y la operación parte de ahí.`);
-      }
+      computeFinancialTotals(datos, periodoFinal);
+      importesValidos = true;
     } catch (error) {
       motivos.push(`No se pudo calcular la utilidad neta del periodo ${periodoFinal} (${error.message}). Corrija el importe en Estados Financieros.`);
+    }
+    if (importesValidos) {
+      const lectura = obtenerUtilidadNetaMotor(datos, periodoFinal);
+      utilidadNeta = lectura.valor;
+      const aviso = lectura.motivos.find(m => m.id === 'is.net_income_reported');
+      if (utilidadNeta === null) {
+        motivos.push(`La utilidad neta no se puede determinar con los datos acreditados del ER ${periodoFinal}. Revise las cuentas y su composición en Estados Financieros.`);
+      } else if (aviso?.codigo === 'reported_subtotal_mismatch') {
+        advertencias.push(`La utilidad neta reportada (${formatCurrency(aviso.reportado)}) no coincide con su desglose (${formatCurrency(aviso.calculado)}).`);
+      } else if (aviso?.codigo === 'reported_subtotal_unverifiable') {
+        advertencias.push('El desglose disponible no permite comprobar la utilidad neta reportada.');
+      }
     }
   }
 
@@ -186,7 +202,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
       }
     }
   }
-  if (depreciacion.presente) {
+  if (depreciacion.presente && depreciacion.filas.length) {
     const signoPositivo = depreciacion.filas.some(fila =>
       (typeof fila.saldoInicial === 'number' && fila.saldoInicial > 0)
       || (typeof fila.saldoFinal === 'number' && fila.saldoFinal > 0));
@@ -273,6 +289,8 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
 
   const totalFlujos = [CFO, CFI, CFF].every(v => typeof v === 'number' && Number.isFinite(v))
     ? CFO + CFI + CFF : null;
+  const efectivoFinalCalculado = Number.isFinite(efectivoInicial) && Number.isFinite(totalFlujos)
+    ? efectivoInicial + totalFlujos : null;
   const variacionEfectivo = efectivoInicial !== null && efectivoFinal !== null
     ? efectivoFinal - efectivoInicial : null;
   const diferencia = totalFlujos !== null && variacionEfectivo !== null
@@ -308,6 +326,7 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     inversion,
     financiamiento,
     totalFlujos,
+    efectivoFinalCalculado,
     efectivoInicial,
     efectivoFinal,
     variacionEfectivo,
@@ -319,14 +338,15 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
     advertencias,
     interpretacion: ''
   };
-  resultado.interpretacion = interpretarEFE(resultado);
+  resultado.interpretacion = interpretarEFE(resultado, monedaDe(datos));
   return resultado;
 }
 
 // Qué dicen los signos de los tres flujos (sin umbrales: solo si la operación
 // genera o consume efectivo, si alcanza para la inversión y de dónde viene o a
 // dónde va el financiamiento). Solo se llama con los tres totales presentes.
-function lecturaFlujos({ operacion, inversion, financiamiento }) {
+function lecturaFlujos({ operacion, inversion, financiamiento }, moneda) {
+  const formatCurrency = v => monedaBase(v, moneda);
   const cfo = operacion.total;
   const cfi = inversion.total;
   const cff = financiamiento.total;
@@ -349,14 +369,15 @@ function lecturaFlujos({ operacion, inversion, financiamiento }) {
 
 // Lectura breve del estado. Los motivos y advertencias pueden traer nombres de
 // cuenta del archivo importado: el llamador debe escaparlos antes de HTML.
-export function interpretarEFE(resultado) {
+export function interpretarEFE(resultado, moneda = 'C$') {
+  const formatCurrency = v => monedaBase(v, moneda);
   const { estado, totalFlujos, variacionEfectivo, diferencia, operacion, inversion, financiamiento, motivos, conciliacionUtilidad } = resultado;
   if (estado === 'incompleta') {
     return `El EFE está incompleto: ${motivos.join(' ')} Complete los datos en Estados Financieros y vuelva a comprobar el estado.`;
   }
   const fmt = valor => formatCurrency(valor);
   const partes = `Operación ${fmt(operacion.total)}, inversión ${fmt(inversion.total)} y financiamiento ${fmt(financiamiento.total)}`;
-  const lectura = lecturaFlujos(resultado);
+  const lectura = lecturaFlujos(resultado, moneda);
   if (estado === 'cuadra') {
     // D-069: con la cuenta de resultado del periodo presente y coincidente, la
     // utilidad quedó verificada contra el balance.

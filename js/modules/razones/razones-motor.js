@@ -1,5 +1,6 @@
 import { ESPECIFICACION_RAZONES } from './especificacion-razones.js';
 import { CUENTAS_CATALOGO } from '../estados/cuentas-catalogo.js';
+import { GRUPOS_COBERTURA, ESTADOS_COBERTURA, coberturaCompleta } from '../estados/estados-cobertura.js';
 
 const numero = valor => typeof valor === 'number' && Number.isFinite(valor);
 const catalogo = new Map(CUENTAS_CATALOGO.map(c => [c.id, c]));
@@ -56,7 +57,19 @@ export function crearEntradaRazones(datos, periodo, opciones = {}) {
     cuentas.push(fila);
   }
   return { cuentas, periodos:{ actual:periodo, anterior, cantidad:datos.periods.length, indice },
+    ...(datos.coberturaEstados ? { coberturaEstados: { current: datos.coberturaEstados[periodo] || {}, previous: datos.coberturaEstados[anterior] || {} } } : {}),
     composicionIngresos:opciones.composicionIngresos || {} };
+}
+
+export function motivoComposicion(error, entrada) {
+  const faltante = /^is\.nonoperating_income: falta declarar composición excluye_intereses para (current|previous); no se infiere de nombres ni importes\.$/.exec(error.message);
+  if (faltante) return { codigo:'composicion_no_declarada', id:'is.nonoperating_income', periodo:faltante[1] };
+  if (error.message === 'is.nonoperating_income: entrada inválida; otros ingresos ya incluye intereses (D-051 opción A).') {
+    const periodo = ['current', 'previous'].find(token => entrada.composicionIngresos?.[token] === 'incluye_intereses'
+      && entrada.cuentas.some(fila => fila.id === 'is.nonoperating_income' && numero(fila[token]))) || 'current';
+    return { codigo:'composicion_incluye_intereses', id:'is.nonoperating_income', periodo };
+  }
+  return null;
 }
 
 export function revisarEntradaRazones(entrada) {
@@ -66,6 +79,14 @@ export function revisarEntradaRazones(entrada) {
 
 function contexto(entrada, opciones, especificacion, id) {
   if (!Array.isArray(entrada.cuentas) || !entrada.periodos) throw new Error('Se requieren cuentas normalizadas y contexto de periodos.');
+  if (entrada.coberturaEstados !== undefined && (!entrada.coberturaEstados
+    || typeof entrada.coberturaEstados !== 'object' || Array.isArray(entrada.coberturaEstados))) throw new Error('Cobertura del motor inválida.');
+  for (const [token, grupos] of Object.entries(entrada.coberturaEstados || {})) {
+    if (!['current', 'previous'].includes(token) || !grupos || typeof grupos !== 'object' || Array.isArray(grupos)
+      || Object.entries(grupos).some(([grupo, estado]) => !GRUPOS_COBERTURA.includes(grupo) || !ESTADOS_COBERTURA.includes(estado))) {
+      throw new Error('Cobertura del motor inválida.');
+    }
+  }
   const documentos = new Map();
   const visitando = new Set();
   const terminados = new Set();
@@ -172,6 +193,25 @@ function leerBase(id, periodo, ctx) {
     return numero(suma) ? valido(suma) : nd('missing_required_account_data', { id, periodo });
   }
   const politica = cuenta?.absence_policy || meta?.politicaAusencia;
+  // Una venta neta reportada no acredita un bruto cero ni sus componentes.
+  // La cobertura completa confirma partidas no aplicables, pero no permite
+  // reconstruir hacia atrás una magnitud que la fuente no informa.
+  const ventasBrutas = ['is.sales_total', 'is.product_sales', 'is.service_revenue', 'is.other_sales_revenue'];
+  if (ventasBrutas.includes(id)) {
+    const presentes = ctx.entrada.cuentas.filter(c => c.estado === 'reconocida' && Object.hasOwn(c, periodo));
+    if (presentes.some(c => c.id === 'is.net_sales_reported') && !presentes.some(c => ventasBrutas.includes(c.id))) {
+      return nd('missing_required_account_data', { id, periodo });
+    }
+  }
+  // Una fuente completa confirma que una partida de detalle no listada no
+  // aplica. No se rellena un total reportado ni un suplemento ausente.
+  const grupo = meta?.grupo;
+  const grupoConDatos = ctx.entrada.cuentas.some(c => (c.grupo || catalogo.get(c.id)?.grupo) === grupo
+    && Object.hasOwn(c, periodo) && numero(c[periodo]));
+  if (meta?.rol !== 'reported_total' && GRUPOS_COBERTURA.includes(grupo)
+    && grupoConDatos && coberturaCompleta(ctx.entrada.coberturaEstados?.[periodo], grupo)) {
+    return { ...valido(0), origen:'no_aplica_por_cobertura' };
+  }
   return politica === 'zero_if_not_reported' ? valido(0) : nd('missing_required_account_data', { id, periodo });
 }
 
@@ -236,10 +276,11 @@ function evaluar(nodo, periodo, doc, ctx, ruta) {
       const indice = doc.derivados.findIndex(d => d.id === nodo.id);
       if (indice < 0) throw new Error(`${doc.razon.id}.json: ${ruta}: derivado desconocido ${nodo.id}.`);
       ctx.resolviendo.add(clave);
-      const resultado = evaluar(doc.derivados[indice].formula, p, doc, ctx, `$.derivados[${indice}].formula`);
-      ctx.resolviendo.delete(clave);
-      ctx.memo.set(clave, resultado);
-      return resultado;
+      try {
+        const resultado = evaluar(doc.derivados[indice].formula, p, doc, ctx, `$.derivados[${indice}].formula`);
+        ctx.memo.set(clave, resultado);
+        return resultado;
+      } finally { ctx.resolviendo.delete(clave); }
     }
     case 'sum_accounts': {
       const miembros = doc.conjuntos[nodo.account_set];
@@ -264,11 +305,20 @@ function evaluar(nodo, periodo, doc, ctx, ruta) {
     case 'reported_or_calculate': {
       const reportado = leerCuenta(nodo.reported, p, ctx);
       if (!numero(reportado.valor)) return hijo(nodo.calculation, 'calculation');
-      const calculado = hijo(nodo.calculation, 'calculation');
-      const tolerancia = doc.reglas_generales.total_reportado_y_componentes.tolerancia;
       const componentes = ctx.influencias.get(nodo.reported) || new Set();
       const comparable = ctx.entrada.cuentas.some(c => c.estado === 'reconocida' && c.id !== nodo.reported
         && componentes.has(c.id) && Object.hasOwn(c, p) && numero(c[p]));
+      if (!comparable) return reportado;
+      let calculado;
+      try { calculado = hijo(nodo.calculation, 'calculation'); }
+      catch (error) {
+        const motivo = motivoComposicion(error, ctx.entrada);
+        if (!motivo) throw error;
+        calculado = valido(null, [motivo]);
+      }
+      if (!numero(calculado.valor)) return valido(reportado.valor, unicos([...reportado.motivos,
+        { codigo:'reported_subtotal_unverifiable', id:nodo.reported, periodo:p, causas:calculado.motivos }]));
+      const tolerancia = doc.reglas_generales.total_reportado_y_componentes.tolerancia;
       if (numero(calculado.valor) && comparable) {
         // Misma convención de precisión de las comprobaciones existentes:
         // un centavo exacto no supera el umbral por representación binaria.
@@ -290,7 +340,8 @@ export function calcularRazon(id, entrada, opciones = {}, especificacion = ESPEC
 export function calcularRazonConTraza(id, entrada, opciones = {}, especificacion = ESPECIFICACION_RAZONES) {
   const ctx = contexto(entrada, opciones, especificacion, id);
   const resultado = evaluarRazon(id, ctx);
-  return { resultado, agregaciones:[], lecturas:[...ctx.lecturas].map(([clave,datos]) => ({ clave, valor:datos.valor })) };
+  return { resultado, agregaciones:[], lecturas:[...ctx.lecturas].map(([clave,datos]) => ({ clave, valor:datos.valor,
+    ...(datos.origen ? { origen:datos.origen } : {}) })) };
 }
 
 export function evaluarDerivado(idRazon, idDerivado, entrada, opciones = {}, especificacion = ESPECIFICACION_RAZONES) {

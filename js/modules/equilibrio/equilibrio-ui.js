@@ -1,9 +1,11 @@
+import { monedaDe } from '../../utils/moneda.js';
+import { panelEjemplos, vincularEjemplos, ejemploSeleccionado } from '../../components/ejemplos.js';
 // Pantalla #/equilibrio: punto de equilibrio, margen de seguridad, escenarios C-V-U y gráfica.
 // El cálculo está en equilibrio-calculations.js; aquí solo se arma el HTML y se atienden los eventos.
 // D-074: fuente única de costos — origen «estados» deriva la base en cada consulta y
 // origen «manual» es la captura de hoy con un aviso si el CF difiere del de los estados.
 import { escapeHTML as esc } from '../../utils/html.js';
-import { formatCurrencyND as monto, formatNumberND, formatPercentND as pct } from '../../utils/format.js';
+import { formatCurrencyND as montoBase, formatNumberND, formatPercentND as pct } from '../../utils/format.js';
 import { leerNumero } from '../../utils/form.js';
 import {
   calcularCVU, calcularEscenarios, ejemploEquilibrio, normalizarEquilibrio,
@@ -28,6 +30,7 @@ function kpi(valor, etiqueta, clase = '') {
 }
 
 function seccionResultados(r) {
+  const monto = v => montoBase(v, monedaDe(r));
   const claseUAII = esNumero(r.uaii) && r.uaii < 0 ? 'text-danger' : '';
   const claseMS = esNumero(r.msPorcentaje) && r.msPorcentaje < 0 ? 'text-danger' : '';
   const etiquetaGao = `Grado de apalancamiento operativo (GAO)${r.motivoGao ? ` — ${ETIQUETA_MOTIVO_GAO[r.motivoGao] ?? r.motivoGao}` : ''}`;
@@ -35,7 +38,7 @@ function seccionResultados(r) {
     ${kpi(monto(r.mcu), 'Margen de contribución unitario (C$ por unidad)')}
     ${kpi(pct(r.rmc), 'Razón de margen de contribución')}
     ${kpi(`${num(r.peUnidades)} u`, `Punto de equilibrio en unidades${esNumero(r.unidadesMinimas) ? ` (mínimo ${num(r.unidadesMinimas)} enteras)` : ''}`)}
-    ${kpi(monto(r.peVentas), 'Punto de equilibrio en ventas (C$)')}
+    ${kpi(monto(r.peVentas), 'Punto de equilibrio en ventas (moneda del caso)')}
     ${kpi(monto(r.uaii), `UAII con ${num(r.q)} unidades`, claseUAII)}
     ${kpi(pct(r.msPorcentaje), `Margen de seguridad (${num(r.msUnidades)} u · ${monto(r.msVentas)})`, claseMS)}
     ${kpi(`${num(r.gao)} veces`, etiquetaGao)}
@@ -44,6 +47,7 @@ function seccionResultados(r) {
 }
 
 function seccionTraza(r) {
+  const monto = v => montoBase(v, monedaDe(r));
   const fila = (concepto, formula, calculo, resultado) =>
     `<tr><td>${concepto}</td><td>${formula}</td><td class="font-mono">${calculo}</td><td class="text-right font-mono">${resultado}</td></tr>`;
   const filas = [
@@ -69,6 +73,7 @@ function seccionTraza(r) {
 }
 
 function seccionInterpretacion(r) {
+  const monto = v => montoBase(v, monedaDe(r));
   const frases = [];
   if (!esNumero(r.mcu) || r.mcu <= 0) {
     frases.push(`<li class="text-danger">El precio (${monto(r.precio)}) no cubre el costo variable unitario (${monto(r.cvu)}): cada unidad vendida aumenta la pérdida y no existe punto de equilibrio. Suba el precio o reduzca el costo variable.</li>`);
@@ -91,6 +96,7 @@ function seccionInterpretacion(r) {
 }
 
 function seccionEscenarios(datos) {
+  const monto = v => montoBase(v, monedaDe(datos));
   // D-075: los errores de escenario se muestran en la tarjeta, junto al
   // formulario con el que se corrigen; los predefinidos se calculan siempre.
   const erroresEscenario = validarEquilibrio(datos).filter(texto => texto.includes('escenario'));
@@ -118,7 +124,7 @@ function seccionEscenarios(datos) {
     <div class="table-wrapper"><table class="statement-table">
       <thead><tr><th scope="col">Escenario</th><th scope="col" class="text-right">Precio</th><th scope="col" class="text-right">CVu</th>
         <th scope="col" class="text-right">CF</th><th scope="col" class="text-right">Unidades</th><th scope="col" class="text-right">MCu</th>
-        <th scope="col" class="text-right">PE (u)</th><th scope="col" class="text-right">PE (C$)</th><th scope="col" class="text-right">UAII</th>
+        <th scope="col" class="text-right">PE (u)</th><th scope="col" class="text-right">PE (moneda del caso)</th><th scope="col" class="text-right">UAII</th>
         <th scope="col" class="text-right">Cambio en la UAII</th><th scope="col" class="text-right">Margen de seguridad</th></tr></thead>
       <tbody>${filas}</tbody></table></div></div>`;
 }
@@ -152,6 +158,7 @@ function configGrafica(r) {
 export function equilibrioUI(page, opciones) {
   const { guardar, graficar = null, estados = null, configApalancamiento = null } = opciones;
   let datos = normalizarEquilibrio(opciones.datos);
+  const monto = v => montoBase(v, monedaDe(datos));
 
   const campo = id => page.querySelector(`#${id}`)?.value ?? '';
   const numero = id => {
@@ -211,7 +218,7 @@ export function equilibrioUI(page, opciones) {
             <select class="form-select" id="eqPeriodo">${opcionesPeriodo}</select></div>
           <div class="form-group"><label class="form-label" for="eqUnidades">Unidades vendidas en el periodo</label>
             <input class="form-input" id="eqUnidades" type="number" min="0" step="any" value="${valorCampo(datos.unidades)}"></div>
-          <div class="form-group"><label class="form-label" for="eqUtilidad">Utilidad objetivo (C$, opcional)</label>
+          <div class="form-group"><label class="form-label" for="eqUtilidad">Utilidad objetivo (moneda del caso, opcional)</label>
             <input class="form-input" id="eqUtilidad" type="number" step="any" value="${valorCampo(datos.utilidadObjetivo)}"></div>
         </div>
         <div class="form-row">
@@ -226,15 +233,15 @@ export function equilibrioUI(page, opciones) {
     return `<div class="card mb-4"><h2 class="card-title">1. Datos</h2>
       <form id="formEquilibrio" novalidate><div class="form-row">
         ${selector}
-        <div class="form-group"><label class="form-label" for="eqPrecio">Precio de venta unitario (C$)</label>
+        <div class="form-group"><label class="form-label" for="eqPrecio">Precio de venta unitario (moneda del caso)</label>
           <input class="form-input" id="eqPrecio" type="number" min="0" step="any" value="${valorCampo(datos.precio)}"></div>
-        <div class="form-group"><label class="form-label" for="eqCVu">Costo variable unitario (C$)</label>
+        <div class="form-group"><label class="form-label" for="eqCVu">Costo variable unitario (moneda del caso)</label>
           <input class="form-input" id="eqCVu" type="number" min="0" step="any" value="${valorCampo(datos.costoVariableUnitario)}"></div>
-        <div class="form-group"><label class="form-label" for="eqCF">Costos fijos del periodo (C$)</label>
+        <div class="form-group"><label class="form-label" for="eqCF">Costos fijos del periodo (moneda del caso)</label>
           <input class="form-input" id="eqCF" type="number" min="0" step="any" value="${valorCampo(datos.costosFijos)}"></div>
         <div class="form-group"><label class="form-label" for="eqUnidades">Unidades vendidas o previstas</label>
           <input class="form-input" id="eqUnidades" type="number" min="0" step="any" value="${valorCampo(datos.unidades)}"></div>
-        <div class="form-group"><label class="form-label" for="eqUtilidad">Utilidad objetivo (C$, opcional)</label>
+        <div class="form-group"><label class="form-label" for="eqUtilidad">Utilidad objetivo (moneda del caso, opcional)</label>
           <input class="form-input" id="eqUtilidad" type="number" step="any" value="${valorCampo(datos.utilidadObjetivo)}"></div>
       </div>
       ${estados
@@ -265,7 +272,7 @@ export function equilibrioUI(page, opciones) {
     page.innerHTML = `<div class="page-header"><h1 class="page-title">Punto de Equilibrio y C-V-U</h1>
         <p class="page-subtitle">Margen de contribución, punto de equilibrio en unidades y en C$, margen de seguridad y escenarios.</p></div>
       <p id="equilibrioMensaje" role="status" aria-live="polite" class="text-muted">Ingrese los datos del producto o de la línea y pulse Calcular.</p>
-      <div class="flex-gap flex-wrap mb-4"><button type="button" class="btn btn-secondary" id="eqEjemplo">Cargar ejemplo</button></div>
+      ${panelEjemplos('equilibrio', 'eqEjemplo')}
       ${seccionDatos(resolucion)}
       ${resultados}`;
     bind();
@@ -274,9 +281,10 @@ export function equilibrioUI(page, opciones) {
   }
 
   function bind() {
+    vincularEjemplos(page, 'equilibrio');
     page.querySelector('#eqEjemplo')?.addEventListener('click', () => {
-      persistir(normalizarEquilibrio(ejemploEquilibrio()),
-        'Ejemplo cargado: una prenda de MUNO MODA en un trimestre (datos ficticios).');
+      persistir(normalizarEquilibrio(ejemploSeleccionado(page, 'equilibrio', ejemploEquilibrio)),
+        'Ejemplo seleccionado cargado. Revise su alcance en el panel.');
     });
     page.querySelector('#eqOrigen')?.addEventListener('change', event => {
       // El cambio de origen es de captura: se guarda al pulsar Calcular y guardar.

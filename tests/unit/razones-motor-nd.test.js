@@ -28,7 +28,9 @@ describe('N/D y cuentas pendientes', () => {
     const entrada = entradaManual();
     campo(entrada,'bs.cash_and_equivalents').current = null;
     entrada.cuentas.push(fila('bs.current_assets_total',0));
-    expect(corriente(entrada)).toMatchObject({ valor:0, motivos:[] });
+    expect(corriente(entrada)).toMatchObject({ valor:0, motivos:expect.arrayContaining([
+      expect.objectContaining({ codigo:'reported_subtotal_unverifiable', id:'bs.current_assets_total' })
+    ]) });
   });
   it('si el total reportado es null, calcula desde sus componentes', () => {
     const entrada = entradaManual();
