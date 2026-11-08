@@ -1,0 +1,3879 @@
+{
+  "base": "8197215",
+  "advertencia": "Los contrafactuales no son datos docentes ni se aplican al usuario.",
+  "otrasSeccionesDemo": {
+    "efe": {
+      "estado": "cuadra-sin-verificar",
+      "utilidadNeta": 104825,
+      "operacion": 102775,
+      "inversion": 0,
+      "financiamiento": -95775,
+      "totalFlujos": 7000,
+      "advertencias": [
+        "Estimación por variaciones de saldos: se necesitan los movimientos reales de efectivo y los ajustes no monetarios para confirmar los flujos por actividad. Que la suma cuadre no confirma esos movimientos ni los dividendos derivados.",
+        "La depreciación y amortización del periodo se estima con la variación del saldo de la depreciación acumulada: el modelo no guarda el gasto por separado.",
+        "No hay cuenta de resultado del periodo en el patrimonio: la comprobación no puede verificar la utilidad neta contra el balance y los dividendos derivados requieren confirmación con un dato independiente."
+      ]
+    },
+    "eoaf": {
+      "totalOrigenes": 97775,
+      "totalAplicaciones": 97775,
+      "diferencia": 0,
+      "estado": "cuadra",
+      "tolerancia": 0.010000000021710411,
+      "motivos": []
+    },
+    "mercado": [
+      {
+        "periodo": "2023",
+        "un": 89180,
+        "dap": 0,
+        "udac": 89180,
+        "patrimonio": 517615,
+        "acciones": null,
+        "precio": null,
+        "dividendos": null,
+        "upa": null,
+        "pu": null,
+        "vlpa": null,
+        "pvl": null,
+        "dpa": null,
+        "pago": null,
+        "rendimiento": null,
+        "dividendosImplicitos": null
+      },
+      {
+        "periodo": "2024",
+        "un": 104825,
+        "dap": 0,
+        "udac": 104825,
+        "patrimonio": 582440,
+        "acciones": null,
+        "precio": null,
+        "dividendos": null,
+        "upa": null,
+        "pu": null,
+        "vlpa": null,
+        "pvl": null,
+        "dpa": null,
+        "pago": null,
+        "rendimiento": null,
+        "dividendosImplicitos": 40000
+      }
+    ],
+    "totalizadorLegado": {
+      "2023": {
+        "activosCorrientes": 370000,
+        "pasivosCorrientes": 160000,
+        "totalActivos": 801475,
+        "totalPasivos": 283860,
+        "totalPatrimonio": 517615,
+        "utilidadNeta": 89180
+      },
+      "2024": {
+        "activosCorrientes": 412000,
+        "pasivosCorrientes": 175000,
+        "totalActivos": 825525,
+        "totalPasivos": 243085,
+        "totalPatrimonio": 582440,
+        "utilidadNeta": 104825
+      }
+    }
+  },
+  "escenarios": {
+    "demo_normalizada": {
+      "2023": {
+        "disponibles": 1,
+        "total": 24,
+        "valores": {
+          "RC": null,
+          "RR": null,
+          "RotInv": null,
+          "RotCxC": null,
+          "PPC": null,
+          "endeudamiento": null,
+          "MN": null,
+          "ROA": null,
+          "roe": null,
+          "margenBruto": 0.4,
+          "margenOperativo": null,
+          "coberturaIntereses": null,
+          "deudaPatrimonio": null,
+          "cicloConversion": null,
+          "edadInventario": null,
+          "plazoPago": null,
+          "rotacionActivosFijos": null,
+          "rotacionCxP": null,
+          "rotacionActivos": null,
+          "capitalNetoTrabajo": null,
+          "pruebaDefensiva": null,
+          "rotacionCapitalTrabajo": null,
+          "apalancamiento": null,
+          "solvencia": null
+        },
+        "motivos": [
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.short_term_investments"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "capitalNetoTrabajo",
+              "rotacionCapitalTrabajo",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_current_receivables"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "capitalNetoTrabajo",
+              "rotacionCapitalTrabajo",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.prepaid_expenses"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "capitalNetoTrabajo",
+              "rotacionCapitalTrabajo",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.short_term_borrowings"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.current_portion_long_term_debt"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.taxes_payable"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.accrued_expenses_payable"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_inventarios"
+            ],
+            "campos": [
+              "RotInv"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_cuentas_por_cobrar"
+            ],
+            "campos": [
+              "RotCxC"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_periodo_promedio_cobro"
+            ],
+            "campos": [
+              "PPC"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.long_term_provisions"
+            ],
+            "campos": [
+              "endeudamiento",
+              "deudaPatrimonio",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.ppe_furniture"
+            ],
+            "campos": [
+              "endeudamiento",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.ppe_other"
+            ],
+            "campos": [
+              "endeudamiento",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.intangible_assets"
+            ],
+            "campos": [
+              "endeudamiento",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.long_term_investments"
+            ],
+            "campos": [
+              "endeudamiento",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_noncurrent_assets"
+            ],
+            "campos": [
+              "endeudamiento",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "composicion_no_declarada",
+            "operandos": [
+              "is.nonoperating_income"
+            ],
+            "campos": [
+              "MN"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "rentabilidad_roa"
+            ],
+            "campos": [
+              "ROA"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "rentabilidad_roe"
+            ],
+            "campos": [
+              "roe"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "is.other_operating_income"
+            ],
+            "campos": [
+              "margenOperativo",
+              "coberturaIntereses"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "is.operating_depreciation"
+            ],
+            "campos": [
+              "margenOperativo",
+              "coberturaIntereses"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "is.operating_amortization"
+            ],
+            "campos": [
+              "margenOperativo",
+              "coberturaIntereses"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "is.other_operating_expenses"
+            ],
+            "campos": [
+              "margenOperativo",
+              "coberturaIntereses"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.additional_paid_in_capital"
+            ],
+            "campos": [
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_reserves"
+            ],
+            "campos": [
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.current_year_result_equity"
+            ],
+            "campos": [
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_equity_components"
+            ],
+            "campos": [
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_ciclo_conversion_efectivo"
+            ],
+            "campos": [
+              "cicloConversion"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_edad_promedio_inventario"
+            ],
+            "campos": [
+              "edadInventario"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_periodo_promedio_pago"
+            ],
+            "campos": [
+              "plazoPago"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_activos_fijos"
+            ],
+            "campos": [
+              "rotacionActivosFijos"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_cuentas_por_pagar"
+            ],
+            "campos": [
+              "rotacionCxP"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_activos_totales"
+            ],
+            "campos": [
+              "rotacionActivos"
+            ]
+          }
+        ],
+        "er": [
+          {
+            "concepto": "Total de ventas",
+            "valor": 850000,
+            "motivos": []
+          },
+          {
+            "concepto": "Ventas netas",
+            "valor": 850000,
+            "motivos": []
+          },
+          {
+            "concepto": "Costo de ventas",
+            "valor": 510000,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad bruta",
+            "valor": 340000,
+            "motivos": []
+          },
+          {
+            "concepto": "Total de gastos operativos",
+            "valor": null,
+            "motivos": [
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_depreciation",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_amortization",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_expenses",
+                "periodo": "current"
+              }
+            ]
+          },
+          {
+            "concepto": "Utilidad operativa (UAII)",
+            "valor": null,
+            "motivos": [
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_income",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_depreciation",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_amortization",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_expenses",
+                "periodo": "current"
+              }
+            ]
+          },
+          {
+            "concepto": "Utilidad antes de impuestos (UAI)",
+            "valor": null,
+            "motivos": [
+              {
+                "codigo": "composicion_no_declarada",
+                "id": "is.nonoperating_income",
+                "periodo": "current"
+              }
+            ]
+          },
+          {
+            "concepto": "Utilidad neta (UN)",
+            "valor": null,
+            "motivos": [
+              {
+                "codigo": "composicion_no_declarada",
+                "id": "is.nonoperating_income",
+                "periodo": "current"
+              }
+            ]
+          }
+        ],
+        "av": {
+          "baseBG": 801475,
+          "baseER": 850000
+        },
+        "dupont": {
+          "PM": null,
+          "AT": null,
+          "EM": null,
+          "ROA": null,
+          "ROE": null,
+          "utilidadNeta": null,
+          "ventas": 850000,
+          "activoProm": null,
+          "patrimonioProm": null
+        },
+        "controlDirectoSoloDiagnostico": {
+          "RC": null,
+          "RR": null,
+          "RotInv": 2.8333333333333335,
+          "RotCxC": null,
+          "PPC": null,
+          "endeudamiento": null,
+          "MN": null,
+          "ROA": null,
+          "roe": null,
+          "margenBruto": 0.4,
+          "margenOperativo": null,
+          "coberturaIntereses": null,
+          "deudaPatrimonio": null,
+          "cicloConversion": null,
+          "edadInventario": 128.8235294117647,
+          "plazoPago": null,
+          "rotacionActivosFijos": null,
+          "rotacionCxP": null,
+          "rotacionActivos": null,
+          "capitalNetoTrabajo": null,
+          "pruebaDefensiva": null,
+          "rotacionCapitalTrabajo": null,
+          "apalancamiento": null,
+          "solvencia": null
+        }
+      },
+      "2024": {
+        "disponibles": 3,
+        "total": 24,
+        "valores": {
+          "RC": null,
+          "RR": null,
+          "RotInv": 2.9066666666666667,
+          "RotCxC": null,
+          "PPC": null,
+          "endeudamiento": null,
+          "MN": null,
+          "ROA": null,
+          "roe": null,
+          "margenBruto": 0.4076086956521739,
+          "margenOperativo": null,
+          "coberturaIntereses": null,
+          "deudaPatrimonio": null,
+          "cicloConversion": null,
+          "edadInventario": 125.57339449541284,
+          "plazoPago": null,
+          "rotacionActivosFijos": null,
+          "rotacionCxP": null,
+          "rotacionActivos": null,
+          "capitalNetoTrabajo": null,
+          "pruebaDefensiva": null,
+          "rotacionCapitalTrabajo": null,
+          "apalancamiento": null,
+          "solvencia": null
+        },
+        "motivos": [
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.short_term_investments"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "rotacionActivos",
+              "capitalNetoTrabajo",
+              "rotacionCapitalTrabajo",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_current_receivables"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "rotacionActivos",
+              "capitalNetoTrabajo",
+              "rotacionCapitalTrabajo",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.prepaid_expenses"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "rotacionActivos",
+              "capitalNetoTrabajo",
+              "rotacionCapitalTrabajo",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.short_term_borrowings"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.current_portion_long_term_debt"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.taxes_payable"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.accrued_expenses_payable"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "supp.credit_sales"
+            ],
+            "campos": [
+              "RotCxC",
+              "PPC",
+              "cicloConversion"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.long_term_provisions"
+            ],
+            "campos": [
+              "endeudamiento",
+              "deudaPatrimonio",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.ppe_furniture"
+            ],
+            "campos": [
+              "endeudamiento",
+              "rotacionActivosFijos",
+              "rotacionActivos",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.ppe_other"
+            ],
+            "campos": [
+              "endeudamiento",
+              "rotacionActivosFijos",
+              "rotacionActivos",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.intangible_assets"
+            ],
+            "campos": [
+              "endeudamiento",
+              "rotacionActivos",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.long_term_investments"
+            ],
+            "campos": [
+              "endeudamiento",
+              "rotacionActivos",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_noncurrent_assets"
+            ],
+            "campos": [
+              "endeudamiento",
+              "rotacionActivos",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "composicion_no_declarada",
+            "operandos": [
+              "is.nonoperating_income"
+            ],
+            "campos": [
+              "MN",
+              "ROA",
+              "roe"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "is.other_operating_income"
+            ],
+            "campos": [
+              "margenOperativo",
+              "coberturaIntereses"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "is.operating_depreciation"
+            ],
+            "campos": [
+              "margenOperativo",
+              "coberturaIntereses"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "is.operating_amortization"
+            ],
+            "campos": [
+              "margenOperativo",
+              "coberturaIntereses"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "is.other_operating_expenses"
+            ],
+            "campos": [
+              "margenOperativo",
+              "coberturaIntereses"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.additional_paid_in_capital"
+            ],
+            "campos": [
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_reserves"
+            ],
+            "campos": [
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.current_year_result_equity"
+            ],
+            "campos": [
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_equity_components"
+            ],
+            "campos": [
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "supp.supplier_payments"
+            ],
+            "campos": [
+              "cicloConversion",
+              "plazoPago",
+              "rotacionCxP"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.ppe_furniture"
+            ],
+            "campos": [
+              "rotacionActivosFijos",
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.ppe_other"
+            ],
+            "campos": [
+              "rotacionActivosFijos",
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.short_term_investments"
+            ],
+            "campos": [
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_current_receivables"
+            ],
+            "campos": [
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.prepaid_expenses"
+            ],
+            "campos": [
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.intangible_assets"
+            ],
+            "campos": [
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.long_term_investments"
+            ],
+            "campos": [
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_noncurrent_assets"
+            ],
+            "campos": [
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.additional_paid_in_capital"
+            ],
+            "campos": [
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_reserves"
+            ],
+            "campos": [
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.current_year_result_equity"
+            ],
+            "campos": [
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_equity_components"
+            ],
+            "campos": [
+              "apalancamiento"
+            ]
+          }
+        ],
+        "er": [
+          {
+            "concepto": "Total de ventas",
+            "valor": 920000,
+            "motivos": []
+          },
+          {
+            "concepto": "Ventas netas",
+            "valor": 920000,
+            "motivos": []
+          },
+          {
+            "concepto": "Costo de ventas",
+            "valor": 545000,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad bruta",
+            "valor": 375000,
+            "motivos": []
+          },
+          {
+            "concepto": "Total de gastos operativos",
+            "valor": null,
+            "motivos": [
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_depreciation",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_amortization",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_expenses",
+                "periodo": "current"
+              }
+            ]
+          },
+          {
+            "concepto": "Utilidad operativa (UAII)",
+            "valor": null,
+            "motivos": [
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_income",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_depreciation",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_amortization",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_expenses",
+                "periodo": "current"
+              }
+            ]
+          },
+          {
+            "concepto": "Utilidad antes de impuestos (UAI)",
+            "valor": null,
+            "motivos": [
+              {
+                "codigo": "composicion_no_declarada",
+                "id": "is.nonoperating_income",
+                "periodo": "current"
+              }
+            ]
+          },
+          {
+            "concepto": "Utilidad neta (UN)",
+            "valor": null,
+            "motivos": [
+              {
+                "codigo": "composicion_no_declarada",
+                "id": "is.nonoperating_income",
+                "periodo": "current"
+              }
+            ]
+          }
+        ],
+        "av": {
+          "baseBG": 825525,
+          "baseER": 920000
+        },
+        "dupont": {
+          "PM": null,
+          "AT": null,
+          "EM": null,
+          "ROA": null,
+          "ROE": null,
+          "utilidadNeta": null,
+          "ventas": 920000,
+          "activoProm": null,
+          "patrimonioProm": null
+        },
+        "controlDirectoSoloDiagnostico": {
+          "RC": null,
+          "RR": null,
+          "RotInv": 2.9066666666666667,
+          "RotCxC": null,
+          "PPC": null,
+          "endeudamiento": null,
+          "MN": null,
+          "ROA": null,
+          "roe": null,
+          "margenBruto": 0.4076086956521739,
+          "margenOperativo": null,
+          "coberturaIntereses": null,
+          "deudaPatrimonio": null,
+          "cicloConversion": null,
+          "edadInventario": 125.57339449541284,
+          "plazoPago": null,
+          "rotacionActivosFijos": null,
+          "rotacionCxP": null,
+          "rotacionActivos": null,
+          "capitalNetoTrabajo": null,
+          "pruebaDefensiva": null,
+          "rotacionCapitalTrabajo": null,
+          "apalancamiento": null,
+          "solvencia": null
+        }
+      }
+    },
+    "solo_composicion_declarada": {
+      "2023": {
+        "disponibles": 1,
+        "total": 24,
+        "valores": {
+          "RC": null,
+          "RR": null,
+          "RotInv": null,
+          "RotCxC": null,
+          "PPC": null,
+          "endeudamiento": null,
+          "MN": null,
+          "ROA": null,
+          "roe": null,
+          "margenBruto": 0.4,
+          "margenOperativo": null,
+          "coberturaIntereses": null,
+          "deudaPatrimonio": null,
+          "cicloConversion": null,
+          "edadInventario": null,
+          "plazoPago": null,
+          "rotacionActivosFijos": null,
+          "rotacionCxP": null,
+          "rotacionActivos": null,
+          "capitalNetoTrabajo": null,
+          "pruebaDefensiva": null,
+          "rotacionCapitalTrabajo": null,
+          "apalancamiento": null,
+          "solvencia": null
+        },
+        "motivos": [
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.short_term_investments"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "capitalNetoTrabajo",
+              "rotacionCapitalTrabajo",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_current_receivables"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "capitalNetoTrabajo",
+              "rotacionCapitalTrabajo",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.prepaid_expenses"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "capitalNetoTrabajo",
+              "rotacionCapitalTrabajo",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.short_term_borrowings"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.current_portion_long_term_debt"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.taxes_payable"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.accrued_expenses_payable"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_inventarios"
+            ],
+            "campos": [
+              "RotInv"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_cuentas_por_cobrar"
+            ],
+            "campos": [
+              "RotCxC"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_periodo_promedio_cobro"
+            ],
+            "campos": [
+              "PPC"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.long_term_provisions"
+            ],
+            "campos": [
+              "endeudamiento",
+              "deudaPatrimonio",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.ppe_furniture"
+            ],
+            "campos": [
+              "endeudamiento",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.ppe_other"
+            ],
+            "campos": [
+              "endeudamiento",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.intangible_assets"
+            ],
+            "campos": [
+              "endeudamiento",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.long_term_investments"
+            ],
+            "campos": [
+              "endeudamiento",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_noncurrent_assets"
+            ],
+            "campos": [
+              "endeudamiento",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "is.other_operating_income"
+            ],
+            "campos": [
+              "MN",
+              "margenOperativo",
+              "coberturaIntereses"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "is.operating_depreciation"
+            ],
+            "campos": [
+              "MN",
+              "margenOperativo",
+              "coberturaIntereses"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "is.operating_amortization"
+            ],
+            "campos": [
+              "MN",
+              "margenOperativo",
+              "coberturaIntereses"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "is.other_operating_expenses"
+            ],
+            "campos": [
+              "MN",
+              "margenOperativo",
+              "coberturaIntereses"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "rentabilidad_roa"
+            ],
+            "campos": [
+              "ROA"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "rentabilidad_roe"
+            ],
+            "campos": [
+              "roe"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.additional_paid_in_capital"
+            ],
+            "campos": [
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_reserves"
+            ],
+            "campos": [
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.current_year_result_equity"
+            ],
+            "campos": [
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_equity_components"
+            ],
+            "campos": [
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_ciclo_conversion_efectivo"
+            ],
+            "campos": [
+              "cicloConversion"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_edad_promedio_inventario"
+            ],
+            "campos": [
+              "edadInventario"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_periodo_promedio_pago"
+            ],
+            "campos": [
+              "plazoPago"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_activos_fijos"
+            ],
+            "campos": [
+              "rotacionActivosFijos"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_cuentas_por_pagar"
+            ],
+            "campos": [
+              "rotacionCxP"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_activos_totales"
+            ],
+            "campos": [
+              "rotacionActivos"
+            ]
+          }
+        ],
+        "er": [
+          {
+            "concepto": "Total de ventas",
+            "valor": 850000,
+            "motivos": []
+          },
+          {
+            "concepto": "Ventas netas",
+            "valor": 850000,
+            "motivos": []
+          },
+          {
+            "concepto": "Costo de ventas",
+            "valor": 510000,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad bruta",
+            "valor": 340000,
+            "motivos": []
+          },
+          {
+            "concepto": "Total de gastos operativos",
+            "valor": null,
+            "motivos": [
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_depreciation",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_amortization",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_expenses",
+                "periodo": "current"
+              }
+            ]
+          },
+          {
+            "concepto": "Utilidad operativa (UAII)",
+            "valor": null,
+            "motivos": [
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_income",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_depreciation",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_amortization",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_expenses",
+                "periodo": "current"
+              }
+            ]
+          },
+          {
+            "concepto": "Utilidad antes de impuestos (UAI)",
+            "valor": null,
+            "motivos": [
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_income",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_depreciation",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_amortization",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_expenses",
+                "periodo": "current"
+              }
+            ]
+          },
+          {
+            "concepto": "Utilidad neta (UN)",
+            "valor": null,
+            "motivos": [
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_income",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_depreciation",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_amortization",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_expenses",
+                "periodo": "current"
+              }
+            ]
+          }
+        ],
+        "av": {
+          "baseBG": 801475,
+          "baseER": 850000
+        },
+        "dupont": {
+          "PM": null,
+          "AT": null,
+          "EM": null,
+          "ROA": null,
+          "ROE": null,
+          "utilidadNeta": null,
+          "ventas": 850000,
+          "activoProm": null,
+          "patrimonioProm": null
+        },
+        "controlDirectoSoloDiagnostico": {
+          "RC": null,
+          "RR": null,
+          "RotInv": 2.8333333333333335,
+          "RotCxC": null,
+          "PPC": null,
+          "endeudamiento": null,
+          "MN": null,
+          "ROA": null,
+          "roe": null,
+          "margenBruto": 0.4,
+          "margenOperativo": null,
+          "coberturaIntereses": null,
+          "deudaPatrimonio": null,
+          "cicloConversion": null,
+          "edadInventario": 128.8235294117647,
+          "plazoPago": null,
+          "rotacionActivosFijos": null,
+          "rotacionCxP": null,
+          "rotacionActivos": null,
+          "capitalNetoTrabajo": null,
+          "pruebaDefensiva": null,
+          "rotacionCapitalTrabajo": null,
+          "apalancamiento": null,
+          "solvencia": null
+        }
+      },
+      "2024": {
+        "disponibles": 3,
+        "total": 24,
+        "valores": {
+          "RC": null,
+          "RR": null,
+          "RotInv": 2.9066666666666667,
+          "RotCxC": null,
+          "PPC": null,
+          "endeudamiento": null,
+          "MN": null,
+          "ROA": null,
+          "roe": null,
+          "margenBruto": 0.4076086956521739,
+          "margenOperativo": null,
+          "coberturaIntereses": null,
+          "deudaPatrimonio": null,
+          "cicloConversion": null,
+          "edadInventario": 125.57339449541284,
+          "plazoPago": null,
+          "rotacionActivosFijos": null,
+          "rotacionCxP": null,
+          "rotacionActivos": null,
+          "capitalNetoTrabajo": null,
+          "pruebaDefensiva": null,
+          "rotacionCapitalTrabajo": null,
+          "apalancamiento": null,
+          "solvencia": null
+        },
+        "motivos": [
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.short_term_investments"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "ROA",
+              "rotacionActivos",
+              "capitalNetoTrabajo",
+              "rotacionCapitalTrabajo",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_current_receivables"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "ROA",
+              "rotacionActivos",
+              "capitalNetoTrabajo",
+              "rotacionCapitalTrabajo",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.prepaid_expenses"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "ROA",
+              "rotacionActivos",
+              "capitalNetoTrabajo",
+              "rotacionCapitalTrabajo",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.short_term_borrowings"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.current_portion_long_term_debt"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.taxes_payable"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.accrued_expenses_payable"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "supp.credit_sales"
+            ],
+            "campos": [
+              "RotCxC",
+              "PPC",
+              "cicloConversion"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.long_term_provisions"
+            ],
+            "campos": [
+              "endeudamiento",
+              "deudaPatrimonio",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.ppe_furniture"
+            ],
+            "campos": [
+              "endeudamiento",
+              "ROA",
+              "rotacionActivosFijos",
+              "rotacionActivos",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.ppe_other"
+            ],
+            "campos": [
+              "endeudamiento",
+              "ROA",
+              "rotacionActivosFijos",
+              "rotacionActivos",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.intangible_assets"
+            ],
+            "campos": [
+              "endeudamiento",
+              "ROA",
+              "rotacionActivos",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.long_term_investments"
+            ],
+            "campos": [
+              "endeudamiento",
+              "ROA",
+              "rotacionActivos",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_noncurrent_assets"
+            ],
+            "campos": [
+              "endeudamiento",
+              "ROA",
+              "rotacionActivos",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "is.other_operating_income"
+            ],
+            "campos": [
+              "MN",
+              "ROA",
+              "roe",
+              "margenOperativo",
+              "coberturaIntereses"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "is.operating_depreciation"
+            ],
+            "campos": [
+              "MN",
+              "ROA",
+              "roe",
+              "margenOperativo",
+              "coberturaIntereses"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "is.operating_amortization"
+            ],
+            "campos": [
+              "MN",
+              "ROA",
+              "roe",
+              "margenOperativo",
+              "coberturaIntereses"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "is.other_operating_expenses"
+            ],
+            "campos": [
+              "MN",
+              "ROA",
+              "roe",
+              "margenOperativo",
+              "coberturaIntereses"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.short_term_investments"
+            ],
+            "campos": [
+              "ROA",
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_current_receivables"
+            ],
+            "campos": [
+              "ROA",
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.prepaid_expenses"
+            ],
+            "campos": [
+              "ROA",
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.ppe_furniture"
+            ],
+            "campos": [
+              "ROA",
+              "rotacionActivosFijos",
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.ppe_other"
+            ],
+            "campos": [
+              "ROA",
+              "rotacionActivosFijos",
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.intangible_assets"
+            ],
+            "campos": [
+              "ROA",
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.long_term_investments"
+            ],
+            "campos": [
+              "ROA",
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_noncurrent_assets"
+            ],
+            "campos": [
+              "ROA",
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.additional_paid_in_capital"
+            ],
+            "campos": [
+              "roe",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_reserves"
+            ],
+            "campos": [
+              "roe",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.current_year_result_equity"
+            ],
+            "campos": [
+              "roe",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_equity_components"
+            ],
+            "campos": [
+              "roe",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.additional_paid_in_capital"
+            ],
+            "campos": [
+              "roe",
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_reserves"
+            ],
+            "campos": [
+              "roe",
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.current_year_result_equity"
+            ],
+            "campos": [
+              "roe",
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_equity_components"
+            ],
+            "campos": [
+              "roe",
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "supp.supplier_payments"
+            ],
+            "campos": [
+              "cicloConversion",
+              "plazoPago",
+              "rotacionCxP"
+            ]
+          }
+        ],
+        "er": [
+          {
+            "concepto": "Total de ventas",
+            "valor": 920000,
+            "motivos": []
+          },
+          {
+            "concepto": "Ventas netas",
+            "valor": 920000,
+            "motivos": []
+          },
+          {
+            "concepto": "Costo de ventas",
+            "valor": 545000,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad bruta",
+            "valor": 375000,
+            "motivos": []
+          },
+          {
+            "concepto": "Total de gastos operativos",
+            "valor": null,
+            "motivos": [
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_depreciation",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_amortization",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_expenses",
+                "periodo": "current"
+              }
+            ]
+          },
+          {
+            "concepto": "Utilidad operativa (UAII)",
+            "valor": null,
+            "motivos": [
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_income",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_depreciation",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_amortization",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_expenses",
+                "periodo": "current"
+              }
+            ]
+          },
+          {
+            "concepto": "Utilidad antes de impuestos (UAI)",
+            "valor": null,
+            "motivos": [
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_income",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_depreciation",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_amortization",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_expenses",
+                "periodo": "current"
+              }
+            ]
+          },
+          {
+            "concepto": "Utilidad neta (UN)",
+            "valor": null,
+            "motivos": [
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_income",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_depreciation",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.operating_amortization",
+                "periodo": "current"
+              },
+              {
+                "codigo": "missing_required_account_data",
+                "id": "is.other_operating_expenses",
+                "periodo": "current"
+              }
+            ]
+          }
+        ],
+        "av": {
+          "baseBG": 825525,
+          "baseER": 920000
+        },
+        "dupont": {
+          "PM": null,
+          "AT": null,
+          "EM": null,
+          "ROA": null,
+          "ROE": null,
+          "utilidadNeta": null,
+          "ventas": 920000,
+          "activoProm": null,
+          "patrimonioProm": null
+        },
+        "controlDirectoSoloDiagnostico": {
+          "RC": null,
+          "RR": null,
+          "RotInv": 2.9066666666666667,
+          "RotCxC": null,
+          "PPC": null,
+          "endeudamiento": null,
+          "MN": null,
+          "ROA": null,
+          "roe": null,
+          "margenBruto": 0.4076086956521739,
+          "margenOperativo": null,
+          "coberturaIntereses": null,
+          "deudaPatrimonio": null,
+          "cicloConversion": null,
+          "edadInventario": 125.57339449541284,
+          "plazoPago": null,
+          "rotacionActivosFijos": null,
+          "rotacionCxP": null,
+          "rotacionActivos": null,
+          "capitalNetoTrabajo": null,
+          "pruebaDefensiva": null,
+          "rotacionCapitalTrabajo": null,
+          "apalancamiento": null,
+          "solvencia": null
+        }
+      }
+    },
+    "composicion_y_cuatro_ceros_ER_sinteticos": {
+      "2023": {
+        "disponibles": 4,
+        "total": 24,
+        "valores": {
+          "RC": null,
+          "RR": null,
+          "RotInv": null,
+          "RotCxC": null,
+          "PPC": null,
+          "endeudamiento": null,
+          "MN": 0.10491764705882353,
+          "ROA": null,
+          "roe": null,
+          "margenBruto": 0.4,
+          "margenOperativo": 0.1588235294117647,
+          "coberturaIntereses": 10.714285714285714,
+          "deudaPatrimonio": null,
+          "cicloConversion": null,
+          "edadInventario": null,
+          "plazoPago": null,
+          "rotacionActivosFijos": null,
+          "rotacionCxP": null,
+          "rotacionActivos": null,
+          "capitalNetoTrabajo": null,
+          "pruebaDefensiva": null,
+          "rotacionCapitalTrabajo": null,
+          "apalancamiento": null,
+          "solvencia": null
+        },
+        "motivos": [
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.short_term_investments"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "capitalNetoTrabajo",
+              "rotacionCapitalTrabajo",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_current_receivables"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "capitalNetoTrabajo",
+              "rotacionCapitalTrabajo",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.prepaid_expenses"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "capitalNetoTrabajo",
+              "rotacionCapitalTrabajo",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.short_term_borrowings"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.current_portion_long_term_debt"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.taxes_payable"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.accrued_expenses_payable"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_inventarios"
+            ],
+            "campos": [
+              "RotInv"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_cuentas_por_cobrar"
+            ],
+            "campos": [
+              "RotCxC"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_periodo_promedio_cobro"
+            ],
+            "campos": [
+              "PPC"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.long_term_provisions"
+            ],
+            "campos": [
+              "endeudamiento",
+              "deudaPatrimonio",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.ppe_furniture"
+            ],
+            "campos": [
+              "endeudamiento",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.ppe_other"
+            ],
+            "campos": [
+              "endeudamiento",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.intangible_assets"
+            ],
+            "campos": [
+              "endeudamiento",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.long_term_investments"
+            ],
+            "campos": [
+              "endeudamiento",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_noncurrent_assets"
+            ],
+            "campos": [
+              "endeudamiento",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "rentabilidad_roa"
+            ],
+            "campos": [
+              "ROA"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "rentabilidad_roe"
+            ],
+            "campos": [
+              "roe"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.additional_paid_in_capital"
+            ],
+            "campos": [
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_reserves"
+            ],
+            "campos": [
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.current_year_result_equity"
+            ],
+            "campos": [
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_equity_components"
+            ],
+            "campos": [
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_ciclo_conversion_efectivo"
+            ],
+            "campos": [
+              "cicloConversion"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_edad_promedio_inventario"
+            ],
+            "campos": [
+              "edadInventario"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_periodo_promedio_pago"
+            ],
+            "campos": [
+              "plazoPago"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_activos_fijos"
+            ],
+            "campos": [
+              "rotacionActivosFijos"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_cuentas_por_pagar"
+            ],
+            "campos": [
+              "rotacionCxP"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_activos_totales"
+            ],
+            "campos": [
+              "rotacionActivos"
+            ]
+          }
+        ],
+        "er": [
+          {
+            "concepto": "Total de ventas",
+            "valor": 850000,
+            "motivos": []
+          },
+          {
+            "concepto": "Ventas netas",
+            "valor": 850000,
+            "motivos": []
+          },
+          {
+            "concepto": "Costo de ventas",
+            "valor": 510000,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad bruta",
+            "valor": 340000,
+            "motivos": []
+          },
+          {
+            "concepto": "Total de gastos operativos",
+            "valor": 205000,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad operativa (UAII)",
+            "valor": 135000,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad antes de impuestos (UAI)",
+            "valor": 127400,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad neta (UN)",
+            "valor": 89180,
+            "motivos": []
+          }
+        ],
+        "av": {
+          "baseBG": 801475,
+          "baseER": 850000
+        },
+        "dupont": {
+          "PM": 0.10491764705882353,
+          "AT": null,
+          "EM": null,
+          "ROA": null,
+          "ROE": null,
+          "utilidadNeta": 89180,
+          "ventas": 850000,
+          "activoProm": null,
+          "patrimonioProm": null
+        },
+        "controlDirectoSoloDiagnostico": {
+          "RC": null,
+          "RR": null,
+          "RotInv": 2.8333333333333335,
+          "RotCxC": null,
+          "PPC": null,
+          "endeudamiento": null,
+          "MN": 0.10491764705882353,
+          "ROA": null,
+          "roe": null,
+          "margenBruto": 0.4,
+          "margenOperativo": 0.1588235294117647,
+          "coberturaIntereses": 10.714285714285714,
+          "deudaPatrimonio": null,
+          "cicloConversion": null,
+          "edadInventario": 128.8235294117647,
+          "plazoPago": null,
+          "rotacionActivosFijos": null,
+          "rotacionCxP": null,
+          "rotacionActivos": null,
+          "capitalNetoTrabajo": null,
+          "pruebaDefensiva": null,
+          "rotacionCapitalTrabajo": null,
+          "apalancamiento": null,
+          "solvencia": null
+        }
+      },
+      "2024": {
+        "disponibles": 6,
+        "total": 24,
+        "valores": {
+          "RC": null,
+          "RR": null,
+          "RotInv": 2.9066666666666667,
+          "RotCxC": null,
+          "PPC": null,
+          "endeudamiento": null,
+          "MN": 0.11394021739130435,
+          "ROA": null,
+          "roe": null,
+          "margenBruto": 0.4076086956521739,
+          "margenOperativo": 0.16847826086956522,
+          "coberturaIntereses": 13.777777777777779,
+          "deudaPatrimonio": null,
+          "cicloConversion": null,
+          "edadInventario": 125.57339449541284,
+          "plazoPago": null,
+          "rotacionActivosFijos": null,
+          "rotacionCxP": null,
+          "rotacionActivos": null,
+          "capitalNetoTrabajo": null,
+          "pruebaDefensiva": null,
+          "rotacionCapitalTrabajo": null,
+          "apalancamiento": null,
+          "solvencia": null
+        },
+        "motivos": [
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.short_term_investments"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "ROA",
+              "rotacionActivos",
+              "capitalNetoTrabajo",
+              "rotacionCapitalTrabajo",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_current_receivables"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "ROA",
+              "rotacionActivos",
+              "capitalNetoTrabajo",
+              "rotacionCapitalTrabajo",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.prepaid_expenses"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "ROA",
+              "rotacionActivos",
+              "capitalNetoTrabajo",
+              "rotacionCapitalTrabajo",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.short_term_borrowings"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.current_portion_long_term_debt"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.taxes_payable"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.accrued_expenses_payable"
+            ],
+            "campos": [
+              "RC",
+              "RR",
+              "endeudamiento",
+              "deudaPatrimonio",
+              "capitalNetoTrabajo",
+              "pruebaDefensiva",
+              "rotacionCapitalTrabajo",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "supp.credit_sales"
+            ],
+            "campos": [
+              "RotCxC",
+              "PPC",
+              "cicloConversion"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.long_term_provisions"
+            ],
+            "campos": [
+              "endeudamiento",
+              "deudaPatrimonio",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.ppe_furniture"
+            ],
+            "campos": [
+              "endeudamiento",
+              "ROA",
+              "rotacionActivosFijos",
+              "rotacionActivos",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.ppe_other"
+            ],
+            "campos": [
+              "endeudamiento",
+              "ROA",
+              "rotacionActivosFijos",
+              "rotacionActivos",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.intangible_assets"
+            ],
+            "campos": [
+              "endeudamiento",
+              "ROA",
+              "rotacionActivos",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.long_term_investments"
+            ],
+            "campos": [
+              "endeudamiento",
+              "ROA",
+              "rotacionActivos",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_noncurrent_assets"
+            ],
+            "campos": [
+              "endeudamiento",
+              "ROA",
+              "rotacionActivos",
+              "apalancamiento",
+              "solvencia"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.short_term_investments"
+            ],
+            "campos": [
+              "ROA",
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_current_receivables"
+            ],
+            "campos": [
+              "ROA",
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.prepaid_expenses"
+            ],
+            "campos": [
+              "ROA",
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.ppe_furniture"
+            ],
+            "campos": [
+              "ROA",
+              "rotacionActivosFijos",
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.ppe_other"
+            ],
+            "campos": [
+              "ROA",
+              "rotacionActivosFijos",
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.intangible_assets"
+            ],
+            "campos": [
+              "ROA",
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.long_term_investments"
+            ],
+            "campos": [
+              "ROA",
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_noncurrent_assets"
+            ],
+            "campos": [
+              "ROA",
+              "rotacionActivos",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.additional_paid_in_capital"
+            ],
+            "campos": [
+              "roe",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_reserves"
+            ],
+            "campos": [
+              "roe",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.current_year_result_equity"
+            ],
+            "campos": [
+              "roe",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_equity_components"
+            ],
+            "campos": [
+              "roe",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.additional_paid_in_capital"
+            ],
+            "campos": [
+              "roe",
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_reserves"
+            ],
+            "campos": [
+              "roe",
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.current_year_result_equity"
+            ],
+            "campos": [
+              "roe",
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "bs.other_equity_components"
+            ],
+            "campos": [
+              "roe",
+              "deudaPatrimonio",
+              "apalancamiento"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "supp.supplier_payments"
+            ],
+            "campos": [
+              "cicloConversion",
+              "plazoPago",
+              "rotacionCxP"
+            ]
+          }
+        ],
+        "er": [
+          {
+            "concepto": "Total de ventas",
+            "valor": 920000,
+            "motivos": []
+          },
+          {
+            "concepto": "Ventas netas",
+            "valor": 920000,
+            "motivos": []
+          },
+          {
+            "concepto": "Costo de ventas",
+            "valor": 545000,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad bruta",
+            "valor": 375000,
+            "motivos": []
+          },
+          {
+            "concepto": "Total de gastos operativos",
+            "valor": 220000,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad operativa (UAII)",
+            "valor": 155000,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad antes de impuestos (UAI)",
+            "valor": 149750,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad neta (UN)",
+            "valor": 104825,
+            "motivos": []
+          }
+        ],
+        "av": {
+          "baseBG": 825525,
+          "baseER": 920000
+        },
+        "dupont": {
+          "PM": 0.11394021739130435,
+          "AT": null,
+          "EM": null,
+          "ROA": null,
+          "ROE": null,
+          "utilidadNeta": 104825,
+          "ventas": 920000,
+          "activoProm": null,
+          "patrimonioProm": null
+        },
+        "controlDirectoSoloDiagnostico": {
+          "RC": null,
+          "RR": null,
+          "RotInv": 2.9066666666666667,
+          "RotCxC": null,
+          "PPC": null,
+          "endeudamiento": null,
+          "MN": 0.11394021739130435,
+          "ROA": null,
+          "roe": null,
+          "margenBruto": 0.4076086956521739,
+          "margenOperativo": 0.16847826086956522,
+          "coberturaIntereses": 13.777777777777779,
+          "deudaPatrimonio": null,
+          "cicloConversion": null,
+          "edadInventario": 125.57339449541284,
+          "plazoPago": null,
+          "rotacionActivosFijos": null,
+          "rotacionCxP": null,
+          "rotacionActivos": null,
+          "capitalNetoTrabajo": null,
+          "pruebaDefensiva": null,
+          "rotacionCapitalTrabajo": null,
+          "apalancamiento": null,
+          "solvencia": null
+        }
+      }
+    },
+    "ceros_bloqueantes_sinteticos_solo_diagnostico": {
+      "2023": {
+        "disponibles": 13,
+        "total": 24,
+        "valores": {
+          "RC": 2.3125,
+          "RR": 1.1875,
+          "RotInv": null,
+          "RotCxC": null,
+          "PPC": null,
+          "endeudamiento": 0.35417199538351163,
+          "MN": 0.10491764705882353,
+          "ROA": null,
+          "roe": null,
+          "margenBruto": 0.4,
+          "margenOperativo": 0.1588235294117647,
+          "coberturaIntereses": 10.714285714285714,
+          "deudaPatrimonio": 0.5483998724921032,
+          "cicloConversion": null,
+          "edadInventario": null,
+          "plazoPago": null,
+          "rotacionActivosFijos": null,
+          "rotacionCxP": null,
+          "rotacionActivos": null,
+          "capitalNetoTrabajo": 210000,
+          "pruebaDefensiva": 0.28125,
+          "rotacionCapitalTrabajo": 4.0476190476190474,
+          "apalancamiento": 1.5483998724921033,
+          "solvencia": 2.823486930176848
+        },
+        "motivos": [
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_inventarios"
+            ],
+            "campos": [
+              "RotInv"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_cuentas_por_cobrar"
+            ],
+            "campos": [
+              "RotCxC"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_periodo_promedio_cobro"
+            ],
+            "campos": [
+              "PPC"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "rentabilidad_roa"
+            ],
+            "campos": [
+              "ROA"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "rentabilidad_roe"
+            ],
+            "campos": [
+              "roe"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_ciclo_conversion_efectivo"
+            ],
+            "campos": [
+              "cicloConversion"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_edad_promedio_inventario"
+            ],
+            "campos": [
+              "edadInventario"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_periodo_promedio_pago"
+            ],
+            "campos": [
+              "plazoPago"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_activos_fijos"
+            ],
+            "campos": [
+              "rotacionActivosFijos"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_cuentas_por_pagar"
+            ],
+            "campos": [
+              "rotacionCxP"
+            ]
+          },
+          {
+            "periodo": "2023",
+            "motivo": "missing_required_period_balance",
+            "operandos": [
+              "actividad_rotacion_activos_totales"
+            ],
+            "campos": [
+              "rotacionActivos"
+            ]
+          }
+        ],
+        "er": [
+          {
+            "concepto": "Total de ventas",
+            "valor": 850000,
+            "motivos": []
+          },
+          {
+            "concepto": "Ventas netas",
+            "valor": 850000,
+            "motivos": []
+          },
+          {
+            "concepto": "Costo de ventas",
+            "valor": 510000,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad bruta",
+            "valor": 340000,
+            "motivos": []
+          },
+          {
+            "concepto": "Total de gastos operativos",
+            "valor": 205000,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad operativa (UAII)",
+            "valor": 135000,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad antes de impuestos (UAI)",
+            "valor": 127400,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad neta (UN)",
+            "valor": 89180,
+            "motivos": []
+          }
+        ],
+        "av": {
+          "baseBG": 801475,
+          "baseER": 850000
+        },
+        "dupont": {
+          "PM": 0.10491764705882353,
+          "AT": null,
+          "EM": 1.5483998724921033,
+          "ROA": null,
+          "ROE": null,
+          "utilidadNeta": 89180,
+          "ventas": 850000,
+          "activoProm": 801475,
+          "patrimonioProm": 517615
+        },
+        "controlDirectoSoloDiagnostico": {
+          "RC": 2.3125,
+          "RR": 1.1875,
+          "RotInv": 2.8333333333333335,
+          "RotCxC": null,
+          "PPC": null,
+          "endeudamiento": 0.35417199538351163,
+          "MN": 0.10491764705882353,
+          "ROA": 0.11126984622102998,
+          "roe": 0.17229021570085876,
+          "margenBruto": 0.4,
+          "margenOperativo": 0.1588235294117647,
+          "coberturaIntereses": 10.714285714285714,
+          "deudaPatrimonio": 0.5483998724921032,
+          "cicloConversion": null,
+          "edadInventario": 128.8235294117647,
+          "plazoPago": null,
+          "rotacionActivosFijos": 1.9699866736195608,
+          "rotacionCxP": null,
+          "rotacionActivos": 1.060544620855298,
+          "capitalNetoTrabajo": 210000,
+          "pruebaDefensiva": 0.28125,
+          "rotacionCapitalTrabajo": 4.0476190476190474,
+          "apalancamiento": 1.5483998724921033,
+          "solvencia": 2.823486930176848
+        }
+      },
+      "2024": {
+        "disponibles": 19,
+        "total": 24,
+        "valores": {
+          "RC": 2.354285714285714,
+          "RR": 1.24,
+          "RotInv": 2.9066666666666667,
+          "RotCxC": null,
+          "PPC": null,
+          "endeudamiento": 0.2944611005117955,
+          "MN": 0.11394021739130435,
+          "ROA": 0.12885679164105715,
+          "roe": 0.190581380021908,
+          "margenBruto": 0.4076086956521739,
+          "margenOperativo": 0.16847826086956522,
+          "coberturaIntereses": 13.777777777777779,
+          "deudaPatrimonio": 0.4173562942105625,
+          "cicloConversion": null,
+          "edadInventario": 125.57339449541284,
+          "plazoPago": null,
+          "rotacionActivosFijos": 2.1775147928994083,
+          "rotacionCxP": null,
+          "rotacionActivos": 1.1309157959434541,
+          "capitalNetoTrabajo": 237000,
+          "pruebaDefensiva": 0.29714285714285715,
+          "rotacionCapitalTrabajo": 3.8818565400843883,
+          "apalancamiento": 1.4790169582429968,
+          "solvencia": 3.3960343089865686
+        },
+        "motivos": [
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "supp.credit_sales"
+            ],
+            "campos": [
+              "RotCxC",
+              "PPC",
+              "cicloConversion"
+            ]
+          },
+          {
+            "periodo": "2024",
+            "motivo": "missing_required_account_data",
+            "operandos": [
+              "supp.supplier_payments"
+            ],
+            "campos": [
+              "cicloConversion",
+              "plazoPago",
+              "rotacionCxP"
+            ]
+          }
+        ],
+        "er": [
+          {
+            "concepto": "Total de ventas",
+            "valor": 920000,
+            "motivos": []
+          },
+          {
+            "concepto": "Ventas netas",
+            "valor": 920000,
+            "motivos": []
+          },
+          {
+            "concepto": "Costo de ventas",
+            "valor": 545000,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad bruta",
+            "valor": 375000,
+            "motivos": []
+          },
+          {
+            "concepto": "Total de gastos operativos",
+            "valor": 220000,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad operativa (UAII)",
+            "valor": 155000,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad antes de impuestos (UAI)",
+            "valor": 149750,
+            "motivos": []
+          },
+          {
+            "concepto": "Utilidad neta (UN)",
+            "valor": 104825,
+            "motivos": []
+          }
+        ],
+        "av": {
+          "baseBG": 825525,
+          "baseER": 920000
+        },
+        "dupont": {
+          "PM": 0.11394021739130435,
+          "AT": 1.1309157959434541,
+          "EM": 1.4790169582429968,
+          "ROA": 0.12885679164105715,
+          "ROE": 0.19058138002190797,
+          "utilidadNeta": 104825,
+          "ventas": 920000,
+          "activoProm": 813500,
+          "patrimonioProm": 550027.5
+        },
+        "controlDirectoSoloDiagnostico": {
+          "RC": 2.354285714285714,
+          "RR": 1.24,
+          "RotInv": 2.9066666666666667,
+          "RotCxC": null,
+          "PPC": null,
+          "endeudamiento": 0.2944611005117955,
+          "MN": 0.11394021739130435,
+          "ROA": 0.12885679164105715,
+          "roe": 0.190581380021908,
+          "margenBruto": 0.4076086956521739,
+          "margenOperativo": 0.16847826086956522,
+          "coberturaIntereses": 13.777777777777779,
+          "deudaPatrimonio": 0.4173562942105625,
+          "cicloConversion": null,
+          "edadInventario": 125.57339449541284,
+          "plazoPago": null,
+          "rotacionActivosFijos": 2.1775147928994083,
+          "rotacionCxP": null,
+          "rotacionActivos": 1.1309157959434541,
+          "capitalNetoTrabajo": 237000,
+          "pruebaDefensiva": 0.29714285714285715,
+          "rotacionCapitalTrabajo": 3.8818565400843883,
+          "apalancamiento": 1.4790169582429968,
+          "solvencia": 3.3960343089865686
+        }
+      }
+    }
+  }
+}

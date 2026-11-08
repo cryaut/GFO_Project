@@ -52,6 +52,8 @@ La lectura ordenada de balance y ER vive en `estados/estados-presentacion-calcul
 
 Análisis incorpora `analisis-calculations.js`: compone las filas completas de AH/AV y el detalle DuPont sin DOM ni store. `index.js` conserva adaptadores públicos y renderizado. El selector de periodo y la sección activa viven solo en memoria; no cambia el esquema de persistencia ni se toca el motor de razones o su generado.
 
+`analisis-disponibilidad-ui.js` traduce y agrupa los motivos N/D existentes para su consulta en Razones. La compactación de cuentas accesorias sin movimiento se comparte desde `estados-presentacion-ui.js`; solo afecta a la lectura, preservando los datos y eventos de edición (D-098).
+
 | Módulo | Dónde está la lógica | Notas |
 |---|---|---|
 | `estados/` | `index.js` (demo, lectura del `store`, `initEstados`), `estados-ui.js` (interfaz), `estados-import.js` (archivos), `estados-normalize.js` (validación), `estados-calculations.js` (tipos y totales) | Único módulo que ya sigue el patrón completo |

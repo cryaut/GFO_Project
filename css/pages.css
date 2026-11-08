@@ -579,6 +579,18 @@
 #page-analisis .analisis-empty { padding-block: var(--space-6); color: var(--text-secondary); }
 #page-analisis .analisis-sheet { margin-top: var(--space-6); padding-top: var(--space-6); border-top: 1px solid var(--border-color); }
 #page-analisis .analisis-sheet > h4 { margin-bottom: var(--space-4); }
+#page-analisis .analisis-sheet > h5 { margin-bottom: var(--space-4); font-size: var(--font-size-lg); }
+#page-analisis .analisis-comparison-title { margin-top: var(--space-6); }
+#page-estados .statement-optional,
+#page-analisis .statement-optional,
+#page-analisis .analisis-availability { margin: var(--space-5) 0; padding: var(--space-4); border: 1px solid var(--border-color); border-radius: var(--radius-md); }
+#page-estados .statement-optional > summary,
+#page-analisis .statement-optional > summary,
+#page-analisis .analisis-availability > summary { cursor: pointer; font-weight: 600; }
+#page-estados .statement-optional[open] > summary,
+#page-analisis .statement-optional[open] > summary,
+#page-analisis .analisis-availability[open] > summary { margin-bottom: var(--space-4); }
+#page-analisis .analisis-availability table { min-width: 620px; }
 #page-analisis .analisis-sheet > .table-wrapper { margin-bottom: 0; }
 #page-analisis .analisis-account-group { display: block; color: var(--text-secondary); font-size: var(--font-size-xs); margin-bottom: var(--space-1); }
 #page-analisis .table-wrapper { position: relative; width: 100%; max-width: 100%; overflow-x: auto; }

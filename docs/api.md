@@ -1013,3 +1013,11 @@ Añade `efectivoFinalCalculado`, igual a efectivo inicial + total de flujos cuan
 `resultadosReales` ahora consume `estadosResueltos` y los márgenes de `computarRazonesDesdeDatos`. Expone `uai` y `otrosOperativos`, además de los campos previos, y conserva N/D según las mismas identidades/entradas que Estados y Razones. `resultadosProforma` conserva los totales de Planeación y añade su `uai`. Los otros ingresos operativos y no operativos no están modelados en la proyección y quedan `null`, que la comparación identifica como no aplicables a esa columna.
 
 `construirReporte` añade `desarrollo` (o `null`) y `motivoPresupuesto` para explicar una proyección ausente. El real y la proyección permanecen separados y las variaciones siguen limitadas a coberturas anuales comparables. La traza no altera el estado guardado ni el reporte de financiamiento requerido.
+
+## Cuentas opcionales y disponibilidad (D-098)
+
+`separarCuentasOpcionales(filas, fuentes = fila => [fila])`, en `estados-presentacion-ui.js`, devuelve `{ visibles, opcionales }` preservando orden y referencias, sin mutarlas. Solo compacta ids accesorios enumerados en ese archivo cuando todas las fuentes existen, tienen origen `importado`, valor exactamente cero y no son subtotales. Un dato ausente, N/D, desconocido, principal o calculado conserva su fila. El callback permite examinar todos los periodos en el editor/AV, las columnas elegidas en la vista multiperiodo y el par de AH. Ejemplo: una devolución importada con cero en ambos periodos se compacta; Franquicias 60000/0 conserva ambos valores. No interpreta ni cambia `absence_policy`.
+
+`desplegableCuentasOpcionales(filas, contenido)` devuelve el HTML de un `<details>` cerrado, con cantidad y explicación, o cadena vacía sin filas. `contenido` debe ser HTML ya escapado por el render de tablas. No modifica ni elimina datos; en el editor las filas conservan sus manejadores e índices.
+
+`disponibilidadRazones(razones)`, en `analisis-disponibilidad-ui.js`, presenta los motivos existentes de los indicadores N/D de la pestaña Razones (23, sin CNT). Agrupa causa/cuenta/periodo, traduce ids conocidos a nombres de catálogo y lista indicadores afectados. Conserva cero como resultado calculable; devuelve cadena vacía sin N/D. Escapa todos los textos de los datos. No consulta el store ni ejecuta fórmulas.

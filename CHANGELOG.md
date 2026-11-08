@@ -18,6 +18,7 @@ Todos los cambios notables en GFO Toolkit.
 - Análisis conserva el aviso de F8 para estados ilegibles y calcula las razones con el motor; las etiquetas de rotaciones indican ventas y compras a crédito. Reportes obtiene la utilidad neta del motor. Los documentos sin datos acreditados mantienen N/D (D-086).
 
 ### Módulo 2: Estados Financieros
+- Cuentas accesorias en cero dentro de un desplegable cerrado, conservando edición, guardado y exportación. Subtotales y N/D permanecen visibles; una cuenta con movimiento en otro periodo no se compacta (D-098).
 - Lectura resuelta en orden docente: balance con subtotales y ER con utilidad bruta, UAII, UAI y UN en su lugar; signos y procedencia reportada/calculada. Los originales siguen editables y los resultados se actualizan sin guardar ni insertar cuentas. Un campo vacío conserva los cálculos independientes y muestra N/D donde falta información (D-096).
 - Ajuste visual de Activos, Pasivos, Patrimonio y Resultados: contenedores con borde completo, esquinas redondeadas, margen y espacio interior; etiquetas y campos editables alineados a la izquierda, incluido el nombre de cuenta.
 - Diseño: acciones separadas en carga, periodo de trabajo, cuentas y vista multiperiodo; opciones secundarias en paneles desplegables, guardado destacado, formularios etiquetados y más espacio entre botones. Ajustes de contraste y navegación móvil, sin cambios a cálculos, validación ni persistencia.
@@ -60,6 +61,7 @@ Todos los cambios notables en GFO Toolkit.
 - Botón **Vista previa del reporte** (muestra el reporte en la página) y **Descargar reporte HTML**; antes el botón "Vista Previa HTML" descargaba el archivo.
 
 ### Módulo 3: Análisis Financiero
+- AH separa BG y ER en tablas con títulos propios; AH/AV compactan únicamente cuentas accesorias sin movimiento. Razones conserva todos sus indicadores y explica los N/D con sus causas. Diagnóstico de la demo MUNO MODA y propuesta financiera documentados, sin cambiar motor ni supuestos (D-098).
 - AH/AV incluyen las mismas filas resueltas y ordenadas de Estados, alinean subtotales calculados/reportados sin duplicarlos y conservan nombres, signos, bases y Δ/abs(T1). El EFE separa el cierre calculado del saldo observado para no ocultar diferencias (D-096).
 - Cambiar el periodo actualiza únicamente los paneles dependientes y conserva el formulario de Mercado sin guardar, sus mensajes y su acción Guardar; no persiste el borrador al navegar.
 - AH/AV completos por cuenta y totales reportados, con nombres propios, ausencias N/D y sin duplicar sumas; DuPont muestra factores, sustituciones, ROA/ROE y comprobación directa desde la misma fuente de Razones (D-095). Navegación agrupada, selector de periodo, métodos desplegables y diseño de las nueve secciones adaptado a móvil y ambos temas. Motor de razones y generado sin cambios.

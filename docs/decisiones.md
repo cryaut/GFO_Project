@@ -2220,3 +2220,24 @@ El real de Proforma lee los subtotales del ER resuelto de D-096 y los márgenes 
 **Para revertirla.** Retirar el desarrollo compartido o redefinir la fuente del real mediante otra decisión, manteniendo N/D y la consistencia con los estados; no sustituir tasas ni completar movimientos para forzar los ejercicios.
 
 **Referencias.** [Revisión docente y referencias independientes](planificacion/proforma-presupuesto-docente/REVISION-DOCENTE.md); [ficha y verificación](planificacion/proforma-presupuesto-docente/README.md); D-010, D-014, D-089 a D-093 y D-096.
+
+### D-098 — Compactar cuentas accesorias sin cambiar la ausencia financiera
+
+- **Fecha**: 2026-11-07.
+- **Estado**: Implementada localmente; sin push ni PR.
+- **Decidió**: Cris pidió retirar cuentas opcionales añadidas en cero, conservar resultados internos y diagnosticar los N/D del ejemplo predeterminado.
+- **Área**: Presentación de Estados y Análisis.
+
+**Contexto.** La demo tiene tres deducciones con cero explícito; el formato no acredita si un cero fue añadido por una herramienta o vino del ejercicio. Borrarlo o equipararlo a ausencia alteraría datos. AH mezcla BG/ER; el motor conserva motivos N/D que la interfaz no explica.
+
+**Opciones.** Borrar cuentas por valor; filtrar todos los ceros; mantenerlos todos; o compactar únicamente cuentas accesorias reconocidas, conservando acceso y datos. Se elige la última para no ocultar subtotales/razones ni alterar cifras.
+
+**Decisión.** Una lista explícita de ids de presentación, independiente de `absence_policy`, permite compactar detalle importado cuando todas las fuentes examinadas son cero. Se usa un desplegable cerrado, editable en Estados, sin persistir preferencias ni cambiar documentos. Desconocidas, N/D, cuentas principales y subtotales se conservan. El editor y AV examinan todos los periodos; AH su par y la vista multiperiodo sus columnas. Franquicias 60000/0 conserva el movimiento. No se infieren identidades por nombre.
+
+AH separa tablas de BG/ER y conserva suplementarios/pendientes. Razones mantiene sus 23 indicadores y añade causas existentes agrupadas por cuenta/periodo, con nombres legibles. La nota del primer periodo explica el modo directo apagado en vez de afirmar que ya usa saldos finales.
+
+**Consecuencias.** La limpieza es visual y reversible. No se resuelve la incompatibilidad financiera de la demo con los componentes `requires_data`; el informe propone cobertura/no-aplica/no-informado y una demo acreditada. Esa política necesita otra decisión; D-032/D-055/D-057/D-059/D-063 permanecen vigentes. Motor, generado, JSON y store no cambian. Los ceros genuinos permanecen accesibles y exportables.
+
+**Para revertirla.** Retirar la compactación y el desplegable de diagnóstico, manteniendo los datos y el informe. No deshacer las políticas de ausencia financiera para cambiar la apariencia.
+
+**Referencias.** [Diagnóstico y propuesta](planificacion/cuentas-opcionales-nd/DIAGNOSTICO-Y-PROPUESTA.md); [ficha y evidencia](planificacion/cuentas-opcionales-nd/README.md); D-096/D-097.

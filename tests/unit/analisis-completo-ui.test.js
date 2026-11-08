@@ -40,6 +40,41 @@ it('escapa los nombres propios en AH y AV en vez de convertirlos en HTML', async
   expect(page.innerHTML).not.toContain('<script>empresa');
 });
 
+it('AH separa balance y ER y Razones conserva sus 23 indicadores incluidos los N/D', async () => {
+  const { DEMO_MUNOMODA } = await import('../../js/modules/estados/index.js');
+  const { normalizeFinancialData } = await import('../../js/modules/estados/estados-normalize.js');
+  const { page, store } = await montar(normalizeFinancialData(DEMO_MUNOMODA));
+  const guardados = structuredClone(store.get('estados'));
+  page.querySelector('#analysisPeriod').onchange({ target: { value: '2024' } });
+  const ah = page.querySelector('#tab-ah').innerHTML;
+  expect(ah).toContain('data-statement="balance"');
+  expect(ah).toContain('data-statement="resultados"');
+  const balance = ah.slice(ah.indexOf('data-statement="balance"'), ah.indexOf('data-statement="resultados"'));
+  expect(balance).toContain('Efectivo');
+  expect(balance).not.toContain('Impuesto sobre la Renta');
+  expect(ah.slice(ah.indexOf('data-statement="resultados"'))).not.toContain('Depreciacion Acumulada');
+  const razones = page.querySelector('#tab-razones').innerHTML;
+  expect(razones).toContain('Por qué hay resultados N/D');
+  expect(razones).toContain('N/D');
+  expect(razones).toContain('Ratio Corriente');
+  expect(razones).toContain('Margen Bruto');
+  expect(store.get('estados')).toEqual(guardados);
+});
+
+it('AV conserva Franquicias en cero si existe movimiento en otro periodo', async () => {
+  const { DEMO_MUNOMODA } = await import('../../js/modules/estados/index.js');
+  const { registrarCuenta } = await import('../../js/modules/estados/cuentas-registro.js');
+  const datos = registrarCuenta(DEMO_MUNOMODA, [
+    { periodo: '2023', id: 'bs.intangible_assets', nombre: 'Franquicias', importe: 60000, confirmado: true },
+    { periodo: '2024', id: 'bs.intangible_assets', nombre: 'Franquicias', importe: 0, confirmado: true }
+  ]);
+  const { page } = await montar(datos);
+  page.querySelector('#analysisPeriod').onchange({ target: { value: '2024' } });
+  const av = page.querySelector('#tab-av').innerHTML;
+  expect(av.indexOf('Franquicias')).toBeGreaterThan(0);
+  expect(av.indexOf('Franquicias')).toBeLessThan(av.indexOf('<details class="statement-optional">'));
+});
+
 
 it('conserva Mercado sin guardar al cambiar periodos, incluso con cero o campos vacíos', async () => {
   const datos = estadosDesdeReferencia(ejemploApp);

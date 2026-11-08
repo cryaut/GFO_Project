@@ -1,9 +1,10 @@
-import { etiquetaFilaEstado, origenFilaEstado } from '../estados/estados-presentacion-ui.js';
+import { etiquetaFilaEstado, origenFilaEstado, separarCuentasOpcionales, desplegableCuentasOpcionales } from '../estados/estados-presentacion-ui.js';
+import { disponibilidadRazones } from './analisis-disponibilidad-ui.js';
 import store from '../../store.js';
 import { mercadoUI } from './mercado-ui.js';
 import { estadosGuardados } from '../../utils/estados-guardados.js';
 import { formatCurrencyND as formatCurrency, formatPercent, formatNumber, formatCurrencyND } from '../../utils/format.js';
-import { analisisHorizontalCompleto, analisisVerticalCompleto, detalleDuPont } from './analisis-calculations.js';
+import { analisisHorizontalCompleto, analisisVerticalCompleto, detalleDuPont, filasAnalisis } from './analisis-calculations.js';
 import { computarRazonesDesdeDatos } from '../razones/razones-app-adapter.js';
 import {
   capitalNetoTrabajo, capitalNetoOperativo, DIAS_ANIO
@@ -256,17 +257,24 @@ function renderAHSection(periods) {
   if (ahData.length === 0) return '<p class="text-muted">Se necesitan al menos 2 periodos.</p>';
   let html = '<p class="analisis-note">Todas las cuentas del balance y del estado de resultados. Δ = T2 − T1; variación % = Δ / |T1|. Una cuenta ausente no equivale a cero: se muestra N/D. Con base cero, el porcentaje es N/D.</p>';
   for (const ah of ahData) {
-    html += `<section class="analisis-sheet"><h4 class="mb-2">${escapeHTML(ah.periodo)}</h4>
-      <div class="table-wrapper mb-6"><table>
+    html += `<h4 class="analisis-comparison-title">${escapeHTML(ah.periodo)}</h4>`;
+    for (const [seccion, titulo] of [['balance', 'Balance general'], ['resultados', 'Estado de resultados'],
+      ['complementarios', 'Datos suplementarios'], ['pendientes', 'Cuentas pendientes de grupo']]) {
+      const filas = ah.rows.filter(r => r.seccion === seccion);
+      if (!filas.length) continue;
+      const { visibles, opcionales } = separarCuentasOpcionales(filas, r => [r.fuenteT1, r.fuenteT2]);
+      const tabla = lista => `<div class="table-wrapper mb-6"><table>
         <thead><tr><th>Cuenta</th><th class="text-right">Periodo T1</th><th class="text-right">Periodo T2</th><th class="text-right">Δ</th><th class="text-right">%Δ</th></tr></thead>
-        <tbody>${ah.rows.map(r => `<tr class="${r.subtotal ? 'statement-subtotal' : ''}">
+        <tbody>${lista.map(r => `<tr class="${r.subtotal ? 'statement-subtotal' : ''}">
           <td><span class="analisis-account-group">${escapeHTML(r.grupo)}</span><span class="statement-label">${etiquetaFilaEstado(r, { mostrarOrigen: false })}</span></td>
           <td class="text-right font-mono">${formatCurrencyND(r.t1)}${origenFilaEstado(r.fuenteT1, r.cuenta)}</td>
           <td class="text-right font-mono">${formatCurrencyND(r.t2)}${origenFilaEstado(r.fuenteT2, r.cuenta)}</td>
           <td class="text-right font-mono ${esNumero(r.delta) && r.delta < 0 ? 'text-danger' : ''}">${formatCurrencyND(r.delta)}</td>
           <td class="text-right font-mono">${r.pctDelta === null ? 'N/D' : formatPercent(r.pctDelta)}</td>
         </tr>`).join('')}</tbody>
-      </table></div></section>`;
+      </table></div>`;
+      html += `<section class="analisis-sheet" data-statement="${seccion}"><h5>${titulo}</h5>${tabla(visibles)}${desplegableCuentasOpcionales(opcionales, opcionales.length ? tabla(opcionales) : '')}</section>`;
+    }
   }
   return html;
 }
@@ -275,24 +283,29 @@ export function computeAH(periods) {
   return analisisHorizontalCompleto(savedCache || refreshSavedStates(), periods);
 }
 
-function renderAVTable(avData, titulo) {
-  return `<section class="analisis-sheet"><h4>${titulo}</h4>
-    <p class="analisis-note">Cuenta / base × 100. Base utilizada: <strong>${escapeHTML(avData.base)}</strong> = ${formatCurrencyND(avData.baseValor)}</p>
-    <div class="table-wrapper mb-6"><table>
+function renderAVTable(avData, titulo, fuentes) {
+  const { visibles, opcionales } = separarCuentasOpcionales(avData.rows, fuentes);
+  const tabla = lista => `<div class="table-wrapper mb-6"><table>
       <thead><tr><th>Cuenta</th><th class="text-right">Valor</th><th class="text-right">% Base</th></tr></thead>
-      <tbody>${avData.rows.map(r => `<tr class="${r.subtotal ? 'statement-subtotal' : ''}">
+      <tbody>${lista.map(r => `<tr class="${r.subtotal ? 'statement-subtotal' : ''}">
         <td><span class="analisis-account-group">${escapeHTML(r.grupo)}</span><span class="statement-label">${etiquetaFilaEstado(r)}</span></td>
         <td class="text-right font-mono">${formatCurrencyND(r.valor)}</td>
         <td class="text-right font-mono">${r.pctBase === null ? 'N/D' : formatPercent(r.pctBase)}</td>
       </tr>`).join('')}</tbody>
-    </table></div></section>`;
+    </table></div>`;
+  return `<section class="analisis-sheet"><h4>${titulo}</h4>
+    <p class="analisis-note">Cuenta / base × 100. Base utilizada: <strong>${escapeHTML(avData.base)}</strong> = ${formatCurrencyND(avData.baseValor)}</p>
+    ${tabla(visibles)}${desplegableCuentasOpcionales(opcionales, opcionales.length ? tabla(opcionales) : '')}</section>`;
 }
 
 function renderAVSection(period) {
-  const datos = analisisVerticalCompleto(savedCache || refreshSavedStates(), period);
+  const estados = savedCache || refreshSavedStates();
+  const datos = analisisVerticalCompleto(estados, period);
+  const periodos = (estados?.periods || []).map(p => new Map(filasAnalisis(estados, p).map(f => [f.clave, f])));
+  const fuentes = fila => periodos.map(m => m.get(fila.clave));
   return '<p class="analisis-note">Incluye todas las cuentas y los subtotales resueltos en orden. Los importados conservan sus nombres; los calculados no se suman de nuevo. Una base cero o incompleta produce N/D.</p>' +
-    renderAVTable(datos.balanceGeneral, 'Análisis Vertical — Balance General') +
-    renderAVTable(datos.estadoResultados, 'Análisis Vertical — Estado de Resultados') +
+    renderAVTable(datos.balanceGeneral, 'Análisis Vertical — Balance General', fuentes) +
+    renderAVTable(datos.estadoResultados, 'Análisis Vertical — Estado de Resultados', fuentes) +
     (datos.complementarios.length ? `<section class="analisis-sheet"><h4>Datos fuera de la base vertical</h4><p class="analisis-note">Los datos suplementarios y las cuentas sin grupo se conservan, pero no se les asigna una base contable sin acreditar su clasificación.</p><div class="table-wrapper"><table><thead><tr><th>Cuenta</th><th>Importe</th><th>% Base</th></tr></thead><tbody>${datos.complementarios.map(fila => `<tr><td>${escapeHTML(fila.cuenta)}</td><td>${formatCurrencyND(fila.valor)}</td><td>N/D · ${escapeHTML(fila.grupo)}</td></tr>`).join('')}</tbody></table></div></section>` : '');
 }
 
@@ -345,7 +358,7 @@ function renderRazonesSection(period) {
   ];
   const notaPromedios = r.usaPromedios
     ? 'Rotaciones, ROA y DuPont usan saldos promedio ((inicial + final) / 2).'
-    : 'Con un solo periodo se usan saldos finales. Ingrese dos periodos para usar promedios.';
+    : 'Sin un periodo anterior, las razones de flujo del motor permanecen N/D con el modo directo desactivado; los indicadores de punto usan el saldo disponible.';
   const notaCreditos = r.RotCxC == null
     ? ''
     : 'La rotación de CxC y el plazo de cobro usan las ventas a crédito declaradas.';
@@ -361,7 +374,7 @@ function renderRazonesSection(period) {
   }).join('') + (grupoAbierto ? '</dl></section>' : '');
   return `<p class="text-muted mb-4" style="font-size:var(--font-size-sm)">${notaPromedios}</p>
   ${notaCreditos ? `<p class="text-muted mb-4" style="font-size:var(--font-size-sm)">${notaCreditos}</p>` : ''}
-  <div class="analisis-ratios">${indicadores}</div>`;
+  <div class="analisis-ratios">${indicadores}</div>${disponibilidadRazones(r)}`;
 }
 
 function renderCNTCNOSection(period) {

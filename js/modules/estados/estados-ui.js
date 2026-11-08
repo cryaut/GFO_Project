@@ -1,5 +1,5 @@
 import { estadosResueltos } from './estados-presentacion-calculations.js';
-import { etiquetaFilaEstado, tablasEstadosResueltos } from './estados-presentacion-ui.js';
+import { etiquetaFilaEstado, tablasEstadosResueltos, separarCuentasOpcionales, desplegableCuentasOpcionales } from './estados-presentacion-ui.js';
 import { ACCOUNT_TYPES, validateFinancialData, inferAccountType,
   seleccionarPeriodos, MAXIMO_PERIODOS_VISIBLES } from './estados-calculations.js';
 import { normalizeFinancialData, ordenarPeriodos } from './estados-normalize.js';
@@ -186,15 +186,16 @@ export function estadosUI(page, { initial, demo, save }) {
     const el = page.querySelector('#accountEditor');
     if (!selected) { el.innerHTML = ''; return; }
     const resueltos = estadosResueltos(draft, selected);
+    const comparadas = draft.periods.map(p => {
+      const estado = p === selected ? resueltos : estadosResueltos(draft, p);
+      return new Map([...estado.balanceGeneral, ...estado.estadoResultados].map(f => [f.clave, f]));
+    });
     el.innerHTML = Object.entries(GROUPS).map(([group, label]) => {
       const accounts = accountsFor(draft, selected, group);
       const filasGrupo = [...resueltos.balanceGeneral, ...resueltos.estadoResultados].filter(f => f.grupoId === group);
-      return `<details class="states-account-group" data-group="${group}"${filasGrupo.length ? ' open' : ''}>
-        <summary><span>${label}</span><small>${Object.keys(accounts).length} cuenta(s) · ${esc(selected)}</small></summary>
-        <div class="states-account-body">
-        <p>La clasificación de una cuenta se comparte entre periodos.</p>
-        <div class="table-wrapper"><table><thead><tr><th>Cuenta</th><th>Importe</th><th>Clasificación</th><th>Acción</th></tr></thead><tbody>
-        ${filasGrupo.map(fila => {
+      const { visibles, opcionales } = separarCuentasOpcionales(filasGrupo, f => comparadas.map(m => m.get(f.clave)));
+      const tabla = filas => `<div class="table-wrapper"><table><thead><tr><th>Cuenta</th><th>Importe</th><th>Clasificación</th><th>Acción</th></tr></thead><tbody>
+        ${filas.map(fila => {
           const i = ['calculado', 'pendiente'].includes(fila.origen) ? -1 : Object.keys(accounts).indexOf(fila.cuenta);
           if (i < 0) return `<tr class="${fila.subtotal ? 'statement-subtotal' : ''}" data-readonly-key="${esc(fila.clave)}">${filaLectura(fila)}</tr>`;
           const catalogada = fila.id ? obtenerCuenta(fila.id) : null;
@@ -204,7 +205,12 @@ export function estadosUI(page, { initial, demo, save }) {
           <td><select class="form-select" data-type aria-label="Clasificación ${esc(fila.cuenta)}"><option value="">${esc(sinTipo)}</option>${options(group, draft.accountTypes[group][fila.cuenta] ?? inferAccountType(group, fila.cuenta))}</select></td>
           <td><button class="btn btn-danger btn-sm" data-remove type="button" aria-label="Eliminar ${esc(fila.cuenta)}">Eliminar</button></td></tr>`;
         }).join('')}
-        </tbody></table></div>
+        </tbody></table></div>`;
+      return `<details class="states-account-group" data-group="${group}"${filasGrupo.length ? ' open' : ''}>
+        <summary><span>${label}</span><small>${Object.keys(accounts).length} cuenta(s) · ${esc(selected)}</small></summary>
+        <div class="states-account-body">
+        <p>La clasificación de una cuenta se comparte entre periodos.</p>
+        ${tabla(visibles)}${desplegableCuentasOpcionales(opcionales, opcionales.length ? tabla(opcionales) : '')}
         <details class="states-subpanel states-add-account"><summary>Añadir cuenta</summary><div class="states-disclosure-content">
         <form class="addAccount states-add-form"><label>Cuenta nueva <input class="form-input" name="account" required maxlength="120"></label>
           <label>Importe <input class="form-input" name="amount" type="number" step="any" required value="0"></label>
