@@ -1,0 +1,13 @@
+{
+  "aprobacionesAntes": 1,
+  "aprobacionesAhora": 0,
+  "prObligatorio": true,
+  "forcePushPermitido": false,
+  "borradoPermitido": false,
+  "resolverConversaciones": true,
+  "otrasProteccionesSinCambios": true,
+  "pruebas": 2096,
+  "archivos": 66,
+  "lintErrores": 0,
+  "lintAdvertencias": 10
+}

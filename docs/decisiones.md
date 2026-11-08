@@ -2325,3 +2325,22 @@ Inicio y Mercado reutilizan el ER resuelto; EFE consulta `obtenerUtilidadNetaMot
 **Para revertirla.** Conservar exportables los suplementos declarados y registrar otra decisión antes de retirar su lectura. No reinterpretarlos como pagos.
 
 **Referencias.** [Informe y contraste](planificacion/reparacion-auditoria-ejemplos/INFORME-FINAL.md), diapositivas 14–15 proporcionadas por el usuario.
+
+### D-103 — Revisión opcional antes del merge
+
+- **Fecha:** 2026-11-08.
+- **Estado:** Implementada por solicitud del usuario.
+- **Decidió:** Cris solicita quitar la regla que exige revisión para hacer merge.
+- **Área:** Reglas de trabajo y protección de main.
+
+**Contexto.** AGENTS.md, la guía de trabajo y GitHub exigían aprobación de otra persona. Cris pide retirar ese requisito de forma general.
+
+**Opciones.** Mantener excepciones puntuales o hacer opcional la revisión conservando el flujo de PR. Se elige la segunda conforme a la solicitud.
+
+**Decisión.** Reemplaza el requisito previo de aprobación ajena: un PR puede integrarse sin revisión. Se mantienen tests/lint, resolución de observaciones existentes y autorización del usuario para merges con IA. En GitHub se requieren cero aprobaciones, conservando PR y las otras protecciones. Este cambio de reglas puede integrarse como parte de la solicitud; no autoriza integrar otros PR automáticamente.
+
+**Consecuencias.** La revisión se puede solicitar, pero no es condición de merge. No se simulan aprobaciones ni se descartan comentarios pendientes. Se conserva el historial de decisiones y revisiones anteriores, que documenta la regla vigente entonces.
+
+**Para revertirla.** Registrar otra decisión, restablecer aprobación obligatoria en las dos guías y configurar nuevamente el número de aprobaciones en GitHub.
+
+**Referencias.** `docs/planificacion/revision-opcional/README.md`; solicitud de Cris del 2026-11-08.

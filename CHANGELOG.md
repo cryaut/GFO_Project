@@ -6,6 +6,9 @@ Todos los cambios notables en GFO Toolkit.
 
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
+### Reglas de trabajo
+- Revisión de PR opcional por solicitud de Cris (D-103): se elimina la aprobación ajena obligatoria y se mantienen PR, tests/lint, atención de comentarios existentes y autorización para merges con IA.
+
 ### Catálogo de ejemplos y presentación de monedas
 - Bartlett de clase separado del histórico: declara crédito total y compras estimadas docentes para 2012. Nueva base de compras declaradas para rotaciones, con la fórmula anterior como alternativa y sin pagos ficticios (D-102).
 - Paneles con selección, fuente y alcance en todos los puntos de carga existentes; MUNO integral completa sus suplementos y añade Baker, Bartlett, Práctico 2 y TOR, además de variantes ficticias. Casos docentes contrastados, sin inventar crédito ni moneda; unidad opcional preservada al guardar/exportar, y comparación de Proforma bloqueada entre monedas distintas (D-100).
