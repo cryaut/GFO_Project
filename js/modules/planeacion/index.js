@@ -1,6 +1,7 @@
 import store from '../../store.js';
 import { destroyChart, renderChart } from '../../components/chart.js';
 import { estadosGuardados } from '../../utils/estados-guardados.js';
+import { monedaDe } from '../../utils/moneda.js';
 import { calcularInventario } from '../inventario/inventario-calculations.js';
 import { planeacionUI } from './planeacion-ui.js';
 import { ARCHIVO_ENTRADAS, ARCHIVO_REFERENCIA } from './planeacion-escenarios.js';
@@ -22,7 +23,10 @@ export function initPlaneacion() {
   if (!page) return;
   let datos = store.get('planeacion');
   const leerEstados = () => estadosGuardados(store.get('estados'));
-  const leerInventario = () => calcularInventario(store.get('inventario'));
+  const leerInventario = () => {
+    const guardado = store.get('inventario');
+    return { ...calcularInventario(guardado), moneda: monedaDe(guardado) };
+  };
   planeacionUI(page, {
     datos,
     leerEstados,

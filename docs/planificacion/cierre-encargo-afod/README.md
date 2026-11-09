@@ -43,3 +43,7 @@ La vista previa incluye valor actual, propuesto, unidad y naturaleza. Antes de a
 ## Verificación
 
 Las pruebas dirigidas cotejan los cinco calendarios, los cuatro métodos o variantes de Proforma, el dividendo no monetario y la UAI por identidad. La matriz de las 16 fuentes y el comparador conservan el origen, los valores esperados, los valores observados y las diferencias. El reporte de cierre relaciona esa evidencia con el commit probado.
+
+## Revisión previa a integración
+
+Revisión independiente solicitada por Cris, sobre `c721ab2` y las correcciones menores de la rama. [Dictamen, reparaciones y evidencia](revision/DICTAMEN.md): 521 controles numéricos sin diferencias, 2252 pruebas aprobadas en 80 archivos y lint sin errores. Se preservan los límites de Halley y La Grandiosa. El PR #34 contiene la rama del #33, por lo que la valoración se integra una sola vez.

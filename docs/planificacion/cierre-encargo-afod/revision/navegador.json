@@ -1,0 +1,85 @@
+{
+  "recorridos": [
+    "Once rutas sin errores de JavaScript",
+    "Cuatro ejercicios de Proforma, dos métodos de Metroline, recálculo de Leonard y datos pendientes",
+    "Cinco calendarios de caja; guardar y recargar conserva caja y presupuesto",
+    "Inventario → Planeación conserva moneda, bloquea origen desactualizado y guarda; Planeación → C-V-U conserva procedencia",
+    "Estados → Flujo: cuota agotada conserva estado y reintentar guarda la procedencia",
+    "Reportes consume la proyección guardada"
+  ],
+  "variantes": [
+    {
+      "ruta": "proforma",
+      "width": 1440,
+      "tema": "light",
+      "desborde": false
+    },
+    {
+      "ruta": "planeacion",
+      "width": 1440,
+      "tema": "light",
+      "desborde": false
+    },
+    {
+      "ruta": "proforma",
+      "width": 1440,
+      "tema": "dark",
+      "desborde": false
+    },
+    {
+      "ruta": "planeacion",
+      "width": 1440,
+      "tema": "dark",
+      "desborde": false
+    },
+    {
+      "ruta": "proforma",
+      "width": 390,
+      "tema": "light",
+      "desborde": false
+    },
+    {
+      "ruta": "planeacion",
+      "width": 390,
+      "tema": "light",
+      "desborde": false
+    },
+    {
+      "ruta": "proforma",
+      "width": 390,
+      "tema": "dark",
+      "desborde": false
+    },
+    {
+      "ruta": "planeacion",
+      "width": 390,
+      "tema": "dark",
+      "desborde": false
+    },
+    {
+      "ruta": "proforma",
+      "width": 320,
+      "tema": "light",
+      "desborde": false
+    },
+    {
+      "ruta": "planeacion",
+      "width": 320,
+      "tema": "light",
+      "desborde": false
+    },
+    {
+      "ruta": "proforma",
+      "width": 320,
+      "tema": "dark",
+      "desborde": false
+    },
+    {
+      "ruta": "planeacion",
+      "width": 320,
+      "tema": "dark",
+      "desborde": false
+    }
+  ],
+  "errores": []
+}

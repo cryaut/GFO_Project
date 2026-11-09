@@ -117,7 +117,13 @@ function mostrarER(s, comparar) {
     ['= Utilidad neta', ...celdas('neta', r => `${monto(r.uai)} − ${monto(r.ir)}`)],
     ['− Dividendos en efectivo', ...celdas('dividendos', () => 'Distribución prevista después de impuestos.')],
     ['= Adición a ganancias retenidas', ...celdas('retenidas', r => `${monto(r.neta)} − ${monto(r.dividendos)}`)]
-  ];
+  ].filter(([nombre]) => {
+    // Ausencias accesorias confirmadas en los ER completos del ejemplo no
+    // agregan renglones cero. Un dato pendiente y los subtotales siguen visibles.
+    if (nombre === '+ Otros ingresos operativos netos') return resultados.some(r => r.otrosOperativos !== 0);
+    if (nombre === '+ Otros ingresos no operativos netos') return resultados.some(r => r.otrosNoOperativos !== 0);
+    return true;
+  });
   const columnas = comparar ? ['Porcentaje de ventas', 'Fijo + variable'] : ['Porcentaje de ventas'];
   return tabla('Estado de resultados pro forma de 2013', columnas, filas) + (comparar
     ? '<p class="form-hint">La variante fijo + variable conserva los importes fijos declarados. Su estimación depende de que esa clasificación siga siendo válida para 2013.</p>'
