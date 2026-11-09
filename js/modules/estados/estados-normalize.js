@@ -1,5 +1,5 @@
 import { ACCOUNT_TYPES, inferAccountType } from './estados-calculations.js';
-import { identificarCuenta, obtenerCuenta } from './cuentas-identificador.js';
+import { identificarCuenta, obtenerCuenta, CUENTA_PROVISION_CXC } from './cuentas-identificador.js';
 import { GRUPOS_COBERTURA, ESTADOS_COBERTURA } from './estados-cobertura.js';
 import { normalizarMoneda } from '../../utils/moneda.js';
 
@@ -77,7 +77,8 @@ function validarSigno(group, name, value, period, identidad, filas) {
     throw new Error(`Fila ${fila}, cuenta «${name}», periodo ${period}: esta cuenta se captura en positivo. Quite el signo negativo o los paréntesis. Si es una devolución o un descuento, use su cuenta de deducción.`);
   }
   if (convencion === 'negativo' && value > 0) {
-    throw new Error(`Fila ${fila}, cuenta «${name}», periodo ${period}: la depreciación acumulada se captura en negativo.`);
+    const correctora = identidad.idCuenta === CUENTA_PROVISION_CXC ? 'la provisión de incobrables' : 'la depreciación acumulada';
+    throw new Error(`Fila ${fila}, cuenta «${name}», periodo ${period}: ${correctora} se captura en negativo.`);
   }
 }
 
@@ -228,7 +229,11 @@ export function normalizeFinancialData(input, { filas = {} } = {}) {
         } else {
           if (!name.trim() || name.length > 120) throw new Error('Nombre de cuenta inválido');
           target[period][name] = toAmount(value, name);
-          accountIdentities.suplementario[name] = identidadCuenta(source, 'suplementario', name);
+          const identidad = identidadCuenta(source, 'suplementario', name);
+          accountIdentities.suplementario[name] = identidad;
+          if (identidad.idCuenta === 'supp.stock_dividends') {
+            validarSigno('suplementario', name, target[period][name], period, identidad, filas);
+          }
         }
       }
     }

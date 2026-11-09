@@ -1,6 +1,7 @@
 import store from '../../store.js';
 import { destroyChart, renderChart } from '../../components/chart.js';
 import { estadosGuardados } from '../../utils/estados-guardados.js';
+import { monedaDe } from '../../utils/moneda.js';
 import { calcularInventario } from '../inventario/inventario-calculations.js';
 import { planeacionUI } from './planeacion-ui.js';
 import { ARCHIVO_ENTRADAS, ARCHIVO_REFERENCIA } from './planeacion-escenarios.js';
@@ -21,10 +22,15 @@ export function initPlaneacion() {
   const page = document.getElementById('page-planeacion');
   if (!page) return;
   let datos = store.get('planeacion');
+  const leerEstados = () => estadosGuardados(store.get('estados'));
+  const leerInventario = () => {
+    const guardado = store.get('inventario');
+    return { ...calcularInventario(guardado), moneda: monedaDe(guardado) };
+  };
   planeacionUI(page, {
     datos,
-    estados: estadosGuardados(store.get('estados')),
-    inventario: calcularInventario(store.get('inventario')),
+    leerEstados,
+    leerInventario,
     // Lanza un error si localStorage falla; la pantalla lo muestra y no cambia nada.
     guardar: nuevos => {
       if (datos !== store.get('planeacion')) {

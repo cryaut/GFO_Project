@@ -7,7 +7,7 @@ import { calcularCVU } from '../../js/modules/equilibrio/equilibrio-calculations
 import { calcularInventario, ejemploInventario } from '../../js/modules/inventario/inventario-calculations.js';
 import { planeacionUI } from '../../js/modules/planeacion/planeacion-ui.js';
 import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
-import { cambiar, clic, element, enviar, llenar, mensaje } from './helpers/dom-falso.js';
+import { aplicarVistaPrevia, cambiar, clic, element, enviar, llenar, mensaje } from './helpers/dom-falso.js';
 
 const ejemplo = normalizarSupuestos(ejemploPlaneacion());
 const p = calcularPresupuestoMaestro(ejemplo);
@@ -209,16 +209,20 @@ describe('pantalla del presupuesto maestro', () => {
       estadoResultados: { 2024: {} }
     });
     const inventario = calcularInventario(ejemploInventario());
-    const { page, guardar } = montar({ supuestos: { ...ejemploPlaneacion(), cxcInicial: 0, saldoInicialCaja: 0 } }, { estados, inventario });
+    const { page, guardar } = montar({ supuestos: { ...ejemploPlaneacion(), cxcInicial: 0, saldoInicialCaja: 0 } }, { estados, inventario, confirmar: () => true });
     await clic(page, 'planVer-supuestos');
+    llenar(page, { planPeriodoBalance: '2024' });
     await clic(page, 'planTomarBalance');
-    expect(mensaje(page, 'planMensaje')).toContain('efectivo C$ 52,000.00');
+    expect(page.querySelector('#planTraerVistaPrevia').innerHTML).toContain('C$ 52,000.00');
+    await aplicarVistaPrevia(page, 'planTraer', ['saldoInicialCaja', 'cxcInicial', 'cxpInicial']);
     llenar(page, { planProducto: 'demo-camisa' });
     await clic(page, 'planTomarInventario');
-    expect(mensaje(page, 'planMensaje')).toContain('Camisa casual');
+    expect(page.querySelector('#planTraerVistaPrevia').innerHTML).toContain('Camisa casual');
+    await aplicarVistaPrevia(page, 'planTraer', ['inventarioInicial', 'costoUnitario']);
+    expect(guardar).not.toHaveBeenCalled();
     await enviar(page, 'formPlaneacion');
-    // D-082: se guarda productoId (el mínimo y el costo se leen del producto
-    // vigente); el costo de la demo es su costo promedio (sin costo en movimientos).
+    // D-082: se guarda productoId para consultar el mínimo del producto. El costo
+    // de la demo es la copia de su promedio vigente al aplicar la transferencia.
     expect(guardar.mock.lastCall[0].supuestos).toMatchObject({
       saldoInicialCaja: 52000, cxcInicial: 135000, cxpInicial: 92000,
       inventarioInicial: 35, costoUnitario: 350, productoId: 'demo-camisa', productoInventario: 'Camisa casual'

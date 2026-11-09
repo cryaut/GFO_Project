@@ -225,3 +225,7 @@ Estados persiste `composicionIngresos[periodo]` con `sin_declarar`, `excluye_int
 Los documentos de Estados, Flujo y Equilibrio admiten `moneda` opcional, validada con `utils/moneda.js`. No se modifica el esquema global del store. El guardado completo conserva la unidad; los renders usan los formateadores existentes. Un archivo anterior sin moneda conserva C$. No hay conversión de divisas automática. D-100 e informe `catalogo-ejemplos-afod` documentan casos, fuentes y limitaciones.
 
 La reparación D-101/D-102 conserva ese esquema. EOAF/EFE reúnen `balanceGeneral` y `reportedTotals` sin escribir cuentas sintéticas. `totalesPeriodo` comparte el ER resuelto con Inicio/Mercado; el EFE lee UN del adaptador del motor. El nuevo id `supp.credit_purchases` utiliza `supplementaryAccounts` y sus identidades existentes; no requiere migración ni modifica `store.js`. El escenario docente Bartlett se genera por separado del histórico y no altera sus movimientos.
+
+## Calendarios y procedencia de transferencias
+
+`planeacion.cajaDocente` guarda opcionalmente la apertura, el calendario y los movimientos declarados. Los resultados se recalculan al leerlos. Las fichas opcionales de `procedencia` se guardan por campo en Flujo y C-V-U y en Planeación o su escenario activo. Reportes valida ambos contratos dentro del respaldo y usa la misma lectura de Proforma para presentar la proyección.

@@ -962,9 +962,11 @@ Lógica pura en `js/modules/<modulo>/<modulo>-calculations.js` (sin DOM ni `stor
 
 Devuelve una lista de errores. El escenario usa meses y el costo escalar queda en `null`. `capital.costosCompra` contiene un costo no negativo o `null` por mes. Los cuatro calendarios, `cobrosApertura`, `cobrosCredito`, `pagosApertura` y `pagosCredito`, son `null` si están pendientes o listas de 1 a 12 fracciones que suman 1 dentro de una tolerancia de `1e-7`. La primera fracción de apertura se aplica al primer mes del presupuesto. La primera fracción de crédito se aplica al mes siguiente al movimiento. Un cero explícito salta un plazo.
 
-#### `calcularCapitalTrabajo(s, capital, fechaCorte)`
+#### `calcularCapitalTrabajo(s, capital, fechaCorte, valorInventarioInicial = null)`
 
-Recibe los supuestos mensuales ya validados con su apertura, la configuración anterior y la fecha de corte `AAAA-MM-DD`. Devuelve `{ etiquetas, unidadesVendidas, existencias, costosCompra, ventas, compras }`. Cada fila de existencias contiene `{ inicial, objetivo, compras, final }` en unidades. Cada bloque de ventas o compras incluye `meses`, `totales` de movimientos y `pendientes` después del horizonte.
+Recibe los supuestos mensuales ya validados con su apertura, la configuración anterior, la fecha de corte `AAAA-MM-DD` y el valor monetario de apertura. Devuelve `{ etiquetas, unidadesVendidas, existencias, costosCompra, valoracion, ventas, compras }`. Cada fila de existencias contiene `{ inicial, objetivo, compras, final }` en unidades. Cada bloque de ventas o compras incluye `meses`, `totales` de movimientos y `pendientes` después del horizonte.
+
+`valoracion` contiene `meses` con `{ inicial, compras, costoVentas, final }` en C$ y `costoVentasTotal` para el horizonte. El cierre mensual multiplica las existencias finales por el costo promedio de las unidades disponibles. El costo de ventas es el valor disponible menos el cierre. El cierre se arrastra con toda su precisión. Una partida que requiere un dato ausente devuelve `null` y se conservan los ceros conocidos. El costo del horizonte requiere todos los meses (D-104).
 
 Cada mes monetario devuelve `{ importe, contado, credito, liquidado, total, apertura, cierre, vencimientos }`. `liquidado` recoge los vencimientos de los saldos de apertura y del crédito de meses previos. `total` suma el contado del mes y la liquidación de crédito. Los vencimientos tienen `{ origen, vence, importe }`, con meses `AAAA-MM`. Un cálculo pendiente queda en `null`. Una lista de vencimientos vacía indica que se conoce que no hay partidas para ese plazo.
 
@@ -977,6 +979,12 @@ Códigos de `avisos` del presupuesto maestro: `financiamiento`, `sin-compras`, `
 `compararResultados(real, proforma)` conserva ambos valores de cada fila. Calcula la variación relativa y la diferencia de márgenes en puntos solo si el periodo real es un año `AAAA` y la proyección cubre 12 meses o 4 trimestres. En los demás casos `variacion` y `puntos` quedan en `null`. Si están presentes ambos resultados y falta comparabilidad temporal, `construirReporte` explica la causa en `motivoComparacion`.
 
 `planeacionUI(page, opciones)` mantiene en la pantalla las vistas Resumen, Supuestos y Tablas completas. El borrador y la selección de consulta se conservan al cambiar de vista. `resumenPlaneacionUI(panel, presupuesto, capital)` presenta la salida de `calcularPresupuestoMaestro` o `calcularCapitalTrabajo`, según `capital`. Planeación puede recibir `destruirGrafica(id)` para retirar una gráfica al reemplazar la pantalla. Invoca `graficar(id, config)` al mostrar las tablas del presupuesto maestro.
+
+`validarCajaDocente(plan)` valida el calendario opcional de Planeación. `proyectarCajaDocente(plan)` devuelve los meses del horizonte, cuotas de cobro y pago por origen, saldos diferidos, caja antes y después de operaciones declaradas y necesidad máxima. Los meses anteriores contribuyen al calendario y el efectivo comienza en la apertura declarada. Un importe que requiere una entrada desconocida queda en `null`.
+
+`calcularERDocente(supuestos, metodo)` calcula porcentaje de ventas o fijo/variable. `calcularBalanceDocente(supuestos)` devuelve el balance por partida, la diferencia, la necesidad de fondos y el dividendo que elimina la diferencia cuando es viable. `calcularERResidualDocente(supuestos)` deriva ventas y gastos desde las premisas de rotación, costo sobre ventas y utilidad objetivo, y devuelve la actividad proyectada con crédito declarado.
+
+`transferenciaBalance`, `transferenciaInventario`, `transferenciaCvuPlaneacion` y `transferenciaCvuInventario` devuelven `{ origen, filas, error }`. `firmaTransferencia` coteja el origen y los valores vigentes antes de aplicar. `fichaTransferencia` registra la revisión de una copia y `validarProcedencia` valida sus campos al restaurar un respaldo. La interfaz distingue valor actual, propuesto, unidad y naturaleza, y aplica únicamente las filas válidas que el usuario selecciona.
 
 #### `validarInventarioRespaldo(datos)`
 

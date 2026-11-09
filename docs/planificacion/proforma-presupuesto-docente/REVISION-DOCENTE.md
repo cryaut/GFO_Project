@@ -21,7 +21,7 @@ Copia íntegra del ZIP entregado por Cris en `../TEAM.md/Ejercicios_AFOD.zip` y 
 
 No se alteran los resultados del presupuesto maestro, sus calendarios, impuestos, tasas, inventario ni persistencia. La corrección del real de Proforma sí cambia resultados o disponibilidad cuando la fuente anterior no reconocía una identidad o suponía ceros: ahora coincide con la lectura estricta ya implementada para Estados (D-096). Se registra en D-097. El motor, el generado y los 20 JSON no se editan.
 
-## Métodos docentes y conformidad actual
+## Estado de los métodos en la revisión inicial
 
 | Fuente | Procedimiento exigido | Evaluación de la app |
 |---|---|---|
@@ -56,7 +56,7 @@ La Pinolera (C$, cierre antes de financiamiento, sin contratar préstamos supues
 
 Pinolero 1 necesita C$14150 en septiembre para alcanzar el mínimo de C$15000; el segundo caso no presenta faltante bajo esas condiciones. Los cobros y pagos de mayo/junio se conservan en las programaciones y los impuestos/seguro entran en los meses indicados. Si se simulara un préstamo en septiembre, cambiarían los saldos posteriores: no se mezcla esa variante con esta referencia antes de financiamiento.
 
-## Qué falta para terminar estos módulos según la nueva fuente
+## Brechas registradas en la revisión inicial
 
 1. Proyección explícita por porcentaje de ventas, con año base, ajustes e importes futuros declarados.
 2. Variante fija/variable que distinga costo de ventas y gastos operativos, y compare ambos métodos.
@@ -66,3 +66,15 @@ Pinolero 1 necesita C$14150 en septiembre para alcanzar el mínimo de C$15000; e
 6. Cierre de fuentes reconstruidas como Halley con los datos/unidades originales.
 
 La mejora local de lectura no se presenta como implementación de esas etapas pendientes. La entrega conserva las fuentes y deja los cambios locales para revisión, sin push ni PR.
+
+## Cierre de los métodos de Proforma
+
+En **Proforma → Métodos docentes AFOD**, cada ejercicio muestra la fuente, la base de 2012, la proyección anual de 2013 y los importes en USD. El formulario permite cambiar las premisas y recalcular. Los ejercicios se mantienen separados del reporte integrado y del histórico guardado.
+
+- **Euro Designs.** El costo y el gasto se derivan del 55 % y 12 % históricos. Los intereses y el IR usan los supuestos de 2013. La utilidad neta asciende a USD 577,200 y la adición a ganancias retenidas a USD 257,200.
+- **Metroline.** Las columnas muestran el porcentaje de ventas y el método fijo + variable. La utilidad neta es USD 216,857.14 y USD 227,400 respectivamente. La segunda variante mantiene los importes fijos y aplica a ventas los porcentajes históricos de los componentes variables.
+- **Leonard.** Se exponen los activos, los pasivos y el patrimonio por partida. El balance antes de cubrir la brecha muestra activos de USD 1,383,000, pasivos de USD 860,000 y patrimonio de USD 470,000. El financiamiento externo requerido es USD 53,000. Con un dividendo de USD 17,000, las ganancias retenidas de cierre pasan a USD 323,000 y activos igualan pasivos más patrimonio. El modelo presenta el faltante como resultado del balance.
+
+Las celdas dependientes de una premisa ausente quedan N/D. Se preservan los ceros explícitos y los cálculos que pueden hacerse con los datos disponibles. Los otros ingresos netos se muestran en su sección operativa o no operativa. Los dividendos se restan después de la utilidad neta.
+
+La prueba `tests/unit/proforma-docente.test.js` compara cada partida de los estados de resultados con [referencias.json](referencias.json) y valida el recálculo de Leonard. Las cifras de referencia provienen del cálculo independiente y se comparan a centavos, conservando precisión en las operaciones intermedias.

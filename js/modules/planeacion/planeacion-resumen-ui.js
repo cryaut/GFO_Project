@@ -42,7 +42,22 @@ function tarjetasResumen(p, capital) {
       pendientes: capital ? p.compras.pendientes : undefined
     }
   ];
-  return capital ? basicas : [
+  if (capital) {
+    const { meses, costoVentasTotal } = p.valoracion;
+    return [
+      ...basicas,
+      {
+        id: 'CostoVentas', etiqueta: 'Costo de ventas', titulo: 'Costo de ventas del mes',
+        periodos: meses.map(mes => [mes.costoVentas]), conceptos: ['Costo de ventas'], valor: costoVentasTotal
+      },
+      {
+        id: 'Inventario', etiqueta: 'Inventario valorizado', titulo: 'Inventario valorizado al cierre del mes',
+        periodos: meses.map(mes => [mes.final]), conceptos: ['Inventario final valorizado'], valor: meses.at(-1).final,
+        alcance: 'Al cierre del horizonte'
+      }
+    ];
+  }
+  return [
     { id: 'Resultado', etiqueta: 'Utilidad neta presupuestada', titulo: 'Estado de resultados presupuestado', valor: p.totales.utilidadNeta, desarrollo: 'resultados' },
     { id: 'Caja', etiqueta: 'Efectivo final antes de financiamiento', titulo: 'Presupuesto de caja', valor: p.cierre.efectivo, desarrollo: 'caja' },
     ...basicas
@@ -58,7 +73,8 @@ function filasMonetarias(conceptos, valores) {
 
 function faltanDatos(p) {
   return [p.ventas.pendientes, p.compras.pendientes, ...Object.values(p.ventas.totales), ...Object.values(p.compras.totales),
-    ...p.costosCompra, ...p.unidadesVendidas, ...p.existencias.flatMap(existencia => Object.values(existencia))
+    ...p.costosCompra, ...p.unidadesVendidas, ...p.existencias.flatMap(existencia => Object.values(existencia)),
+    p.valoracion.costoVentasTotal, ...p.valoracion.meses.flatMap(mes => Object.values(mes))
   ].includes(null);
 }
 
@@ -70,14 +86,14 @@ export function resumenPlaneacionUI(panel, presupuesto, capital) {
   let tarjeta = tarjetas[0];
   let periodo = capital ? etiquetas.length - 1 : -1;
   panel.innerHTML = `<p class="plan-contexto mb-2">Resultados del presupuesto guardado</p>
-    ${capital ? '<section class="plan-alcance"><h2>Capital de trabajo · cálculo parcial</h2><p>Disponibles: ventas, inventario físico, compras, cobros y pagos a proveedores.</p><p><strong>Pendientes: costo de ventas, estado de resultados y presupuesto de caja completos.</strong> Cobros menos pagos a proveedores todavía no es el flujo neto de la empresa.</p></section>' : '<p class="plan-alcance">Seleccione <strong>Utilidad neta</strong> o <strong>Efectivo final</strong> para ver cada operación y su resultado. El IR se devenga por periodo y queda por pagar; el financiamiento requerido se informa antes de contratarlo.</p>'}
+    ${capital ? '<section class="plan-alcance"><h2>Capital de trabajo · cálculo parcial</h2><p>Consulta las ventas, el inventario físico y valorizado, el costo de ventas, las compras, los cobros y los pagos a proveedores.</p><p><strong>El estado de resultados y el presupuesto de caja completos siguen pendientes.</strong> La caja completa también requiere gastos, inversión, deuda, impuestos y dividendos.</p></section>' : '<p class="plan-alcance">Seleccione <strong>Utilidad neta</strong> o <strong>Efectivo final</strong> para ver cada operación y su resultado. El IR se devenga por periodo y queda por pagar; el financiamiento requerido se informa antes de contratarlo.</p>'}
     ${capital && faltanDatos(presupuesto) ? '<p class="plan-aviso text-warning mb-2">Hay resultados pendientes. N/D indica qué cifras requieren revisar los supuestos.</p>' : ''}
     <div class="plan-resumen">
       <div class="plan-cuadricula" role="group" aria-label="Consultar una cifra">
         ${tarjetas.map(t => `<button id="planTarjeta${t.id}" type="button" class="kpi-card plan-metrica"
           aria-pressed="${t === tarjeta}" aria-controls="planDetalle">
           <span class="kpi-label">${t.etiqueta}</span><strong class="kpi-value">${monto(t.valor)}</strong>
-          <span class="plan-contexto">${t.periodos || t.desarrollo === 'resultados' ? 'Durante el horizonte' : 'Al cierre del horizonte'}</span>
+          <span class="plan-contexto">${t.alcance ?? (t.periodos || t.desarrollo === 'resultados' ? 'Durante el horizonte' : 'Al cierre del horizonte')}</span>
         </button>`).join('')}
       </div>
       <section class="card plan-detalle" id="planDetalle" aria-labelledby="planDetalleTitulo">

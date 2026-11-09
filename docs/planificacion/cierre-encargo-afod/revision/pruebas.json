@@ -1,0 +1,11 @@
+{
+  "comando": "npm.cmd test -- --maxWorkers=2",
+  "aprobadas": 2253,
+  "fallidas": 0,
+  "archivos": 80,
+  "nuevas_regresiones": 5,
+  "regresiones_sin_correccion": {
+    "aprobadas": 1,
+    "fallidas": 3
+  }
+}

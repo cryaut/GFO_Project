@@ -1,4 +1,5 @@
 import { normalizeFinancialData } from '../estados/estados-normalize.js';
+import { consultarMontoCuenta, CUENTA_CXC, CUENTA_PROVISION_CXC } from '../estados/cuentas-identificador.js';
 import { ESPECIFICACION_RAZONES } from './especificacion-razones.js';
 import { crearEntradaRazones, calcularRazones, calcularRazon, revisarEntradaRazones, motivoComposicion } from './razones-motor.js';
 
@@ -43,13 +44,25 @@ export function crearContextoRazonesGuardadas(datos, periodo, { cuentasNoDisponi
     current:composicion[periodo] ?? 'sin_declarar',
     previous:anterior === null ? 'sin_declarar' : composicion[anterior] ?? 'sin_declarar'
   } });
+  // Las razones reciben el saldo neto con la correctora explícita, sin alterar
+  // la cuenta original ni las fórmulas de sus especificaciones.
+  for (const [token, corte] of [['current', periodo], ['previous', anterior]]) {
+    if (!corte || !entrada.cuentas.some(c => c.id === CUENTA_PROVISION_CXC && c.estado === 'reconocida'
+      && Object.hasOwn(c, token))) continue;
+    const { valor } = consultarMontoCuenta(normalizados, corte, CUENTA_CXC);
+    for (const c of entrada.cuentas) {
+      if (c.id === CUENTA_CXC && c.estado === 'reconocida') delete c[token];
+    }
+    entrada.cuentas.push({ id: CUENTA_CXC, estado: 'reconocida', grupo: 'activos', tipoApp: 'cxC', candidatos: [], [token]: valor });
+  }
   // Lectura del borrador: vaciar un campo mantiene desconocido su importe,
   // aunque el grupo completo confirme la ausencia de otras partidas.
   for (const cuenta of cuentasNoDisponibles) {
     const token = cuenta.periodo === periodo ? 'current' : cuenta.periodo === anterior ? 'previous' : null;
     if (!token) continue;
-    let fila = entrada.cuentas.find(c => c.id === cuenta.id && c.estado === 'reconocida');
-    if (!fila) { fila = { id:cuenta.id, estado:'reconocida', candidatos:[] }; entrada.cuentas.push(fila); }
+    const id = cuenta.id === CUENTA_PROVISION_CXC ? CUENTA_CXC : cuenta.id;
+    let fila = entrada.cuentas.find(c => c.id === id && c.estado === 'reconocida');
+    if (!fila) { fila = { id, estado:'reconocida', candidatos:[] }; entrada.cuentas.push(fila); }
     fila[token] = null;
   }
   return { datos:normalizados, entrada, fallo:null };

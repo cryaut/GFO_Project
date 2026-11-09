@@ -114,6 +114,7 @@ it.each([null, [], { '2031':'inventado' }, { '2039':'excluye_intereses' }])('rec
 it.each([
   ['supp.credit_sales', 'ventasCredito', 145],
   ['supp.supplier_payments', 'pagosProveedores', 89],
+  ['supp.stock_dividends', 'dividendosAcciones', 5000],
   ['supp.credit_sales', 'ventasCredito', 0],
   ['supp.supplier_payments', 'pagosProveedores', 0]
 ])('D-059 guarda y recarga %s declarado como %s en el periodo editado', async (id, campo, valor) => {

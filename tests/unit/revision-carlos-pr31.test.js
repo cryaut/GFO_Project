@@ -5,7 +5,7 @@ import { flujoUI } from '../../js/modules/flujo/flujo-ui.js';
 import { calcularFlujo, conciliarConBalance, ejemploFlujo } from '../../js/modules/flujo/flujo-calculations.js';
 import { planeacionUI } from '../../js/modules/planeacion/planeacion-ui.js';
 import { ejemploPlaneacion } from '../../js/modules/planeacion/planeacion-calculations.js';
-import { clic, element, cambiar, enviar, mensaje } from './helpers/dom-falso.js';
+import { aplicarVistaPrevia, clic, element, cambiar, enviar, llenar, mensaje } from './helpers/dom-falso.js';
 import { registrarCuenta } from '../../js/modules/estados/cuentas-registro.js';
 import { computeFinancialTotals } from '../../js/modules/estados/estados-calculations.js';
 import { analisisVerticalCompleto } from '../../js/modules/analisis/analisis-calculations.js';
@@ -31,6 +31,7 @@ it.each(['USD','UM'])('P1: Planeación conserva el borrador editado y no guarda 
   await cambiar(page, 'plan-saldoInicialCaja', '777', 'input');
   await cambiar(page, 'plan-cxcInicial', '888', 'input');
   const campo = page.querySelector('#plan-saldoInicialCaja');
+  llenar(page, { planPeriodoBalance: '2012' });
   await clic(page, 'planTomarBalance');
   expect(mensaje(page, 'planMensaje')).toContain('Moneda incompatible');
   expect(page.querySelector('#plan-saldoInicialCaja')).toBe(campo);
@@ -47,6 +48,7 @@ it.each(['USD','C$',undefined])('P1: Flujo permite copiar monedas compatibles (%
   flujoUI(page, { estados, datos, guardar });
   page.querySelector('#flujoPeriodo').value = '2011';
   await clic(page, 'flujoTomarSaldo');
+  await aplicarVistaPrevia(page, 'flujoTraer', ['saldoInicial']);
   expect(guardar.mock.lastCall[0]).toMatchObject({ saldoInicial:500000, periodoBase:'2011' });
 });
 
@@ -83,6 +85,7 @@ it('Flujo conserva su saldo si falta efectivo y acepta el cero declarado', async
 
   page.querySelector('#flujoPeriodo').value = '2024';
   await clic(page, 'flujoTomarSaldo');
+  await aplicarVistaPrevia(page, 'flujoTraer', ['saldoInicial']);
   expect(guardar.mock.lastCall[0]).toMatchObject({ saldoInicial:0, periodoBase:'2024' });
 });
 
@@ -106,12 +109,14 @@ it('Planeación toma el cero reportado y conserva los campos ausentes del borrad
     balanceGeneral:{ '2024':{ activos:{ Efectivo:0 }, pasivos:{}, patrimonio:{} } }
   };
   const supuestos = ejemploPlaneacion(), page = element(), guardar = vi.fn();
-  planeacionUI(page, { estados, datos:{ supuestos }, guardar });
+  planeacionUI(page, { estados, datos:{ supuestos }, guardar, confirmar: () => true });
   await clic(page, 'planVer-supuestos');
   await cambiar(page, 'plan-cxcInicial', '888', 'input');
+  llenar(page, { planPeriodoBalance: '2024' });
   await clic(page, 'planTomarBalance');
   expect(guardar).not.toHaveBeenCalled();
-  expect(mensaje(page, 'planMensaje')).toContain('Se conservaron los campos CxC, CxP');
+  expect(page.querySelector('#planTraerVistaPrevia').innerHTML).toContain('N/D');
+  await aplicarVistaPrevia(page, 'planTraer', ['saldoInicialCaja']);
   await enviar(page, 'formPlaneacion');
   expect(guardar.mock.lastCall[0].supuestos).toMatchObject({
     saldoInicialCaja:0, cxcInicial:888, cxpInicial:supuestos.cxpInicial

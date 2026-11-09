@@ -9,6 +9,8 @@ import { computeRazones, refreshSavedStates } from '../analisis/index.js';
 import { obtenerUtilidadNetaMotor } from '../razones/razones-app-adapter.js';
 import { validarRespaldo, MAX_RESPALDO_BYTES } from './integracion-respaldo.js';
 import { construirReporteHTML } from './integracion-reporte.js';
+import { reunirEntradas } from '../proforma/index.js';
+import { construirReporte } from '../proforma/proforma-calculations.js';
 
 // D-077: una sola lectura. Devuelve { estados, error } para quien necesita el
 // motivo y solo los estados para el resto.
@@ -205,9 +207,11 @@ function bindExportEvents(page) {
   });
 
   const cuerpoReporte = () => {
-    const { error } = leerGuardados();
-    // D-078: el reporte distingue «no hay datos» de «hay datos que no se leen».
-    return construirReporteHTML({ kpis: computeDashboardKPIs(), estados: getNormalizedStates(), errorEstados: error });
+    const entradas = reunirEntradas();
+    return construirReporteHTML({
+      kpis: computeDashboardKPIs(), estados: entradas.estados, errorEstados: entradas.errorEstados,
+      reporte: construirReporte(entradas)
+    });
   };
 
   page.querySelector('#btnPreviewHTML')?.addEventListener('click', () => {

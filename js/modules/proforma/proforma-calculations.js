@@ -42,7 +42,7 @@ export function resultadosReales(estados) {
     const otros = [cuenta('is.nonoperating_income'), cuenta('is.interest_income'), cuenta('is.noninterest_nonoperating_expenses')];
     const r = computarRazonesDesdeDatos(estados, periodo);
     return {
-      periodo, moneda:monedaDe(estados), ventas: subtotal('is.net_sales_reported'), cbv: subtotal('is.cost_of_sales_reported'),
+      periodo, empresa: estados.name, moneda:monedaDe(estados), ventas: subtotal('is.net_sales_reported'), cbv: subtotal('is.cost_of_sales_reported'),
       utilidadBruta: subtotal('is.gross_profit_reported'), gastosOperacion: subtotal('presentacion.gastos_operativos'),
       otrosOperativos: cuenta('is.other_operating_income'),
       uaii: subtotal('is.operating_profit_reported'), uai: subtotal('presentacion.uai'),
@@ -61,6 +61,7 @@ export function resultadosProforma(presupuesto) {
   const t = presupuesto.totales;
   const s = presupuesto.supuestos;
   return {
+    moneda: monedaDe(s),
     horizonte: `${s.periodos} ${s.tipoPeriodo.toLowerCase()}${s.periodos === 1 ? '' : (s.tipoPeriodo === 'Mes' ? 'es' : 's')}`,
     // Un año: 12 meses o 4 trimestres. Solo así se compara sin ajustar con un periodo anual.
     anual: (s.tipoPeriodo === 'Mes' && s.periodos === 12) || (s.tipoPeriodo === 'Trimestre' && s.periodos === 4),

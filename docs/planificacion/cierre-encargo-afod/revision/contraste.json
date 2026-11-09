@@ -1,0 +1,3132 @@
+{
+  "controles": 521,
+  "diferencias": [],
+  "resultados": [
+    {
+      "control": "euro.ventas",
+      "esperado": 3900000.0,
+      "app": 3900000,
+      "conforme": true
+    },
+    {
+      "control": "euro.costo",
+      "esperado": 2145000.0,
+      "app": 2145000,
+      "conforme": true
+    },
+    {
+      "control": "euro.gastos",
+      "esperado": 468000.0,
+      "app": 468000,
+      "conforme": true
+    },
+    {
+      "control": "euro.intereses",
+      "esperado": 325000.0,
+      "app": 325000,
+      "conforme": true
+    },
+    {
+      "control": "euro.bruta",
+      "esperado": 1755000.0,
+      "app": 1755000,
+      "conforme": true
+    },
+    {
+      "control": "euro.uaii",
+      "esperado": 1287000.0,
+      "app": 1287000,
+      "conforme": true
+    },
+    {
+      "control": "euro.uai",
+      "esperado": 962000.0,
+      "app": 962000,
+      "conforme": true
+    },
+    {
+      "control": "euro.ir",
+      "esperado": 384800.0,
+      "app": 384800,
+      "conforme": true
+    },
+    {
+      "control": "euro.neta",
+      "esperado": 577200.0,
+      "app": 577200,
+      "conforme": true
+    },
+    {
+      "control": "euro.dividendos",
+      "esperado": 320000.0,
+      "app": 320000,
+      "conforme": true
+    },
+    {
+      "control": "euro.retenidas",
+      "esperado": 257200.0,
+      "app": 257200,
+      "conforme": true
+    },
+    {
+      "control": "metro.ventas",
+      "esperado": 1500000.0,
+      "app": 1500000,
+      "conforme": true
+    },
+    {
+      "control": "metro.costo",
+      "esperado": 975000.0,
+      "app": 975000,
+      "conforme": true
+    },
+    {
+      "control": "metro.gastos",
+      "esperado": 128571.42857142857,
+      "app": 128571.42857142858,
+      "conforme": true
+    },
+    {
+      "control": "metro.intereses",
+      "esperado": 35000.0,
+      "app": 35000,
+      "conforme": true
+    },
+    {
+      "control": "metro.bruta",
+      "esperado": 525000.0,
+      "app": 525000,
+      "conforme": true
+    },
+    {
+      "control": "metro.uaii",
+      "esperado": 396428.5714285714,
+      "app": 396428.5714285714,
+      "conforme": true
+    },
+    {
+      "control": "metro.uai",
+      "esperado": 361428.5714285714,
+      "app": 361428.5714285714,
+      "conforme": true
+    },
+    {
+      "control": "metro.ir",
+      "esperado": 144571.42857142858,
+      "app": 144571.42857142858,
+      "conforme": true
+    },
+    {
+      "control": "metro.neta",
+      "esperado": 216857.14285714287,
+      "app": 216857.14285714284,
+      "conforme": true
+    },
+    {
+      "control": "metro.dividendos",
+      "esperado": 70000.0,
+      "app": 70000,
+      "conforme": true
+    },
+    {
+      "control": "metro.retenidas",
+      "esperado": 146857.14285714287,
+      "app": 146857.14285714284,
+      "conforme": true
+    },
+    {
+      "control": "metroFV.ventas",
+      "esperado": 1500000.0,
+      "app": 1500000,
+      "conforme": true
+    },
+    {
+      "control": "metroFV.costo",
+      "esperado": 960000.0,
+      "app": 960000,
+      "conforme": true
+    },
+    {
+      "control": "metroFV.gastos",
+      "esperado": 126000.0,
+      "app": 126000,
+      "conforme": true
+    },
+    {
+      "control": "metroFV.intereses",
+      "esperado": 35000.0,
+      "app": 35000,
+      "conforme": true
+    },
+    {
+      "control": "metroFV.bruta",
+      "esperado": 540000.0,
+      "app": 540000,
+      "conforme": true
+    },
+    {
+      "control": "metroFV.uaii",
+      "esperado": 414000.0,
+      "app": 414000,
+      "conforme": true
+    },
+    {
+      "control": "metroFV.uai",
+      "esperado": 379000.0,
+      "app": 379000,
+      "conforme": true
+    },
+    {
+      "control": "metroFV.ir",
+      "esperado": 151600.0,
+      "app": 151600,
+      "conforme": true
+    },
+    {
+      "control": "metroFV.neta",
+      "esperado": 227400.0,
+      "app": 227400,
+      "conforme": true
+    },
+    {
+      "control": "metroFV.dividendos",
+      "esperado": 70000.0,
+      "app": 70000,
+      "conforme": true
+    },
+    {
+      "control": "metroFV.retenidas",
+      "esperado": 157400.0,
+      "app": 157400,
+      "conforme": true
+    },
+    {
+      "control": "leonard.activos.efectivo",
+      "esperado": 50000.0,
+      "app": 50000,
+      "conforme": true
+    },
+    {
+      "control": "leonard.activos.valores",
+      "esperado": 15000.0,
+      "app": 15000,
+      "conforme": true
+    },
+    {
+      "control": "leonard.activos.cxc",
+      "esperado": 300000.0,
+      "app": 300000,
+      "conforme": true
+    },
+    {
+      "control": "leonard.activos.inventario",
+      "esperado": 360000.0,
+      "app": 360000,
+      "conforme": true
+    },
+    {
+      "control": "leonard.activos.corrientes",
+      "esperado": 725000.0,
+      "app": 725000,
+      "conforme": true
+    },
+    {
+      "control": "leonard.activos.fijosNetos",
+      "esperado": 658000.0,
+      "app": 658000,
+      "conforme": true
+    },
+    {
+      "control": "leonard.activos.total",
+      "esperado": 1383000.0,
+      "app": 1383000,
+      "conforme": true
+    },
+    {
+      "control": "leonard.pasivos.cxp",
+      "esperado": 420000.0,
+      "app": 420000.00000000006,
+      "conforme": true
+    },
+    {
+      "control": "leonard.pasivos.deudasAcumuladas",
+      "esperado": 60000.0,
+      "app": 60000,
+      "conforme": true
+    },
+    {
+      "control": "leonard.pasivos.otrosCorrientes",
+      "esperado": 30000.0,
+      "app": 30000,
+      "conforme": true
+    },
+    {
+      "control": "leonard.pasivos.deudaLargoPlazo",
+      "esperado": 350000.0,
+      "app": 350000,
+      "conforme": true
+    },
+    {
+      "control": "leonard.pasivos.corrientes",
+      "esperado": 510000.0,
+      "app": 510000.00000000006,
+      "conforme": true
+    },
+    {
+      "control": "leonard.pasivos.total",
+      "esperado": 860000.0,
+      "app": 860000,
+      "conforme": true
+    },
+    {
+      "control": "leonard.patrimonio.acciones",
+      "esperado": 200000.0,
+      "app": 200000,
+      "conforme": true
+    },
+    {
+      "control": "leonard.patrimonio.retenidas",
+      "esperado": 270000.0,
+      "app": 270000,
+      "conforme": true
+    },
+    {
+      "control": "leonard.patrimonio.total",
+      "esperado": 470000.0,
+      "app": 470000,
+      "conforme": true
+    },
+    {
+      "control": "leonard.pasivosPatrimonio",
+      "esperado": 1330000.0,
+      "app": 1330000,
+      "conforme": true
+    },
+    {
+      "control": "leonard.utilidadNeta",
+      "esperado": 120000.0,
+      "app": 120000,
+      "conforme": true
+    },
+    {
+      "control": "leonard.adicionRetenidas",
+      "esperado": 50000.0,
+      "app": 50000,
+      "conforme": true
+    },
+    {
+      "control": "leonard.diferencia",
+      "esperado": 53000.0,
+      "app": 53000,
+      "conforme": true
+    },
+    {
+      "control": "leonard.financiamiento",
+      "esperado": 53000.0,
+      "app": 53000,
+      "conforme": true
+    },
+    {
+      "control": "leonard.dividendoSinFaltante",
+      "esperado": 17000.0,
+      "app": 17000,
+      "conforme": true
+    },
+    {
+      "control": "leonard ajustado: balance",
+      "esperado": 1383000.0,
+      "app": 1383000,
+      "conforme": true
+    },
+    {
+      "control": "leonard ajustado: brecha",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "residual.ventas",
+      "esperado": 52562500.0,
+      "app": 52562500,
+      "conforme": true
+    },
+    {
+      "control": "residual.costo",
+      "esperado": 37845000.0,
+      "app": 37845000,
+      "conforme": true
+    },
+    {
+      "control": "residual.bruta",
+      "esperado": 14717500.0,
+      "app": 14717500,
+      "conforme": true
+    },
+    {
+      "control": "residual.gastos",
+      "esperado": 3668031.4285714286,
+      "app": 3668031.4285714272,
+      "conforme": true
+    },
+    {
+      "control": "residual.uaii",
+      "esperado": 11049468.57142857,
+      "app": 11049468.571428573,
+      "conforme": true
+    },
+    {
+      "control": "residual.uai",
+      "esperado": 10391428.57142857,
+      "app": 10391428.571428573,
+      "conforme": true
+    },
+    {
+      "control": "residual.intereses",
+      "esperado": 658040.0,
+      "app": 658040,
+      "conforme": true
+    },
+    {
+      "control": "residual.ir",
+      "esperado": 3117428.5714285714,
+      "app": 3117428.571428572,
+      "conforme": true
+    },
+    {
+      "control": "residual.neta",
+      "esperado": 7274000.0,
+      "app": 7274000.000000001,
+      "conforme": true
+    },
+    {
+      "control": "residual.ventasCredito",
+      "esperado": 44678125.0,
+      "app": 44678125,
+      "conforme": true
+    },
+    {
+      "control": "residual.comprasCredito",
+      "esperado": 37962000.0,
+      "app": 37962000,
+      "conforme": true
+    },
+    {
+      "control": "residual.actividad.RotInv",
+      "esperado": 6.0,
+      "app": 6,
+      "conforme": true
+    },
+    {
+      "control": "residual.actividad.edadInventario",
+      "esperado": 60.833333333333336,
+      "app": 60.833333333333336,
+      "conforme": true
+    },
+    {
+      "control": "residual.actividad.RotCxC",
+      "esperado": 7.209056070996369,
+      "app": 7.209056070996369,
+      "conforme": true
+    },
+    {
+      "control": "residual.actividad.PPC",
+      "esperado": 50.630761698258375,
+      "app": 50.630761698258375,
+      "conforme": true
+    },
+    {
+      "control": "residual.actividad.rotacionCxP",
+      "esperado": 74.94965449160908,
+      "app": 74.94965449160908,
+      "conforme": true
+    },
+    {
+      "control": "residual.actividad.plazoPago",
+      "esperado": 4.869935725198883,
+      "app": 4.869935725198883,
+      "conforme": true
+    },
+    {
+      "control": "residual.actividad.rotacionActivosFijos",
+      "esperado": 19.044384057971016,
+      "app": 19.044384057971016,
+      "conforme": true
+    },
+    {
+      "control": "residual.actividad.rotacionActivos",
+      "esperado": 2.315987750875724,
+      "app": 2.315987750875724,
+      "conforme": true
+    },
+    {
+      "control": "residual.actividad.cicloConversion",
+      "esperado": 106.59415930639283,
+      "app": 106.59415930639283,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.1.ventas",
+      "esperado": 425000.0,
+      "app": 425000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.1.compras",
+      "esperado": 255000.0,
+      "app": 255000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.1.cobros.importe",
+      "esperado": 307500.0,
+      "app": 307500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.1.proveedores.importe",
+      "esperado": 222600.0,
+      "app": 222600,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.1.entradas",
+      "esperado": 307500.0,
+      "app": 307500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.1.salidas",
+      "esperado": 284350.0,
+      "app": 284350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.1.neto",
+      "esperado": 23150.0,
+      "app": 23150,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.1.inicial",
+      "esperado": 15000.0,
+      "app": 15000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.1.antes",
+      "esperado": 38150.0,
+      "app": 38150,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.1.minimo",
+      "esperado": 15000.0,
+      "app": 15000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.1.necesidad",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.1.exceso",
+      "esperado": 23150.0,
+      "app": 23150,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.1.final",
+      "esperado": 38150.0,
+      "app": 38150,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.1.deudaAdicional",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.1.cxcInicial",
+      "esperado": 294200.0,
+      "app": 294200,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.1.cxcFinal",
+      "esperado": 411700.0,
+      "app": 411700,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.1.cxpInicial",
+      "esperado": 69600.0,
+      "app": 69600,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.1.cxpFinal",
+      "esperado": 102000.0,
+      "app": 102000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.2.ventas",
+      "esperado": 500000.0,
+      "app": 500000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.2.compras",
+      "esperado": 300000.0,
+      "app": 300000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.2.cobros.importe",
+      "esperado": 416450.0,
+      "app": 416450,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.2.proveedores.importe",
+      "esperado": 282000.0,
+      "app": 282000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.2.entradas",
+      "esperado": 416450.0,
+      "app": 416450,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.2.salidas",
+      "esperado": 417000.0,
+      "app": 417000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.2.neto",
+      "esperado": -550.0,
+      "app": -550,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.2.inicial",
+      "esperado": 38150.0,
+      "app": 38150,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.2.antes",
+      "esperado": 37600.0,
+      "app": 37600,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.2.minimo",
+      "esperado": 15000.0,
+      "app": 15000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.2.necesidad",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.2.exceso",
+      "esperado": 22600.0,
+      "app": 22600,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.2.final",
+      "esperado": 37600.0,
+      "app": 37600,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.2.deudaAdicional",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.2.cxcInicial",
+      "esperado": 411700.0,
+      "app": 411700,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.2.cxcFinal",
+      "esperado": 495250.0,
+      "app": 495250,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.2.cxpInicial",
+      "esperado": 102000.0,
+      "app": 102000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.2.cxpFinal",
+      "esperado": 120000.0,
+      "app": 120000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.3.ventas",
+      "esperado": 600000.0,
+      "app": 600000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.3.compras",
+      "esperado": 360000.0,
+      "app": 360000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.3.cobros.importe",
+      "esperado": 502250.0,
+      "app": 502250,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.3.proveedores.importe",
+      "esperado": 336000.0,
+      "app": 336000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.3.entradas",
+      "esperado": 502250.0,
+      "app": 502250,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.3.salidas",
+      "esperado": 539000.0,
+      "app": 539000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.3.neto",
+      "esperado": -36750.0,
+      "app": -36750,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.3.inicial",
+      "esperado": 37600.0,
+      "app": 37600,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.3.antes",
+      "esperado": 850.0,
+      "app": 850,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.3.minimo",
+      "esperado": 15000.0,
+      "app": 15000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.3.necesidad",
+      "esperado": 14150.0,
+      "app": 14150,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.3.exceso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.3.final",
+      "esperado": 850.0,
+      "app": 850,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.3.deudaAdicional",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.3.cxcInicial",
+      "esperado": 495250.0,
+      "app": 495250,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.3.cxcFinal",
+      "esperado": 593000.0,
+      "app": 593000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.3.cxpInicial",
+      "esperado": 120000.0,
+      "app": 120000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.3.cxpFinal",
+      "esperado": 144000.0,
+      "app": 144000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.4.ventas",
+      "esperado": 625000.0,
+      "app": 625000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.4.compras",
+      "esperado": 375000.0,
+      "app": 375000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.4.cobros.importe",
+      "esperado": 590000.0,
+      "app": 590000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.4.proveedores.importe",
+      "esperado": 369000.0,
+      "app": 369000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.4.entradas",
+      "esperado": 590000.0,
+      "app": 590000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.4.salidas",
+      "esperado": 542750.0,
+      "app": 542750,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.4.neto",
+      "esperado": 47250.0,
+      "app": 47250,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.4.inicial",
+      "esperado": 850.0,
+      "app": 850,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.4.antes",
+      "esperado": 48100.0,
+      "app": 48100,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.4.minimo",
+      "esperado": 15000.0,
+      "app": 15000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.4.necesidad",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.4.exceso",
+      "esperado": 33100.0,
+      "app": 33100,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.4.final",
+      "esperado": 48100.0,
+      "app": 48100,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.4.deudaAdicional",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.4.cxcInicial",
+      "esperado": 593000.0,
+      "app": 593000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.4.cxcFinal",
+      "esperado": 628000.0,
+      "app": 628000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.4.cxpInicial",
+      "esperado": 144000.0,
+      "app": 144000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.4.cxpFinal",
+      "esperado": 150000.0,
+      "app": 150000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.5.ventas",
+      "esperado": 650000.0,
+      "app": 650000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.5.compras",
+      "esperado": 390000.0,
+      "app": 390000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.5.cobros.importe",
+      "esperado": 624750.0,
+      "app": 624750,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.5.proveedores.importe",
+      "esperado": 384000.0,
+      "app": 384000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.5.entradas",
+      "esperado": 624750.0,
+      "app": 624750,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.5.salidas",
+      "esperado": 568500.0,
+      "app": 568500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.5.neto",
+      "esperado": 56250.0,
+      "app": 56250,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.5.inicial",
+      "esperado": 48100.0,
+      "app": 48100,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.5.antes",
+      "esperado": 104350.0,
+      "app": 104350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.5.minimo",
+      "esperado": 15000.0,
+      "app": 15000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.5.necesidad",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.5.exceso",
+      "esperado": 89350.0,
+      "app": 89350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.5.final",
+      "esperado": 104350.0,
+      "app": 104350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.5.deudaAdicional",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.5.cxcInicial",
+      "esperado": 628000.0,
+      "app": 628000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.5.cxcFinal",
+      "esperado": 653250.0,
+      "app": 653250,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.5.cxpInicial",
+      "esperado": 150000.0,
+      "app": 150000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.5.cxpFinal",
+      "esperado": 156000.0,
+      "app": 156000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.6.ventas",
+      "esperado": 700000.0,
+      "app": 700000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.6.compras",
+      "esperado": 420000.0,
+      "app": 420000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.6.cobros.importe",
+      "esperado": 652750.0,
+      "app": 652750,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.6.proveedores.importe",
+      "esperado": 408000.0,
+      "app": 408000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.6.entradas",
+      "esperado": 652750.0,
+      "app": 652750,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.6.salidas",
+      "esperado": 678000.0,
+      "app": 678000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.6.neto",
+      "esperado": -25250.0,
+      "app": -25250,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.6.inicial",
+      "esperado": 104350.0,
+      "app": 104350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.6.antes",
+      "esperado": 79100.0,
+      "app": 79100,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.6.minimo",
+      "esperado": 15000.0,
+      "app": 15000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.6.necesidad",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.6.exceso",
+      "esperado": 64100.0,
+      "app": 64100,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.6.final",
+      "esperado": 79100.0,
+      "app": 79100,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.6.deudaAdicional",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.6.cxcInicial",
+      "esperado": 653250.0,
+      "app": 653250,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.6.cxcFinal",
+      "esperado": 700500.0,
+      "app": 700500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.6.cxpInicial",
+      "esperado": 156000.0,
+      "app": 156000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.6.cxpFinal",
+      "esperado": 168000.0,
+      "app": 168000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero1.financiamientoMaximo",
+      "esperado": 14150.0,
+      "app": 14150,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.1.ventas",
+      "esperado": 425000.0,
+      "app": 425000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.1.compras",
+      "esperado": 255000.0,
+      "app": 255000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.1.cobros.importe",
+      "esperado": 304500.0,
+      "app": 304500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.1.proveedores.importe",
+      "esperado": 206400.0,
+      "app": 206400,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.1.entradas",
+      "esperado": 304500.0,
+      "app": 304500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.1.salidas",
+      "esperado": 268150.0,
+      "app": 268150,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.1.neto",
+      "esperado": 36350.0,
+      "app": 36350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.1.inicial",
+      "esperado": 15000.0,
+      "app": 15000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.1.antes",
+      "esperado": 51350.0,
+      "app": 51350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.1.minimo",
+      "esperado": 15000.0,
+      "app": 15000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.1.necesidad",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.1.exceso",
+      "esperado": 36350.0,
+      "app": 36350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.1.final",
+      "esperado": 51350.0,
+      "app": 51350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.1.deudaAdicional",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.1.cxcInicial",
+      "esperado": 291000.0,
+      "app": 291000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.1.cxcFinal",
+      "esperado": 411500.0,
+      "app": 411500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.1.cxpInicial",
+      "esperado": 104400.0,
+      "app": 104400,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.1.cxpFinal",
+      "esperado": 153000.0,
+      "app": 153000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.2.ventas",
+      "esperado": 500000.0,
+      "app": 500000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.2.compras",
+      "esperado": 300000.0,
+      "app": 300000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.2.cobros.importe",
+      "esperado": 419000.0,
+      "app": 419000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.2.proveedores.importe",
+      "esperado": 273000.0,
+      "app": 273000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.2.entradas",
+      "esperado": 419000.0,
+      "app": 419000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.2.salidas",
+      "esperado": 353000.0,
+      "app": 353000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.2.neto",
+      "esperado": 66000.0,
+      "app": 66000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.2.inicial",
+      "esperado": 51350.0,
+      "app": 51350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.2.antes",
+      "esperado": 117350.0,
+      "app": 117350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.2.minimo",
+      "esperado": 15000.0,
+      "app": 15000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.2.necesidad",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.2.exceso",
+      "esperado": 102350.0,
+      "app": 102350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.2.final",
+      "esperado": 117350.0,
+      "app": 117350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.2.deudaAdicional",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.2.cxcInicial",
+      "esperado": 411500.0,
+      "app": 411500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.2.cxcFinal",
+      "esperado": 492500.0,
+      "app": 492500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.2.cxpInicial",
+      "esperado": 153000.0,
+      "app": 153000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.2.cxpFinal",
+      "esperado": 180000.0,
+      "app": 180000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.3.ventas",
+      "esperado": 600000.0,
+      "app": 600000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.3.compras",
+      "esperado": 360000.0,
+      "app": 360000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.3.cobros.importe",
+      "esperado": 502500.0,
+      "app": 502500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.3.proveedores.importe",
+      "esperado": 324000.0,
+      "app": 324000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.3.entradas",
+      "esperado": 502500.0,
+      "app": 502500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.3.salidas",
+      "esperado": 451000.0,
+      "app": 451000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.3.neto",
+      "esperado": 51500.0,
+      "app": 51500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.3.inicial",
+      "esperado": 117350.0,
+      "app": 117350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.3.antes",
+      "esperado": 168850.0,
+      "app": 168850,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.3.minimo",
+      "esperado": 15000.0,
+      "app": 15000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.3.necesidad",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.3.exceso",
+      "esperado": 153850.0,
+      "app": 153850,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.3.final",
+      "esperado": 168850.0,
+      "app": 168850,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.3.deudaAdicional",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.3.cxcInicial",
+      "esperado": 492500.0,
+      "app": 492500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.3.cxcFinal",
+      "esperado": 590000.0,
+      "app": 590000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.3.cxpInicial",
+      "esperado": 180000.0,
+      "app": 180000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.3.cxpFinal",
+      "esperado": 216000.0,
+      "app": 216000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.4.ventas",
+      "esperado": 625000.0,
+      "app": 625000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.4.compras",
+      "esperado": 375000.0,
+      "app": 375000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.4.cobros.importe",
+      "esperado": 592500.0,
+      "app": 592500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.4.proveedores.importe",
+      "esperado": 366000.0,
+      "app": 366000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.4.entradas",
+      "esperado": 592500.0,
+      "app": 592500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.4.salidas",
+      "esperado": 471000.0,
+      "app": 471000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.4.neto",
+      "esperado": 121500.0,
+      "app": 121500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.4.inicial",
+      "esperado": 168850.0,
+      "app": 168850,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.4.antes",
+      "esperado": 290350.0,
+      "app": 290350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.4.minimo",
+      "esperado": 15000.0,
+      "app": 15000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.4.necesidad",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.4.exceso",
+      "esperado": 275350.0,
+      "app": 275350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.4.final",
+      "esperado": 290350.0,
+      "app": 290350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.4.deudaAdicional",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.4.cxcInicial",
+      "esperado": 590000.0,
+      "app": 590000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.4.cxcFinal",
+      "esperado": 622500.0,
+      "app": 622500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.4.cxpInicial",
+      "esperado": 216000.0,
+      "app": 216000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.4.cxpFinal",
+      "esperado": 225000.0,
+      "app": 225000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.5.ventas",
+      "esperado": 650000.0,
+      "app": 650000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.5.compras",
+      "esperado": 390000.0,
+      "app": 390000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.5.cobros.importe",
+      "esperado": 625000.0,
+      "app": 625000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.5.proveedores.importe",
+      "esperado": 381000.0,
+      "app": 381000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.5.entradas",
+      "esperado": 625000.0,
+      "app": 625000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.5.salidas",
+      "esperado": 494000.0,
+      "app": 494000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.5.neto",
+      "esperado": 131000.0,
+      "app": 131000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.5.inicial",
+      "esperado": 290350.0,
+      "app": 290350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.5.antes",
+      "esperado": 421350.0,
+      "app": 421350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.5.minimo",
+      "esperado": 15000.0,
+      "app": 15000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.5.necesidad",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.5.exceso",
+      "esperado": 406350.0,
+      "app": 406350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.5.final",
+      "esperado": 421350.0,
+      "app": 421350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.5.deudaAdicional",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.5.cxcInicial",
+      "esperado": 622500.0,
+      "app": 622500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.5.cxcFinal",
+      "esperado": 647500.0,
+      "app": 647500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.5.cxpInicial",
+      "esperado": 225000.0,
+      "app": 225000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.5.cxpFinal",
+      "esperado": 234000.0,
+      "app": 234000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.6.ventas",
+      "esperado": 700000.0,
+      "app": 700000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.6.compras",
+      "esperado": 420000.0,
+      "app": 420000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.6.cobros.importe",
+      "esperado": 652500.0,
+      "app": 652500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.6.proveedores.importe",
+      "esperado": 402000.0,
+      "app": 402000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.6.entradas",
+      "esperado": 652500.0,
+      "app": 652500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.6.salidas",
+      "esperado": 585000.0,
+      "app": 585000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.6.neto",
+      "esperado": 67500.0,
+      "app": 67500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.6.inicial",
+      "esperado": 421350.0,
+      "app": 421350,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.6.antes",
+      "esperado": 488850.0,
+      "app": 488850,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.6.minimo",
+      "esperado": 15000.0,
+      "app": 15000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.6.necesidad",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.6.exceso",
+      "esperado": 473850.0,
+      "app": 473850,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.6.final",
+      "esperado": 488850.0,
+      "app": 488850,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.6.deudaAdicional",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.6.cxcInicial",
+      "esperado": 647500.0,
+      "app": 647500,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.6.cxcFinal",
+      "esperado": 695000.0,
+      "app": 695000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.6.cxpInicial",
+      "esperado": 234000.0,
+      "app": 234000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.6.cxpFinal",
+      "esperado": 252000.0,
+      "app": 252000,
+      "conforme": true
+    },
+    {
+      "control": "pinolero2.financiamientoMaximo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "halley.1.ventas",
+      "esperado": 400000.0,
+      "app": 400000,
+      "conforme": true
+    },
+    {
+      "control": "halley.1.compras",
+      "esperado": 280000.0,
+      "app": 280000,
+      "conforme": true
+    },
+    {
+      "control": "halley.1.cobros.importe",
+      "esperado": 210000.0,
+      "app": 210000,
+      "conforme": true
+    },
+    {
+      "control": "halley.1.proveedores.importe",
+      "esperado": 140000.0,
+      "app": 140000,
+      "conforme": true
+    },
+    {
+      "control": "halley.1.entradas",
+      "esperado": 210000.0,
+      "app": 210000,
+      "conforme": true
+    },
+    {
+      "control": "halley.1.salidas",
+      "esperado": 213000.0,
+      "app": 213000,
+      "conforme": true
+    },
+    {
+      "control": "halley.1.neto",
+      "esperado": -3000.0,
+      "app": -3000,
+      "conforme": true
+    },
+    {
+      "control": "halley.1.inicial",
+      "esperado": 50000.0,
+      "app": 50000,
+      "conforme": true
+    },
+    {
+      "control": "halley.1.antes",
+      "esperado": 47000.0,
+      "app": 47000,
+      "conforme": true
+    },
+    {
+      "control": "halley.1.minimo",
+      "esperado": 25000.0,
+      "app": 25000,
+      "conforme": true
+    },
+    {
+      "control": "halley.1.necesidad",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "halley.1.exceso",
+      "esperado": 22000.0,
+      "app": 22000,
+      "conforme": true
+    },
+    {
+      "control": "halley.1.final",
+      "esperado": 47000.0,
+      "app": 47000,
+      "conforme": true
+    },
+    {
+      "control": "halley.1.deudaAdicional",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "halley.1.cxcInicial",
+      "esperado": 190000.0,
+      "app": 190000,
+      "conforme": true
+    },
+    {
+      "control": "halley.1.cxcFinal",
+      "esperado": 380000.0,
+      "app": 380000,
+      "conforme": true
+    },
+    {
+      "control": "halley.1.cxpInicial",
+      "esperado": 140000.0,
+      "app": 140000,
+      "conforme": true
+    },
+    {
+      "control": "halley.1.cxpFinal",
+      "esperado": 280000.0,
+      "app": 280000,
+      "conforme": true
+    },
+    {
+      "control": "halley.2.ventas",
+      "esperado": 300000.0,
+      "app": 300000,
+      "conforme": true
+    },
+    {
+      "control": "halley.2.compras",
+      "esperado": 210000.0,
+      "app": 210000,
+      "conforme": true
+    },
+    {
+      "control": "halley.2.cobros.importe",
+      "esperado": 320000.0,
+      "app": 320000,
+      "conforme": true
+    },
+    {
+      "control": "halley.2.proveedores.importe",
+      "esperado": 245000.0,
+      "app": 245000,
+      "conforme": true
+    },
+    {
+      "control": "halley.2.entradas",
+      "esperado": 320000.0,
+      "app": 320000,
+      "conforme": true
+    },
+    {
+      "control": "halley.2.salidas",
+      "esperado": 418000.0,
+      "app": 418000,
+      "conforme": true
+    },
+    {
+      "control": "halley.2.neto",
+      "esperado": -98000.0,
+      "app": -98000,
+      "conforme": true
+    },
+    {
+      "control": "halley.2.inicial",
+      "esperado": 47000.0,
+      "app": 47000,
+      "conforme": true
+    },
+    {
+      "control": "halley.2.antes",
+      "esperado": -51000.0,
+      "app": -51000,
+      "conforme": true
+    },
+    {
+      "control": "halley.2.minimo",
+      "esperado": 25000.0,
+      "app": 25000,
+      "conforme": true
+    },
+    {
+      "control": "halley.2.necesidad",
+      "esperado": 76000.0,
+      "app": 76000,
+      "conforme": true
+    },
+    {
+      "control": "halley.2.exceso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "halley.2.final",
+      "esperado": -51000.0,
+      "app": -51000,
+      "conforme": true
+    },
+    {
+      "control": "halley.2.deudaAdicional",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "halley.2.cxcInicial",
+      "esperado": 380000.0,
+      "app": 380000,
+      "conforme": true
+    },
+    {
+      "control": "halley.2.cxcFinal",
+      "esperado": 360000.0,
+      "app": 360000,
+      "conforme": true
+    },
+    {
+      "control": "halley.2.cxpInicial",
+      "esperado": 280000.0,
+      "app": 280000,
+      "conforme": true
+    },
+    {
+      "control": "halley.2.cxpFinal",
+      "esperado": 245000.0,
+      "app": 244999.99999999997,
+      "conforme": true
+    },
+    {
+      "control": "halley.3.ventas",
+      "esperado": 200000.0,
+      "app": 200000,
+      "conforme": true
+    },
+    {
+      "control": "halley.3.compras",
+      "esperado": 140000.0,
+      "app": 140000,
+      "conforme": true
+    },
+    {
+      "control": "halley.3.cobros.importe",
+      "esperado": 310000.0,
+      "app": 310000,
+      "conforme": true
+    },
+    {
+      "control": "halley.3.proveedores.importe",
+      "esperado": 217000.0,
+      "app": 217000,
+      "conforme": true
+    },
+    {
+      "control": "halley.3.entradas",
+      "esperado": 340000.0,
+      "app": 340000,
+      "conforme": true
+    },
+    {
+      "control": "halley.3.salidas",
+      "esperado": 305000.0,
+      "app": 305000,
+      "conforme": true
+    },
+    {
+      "control": "halley.3.neto",
+      "esperado": 35000.0,
+      "app": 35000,
+      "conforme": true
+    },
+    {
+      "control": "halley.3.inicial",
+      "esperado": -51000.0,
+      "app": -51000,
+      "conforme": true
+    },
+    {
+      "control": "halley.3.antes",
+      "esperado": -16000.0,
+      "app": -16000,
+      "conforme": true
+    },
+    {
+      "control": "halley.3.minimo",
+      "esperado": 25000.0,
+      "app": 25000,
+      "conforme": true
+    },
+    {
+      "control": "halley.3.necesidad",
+      "esperado": 41000.0,
+      "app": 41000,
+      "conforme": true
+    },
+    {
+      "control": "halley.3.exceso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "halley.3.final",
+      "esperado": -16000.0,
+      "app": -16000,
+      "conforme": true
+    },
+    {
+      "control": "halley.3.deudaAdicional",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "halley.3.cxcInicial",
+      "esperado": 360000.0,
+      "app": 360000,
+      "conforme": true
+    },
+    {
+      "control": "halley.3.cxcFinal",
+      "esperado": 250000.0,
+      "app": 250000,
+      "conforme": true
+    },
+    {
+      "control": "halley.3.cxpInicial",
+      "esperado": 245000.0,
+      "app": 244999.99999999997,
+      "conforme": true
+    },
+    {
+      "control": "halley.3.cxpFinal",
+      "esperado": 168000.0,
+      "app": 168000,
+      "conforme": true
+    },
+    {
+      "control": "halley.financiamientoMaximo",
+      "esperado": 76000.0,
+      "app": 76000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.1.ventas",
+      "esperado": 400000.0,
+      "app": 400000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.1.compras",
+      "esperado": 280000.0,
+      "app": 280000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.1.cobros.importe",
+      "esperado": 210000.0,
+      "app": 210000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.1.proveedores.importe",
+      "esperado": 140000.0,
+      "app": 140000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.1.entradas",
+      "esperado": 210000.0,
+      "app": 210000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.1.salidas",
+      "esperado": 213000.0,
+      "app": 213000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.1.neto",
+      "esperado": -3000.0,
+      "app": -3000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.1.inicial",
+      "esperado": 50000.0,
+      "app": 50000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.1.antes",
+      "esperado": 47000.0,
+      "app": 47000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.1.minimo",
+      "esperado": 25000.0,
+      "app": 25000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.1.necesidad",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.1.exceso",
+      "esperado": 22000.0,
+      "app": 22000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.1.final",
+      "esperado": 47000.0,
+      "app": 47000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.1.deudaAdicional",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.1.cxcInicial",
+      "esperado": 190000.0,
+      "app": 190000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.1.cxcFinal",
+      "esperado": 380000.0,
+      "app": 380000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.1.cxpInicial",
+      "esperado": 140000.0,
+      "app": 140000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.1.cxpFinal",
+      "esperado": 280000.0,
+      "app": 280000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.2.ventas",
+      "esperado": 300000.0,
+      "app": 300000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.2.compras",
+      "esperado": 210000.0,
+      "app": 210000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.2.cobros.importe",
+      "esperado": 320000.0,
+      "app": 320000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.2.proveedores.importe",
+      "esperado": 245000.0,
+      "app": 245000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.2.entradas",
+      "esperado": 320000.0,
+      "app": 320000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.2.salidas",
+      "esperado": 418000.0,
+      "app": 418000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.2.neto",
+      "esperado": -98000.0,
+      "app": -98000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.2.inicial",
+      "esperado": 47000.0,
+      "app": 47000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.2.antes",
+      "esperado": -51000.0,
+      "app": -51000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.2.minimo",
+      "esperado": 25000.0,
+      "app": 25000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.2.necesidad",
+      "esperado": 76000.0,
+      "app": 76000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.2.exceso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.2.final",
+      "esperado": 25000.0,
+      "app": 25000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.2.deudaAdicional",
+      "esperado": 76000.0,
+      "app": 76000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.2.cxcInicial",
+      "esperado": 380000.0,
+      "app": 380000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.2.cxcFinal",
+      "esperado": 360000.0,
+      "app": 360000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.2.cxpInicial",
+      "esperado": 280000.0,
+      "app": 280000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.2.cxpFinal",
+      "esperado": 245000.0,
+      "app": 244999.99999999997,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.3.ventas",
+      "esperado": 200000.0,
+      "app": 200000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.3.compras",
+      "esperado": 140000.0,
+      "app": 140000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.3.cobros.importe",
+      "esperado": 310000.0,
+      "app": 310000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.3.proveedores.importe",
+      "esperado": 217000.0,
+      "app": 217000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.3.entradas",
+      "esperado": 340000.0,
+      "app": 340000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.3.salidas",
+      "esperado": 305000.0,
+      "app": 305000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.3.neto",
+      "esperado": 35000.0,
+      "app": 35000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.3.inicial",
+      "esperado": 25000.0,
+      "app": 25000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.3.antes",
+      "esperado": 60000.0,
+      "app": 60000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.3.minimo",
+      "esperado": 25000.0,
+      "app": 25000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.3.necesidad",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.3.exceso",
+      "esperado": 35000.0,
+      "app": 35000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.3.final",
+      "esperado": 60000.0,
+      "app": 60000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.3.deudaAdicional",
+      "esperado": 76000.0,
+      "app": 76000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.3.cxcInicial",
+      "esperado": 360000.0,
+      "app": 360000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.3.cxcFinal",
+      "esperado": 250000.0,
+      "app": 250000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.3.cxpInicial",
+      "esperado": 245000.0,
+      "app": 244999.99999999997,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.3.cxpFinal",
+      "esperado": 168000.0,
+      "app": 168000,
+      "conforme": true
+    },
+    {
+      "control": "halleyPrestamo.financiamientoMaximo",
+      "esperado": 76000.0,
+      "app": 76000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.1.ventas",
+      "esperado": 400000.0,
+      "app": 400000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.1.compras",
+      "esperado": 280000.0,
+      "app": 280000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.1.cobros.importe",
+      "esperado": 210000.0,
+      "app": 210000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.1.proveedores.importe",
+      "esperado": 140000.0,
+      "app": 140000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.1.entradas",
+      "esperado": 210000.0,
+      "app": 210000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.1.salidas",
+      "esperado": 213000.0,
+      "app": 213000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.1.neto",
+      "esperado": -3000.0,
+      "app": -3000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.1.inicial",
+      "esperado": 50000.0,
+      "app": 50000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.1.antes",
+      "esperado": 47000.0,
+      "app": 47000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.1.minimo",
+      "esperado": 25000.0,
+      "app": 25000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.1.necesidad",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.1.exceso",
+      "esperado": 22000.0,
+      "app": 22000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.1.final",
+      "esperado": 47000.0,
+      "app": 47000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.1.deudaAdicional",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.1.cxcInicial",
+      "esperado": 190000.0,
+      "app": 190000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.1.cxcFinal",
+      "esperado": 380000.0,
+      "app": 380000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.1.cxpInicial",
+      "esperado": 140000.0,
+      "app": 140000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.1.cxpFinal",
+      "esperado": 280000.0,
+      "app": 280000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.2.ventas",
+      "esperado": 300000.0,
+      "app": 300000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.2.compras",
+      "esperado": 210000.0,
+      "app": 210000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.2.cobros.importe",
+      "esperado": 320000.0,
+      "app": 320000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.2.proveedores.importe",
+      "esperado": 245000.0,
+      "app": 245000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.2.entradas",
+      "esperado": 320000.0,
+      "app": 320000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.2.salidas",
+      "esperado": 418000.0,
+      "app": 418000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.2.neto",
+      "esperado": -98000.0,
+      "app": -98000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.2.inicial",
+      "esperado": 47000.0,
+      "app": 47000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.2.antes",
+      "esperado": -51000.0,
+      "app": -51000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.2.minimo",
+      "esperado": 25000.0,
+      "app": 25000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.2.necesidad",
+      "esperado": 76000.0,
+      "app": 76000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.2.exceso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.2.final",
+      "esperado": 25000.0,
+      "app": 25000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.2.deudaAdicional",
+      "esperado": 76000.0,
+      "app": 76000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.2.cxcInicial",
+      "esperado": 380000.0,
+      "app": 380000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.2.cxcFinal",
+      "esperado": 360000.0,
+      "app": 360000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.2.cxpInicial",
+      "esperado": 280000.0,
+      "app": 280000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.2.cxpFinal",
+      "esperado": 245000.0,
+      "app": 244999.99999999997,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.3.ventas",
+      "esperado": 200000.0,
+      "app": 200000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.3.compras",
+      "esperado": 140000.0,
+      "app": 140000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.3.cobros.importe",
+      "esperado": 310000.0,
+      "app": 310000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.3.proveedores.importe",
+      "esperado": 217000.0,
+      "app": 217000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.3.entradas",
+      "esperado": 340000.0,
+      "app": 340000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.3.salidas",
+      "esperado": 305000.0,
+      "app": 305000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.3.neto",
+      "esperado": 35000.0,
+      "app": 35000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.3.inicial",
+      "esperado": 25000.0,
+      "app": 25000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.3.antes",
+      "esperado": 60000.0,
+      "app": 60000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.3.minimo",
+      "esperado": 25000.0,
+      "app": 25000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.3.necesidad",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.3.exceso",
+      "esperado": 35000.0,
+      "app": 35000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.3.final",
+      "esperado": 25000.0,
+      "app": 25000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.3.deudaAdicional",
+      "esperado": 41000.0,
+      "app": 41000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.3.cxcInicial",
+      "esperado": 360000.0,
+      "app": 360000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.3.cxcFinal",
+      "esperado": 250000.0,
+      "app": 250000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.3.cxpInicial",
+      "esperado": 245000.0,
+      "app": 244999.99999999997,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.3.cxpFinal",
+      "esperado": 168000.0,
+      "app": 168000,
+      "conforme": true
+    },
+    {
+      "control": "halleyRepago.financiamientoMaximo",
+      "esperado": 76000.0,
+      "app": 76000,
+      "conforme": true
+    },
+    {
+      "control": "inventario.1.inicial",
+      "esperado": 80000.0,
+      "app": 80000,
+      "conforme": true
+    },
+    {
+      "control": "inventario.1.compras",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "inventario.1.costoVentas",
+      "esperado": 28000.0,
+      "app": 28000,
+      "conforme": true
+    },
+    {
+      "control": "inventario.1.final",
+      "esperado": 52000.0,
+      "app": 52000,
+      "conforme": true
+    },
+    {
+      "control": "inventario.unidades.1",
+      "esperado": 520.0,
+      "app": 520,
+      "conforme": true
+    },
+    {
+      "control": "inventario.2.inicial",
+      "esperado": 52000.0,
+      "app": 52000,
+      "conforme": true
+    },
+    {
+      "control": "inventario.2.compras",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "inventario.2.costoVentas",
+      "esperado": 29000.0,
+      "app": 29000,
+      "conforme": true
+    },
+    {
+      "control": "inventario.2.final",
+      "esperado": 23000.0,
+      "app": 23000,
+      "conforme": true
+    },
+    {
+      "control": "inventario.unidades.2",
+      "esperado": 230.0,
+      "app": 230,
+      "conforme": true
+    },
+    {
+      "control": "inventario.3.inicial",
+      "esperado": 23000.0,
+      "app": 23000,
+      "conforme": true
+    },
+    {
+      "control": "inventario.3.compras",
+      "esperado": 14750.0,
+      "app": 14750,
+      "conforme": true
+    },
+    {
+      "control": "inventario.3.costoVentas",
+      "esperado": 30000.0,
+      "app": 30000,
+      "conforme": true
+    },
+    {
+      "control": "inventario.3.final",
+      "esperado": 7750.0,
+      "app": 7750,
+      "conforme": true
+    },
+    {
+      "control": "inventario.unidades.3",
+      "esperado": 77.5,
+      "app": 77.5,
+      "conforme": true
+    },
+    {
+      "control": "inventario.4.inicial",
+      "esperado": 7750.0,
+      "app": 7750,
+      "conforme": true
+    },
+    {
+      "control": "inventario.4.compras",
+      "esperado": 31250.0,
+      "app": 31250,
+      "conforme": true
+    },
+    {
+      "control": "inventario.4.costoVentas",
+      "esperado": 31000.0,
+      "app": 31000,
+      "conforme": true
+    },
+    {
+      "control": "inventario.4.final",
+      "esperado": 8000.0,
+      "app": 8000,
+      "conforme": true
+    },
+    {
+      "control": "inventario.unidades.4",
+      "esperado": 80.0,
+      "app": 80,
+      "conforme": true
+    },
+    {
+      "control": "inventario.5.inicial",
+      "esperado": 8000.0,
+      "app": 8000,
+      "conforme": true
+    },
+    {
+      "control": "inventario.5.compras",
+      "esperado": 31500.0,
+      "app": 31500,
+      "conforme": true
+    },
+    {
+      "control": "inventario.5.costoVentas",
+      "esperado": 32000.0,
+      "app": 32000,
+      "conforme": true
+    },
+    {
+      "control": "inventario.5.final",
+      "esperado": 7500.0,
+      "app": 7500,
+      "conforme": true
+    },
+    {
+      "control": "inventario.unidades.5",
+      "esperado": 75.0,
+      "app": 75,
+      "conforme": true
+    },
+    {
+      "control": "inventario.6.inicial",
+      "esperado": 7500.0,
+      "app": 7500,
+      "conforme": true
+    },
+    {
+      "control": "inventario.6.compras",
+      "esperado": 29750.0,
+      "app": 29750,
+      "conforme": true
+    },
+    {
+      "control": "inventario.6.costoVentas",
+      "esperado": 30000.0,
+      "app": 30000,
+      "conforme": true
+    },
+    {
+      "control": "inventario.6.final",
+      "esperado": 7250.0,
+      "app": 7250,
+      "conforme": true
+    },
+    {
+      "control": "inventario.unidades.6",
+      "esperado": 72.5,
+      "app": 72.5,
+      "conforme": true
+    },
+    {
+      "control": "inventario.7.inicial",
+      "esperado": 7250.0,
+      "app": 7250,
+      "conforme": true
+    },
+    {
+      "control": "inventario.7.compras",
+      "esperado": 31050.0,
+      "app": 31050,
+      "conforme": true
+    },
+    {
+      "control": "inventario.7.costoVentas",
+      "esperado": 30852.777777777777,
+      "app": 30852.777777777777,
+      "conforme": true
+    },
+    {
+      "control": "inventario.7.final",
+      "esperado": 7447.222222222223,
+      "app": 7447.222222222222,
+      "conforme": true
+    },
+    {
+      "control": "inventario.unidades.7",
+      "esperado": 70.0,
+      "app": 70,
+      "conforme": true
+    },
+    {
+      "control": "inventario.8.inicial",
+      "esperado": 7447.222222222223,
+      "app": 7447.222222222222,
+      "conforme": true
+    },
+    {
+      "control": "inventario.8.compras",
+      "esperado": 30780.0,
+      "app": 30780,
+      "conforme": true
+    },
+    {
+      "control": "inventario.8.costoVentas",
+      "esperado": 30151.048513302034,
+      "app": 30151.048513302034,
+      "conforme": true
+    },
+    {
+      "control": "inventario.8.final",
+      "esperado": 8076.173708920188,
+      "app": 8076.173708920187,
+      "conforme": true
+    },
+    {
+      "control": "inventario.unidades.8",
+      "esperado": 75.0,
+      "app": 75,
+      "conforme": true
+    },
+    {
+      "control": "inventario.9.inicial",
+      "esperado": 8076.173708920188,
+      "app": 8076.173708920187,
+      "conforme": true
+    },
+    {
+      "control": "inventario.9.compras",
+      "esperado": 32670.0,
+      "app": 32670,
+      "conforme": true
+    },
+    {
+      "control": "inventario.9.costoVentas",
+      "esperado": 32381.06519914187,
+      "app": 32381.06519914187,
+      "conforme": true
+    },
+    {
+      "control": "inventario.9.final",
+      "esperado": 8365.108509778316,
+      "app": 8365.108509778316,
+      "conforme": true
+    },
+    {
+      "control": "inventario.unidades.9",
+      "esperado": 77.5,
+      "app": 77.5,
+      "conforme": true
+    },
+    {
+      "control": "inventario.10.inicial",
+      "esperado": 8365.108509778316,
+      "app": 8365.108509778316,
+      "conforme": true
+    },
+    {
+      "control": "inventario.10.compras",
+      "esperado": 34020.0,
+      "app": 34020,
+      "conforme": true
+    },
+    {
+      "control": "inventario.10.costoVentas",
+      "esperado": 33476.13665740453,
+      "app": 33476.136657404524,
+      "conforme": true
+    },
+    {
+      "control": "inventario.10.final",
+      "esperado": 8908.971852373787,
+      "app": 8908.971852373787,
+      "conforme": true
+    },
+    {
+      "control": "inventario.unidades.10",
+      "esperado": 82.5,
+      "app": 82.5,
+      "conforme": true
+    },
+    {
+      "control": "inventario.11.inicial",
+      "esperado": 8908.971852373787,
+      "app": 8908.971852373787,
+      "conforme": true
+    },
+    {
+      "control": "inventario.11.compras",
+      "esperado": 36180.0,
+      "app": 36180,
+      "conforme": true
+    },
+    {
+      "control": "inventario.11.costoVentas",
+      "esperado": 35639.18733241521,
+      "app": 35639.187332415204,
+      "conforme": true
+    },
+    {
+      "control": "inventario.11.final",
+      "esperado": 9449.784519958577,
+      "app": 9449.784519958577,
+      "conforme": true
+    },
+    {
+      "control": "inventario.unidades.11",
+      "esperado": 87.5,
+      "app": 87.5,
+      "conforme": true
+    },
+    {
+      "control": "inventario.12.inicial",
+      "esperado": 9449.784519958577,
+      "app": 9449.784519958577,
+      "conforme": true
+    },
+    {
+      "control": "inventario.12.compras",
+      "esperado": 36450.0,
+      "app": 36450,
+      "conforme": true
+    },
+    {
+      "control": "inventario.12.costoVentas",
+      "esperado": 37799.82254584824,
+      "app": 37799.82254584824,
+      "conforme": true
+    },
+    {
+      "control": "inventario.12.final",
+      "esperado": 8099.961974110337,
+      "app": 8099.961974110337,
+      "conforme": true
+    },
+    {
+      "control": "inventario.unidades.12",
+      "esperado": 75.0,
+      "app": 75,
+      "conforme": true
+    },
+    {
+      "control": "inventario.costoVentasTotal",
+      "esperado": 380300.03802588966,
+      "app": 380300.03802588966,
+      "conforme": true
+    }
+  ]
+}

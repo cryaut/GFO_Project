@@ -1,5 +1,7 @@
 import { TIPOS_APP } from './cuentas-catalogo.js';
-import { tipoCuentaLegada, obtenerCuenta, identificarCuenta } from './cuentas-identificador.js';
+import {
+  tipoCuentaLegada, obtenerCuenta, identificarCuenta, consultarMontoCuenta, CUENTA_CXC, CUENTA_PROVISION_CXC
+} from './cuentas-identificador.js';
 import { coberturaCompleta } from './estados-cobertura.js';
 export const ACCOUNT_TYPES = TIPOS_APP;
 
@@ -122,6 +124,10 @@ export function computeFinancialTotals(data, period) {
         continue;
       }
       if (id) idsPresentes.add(id);
+      if (id === CUENTA_PROVISION_CXC) {
+        present.add('cxC');
+        continue;
+      }
       if (type) {
         detail[type] += value;
         present.add(type);
@@ -174,7 +180,8 @@ export function computeFinancialTotals(data, period) {
     : (hayDetalle ? detalle : (groupReported.has(grupo) ? null : 0));
 
   const inventario = componente(detail.inventario, present.has('inventario'), 'bs.inventory_total');
-  const activosCorrientesDetalle = detail.efectivo + detail.cxC + inventario + detail.activosCorrientesOtros;
+  const cxC = idsPresentes.has(CUENTA_PROVISION_CXC) ? consultarMontoCuenta(data, period, CUENTA_CXC).valor : detail.cxC;
+  const activosCorrientesDetalle = cxC === null ? null : detail.efectivo + cxC + inventario + detail.activosCorrientesOtros;
   const hayCorrientes = ['efectivo', 'cxC', 'inventario', 'activosCorrientesOtros'].some(tipo => present.has(tipo))
     || hayReportado('bs.inventory_total');
   const activosCorrientes = subtotal(activosCorrientesDetalle, hayCorrientes, 'activos', 'bs.current_assets_total');
@@ -187,6 +194,14 @@ export function computeFinancialTotals(data, period) {
   let totalActivos = hayReportado('bs.total_assets')
     ? usarReportado('bs.total_assets', totalActivosCalculado)
     : (totalActivosCalculado !== null ? totalActivosCalculado : (groupReported.has('activos') ? null : 0));
+  if (cxC === null) {
+    if (!hayReportado('bs.total_assets') && activosCorrientes === null) totalActivos = null;
+    reasons.push({
+      group: 'activos', name: 'Provisión de cuentas incobrables', motivo: 'missing_required_account_data',
+      campos: ['cxC', ...(!hayReportado('bs.current_assets_total') ? ['activosCorrientes'] : []),
+        ...(totalActivos === null ? ['totalActivos'] : [])]
+    });
+  }
   let activosFijosFinal = activosFijos;
   if (faltaDepreciacion) {
     if (!hayReportado('bs.fixed_assets_net_total')) activosFijosFinal = null;
@@ -244,6 +259,7 @@ export function computeFinancialTotals(data, period) {
 
   const totals = {
     ...detail,
+    cxC,
     inventario,
     activosCorrientes, activosFijos: activosFijosFinal, totalActivos,
     pasivosCorrientes, totalPasivos, totalPatrimonio,
