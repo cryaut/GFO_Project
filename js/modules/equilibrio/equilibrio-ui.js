@@ -7,6 +7,8 @@ import { panelEjemplos, vincularEjemplos, ejemploSeleccionado } from '../../comp
 import { escapeHTML as esc } from '../../utils/html.js';
 import { formatCurrencyND as montoBase, formatNumberND, formatPercentND as pct } from '../../utils/format.js';
 import { leerNumero } from '../../utils/form.js';
+import { mostrarProcedencia, panelTransferencia, vincularTransferencia } from '../../components/transferencia.js';
+import { procedenciaVigente, transferenciaCvuInventario, transferenciaCvuPlaneacion } from '../../utils/transferencias.js';
 import {
   calcularCVU, calcularEscenarios, ejemploEquilibrio, normalizarEquilibrio,
   puntosGrafica, resolverBase, validarEquilibrio
@@ -17,6 +19,9 @@ const esNumero = valor => typeof valor === 'number' && Number.isFinite(valor);
 const num = valor => formatNumberND(valor, esNumero(valor) && Number.isInteger(valor) ? 0 : 2);
 const valorCampo = valor => (esNumero(valor) ? String(valor) : '');
 const valorPorcentaje = fraccion => (fraccion ? String(Number((fraccion * 100).toFixed(4))) : '0');
+const CAMPOS_CVU = [
+  ['precio', 'eqPrecio'], ['costoVariableUnitario', 'eqCVu'], ['costosFijos', 'eqCF'], ['unidades', 'eqUnidades']
+];
 
 const ETIQUETA_MOTIVO_GAO = {
   'sin-ventas': 'sin unidades vendidas',
@@ -156,8 +161,10 @@ function configGrafica(r) {
 
 // opciones: { datos, guardar, graficar?, estados?, configApalancamiento? }
 export function equilibrioUI(page, opciones) {
-  const { guardar, graficar = null, estados = null, configApalancamiento = null } = opciones;
+  const { guardar, graficar = null, estados = null, configApalancamiento = null,
+    leerFuentes = () => ({}), confirmar = texto => window.confirm(texto) } = opciones;
   let datos = normalizarEquilibrio(opciones.datos);
+  let procedenciaBorrador = {};
   const monto = v => montoBase(v, monedaDe(datos));
 
   const campo = id => page.querySelector(`#${id}`)?.value ?? '';
@@ -251,7 +258,32 @@ export function equilibrioUI(page, opciones) {
       <button type="submit" class="btn btn-primary">Calcular y guardar</button></form></div>`;
   }
 
+  function seccionTransferencias() {
+    if (datos.origen === 'estados' && estados) {
+      return `<p class="form-hint">Fuente en vivo · ${esc(estados.name || 'Estados guardados')} · ${esc(monedaDe(estados))}. El periodo se elige en Datos.</p>`;
+    }
+    const { inventario, planeacion } = leerFuentes();
+    const controles = [];
+    if (planeacion?.periodos.length) controles.push(`<div class="form-group">
+      <label for="eqTraerPeriodo">Periodo de Planeación</label>
+      <select class="form-select" id="eqTraerPeriodo">${planeacion.periodos.map(p =>
+        `<option value="${esc(p)}">${esc(p)}</option>`).join('')}</select>
+      <button type="button" class="btn btn-secondary" id="eqTraerPlaneacion">Ver presupuesto guardado</button></div>`);
+    if (inventario?.productos.length) controles.push(`<div class="form-group">
+      <label for="eqTraerProducto">Producto de Inventario</label>
+      <select class="form-select" id="eqTraerProducto">${inventario.productos.map(p =>
+        `<option value="${esc(p.id)}">${esc(p.nombre)}</option>`).join('')}</select>
+      <label><input type="checkbox" id="eqTraerCostoConfirmado"> El costo promedio cubre todo el costo variable unitario de esta línea</label>
+      <button type="button" class="btn btn-secondary" id="eqTraerInventario">Ver costo del producto</button></div>`);
+    return (controles.length ? panelTransferencia('eqTraer', controles.join(''),
+      'Aplique los datos compatibles al formulario. Las unidades de Inventario corresponden a existencias y las de Planeación a ventas previstas.')
+      : '') + mostrarProcedencia(datos.procedencia ?? {}, dato => procedenciaVigente(dato, dato.origen === 'inventario'
+      ? transferenciaCvuInventario(inventario, dato.producto, monedaDe(datos), {}, true)
+      : transferenciaCvuPlaneacion(planeacion, dato.periodo, monedaDe(datos), {})));
+  }
+
   function render() {
+    procedenciaBorrador = { ...datos.procedencia };
     const resolucion = resolverBase(datos, estados, configApalancamiento);
     const datosEfectivos = resolucion.base ? { ...datos, ...resolucion.base } : datos;
     const errores = validarEquilibrio(datosEfectivos);
@@ -273,6 +305,7 @@ export function equilibrioUI(page, opciones) {
         <p class="page-subtitle">Margen de contribución, punto de equilibrio en unidades y en C$, margen de seguridad y escenarios.</p></div>
       <p id="equilibrioMensaje" role="status" aria-live="polite" class="text-muted">Ingrese los datos del producto o de la línea y pulse Calcular.</p>
       ${panelEjemplos('equilibrio', 'eqEjemplo')}
+      ${seccionTransferencias()}
       ${seccionDatos(resolucion)}
       ${resultados}`;
     bind();
@@ -282,6 +315,30 @@ export function equilibrioUI(page, opciones) {
 
   function bind() {
     vincularEjemplos(page, 'equilibrio');
+    const actuales = () => Object.fromEntries(CAMPOS_CVU.map(([clave, id]) => [clave, numero(id).valor]));
+    vincularTransferencia(page, {
+      id: 'eqTraer', confirmar, mensaje, textoAplicar: 'Aplicar al borrador',
+      fuentes: {
+        eqTraerPlaneacion: () => transferenciaCvuPlaneacion(leerFuentes().planeacion, campo('eqTraerPeriodo'), monedaDe(datos), actuales()),
+        eqTraerInventario: () => transferenciaCvuInventario(leerFuentes().inventario, campo('eqTraerProducto'), monedaDe(datos), actuales(),
+          page.querySelector('#eqTraerCostoConfirmado')?.checked)
+      },
+      aplicar(filas, fichas, origen) {
+        const otros = Object.entries(procedenciaBorrador).filter(([clave, dato]) =>
+          !Object.hasOwn(fichas, clave) && numero(CAMPOS_CVU.find(([campo]) => campo === clave)[1]).valor === dato.valor);
+        const incompatibles = otros.some(([, dato]) => dato.origen === origen.origen
+          ? dato.producto !== origen.producto || dato.periodo !== origen.periodo || dato.escenario !== origen.escenario || dato.caso !== origen.caso
+          : !dato.producto || dato.producto !== origen.producto);
+        if (incompatibles) { mensaje('Elija los campos vinculados del mismo producto y periodo, o revise primero el borrador.', true); return; }
+        for (const fila of filas) {
+          const input = CAMPOS_CVU.find(([clave]) => clave === fila.campo)[1];
+          page.querySelector(`#${input}`).value = String(fila.valor);
+        }
+        procedenciaBorrador = { ...Object.fromEntries(otros), ...fichas };
+        page.querySelector('#eqTraerVistaPrevia').innerHTML = '';
+        mensaje('Datos aplicados al formulario. Pulse Calcular y guardar.');
+      }
+    });
     page.querySelector('#eqEjemplo')?.addEventListener('click', () => {
       persistir(normalizarEquilibrio(ejemploSeleccionado(page, 'equilibrio', ejemploEquilibrio)),
         'Ejemplo seleccionado cargado. Revise su alcance en el panel.');
@@ -304,13 +361,13 @@ export function equilibrioUI(page, opciones) {
         persistir(nuevos, `Datos guardados: el precio y los costos se derivan de los estados de ${nuevos.periodo} en cada consulta.`);
         return;
       }
-      const leidos = {
-        precio: numero('eqPrecio'), costoVariableUnitario: numero('eqCVu'),
-        costosFijos: numero('eqCF'), unidades: numero('eqUnidades')
-      };
+      const leidos = Object.fromEntries(CAMPOS_CVU.map(([clave, id]) => [clave, numero(id)]));
       const objetivo = numero('eqUtilidad');
       const nuevos = { ...datos, origen: 'manual', utilidadObjetivo: objetivo.vacio ? null : objetivo.valor };
       for (const [clave, { valor }] of Object.entries(leidos)) nuevos[clave] = valor;
+      const fichas = Object.entries(procedenciaBorrador).filter(([clave, dato]) => nuevos[clave] === dato.valor);
+      if (fichas.length) nuevos.procedencia = Object.fromEntries(fichas);
+      else delete nuevos.procedencia;
       // Un texto no numérico en la utilidad objetivo es un error, no un campo vacío.
       if (!objetivo.vacio && objetivo.valor === null) { mensaje('La utilidad objetivo debe ser un número.', true); return; }
       persistir(nuevos, 'Datos guardados. Resultados recalculados.');

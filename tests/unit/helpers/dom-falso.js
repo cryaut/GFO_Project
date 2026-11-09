@@ -53,6 +53,11 @@ export async function clic(page, id) {
   await el.dispatchEvent({ type: 'click' });
 }
 
+export async function aplicarVistaPrevia(page, id, campos) {
+  for (const campo of campos) page.querySelector(`#${id}Campo-${campo}`).checked = true;
+  await clic(page, `${id}Aplicar`);
+}
+
 export async function enviar(page, id) {
   const el = page.querySelector(`#${id}`);
   if (!el) throw new Error(`No existe #${id}`);

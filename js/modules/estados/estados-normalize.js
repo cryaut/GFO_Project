@@ -228,7 +228,11 @@ export function normalizeFinancialData(input, { filas = {} } = {}) {
         } else {
           if (!name.trim() || name.length > 120) throw new Error('Nombre de cuenta inválido');
           target[period][name] = toAmount(value, name);
-          accountIdentities.suplementario[name] = identidadCuenta(source, 'suplementario', name);
+          const identidad = identidadCuenta(source, 'suplementario', name);
+          accountIdentities.suplementario[name] = identidad;
+          if (identidad.idCuenta === 'supp.stock_dividends') {
+            validarSigno('suplementario', name, target[period][name], period, identidad, filas);
+          }
         }
       }
     }

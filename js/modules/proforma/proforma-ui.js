@@ -1,4 +1,5 @@
 import { tablaDesarrollo } from '../planeacion/planeacion-desarrollo-ui.js';
+import { montarProformaDocente } from './proforma-docente-ui.js';
 // Pantalla #/proforma: estado de resultados proforma, efectivo proyectado, indicadores integrados
 // y alertas. Los datos llegan ya calculados por proforma-calculations.js.
 import { escapeHTML as esc } from '../../utils/html.js';
@@ -50,8 +51,9 @@ function seccionProforma(r) {
   if (r.motivoComparacion) notas.push(esc(r.motivoComparacion));
   if (r.proforma) notas.push('La proforma sale del presupuesto maestro: no incluye otros ingresos operativos ni otros ingresos o gastos no operativos, y el IR se calcula sobre la UAI positiva de cada periodo.');
   return `<div class="card mb-4"><h2 class="card-title">1. Estado de resultados proforma</h2>
-    ${r.proforma ? `<p class="proforma-resultado"><strong>Utilidad neta proyectada: ${monto(r.proforma.utilidadNeta)}</strong><span>Utilidad antes de impuestos (UAI): ${monto(r.proforma.uai)}</span></p>` : ''}
-    ${r.proforma ? `<p class="proforma-origen">Fuente: presupuesto maestro guardado · ${esc(r.proforma.horizonte)}. Las ventas se proyectan desde unidades y precio; los costos y gastos usan sus supuestos declarados.</p>` : ''}
+    ${r.real ? `<p class="proforma-origen">Histórico de Estados Financieros · ${esc(r.real.empresa || 'Estados guardados')} · ${esc(r.real.periodo)} · ${esc(r.real.moneda)}. <a href="#/estados">Consultar origen</a></p>` : ''}
+    ${r.proforma ? `<p class="proforma-resultado"><strong>Utilidad neta proyectada: ${monto(r.proforma.utilidadNeta, r.proforma.moneda)}</strong><span>Utilidad antes de impuestos (UAI): ${monto(r.proforma.uai, r.proforma.moneda)}</span></p>` : ''}
+    ${r.proforma ? `<p class="proforma-origen">Presupuesto maestro guardado · ${esc(r.proforma.horizonte)} · ${esc(r.proforma.moneda)}. Las ventas se proyectan desde unidades y precio. <a href="#/planeacion">Consultar origen</a></p>` : ''}
     <div class="table-wrapper"><table class="statement-table">
       <thead><tr><th scope="col">Concepto</th><th scope="col" class="text-right">${tituloReal}</th><th scope="col" class="text-right">${tituloProforma}</th><th scope="col" class="text-right">Variación</th></tr></thead>
       <tbody>${filas}</tbody></table></div>
@@ -101,6 +103,7 @@ export function proformaUI(page, { reporte, imprimir = null }) {
       <p class="page-subtitle">Resumen de todos los módulos para apoyar decisiones: resultados proyectados, efectivo, indicadores y alertas.</p></div>
     <div class="flex-gap flex-wrap mb-4">${imprimir ? '<button type="button" class="btn btn-secondary" id="proformaImprimir">Imprimir o guardar como PDF</button>' : ''}</div>
     ${seccionProforma(reporte)}
+    <details class="card mb-4"><summary>Métodos docentes AFOD</summary><div id="proformaAFOD"></div></details>
     ${seccionEfectivo(reporte.efectivo, reporte.desarrollo)}
     ${seccionFaltantes(reporte.faltantes)}
     ${seccionIndicadores(reporte.indicadores)}
@@ -108,4 +111,5 @@ export function proformaUI(page, { reporte, imprimir = null }) {
     <div class="card mb-4"><h2 class="card-title">Cómo se integra</h2>
       <p>Estados financieros → Análisis y Apalancamiento → Presupuesto maestro → esta proforma. El inventario aporta las existencias y alertas de compra; el punto de equilibrio usa las mismas fórmulas que el presupuesto. El presupuesto personal es independiente.</p></div>`;
   page.querySelector('#proformaImprimir')?.addEventListener('click', () => imprimir());
+  montarProformaDocente(page.querySelector('#proformaAFOD'));
 }

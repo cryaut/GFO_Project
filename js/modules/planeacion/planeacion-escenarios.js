@@ -1,6 +1,7 @@
 import {
   MAX_PERIODOS, SUPUESTOS, normalizarSupuestos, validarCapitalTrabajo, validarSupuestos
 } from './planeacion-calculations.js';
+import { PROCEDENCIA_PLANEACION, validarProcedencia } from '../../utils/transferencias.js';
 
 export const ARCHIVO_REFERENCIA = 'propuesta-caso/referencia/referencia_resultados.json';
 export const ARCHIVO_ENTRADAS = 'propuesta-caso/referencia/inputs.json';
@@ -78,6 +79,7 @@ export function validarEscenarios(datos) {
       throw new Error('El escenario tiene supuestos incompatibles con su base.');
     }
     const errores = validarSupuestos(conApertura(escenario, base), { parcial: true });
+    if (Object.hasOwn(escenario, 'procedencia')) validarProcedencia(escenario.procedencia, PROCEDENCIA_PLANEACION);
     if (Object.hasOwn(escenario, 'capitalTrabajo')) {
       if (!base) throw new Error('Capital de trabajo requiere una base histórica.');
       errores.push(...validarCapitalTrabajo(escenario.capitalTrabajo, supuestos));
@@ -191,11 +193,15 @@ export function duplicarEscenario(datos, id) {
   return validarEscenarios({ ...datos, escenarios: [...datos.escenarios, copia], activoId: id });
 }
 
-export function editarEscenario(datos, nombre, supuestos, capitalTrabajo = undefined) {
+export function editarEscenario(datos, nombre, supuestos, capitalTrabajo = undefined, procedencia = undefined) {
   const { escenario, base, error } = leerPlaneacion(datos);
   if (!escenario) throw new Error(error ?? 'Seleccione un escenario para guardarlo.');
   const nuevo = { ...escenario, nombre: nombre.trim(), supuestos: { ...supuestos } };
   if (capitalTrabajo !== undefined) nuevo.capitalTrabajo = capitalTrabajo;
+  if (procedencia !== undefined) {
+    if (Object.keys(procedencia).length) nuevo.procedencia = validarProcedencia(procedencia, PROCEDENCIA_PLANEACION);
+    else delete nuevo.procedencia;
+  }
   if (base) for (const clave of CAMPOS_BASE) delete nuevo.supuestos[clave];
   return validarEscenarios({
     ...datos, escenarios: datos.escenarios.map(e => (e.id === escenario.id ? nuevo : e))

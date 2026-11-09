@@ -1,5 +1,5 @@
 // Datos de la colección. Investigación y procedencia: docs/planificacion/cuentas/investigacion.md.
-export const versionCatalogo = '2026-11-07.1';
+export const versionCatalogo = '2026-11-08.1';
 export const TIPOS_APP = {
   'activos': [
     'efectivo',
@@ -848,7 +848,7 @@ export const CUENTAS_CATALOGO = [
     'clasificacion': 'patrimonio',
     'rol': 'detail',
     'politicaAusencia': 'requires_data',
-    'convencionSigno': 'positivo',
+    'convencionSigno': 'conservar',
     'sinonimos': [
       'Otras cuentas patrimoniales que no tengan un identificador más específico'
     ],
@@ -2087,6 +2087,43 @@ export const CUENTAS_CATALOGO = [
       'fecha': '2026-10-18',
       'motivo': 'La cita específica procede del PGC español (705 (definición conjunta 700/705)); solo sirve de referencia terminológica. El enlace NIIF/NIC restante es conceptual y no verifica esta cuenta específica.'
     }
+  },
+  {
+    'id': 'is.pretax_income_reported',
+    'nombreCanonico': 'Utilidad antes de impuestos',
+    'definicion': 'Resultado antes del impuesto sobre la renta informado directamente por la fuente. Una pérdida conserva signo negativo.',
+    'grupo': 'estadoResultados',
+    'clasificacion': 'total',
+    'rol': 'reported_total',
+    'politicaAusencia': 'not_applicable',
+    'convencionSigno': 'conservar',
+    'sinonimos': [
+      'Utilidad antes de impuesto',
+      'Utilidad neta antes de impuestos',
+      'Resultado antes de impuestos',
+      'UAI'
+    ],
+    'sinonimosDudosos': [],
+    'tipoApp': null,
+    'ambiguedades': [],
+    'estadoInvestigacion': 'partially_verified',
+    'fuentes': []
+  },
+  {
+    'id': 'supp.stock_dividends',
+    'nombreCanonico': 'Dividendos en acciones',
+    'definicion': 'Importe declarado de utilidades capitalizadas como dividendos en acciones durante el periodo.',
+    'grupo': 'suplementario',
+    'clasificacion': 'suplementario',
+    'rol': 'detail',
+    'politicaAusencia': 'requires_data',
+    'convencionSigno': 'positivo',
+    'sinonimos': ['Dividendos pagados en acciones'],
+    'sinonimosDudosos': [],
+    'tipoApp': null,
+    'ambiguedades': [],
+    'estadoInvestigacion': 'partially_verified',
+    'fuentes': []
   },
   {
     'id': 'supp.credit_sales',

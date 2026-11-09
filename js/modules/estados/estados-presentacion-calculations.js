@@ -10,13 +10,16 @@ const numero = v => typeof v === 'number' && Number.isFinite(v);
 const TITULOS = { activos: 'Activos', pasivos: 'Pasivos', patrimonio: 'Patrimonio', estadoResultados: 'Estado de resultados' };
 const TIPOS = { activos: 'Activo', pasivos: 'Pasivo', patrimonio: 'Patrimonio' };
 const RAZON_ER = 'rentabilidad_margen_utilidad_neta';
+const UAI_REPORTADA = 'is.pretax_income_reported';
 // Se consulta la expresión existente antes del impuesto, sin modificar la
 // especificación generada ni sustituir impuestos ausentes por un cero ficticio.
 const docER = ESPECIFICACION_RAZONES[RAZON_ER];
 const formulaUN = docER.derivados.find(d => d.id === 'derived.net_income').formula.calculation;
 const consultaUAI = { id: 'derived.presentacion_uai', kind: 'flow', formula: {
-  ...formulaUN, right: { ...formulaUN.right,
-    operands: formulaUN.right.operands.filter(n => n.id !== 'is.income_tax_expense') }
+  op: 'reported_or_calculate',
+  reported: UAI_REPORTADA,
+  calculation: { ...formulaUN, right: { ...formulaUN.right,
+    operands: formulaUN.right.operands.filter(n => n.id !== 'is.income_tax_expense') } }
 } };
 const consultasER = { ...ESPECIFICACION_RAZONES, [RAZON_ER]: {
   ...docER, derivados: [...docER.derivados, consultaUAI]
@@ -139,7 +142,8 @@ const BLOQUES_ER = [
 ];
 
 function resultadosResueltos(datos, periodo, filas, cuentasNoDisponibles) {
-  const delGrupo = filas.filter(f => f.grupoId === 'estadoResultados');
+  const delGrupo = filas.filter(f => f.grupoId === 'estadoResultados')
+    .map(f => f.id === UAI_REPORTADA ? { ...f, id: 'presentacion.uai' } : f);
   if (!delGrupo.length) return [];
   const contexto = crearContextoRazonesGuardadas(datos, periodo, { cuentasNoDisponibles });
   const restantes = new Set(delGrupo);

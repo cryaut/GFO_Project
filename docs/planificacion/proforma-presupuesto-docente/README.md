@@ -1,6 +1,6 @@
 # Proforma y presupuesto: procedimiento visible
 
-- Estado: Implementada y verificada; entrega local, sin push ni PR.
+- Estado: Procedimiento base integrado en el PR #31. Métodos docentes implementados en la rama de cierre del encargo.
 - Rama: `codex/proforma-presupuesto-docente`, creada desde origin/main e incorporando el commit local dc4d96b de Estados resueltos.
 - Fuente nueva: `../TEAM.md/Ejercicios_AFOD.zip` y 16 Markdown extraídos en `../TEAM.md/Ejercicios_AFOD/`.
 - SHA-256 del ZIP: `6fd39159eaca96013eda5f49b3ccd031c63e01eb0f37c4fcf5b84bcddbd552c4`.
@@ -13,7 +13,11 @@ Fuentes principales: Ejercicios E.R proformas (Euro Designs, Metroline y Leonard
 
 ## Alcance
 
-Mostrar resultado y caja completos cuando el presupuesto ya los calcula, con procedimiento del horizonte y del periodo. Completar UAI en Proforma, distinguir sus fuentes y explicar IR devengado/pagado y financiamiento informado. Mantener independientes los escenarios parciales, sus resultados disponibles, borradores y N/D. No introducir métodos docentes nuevos ni cambiar fórmulas, calendarios, tasas o persistencia para forzar coincidencias. Documentar los métodos por porcentaje de ventas, fijo/variable, balance crítico y pagos de impuestos por fecha que aún no implementa el modelo actual.
+Mostrar resultado y caja completos cuando el presupuesto ya los calcula, con procedimiento del horizonte y del periodo. Completar UAI en Proforma, distinguir sus fuentes y explicar IR devengado/pagado y financiamiento informado. Mantener independientes los escenarios parciales, sus resultados disponibles, borradores y N/D.
+
+El cierre del encargo agrega **Métodos docentes AFOD** a Proforma. Se pueden editar las premisas y recalcular Euro Designs por porcentaje de ventas, Metroline por ambos métodos y Leonard por balance crítico. La fuente acredita importes en USD y una proyección anual de 2013 sobre datos de 2012. El cálculo de cada ejercicio queda en su panel y no escribe en el almacenamiento de los módulos.
+
+Las pruebas de `tests/unit/proforma-docente.test.js` contrastan las partidas de los tres estados de resultados con la referencia independiente y verifican el balance por cuenta, el ajuste del dividendo de Leonard, el formulario y los datos pendientes.
 
 ## Entrega y validación
 

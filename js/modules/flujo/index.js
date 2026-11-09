@@ -7,11 +7,18 @@ import { flujoUI } from './flujo-ui.js';
 export function initFlujo() {
   const page = document.getElementById('page-flujo');
   if (!page) return;
+  let datos = store.get('flujo');
+  const leerEstados = () => estadosGuardados(store.get('estados'));
   flujoUI(page, {
-    datos: store.get('flujo'),
-    estados: estadosGuardados(store.get('estados')),
+    datos,
+    estados: leerEstados(),
+    leerEstados,
     // Lanza un error si localStorage falla; la pantalla lo muestra y no cambia nada.
-    guardar: datos => store.setPersisted('flujo', datos),
+    guardar: nuevos => {
+      if (datos !== store.get('flujo')) throw new Error('Flujo cambió. Vuelva a abrir la pantalla para guardar sobre los datos vigentes');
+      store.setPersisted('flujo', nuevos);
+      datos = store.get('flujo');
+    },
     graficar: renderChart,
     confirmar: texto => window.confirm(texto)
   });

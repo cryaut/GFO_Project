@@ -3,7 +3,7 @@ import { leerEstados } from '../../utils/estados-guardados.js';
 import { UMBRALES, computeDuPont, computeRazones, refreshSavedStates } from '../analisis/index.js';
 import { calcularRazonesMercado } from '../analisis/mercado-calculations.js';
 import { calcularApalancamiento } from '../apalancamiento/apalancamiento-calculations.js';
-import { calcularCVU, normalizarEquilibrio, validarEquilibrio } from '../equilibrio/equilibrio-calculations.js';
+import { calcularCVU, normalizarEquilibrio, resolverBase, validarEquilibrio } from '../equilibrio/equilibrio-calculations.js';
 import { calcularInventario } from '../inventario/inventario-calculations.js';
 import { calcularPresupuestoMaestro, validarSupuestos } from '../planeacion/planeacion-calculations.js';
 import { leerPlaneacion } from '../planeacion/planeacion-escenarios.js';
@@ -31,9 +31,11 @@ export function reunirEntradas() {
   const { supuestos, base, escenario, error: errorPlaneacion } = leerPlaneacion(store.get('planeacion'));
   const motivoPresupuesto = errorPlaneacion || (base
     ? (escenario?.capitalTrabajo
-      ? 'El escenario activo tiene su propia base histórica. Su presupuesto parcial de capital de trabajo está en Planeación; aún faltan la valorización del costo de ventas, los gastos y la caja para elaborar una proforma completa.'
+      ? 'El escenario activo tiene su propia base histórica y sus resultados parciales están en Planeación. Una proforma completa requiere los gastos y la caja del mismo escenario.'
       : 'El escenario activo tiene su propia base histórica. Consulte sus resultados en Planeación; no se comparan con los estados de otra base en la proforma integrada.') : null);
   const equilibrio = normalizarEquilibrio(store.get('equilibrio'));
+  const baseCvu = resolverBase(equilibrio, estados, store.get('apalancamiento'));
+  const cVu = baseCvu.base ? { ...equilibrio, ...baseCvu.base } : equilibrio;
   // D-070: el flujo viene del EFE de Análisis (último par de periodos), no de la
   // captura manual del flujo directo, que queda como captura no oficial.
   const flujo = estados ? intentar(() => flujoDesdeEFE(estados)) : flujoDesdeEFE(null);
@@ -50,7 +52,7 @@ export function reunirEntradas() {
     presupuesto: motivoPresupuesto || validarSupuestos(supuestos).length
       ? null : intentar(() => calcularPresupuestoMaestro(supuestos, inventario)),
     motivoPresupuesto,
-    equilibrio: validarEquilibrio(equilibrio).length ? null : calcularCVU(equilibrio),
+    equilibrio: baseCvu.error || validarEquilibrio(cVu).length ? null : calcularCVU(cVu),
     flujo,
     inventario: inventario.productos.length ? inventario : null,
     umbrales: UMBRALES

@@ -5,7 +5,7 @@ import {
 } from '../../js/modules/flujo/flujo-calculations.js';
 import { flujoUI } from '../../js/modules/flujo/flujo-ui.js';
 import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
-import { clic, element, enviar, llenar, mensaje } from './helpers/dom-falso.js';
+import { aplicarVistaPrevia, clic, element, enviar, llenar, mensaje } from './helpers/dom-falso.js';
 
 describe('fórmulas de flujo de efectivo', () => {
   it('flujo neto, variación neta y saldo final', () => {
@@ -154,6 +154,8 @@ describe('pantalla de flujo de efectivo', () => {
     const { page, guardar } = montar(undefined, { estados });
     llenar(page, { flujoPeriodo: '2024' });
     await clic(page, 'flujoTomarSaldo');
+    expect(guardar).not.toHaveBeenCalled();
+    await aplicarVistaPrevia(page, 'flujoTraer', ['saldoInicial']);
     expect(guardar.mock.lastCall[0]).toMatchObject({ saldoInicial: 52000, periodoBase: '2024' });
     expect(page.innerHTML).toContain('tomado del efectivo del balance de 2024');
   });

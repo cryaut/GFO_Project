@@ -1,4 +1,5 @@
 import { normalizarMoneda } from '../../utils/moneda.js';
+import { leerProcedencia, PROCEDENCIA_CVU } from '../../utils/transferencias.js';
 // Punto de equilibrio y análisis costo-volumen-utilidad (C-V-U).
 // Lógica pura: sin DOM, window ni store. Plan: docs/planificacion/modulos-guia/01-modulos-obligatorios.md.
 import {
@@ -41,8 +42,10 @@ export function normalizarEquilibrio(datos) {
     escenario[campo] = valor === undefined || valor === null || valor === '' ? 0
       : esNumero(valor) ? valor : null;
   }
+  const procedencia = leerProcedencia(datos?.procedencia, PROCEDENCIA_CVU);
   return {
     ...normalizarMoneda(datos),
+    ...(Object.keys(procedencia).length ? { procedencia } : {}),
     origen: datos?.origen === 'estados' ? 'estados' : 'manual',
     periodo: typeof datos?.periodo === 'string' ? datos.periodo : '',
     precio: numeroONull(datos?.precio),

@@ -21,10 +21,12 @@ export function initPlaneacion() {
   const page = document.getElementById('page-planeacion');
   if (!page) return;
   let datos = store.get('planeacion');
+  const leerEstados = () => estadosGuardados(store.get('estados'));
+  const leerInventario = () => calcularInventario(store.get('inventario'));
   planeacionUI(page, {
     datos,
-    estados: estadosGuardados(store.get('estados')),
-    inventario: calcularInventario(store.get('inventario')),
+    leerEstados,
+    leerInventario,
     // Lanza un error si localStorage falla; la pantalla lo muestra y no cambia nada.
     guardar: nuevos => {
       if (datos !== store.get('planeacion')) {
