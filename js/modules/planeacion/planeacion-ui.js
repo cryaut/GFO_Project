@@ -144,9 +144,18 @@ function seccionCapitalTrabajo(p) {
     { concepto: 'Existencia final proyectada', formato: 'unidades', valores: p.existencias.map(f => f.final), destacar: true },
     { concepto: 'Costo unitario de compra', formato: 'monto', valores: p.costosCompra }
   ], 'Si la existencia inicial cubre las ventas y el objetivo, se conserva el sobrante.');
+  const { meses, costoVentasTotal } = p.valoracion;
+  const valoracion = tabla('Inventario valorizado y costo de ventas', p.etiquetas, [
+    ['inicial', 'Inventario inicial valorizado', meses[0].inicial],
+    ['compras', '(+) Compras del periodo', p.compras.totales.importe],
+    ['costoVentas', '(−) Costo de ventas', costoVentasTotal],
+    ['final', '(=) Inventario final valorizado', meses.at(-1).final]
+  ].map(([clave, concepto, total]) => ({
+    concepto, formato: 'monto', valores: meses.map(mes => mes[clave]), total, destacar: clave === 'final'
+  })), 'El promedio ponderado mensual divide el valor del inventario inicial más las compras entre las unidades disponibles. En Total, las filas de inventario muestran la apertura y el cierre del horizonte.');
   return `<section aria-label="Presupuesto parcial de capital de trabajo">
     <p class="form-hint">Resultados del escenario guardado. N/D indica un cálculo pendiente. Los saldos se muestran por mes.</p>
-    ${ventas}${existencias}${compras}
+    ${ventas}${existencias}${valoracion}${compras}
     <div class="card mb-4"><h2 class="card-title">Vencimientos después del horizonte</h2>
       <h3>Cobros pendientes</h3>${detalleVencimientos(p.ventas.pendientes)}
       <h3>Pagos pendientes</h3>${detalleVencimientos(p.compras.pendientes)}</div>
@@ -482,7 +491,9 @@ export function planeacionUI(page, opciones) {
       return;
     }
     const capital = lectura.escenario?.capitalTrabajo;
-    const resultadoCapital = capital ? calcularCapitalTrabajo(lectura.supuestos, capital, lectura.base.fechaCorte) : null;
+    const resultadoCapital = capital
+      ? calcularCapitalTrabajo(lectura.supuestos, capital, lectura.base.fechaCorte, lectura.base.apertura.inventarioValor)
+      : null;
     const resultado = capital || validarSupuestos(lectura.supuestos).length
       ? null : calcularPresupuestoMaestro(lectura.supuestos, lectura.base ? null : leerInventario());
     const resumen = resultadoCapital ?? resultado;
@@ -493,7 +504,7 @@ export function planeacionUI(page, opciones) {
     const contexto = [base?.empresa, horizonte, base ? `Corte ${base.fechaCorte}` : ''].filter(Boolean).join(' · ');
     const aviso = resultado?.avisos.find(a => a.codigo === 'financiamiento') ?? resultado?.avisos[0];
     const carga = `<div class="plan-carga">
-      ${cargarReferencia ? '<section class="example-picker"><h3>Caso integrado de referencia</h3><label for="planReferenciaEjemplo">Referencia disponible</label><select id="planReferenciaEjemplo" class="form-select"><option>Comercial Ejemplo · capital de trabajo parcial</option></select><p class="example-picker-source">Referencia propia del repositorio. Su alcance es cobros, pagos e inventario; no es un presupuesto maestro completo.</p><button id="planCargarCaso" type="button" class="btn btn-secondary">Cargar referencia seleccionada</button></section>' : ''}
+      ${cargarReferencia ? '<section class="example-picker"><h3>Caso integrado de referencia</h3><label for="planReferenciaEjemplo">Referencia disponible</label><select id="planReferenciaEjemplo" class="form-select"><option>Comercial Ejemplo · capital de trabajo parcial</option></select><p class="example-picker-source">Referencia propia del repositorio con ventas, cobros, pagos, inventario y costo de ventas de un presupuesto parcial.</p><button id="planCargarCaso" type="button" class="btn btn-secondary">Cargar referencia seleccionada</button></section>' : ''}
       ${panelEjemplos('planeacion', 'planEjemplo')}
     </div>`;
     page.innerHTML = `<header class="page-header plan-cabecera">

@@ -2344,3 +2344,21 @@ Inicio y Mercado reutilizan el ER resuelto; EFE consulta `obtenerUtilidadNetaMot
 **Para revertirla.** Registrar otra decisión, restablecer aprobación obligatoria en las dos guías y configurar nuevamente el número de aprobaciones en GitHub.
 
 **Referencias.** `docs/planificacion/revision-opcional/README.md`; solicitud de Cris del 2026-11-08.
+
+### D-104 — Valoración mensual del inventario de Comercial Ejemplo
+
+- **Fecha** · 2026-11-08.
+- **Estado** · Implementada para el escenario parcial.
+- **Área** · Planeación y referencia de Comercial Ejemplo.
+
+**Contexto.** D-090 proyectó unidades y compras. El cierre histórico aporta el valor de apertura y el escenario guarda costos de compra mensuales.
+
+**Opciones.** Mantener un costo fijo, llevar un kardex por movimiento o valorar el conjunto de unidades disponibles de cada mes. Se elige el promedio ponderado mensual porque los supuestos son mensuales y la referencia independiente ya usa ese método.
+
+**Decisión.** Se divide la suma del valor de apertura y las compras entre las unidades disponibles. Se valora el inventario final con ese promedio y se obtiene el costo de ventas por diferencia. El cierre se arrastra al mes siguiente con toda su precisión. Los importes que dependen de un dato ausente quedan N/D. Una venta cero tiene costo cero, y un cierre de cero unidades deja un valor cero que permite reiniciar la valoración. El total del costo de ventas requiere todos los meses.
+
+**Consecuencias.** La valoración se deriva de los datos guardados, con el mismo esquema de escenarios. Un respaldo con cero unidades y valor positivo en la apertura muestra el valor de apertura como N/D. El método mensual reproduce la referencia del caso. El kardex de Inventario conserva la política por movimiento de D-081.
+
+**Para revertirla.** Retirar la valoración de las vistas y conservar los costos y la apertura de los escenarios.
+
+**Referencias.** [Caso integrado](planificacion/caso-integrado/README.md) · [Cálculo independiente](../propuesta-caso/referencia/calculo_referencia.py).

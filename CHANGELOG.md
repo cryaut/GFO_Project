@@ -15,6 +15,7 @@ Todos los cambios notables en GFO Toolkit.
 - Referencia parcial de Planeación identificada por separado; cargar un presupuesto completo confirma el reemplazo de sus escenarios. Inventario conserva el desplazamiento de tablas dentro del ancho móvil.
 
 ### Planeación y Proforma
+- Comercial Ejemplo muestra el costo de ventas y el inventario valorizado por mes, con promedio ponderado y N/D para los importes que requieren datos pendientes (D-104).
 - Presupuesto completo: utilidad y caja visibles desde el resumen; desarrollo con fórmulas, operandos y resultados por horizonte/periodo. Proforma incorpora UAI, comparte la lectura del ER real de Estados/Razones y expone sus cálculos. El caso parcial muestra sus pendientes sin inventar resultados; comparación con Ejercicios AFOD documentada (D-097).
 
 ### Rigor financiero

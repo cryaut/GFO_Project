@@ -962,9 +962,11 @@ Lógica pura en `js/modules/<modulo>/<modulo>-calculations.js` (sin DOM ni `stor
 
 Devuelve una lista de errores. El escenario usa meses y el costo escalar queda en `null`. `capital.costosCompra` contiene un costo no negativo o `null` por mes. Los cuatro calendarios, `cobrosApertura`, `cobrosCredito`, `pagosApertura` y `pagosCredito`, son `null` si están pendientes o listas de 1 a 12 fracciones que suman 1 dentro de una tolerancia de `1e-7`. La primera fracción de apertura se aplica al primer mes del presupuesto. La primera fracción de crédito se aplica al mes siguiente al movimiento. Un cero explícito salta un plazo.
 
-#### `calcularCapitalTrabajo(s, capital, fechaCorte)`
+#### `calcularCapitalTrabajo(s, capital, fechaCorte, valorInventarioInicial = null)`
 
-Recibe los supuestos mensuales ya validados con su apertura, la configuración anterior y la fecha de corte `AAAA-MM-DD`. Devuelve `{ etiquetas, unidadesVendidas, existencias, costosCompra, ventas, compras }`. Cada fila de existencias contiene `{ inicial, objetivo, compras, final }` en unidades. Cada bloque de ventas o compras incluye `meses`, `totales` de movimientos y `pendientes` después del horizonte.
+Recibe los supuestos mensuales ya validados con su apertura, la configuración anterior, la fecha de corte `AAAA-MM-DD` y el valor monetario de apertura. Devuelve `{ etiquetas, unidadesVendidas, existencias, costosCompra, valoracion, ventas, compras }`. Cada fila de existencias contiene `{ inicial, objetivo, compras, final }` en unidades. Cada bloque de ventas o compras incluye `meses`, `totales` de movimientos y `pendientes` después del horizonte.
+
+`valoracion` contiene `meses` con `{ inicial, compras, costoVentas, final }` en C$ y `costoVentasTotal` para el horizonte. El cierre mensual multiplica las existencias finales por el costo promedio de las unidades disponibles. El costo de ventas es el valor disponible menos el cierre. El cierre se arrastra con toda su precisión. Una partida que requiere un dato ausente devuelve `null` y se conservan los ceros conocidos. El costo del horizonte requiere todos los meses (D-104).
 
 Cada mes monetario devuelve `{ importe, contado, credito, liquidado, total, apertura, cierre, vencimientos }`. `liquidado` recoge los vencimientos de los saldos de apertura y del crédito de meses previos. `total` suma el contado del mes y la liquidación de crédito. Los vencimientos tienen `{ origen, vence, importe }`, con meses `AAAA-MM`. Un cálculo pendiente queda en `null`. Una lista de vencimientos vacía indica que se conoce que no hay partidas para ese plazo.
 

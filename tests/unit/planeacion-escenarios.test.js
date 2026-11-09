@@ -46,6 +46,9 @@ describe('Planeación con la referencia de Comercial Ejemplo', () => {
     expect(page.innerHTML).toMatch(/id="plan-cxcInicial"[^>]*readonly[^>]*value="28400"/);
     expect(page.innerHTML).toMatch(/id="plan-cobrosApertura"[^>]*value="60 40"/);
     expect(page.innerHTML).toContain('Ventas y cobros');
+    expect(page.innerHTML).toContain('Inventario valorizado y costo de ventas');
+    expect(page.innerHTML).toContain('C$ 380,300.04');
+    expect(page.innerHTML).toContain('C$ 8,099.96');
     expect(page.innerHTML).toContain('2027-02');
     expect(page.innerHTML).not.toContain('id="planChart"');
     const baseId = store.get('planeacion.activoId');
@@ -57,6 +60,7 @@ describe('Planeación con la referencia de Comercial Ejemplo', () => {
     await cambiar(page, 'plan-precio', '235', 'input');
     await cambiar(page, 'planCostoCompra-0', '0', 'input');
     await cambiar(page, 'planCostoCompra-1', '', 'input');
+    await cambiar(page, 'planCostoCompra-2', '', 'input');
     await cambiar(page, 'plan-cobrosCredito', '0 100', 'input');
     await enviar(page, 'formPlaneacion');
     store.load();
@@ -69,14 +73,19 @@ describe('Planeación con la referencia de Comercial Ejemplo', () => {
     expect(base.supuestos.precio).toBe(220);
     expect(base.capitalTrabajo).toMatchObject({ costosCompra: entradas.proyeccion_2026.costo_compra_unitario, cobrosCredito: [0.5, 0.5] });
     expect(copia).toMatchObject({ origenId: baseId, nombre: '<Tensión>', baseId: base.baseId, supuestos: { precio: 235 } });
-    expect(copia.capitalTrabajo.costosCompra.slice(0, 2)).toEqual([0, null]);
+    expect(copia.capitalTrabajo.costosCompra.slice(0, 3)).toEqual([0, null, null]);
     expect(copia.capitalTrabajo.cobrosCredito).toEqual([0, 1]);
     expect(copia.supuestos).not.toHaveProperty('saldoInicialCaja');
     expect(page.innerHTML).toContain('&lt;Tensión&gt;');
     expect(page.innerHTML).not.toContain('<Tensión>');
     expect(page.innerHTML).toMatch(/id="plan-cobrosCredito"[^>]*value="0 100"/);
+    expect(page.innerHTML).toMatch(/Costo de ventas<\/td>[^]*?C\$ 28,000\.00[^]*?N\/D/);
+    expect(page.innerHTML).not.toContain('C$ 380,300.04');
+    expect(page.innerHTML).not.toContain('C$ 8,099.96');
     await cambiar(page, 'planEscenario', baseId);
     expect(page.innerHTML).toMatch(/id="plan-precio"[^>]*value="220"/);
+    expect(page.innerHTML).toContain('C$ 380,300.04');
+    expect(page.innerHTML).toContain('C$ 8,099.96');
     await clic(page, 'planVer-supuestos');
     await clic(page, 'planCargarCaso');
     expect(store.get('planeacion.escenarios')).toHaveLength(3);

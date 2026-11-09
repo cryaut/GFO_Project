@@ -725,7 +725,7 @@ Al tomar los saldos del balance, Planeación copia los importes disponibles en l
 4. En **Supuestos**, pulsa **Duplicar escenario** para copiar la versión guardada y probar otra política. Elige el escenario en **Escenario activo**. Los escenarios comparten el cierre histórico y guardan supuestos independientes.
 5. Guarda un respaldo desde **Reportes** para conservar los escenarios y su base. Los respaldos anteriores siguen siendo recuperables.
 
-Consulta este presupuesto parcial en Planeación. La proyección de caja completa, el costo de ventas y los estados proforma del caso corresponden a etapas posteriores.
+En **Resumen**, pulsa **Costo de ventas** o **Inventario valorizado** para consultar el importe de un mes. El costo de ventas de la tarjeta cubre el horizonte y el inventario muestra su cierre. En **Tablas completas**, la sección **Inventario valorizado y costo de ventas** presenta la apertura, las compras, el costo de ventas y el cierre de cada mes. La valoración usa el promedio ponderado mensual y muestra N/D en los importes que requieren un dato pendiente. La caja completa y los estados proforma del caso corresponden a etapas posteriores.
 
 ---
 
