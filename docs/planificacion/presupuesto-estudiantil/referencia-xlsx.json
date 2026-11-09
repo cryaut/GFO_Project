@@ -1,0 +1,7324 @@
+{
+  "archivo": "Presupuesto_estudiantil.xlsx",
+  "sha256": "98ba497eee7ed3563d73ce49c8223f98095af6ef9868c9c13c4dd22ac7eb82d4",
+  "hojas": {
+    "Inicio y meta": {
+      "A1": {
+        "valor": "MI CONTROL DE PRESUPUESTO ESTUDIANTIL",
+        "formula": null,
+        "compartida": null
+      },
+      "B1": {
+        "valor": "MI CONTROL DE PRESUPUESTO ESTUDIANTIL",
+        "formula": null,
+        "compartida": null
+      },
+      "C1": {
+        "valor": "MI CONTROL DE PRESUPUESTO ESTUDIANTIL",
+        "formula": null,
+        "compartida": null
+      },
+      "D1": {
+        "valor": "MI CONTROL DE PRESUPUESTO ESTUDIANTIL",
+        "formula": null,
+        "compartida": null
+      },
+      "E1": {
+        "valor": "MI CONTROL DE PRESUPUESTO ESTUDIANTIL",
+        "formula": null,
+        "compartida": null
+      },
+      "F1": {
+        "valor": "MI CONTROL DE PRESUPUESTO ESTUDIANTIL",
+        "formula": null,
+        "compartida": null
+      },
+      "G1": {
+        "valor": "MI CONTROL DE PRESUPUESTO ESTUDIANTIL",
+        "formula": null,
+        "compartida": null
+      },
+      "H1": {
+        "valor": "MI CONTROL DE PRESUPUESTO ESTUDIANTIL",
+        "formula": null,
+        "compartida": null
+      },
+      "A2": {
+        "valor": "MI CONTROL DE PRESUPUESTO ESTUDIANTIL",
+        "formula": null,
+        "compartida": null
+      },
+      "B2": {
+        "valor": "MI CONTROL DE PRESUPUESTO ESTUDIANTIL",
+        "formula": null,
+        "compartida": null
+      },
+      "C2": {
+        "valor": "MI CONTROL DE PRESUPUESTO ESTUDIANTIL",
+        "formula": null,
+        "compartida": null
+      },
+      "D2": {
+        "valor": "MI CONTROL DE PRESUPUESTO ESTUDIANTIL",
+        "formula": null,
+        "compartida": null
+      },
+      "E2": {
+        "valor": "MI CONTROL DE PRESUPUESTO ESTUDIANTIL",
+        "formula": null,
+        "compartida": null
+      },
+      "F2": {
+        "valor": "MI CONTROL DE PRESUPUESTO ESTUDIANTIL",
+        "formula": null,
+        "compartida": null
+      },
+      "G2": {
+        "valor": "MI CONTROL DE PRESUPUESTO ESTUDIANTIL",
+        "formula": null,
+        "compartida": null
+      },
+      "H2": {
+        "valor": "MI CONTROL DE PRESUPUESTO ESTUDIANTIL",
+        "formula": null,
+        "compartida": null
+      },
+      "A3": {
+        "valor": "Registrar → revisar → ajustar → avanzar hacia la meta",
+        "formula": null,
+        "compartida": null
+      },
+      "A5": {
+        "valor": "DATOS DEL ESTUDIANTE",
+        "formula": null,
+        "compartida": null
+      },
+      "B5": {
+        "valor": "DATOS DEL ESTUDIANTE",
+        "formula": null,
+        "compartida": null
+      },
+      "C5": {
+        "valor": "DATOS DEL ESTUDIANTE",
+        "formula": null,
+        "compartida": null
+      },
+      "D5": {
+        "valor": "DATOS DEL ESTUDIANTE",
+        "formula": null,
+        "compartida": null
+      },
+      "E5": {
+        "valor": "RESULTADOS AUTOMÁTICOS",
+        "formula": null,
+        "compartida": null
+      },
+      "F5": {
+        "valor": "RESULTADOS AUTOMÁTICOS",
+        "formula": null,
+        "compartida": null
+      },
+      "G5": {
+        "valor": "RESULTADOS AUTOMÁTICOS",
+        "formula": null,
+        "compartida": null
+      },
+      "H5": {
+        "valor": "RESULTADOS AUTOMÁTICOS",
+        "formula": null,
+        "compartida": null
+      },
+      "A6": {
+        "valor": "Nombre:",
+        "formula": null,
+        "compartida": null
+      },
+      "E6": {
+        "valor": "Total de ingresos:",
+        "formula": null,
+        "compartida": null
+      },
+      "F6": {
+        "valor": "2400",
+        "formula": "SUM(Seguimiento!E6:E25)",
+        "compartida": {}
+      },
+      "A7": {
+        "valor": "Meta al final del semestre:",
+        "formula": null,
+        "compartida": null
+      },
+      "B7": {
+        "valor": "Curso, herramienta, equipo o pequeño emprendimiento",
+        "formula": null,
+        "compartida": null
+      },
+      "E7": {
+        "valor": "Total de gastos:",
+        "formula": null,
+        "compartida": null
+      },
+      "F7": {
+        "valor": "1750",
+        "formula": "SUM(Seguimiento!F6:F25)",
+        "compartida": {}
+      },
+      "A8": {
+        "valor": "Costo de la meta:",
+        "formula": null,
+        "compartida": null
+      },
+      "B8": {
+        "valor": "2000",
+        "formula": null,
+        "compartida": null
+      },
+      "E8": {
+        "valor": "Ahorro para la meta:",
+        "formula": null,
+        "compartida": null
+      },
+      "F8": {
+        "valor": "400",
+        "formula": "SUM(Seguimiento!G6:G25)",
+        "compartida": {}
+      },
+      "A9": {
+        "valor": "Duración del seguimiento (semanas):",
+        "formula": null,
+        "compartida": null
+      },
+      "B9": {
+        "valor": "20",
+        "formula": null,
+        "compartida": null
+      },
+      "E9": {
+        "valor": "Reserva acumulada:",
+        "formula": null,
+        "compartida": null
+      },
+      "F9": {
+        "valor": "250",
+        "formula": "SUM(Seguimiento!H6:H25)",
+        "compartida": {}
+      },
+      "A10": {
+        "valor": "Aporte semanal recomendado:",
+        "formula": null,
+        "compartida": null
+      },
+      "B10": {
+        "valor": "100",
+        "formula": "IF(B9=0,0,B8/B9)",
+        "compartida": {}
+      },
+      "E10": {
+        "valor": "Saldo disponible:",
+        "formula": null,
+        "compartida": null
+      },
+      "F10": {
+        "valor": "0",
+        "formula": "SUM(Seguimiento!I6:I25)",
+        "compartida": {}
+      },
+      "A11": {
+        "valor": "Inicio del seguimiento (lunes):",
+        "formula": null,
+        "compartida": null
+      },
+      "B11": {
+        "valor": "46237",
+        "formula": null,
+        "compartida": null
+      },
+      "E11": {
+        "valor": "Avance de la meta:",
+        "formula": null,
+        "compartida": null
+      },
+      "F11": {
+        "valor": "0.2",
+        "formula": "IF(B8=0,0,F8/B8)",
+        "compartida": {}
+      },
+      "A12": {
+        "valor": "Final del seguimiento (domingo):",
+        "formula": null,
+        "compartida": null
+      },
+      "B12": {
+        "valor": "46376",
+        "formula": "B11+(B9*7)-1",
+        "compartida": {}
+      },
+      "A14": {
+        "valor": "¿CÓMO UTILIZAR ESTA PLANTILLA?",
+        "formula": null,
+        "compartida": null
+      },
+      "B14": {
+        "valor": "¿CÓMO UTILIZAR ESTA PLANTILLA?",
+        "formula": null,
+        "compartida": null
+      },
+      "C14": {
+        "valor": "¿CÓMO UTILIZAR ESTA PLANTILLA?",
+        "formula": null,
+        "compartida": null
+      },
+      "D14": {
+        "valor": "¿CÓMO UTILIZAR ESTA PLANTILLA?",
+        "formula": null,
+        "compartida": null
+      },
+      "E14": {
+        "valor": "¿CÓMO UTILIZAR ESTA PLANTILLA?",
+        "formula": null,
+        "compartida": null
+      },
+      "F14": {
+        "valor": "¿CÓMO UTILIZAR ESTA PLANTILLA?",
+        "formula": null,
+        "compartida": null
+      },
+      "G14": {
+        "valor": "¿CÓMO UTILIZAR ESTA PLANTILLA?",
+        "formula": null,
+        "compartida": null
+      },
+      "H14": {
+        "valor": "¿CÓMO UTILIZAR ESTA PLANTILLA?",
+        "formula": null,
+        "compartida": null
+      },
+      "A15": {
+        "valor": "1. Define una meta concreta y su costo.",
+        "formula": null,
+        "compartida": null
+      },
+      "A16": {
+        "valor": "2. En “Presupuesto proyectado”, distribuye el dinero que realmente recibes o el que necesitarías.",
+        "formula": null,
+        "compartida": null
+      },
+      "A17": {
+        "valor": "3. Cambia la fecha inicial en B11; los periodos de lunes a domingo se actualizarán automáticamente.",
+        "formula": null,
+        "compartida": null
+      },
+      "A18": {
+        "valor": "4. En “Registro semanal”, sustituye los movimientos del ejemplo por los tuyos; escribe montos positivos.",
+        "formula": null,
+        "compartida": null
+      },
+      "A19": {
+        "valor": "5. Revisa “Seguimiento” cada domingo y explica cualquier diferencia.",
+        "formula": null,
+        "compartida": null
+      },
+      "A20": {
+        "valor": "6. Si solo recibes para transporte, registra esa realidad y proyecta aparte tus necesidades y deseos.",
+        "formula": null,
+        "compartida": null
+      },
+      "A22": {
+        "valor": "Principio: un presupuesto real puede tener ahorro C$0. La disciplina comienza identificando y registrando el dinero, no fingiendo ingresos que no existen.",
+        "formula": null,
+        "compartida": null
+      }
+    },
+    "Registro semanal": {
+      "A1": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "B1": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "C1": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "D1": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "E1": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "F1": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "G1": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "H1": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "I1": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "J1": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "K1": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "A2": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "B2": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "C2": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "D2": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "E2": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "F2": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "G2": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "H2": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "I2": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "J2": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "K2": {
+        "valor": "REGISTRO SEMANAL — EJEMPLO CON C$2,400",
+        "formula": null,
+        "compartida": null
+      },
+      "A3": {
+        "valor": "Ejemplo: C$600 por semana durante cuatro semanas. Cada corte inicia el lunes y termina el domingo. Sustituye estos datos por los tuyos.",
+        "formula": null,
+        "compartida": null
+      },
+      "A5": {
+        "valor": "Fecha",
+        "formula": null,
+        "compartida": null
+      },
+      "B5": {
+        "valor": "Semana",
+        "formula": null,
+        "compartida": null
+      },
+      "C5": {
+        "valor": "Desde (lunes)",
+        "formula": null,
+        "compartida": null
+      },
+      "D5": {
+        "valor": "Hasta (domingo)",
+        "formula": null,
+        "compartida": null
+      },
+      "E5": {
+        "valor": "Tipo de movimiento",
+        "formula": null,
+        "compartida": null
+      },
+      "F5": {
+        "valor": "Categoría",
+        "formula": null,
+        "compartida": null
+      },
+      "G5": {
+        "valor": "Descripción",
+        "formula": null,
+        "compartida": null
+      },
+      "H5": {
+        "valor": "Monto",
+        "formula": null,
+        "compartida": null
+      },
+      "I5": {
+        "valor": "Prioridad",
+        "formula": null,
+        "compartida": null
+      },
+      "J5": {
+        "valor": "Medio",
+        "formula": null,
+        "compartida": null
+      },
+      "K5": {
+        "valor": "Observación",
+        "formula": null,
+        "compartida": null
+      },
+      "A6": {
+        "valor": "46237",
+        "formula": null,
+        "compartida": null
+      },
+      "B6": {
+        "valor": "1",
+        "formula": null,
+        "compartida": null
+      },
+      "C6": {
+        "valor": "46237",
+        "formula": "IF(B6=\"\",\"\",'Inicio y meta'!$B$11+(B6-1)*7)",
+        "compartida": {}
+      },
+      "D6": {
+        "valor": "46243",
+        "formula": "IF(C6=\"\",\"\",C6+6)",
+        "compartida": {
+          "t": "shared",
+          "ref": "D6:D37",
+          "si": "0"
+        }
+      },
+      "E6": {
+        "valor": "Ingreso",
+        "formula": null,
+        "compartida": null
+      },
+      "F6": {
+        "valor": "Apoyo familiar",
+        "formula": null,
+        "compartida": null
+      },
+      "G6": {
+        "valor": "Cuota semanal",
+        "formula": null,
+        "compartida": null
+      },
+      "H6": {
+        "valor": "600",
+        "formula": null,
+        "compartida": null
+      },
+      "I6": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J6": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "K6": {
+        "valor": "C$2,400 ÷ 4 semanas",
+        "formula": null,
+        "compartida": null
+      },
+      "A7": {
+        "valor": "46238",
+        "formula": null,
+        "compartida": null
+      },
+      "B7": {
+        "valor": "1",
+        "formula": null,
+        "compartida": null
+      },
+      "C7": {
+        "valor": "46237",
+        "formula": "IF(B7=\"\",\"\",'Inicio y meta'!$B$11+(B7-1)*7)",
+        "compartida": {}
+      },
+      "D7": {
+        "valor": "46243",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E7": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F7": {
+        "valor": "Transporte",
+        "formula": null,
+        "compartida": null
+      },
+      "G7": {
+        "valor": "Transporte semanal",
+        "formula": null,
+        "compartida": null
+      },
+      "H7": {
+        "valor": "175",
+        "formula": null,
+        "compartida": null
+      },
+      "I7": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J7": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A8": {
+        "valor": "46239",
+        "formula": null,
+        "compartida": null
+      },
+      "B8": {
+        "valor": "1",
+        "formula": null,
+        "compartida": null
+      },
+      "C8": {
+        "valor": "46237",
+        "formula": "IF(B8=\"\",\"\",'Inicio y meta'!$B$11+(B8-1)*7)",
+        "compartida": {}
+      },
+      "D8": {
+        "valor": "46243",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E8": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F8": {
+        "valor": "Alimentación",
+        "formula": null,
+        "compartida": null
+      },
+      "G8": {
+        "valor": "Alimentación y meriendas",
+        "formula": null,
+        "compartida": null
+      },
+      "H8": {
+        "valor": "125",
+        "formula": null,
+        "compartida": null
+      },
+      "I8": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J8": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A9": {
+        "valor": "46240",
+        "formula": null,
+        "compartida": null
+      },
+      "B9": {
+        "valor": "1",
+        "formula": null,
+        "compartida": null
+      },
+      "C9": {
+        "valor": "46237",
+        "formula": "IF(B9=\"\",\"\",'Inicio y meta'!$B$11+(B9-1)*7)",
+        "compartida": {}
+      },
+      "D9": {
+        "valor": "46243",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E9": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F9": {
+        "valor": "Datos/Internet",
+        "formula": null,
+        "compartida": null
+      },
+      "G9": {
+        "valor": "Datos móviles",
+        "formula": null,
+        "compartida": null
+      },
+      "H9": {
+        "valor": "50",
+        "formula": null,
+        "compartida": null
+      },
+      "I9": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J9": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A10": {
+        "valor": "46241",
+        "formula": null,
+        "compartida": null
+      },
+      "B10": {
+        "valor": "1",
+        "formula": null,
+        "compartida": null
+      },
+      "C10": {
+        "valor": "46237",
+        "formula": "IF(B10=\"\",\"\",'Inicio y meta'!$B$11+(B10-1)*7)",
+        "compartida": {}
+      },
+      "D10": {
+        "valor": "46243",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E10": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F10": {
+        "valor": "Copias y materiales",
+        "formula": null,
+        "compartida": null
+      },
+      "G10": {
+        "valor": "Copias y materiales",
+        "formula": null,
+        "compartida": null
+      },
+      "H10": {
+        "valor": "25",
+        "formula": null,
+        "compartida": null
+      },
+      "I10": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J10": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A11": {
+        "valor": "46242",
+        "formula": null,
+        "compartida": null
+      },
+      "B11": {
+        "valor": "1",
+        "formula": null,
+        "compartida": null
+      },
+      "C11": {
+        "valor": "46237",
+        "formula": "IF(B11=\"\",\"\",'Inicio y meta'!$B$11+(B11-1)*7)",
+        "compartida": {}
+      },
+      "D11": {
+        "valor": "46243",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E11": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F11": {
+        "valor": "Personal/Ocio",
+        "formula": null,
+        "compartida": null
+      },
+      "G11": {
+        "valor": "Gasto flexible",
+        "formula": null,
+        "compartida": null
+      },
+      "H11": {
+        "valor": "62.5",
+        "formula": null,
+        "compartida": null
+      },
+      "I11": {
+        "valor": "Deseo",
+        "formula": null,
+        "compartida": null
+      },
+      "J11": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A12": {
+        "valor": "46243",
+        "formula": null,
+        "compartida": null
+      },
+      "B12": {
+        "valor": "1",
+        "formula": null,
+        "compartida": null
+      },
+      "C12": {
+        "valor": "46237",
+        "formula": "IF(B12=\"\",\"\",'Inicio y meta'!$B$11+(B12-1)*7)",
+        "compartida": {}
+      },
+      "D12": {
+        "valor": "46243",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E12": {
+        "valor": "Reserva",
+        "formula": null,
+        "compartida": null
+      },
+      "F12": {
+        "valor": "Reserva imprevistos",
+        "formula": null,
+        "compartida": null
+      },
+      "G12": {
+        "valor": "Separación para imprevistos",
+        "formula": null,
+        "compartida": null
+      },
+      "H12": {
+        "valor": "62.5",
+        "formula": null,
+        "compartida": null
+      },
+      "I12": {
+        "valor": "Meta",
+        "formula": null,
+        "compartida": null
+      },
+      "J12": {
+        "valor": "Transferencia",
+        "formula": null,
+        "compartida": null
+      },
+      "A13": {
+        "valor": "46243",
+        "formula": null,
+        "compartida": null
+      },
+      "B13": {
+        "valor": "1",
+        "formula": null,
+        "compartida": null
+      },
+      "C13": {
+        "valor": "46237",
+        "formula": "IF(B13=\"\",\"\",'Inicio y meta'!$B$11+(B13-1)*7)",
+        "compartida": {}
+      },
+      "D13": {
+        "valor": "46243",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E13": {
+        "valor": "Ahorro",
+        "formula": null,
+        "compartida": null
+      },
+      "F13": {
+        "valor": "Meta de ahorro",
+        "formula": null,
+        "compartida": null
+      },
+      "G13": {
+        "valor": "Aporte para el curso",
+        "formula": null,
+        "compartida": null
+      },
+      "H13": {
+        "valor": "100",
+        "formula": null,
+        "compartida": null
+      },
+      "I13": {
+        "valor": "Meta",
+        "formula": null,
+        "compartida": null
+      },
+      "J13": {
+        "valor": "Transferencia",
+        "formula": null,
+        "compartida": null
+      },
+      "A14": {
+        "valor": "46244",
+        "formula": null,
+        "compartida": null
+      },
+      "B14": {
+        "valor": "2",
+        "formula": null,
+        "compartida": null
+      },
+      "C14": {
+        "valor": "46244",
+        "formula": "IF(B14=\"\",\"\",'Inicio y meta'!$B$11+(B14-1)*7)",
+        "compartida": {}
+      },
+      "D14": {
+        "valor": "46250",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E14": {
+        "valor": "Ingreso",
+        "formula": null,
+        "compartida": null
+      },
+      "F14": {
+        "valor": "Apoyo familiar",
+        "formula": null,
+        "compartida": null
+      },
+      "G14": {
+        "valor": "Cuota semanal",
+        "formula": null,
+        "compartida": null
+      },
+      "H14": {
+        "valor": "600",
+        "formula": null,
+        "compartida": null
+      },
+      "I14": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J14": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "K14": {
+        "valor": "C$2,400 ÷ 4 semanas",
+        "formula": null,
+        "compartida": null
+      },
+      "A15": {
+        "valor": "46245",
+        "formula": null,
+        "compartida": null
+      },
+      "B15": {
+        "valor": "2",
+        "formula": null,
+        "compartida": null
+      },
+      "C15": {
+        "valor": "46244",
+        "formula": "IF(B15=\"\",\"\",'Inicio y meta'!$B$11+(B15-1)*7)",
+        "compartida": {}
+      },
+      "D15": {
+        "valor": "46250",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E15": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F15": {
+        "valor": "Transporte",
+        "formula": null,
+        "compartida": null
+      },
+      "G15": {
+        "valor": "Transporte semanal",
+        "formula": null,
+        "compartida": null
+      },
+      "H15": {
+        "valor": "175",
+        "formula": null,
+        "compartida": null
+      },
+      "I15": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J15": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A16": {
+        "valor": "46246",
+        "formula": null,
+        "compartida": null
+      },
+      "B16": {
+        "valor": "2",
+        "formula": null,
+        "compartida": null
+      },
+      "C16": {
+        "valor": "46244",
+        "formula": "IF(B16=\"\",\"\",'Inicio y meta'!$B$11+(B16-1)*7)",
+        "compartida": {}
+      },
+      "D16": {
+        "valor": "46250",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E16": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F16": {
+        "valor": "Alimentación",
+        "formula": null,
+        "compartida": null
+      },
+      "G16": {
+        "valor": "Alimentación y meriendas",
+        "formula": null,
+        "compartida": null
+      },
+      "H16": {
+        "valor": "125",
+        "formula": null,
+        "compartida": null
+      },
+      "I16": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J16": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A17": {
+        "valor": "46247",
+        "formula": null,
+        "compartida": null
+      },
+      "B17": {
+        "valor": "2",
+        "formula": null,
+        "compartida": null
+      },
+      "C17": {
+        "valor": "46244",
+        "formula": "IF(B17=\"\",\"\",'Inicio y meta'!$B$11+(B17-1)*7)",
+        "compartida": {}
+      },
+      "D17": {
+        "valor": "46250",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E17": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F17": {
+        "valor": "Datos/Internet",
+        "formula": null,
+        "compartida": null
+      },
+      "G17": {
+        "valor": "Datos móviles",
+        "formula": null,
+        "compartida": null
+      },
+      "H17": {
+        "valor": "50",
+        "formula": null,
+        "compartida": null
+      },
+      "I17": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J17": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A18": {
+        "valor": "46248",
+        "formula": null,
+        "compartida": null
+      },
+      "B18": {
+        "valor": "2",
+        "formula": null,
+        "compartida": null
+      },
+      "C18": {
+        "valor": "46244",
+        "formula": "IF(B18=\"\",\"\",'Inicio y meta'!$B$11+(B18-1)*7)",
+        "compartida": {}
+      },
+      "D18": {
+        "valor": "46250",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E18": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F18": {
+        "valor": "Copias y materiales",
+        "formula": null,
+        "compartida": null
+      },
+      "G18": {
+        "valor": "Copias y materiales",
+        "formula": null,
+        "compartida": null
+      },
+      "H18": {
+        "valor": "25",
+        "formula": null,
+        "compartida": null
+      },
+      "I18": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J18": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A19": {
+        "valor": "46249",
+        "formula": null,
+        "compartida": null
+      },
+      "B19": {
+        "valor": "2",
+        "formula": null,
+        "compartida": null
+      },
+      "C19": {
+        "valor": "46244",
+        "formula": "IF(B19=\"\",\"\",'Inicio y meta'!$B$11+(B19-1)*7)",
+        "compartida": {}
+      },
+      "D19": {
+        "valor": "46250",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E19": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F19": {
+        "valor": "Personal/Ocio",
+        "formula": null,
+        "compartida": null
+      },
+      "G19": {
+        "valor": "Gasto flexible",
+        "formula": null,
+        "compartida": null
+      },
+      "H19": {
+        "valor": "62.5",
+        "formula": null,
+        "compartida": null
+      },
+      "I19": {
+        "valor": "Deseo",
+        "formula": null,
+        "compartida": null
+      },
+      "J19": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A20": {
+        "valor": "46250",
+        "formula": null,
+        "compartida": null
+      },
+      "B20": {
+        "valor": "2",
+        "formula": null,
+        "compartida": null
+      },
+      "C20": {
+        "valor": "46244",
+        "formula": "IF(B20=\"\",\"\",'Inicio y meta'!$B$11+(B20-1)*7)",
+        "compartida": {}
+      },
+      "D20": {
+        "valor": "46250",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E20": {
+        "valor": "Reserva",
+        "formula": null,
+        "compartida": null
+      },
+      "F20": {
+        "valor": "Reserva imprevistos",
+        "formula": null,
+        "compartida": null
+      },
+      "G20": {
+        "valor": "Separación para imprevistos",
+        "formula": null,
+        "compartida": null
+      },
+      "H20": {
+        "valor": "62.5",
+        "formula": null,
+        "compartida": null
+      },
+      "I20": {
+        "valor": "Meta",
+        "formula": null,
+        "compartida": null
+      },
+      "J20": {
+        "valor": "Transferencia",
+        "formula": null,
+        "compartida": null
+      },
+      "A21": {
+        "valor": "46250",
+        "formula": null,
+        "compartida": null
+      },
+      "B21": {
+        "valor": "2",
+        "formula": null,
+        "compartida": null
+      },
+      "C21": {
+        "valor": "46244",
+        "formula": "IF(B21=\"\",\"\",'Inicio y meta'!$B$11+(B21-1)*7)",
+        "compartida": {}
+      },
+      "D21": {
+        "valor": "46250",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E21": {
+        "valor": "Ahorro",
+        "formula": null,
+        "compartida": null
+      },
+      "F21": {
+        "valor": "Meta de ahorro",
+        "formula": null,
+        "compartida": null
+      },
+      "G21": {
+        "valor": "Aporte para el curso",
+        "formula": null,
+        "compartida": null
+      },
+      "H21": {
+        "valor": "100",
+        "formula": null,
+        "compartida": null
+      },
+      "I21": {
+        "valor": "Meta",
+        "formula": null,
+        "compartida": null
+      },
+      "J21": {
+        "valor": "Transferencia",
+        "formula": null,
+        "compartida": null
+      },
+      "A22": {
+        "valor": "46251",
+        "formula": null,
+        "compartida": null
+      },
+      "B22": {
+        "valor": "3",
+        "formula": null,
+        "compartida": null
+      },
+      "C22": {
+        "valor": "46251",
+        "formula": "IF(B22=\"\",\"\",'Inicio y meta'!$B$11+(B22-1)*7)",
+        "compartida": {}
+      },
+      "D22": {
+        "valor": "46257",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E22": {
+        "valor": "Ingreso",
+        "formula": null,
+        "compartida": null
+      },
+      "F22": {
+        "valor": "Apoyo familiar",
+        "formula": null,
+        "compartida": null
+      },
+      "G22": {
+        "valor": "Cuota semanal",
+        "formula": null,
+        "compartida": null
+      },
+      "H22": {
+        "valor": "600",
+        "formula": null,
+        "compartida": null
+      },
+      "I22": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J22": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "K22": {
+        "valor": "C$2,400 ÷ 4 semanas",
+        "formula": null,
+        "compartida": null
+      },
+      "A23": {
+        "valor": "46252",
+        "formula": null,
+        "compartida": null
+      },
+      "B23": {
+        "valor": "3",
+        "formula": null,
+        "compartida": null
+      },
+      "C23": {
+        "valor": "46251",
+        "formula": "IF(B23=\"\",\"\",'Inicio y meta'!$B$11+(B23-1)*7)",
+        "compartida": {}
+      },
+      "D23": {
+        "valor": "46257",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E23": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F23": {
+        "valor": "Transporte",
+        "formula": null,
+        "compartida": null
+      },
+      "G23": {
+        "valor": "Transporte semanal",
+        "formula": null,
+        "compartida": null
+      },
+      "H23": {
+        "valor": "175",
+        "formula": null,
+        "compartida": null
+      },
+      "I23": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J23": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A24": {
+        "valor": "46253",
+        "formula": null,
+        "compartida": null
+      },
+      "B24": {
+        "valor": "3",
+        "formula": null,
+        "compartida": null
+      },
+      "C24": {
+        "valor": "46251",
+        "formula": "IF(B24=\"\",\"\",'Inicio y meta'!$B$11+(B24-1)*7)",
+        "compartida": {}
+      },
+      "D24": {
+        "valor": "46257",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E24": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F24": {
+        "valor": "Alimentación",
+        "formula": null,
+        "compartida": null
+      },
+      "G24": {
+        "valor": "Alimentación y meriendas",
+        "formula": null,
+        "compartida": null
+      },
+      "H24": {
+        "valor": "125",
+        "formula": null,
+        "compartida": null
+      },
+      "I24": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J24": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A25": {
+        "valor": "46254",
+        "formula": null,
+        "compartida": null
+      },
+      "B25": {
+        "valor": "3",
+        "formula": null,
+        "compartida": null
+      },
+      "C25": {
+        "valor": "46251",
+        "formula": "IF(B25=\"\",\"\",'Inicio y meta'!$B$11+(B25-1)*7)",
+        "compartida": {}
+      },
+      "D25": {
+        "valor": "46257",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E25": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F25": {
+        "valor": "Datos/Internet",
+        "formula": null,
+        "compartida": null
+      },
+      "G25": {
+        "valor": "Datos móviles",
+        "formula": null,
+        "compartida": null
+      },
+      "H25": {
+        "valor": "50",
+        "formula": null,
+        "compartida": null
+      },
+      "I25": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J25": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A26": {
+        "valor": "46255",
+        "formula": null,
+        "compartida": null
+      },
+      "B26": {
+        "valor": "3",
+        "formula": null,
+        "compartida": null
+      },
+      "C26": {
+        "valor": "46251",
+        "formula": "IF(B26=\"\",\"\",'Inicio y meta'!$B$11+(B26-1)*7)",
+        "compartida": {}
+      },
+      "D26": {
+        "valor": "46257",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E26": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F26": {
+        "valor": "Copias y materiales",
+        "formula": null,
+        "compartida": null
+      },
+      "G26": {
+        "valor": "Copias y materiales",
+        "formula": null,
+        "compartida": null
+      },
+      "H26": {
+        "valor": "25",
+        "formula": null,
+        "compartida": null
+      },
+      "I26": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J26": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A27": {
+        "valor": "46256",
+        "formula": null,
+        "compartida": null
+      },
+      "B27": {
+        "valor": "3",
+        "formula": null,
+        "compartida": null
+      },
+      "C27": {
+        "valor": "46251",
+        "formula": "IF(B27=\"\",\"\",'Inicio y meta'!$B$11+(B27-1)*7)",
+        "compartida": {}
+      },
+      "D27": {
+        "valor": "46257",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E27": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F27": {
+        "valor": "Personal/Ocio",
+        "formula": null,
+        "compartida": null
+      },
+      "G27": {
+        "valor": "Gasto flexible",
+        "formula": null,
+        "compartida": null
+      },
+      "H27": {
+        "valor": "62.5",
+        "formula": null,
+        "compartida": null
+      },
+      "I27": {
+        "valor": "Deseo",
+        "formula": null,
+        "compartida": null
+      },
+      "J27": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A28": {
+        "valor": "46257",
+        "formula": null,
+        "compartida": null
+      },
+      "B28": {
+        "valor": "3",
+        "formula": null,
+        "compartida": null
+      },
+      "C28": {
+        "valor": "46251",
+        "formula": "IF(B28=\"\",\"\",'Inicio y meta'!$B$11+(B28-1)*7)",
+        "compartida": {}
+      },
+      "D28": {
+        "valor": "46257",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E28": {
+        "valor": "Reserva",
+        "formula": null,
+        "compartida": null
+      },
+      "F28": {
+        "valor": "Reserva imprevistos",
+        "formula": null,
+        "compartida": null
+      },
+      "G28": {
+        "valor": "Separación para imprevistos",
+        "formula": null,
+        "compartida": null
+      },
+      "H28": {
+        "valor": "62.5",
+        "formula": null,
+        "compartida": null
+      },
+      "I28": {
+        "valor": "Meta",
+        "formula": null,
+        "compartida": null
+      },
+      "J28": {
+        "valor": "Transferencia",
+        "formula": null,
+        "compartida": null
+      },
+      "A29": {
+        "valor": "46257",
+        "formula": null,
+        "compartida": null
+      },
+      "B29": {
+        "valor": "3",
+        "formula": null,
+        "compartida": null
+      },
+      "C29": {
+        "valor": "46251",
+        "formula": "IF(B29=\"\",\"\",'Inicio y meta'!$B$11+(B29-1)*7)",
+        "compartida": {}
+      },
+      "D29": {
+        "valor": "46257",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E29": {
+        "valor": "Ahorro",
+        "formula": null,
+        "compartida": null
+      },
+      "F29": {
+        "valor": "Meta de ahorro",
+        "formula": null,
+        "compartida": null
+      },
+      "G29": {
+        "valor": "Aporte para el curso",
+        "formula": null,
+        "compartida": null
+      },
+      "H29": {
+        "valor": "100",
+        "formula": null,
+        "compartida": null
+      },
+      "I29": {
+        "valor": "Meta",
+        "formula": null,
+        "compartida": null
+      },
+      "J29": {
+        "valor": "Transferencia",
+        "formula": null,
+        "compartida": null
+      },
+      "A30": {
+        "valor": "46258",
+        "formula": null,
+        "compartida": null
+      },
+      "B30": {
+        "valor": "4",
+        "formula": null,
+        "compartida": null
+      },
+      "C30": {
+        "valor": "46258",
+        "formula": "IF(B30=\"\",\"\",'Inicio y meta'!$B$11+(B30-1)*7)",
+        "compartida": {}
+      },
+      "D30": {
+        "valor": "46264",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E30": {
+        "valor": "Ingreso",
+        "formula": null,
+        "compartida": null
+      },
+      "F30": {
+        "valor": "Apoyo familiar",
+        "formula": null,
+        "compartida": null
+      },
+      "G30": {
+        "valor": "Cuota semanal",
+        "formula": null,
+        "compartida": null
+      },
+      "H30": {
+        "valor": "600",
+        "formula": null,
+        "compartida": null
+      },
+      "I30": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J30": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "K30": {
+        "valor": "C$2,400 ÷ 4 semanas",
+        "formula": null,
+        "compartida": null
+      },
+      "A31": {
+        "valor": "46259",
+        "formula": null,
+        "compartida": null
+      },
+      "B31": {
+        "valor": "4",
+        "formula": null,
+        "compartida": null
+      },
+      "C31": {
+        "valor": "46258",
+        "formula": "IF(B31=\"\",\"\",'Inicio y meta'!$B$11+(B31-1)*7)",
+        "compartida": {}
+      },
+      "D31": {
+        "valor": "46264",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E31": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F31": {
+        "valor": "Transporte",
+        "formula": null,
+        "compartida": null
+      },
+      "G31": {
+        "valor": "Transporte semanal",
+        "formula": null,
+        "compartida": null
+      },
+      "H31": {
+        "valor": "175",
+        "formula": null,
+        "compartida": null
+      },
+      "I31": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J31": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A32": {
+        "valor": "46260",
+        "formula": null,
+        "compartida": null
+      },
+      "B32": {
+        "valor": "4",
+        "formula": null,
+        "compartida": null
+      },
+      "C32": {
+        "valor": "46258",
+        "formula": "IF(B32=\"\",\"\",'Inicio y meta'!$B$11+(B32-1)*7)",
+        "compartida": {}
+      },
+      "D32": {
+        "valor": "46264",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E32": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F32": {
+        "valor": "Alimentación",
+        "formula": null,
+        "compartida": null
+      },
+      "G32": {
+        "valor": "Alimentación y meriendas",
+        "formula": null,
+        "compartida": null
+      },
+      "H32": {
+        "valor": "125",
+        "formula": null,
+        "compartida": null
+      },
+      "I32": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J32": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A33": {
+        "valor": "46261",
+        "formula": null,
+        "compartida": null
+      },
+      "B33": {
+        "valor": "4",
+        "formula": null,
+        "compartida": null
+      },
+      "C33": {
+        "valor": "46258",
+        "formula": "IF(B33=\"\",\"\",'Inicio y meta'!$B$11+(B33-1)*7)",
+        "compartida": {}
+      },
+      "D33": {
+        "valor": "46264",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E33": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F33": {
+        "valor": "Datos/Internet",
+        "formula": null,
+        "compartida": null
+      },
+      "G33": {
+        "valor": "Datos móviles",
+        "formula": null,
+        "compartida": null
+      },
+      "H33": {
+        "valor": "50",
+        "formula": null,
+        "compartida": null
+      },
+      "I33": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J33": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A34": {
+        "valor": "46262",
+        "formula": null,
+        "compartida": null
+      },
+      "B34": {
+        "valor": "4",
+        "formula": null,
+        "compartida": null
+      },
+      "C34": {
+        "valor": "46258",
+        "formula": "IF(B34=\"\",\"\",'Inicio y meta'!$B$11+(B34-1)*7)",
+        "compartida": {}
+      },
+      "D34": {
+        "valor": "46264",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E34": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F34": {
+        "valor": "Copias y materiales",
+        "formula": null,
+        "compartida": null
+      },
+      "G34": {
+        "valor": "Copias y materiales",
+        "formula": null,
+        "compartida": null
+      },
+      "H34": {
+        "valor": "25",
+        "formula": null,
+        "compartida": null
+      },
+      "I34": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "J34": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A35": {
+        "valor": "46263",
+        "formula": null,
+        "compartida": null
+      },
+      "B35": {
+        "valor": "4",
+        "formula": null,
+        "compartida": null
+      },
+      "C35": {
+        "valor": "46258",
+        "formula": "IF(B35=\"\",\"\",'Inicio y meta'!$B$11+(B35-1)*7)",
+        "compartida": {}
+      },
+      "D35": {
+        "valor": "46264",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E35": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "F35": {
+        "valor": "Personal/Ocio",
+        "formula": null,
+        "compartida": null
+      },
+      "G35": {
+        "valor": "Gasto flexible",
+        "formula": null,
+        "compartida": null
+      },
+      "H35": {
+        "valor": "62.5",
+        "formula": null,
+        "compartida": null
+      },
+      "I35": {
+        "valor": "Deseo",
+        "formula": null,
+        "compartida": null
+      },
+      "J35": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A36": {
+        "valor": "46264",
+        "formula": null,
+        "compartida": null
+      },
+      "B36": {
+        "valor": "4",
+        "formula": null,
+        "compartida": null
+      },
+      "C36": {
+        "valor": "46258",
+        "formula": "IF(B36=\"\",\"\",'Inicio y meta'!$B$11+(B36-1)*7)",
+        "compartida": {}
+      },
+      "D36": {
+        "valor": "46264",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E36": {
+        "valor": "Reserva",
+        "formula": null,
+        "compartida": null
+      },
+      "F36": {
+        "valor": "Reserva imprevistos",
+        "formula": null,
+        "compartida": null
+      },
+      "G36": {
+        "valor": "Separación para imprevistos",
+        "formula": null,
+        "compartida": null
+      },
+      "H36": {
+        "valor": "62.5",
+        "formula": null,
+        "compartida": null
+      },
+      "I36": {
+        "valor": "Meta",
+        "formula": null,
+        "compartida": null
+      },
+      "J36": {
+        "valor": "Transferencia",
+        "formula": null,
+        "compartida": null
+      },
+      "A37": {
+        "valor": "46264",
+        "formula": null,
+        "compartida": null
+      },
+      "B37": {
+        "valor": "4",
+        "formula": null,
+        "compartida": null
+      },
+      "C37": {
+        "valor": "46258",
+        "formula": "IF(B37=\"\",\"\",'Inicio y meta'!$B$11+(B37-1)*7)",
+        "compartida": {}
+      },
+      "D37": {
+        "valor": "46264",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "E37": {
+        "valor": "Ahorro",
+        "formula": null,
+        "compartida": null
+      },
+      "F37": {
+        "valor": "Meta de ahorro",
+        "formula": null,
+        "compartida": null
+      },
+      "G37": {
+        "valor": "Aporte para el curso",
+        "formula": null,
+        "compartida": null
+      },
+      "H37": {
+        "valor": "100",
+        "formula": null,
+        "compartida": null
+      },
+      "I37": {
+        "valor": "Meta",
+        "formula": null,
+        "compartida": null
+      },
+      "J37": {
+        "valor": "Transferencia",
+        "formula": null,
+        "compartida": null
+      },
+      "C38": {
+        "valor": null,
+        "formula": "IF(B38=\"\",\"\",'Inicio y meta'!$B$11+(B38-1)*7)",
+        "compartida": {}
+      },
+      "D38": {
+        "valor": null,
+        "formula": "IF(C38=\"\",\"\",C38+6)",
+        "compartida": {
+          "t": "shared",
+          "ref": "D38:D69",
+          "si": "1"
+        }
+      },
+      "C39": {
+        "valor": null,
+        "formula": "IF(B39=\"\",\"\",'Inicio y meta'!$B$11+(B39-1)*7)",
+        "compartida": {}
+      },
+      "D39": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C40": {
+        "valor": null,
+        "formula": "IF(B40=\"\",\"\",'Inicio y meta'!$B$11+(B40-1)*7)",
+        "compartida": {}
+      },
+      "D40": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C41": {
+        "valor": null,
+        "formula": "IF(B41=\"\",\"\",'Inicio y meta'!$B$11+(B41-1)*7)",
+        "compartida": {}
+      },
+      "D41": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C42": {
+        "valor": null,
+        "formula": "IF(B42=\"\",\"\",'Inicio y meta'!$B$11+(B42-1)*7)",
+        "compartida": {}
+      },
+      "D42": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C43": {
+        "valor": null,
+        "formula": "IF(B43=\"\",\"\",'Inicio y meta'!$B$11+(B43-1)*7)",
+        "compartida": {}
+      },
+      "D43": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C44": {
+        "valor": null,
+        "formula": "IF(B44=\"\",\"\",'Inicio y meta'!$B$11+(B44-1)*7)",
+        "compartida": {}
+      },
+      "D44": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C45": {
+        "valor": null,
+        "formula": "IF(B45=\"\",\"\",'Inicio y meta'!$B$11+(B45-1)*7)",
+        "compartida": {}
+      },
+      "D45": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C46": {
+        "valor": null,
+        "formula": "IF(B46=\"\",\"\",'Inicio y meta'!$B$11+(B46-1)*7)",
+        "compartida": {}
+      },
+      "D46": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C47": {
+        "valor": null,
+        "formula": "IF(B47=\"\",\"\",'Inicio y meta'!$B$11+(B47-1)*7)",
+        "compartida": {}
+      },
+      "D47": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C48": {
+        "valor": null,
+        "formula": "IF(B48=\"\",\"\",'Inicio y meta'!$B$11+(B48-1)*7)",
+        "compartida": {}
+      },
+      "D48": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C49": {
+        "valor": null,
+        "formula": "IF(B49=\"\",\"\",'Inicio y meta'!$B$11+(B49-1)*7)",
+        "compartida": {}
+      },
+      "D49": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C50": {
+        "valor": null,
+        "formula": "IF(B50=\"\",\"\",'Inicio y meta'!$B$11+(B50-1)*7)",
+        "compartida": {}
+      },
+      "D50": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C51": {
+        "valor": null,
+        "formula": "IF(B51=\"\",\"\",'Inicio y meta'!$B$11+(B51-1)*7)",
+        "compartida": {}
+      },
+      "D51": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C52": {
+        "valor": null,
+        "formula": "IF(B52=\"\",\"\",'Inicio y meta'!$B$11+(B52-1)*7)",
+        "compartida": {}
+      },
+      "D52": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C53": {
+        "valor": null,
+        "formula": "IF(B53=\"\",\"\",'Inicio y meta'!$B$11+(B53-1)*7)",
+        "compartida": {}
+      },
+      "D53": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C54": {
+        "valor": null,
+        "formula": "IF(B54=\"\",\"\",'Inicio y meta'!$B$11+(B54-1)*7)",
+        "compartida": {}
+      },
+      "D54": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C55": {
+        "valor": null,
+        "formula": "IF(B55=\"\",\"\",'Inicio y meta'!$B$11+(B55-1)*7)",
+        "compartida": {}
+      },
+      "D55": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C56": {
+        "valor": null,
+        "formula": "IF(B56=\"\",\"\",'Inicio y meta'!$B$11+(B56-1)*7)",
+        "compartida": {}
+      },
+      "D56": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C57": {
+        "valor": null,
+        "formula": "IF(B57=\"\",\"\",'Inicio y meta'!$B$11+(B57-1)*7)",
+        "compartida": {}
+      },
+      "D57": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C58": {
+        "valor": null,
+        "formula": "IF(B58=\"\",\"\",'Inicio y meta'!$B$11+(B58-1)*7)",
+        "compartida": {}
+      },
+      "D58": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C59": {
+        "valor": null,
+        "formula": "IF(B59=\"\",\"\",'Inicio y meta'!$B$11+(B59-1)*7)",
+        "compartida": {}
+      },
+      "D59": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C60": {
+        "valor": null,
+        "formula": "IF(B60=\"\",\"\",'Inicio y meta'!$B$11+(B60-1)*7)",
+        "compartida": {}
+      },
+      "D60": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C61": {
+        "valor": null,
+        "formula": "IF(B61=\"\",\"\",'Inicio y meta'!$B$11+(B61-1)*7)",
+        "compartida": {}
+      },
+      "D61": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C62": {
+        "valor": null,
+        "formula": "IF(B62=\"\",\"\",'Inicio y meta'!$B$11+(B62-1)*7)",
+        "compartida": {}
+      },
+      "D62": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C63": {
+        "valor": null,
+        "formula": "IF(B63=\"\",\"\",'Inicio y meta'!$B$11+(B63-1)*7)",
+        "compartida": {}
+      },
+      "D63": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C64": {
+        "valor": null,
+        "formula": "IF(B64=\"\",\"\",'Inicio y meta'!$B$11+(B64-1)*7)",
+        "compartida": {}
+      },
+      "D64": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C65": {
+        "valor": null,
+        "formula": "IF(B65=\"\",\"\",'Inicio y meta'!$B$11+(B65-1)*7)",
+        "compartida": {}
+      },
+      "D65": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C66": {
+        "valor": null,
+        "formula": "IF(B66=\"\",\"\",'Inicio y meta'!$B$11+(B66-1)*7)",
+        "compartida": {}
+      },
+      "D66": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C67": {
+        "valor": null,
+        "formula": "IF(B67=\"\",\"\",'Inicio y meta'!$B$11+(B67-1)*7)",
+        "compartida": {}
+      },
+      "D67": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C68": {
+        "valor": null,
+        "formula": "IF(B68=\"\",\"\",'Inicio y meta'!$B$11+(B68-1)*7)",
+        "compartida": {}
+      },
+      "D68": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C69": {
+        "valor": null,
+        "formula": "IF(B69=\"\",\"\",'Inicio y meta'!$B$11+(B69-1)*7)",
+        "compartida": {}
+      },
+      "D69": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "C70": {
+        "valor": null,
+        "formula": "IF(B70=\"\",\"\",'Inicio y meta'!$B$11+(B70-1)*7)",
+        "compartida": {}
+      },
+      "D70": {
+        "valor": null,
+        "formula": "IF(C70=\"\",\"\",C70+6)",
+        "compartida": {
+          "t": "shared",
+          "ref": "D70:D101",
+          "si": "2"
+        }
+      },
+      "C71": {
+        "valor": null,
+        "formula": "IF(B71=\"\",\"\",'Inicio y meta'!$B$11+(B71-1)*7)",
+        "compartida": {}
+      },
+      "D71": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C72": {
+        "valor": null,
+        "formula": "IF(B72=\"\",\"\",'Inicio y meta'!$B$11+(B72-1)*7)",
+        "compartida": {}
+      },
+      "D72": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C73": {
+        "valor": null,
+        "formula": "IF(B73=\"\",\"\",'Inicio y meta'!$B$11+(B73-1)*7)",
+        "compartida": {}
+      },
+      "D73": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C74": {
+        "valor": null,
+        "formula": "IF(B74=\"\",\"\",'Inicio y meta'!$B$11+(B74-1)*7)",
+        "compartida": {}
+      },
+      "D74": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C75": {
+        "valor": null,
+        "formula": "IF(B75=\"\",\"\",'Inicio y meta'!$B$11+(B75-1)*7)",
+        "compartida": {}
+      },
+      "D75": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C76": {
+        "valor": null,
+        "formula": "IF(B76=\"\",\"\",'Inicio y meta'!$B$11+(B76-1)*7)",
+        "compartida": {}
+      },
+      "D76": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C77": {
+        "valor": null,
+        "formula": "IF(B77=\"\",\"\",'Inicio y meta'!$B$11+(B77-1)*7)",
+        "compartida": {}
+      },
+      "D77": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C78": {
+        "valor": null,
+        "formula": "IF(B78=\"\",\"\",'Inicio y meta'!$B$11+(B78-1)*7)",
+        "compartida": {}
+      },
+      "D78": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C79": {
+        "valor": null,
+        "formula": "IF(B79=\"\",\"\",'Inicio y meta'!$B$11+(B79-1)*7)",
+        "compartida": {}
+      },
+      "D79": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C80": {
+        "valor": null,
+        "formula": "IF(B80=\"\",\"\",'Inicio y meta'!$B$11+(B80-1)*7)",
+        "compartida": {}
+      },
+      "D80": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C81": {
+        "valor": null,
+        "formula": "IF(B81=\"\",\"\",'Inicio y meta'!$B$11+(B81-1)*7)",
+        "compartida": {}
+      },
+      "D81": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C82": {
+        "valor": null,
+        "formula": "IF(B82=\"\",\"\",'Inicio y meta'!$B$11+(B82-1)*7)",
+        "compartida": {}
+      },
+      "D82": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C83": {
+        "valor": null,
+        "formula": "IF(B83=\"\",\"\",'Inicio y meta'!$B$11+(B83-1)*7)",
+        "compartida": {}
+      },
+      "D83": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C84": {
+        "valor": null,
+        "formula": "IF(B84=\"\",\"\",'Inicio y meta'!$B$11+(B84-1)*7)",
+        "compartida": {}
+      },
+      "D84": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C85": {
+        "valor": null,
+        "formula": "IF(B85=\"\",\"\",'Inicio y meta'!$B$11+(B85-1)*7)",
+        "compartida": {}
+      },
+      "D85": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C86": {
+        "valor": null,
+        "formula": "IF(B86=\"\",\"\",'Inicio y meta'!$B$11+(B86-1)*7)",
+        "compartida": {}
+      },
+      "D86": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C87": {
+        "valor": null,
+        "formula": "IF(B87=\"\",\"\",'Inicio y meta'!$B$11+(B87-1)*7)",
+        "compartida": {}
+      },
+      "D87": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C88": {
+        "valor": null,
+        "formula": "IF(B88=\"\",\"\",'Inicio y meta'!$B$11+(B88-1)*7)",
+        "compartida": {}
+      },
+      "D88": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C89": {
+        "valor": null,
+        "formula": "IF(B89=\"\",\"\",'Inicio y meta'!$B$11+(B89-1)*7)",
+        "compartida": {}
+      },
+      "D89": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C90": {
+        "valor": null,
+        "formula": "IF(B90=\"\",\"\",'Inicio y meta'!$B$11+(B90-1)*7)",
+        "compartida": {}
+      },
+      "D90": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C91": {
+        "valor": null,
+        "formula": "IF(B91=\"\",\"\",'Inicio y meta'!$B$11+(B91-1)*7)",
+        "compartida": {}
+      },
+      "D91": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C92": {
+        "valor": null,
+        "formula": "IF(B92=\"\",\"\",'Inicio y meta'!$B$11+(B92-1)*7)",
+        "compartida": {}
+      },
+      "D92": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C93": {
+        "valor": null,
+        "formula": "IF(B93=\"\",\"\",'Inicio y meta'!$B$11+(B93-1)*7)",
+        "compartida": {}
+      },
+      "D93": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C94": {
+        "valor": null,
+        "formula": "IF(B94=\"\",\"\",'Inicio y meta'!$B$11+(B94-1)*7)",
+        "compartida": {}
+      },
+      "D94": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C95": {
+        "valor": null,
+        "formula": "IF(B95=\"\",\"\",'Inicio y meta'!$B$11+(B95-1)*7)",
+        "compartida": {}
+      },
+      "D95": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C96": {
+        "valor": null,
+        "formula": "IF(B96=\"\",\"\",'Inicio y meta'!$B$11+(B96-1)*7)",
+        "compartida": {}
+      },
+      "D96": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C97": {
+        "valor": null,
+        "formula": "IF(B97=\"\",\"\",'Inicio y meta'!$B$11+(B97-1)*7)",
+        "compartida": {}
+      },
+      "D97": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C98": {
+        "valor": null,
+        "formula": "IF(B98=\"\",\"\",'Inicio y meta'!$B$11+(B98-1)*7)",
+        "compartida": {}
+      },
+      "D98": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C99": {
+        "valor": null,
+        "formula": "IF(B99=\"\",\"\",'Inicio y meta'!$B$11+(B99-1)*7)",
+        "compartida": {}
+      },
+      "D99": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C100": {
+        "valor": null,
+        "formula": "IF(B100=\"\",\"\",'Inicio y meta'!$B$11+(B100-1)*7)",
+        "compartida": {}
+      },
+      "D100": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C101": {
+        "valor": null,
+        "formula": "IF(B101=\"\",\"\",'Inicio y meta'!$B$11+(B101-1)*7)",
+        "compartida": {}
+      },
+      "D101": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "C102": {
+        "valor": null,
+        "formula": "IF(B102=\"\",\"\",'Inicio y meta'!$B$11+(B102-1)*7)",
+        "compartida": {}
+      },
+      "D102": {
+        "valor": null,
+        "formula": "IF(C102=\"\",\"\",C102+6)",
+        "compartida": {
+          "t": "shared",
+          "ref": "D102:D133",
+          "si": "3"
+        }
+      },
+      "C103": {
+        "valor": null,
+        "formula": "IF(B103=\"\",\"\",'Inicio y meta'!$B$11+(B103-1)*7)",
+        "compartida": {}
+      },
+      "D103": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C104": {
+        "valor": null,
+        "formula": "IF(B104=\"\",\"\",'Inicio y meta'!$B$11+(B104-1)*7)",
+        "compartida": {}
+      },
+      "D104": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C105": {
+        "valor": null,
+        "formula": "IF(B105=\"\",\"\",'Inicio y meta'!$B$11+(B105-1)*7)",
+        "compartida": {}
+      },
+      "D105": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C106": {
+        "valor": null,
+        "formula": "IF(B106=\"\",\"\",'Inicio y meta'!$B$11+(B106-1)*7)",
+        "compartida": {}
+      },
+      "D106": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C107": {
+        "valor": null,
+        "formula": "IF(B107=\"\",\"\",'Inicio y meta'!$B$11+(B107-1)*7)",
+        "compartida": {}
+      },
+      "D107": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C108": {
+        "valor": null,
+        "formula": "IF(B108=\"\",\"\",'Inicio y meta'!$B$11+(B108-1)*7)",
+        "compartida": {}
+      },
+      "D108": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C109": {
+        "valor": null,
+        "formula": "IF(B109=\"\",\"\",'Inicio y meta'!$B$11+(B109-1)*7)",
+        "compartida": {}
+      },
+      "D109": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C110": {
+        "valor": null,
+        "formula": "IF(B110=\"\",\"\",'Inicio y meta'!$B$11+(B110-1)*7)",
+        "compartida": {}
+      },
+      "D110": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C111": {
+        "valor": null,
+        "formula": "IF(B111=\"\",\"\",'Inicio y meta'!$B$11+(B111-1)*7)",
+        "compartida": {}
+      },
+      "D111": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C112": {
+        "valor": null,
+        "formula": "IF(B112=\"\",\"\",'Inicio y meta'!$B$11+(B112-1)*7)",
+        "compartida": {}
+      },
+      "D112": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C113": {
+        "valor": null,
+        "formula": "IF(B113=\"\",\"\",'Inicio y meta'!$B$11+(B113-1)*7)",
+        "compartida": {}
+      },
+      "D113": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C114": {
+        "valor": null,
+        "formula": "IF(B114=\"\",\"\",'Inicio y meta'!$B$11+(B114-1)*7)",
+        "compartida": {}
+      },
+      "D114": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C115": {
+        "valor": null,
+        "formula": "IF(B115=\"\",\"\",'Inicio y meta'!$B$11+(B115-1)*7)",
+        "compartida": {}
+      },
+      "D115": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C116": {
+        "valor": null,
+        "formula": "IF(B116=\"\",\"\",'Inicio y meta'!$B$11+(B116-1)*7)",
+        "compartida": {}
+      },
+      "D116": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C117": {
+        "valor": null,
+        "formula": "IF(B117=\"\",\"\",'Inicio y meta'!$B$11+(B117-1)*7)",
+        "compartida": {}
+      },
+      "D117": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C118": {
+        "valor": null,
+        "formula": "IF(B118=\"\",\"\",'Inicio y meta'!$B$11+(B118-1)*7)",
+        "compartida": {}
+      },
+      "D118": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C119": {
+        "valor": null,
+        "formula": "IF(B119=\"\",\"\",'Inicio y meta'!$B$11+(B119-1)*7)",
+        "compartida": {}
+      },
+      "D119": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C120": {
+        "valor": null,
+        "formula": "IF(B120=\"\",\"\",'Inicio y meta'!$B$11+(B120-1)*7)",
+        "compartida": {}
+      },
+      "D120": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C121": {
+        "valor": null,
+        "formula": "IF(B121=\"\",\"\",'Inicio y meta'!$B$11+(B121-1)*7)",
+        "compartida": {}
+      },
+      "D121": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C122": {
+        "valor": null,
+        "formula": "IF(B122=\"\",\"\",'Inicio y meta'!$B$11+(B122-1)*7)",
+        "compartida": {}
+      },
+      "D122": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C123": {
+        "valor": null,
+        "formula": "IF(B123=\"\",\"\",'Inicio y meta'!$B$11+(B123-1)*7)",
+        "compartida": {}
+      },
+      "D123": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C124": {
+        "valor": null,
+        "formula": "IF(B124=\"\",\"\",'Inicio y meta'!$B$11+(B124-1)*7)",
+        "compartida": {}
+      },
+      "D124": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C125": {
+        "valor": null,
+        "formula": "IF(B125=\"\",\"\",'Inicio y meta'!$B$11+(B125-1)*7)",
+        "compartida": {}
+      },
+      "D125": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C126": {
+        "valor": null,
+        "formula": "IF(B126=\"\",\"\",'Inicio y meta'!$B$11+(B126-1)*7)",
+        "compartida": {}
+      },
+      "D126": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C127": {
+        "valor": null,
+        "formula": "IF(B127=\"\",\"\",'Inicio y meta'!$B$11+(B127-1)*7)",
+        "compartida": {}
+      },
+      "D127": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C128": {
+        "valor": null,
+        "formula": "IF(B128=\"\",\"\",'Inicio y meta'!$B$11+(B128-1)*7)",
+        "compartida": {}
+      },
+      "D128": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C129": {
+        "valor": null,
+        "formula": "IF(B129=\"\",\"\",'Inicio y meta'!$B$11+(B129-1)*7)",
+        "compartida": {}
+      },
+      "D129": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C130": {
+        "valor": null,
+        "formula": "IF(B130=\"\",\"\",'Inicio y meta'!$B$11+(B130-1)*7)",
+        "compartida": {}
+      },
+      "D130": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C131": {
+        "valor": null,
+        "formula": "IF(B131=\"\",\"\",'Inicio y meta'!$B$11+(B131-1)*7)",
+        "compartida": {}
+      },
+      "D131": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C132": {
+        "valor": null,
+        "formula": "IF(B132=\"\",\"\",'Inicio y meta'!$B$11+(B132-1)*7)",
+        "compartida": {}
+      },
+      "D132": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C133": {
+        "valor": null,
+        "formula": "IF(B133=\"\",\"\",'Inicio y meta'!$B$11+(B133-1)*7)",
+        "compartida": {}
+      },
+      "D133": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "C134": {
+        "valor": null,
+        "formula": "IF(B134=\"\",\"\",'Inicio y meta'!$B$11+(B134-1)*7)",
+        "compartida": {}
+      },
+      "D134": {
+        "valor": null,
+        "formula": "IF(C134=\"\",\"\",C134+6)",
+        "compartida": {
+          "t": "shared",
+          "ref": "D134:D165",
+          "si": "4"
+        }
+      },
+      "C135": {
+        "valor": null,
+        "formula": "IF(B135=\"\",\"\",'Inicio y meta'!$B$11+(B135-1)*7)",
+        "compartida": {}
+      },
+      "D135": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C136": {
+        "valor": null,
+        "formula": "IF(B136=\"\",\"\",'Inicio y meta'!$B$11+(B136-1)*7)",
+        "compartida": {}
+      },
+      "D136": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C137": {
+        "valor": null,
+        "formula": "IF(B137=\"\",\"\",'Inicio y meta'!$B$11+(B137-1)*7)",
+        "compartida": {}
+      },
+      "D137": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C138": {
+        "valor": null,
+        "formula": "IF(B138=\"\",\"\",'Inicio y meta'!$B$11+(B138-1)*7)",
+        "compartida": {}
+      },
+      "D138": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C139": {
+        "valor": null,
+        "formula": "IF(B139=\"\",\"\",'Inicio y meta'!$B$11+(B139-1)*7)",
+        "compartida": {}
+      },
+      "D139": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C140": {
+        "valor": null,
+        "formula": "IF(B140=\"\",\"\",'Inicio y meta'!$B$11+(B140-1)*7)",
+        "compartida": {}
+      },
+      "D140": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C141": {
+        "valor": null,
+        "formula": "IF(B141=\"\",\"\",'Inicio y meta'!$B$11+(B141-1)*7)",
+        "compartida": {}
+      },
+      "D141": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C142": {
+        "valor": null,
+        "formula": "IF(B142=\"\",\"\",'Inicio y meta'!$B$11+(B142-1)*7)",
+        "compartida": {}
+      },
+      "D142": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C143": {
+        "valor": null,
+        "formula": "IF(B143=\"\",\"\",'Inicio y meta'!$B$11+(B143-1)*7)",
+        "compartida": {}
+      },
+      "D143": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C144": {
+        "valor": null,
+        "formula": "IF(B144=\"\",\"\",'Inicio y meta'!$B$11+(B144-1)*7)",
+        "compartida": {}
+      },
+      "D144": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C145": {
+        "valor": null,
+        "formula": "IF(B145=\"\",\"\",'Inicio y meta'!$B$11+(B145-1)*7)",
+        "compartida": {}
+      },
+      "D145": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C146": {
+        "valor": null,
+        "formula": "IF(B146=\"\",\"\",'Inicio y meta'!$B$11+(B146-1)*7)",
+        "compartida": {}
+      },
+      "D146": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C147": {
+        "valor": null,
+        "formula": "IF(B147=\"\",\"\",'Inicio y meta'!$B$11+(B147-1)*7)",
+        "compartida": {}
+      },
+      "D147": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C148": {
+        "valor": null,
+        "formula": "IF(B148=\"\",\"\",'Inicio y meta'!$B$11+(B148-1)*7)",
+        "compartida": {}
+      },
+      "D148": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C149": {
+        "valor": null,
+        "formula": "IF(B149=\"\",\"\",'Inicio y meta'!$B$11+(B149-1)*7)",
+        "compartida": {}
+      },
+      "D149": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C150": {
+        "valor": null,
+        "formula": "IF(B150=\"\",\"\",'Inicio y meta'!$B$11+(B150-1)*7)",
+        "compartida": {}
+      },
+      "D150": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C151": {
+        "valor": null,
+        "formula": "IF(B151=\"\",\"\",'Inicio y meta'!$B$11+(B151-1)*7)",
+        "compartida": {}
+      },
+      "D151": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C152": {
+        "valor": null,
+        "formula": "IF(B152=\"\",\"\",'Inicio y meta'!$B$11+(B152-1)*7)",
+        "compartida": {}
+      },
+      "D152": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C153": {
+        "valor": null,
+        "formula": "IF(B153=\"\",\"\",'Inicio y meta'!$B$11+(B153-1)*7)",
+        "compartida": {}
+      },
+      "D153": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C154": {
+        "valor": null,
+        "formula": "IF(B154=\"\",\"\",'Inicio y meta'!$B$11+(B154-1)*7)",
+        "compartida": {}
+      },
+      "D154": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C155": {
+        "valor": null,
+        "formula": "IF(B155=\"\",\"\",'Inicio y meta'!$B$11+(B155-1)*7)",
+        "compartida": {}
+      },
+      "D155": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C156": {
+        "valor": null,
+        "formula": "IF(B156=\"\",\"\",'Inicio y meta'!$B$11+(B156-1)*7)",
+        "compartida": {}
+      },
+      "D156": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C157": {
+        "valor": null,
+        "formula": "IF(B157=\"\",\"\",'Inicio y meta'!$B$11+(B157-1)*7)",
+        "compartida": {}
+      },
+      "D157": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C158": {
+        "valor": null,
+        "formula": "IF(B158=\"\",\"\",'Inicio y meta'!$B$11+(B158-1)*7)",
+        "compartida": {}
+      },
+      "D158": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C159": {
+        "valor": null,
+        "formula": "IF(B159=\"\",\"\",'Inicio y meta'!$B$11+(B159-1)*7)",
+        "compartida": {}
+      },
+      "D159": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C160": {
+        "valor": null,
+        "formula": "IF(B160=\"\",\"\",'Inicio y meta'!$B$11+(B160-1)*7)",
+        "compartida": {}
+      },
+      "D160": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C161": {
+        "valor": null,
+        "formula": "IF(B161=\"\",\"\",'Inicio y meta'!$B$11+(B161-1)*7)",
+        "compartida": {}
+      },
+      "D161": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C162": {
+        "valor": null,
+        "formula": "IF(B162=\"\",\"\",'Inicio y meta'!$B$11+(B162-1)*7)",
+        "compartida": {}
+      },
+      "D162": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C163": {
+        "valor": null,
+        "formula": "IF(B163=\"\",\"\",'Inicio y meta'!$B$11+(B163-1)*7)",
+        "compartida": {}
+      },
+      "D163": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C164": {
+        "valor": null,
+        "formula": "IF(B164=\"\",\"\",'Inicio y meta'!$B$11+(B164-1)*7)",
+        "compartida": {}
+      },
+      "D164": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C165": {
+        "valor": null,
+        "formula": "IF(B165=\"\",\"\",'Inicio y meta'!$B$11+(B165-1)*7)",
+        "compartida": {}
+      },
+      "D165": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "C166": {
+        "valor": null,
+        "formula": "IF(B166=\"\",\"\",'Inicio y meta'!$B$11+(B166-1)*7)",
+        "compartida": {}
+      },
+      "D166": {
+        "valor": null,
+        "formula": "IF(C166=\"\",\"\",C166+6)",
+        "compartida": {
+          "t": "shared",
+          "ref": "D166:D197",
+          "si": "5"
+        }
+      },
+      "C167": {
+        "valor": null,
+        "formula": "IF(B167=\"\",\"\",'Inicio y meta'!$B$11+(B167-1)*7)",
+        "compartida": {}
+      },
+      "D167": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C168": {
+        "valor": null,
+        "formula": "IF(B168=\"\",\"\",'Inicio y meta'!$B$11+(B168-1)*7)",
+        "compartida": {}
+      },
+      "D168": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C169": {
+        "valor": null,
+        "formula": "IF(B169=\"\",\"\",'Inicio y meta'!$B$11+(B169-1)*7)",
+        "compartida": {}
+      },
+      "D169": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C170": {
+        "valor": null,
+        "formula": "IF(B170=\"\",\"\",'Inicio y meta'!$B$11+(B170-1)*7)",
+        "compartida": {}
+      },
+      "D170": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C171": {
+        "valor": null,
+        "formula": "IF(B171=\"\",\"\",'Inicio y meta'!$B$11+(B171-1)*7)",
+        "compartida": {}
+      },
+      "D171": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C172": {
+        "valor": null,
+        "formula": "IF(B172=\"\",\"\",'Inicio y meta'!$B$11+(B172-1)*7)",
+        "compartida": {}
+      },
+      "D172": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C173": {
+        "valor": null,
+        "formula": "IF(B173=\"\",\"\",'Inicio y meta'!$B$11+(B173-1)*7)",
+        "compartida": {}
+      },
+      "D173": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C174": {
+        "valor": null,
+        "formula": "IF(B174=\"\",\"\",'Inicio y meta'!$B$11+(B174-1)*7)",
+        "compartida": {}
+      },
+      "D174": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C175": {
+        "valor": null,
+        "formula": "IF(B175=\"\",\"\",'Inicio y meta'!$B$11+(B175-1)*7)",
+        "compartida": {}
+      },
+      "D175": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C176": {
+        "valor": null,
+        "formula": "IF(B176=\"\",\"\",'Inicio y meta'!$B$11+(B176-1)*7)",
+        "compartida": {}
+      },
+      "D176": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C177": {
+        "valor": null,
+        "formula": "IF(B177=\"\",\"\",'Inicio y meta'!$B$11+(B177-1)*7)",
+        "compartida": {}
+      },
+      "D177": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C178": {
+        "valor": null,
+        "formula": "IF(B178=\"\",\"\",'Inicio y meta'!$B$11+(B178-1)*7)",
+        "compartida": {}
+      },
+      "D178": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C179": {
+        "valor": null,
+        "formula": "IF(B179=\"\",\"\",'Inicio y meta'!$B$11+(B179-1)*7)",
+        "compartida": {}
+      },
+      "D179": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C180": {
+        "valor": null,
+        "formula": "IF(B180=\"\",\"\",'Inicio y meta'!$B$11+(B180-1)*7)",
+        "compartida": {}
+      },
+      "D180": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C181": {
+        "valor": null,
+        "formula": "IF(B181=\"\",\"\",'Inicio y meta'!$B$11+(B181-1)*7)",
+        "compartida": {}
+      },
+      "D181": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C182": {
+        "valor": null,
+        "formula": "IF(B182=\"\",\"\",'Inicio y meta'!$B$11+(B182-1)*7)",
+        "compartida": {}
+      },
+      "D182": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C183": {
+        "valor": null,
+        "formula": "IF(B183=\"\",\"\",'Inicio y meta'!$B$11+(B183-1)*7)",
+        "compartida": {}
+      },
+      "D183": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C184": {
+        "valor": null,
+        "formula": "IF(B184=\"\",\"\",'Inicio y meta'!$B$11+(B184-1)*7)",
+        "compartida": {}
+      },
+      "D184": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C185": {
+        "valor": null,
+        "formula": "IF(B185=\"\",\"\",'Inicio y meta'!$B$11+(B185-1)*7)",
+        "compartida": {}
+      },
+      "D185": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C186": {
+        "valor": null,
+        "formula": "IF(B186=\"\",\"\",'Inicio y meta'!$B$11+(B186-1)*7)",
+        "compartida": {}
+      },
+      "D186": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C187": {
+        "valor": null,
+        "formula": "IF(B187=\"\",\"\",'Inicio y meta'!$B$11+(B187-1)*7)",
+        "compartida": {}
+      },
+      "D187": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C188": {
+        "valor": null,
+        "formula": "IF(B188=\"\",\"\",'Inicio y meta'!$B$11+(B188-1)*7)",
+        "compartida": {}
+      },
+      "D188": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C189": {
+        "valor": null,
+        "formula": "IF(B189=\"\",\"\",'Inicio y meta'!$B$11+(B189-1)*7)",
+        "compartida": {}
+      },
+      "D189": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C190": {
+        "valor": null,
+        "formula": "IF(B190=\"\",\"\",'Inicio y meta'!$B$11+(B190-1)*7)",
+        "compartida": {}
+      },
+      "D190": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C191": {
+        "valor": null,
+        "formula": "IF(B191=\"\",\"\",'Inicio y meta'!$B$11+(B191-1)*7)",
+        "compartida": {}
+      },
+      "D191": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C192": {
+        "valor": null,
+        "formula": "IF(B192=\"\",\"\",'Inicio y meta'!$B$11+(B192-1)*7)",
+        "compartida": {}
+      },
+      "D192": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C193": {
+        "valor": null,
+        "formula": "IF(B193=\"\",\"\",'Inicio y meta'!$B$11+(B193-1)*7)",
+        "compartida": {}
+      },
+      "D193": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C194": {
+        "valor": null,
+        "formula": "IF(B194=\"\",\"\",'Inicio y meta'!$B$11+(B194-1)*7)",
+        "compartida": {}
+      },
+      "D194": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C195": {
+        "valor": null,
+        "formula": "IF(B195=\"\",\"\",'Inicio y meta'!$B$11+(B195-1)*7)",
+        "compartida": {}
+      },
+      "D195": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C196": {
+        "valor": null,
+        "formula": "IF(B196=\"\",\"\",'Inicio y meta'!$B$11+(B196-1)*7)",
+        "compartida": {}
+      },
+      "D196": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C197": {
+        "valor": null,
+        "formula": "IF(B197=\"\",\"\",'Inicio y meta'!$B$11+(B197-1)*7)",
+        "compartida": {}
+      },
+      "D197": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "C198": {
+        "valor": null,
+        "formula": "IF(B198=\"\",\"\",'Inicio y meta'!$B$11+(B198-1)*7)",
+        "compartida": {}
+      },
+      "D198": {
+        "valor": null,
+        "formula": "IF(C198=\"\",\"\",C198+6)",
+        "compartida": {
+          "t": "shared",
+          "ref": "D198:D229",
+          "si": "6"
+        }
+      },
+      "C199": {
+        "valor": null,
+        "formula": "IF(B199=\"\",\"\",'Inicio y meta'!$B$11+(B199-1)*7)",
+        "compartida": {}
+      },
+      "D199": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "C200": {
+        "valor": null,
+        "formula": "IF(B200=\"\",\"\",'Inicio y meta'!$B$11+(B200-1)*7)",
+        "compartida": {}
+      },
+      "D200": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "C201": {
+        "valor": null,
+        "formula": "IF(B201=\"\",\"\",'Inicio y meta'!$B$11+(B201-1)*7)",
+        "compartida": {}
+      },
+      "D201": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "C202": {
+        "valor": null,
+        "formula": "IF(B202=\"\",\"\",'Inicio y meta'!$B$11+(B202-1)*7)",
+        "compartida": {}
+      },
+      "D202": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "C203": {
+        "valor": null,
+        "formula": "IF(B203=\"\",\"\",'Inicio y meta'!$B$11+(B203-1)*7)",
+        "compartida": {}
+      },
+      "D203": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "C204": {
+        "valor": null,
+        "formula": "IF(B204=\"\",\"\",'Inicio y meta'!$B$11+(B204-1)*7)",
+        "compartida": {}
+      },
+      "D204": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "C205": {
+        "valor": null,
+        "formula": "IF(B205=\"\",\"\",'Inicio y meta'!$B$11+(B205-1)*7)",
+        "compartida": {}
+      },
+      "D205": {
+        "valor": null,
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      }
+    },
+    "Seguimiento": {
+      "A1": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "B1": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "C1": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "D1": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "E1": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "F1": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "G1": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "H1": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "I1": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "J1": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "K1": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "A2": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "B2": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "C2": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "D2": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "E2": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "F2": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "G2": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "H2": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "I2": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "J2": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "K2": {
+        "valor": "SEGUIMIENTO SEMANAL DEL PRESUPUESTO",
+        "formula": null,
+        "compartida": null
+      },
+      "A3": {
+        "valor": "Cada corte comprende de lunes a domingo. Cuatro semanas forman un mes presupuestario de C$2,400.",
+        "formula": null,
+        "compartida": null
+      },
+      "A5": {
+        "valor": "Mes",
+        "formula": null,
+        "compartida": null
+      },
+      "B5": {
+        "valor": "Semana",
+        "formula": null,
+        "compartida": null
+      },
+      "C5": {
+        "valor": "Desde",
+        "formula": null,
+        "compartida": null
+      },
+      "D5": {
+        "valor": "Hasta",
+        "formula": null,
+        "compartida": null
+      },
+      "E5": {
+        "valor": "Ingresos",
+        "formula": null,
+        "compartida": null
+      },
+      "F5": {
+        "valor": "Gastos",
+        "formula": null,
+        "compartida": null
+      },
+      "G5": {
+        "valor": "Ahorro meta",
+        "formula": null,
+        "compartida": null
+      },
+      "H5": {
+        "valor": "Reserva",
+        "formula": null,
+        "compartida": null
+      },
+      "I5": {
+        "valor": "Saldo",
+        "formula": null,
+        "compartida": null
+      },
+      "J5": {
+        "valor": "Ahorro acumulado",
+        "formula": null,
+        "compartida": null
+      },
+      "K5": {
+        "valor": "% de la meta",
+        "formula": null,
+        "compartida": null
+      },
+      "M5": {
+        "valor": "Semana",
+        "formula": null,
+        "compartida": null
+      },
+      "N5": {
+        "valor": "Ingresos",
+        "formula": null,
+        "compartida": null
+      },
+      "O5": {
+        "valor": "Gastos",
+        "formula": null,
+        "compartida": null
+      },
+      "P5": {
+        "valor": "Ahorro",
+        "formula": null,
+        "compartida": null
+      },
+      "Q5": {
+        "valor": "Reserva",
+        "formula": null,
+        "compartida": null
+      },
+      "A6": {
+        "valor": "1",
+        "formula": "ROUNDUP(B6/4,0)",
+        "compartida": {
+          "t": "shared",
+          "ref": "A6:A25",
+          "si": "0"
+        }
+      },
+      "B6": {
+        "valor": "1",
+        "formula": null,
+        "compartida": null
+      },
+      "C6": {
+        "valor": "46237",
+        "formula": "'Inicio y meta'!$B$11+(B6-1)*7",
+        "compartida": {}
+      },
+      "D6": {
+        "valor": "46243",
+        "formula": "C6+6",
+        "compartida": {
+          "t": "shared",
+          "ref": "D6:D25",
+          "si": "1"
+        }
+      },
+      "E6": {
+        "valor": "600",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B6,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F6": {
+        "valor": "437.5",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B6,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G6": {
+        "valor": "100",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B6,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H6": {
+        "valor": "62.5",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B6,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I6": {
+        "valor": "0",
+        "formula": "E6-F6-G6-H6",
+        "compartida": {
+          "t": "shared",
+          "ref": "I6:I25",
+          "si": "2"
+        }
+      },
+      "J6": {
+        "valor": "100",
+        "formula": "SUM($G$6:G6)",
+        "compartida": {}
+      },
+      "K6": {
+        "valor": "0.05",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J6/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M6": {
+        "valor": "1",
+        "formula": "B6",
+        "compartida": {
+          "t": "shared",
+          "ref": "M6:M25",
+          "si": "3"
+        }
+      },
+      "N6": {
+        "valor": "600",
+        "formula": "E6",
+        "compartida": {
+          "t": "shared",
+          "ref": "N6:N25",
+          "si": "4"
+        }
+      },
+      "O6": {
+        "valor": "437.5",
+        "formula": "F6",
+        "compartida": {
+          "t": "shared",
+          "ref": "O6:O25",
+          "si": "5"
+        }
+      },
+      "P6": {
+        "valor": "100",
+        "formula": "G6",
+        "compartida": {
+          "t": "shared",
+          "ref": "P6:P25",
+          "si": "6"
+        }
+      },
+      "Q6": {
+        "valor": "62.5",
+        "formula": "H6",
+        "compartida": {
+          "t": "shared",
+          "ref": "Q6:Q25",
+          "si": "7"
+        }
+      },
+      "A7": {
+        "valor": "1",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "B7": {
+        "valor": "2",
+        "formula": null,
+        "compartida": null
+      },
+      "C7": {
+        "valor": "46244",
+        "formula": "'Inicio y meta'!$B$11+(B7-1)*7",
+        "compartida": {}
+      },
+      "D7": {
+        "valor": "46250",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "E7": {
+        "valor": "600",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B7,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F7": {
+        "valor": "437.5",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B7,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G7": {
+        "valor": "100",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B7,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H7": {
+        "valor": "62.5",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B7,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I7": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "J7": {
+        "valor": "200",
+        "formula": "SUM($G$6:G7)",
+        "compartida": {}
+      },
+      "K7": {
+        "valor": "0.1",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J7/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M7": {
+        "valor": "2",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "N7": {
+        "valor": "600",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "O7": {
+        "valor": "437.5",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "P7": {
+        "valor": "100",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "Q7": {
+        "valor": "62.5",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "7"
+        }
+      },
+      "A8": {
+        "valor": "1",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "B8": {
+        "valor": "3",
+        "formula": null,
+        "compartida": null
+      },
+      "C8": {
+        "valor": "46251",
+        "formula": "'Inicio y meta'!$B$11+(B8-1)*7",
+        "compartida": {}
+      },
+      "D8": {
+        "valor": "46257",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "E8": {
+        "valor": "600",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B8,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F8": {
+        "valor": "437.5",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B8,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G8": {
+        "valor": "100",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B8,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H8": {
+        "valor": "62.5",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B8,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I8": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "J8": {
+        "valor": "300",
+        "formula": "SUM($G$6:G8)",
+        "compartida": {}
+      },
+      "K8": {
+        "valor": "0.15",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J8/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M8": {
+        "valor": "3",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "N8": {
+        "valor": "600",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "O8": {
+        "valor": "437.5",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "P8": {
+        "valor": "100",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "Q8": {
+        "valor": "62.5",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "7"
+        }
+      },
+      "A9": {
+        "valor": "1",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "B9": {
+        "valor": "4",
+        "formula": null,
+        "compartida": null
+      },
+      "C9": {
+        "valor": "46258",
+        "formula": "'Inicio y meta'!$B$11+(B9-1)*7",
+        "compartida": {}
+      },
+      "D9": {
+        "valor": "46264",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "E9": {
+        "valor": "600",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B9,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F9": {
+        "valor": "437.5",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B9,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G9": {
+        "valor": "100",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B9,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H9": {
+        "valor": "62.5",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B9,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I9": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "J9": {
+        "valor": "400",
+        "formula": "SUM($G$6:G9)",
+        "compartida": {}
+      },
+      "K9": {
+        "valor": "0.2",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J9/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M9": {
+        "valor": "4",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "N9": {
+        "valor": "600",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "O9": {
+        "valor": "437.5",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "P9": {
+        "valor": "100",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "Q9": {
+        "valor": "62.5",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "7"
+        }
+      },
+      "A10": {
+        "valor": "2",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "B10": {
+        "valor": "5",
+        "formula": null,
+        "compartida": null
+      },
+      "C10": {
+        "valor": "46265",
+        "formula": "'Inicio y meta'!$B$11+(B10-1)*7",
+        "compartida": {}
+      },
+      "D10": {
+        "valor": "46271",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "E10": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B10,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F10": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B10,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G10": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B10,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H10": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B10,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I10": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "J10": {
+        "valor": "400",
+        "formula": "SUM($G$6:G10)",
+        "compartida": {}
+      },
+      "K10": {
+        "valor": "0.2",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J10/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M10": {
+        "valor": "5",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "N10": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "O10": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "P10": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "Q10": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "7"
+        }
+      },
+      "A11": {
+        "valor": "2",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "B11": {
+        "valor": "6",
+        "formula": null,
+        "compartida": null
+      },
+      "C11": {
+        "valor": "46272",
+        "formula": "'Inicio y meta'!$B$11+(B11-1)*7",
+        "compartida": {}
+      },
+      "D11": {
+        "valor": "46278",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "E11": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B11,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F11": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B11,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G11": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B11,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H11": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B11,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I11": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "J11": {
+        "valor": "400",
+        "formula": "SUM($G$6:G11)",
+        "compartida": {}
+      },
+      "K11": {
+        "valor": "0.2",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J11/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M11": {
+        "valor": "6",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "N11": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "O11": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "P11": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "Q11": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "7"
+        }
+      },
+      "A12": {
+        "valor": "2",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "B12": {
+        "valor": "7",
+        "formula": null,
+        "compartida": null
+      },
+      "C12": {
+        "valor": "46279",
+        "formula": "'Inicio y meta'!$B$11+(B12-1)*7",
+        "compartida": {}
+      },
+      "D12": {
+        "valor": "46285",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "E12": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B12,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F12": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B12,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G12": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B12,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H12": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B12,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I12": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "J12": {
+        "valor": "400",
+        "formula": "SUM($G$6:G12)",
+        "compartida": {}
+      },
+      "K12": {
+        "valor": "0.2",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J12/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M12": {
+        "valor": "7",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "N12": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "O12": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "P12": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "Q12": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "7"
+        }
+      },
+      "A13": {
+        "valor": "2",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "B13": {
+        "valor": "8",
+        "formula": null,
+        "compartida": null
+      },
+      "C13": {
+        "valor": "46286",
+        "formula": "'Inicio y meta'!$B$11+(B13-1)*7",
+        "compartida": {}
+      },
+      "D13": {
+        "valor": "46292",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "E13": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B13,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F13": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B13,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G13": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B13,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H13": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B13,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I13": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "J13": {
+        "valor": "400",
+        "formula": "SUM($G$6:G13)",
+        "compartida": {}
+      },
+      "K13": {
+        "valor": "0.2",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J13/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M13": {
+        "valor": "8",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "N13": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "O13": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "P13": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "Q13": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "7"
+        }
+      },
+      "A14": {
+        "valor": "3",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "B14": {
+        "valor": "9",
+        "formula": null,
+        "compartida": null
+      },
+      "C14": {
+        "valor": "46293",
+        "formula": "'Inicio y meta'!$B$11+(B14-1)*7",
+        "compartida": {}
+      },
+      "D14": {
+        "valor": "46299",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "E14": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B14,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F14": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B14,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G14": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B14,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H14": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B14,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I14": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "J14": {
+        "valor": "400",
+        "formula": "SUM($G$6:G14)",
+        "compartida": {}
+      },
+      "K14": {
+        "valor": "0.2",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J14/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M14": {
+        "valor": "9",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "N14": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "O14": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "P14": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "Q14": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "7"
+        }
+      },
+      "A15": {
+        "valor": "3",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "B15": {
+        "valor": "10",
+        "formula": null,
+        "compartida": null
+      },
+      "C15": {
+        "valor": "46300",
+        "formula": "'Inicio y meta'!$B$11+(B15-1)*7",
+        "compartida": {}
+      },
+      "D15": {
+        "valor": "46306",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "E15": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B15,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F15": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B15,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G15": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B15,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H15": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B15,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I15": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "J15": {
+        "valor": "400",
+        "formula": "SUM($G$6:G15)",
+        "compartida": {}
+      },
+      "K15": {
+        "valor": "0.2",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J15/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M15": {
+        "valor": "10",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "N15": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "O15": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "P15": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "Q15": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "7"
+        }
+      },
+      "A16": {
+        "valor": "3",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "B16": {
+        "valor": "11",
+        "formula": null,
+        "compartida": null
+      },
+      "C16": {
+        "valor": "46307",
+        "formula": "'Inicio y meta'!$B$11+(B16-1)*7",
+        "compartida": {}
+      },
+      "D16": {
+        "valor": "46313",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "E16": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B16,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F16": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B16,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G16": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B16,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H16": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B16,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I16": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "J16": {
+        "valor": "400",
+        "formula": "SUM($G$6:G16)",
+        "compartida": {}
+      },
+      "K16": {
+        "valor": "0.2",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J16/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M16": {
+        "valor": "11",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "N16": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "O16": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "P16": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "Q16": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "7"
+        }
+      },
+      "A17": {
+        "valor": "3",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "B17": {
+        "valor": "12",
+        "formula": null,
+        "compartida": null
+      },
+      "C17": {
+        "valor": "46314",
+        "formula": "'Inicio y meta'!$B$11+(B17-1)*7",
+        "compartida": {}
+      },
+      "D17": {
+        "valor": "46320",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "E17": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B17,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F17": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B17,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G17": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B17,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H17": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B17,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I17": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "J17": {
+        "valor": "400",
+        "formula": "SUM($G$6:G17)",
+        "compartida": {}
+      },
+      "K17": {
+        "valor": "0.2",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J17/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M17": {
+        "valor": "12",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "N17": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "O17": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "P17": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "Q17": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "7"
+        }
+      },
+      "A18": {
+        "valor": "4",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "B18": {
+        "valor": "13",
+        "formula": null,
+        "compartida": null
+      },
+      "C18": {
+        "valor": "46321",
+        "formula": "'Inicio y meta'!$B$11+(B18-1)*7",
+        "compartida": {}
+      },
+      "D18": {
+        "valor": "46327",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "E18": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B18,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F18": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B18,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G18": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B18,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H18": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B18,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I18": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "J18": {
+        "valor": "400",
+        "formula": "SUM($G$6:G18)",
+        "compartida": {}
+      },
+      "K18": {
+        "valor": "0.2",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J18/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M18": {
+        "valor": "13",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "N18": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "O18": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "P18": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "Q18": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "7"
+        }
+      },
+      "A19": {
+        "valor": "4",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "B19": {
+        "valor": "14",
+        "formula": null,
+        "compartida": null
+      },
+      "C19": {
+        "valor": "46328",
+        "formula": "'Inicio y meta'!$B$11+(B19-1)*7",
+        "compartida": {}
+      },
+      "D19": {
+        "valor": "46334",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "E19": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B19,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F19": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B19,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G19": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B19,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H19": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B19,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I19": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "J19": {
+        "valor": "400",
+        "formula": "SUM($G$6:G19)",
+        "compartida": {}
+      },
+      "K19": {
+        "valor": "0.2",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J19/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M19": {
+        "valor": "14",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "N19": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "O19": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "P19": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "Q19": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "7"
+        }
+      },
+      "A20": {
+        "valor": "4",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "B20": {
+        "valor": "15",
+        "formula": null,
+        "compartida": null
+      },
+      "C20": {
+        "valor": "46335",
+        "formula": "'Inicio y meta'!$B$11+(B20-1)*7",
+        "compartida": {}
+      },
+      "D20": {
+        "valor": "46341",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "E20": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B20,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F20": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B20,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G20": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B20,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H20": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B20,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I20": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "J20": {
+        "valor": "400",
+        "formula": "SUM($G$6:G20)",
+        "compartida": {}
+      },
+      "K20": {
+        "valor": "0.2",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J20/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M20": {
+        "valor": "15",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "N20": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "O20": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "P20": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "Q20": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "7"
+        }
+      },
+      "A21": {
+        "valor": "4",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "B21": {
+        "valor": "16",
+        "formula": null,
+        "compartida": null
+      },
+      "C21": {
+        "valor": "46342",
+        "formula": "'Inicio y meta'!$B$11+(B21-1)*7",
+        "compartida": {}
+      },
+      "D21": {
+        "valor": "46348",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "E21": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B21,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F21": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B21,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G21": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B21,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H21": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B21,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I21": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "J21": {
+        "valor": "400",
+        "formula": "SUM($G$6:G21)",
+        "compartida": {}
+      },
+      "K21": {
+        "valor": "0.2",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J21/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M21": {
+        "valor": "16",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "N21": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "O21": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "P21": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "Q21": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "7"
+        }
+      },
+      "A22": {
+        "valor": "5",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "B22": {
+        "valor": "17",
+        "formula": null,
+        "compartida": null
+      },
+      "C22": {
+        "valor": "46349",
+        "formula": "'Inicio y meta'!$B$11+(B22-1)*7",
+        "compartida": {}
+      },
+      "D22": {
+        "valor": "46355",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "E22": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B22,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F22": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B22,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G22": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B22,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H22": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B22,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I22": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "J22": {
+        "valor": "400",
+        "formula": "SUM($G$6:G22)",
+        "compartida": {}
+      },
+      "K22": {
+        "valor": "0.2",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J22/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M22": {
+        "valor": "17",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "N22": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "O22": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "P22": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "Q22": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "7"
+        }
+      },
+      "A23": {
+        "valor": "5",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "B23": {
+        "valor": "18",
+        "formula": null,
+        "compartida": null
+      },
+      "C23": {
+        "valor": "46356",
+        "formula": "'Inicio y meta'!$B$11+(B23-1)*7",
+        "compartida": {}
+      },
+      "D23": {
+        "valor": "46362",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "E23": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B23,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F23": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B23,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G23": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B23,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H23": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B23,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I23": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "J23": {
+        "valor": "400",
+        "formula": "SUM($G$6:G23)",
+        "compartida": {}
+      },
+      "K23": {
+        "valor": "0.2",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J23/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M23": {
+        "valor": "18",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "N23": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "O23": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "P23": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "Q23": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "7"
+        }
+      },
+      "A24": {
+        "valor": "5",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "B24": {
+        "valor": "19",
+        "formula": null,
+        "compartida": null
+      },
+      "C24": {
+        "valor": "46363",
+        "formula": "'Inicio y meta'!$B$11+(B24-1)*7",
+        "compartida": {}
+      },
+      "D24": {
+        "valor": "46369",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "E24": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B24,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F24": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B24,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G24": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B24,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H24": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B24,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I24": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "J24": {
+        "valor": "400",
+        "formula": "SUM($G$6:G24)",
+        "compartida": {}
+      },
+      "K24": {
+        "valor": "0.2",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J24/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M24": {
+        "valor": "19",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "N24": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "O24": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "P24": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "Q24": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "7"
+        }
+      },
+      "A25": {
+        "valor": "5",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "B25": {
+        "valor": "20",
+        "formula": null,
+        "compartida": null
+      },
+      "C25": {
+        "valor": "46370",
+        "formula": "'Inicio y meta'!$B$11+(B25-1)*7",
+        "compartida": {}
+      },
+      "D25": {
+        "valor": "46376",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "1"
+        }
+      },
+      "E25": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B25,'Registro semanal'!$E$6:$E$205,\"Ingreso\")",
+        "compartida": {}
+      },
+      "F25": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B25,'Registro semanal'!$E$6:$E$205,\"Gasto\")",
+        "compartida": {}
+      },
+      "G25": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B25,'Registro semanal'!$E$6:$E$205,\"Ahorro\")",
+        "compartida": {}
+      },
+      "H25": {
+        "valor": "0",
+        "formula": "SUMIFS('Registro semanal'!$H$6:$H$205,'Registro semanal'!$B$6:$B$205,B25,'Registro semanal'!$E$6:$E$205,\"Reserva\")",
+        "compartida": {}
+      },
+      "I25": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "2"
+        }
+      },
+      "J25": {
+        "valor": "400",
+        "formula": "SUM($G$6:G25)",
+        "compartida": {}
+      },
+      "K25": {
+        "valor": "0.2",
+        "formula": "IF('Inicio y meta'!$B$8=0,0,J25/'Inicio y meta'!$B$8)",
+        "compartida": {}
+      },
+      "M25": {
+        "valor": "20",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "3"
+        }
+      },
+      "N25": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "4"
+        }
+      },
+      "O25": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "5"
+        }
+      },
+      "P25": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "6"
+        }
+      },
+      "Q25": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "7"
+        }
+      }
+    },
+    "Presupuesto proyectado": {
+      "A1": {
+        "valor": "PRESUPUESTO PROYECTADO: REAL O DESEADO",
+        "formula": null,
+        "compartida": null
+      },
+      "B1": {
+        "valor": "PRESUPUESTO PROYECTADO: REAL O DESEADO",
+        "formula": null,
+        "compartida": null
+      },
+      "C1": {
+        "valor": "PRESUPUESTO PROYECTADO: REAL O DESEADO",
+        "formula": null,
+        "compartida": null
+      },
+      "D1": {
+        "valor": "PRESUPUESTO PROYECTADO: REAL O DESEADO",
+        "formula": null,
+        "compartida": null
+      },
+      "E1": {
+        "valor": "PRESUPUESTO PROYECTADO: REAL O DESEADO",
+        "formula": null,
+        "compartida": null
+      },
+      "F1": {
+        "valor": "PRESUPUESTO PROYECTADO: REAL O DESEADO",
+        "formula": null,
+        "compartida": null
+      },
+      "A2": {
+        "valor": "PRESUPUESTO PROYECTADO: REAL O DESEADO",
+        "formula": null,
+        "compartida": null
+      },
+      "B2": {
+        "valor": "PRESUPUESTO PROYECTADO: REAL O DESEADO",
+        "formula": null,
+        "compartida": null
+      },
+      "C2": {
+        "valor": "PRESUPUESTO PROYECTADO: REAL O DESEADO",
+        "formula": null,
+        "compartida": null
+      },
+      "D2": {
+        "valor": "PRESUPUESTO PROYECTADO: REAL O DESEADO",
+        "formula": null,
+        "compartida": null
+      },
+      "E2": {
+        "valor": "PRESUPUESTO PROYECTADO: REAL O DESEADO",
+        "formula": null,
+        "compartida": null
+      },
+      "F2": {
+        "valor": "PRESUPUESTO PROYECTADO: REAL O DESEADO",
+        "formula": null,
+        "compartida": null
+      },
+      "A3": {
+        "valor": "Si el ingreso actual solo cubre transporte, registre esa realidad y complete una segunda proyección con lo que necesitaría.",
+        "formula": null,
+        "compartida": null
+      },
+      "A5": {
+        "valor": "Tipo de proyección:",
+        "formula": null,
+        "compartida": null
+      },
+      "B5": {
+        "valor": "Real actual",
+        "formula": null,
+        "compartida": null
+      },
+      "D5": {
+        "valor": "Diferencia:",
+        "formula": null,
+        "compartida": null
+      },
+      "E5": {
+        "valor": "0",
+        "formula": "B6-B8",
+        "compartida": {}
+      },
+      "A6": {
+        "valor": "Ingreso mensual o semanal disponible:",
+        "formula": null,
+        "compartida": null
+      },
+      "B6": {
+        "valor": "2400",
+        "formula": null,
+        "compartida": null
+      },
+      "D6": {
+        "valor": "Porcentaje asignado:",
+        "formula": null,
+        "compartida": null
+      },
+      "E6": {
+        "valor": "1",
+        "formula": "IF(B6=0,0,B8/B6)",
+        "compartida": {}
+      },
+      "A7": {
+        "valor": "Frecuencia:",
+        "formula": null,
+        "compartida": null
+      },
+      "B7": {
+        "valor": "Mensual",
+        "formula": null,
+        "compartida": null
+      },
+      "D7": {
+        "valor": "Estado:",
+        "formula": null,
+        "compartida": null
+      },
+      "E7": {
+        "valor": "Balanceado",
+        "formula": "IF(E5=0,\"Balanceado\",IF(E5>0,\"Falta asignar\",\"Excede ingreso\"))",
+        "compartida": {}
+      },
+      "A8": {
+        "valor": "Total asignado:",
+        "formula": null,
+        "compartida": null
+      },
+      "B8": {
+        "valor": "2400",
+        "formula": "SUM(B12:B20)",
+        "compartida": {}
+      },
+      "D8": {
+        "valor": "Ahorro proyectado:",
+        "formula": null,
+        "compartida": null
+      },
+      "E8": {
+        "valor": "400",
+        "formula": "B19",
+        "compartida": {}
+      },
+      "A11": {
+        "valor": "Categoría",
+        "formula": null,
+        "compartida": null
+      },
+      "B11": {
+        "valor": "Monto planificado",
+        "formula": null,
+        "compartida": null
+      },
+      "C11": {
+        "valor": "% del ingreso",
+        "formula": null,
+        "compartida": null
+      },
+      "D11": {
+        "valor": "Tipo",
+        "formula": null,
+        "compartida": null
+      },
+      "E11": {
+        "valor": "Comentario",
+        "formula": null,
+        "compartida": null
+      },
+      "A12": {
+        "valor": "Transporte",
+        "formula": null,
+        "compartida": null
+      },
+      "B12": {
+        "valor": "700",
+        "formula": null,
+        "compartida": null
+      },
+      "C12": {
+        "valor": "0.29166666666666669",
+        "formula": "IF($B$6=0,0,B12/$B$6)",
+        "compartida": {
+          "t": "shared",
+          "ref": "C12:C20",
+          "si": "0"
+        }
+      },
+      "D12": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "A13": {
+        "valor": "Alimentación",
+        "formula": null,
+        "compartida": null
+      },
+      "B13": {
+        "valor": "500",
+        "formula": null,
+        "compartida": null
+      },
+      "C13": {
+        "valor": "0.20833333333333334",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "D13": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "A14": {
+        "valor": "Datos/Internet",
+        "formula": null,
+        "compartida": null
+      },
+      "B14": {
+        "valor": "200",
+        "formula": null,
+        "compartida": null
+      },
+      "C14": {
+        "valor": "8.3333333333333329E-2",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "D14": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "A15": {
+        "valor": "Copias y materiales",
+        "formula": null,
+        "compartida": null
+      },
+      "B15": {
+        "valor": "100",
+        "formula": null,
+        "compartida": null
+      },
+      "C15": {
+        "valor": "4.1666666666666664E-2",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "D15": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "A16": {
+        "valor": "Salud",
+        "formula": null,
+        "compartida": null
+      },
+      "B16": {
+        "valor": "0",
+        "formula": null,
+        "compartida": null
+      },
+      "C16": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "D16": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "A17": {
+        "valor": "Personal/Ocio",
+        "formula": null,
+        "compartida": null
+      },
+      "B17": {
+        "valor": "250",
+        "formula": null,
+        "compartida": null
+      },
+      "C17": {
+        "valor": "0.10416666666666667",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "D17": {
+        "valor": "Deseo",
+        "formula": null,
+        "compartida": null
+      },
+      "A18": {
+        "valor": "Reserva imprevistos",
+        "formula": null,
+        "compartida": null
+      },
+      "B18": {
+        "valor": "250",
+        "formula": null,
+        "compartida": null
+      },
+      "C18": {
+        "valor": "0.10416666666666667",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "D18": {
+        "valor": "Reserva",
+        "formula": null,
+        "compartida": null
+      },
+      "A19": {
+        "valor": "Meta de ahorro",
+        "formula": null,
+        "compartida": null
+      },
+      "B19": {
+        "valor": "400",
+        "formula": null,
+        "compartida": null
+      },
+      "C19": {
+        "valor": "0.16666666666666666",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "D19": {
+        "valor": "Ahorro",
+        "formula": null,
+        "compartida": null
+      },
+      "A20": {
+        "valor": "Otro",
+        "formula": null,
+        "compartida": null
+      },
+      "B20": {
+        "valor": "0",
+        "formula": null,
+        "compartida": null
+      },
+      "C20": {
+        "valor": "0",
+        "formula": null,
+        "compartida": {
+          "t": "shared",
+          "si": "0"
+        }
+      },
+      "D20": {
+        "valor": "Según el caso",
+        "formula": null,
+        "compartida": null
+      },
+      "A22": {
+        "valor": "Interpretación: los porcentajes sirven para analizar la distribución; no obligan a gastar más si aumenta el ingreso.",
+        "formula": null,
+        "compartida": null
+      },
+      "A23": {
+        "valor": "Ingreso extraordinario: priorizar una necesidad pendiente, la reserva y la meta antes de aumentar el ocio.",
+        "formula": null,
+        "compartida": null
+      }
+    },
+    "Listas": {
+      "A1": {
+        "valor": "Semana",
+        "formula": null,
+        "compartida": null
+      },
+      "B1": {
+        "valor": "Tipo",
+        "formula": null,
+        "compartida": null
+      },
+      "C1": {
+        "valor": "Categoría",
+        "formula": null,
+        "compartida": null
+      },
+      "D1": {
+        "valor": "Prioridad",
+        "formula": null,
+        "compartida": null
+      },
+      "E1": {
+        "valor": "Medio",
+        "formula": null,
+        "compartida": null
+      },
+      "A2": {
+        "valor": "1",
+        "formula": null,
+        "compartida": null
+      },
+      "B2": {
+        "valor": "Ingreso",
+        "formula": null,
+        "compartida": null
+      },
+      "C2": {
+        "valor": "Apoyo familiar",
+        "formula": null,
+        "compartida": null
+      },
+      "D2": {
+        "valor": "Necesidad",
+        "formula": null,
+        "compartida": null
+      },
+      "E2": {
+        "valor": "Efectivo",
+        "formula": null,
+        "compartida": null
+      },
+      "A3": {
+        "valor": "2",
+        "formula": null,
+        "compartida": null
+      },
+      "B3": {
+        "valor": "Gasto",
+        "formula": null,
+        "compartida": null
+      },
+      "C3": {
+        "valor": "Ingreso extra",
+        "formula": null,
+        "compartida": null
+      },
+      "D3": {
+        "valor": "Deseo",
+        "formula": null,
+        "compartida": null
+      },
+      "E3": {
+        "valor": "Transferencia",
+        "formula": null,
+        "compartida": null
+      },
+      "A4": {
+        "valor": "3",
+        "formula": null,
+        "compartida": null
+      },
+      "B4": {
+        "valor": "Ahorro",
+        "formula": null,
+        "compartida": null
+      },
+      "C4": {
+        "valor": "Transporte",
+        "formula": null,
+        "compartida": null
+      },
+      "D4": {
+        "valor": "Meta",
+        "formula": null,
+        "compartida": null
+      },
+      "E4": {
+        "valor": "Tarjeta",
+        "formula": null,
+        "compartida": null
+      },
+      "A5": {
+        "valor": "4",
+        "formula": null,
+        "compartida": null
+      },
+      "B5": {
+        "valor": "Reserva",
+        "formula": null,
+        "compartida": null
+      },
+      "C5": {
+        "valor": "Alimentación",
+        "formula": null,
+        "compartida": null
+      },
+      "E5": {
+        "valor": "Otro",
+        "formula": null,
+        "compartida": null
+      },
+      "A6": {
+        "valor": "5",
+        "formula": null,
+        "compartida": null
+      },
+      "C6": {
+        "valor": "Datos/Internet",
+        "formula": null,
+        "compartida": null
+      },
+      "A7": {
+        "valor": "6",
+        "formula": null,
+        "compartida": null
+      },
+      "C7": {
+        "valor": "Copias y materiales",
+        "formula": null,
+        "compartida": null
+      },
+      "A8": {
+        "valor": "7",
+        "formula": null,
+        "compartida": null
+      },
+      "C8": {
+        "valor": "Salud",
+        "formula": null,
+        "compartida": null
+      },
+      "A9": {
+        "valor": "8",
+        "formula": null,
+        "compartida": null
+      },
+      "C9": {
+        "valor": "Personal/Ocio",
+        "formula": null,
+        "compartida": null
+      },
+      "A10": {
+        "valor": "9",
+        "formula": null,
+        "compartida": null
+      },
+      "C10": {
+        "valor": "Reserva imprevistos",
+        "formula": null,
+        "compartida": null
+      },
+      "A11": {
+        "valor": "10",
+        "formula": null,
+        "compartida": null
+      },
+      "C11": {
+        "valor": "Meta de ahorro",
+        "formula": null,
+        "compartida": null
+      },
+      "A12": {
+        "valor": "11",
+        "formula": null,
+        "compartida": null
+      },
+      "C12": {
+        "valor": "Otro",
+        "formula": null,
+        "compartida": null
+      },
+      "A13": {
+        "valor": "12",
+        "formula": null,
+        "compartida": null
+      },
+      "A14": {
+        "valor": "13",
+        "formula": null,
+        "compartida": null
+      },
+      "A15": {
+        "valor": "14",
+        "formula": null,
+        "compartida": null
+      },
+      "A16": {
+        "valor": "15",
+        "formula": null,
+        "compartida": null
+      },
+      "A17": {
+        "valor": "16",
+        "formula": null,
+        "compartida": null
+      },
+      "A18": {
+        "valor": "17",
+        "formula": null,
+        "compartida": null
+      },
+      "A19": {
+        "valor": "18",
+        "formula": null,
+        "compartida": null
+      },
+      "A20": {
+        "valor": "19",
+        "formula": null,
+        "compartida": null
+      },
+      "A21": {
+        "valor": "20",
+        "formula": null,
+        "compartida": null
+      }
+    }
+  }
+}

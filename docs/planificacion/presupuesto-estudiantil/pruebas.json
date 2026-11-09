@@ -1,0 +1,9 @@
+{
+  "success": true,
+  "numTotalTests": 2239,
+  "numPassedTests": 2239,
+  "numFailedTests": 0,
+  "archivos": 76,
+  "comando": "npm.cmd test -- --maxWorkers=2",
+  "fallos": []
+}

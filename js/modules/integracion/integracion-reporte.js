@@ -70,11 +70,21 @@ function tablaTotales(estados) {
   return tabla('Totales por periodo', periods, filas) + nota;
 }
 
+// El presupuesto personal también se puede consultar sin estados empresariales.
+export function resumenPresupuestoEstudiantil(p) {
+  if (!p) return '';
+  if (p.error) return `<h2>Presupuesto estudiantil</h2><p>No se pudo leer: ${esc(p.error)}</p>`;
+  return `<h2>Presupuesto estudiantil: movimientos realizados</h2><p>Seguimiento de ${esc(p.semanas)} semanas: ${esc(p.desde ?? 'Sin fecha')} a ${esc(p.hasta ?? 'Sin fecha')}.</p>
+    <div class="table-wrapper"><table><tbody>${[['Ingresos registrados',p.ingresos], ['Gastos realizados',p.gastos], ['Ahorro para la meta',p.ahorro], ['Reserva acumulada',p.reserva], ['Saldo disponible',p.saldo], ['Costo de la meta',p.metaAhorro]].map(([t,v]) => `<tr><th>${t}</th>${celdaMonto(v)}</tr>`).join('')}</tbody></table></div><p>Las asignaciones proyectadas no cuentan como movimientos realizados.</p>`;
+}
+
 function resumen(kpis) {
   if (!kpis) return '';
+  const personal = resumenPresupuestoEstudiantil(kpis.presupuestoEstudiantil);
+  if (!Object.hasOwn(kpis, 'totalActivos')) return personal;
   return `<h2>Resumen</h2>
 <p>Total Activos: ${monto(kpis.totalActivos)} | Total Pasivos: ${monto(kpis.totalPasivos)} | Patrimonio: ${monto(kpis.totalPatrimonio)}</p>
-<p>Ventas: ${monto(kpis.ventas)} | Utilidad Neta: ${monto(kpis.utilidadNeta)}</p>`;
+<p>Ventas: ${monto(kpis.ventas)} | Utilidad Neta: ${monto(kpis.utilidadNeta)}</p>${personal}`;
 }
 
 // kpis: resultado de computeDashboardKPIs (o null). estados: datos normalizados (o null).
@@ -84,7 +94,7 @@ export function construirReporteHTML({ kpis = null, estados = null, errorEstados
     return `${resumen(kpis)}<p>No se pudieron leer los estados financieros guardados: ${esc(errorEstados)}. Revise los datos en Estados Financieros.</p>`;
   }
   if (!estados || !estados.periods?.length) {
-    return `${resumen(kpis)}<p>No hay estados financieros guardados. Cárguelos en Estados Financieros para generar el reporte.</p>`;
+    return `${resumen(kpis)}<p>No hay estados financieros guardados.${kpis?.presupuestoEstudiantil ? '' : ' Cárguelos en Estados Financieros para generar el reporte.'}</p>`;
   }
   return `<p>Empresa: <strong>${esc(estados.name)}</strong></p>${resumen(kpis)}${tablaBalance(estados)}${tablaResultados(estados)}${tablaTotales(estados)}`;
 }

@@ -36,7 +36,8 @@ describe('validarRespaldo', () => {
   it('completa con los valores actuales lo que el archivo no trae', () => {
     const { modulos } = validarRespaldo({ presupuesto: { ingresoMensual: 500 } }, actuales());
     expect(modulos.presupuesto).toEqual({
-      ingresoMensual: 500, metaAhorro: 0, mesesDisponibles: 12, gastos: [], semanas: [], ingresos: []
+      ingresoMensual: 500, metaAhorro: 0, mesesDisponibles: 12, gastos: [], semanas: [], ingresos: [],
+      vista: 'mensual', estudiantil: null
     });
   });
 

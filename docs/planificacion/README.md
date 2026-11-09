@@ -6,6 +6,7 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 
 | Feature | Responsable | Estado | Ficha |
 |---|---|---|---|
+| Presupuesto personal según plantilla estudiantil | Solicitud de Cris | Implementada y verificada | [presupuesto-estudiantil](presupuesto-estudiantil/README.md) |
 | Revisión opcional para integrar | Solicitud de Cris | Validada; configuración aplicada | [revision-opcional](revision-opcional/README.md) |
 | Integración de ramas y guías (`core`) | Carlos | Completada (PR #1) | [integracion-core](integracion-core/README.md) |
 | Colección de cuentas e identificador | Carlos | En revisión | [cuentas](cuentas/README.md) |

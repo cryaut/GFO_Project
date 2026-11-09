@@ -60,11 +60,12 @@ D-099 añade `estados-cobertura.js` y el campo opcional `estados.coberturaEstado
 |---|---|---|
 | `estados/` | `index.js` (demo, lectura del `store`, `initEstados`), `estados-ui.js` (interfaz), `estados-import.js` (archivos), `estados-normalize.js` (validación), `estados-calculations.js` (tipos y totales) | Único módulo que ya sigue el patrón completo |
 | `analisis/` | `index.js` (cálculo e interfaz de las pestañas), `mercado-calculations.js` / `mercado-ui.js` (pestaña Mercado), `eoaf-calculations.js` (lógica pura del Estado de Origen y Aplicación), `efe-calculations.js` (lógica pura del EFE, D-024) y `comprobacion-calculations.js` (piezas comunes de ambas comprobaciones, D-027) | `ah.js`, `av.js`, `razones.js`, `dupont.js`, `cnt-cno.js`, `eoaf.js` y `efe.js` solo reexportan funciones de `index.js` |
-| `presupuesto/`, `activos/`, `mercados/`, `integracion/` | Casi todo en `index.js` | `glosario-data.js`, `comparador.js` y `quiz.js` reexportan datos de `mercados/index.js` |
+| `activos/`, `mercados/`, `integracion/` | Casi todo en `index.js` | `glosario-data.js`, `comparador.js` y `quiz.js` reexportan datos de `mercados/index.js` |
+| `presupuesto/` | `index.js` selecciona vista y persiste; `presupuesto-calculations.js` valida/calcula el documento estudiantil; `presupuesto-ui.js` presenta sus cuatro vistas | `presupuesto-mensual.js` conserva la vista anterior y las exportaciones `presupuestoCalculations`/`ejemploPresupuestoPersonal` reexportadas desde `index.js` |
 | `apalancamiento/` | `index.js` (lee el `store` e `initApalancamiento`), `apalancamiento-ui.js` (interfaz), `apalancamiento-calculations.js` (derivación pura, sin DOM ni `store`) | Lee los estados con `computeFinancialTotals` y `resolveAccountType`; las fórmulas están en `calculate.js` |
 | `inventario/`, `equilibrio/`, `flujo/`, `planeacion/`, `proforma/` | Mismo patrón que `apalancamiento/`: `<modulo>-calculations.js` puro, `<modulo>-ui.js` que recibe `page` y `{ datos, guardar, graficar? }`, e `index.js` que lee el `store` | Plan en `docs/planificacion/modulos-guia/`. `proforma/` no guarda datos: reúne los resultados de los demás con sus mismas funciones |
 
-Estos archivos están vacíos (devuelven `{}`) y ningún módulo los usa: `activos/activos-ui.js`, `analisis/analisis-ui.js`, `integracion/dashboard.js`, `integracion/export.js`, `mercados/mercados-ui.js`, `presupuesto/presupuesto-ui.js` y `presupuesto/presupuesto-calculations.js`. `activos/depreciacion.js` solo envuelve una función de `calculate.js`. No agregues lógica en ellos sin acordarlo: hoy nadie los importa.
+Estos archivos están vacíos (devuelven `{}`) y ningún módulo los usa: `activos/activos-ui.js`, `analisis/analisis-ui.js`, `integracion/dashboard.js`, `integracion/export.js`, `mercados/mercados-ui.js`. `activos/depreciacion.js` solo envuelve una función de `calculate.js`. No agregues lógica en ellos sin acordarlo: hoy nadie los importa.
 
 ## Rutas
 
@@ -122,7 +123,7 @@ Secciones de `defaultData` en `js/store.js`:
 
 | Clave | Contenido |
 |---|---|
-| `presupuesto` | `ingresoMensual` (total de `ingresos`), `metaAhorro`, `mesesDisponibles`, `gastos[]`, `semanas[]`, `ingresos[]` (`{ concepto, monto, tipo: 'regular' \| 'ocasional' }`) |
+| `presupuesto` | `vista` (`estudiantil`/`mensual`), `estudiantil` (null o documento v1 de meta, movimientos y proyecciones real/deseada); conserva `ingresoMensual` (total de `ingresos`), `metaAhorro`, `mesesDisponibles`, `gastos[]`, `semanas[]`, `ingresos[]` (`{ concepto, monto, tipo: 'regular' \| 'ocasional' }`) |
 | `estados` | Estados financieros (forma abajo) |
 | `analisis` | `resultados` (sin uso actual) |
 | `activos` | `inventario[]` |

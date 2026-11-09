@@ -34,8 +34,8 @@ async function cargarPresupuesto(datos) {
   vi.stubGlobal('window', { confirm: () => true });
   const { default: store } = await import('../../js/store.js');
   if (datos) store.setPersisted('presupuesto', datos);
-  const modulo = await import('../../js/modules/presupuesto/index.js');
-  modulo.initPresupuesto();
+  const modulo = await import('../../js/modules/presupuesto/presupuesto-mensual.js');
+  modulo.initPresupuestoMensual();
   return { page, store, modulo, toasts };
 }
 

@@ -238,7 +238,16 @@ export function areasClave(entradas) {
 
 // Presupuesto personal. Recibe los totales ya sumados por presupuestoCalculations
 // (inicio/index.js); aquí solo se aplican capacidadAhorro, tasaAhorro y ahorroMensual.
-function areaPresupuestoPersonal({ ingresos, gastos, metaAhorro = 0, mesesDisponibles = 12 }) {
+function areaPresupuestoPersonal(p) {
+  const { ingresos, gastos, metaAhorro = 0, mesesDisponibles = 12 } = p;
+  if (p.estudiantil) {
+    const puntos = [punto('Ingresos registrados', ingresos, 'monto'), punto('Gastos realizados', gastos, 'monto'),
+      punto('Ahorro para la meta', p.ahorro ?? null, 'monto'), punto('Reserva acumulada', p.reserva ?? null, 'monto'),
+      punto('Saldo disponible', p.saldo ?? null, 'monto'), punto('Avance realizado', p.avance ?? null, 'pct')];
+    const lectura = p.error ? `No se pudo leer el presupuesto estudiantil: ${p.error}`
+      : `Movimientos del seguimiento de ${p.semanas} semanas${p.desde ? ` (${p.desde} a ${p.hasta})` : ''}. El ahorro registrado es ${monto(p.ahorro)}; la reserva se mantiene aparte. Las proyecciones no cuentan como ahorro realizado.`;
+    return area('presupuestoPersonal', 'Presupuesto estudiantil', '#/presupuesto', p.error ? 'alerta' : p.saldo < 0 ? 'alerta' : 'info', puntos, lectura);
+  }
   const capacidad = capacidadAhorro(ingresos, gastos);
   const tasa = tasaAhorro(capacidad, ingresos);
   const necesario = metaAhorro > 0 ? ahorroMensual(metaAhorro, mesesDisponibles) : null;
@@ -275,7 +284,7 @@ function areaActivosHogar(r) {
 // presupuesto: { ingresos, gastos, metaAhorro, mesesDisponibles } o null; activos: lista con `estado`.
 export function finanzasPersonales(presupuesto = null, activos = null) {
   const lista = [];
-  if (presupuesto && (presupuesto.ingresos > 0 || presupuesto.gastos > 0)) lista.push(areaPresupuestoPersonal(presupuesto));
+  if (presupuesto && (presupuesto.estudiantil || presupuesto.ingresos > 0 || presupuesto.gastos > 0)) lista.push(areaPresupuestoPersonal(presupuesto));
   const resumen = resumenActivos(activos);
   if (resumen) lista.push(areaActivosHogar(resumen));
   return lista;

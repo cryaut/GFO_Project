@@ -2344,3 +2344,27 @@ Inicio y Mercado reutilizan el ER resuelto; EFE consulta `obtenerUtilidadNetaMot
 **Para revertirla.** Registrar otra decisión, restablecer aprobación obligatoria en las dos guías y configurar nuevamente el número de aprobaciones en GitHub.
 
 **Referencias.** `docs/planificacion/revision-opcional/README.md`; solicitud de Cris del 2026-11-08.
+
+
+### D-109 — Presupuesto estudiantil: realizados, proyecciones y compatibilidad
+
+- **Fecha:** 2026-11-08.
+- **Estado:** Implementada; validación documentada en la ficha.
+- **Decidió:** Cris solicita reparar Presupuesto personal conforme a su XLSX y organizar la interfaz.
+- **Área:** Presupuesto personal; consumidores y respaldo de su información.
+
+**Contexto.** La vista anterior distribuye un ingreso mensual, calcula un ahorro recomendado e incluye inflación, pero no representa el libro docente: faltan movimientos fechados por tipo, veinte semanas de seguimiento y separación entre ahorro/reserva realizados y lo planificado. No es posible convertir sus asignaciones en transacciones sin inventar fechas y ejecución. D-104 a D-108 están reservadas en el encargo concurrente AFOD; se usa D-109.
+
+**Opciones.** Reinterpretar los datos anteriores, reemplazar la pantalla perdiendo su acceso, o añadir el modelo estudiantil conservando ambos conjuntos. Se elige la tercera. Los antiguos archivos vacíos `presupuesto-calculations.js`/`presupuesto-ui.js`, sin consumidores, alojan la nueva lógica e interfaz conforme a este encargo; `presupuesto-mensual.js` conserva la implementación anterior y `index.js` sus exportaciones públicas utilizadas.
+
+**Decisión.** Guardar el documento versionado en `presupuesto.estudiantil` y la vista en `presupuesto.vista`, con `setPersisted` del módulo completo. Nuevo acceso predeterminado estudiantil; la vista mensual está disponible desde «Ejemplos y datos». No se infieren transacciones de sus importes. Las semanas se derivan de fechas dentro de un seguimiento cuyo inicio debe ser lunes; lunes–domingo y bloques de cuatro semanas siguen el libro. El valor fuente es 20 semanas; la app permite 1–52, hasta 5000 movimientos y sus nueve categorías de proyección en orden. Son límites explícitos de la app.
+
+El ahorro recomendado reutiliza la división de `ahorroMensual(costo, semanas)`, con ambos operandos en unidad semanal y etiqueta correcta; no se copia una fórmula. Saldo y porcentajes reutilizan `saldoSemanal` y `tasaAhorro`. En proyección, ahorro corresponde a «Meta de ahorro» (B19), reserva a «Reserva imprevistos» (B18); cambiar el tipo descriptivo no mueve ese dinero. Real y deseada se guardan por separado, sin generar movimientos. El límite semanal conserva lo confirmado por Cris: `(ingreso − ahorro − reserva) ÷ 4` para mensual, sin división para semanal. Es una ayuda adicional basada en las cuatro semanas del ejemplo; no se presenta como celda calculada del XLSX. Cambiar frecuencia no convierte cifras.
+
+**Diferencias explícitas con Excel.** Los `IF(base=0,0,cociente)` del libro se muestran N/D ante base inexistente/cero conforme a la regla del proyecto; un cero registrado sí cuenta y una semana sin movimientos suma cero. No se proyectan ahorros a semanas vacías. El campo «Mes» del seguimiento se etiqueta «Bloque (4 semanas)» para no atribuirle un mes calendario. La app deriva la semana de la fecha, en vez de permitir una semana manual contradictoria. La proyección deseada es un segundo escenario vacío, nunca una copia inventada del ejemplo real. La inflación permanece exclusivamente en el presupuesto mensual anterior.
+
+**Consecuencias.** Inicio y Reportes usan movimientos realizados del modelo activo; el presupuesto personal puede reportarse sin estados empresariales. Un error de validación no se convierte en ingreso cero ni recupera silenciosamente cifras del modelo mensual. El respaldo de todo el sistema incluye ambos modelos; el respaldo estudiantil solo incluye su documento dentro del módulo, restaurable en Reportes conservando el mensual. Los respaldos antiguos seleccionan la vista mensual y conservan el documento estudiantil actual si no lo incluyen. No hay migración destructiva ni nuevas dependencias. Los datos o borradores no se borran cuando falla la escritura; reemplazar un ejemplo confirma el cambio.
+
+**Para revertirla.** Registrar otra decisión, volver a seleccionar la vista mensual y conservar exportable `estudiantil`; no borrar movimientos ni convertirlos en asignaciones.
+
+**Referencias.** [Contraste, cambios y pruebas](planificacion/presupuesto-estudiantil/INFORME-FINAL.md), libro proporcionado por Cris (SHA-256 en la referencia extraída).

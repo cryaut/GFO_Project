@@ -315,3 +315,10 @@ EOAF/EFE reúnen saldos de cuentas y totales reportados; un inventario total sin
 Inicio/Mercado usan `totalesPeriodo` con ER resuelto; EFE usa `obtenerUtilidadNetaMotor`. ER ausente/vacío significa UN N/D. Cobertura completa tampoco reconstruye un bruto desconocido desde ventas netas reportadas. Los ceros explícitos se conservan.
 
 `ejemploBartlettClase()` incorpora únicamente las premisas de diapositivas 14–15 para 2012: ventas a crédito 3074000 y compras estimadas 1461600. `supp.credit_purchases` declara la base de compras para rotación de CxP; los JSON usan el dato si está disponible y conservan pagos + ΔCxP si falta. No se aproxima automáticamente con CBV ni se considera caja. La base 365 sigue proveniente de DIAS_ANIO. Se mantienen separado el Bartlett histórico y sus flujos. Fuentes, resultados y límites en `docs/planificacion/reparacion-auditoria-ejemplos/INFORME-FINAL.md`.
+
+
+## Presupuesto estudiantil (D-109)
+
+`presupuesto/presupuesto-calculations.js` valida el documento con `normalizarEstudiantil` y agrega flujos reales con `calcularSeguimiento`. Las cuatro clases son Ingreso, Gasto, Ahorro y Reserva; ahorro/reserva no son gastos ni duplican sus montos. La fecha determina una semana lunes–domingo; cada cuatro semanas forma un bloque. `calcularProyeccion` suma las nueve partidas de cada escenario y reutiliza `saldoSemanal`/`tasaAhorro`. El aporte semanal recomendado reutiliza la división pura de `ahorroMensual(costo, semanas)` con unidades semanales. No hay fórmula financiera duplicada.
+
+En el plan, «Meta de ahorro»/«Reserva imprevistos» determinan ahorro/reserva, independientemente de la clasificación descriptiva. El ejemplo docente tiene ingreso 2400, total asignado 2400, ahorro 400, reserva 250 y límite de gasto semanal `(2400−400−250)/4 = 437.50`. Sus movimientos registrados suman 2400/1750/400/250 y saldo 0; el avance de la meta de 2000 es 20 %. Proyectar no realiza dinero. `null` queda N/D, cero explícito se conserva y una semana sin movimientos suma cero. `resumenEstudiantilGuardado` es la fuente compartida para Inicio y Reportes; no toma asignaciones mensuales como realizados.

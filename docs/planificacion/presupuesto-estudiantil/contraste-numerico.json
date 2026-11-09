@@ -1,0 +1,4040 @@
+{
+  "fuente": "Presupuesto_estudiantil.xlsx",
+  "sha256": "98ba497eee7ed3563d73ce49c8223f98095af6ef9868c9c13c4dd22ac7eb82d4",
+  "controles": 672,
+  "diferencias": [],
+  "resultados": [
+    {
+      "control": "meta: descripción B7",
+      "esperado": "Curso, herramienta, equipo o pequeño emprendimiento",
+      "app": "Curso, herramienta, equipo o pequeño emprendimiento",
+      "conforme": true
+    },
+    {
+      "control": "meta: costo B8",
+      "esperado": 2000.0,
+      "app": 2000,
+      "conforme": true
+    },
+    {
+      "control": "meta: duración B9",
+      "esperado": 20,
+      "app": 20,
+      "conforme": true
+    },
+    {
+      "control": "meta: inicio B11",
+      "esperado": "2026-08-03",
+      "app": "2026-08-03",
+      "conforme": true
+    },
+    {
+      "control": "meta: aporte B10",
+      "esperado": 100.0,
+      "app": 100,
+      "conforme": true
+    },
+    {
+      "control": "meta: final B12",
+      "esperado": "2026-12-20",
+      "app": "2026-12-20",
+      "conforme": true
+    },
+    {
+      "control": "cantidad de movimientos",
+      "esperado": 32,
+      "app": 32,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 6: fecha",
+      "esperado": "2026-08-03",
+      "app": "2026-08-03",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 6: monto",
+      "esperado": 600.0,
+      "app": 600,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 6: tipo",
+      "esperado": "Ingreso",
+      "app": "Ingreso",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 6: categoria",
+      "esperado": "Apoyo familiar",
+      "app": "Apoyo familiar",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 6: descripcion",
+      "esperado": "Cuota semanal",
+      "app": "Cuota semanal",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 6: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 6: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 6: observacion",
+      "esperado": "C$2,400 ÷ 4 semanas",
+      "app": "C$2,400 ÷ 4 semanas",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 7: fecha",
+      "esperado": "2026-08-04",
+      "app": "2026-08-04",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 7: monto",
+      "esperado": 175.0,
+      "app": 175,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 7: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 7: categoria",
+      "esperado": "Transporte",
+      "app": "Transporte",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 7: descripcion",
+      "esperado": "Transporte semanal",
+      "app": "Transporte semanal",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 7: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 7: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 7: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 8: fecha",
+      "esperado": "2026-08-05",
+      "app": "2026-08-05",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 8: monto",
+      "esperado": 125.0,
+      "app": 125,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 8: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 8: categoria",
+      "esperado": "Alimentación",
+      "app": "Alimentación",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 8: descripcion",
+      "esperado": "Alimentación y meriendas",
+      "app": "Alimentación y meriendas",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 8: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 8: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 8: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 9: fecha",
+      "esperado": "2026-08-06",
+      "app": "2026-08-06",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 9: monto",
+      "esperado": 50.0,
+      "app": 50,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 9: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 9: categoria",
+      "esperado": "Datos/Internet",
+      "app": "Datos/Internet",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 9: descripcion",
+      "esperado": "Datos móviles",
+      "app": "Datos móviles",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 9: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 9: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 9: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 10: fecha",
+      "esperado": "2026-08-07",
+      "app": "2026-08-07",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 10: monto",
+      "esperado": 25.0,
+      "app": 25,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 10: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 10: categoria",
+      "esperado": "Copias y materiales",
+      "app": "Copias y materiales",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 10: descripcion",
+      "esperado": "Copias y materiales",
+      "app": "Copias y materiales",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 10: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 10: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 10: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 11: fecha",
+      "esperado": "2026-08-08",
+      "app": "2026-08-08",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 11: monto",
+      "esperado": 62.5,
+      "app": 62.5,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 11: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 11: categoria",
+      "esperado": "Personal/Ocio",
+      "app": "Personal/Ocio",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 11: descripcion",
+      "esperado": "Gasto flexible",
+      "app": "Gasto flexible",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 11: prioridad",
+      "esperado": "Deseo",
+      "app": "Deseo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 11: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 11: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 12: fecha",
+      "esperado": "2026-08-09",
+      "app": "2026-08-09",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 12: monto",
+      "esperado": 62.5,
+      "app": 62.5,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 12: tipo",
+      "esperado": "Reserva",
+      "app": "Reserva",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 12: categoria",
+      "esperado": "Reserva imprevistos",
+      "app": "Reserva imprevistos",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 12: descripcion",
+      "esperado": "Separación para imprevistos",
+      "app": "Separación para imprevistos",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 12: prioridad",
+      "esperado": "Meta",
+      "app": "Meta",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 12: medio",
+      "esperado": "Transferencia",
+      "app": "Transferencia",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 12: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 13: fecha",
+      "esperado": "2026-08-09",
+      "app": "2026-08-09",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 13: monto",
+      "esperado": 100.0,
+      "app": 100,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 13: tipo",
+      "esperado": "Ahorro",
+      "app": "Ahorro",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 13: categoria",
+      "esperado": "Meta de ahorro",
+      "app": "Meta de ahorro",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 13: descripcion",
+      "esperado": "Aporte para el curso",
+      "app": "Aporte para el curso",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 13: prioridad",
+      "esperado": "Meta",
+      "app": "Meta",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 13: medio",
+      "esperado": "Transferencia",
+      "app": "Transferencia",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 13: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 14: fecha",
+      "esperado": "2026-08-10",
+      "app": "2026-08-10",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 14: monto",
+      "esperado": 600.0,
+      "app": 600,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 14: tipo",
+      "esperado": "Ingreso",
+      "app": "Ingreso",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 14: categoria",
+      "esperado": "Apoyo familiar",
+      "app": "Apoyo familiar",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 14: descripcion",
+      "esperado": "Cuota semanal",
+      "app": "Cuota semanal",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 14: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 14: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 14: observacion",
+      "esperado": "C$2,400 ÷ 4 semanas",
+      "app": "C$2,400 ÷ 4 semanas",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 15: fecha",
+      "esperado": "2026-08-11",
+      "app": "2026-08-11",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 15: monto",
+      "esperado": 175.0,
+      "app": 175,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 15: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 15: categoria",
+      "esperado": "Transporte",
+      "app": "Transporte",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 15: descripcion",
+      "esperado": "Transporte semanal",
+      "app": "Transporte semanal",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 15: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 15: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 15: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 16: fecha",
+      "esperado": "2026-08-12",
+      "app": "2026-08-12",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 16: monto",
+      "esperado": 125.0,
+      "app": 125,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 16: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 16: categoria",
+      "esperado": "Alimentación",
+      "app": "Alimentación",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 16: descripcion",
+      "esperado": "Alimentación y meriendas",
+      "app": "Alimentación y meriendas",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 16: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 16: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 16: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 17: fecha",
+      "esperado": "2026-08-13",
+      "app": "2026-08-13",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 17: monto",
+      "esperado": 50.0,
+      "app": 50,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 17: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 17: categoria",
+      "esperado": "Datos/Internet",
+      "app": "Datos/Internet",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 17: descripcion",
+      "esperado": "Datos móviles",
+      "app": "Datos móviles",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 17: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 17: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 17: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 18: fecha",
+      "esperado": "2026-08-14",
+      "app": "2026-08-14",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 18: monto",
+      "esperado": 25.0,
+      "app": 25,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 18: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 18: categoria",
+      "esperado": "Copias y materiales",
+      "app": "Copias y materiales",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 18: descripcion",
+      "esperado": "Copias y materiales",
+      "app": "Copias y materiales",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 18: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 18: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 18: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 19: fecha",
+      "esperado": "2026-08-15",
+      "app": "2026-08-15",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 19: monto",
+      "esperado": 62.5,
+      "app": 62.5,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 19: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 19: categoria",
+      "esperado": "Personal/Ocio",
+      "app": "Personal/Ocio",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 19: descripcion",
+      "esperado": "Gasto flexible",
+      "app": "Gasto flexible",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 19: prioridad",
+      "esperado": "Deseo",
+      "app": "Deseo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 19: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 19: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 20: fecha",
+      "esperado": "2026-08-16",
+      "app": "2026-08-16",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 20: monto",
+      "esperado": 62.5,
+      "app": 62.5,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 20: tipo",
+      "esperado": "Reserva",
+      "app": "Reserva",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 20: categoria",
+      "esperado": "Reserva imprevistos",
+      "app": "Reserva imprevistos",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 20: descripcion",
+      "esperado": "Separación para imprevistos",
+      "app": "Separación para imprevistos",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 20: prioridad",
+      "esperado": "Meta",
+      "app": "Meta",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 20: medio",
+      "esperado": "Transferencia",
+      "app": "Transferencia",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 20: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 21: fecha",
+      "esperado": "2026-08-16",
+      "app": "2026-08-16",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 21: monto",
+      "esperado": 100.0,
+      "app": 100,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 21: tipo",
+      "esperado": "Ahorro",
+      "app": "Ahorro",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 21: categoria",
+      "esperado": "Meta de ahorro",
+      "app": "Meta de ahorro",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 21: descripcion",
+      "esperado": "Aporte para el curso",
+      "app": "Aporte para el curso",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 21: prioridad",
+      "esperado": "Meta",
+      "app": "Meta",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 21: medio",
+      "esperado": "Transferencia",
+      "app": "Transferencia",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 21: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 22: fecha",
+      "esperado": "2026-08-17",
+      "app": "2026-08-17",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 22: monto",
+      "esperado": 600.0,
+      "app": 600,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 22: tipo",
+      "esperado": "Ingreso",
+      "app": "Ingreso",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 22: categoria",
+      "esperado": "Apoyo familiar",
+      "app": "Apoyo familiar",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 22: descripcion",
+      "esperado": "Cuota semanal",
+      "app": "Cuota semanal",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 22: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 22: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 22: observacion",
+      "esperado": "C$2,400 ÷ 4 semanas",
+      "app": "C$2,400 ÷ 4 semanas",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 23: fecha",
+      "esperado": "2026-08-18",
+      "app": "2026-08-18",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 23: monto",
+      "esperado": 175.0,
+      "app": 175,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 23: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 23: categoria",
+      "esperado": "Transporte",
+      "app": "Transporte",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 23: descripcion",
+      "esperado": "Transporte semanal",
+      "app": "Transporte semanal",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 23: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 23: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 23: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 24: fecha",
+      "esperado": "2026-08-19",
+      "app": "2026-08-19",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 24: monto",
+      "esperado": 125.0,
+      "app": 125,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 24: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 24: categoria",
+      "esperado": "Alimentación",
+      "app": "Alimentación",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 24: descripcion",
+      "esperado": "Alimentación y meriendas",
+      "app": "Alimentación y meriendas",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 24: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 24: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 24: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 25: fecha",
+      "esperado": "2026-08-20",
+      "app": "2026-08-20",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 25: monto",
+      "esperado": 50.0,
+      "app": 50,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 25: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 25: categoria",
+      "esperado": "Datos/Internet",
+      "app": "Datos/Internet",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 25: descripcion",
+      "esperado": "Datos móviles",
+      "app": "Datos móviles",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 25: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 25: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 25: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 26: fecha",
+      "esperado": "2026-08-21",
+      "app": "2026-08-21",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 26: monto",
+      "esperado": 25.0,
+      "app": 25,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 26: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 26: categoria",
+      "esperado": "Copias y materiales",
+      "app": "Copias y materiales",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 26: descripcion",
+      "esperado": "Copias y materiales",
+      "app": "Copias y materiales",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 26: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 26: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 26: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 27: fecha",
+      "esperado": "2026-08-22",
+      "app": "2026-08-22",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 27: monto",
+      "esperado": 62.5,
+      "app": 62.5,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 27: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 27: categoria",
+      "esperado": "Personal/Ocio",
+      "app": "Personal/Ocio",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 27: descripcion",
+      "esperado": "Gasto flexible",
+      "app": "Gasto flexible",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 27: prioridad",
+      "esperado": "Deseo",
+      "app": "Deseo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 27: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 27: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 28: fecha",
+      "esperado": "2026-08-23",
+      "app": "2026-08-23",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 28: monto",
+      "esperado": 62.5,
+      "app": 62.5,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 28: tipo",
+      "esperado": "Reserva",
+      "app": "Reserva",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 28: categoria",
+      "esperado": "Reserva imprevistos",
+      "app": "Reserva imprevistos",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 28: descripcion",
+      "esperado": "Separación para imprevistos",
+      "app": "Separación para imprevistos",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 28: prioridad",
+      "esperado": "Meta",
+      "app": "Meta",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 28: medio",
+      "esperado": "Transferencia",
+      "app": "Transferencia",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 28: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 29: fecha",
+      "esperado": "2026-08-23",
+      "app": "2026-08-23",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 29: monto",
+      "esperado": 100.0,
+      "app": 100,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 29: tipo",
+      "esperado": "Ahorro",
+      "app": "Ahorro",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 29: categoria",
+      "esperado": "Meta de ahorro",
+      "app": "Meta de ahorro",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 29: descripcion",
+      "esperado": "Aporte para el curso",
+      "app": "Aporte para el curso",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 29: prioridad",
+      "esperado": "Meta",
+      "app": "Meta",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 29: medio",
+      "esperado": "Transferencia",
+      "app": "Transferencia",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 29: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 30: fecha",
+      "esperado": "2026-08-24",
+      "app": "2026-08-24",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 30: monto",
+      "esperado": 600.0,
+      "app": 600,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 30: tipo",
+      "esperado": "Ingreso",
+      "app": "Ingreso",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 30: categoria",
+      "esperado": "Apoyo familiar",
+      "app": "Apoyo familiar",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 30: descripcion",
+      "esperado": "Cuota semanal",
+      "app": "Cuota semanal",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 30: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 30: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 30: observacion",
+      "esperado": "C$2,400 ÷ 4 semanas",
+      "app": "C$2,400 ÷ 4 semanas",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 31: fecha",
+      "esperado": "2026-08-25",
+      "app": "2026-08-25",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 31: monto",
+      "esperado": 175.0,
+      "app": 175,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 31: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 31: categoria",
+      "esperado": "Transporte",
+      "app": "Transporte",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 31: descripcion",
+      "esperado": "Transporte semanal",
+      "app": "Transporte semanal",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 31: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 31: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 31: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 32: fecha",
+      "esperado": "2026-08-26",
+      "app": "2026-08-26",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 32: monto",
+      "esperado": 125.0,
+      "app": 125,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 32: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 32: categoria",
+      "esperado": "Alimentación",
+      "app": "Alimentación",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 32: descripcion",
+      "esperado": "Alimentación y meriendas",
+      "app": "Alimentación y meriendas",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 32: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 32: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 32: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 33: fecha",
+      "esperado": "2026-08-27",
+      "app": "2026-08-27",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 33: monto",
+      "esperado": 50.0,
+      "app": 50,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 33: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 33: categoria",
+      "esperado": "Datos/Internet",
+      "app": "Datos/Internet",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 33: descripcion",
+      "esperado": "Datos móviles",
+      "app": "Datos móviles",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 33: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 33: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 33: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 34: fecha",
+      "esperado": "2026-08-28",
+      "app": "2026-08-28",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 34: monto",
+      "esperado": 25.0,
+      "app": 25,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 34: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 34: categoria",
+      "esperado": "Copias y materiales",
+      "app": "Copias y materiales",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 34: descripcion",
+      "esperado": "Copias y materiales",
+      "app": "Copias y materiales",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 34: prioridad",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 34: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 34: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 35: fecha",
+      "esperado": "2026-08-29",
+      "app": "2026-08-29",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 35: monto",
+      "esperado": 62.5,
+      "app": 62.5,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 35: tipo",
+      "esperado": "Gasto",
+      "app": "Gasto",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 35: categoria",
+      "esperado": "Personal/Ocio",
+      "app": "Personal/Ocio",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 35: descripcion",
+      "esperado": "Gasto flexible",
+      "app": "Gasto flexible",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 35: prioridad",
+      "esperado": "Deseo",
+      "app": "Deseo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 35: medio",
+      "esperado": "Efectivo",
+      "app": "Efectivo",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 35: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 36: fecha",
+      "esperado": "2026-08-30",
+      "app": "2026-08-30",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 36: monto",
+      "esperado": 62.5,
+      "app": 62.5,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 36: tipo",
+      "esperado": "Reserva",
+      "app": "Reserva",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 36: categoria",
+      "esperado": "Reserva imprevistos",
+      "app": "Reserva imprevistos",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 36: descripcion",
+      "esperado": "Separación para imprevistos",
+      "app": "Separación para imprevistos",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 36: prioridad",
+      "esperado": "Meta",
+      "app": "Meta",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 36: medio",
+      "esperado": "Transferencia",
+      "app": "Transferencia",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 36: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 37: fecha",
+      "esperado": "2026-08-30",
+      "app": "2026-08-30",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 37: monto",
+      "esperado": 100.0,
+      "app": 100,
+      "conforme": true
+    },
+    {
+      "control": "registro fila 37: tipo",
+      "esperado": "Ahorro",
+      "app": "Ahorro",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 37: categoria",
+      "esperado": "Meta de ahorro",
+      "app": "Meta de ahorro",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 37: descripcion",
+      "esperado": "Aporte para el curso",
+      "app": "Aporte para el curso",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 37: prioridad",
+      "esperado": "Meta",
+      "app": "Meta",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 37: medio",
+      "esperado": "Transferencia",
+      "app": "Transferencia",
+      "conforme": true
+    },
+    {
+      "control": "registro fila 37: observacion",
+      "esperado": "",
+      "app": "",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 1: ingreso",
+      "esperado": 600.0,
+      "app": 600,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 1: gasto",
+      "esperado": 437.5,
+      "app": 437.5,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 1: ahorro",
+      "esperado": 100.0,
+      "app": 100,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 1: reserva",
+      "esperado": 62.5,
+      "app": 62.5,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 1: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 1: semana",
+      "esperado": 1,
+      "app": 1,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 1: bloque",
+      "esperado": 1,
+      "app": 1,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 1: desde",
+      "esperado": "2026-08-03",
+      "app": "2026-08-03",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 1: hasta",
+      "esperado": "2026-08-09",
+      "app": "2026-08-09",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 1: acumulado",
+      "esperado": 100.0,
+      "app": 100,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 1: avance",
+      "esperado": 0.05,
+      "app": 0.05,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E6",
+      "esperado": 600.0,
+      "app": 600.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F6",
+      "esperado": 437.5,
+      "app": 437.5,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G6",
+      "esperado": 100.0,
+      "app": 100.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H6",
+      "esperado": 62.5,
+      "app": 62.5,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I6",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J6",
+      "esperado": 100.0,
+      "app": 100.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K6",
+      "esperado": 0.05,
+      "app": 0.05,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 2: ingreso",
+      "esperado": 600.0,
+      "app": 600,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 2: gasto",
+      "esperado": 437.5,
+      "app": 437.5,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 2: ahorro",
+      "esperado": 100.0,
+      "app": 100,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 2: reserva",
+      "esperado": 62.5,
+      "app": 62.5,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 2: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 2: semana",
+      "esperado": 2,
+      "app": 2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 2: bloque",
+      "esperado": 1,
+      "app": 1,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 2: desde",
+      "esperado": "2026-08-10",
+      "app": "2026-08-10",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 2: hasta",
+      "esperado": "2026-08-16",
+      "app": "2026-08-16",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 2: acumulado",
+      "esperado": 200.0,
+      "app": 200,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 2: avance",
+      "esperado": 0.1,
+      "app": 0.1,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E7",
+      "esperado": 600.0,
+      "app": 600.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F7",
+      "esperado": 437.5,
+      "app": 437.5,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G7",
+      "esperado": 100.0,
+      "app": 100.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H7",
+      "esperado": 62.5,
+      "app": 62.5,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I7",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J7",
+      "esperado": 200.0,
+      "app": 200.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K7",
+      "esperado": 0.1,
+      "app": 0.1,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 3: ingreso",
+      "esperado": 600.0,
+      "app": 600,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 3: gasto",
+      "esperado": 437.5,
+      "app": 437.5,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 3: ahorro",
+      "esperado": 100.0,
+      "app": 100,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 3: reserva",
+      "esperado": 62.5,
+      "app": 62.5,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 3: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 3: semana",
+      "esperado": 3,
+      "app": 3,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 3: bloque",
+      "esperado": 1,
+      "app": 1,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 3: desde",
+      "esperado": "2026-08-17",
+      "app": "2026-08-17",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 3: hasta",
+      "esperado": "2026-08-23",
+      "app": "2026-08-23",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 3: acumulado",
+      "esperado": 300.0,
+      "app": 300,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 3: avance",
+      "esperado": 0.15,
+      "app": 0.15,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E8",
+      "esperado": 600.0,
+      "app": 600.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F8",
+      "esperado": 437.5,
+      "app": 437.5,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G8",
+      "esperado": 100.0,
+      "app": 100.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H8",
+      "esperado": 62.5,
+      "app": 62.5,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I8",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J8",
+      "esperado": 300.0,
+      "app": 300.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K8",
+      "esperado": 0.15,
+      "app": 0.15,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 4: ingreso",
+      "esperado": 600.0,
+      "app": 600,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 4: gasto",
+      "esperado": 437.5,
+      "app": 437.5,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 4: ahorro",
+      "esperado": 100.0,
+      "app": 100,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 4: reserva",
+      "esperado": 62.5,
+      "app": 62.5,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 4: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 4: semana",
+      "esperado": 4,
+      "app": 4,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 4: bloque",
+      "esperado": 1,
+      "app": 1,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 4: desde",
+      "esperado": "2026-08-24",
+      "app": "2026-08-24",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 4: hasta",
+      "esperado": "2026-08-30",
+      "app": "2026-08-30",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 4: acumulado",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 4: avance",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E9",
+      "esperado": 600.0,
+      "app": 600.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F9",
+      "esperado": 437.5,
+      "app": 437.5,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G9",
+      "esperado": 100.0,
+      "app": 100.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H9",
+      "esperado": 62.5,
+      "app": 62.5,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I9",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J9",
+      "esperado": 400.0,
+      "app": 400.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K9",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 5: ingreso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 5: gasto",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 5: ahorro",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 5: reserva",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 5: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 5: semana",
+      "esperado": 5,
+      "app": 5,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 5: bloque",
+      "esperado": 2,
+      "app": 2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 5: desde",
+      "esperado": "2026-08-31",
+      "app": "2026-08-31",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 5: hasta",
+      "esperado": "2026-09-06",
+      "app": "2026-09-06",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 5: acumulado",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 5: avance",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E10",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F10",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G10",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H10",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I10",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J10",
+      "esperado": 400.0,
+      "app": 400.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K10",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 6: ingreso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 6: gasto",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 6: ahorro",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 6: reserva",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 6: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 6: semana",
+      "esperado": 6,
+      "app": 6,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 6: bloque",
+      "esperado": 2,
+      "app": 2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 6: desde",
+      "esperado": "2026-09-07",
+      "app": "2026-09-07",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 6: hasta",
+      "esperado": "2026-09-13",
+      "app": "2026-09-13",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 6: acumulado",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 6: avance",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E11",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F11",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G11",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H11",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I11",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J11",
+      "esperado": 400.0,
+      "app": 400.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K11",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 7: ingreso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 7: gasto",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 7: ahorro",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 7: reserva",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 7: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 7: semana",
+      "esperado": 7,
+      "app": 7,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 7: bloque",
+      "esperado": 2,
+      "app": 2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 7: desde",
+      "esperado": "2026-09-14",
+      "app": "2026-09-14",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 7: hasta",
+      "esperado": "2026-09-20",
+      "app": "2026-09-20",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 7: acumulado",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 7: avance",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E12",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F12",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G12",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H12",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I12",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J12",
+      "esperado": 400.0,
+      "app": 400.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K12",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 8: ingreso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 8: gasto",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 8: ahorro",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 8: reserva",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 8: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 8: semana",
+      "esperado": 8,
+      "app": 8,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 8: bloque",
+      "esperado": 2,
+      "app": 2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 8: desde",
+      "esperado": "2026-09-21",
+      "app": "2026-09-21",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 8: hasta",
+      "esperado": "2026-09-27",
+      "app": "2026-09-27",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 8: acumulado",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 8: avance",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E13",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F13",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G13",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H13",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I13",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J13",
+      "esperado": 400.0,
+      "app": 400.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K13",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 9: ingreso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 9: gasto",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 9: ahorro",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 9: reserva",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 9: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 9: semana",
+      "esperado": 9,
+      "app": 9,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 9: bloque",
+      "esperado": 3,
+      "app": 3,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 9: desde",
+      "esperado": "2026-09-28",
+      "app": "2026-09-28",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 9: hasta",
+      "esperado": "2026-10-04",
+      "app": "2026-10-04",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 9: acumulado",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 9: avance",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E14",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F14",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G14",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H14",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I14",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J14",
+      "esperado": 400.0,
+      "app": 400.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K14",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 10: ingreso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 10: gasto",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 10: ahorro",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 10: reserva",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 10: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 10: semana",
+      "esperado": 10,
+      "app": 10,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 10: bloque",
+      "esperado": 3,
+      "app": 3,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 10: desde",
+      "esperado": "2026-10-05",
+      "app": "2026-10-05",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 10: hasta",
+      "esperado": "2026-10-11",
+      "app": "2026-10-11",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 10: acumulado",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 10: avance",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E15",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F15",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G15",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H15",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I15",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J15",
+      "esperado": 400.0,
+      "app": 400.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K15",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 11: ingreso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 11: gasto",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 11: ahorro",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 11: reserva",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 11: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 11: semana",
+      "esperado": 11,
+      "app": 11,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 11: bloque",
+      "esperado": 3,
+      "app": 3,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 11: desde",
+      "esperado": "2026-10-12",
+      "app": "2026-10-12",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 11: hasta",
+      "esperado": "2026-10-18",
+      "app": "2026-10-18",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 11: acumulado",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 11: avance",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E16",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F16",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G16",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H16",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I16",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J16",
+      "esperado": 400.0,
+      "app": 400.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K16",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 12: ingreso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 12: gasto",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 12: ahorro",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 12: reserva",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 12: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 12: semana",
+      "esperado": 12,
+      "app": 12,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 12: bloque",
+      "esperado": 3,
+      "app": 3,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 12: desde",
+      "esperado": "2026-10-19",
+      "app": "2026-10-19",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 12: hasta",
+      "esperado": "2026-10-25",
+      "app": "2026-10-25",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 12: acumulado",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 12: avance",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E17",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F17",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G17",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H17",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I17",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J17",
+      "esperado": 400.0,
+      "app": 400.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K17",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 13: ingreso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 13: gasto",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 13: ahorro",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 13: reserva",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 13: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 13: semana",
+      "esperado": 13,
+      "app": 13,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 13: bloque",
+      "esperado": 4,
+      "app": 4,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 13: desde",
+      "esperado": "2026-10-26",
+      "app": "2026-10-26",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 13: hasta",
+      "esperado": "2026-11-01",
+      "app": "2026-11-01",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 13: acumulado",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 13: avance",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E18",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F18",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G18",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H18",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I18",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J18",
+      "esperado": 400.0,
+      "app": 400.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K18",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 14: ingreso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 14: gasto",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 14: ahorro",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 14: reserva",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 14: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 14: semana",
+      "esperado": 14,
+      "app": 14,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 14: bloque",
+      "esperado": 4,
+      "app": 4,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 14: desde",
+      "esperado": "2026-11-02",
+      "app": "2026-11-02",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 14: hasta",
+      "esperado": "2026-11-08",
+      "app": "2026-11-08",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 14: acumulado",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 14: avance",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E19",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F19",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G19",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H19",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I19",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J19",
+      "esperado": 400.0,
+      "app": 400.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K19",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 15: ingreso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 15: gasto",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 15: ahorro",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 15: reserva",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 15: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 15: semana",
+      "esperado": 15,
+      "app": 15,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 15: bloque",
+      "esperado": 4,
+      "app": 4,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 15: desde",
+      "esperado": "2026-11-09",
+      "app": "2026-11-09",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 15: hasta",
+      "esperado": "2026-11-15",
+      "app": "2026-11-15",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 15: acumulado",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 15: avance",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E20",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F20",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G20",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H20",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I20",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J20",
+      "esperado": 400.0,
+      "app": 400.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K20",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 16: ingreso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 16: gasto",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 16: ahorro",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 16: reserva",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 16: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 16: semana",
+      "esperado": 16,
+      "app": 16,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 16: bloque",
+      "esperado": 4,
+      "app": 4,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 16: desde",
+      "esperado": "2026-11-16",
+      "app": "2026-11-16",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 16: hasta",
+      "esperado": "2026-11-22",
+      "app": "2026-11-22",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 16: acumulado",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 16: avance",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E21",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F21",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G21",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H21",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I21",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J21",
+      "esperado": 400.0,
+      "app": 400.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K21",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 17: ingreso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 17: gasto",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 17: ahorro",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 17: reserva",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 17: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 17: semana",
+      "esperado": 17,
+      "app": 17,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 17: bloque",
+      "esperado": 5,
+      "app": 5,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 17: desde",
+      "esperado": "2026-11-23",
+      "app": "2026-11-23",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 17: hasta",
+      "esperado": "2026-11-29",
+      "app": "2026-11-29",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 17: acumulado",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 17: avance",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E22",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F22",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G22",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H22",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I22",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J22",
+      "esperado": 400.0,
+      "app": 400.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K22",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 18: ingreso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 18: gasto",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 18: ahorro",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 18: reserva",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 18: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 18: semana",
+      "esperado": 18,
+      "app": 18,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 18: bloque",
+      "esperado": 5,
+      "app": 5,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 18: desde",
+      "esperado": "2026-11-30",
+      "app": "2026-11-30",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 18: hasta",
+      "esperado": "2026-12-06",
+      "app": "2026-12-06",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 18: acumulado",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 18: avance",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E23",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F23",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G23",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H23",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I23",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J23",
+      "esperado": 400.0,
+      "app": 400.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K23",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 19: ingreso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 19: gasto",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 19: ahorro",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 19: reserva",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 19: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 19: semana",
+      "esperado": 19,
+      "app": 19,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 19: bloque",
+      "esperado": 5,
+      "app": 5,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 19: desde",
+      "esperado": "2026-12-07",
+      "app": "2026-12-07",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 19: hasta",
+      "esperado": "2026-12-13",
+      "app": "2026-12-13",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 19: acumulado",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 19: avance",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E24",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F24",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G24",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H24",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I24",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J24",
+      "esperado": 400.0,
+      "app": 400.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K24",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 20: ingreso",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 20: gasto",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 20: ahorro",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 20: reserva",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 20: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 20: semana",
+      "esperado": 20,
+      "app": 20,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 20: bloque",
+      "esperado": 5,
+      "app": 5,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 20: desde",
+      "esperado": "2026-12-14",
+      "app": "2026-12-14",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 20: hasta",
+      "esperado": "2026-12-20",
+      "app": "2026-12-20",
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 20: acumulado",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "seguimiento semana 20: avance",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!E25",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!F25",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!G25",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!H25",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!I25",
+      "esperado": 0.0,
+      "app": 0.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!J25",
+      "esperado": 400.0,
+      "app": 400.0,
+      "conforme": true
+    },
+    {
+      "control": "caché docente Seguimiento!K25",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "total realizado: ingreso",
+      "esperado": 2400.0,
+      "app": 2400,
+      "conforme": true
+    },
+    {
+      "control": "total realizado: gasto",
+      "esperado": 1750.0,
+      "app": 1750,
+      "conforme": true
+    },
+    {
+      "control": "total realizado: ahorro",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "total realizado: reserva",
+      "esperado": 250.0,
+      "app": 250,
+      "conforme": true
+    },
+    {
+      "control": "total realizado: saldo",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "avance total",
+      "esperado": 0.2,
+      "app": 0.2,
+      "conforme": true
+    },
+    {
+      "control": "proyección: total",
+      "esperado": 2400.0,
+      "app": 2400,
+      "conforme": true
+    },
+    {
+      "control": "proyección: ahorro",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "proyección: reserva",
+      "esperado": 250.0,
+      "app": 250,
+      "conforme": true
+    },
+    {
+      "control": "proyección: diferencia",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "proyección: porcentaje",
+      "esperado": 1.0,
+      "app": 1,
+      "conforme": true
+    },
+    {
+      "control": "proyección: estado",
+      "esperado": "Balanceado",
+      "app": "Balanceado",
+      "conforme": true
+    },
+    {
+      "control": "proyección: limiteSemanal",
+      "esperado": 437.5,
+      "app": 437.5,
+      "conforme": true
+    },
+    {
+      "control": "partida 12: categoria",
+      "esperado": "Transporte",
+      "app": "Transporte",
+      "conforme": true
+    },
+    {
+      "control": "partida 12: monto",
+      "esperado": 700.0,
+      "app": 700,
+      "conforme": true
+    },
+    {
+      "control": "partida 12: tipo",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "partida 12: porcentaje",
+      "esperado": 0.2916666666666667,
+      "app": 0.2916666666666667,
+      "conforme": true
+    },
+    {
+      "control": "partida 13: categoria",
+      "esperado": "Alimentación",
+      "app": "Alimentación",
+      "conforme": true
+    },
+    {
+      "control": "partida 13: monto",
+      "esperado": 500.0,
+      "app": 500,
+      "conforme": true
+    },
+    {
+      "control": "partida 13: tipo",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "partida 13: porcentaje",
+      "esperado": 0.20833333333333334,
+      "app": 0.20833333333333334,
+      "conforme": true
+    },
+    {
+      "control": "partida 14: categoria",
+      "esperado": "Datos/Internet",
+      "app": "Datos/Internet",
+      "conforme": true
+    },
+    {
+      "control": "partida 14: monto",
+      "esperado": 200.0,
+      "app": 200,
+      "conforme": true
+    },
+    {
+      "control": "partida 14: tipo",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "partida 14: porcentaje",
+      "esperado": 0.08333333333333333,
+      "app": 0.08333333333333333,
+      "conforme": true
+    },
+    {
+      "control": "partida 15: categoria",
+      "esperado": "Copias y materiales",
+      "app": "Copias y materiales",
+      "conforme": true
+    },
+    {
+      "control": "partida 15: monto",
+      "esperado": 100.0,
+      "app": 100,
+      "conforme": true
+    },
+    {
+      "control": "partida 15: tipo",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "partida 15: porcentaje",
+      "esperado": 0.041666666666666664,
+      "app": 0.041666666666666664,
+      "conforme": true
+    },
+    {
+      "control": "partida 16: categoria",
+      "esperado": "Salud",
+      "app": "Salud",
+      "conforme": true
+    },
+    {
+      "control": "partida 16: monto",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "partida 16: tipo",
+      "esperado": "Necesidad",
+      "app": "Necesidad",
+      "conforme": true
+    },
+    {
+      "control": "partida 16: porcentaje",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "partida 17: categoria",
+      "esperado": "Personal/Ocio",
+      "app": "Personal/Ocio",
+      "conforme": true
+    },
+    {
+      "control": "partida 17: monto",
+      "esperado": 250.0,
+      "app": 250,
+      "conforme": true
+    },
+    {
+      "control": "partida 17: tipo",
+      "esperado": "Deseo",
+      "app": "Deseo",
+      "conforme": true
+    },
+    {
+      "control": "partida 17: porcentaje",
+      "esperado": 0.10416666666666667,
+      "app": 0.10416666666666667,
+      "conforme": true
+    },
+    {
+      "control": "partida 18: categoria",
+      "esperado": "Reserva imprevistos",
+      "app": "Reserva imprevistos",
+      "conforme": true
+    },
+    {
+      "control": "partida 18: monto",
+      "esperado": 250.0,
+      "app": 250,
+      "conforme": true
+    },
+    {
+      "control": "partida 18: tipo",
+      "esperado": "Reserva",
+      "app": "Reserva",
+      "conforme": true
+    },
+    {
+      "control": "partida 18: porcentaje",
+      "esperado": 0.10416666666666667,
+      "app": 0.10416666666666667,
+      "conforme": true
+    },
+    {
+      "control": "partida 19: categoria",
+      "esperado": "Meta de ahorro",
+      "app": "Meta de ahorro",
+      "conforme": true
+    },
+    {
+      "control": "partida 19: monto",
+      "esperado": 400.0,
+      "app": 400,
+      "conforme": true
+    },
+    {
+      "control": "partida 19: tipo",
+      "esperado": "Ahorro",
+      "app": "Ahorro",
+      "conforme": true
+    },
+    {
+      "control": "partida 19: porcentaje",
+      "esperado": 0.16666666666666666,
+      "app": 0.16666666666666666,
+      "conforme": true
+    },
+    {
+      "control": "partida 20: categoria",
+      "esperado": "Otro",
+      "app": "Otro",
+      "conforme": true
+    },
+    {
+      "control": "partida 20: monto",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    },
+    {
+      "control": "partida 20: tipo",
+      "esperado": "Según el caso",
+      "app": "Según el caso",
+      "conforme": true
+    },
+    {
+      "control": "partida 20: porcentaje",
+      "esperado": 0.0,
+      "app": 0,
+      "conforme": true
+    }
+  ]
+}

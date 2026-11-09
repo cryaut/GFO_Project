@@ -14,6 +14,7 @@ import { ejemploInventario, normalizarInventario } from '../inventario/inventari
 import { ejemploPlaneacion, normalizarSupuestos } from '../planeacion/planeacion-calculations.js';
 import { tieneEscenarios } from '../planeacion/planeacion-escenarios.js';
 import { ejemploPresupuestoPersonal, presupuestoCalculations } from '../presupuesto/index.js';
+import { resumenEstudiantilGuardado } from '../presupuesto/presupuesto-calculations.js';
 import { reunirEntradas } from '../proforma/index.js';
 import { construirReporte } from '../proforma/proforma-calculations.js';
 import { panoramaGeneral } from './inicio-calculations.js';
@@ -67,6 +68,8 @@ export function cargarEjemploPersonal(id = 'actual') {
 // Totales del presupuesto personal con las mismas funciones que su pantalla.
 function totalesPersonales() {
   const p = store.get('presupuesto') || {};
+  const estudiantil = resumenEstudiantilGuardado(p);
+  if (estudiantil) return estudiantil;
   const ingresos = presupuestoCalculations.ingresosDe(p.ingresos, p.ingresoMensual || 0);
   return {
     ingresos: presupuestoCalculations.totalIngresos(ingresos),

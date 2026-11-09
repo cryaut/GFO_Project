@@ -1,4 +1,5 @@
 import { ejemploBaker, ejemploBartlett, ejemploBartlettClase, ejemploPractico2, completarEjemploMuno } from './ejemplos-estados.js';
+import { ejemploEstudiantil, ejemploSoloTransporte } from '../modules/presupuesto/ejemplos-estudiantiles.js';
 
 const propio = (id, nombre, detalle) => ({ id, nombre, fuente:'Ejemplo ficticio de la app', detalle });
 const docente = (id, nombre, fuente, detalle) => ({ id, nombre, fuente:`Ejercicios_AFOD.zip · ${fuente}`, detalle });
@@ -11,6 +12,8 @@ const estados = [
   docente('practico2','Ejercicio práctico 2','Ejercicio practico 2.md','BG y ER 2023–2024. UM: la fuente usa $ sin identificar moneda. PPE ya neto; no se añade depreciación. No da ventas a crédito ni pagos a proveedores.')
 ];
 const LISTAS = {
+  presupuestoEstudiantil:[{ id:'actual', nombre:'Plantilla del profesor · C$2400', fuente:'Presupuesto_estudiantil.xlsx', detalle:'32 movimientos en cuatro semanas de agosto de 2026. Meta C$2000 en 20 semanas; ahorro realizado C$400, reserva C$250. Proyección real mensual C$2400; la deseada queda por definir.' },
+    propio('transporte', 'Solo transporte · ahorro cero', 'Caso sintético: ingreso y gasto semanales C$175. Ahorro realizado cero; no se inventa dinero para cumplir la meta.')],
   estados,
   flujo:[propio('actual','MUNO MODA · flujo anual','Movimientos ficticios de caja en C$.'),
     docente('baker-directo','Baker · método directo','Baker Completo.md','Flujo resuelto 2012: CFO 780000, inversión −300000 y financiamiento 20000. USD; fuente en miles. No es una estimación desde saldos.'),
@@ -36,6 +39,7 @@ export function listarEjemplos(modulo) { return structuredClone(LISTAS[modulo] |
 
 export function crearEjemplo(modulo, id, actual) {
   if (!LISTAS[modulo]?.some(e => e.id === id)) throw new Error('El ejemplo seleccionado no existe en esta sección.');
+  if (modulo === 'presupuestoEstudiantil') return id === 'actual' ? ejemploEstudiantil() : ejemploSoloTransporte();
   if (['estados','inicioEmpresa'].includes(modulo)) {
     if (id === 'baker') return ejemploBaker();
     if (id === 'bartlett') return ejemploBartlett();

@@ -2,6 +2,8 @@ const STORAGE_KEY = 'gfo-toolkit-data';
 
 const defaultData = {
   presupuesto: {
+    vista: 'estudiantil',
+    estudiantil: null,
     ingresoMensual: 0,
     metaAhorro: 0,
     mesesDisponibles: 12,
