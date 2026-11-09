@@ -2362,3 +2362,45 @@ Inicio y Mercado reutilizan el ER resuelto; EFE consulta `obtenerUtilidadNetaMot
 **Para revertirla.** Retirar la valoración de las vistas y conservar los costos y la apertura de los escenarios.
 
 **Referencias.** [Caso integrado](planificacion/caso-integrado/README.md) · [Cálculo independiente](../propuesta-caso/referencia/calculo_referencia.py).
+
+### D-105 — Métodos docentes con premisas separadas
+
+- **Fecha** · 2026-11-08.
+- **Área** · Proforma AFOD.
+
+**Contexto.** Euro Designs, Metroline, Leonard y Electrónicas acreditan procedimientos y periodos diferentes.
+
+**Decisión.** El panel docente conserva una base y una proyección por ejercicio. Porcentaje de ventas aplica las proporciones históricas. Fijo/variable conserva la parte fija. El balance crítico de Leonard muestra la brecha de activos contra pasivo y patrimonio y permite comprobar el dividendo compatible sin imputar financiamiento. En Electrónicas el costo sale de inventario promedio por rotación, las ventas se derivan del costo sobre ventas y la utilidad objetivo determina los gastos residuales. La actividad usa ventas y compras a crédito explícitas.
+
+**Consecuencias.** Las premisas editadas son temporales. Los datos históricos de Estados y el presupuesto guardado siguen sus rutas de origen.
+
+### D-106 — Caja por desfase y operaciones declaradas
+
+- **Fecha** · 2026-11-08.
+- **Área** · Planeación.
+
+**Contexto.** La Pinolera y Halley combinan meses de origen anteriores, impuestos pagados por fecha y distintas decisiones de financiamiento.
+
+**Decisión.** Las ventas y compras generan cuotas con un calendario por desfase. Los meses previos solo originan cuotas. Los pagos por fecha, incluido IR, se registran aparte. Se informa la necesidad antes de financiar y se arrastra el efectivo tras los préstamos y repagos declarados. Las compras y ventas con entradas insuficientes producen N/D en sus dependencias.
+
+**Consecuencias.** Los supuestos del calendario se guardan como campo opcional de Planeación y se validan al restaurar. Halley mantiene identificada la escala reconstruida.
+
+### D-107 — Vista previa y procedencia de las copias
+
+- **Fecha** · 2026-11-08.
+- **Área** · Estados, Inventario, Planeación, Flujo, C-V-U y Reportes.
+
+**Decisión.** Cada copia propone filas por identidad y corte, vuelve a consultar la fuente al aplicar y registra la revisión y unidad del campo guardado. Las copias incompatibles o N/D quedan fuera de la aplicación. En Planeación y C-V-U se trabaja en el borrador. Flujo guarda el saldo con persistencia del módulo. El stock mínimo conserva su vínculo con Inventario. Proforma, Inicio y Reportes consultan la misma proyección guardada.
+
+**Consecuencias.** Una edición manual retira la procedencia de ese campo. Un cambio de origen avisa que debe abrirse otra vista previa. Los respaldos anteriores siguen siendo válidos.
+
+### D-108 — UAI informada, correctoras y dividendos no monetarios
+
+- **Fecha** · 2026-11-08.
+- **Área** · Estados, Razones, Análisis y EFE.
+
+**Decisión.** La UAI reportada se conserva y el desglose se comprueba cuando existen datos. Los componentes patrimoniales confirmados conservan su signo. Una provisión de incobrables explícita se presenta como fila negativa y reduce la CxC bruta acreditada para calcular el saldo neto. Sin el bruto, la lectura neta queda N/D. El EFE excluye los dividendos en acciones declarados de ambas magnitudes de financiamiento estimadas y señala los importes contradictorios.
+
+**Consecuencias.** Las fórmulas de los 20 JSON se conservan. Los valores informados y sus advertencias permanecen distinguibles en cada pantalla.
+
+**Referencias.** [Comparaciones y límites de fuente](planificacion/cierre-encargo-afod/README.md).

@@ -980,6 +980,12 @@ Códigos de `avisos` del presupuesto maestro: `financiamiento`, `sin-compras`, `
 
 `planeacionUI(page, opciones)` mantiene en la pantalla las vistas Resumen, Supuestos y Tablas completas. El borrador y la selección de consulta se conservan al cambiar de vista. `resumenPlaneacionUI(panel, presupuesto, capital)` presenta la salida de `calcularPresupuestoMaestro` o `calcularCapitalTrabajo`, según `capital`. Planeación puede recibir `destruirGrafica(id)` para retirar una gráfica al reemplazar la pantalla. Invoca `graficar(id, config)` al mostrar las tablas del presupuesto maestro.
 
+`validarCajaDocente(plan)` valida el calendario opcional de Planeación. `proyectarCajaDocente(plan)` devuelve los meses del horizonte, cuotas de cobro y pago por origen, saldos diferidos, caja antes y después de operaciones declaradas y necesidad máxima. Los meses anteriores contribuyen al calendario y el efectivo comienza en la apertura declarada. Un importe que requiere una entrada desconocida queda en `null`.
+
+`calcularERDocente(supuestos, metodo)` calcula porcentaje de ventas o fijo/variable. `calcularBalanceDocente(supuestos)` devuelve el balance por partida, la diferencia, la necesidad de fondos y el dividendo que elimina la diferencia cuando es viable. `calcularERResidualDocente(supuestos)` deriva ventas y gastos desde las premisas de rotación, costo sobre ventas y utilidad objetivo, y devuelve la actividad proyectada con crédito declarado.
+
+`transferenciaBalance`, `transferenciaInventario`, `transferenciaCvuPlaneacion` y `transferenciaCvuInventario` devuelven `{ origen, filas, error }`. `firmaTransferencia` coteja el origen y los valores vigentes antes de aplicar. `fichaTransferencia` registra la revisión de una copia y `validarProcedencia` valida sus campos al restaurar un respaldo. La interfaz distingue valor actual, propuesto, unidad y naturaleza, y aplica únicamente las filas válidas que el usuario selecciona.
+
 #### `validarInventarioRespaldo(datos)`
 
 Recibe el módulo de Inventario del respaldo y devuelve `{ productos, movimientos }` normalizados. Lanza un error si la normalización descarta registros, una fecha no existe en el calendario, un costo explícito no es un número finito mayor o igual a cero, o cualquier saldo intermedio del kardex cae bajo la tolerancia de existencias. Valida por producto y fecha. Si dos movimientos comparten fecha, respeta el orden del archivo. Una entrada legada con la propiedad `costoUnitario` omitida usa el costo del producto según D-081.

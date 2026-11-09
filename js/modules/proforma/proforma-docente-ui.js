@@ -1,7 +1,7 @@
 import { leerNumero } from '../../utils/form.js';
-import { formatCurrencyND, formatPercentND as pct } from '../../utils/format.js';
+import { formatCurrencyND, formatNumberND, formatPercentND as pct } from '../../utils/format.js';
 import { escapeHTML as esc } from '../../utils/html.js';
-import { calcularBalanceDocente, calcularERDocente } from './proforma-docente-calculations.js';
+import { calcularBalanceDocente, calcularERDocente, calcularERResidualDocente } from './proforma-docente-calculations.js';
 import { CASOS_PROFORMA_DOCENTE } from './proforma-docente-ejemplos.js';
 
 const monto = valor => formatCurrencyND(valor, 'USD');
@@ -26,6 +26,15 @@ const BALANCE = [
   ['accionesComunes', 'Acciones comunes de 2012'], ['retenidasBase', 'Ganancias retenidas de 2012', 'signo'],
   ['tasaUtilidadNeta', 'Margen neto de 2013', 'tasa-signo'], ['dividendos', 'Dividendos de 2013']
 ];
+const RESIDUAL = [
+  ['inventarioInicial', 'Inventario de 2018'], ['inventarioFinal', 'Inventario de 2019'],
+  ['rotacionObjetivo', 'Rotación objetivo del inventario', 'veces'], ['costoSobreVentas', 'Costo de ventas / ventas', 'impuesto'],
+  ['utilidadObjetivo', 'Utilidad neta objetivo'], ['tasaIR', 'Tasa de IR proyectada', 'impuesto'],
+  ['deudaPromedio', 'Deuda promedio'], ['tasaInteres', 'Tasa de interés', 'impuesto'],
+  ['tasaVentasCredito', 'Ventas a crédito', 'impuesto'], ['tasaComprasCredito', 'Compras a crédito', 'impuesto'],
+  ['cxcPromedio', 'CxC promedio'], ['cxpPromedio', 'CxP promedio'], ['activoFijoPromedio', 'Activo fijo neto promedio'],
+  ['activoPromedio', 'Activo total promedio']
+];
 
 const idCampo = clave => 'proformaAFOD-' + clave;
 const esTasa = tipo => tipo === 'impuesto' || tipo?.startsWith('tasa');
@@ -35,7 +44,7 @@ function campo([clave, etiqueta, tipo], supuestos) {
   const id = idCampo(clave);
   const valor = entrada(supuestos[clave], tipo);
   return `<div class="form-group">
-    <label for="${id}" class="form-label">${etiqueta} (${esTasa(tipo) ? '%' : 'USD'})</label>
+    <label for="${id}" class="form-label">${etiqueta} (${esTasa(tipo) ? '%' : tipo === 'veces' ? 'veces' : 'USD'})</label>
     <input class="form-input" id="${id}" inputmode="decimal" value="${esc(valor)}">
   </div>`;
 }
@@ -61,6 +70,31 @@ function aplicarTasa(ventas, tasa) {
 
 function costoPorVentas(base, ventasBase, tasa, ventas, fijo, desglosado) {
   return `${monto(base)} ÷ ${monto(ventasBase)} = ${pct(tasa)}. ${desglosado ? monto(fijo) + ' + ' : ''}${aplicarTasa(ventas, tasa)}.`;
+}
+
+function mostrarResidual(s) {
+  const r = calcularERResidualDocente(s);
+  const actividad = [
+    ['Rotación del inventario', 'RotInv', 'veces'], ['Edad del inventario', 'edadInventario', 'días'],
+    ['Rotación de CxC', 'RotCxC', 'veces'], ['Periodo de cobro', 'PPC', 'días'],
+    ['Rotación de CxP', 'rotacionCxP', 'veces'], ['Periodo de pago', 'plazoPago', 'días'],
+    ['Rotación del activo fijo', 'rotacionActivosFijos', 'veces'], ['Rotación del activo total', 'rotacionActivos', 'veces'],
+    ['Ciclo de conversión', 'cicloConversion', 'días']
+  ];
+  return tabla('ER proyectado 2019 por método residual', ['Proyección 2019 · USD'], [
+    ['Ventas proyectadas', [r.ventas, `${monto(r.costo)} ÷ ${pct(s.costoSobreVentas)}`]],
+    ['− Costo de ventas', [r.costo, `${monto(r.inventarioPromedio)} × ${formatNumberND(s.rotacionObjetivo)} veces`]],
+    ['= Utilidad bruta', [r.bruta, `${monto(r.ventas)} − ${monto(r.costo)}`]],
+    ['− Gastos operativos residuales', [r.gastos, `${monto(r.bruta)} − ${monto(r.uaii)}`]],
+    ['= UAII', [r.uaii, `${monto(r.uai)} + ${monto(r.intereses)}`]],
+    ['− Intereses', [r.intereses, aplicarTasa(s.deudaPromedio, s.tasaInteres)]],
+    ['= UAI', [r.uai, `${monto(s.utilidadObjetivo)} ÷ (1 − ${pct(s.tasaIR)})`]],
+    ['− IR', [r.ir, aplicarTasa(r.uai, s.tasaIR)]],
+    ['= Utilidad neta', [r.neta, `${monto(r.uai)} − ${monto(r.ir)}`]],
+    ['Ventas a crédito', [r.ventasCredito, aplicarTasa(r.ventas, s.tasaVentasCredito)]],
+    ['Compras a crédito', [r.comprasCredito, `(${monto(r.costo)} + ${monto(s.inventarioFinal)} − ${monto(s.inventarioInicial)}) × ${pct(s.tasaComprasCredito)}`]]
+  ]) + `<h3>Actividad del escenario proyectado</h3><ul>${actividad.map(([nombre, clave, unidad]) =>
+    `<li>${esc(nombre)} · ${formatNumberND(r.actividad[clave])} ${unidad}</li>`).join('')}</ul>`;
 }
 
 function mostrarER(s, comparar) {
@@ -145,12 +179,16 @@ export function montarProformaDocente(panel) {
     const { tipo, supuestos } = CASOS_PROFORMA_DOCENTE[clave];
     const balance = tipo === 'balance';
     const comparar = tipo === 'comparativo';
-    const grupos = balance ? [['Premisas del balance por método crítico', BALANCE]] : [
+    const residual = tipo === 'residual';
+    const grupos = residual ? [['Premisas del escenario proyectado 2019', RESIDUAL]]
+      : balance ? [['Premisas del balance por método crítico', BALANCE]] : [
       ['Base histórica de 2012', BASE_ER], ...(comparar ? [['Clasificación fija y variable de 2012', CLASIFICACION]] : []),
       ['Premisas de proyección de 2013', PROYECCION_ER]
     ];
-    const resultado = s => balance ? mostrarBalance(s) : mostrarER(s, comparar);
-    contenido.innerHTML = `<p class="form-hint">Fuente académica «Ejercicios E.R proformas». Base 2012 y proyección anual 2013 en USD.
+    const resultado = s => residual ? mostrarResidual(s) : balance ? mostrarBalance(s) : mostrarER(s, comparar);
+    const fuente = residual ? 'Fuente académica «Electronicas_analisis_financiero». La proyección anual de 2019 se presenta en USD a partir de la fuente en miles.'
+      : 'Fuente académica «Ejercicios E.R proformas». Base 2012 y proyección anual 2013 en USD.';
+    contenido.innerHTML = `<p class="form-hint">${fuente}
       Las premisas editadas son temporales y se reinician al cambiar de ejercicio o salir de Proforma.</p>
       <form id="proformaAFODForm">
         ${grupos.map(([titulo, grupo]) => campos(titulo, grupo, supuestos)).join('')}

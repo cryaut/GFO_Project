@@ -2089,6 +2089,22 @@ export const CUENTAS_CATALOGO = [
     }
   },
   {
+    'id': 'bs.trade_receivables_allowance',
+    'nombreCanonico': 'Provisión de cuentas incobrables',
+    'definicion': 'Cuenta correctora separada que reduce las cuentas por cobrar comerciales brutas.',
+    'grupo': 'activos',
+    'clasificacion': 'activo_corriente',
+    'rol': 'detail',
+    'politicaAusencia': 'not_applicable',
+    'convencionSigno': 'negativo',
+    'sinonimos': ['Estimación para cuentas incobrables', 'Provisión para cuentas incobrables'],
+    'sinonimosDudosos': [],
+    'tipoApp': 'cxC',
+    'ambiguedades': [],
+    'estadoInvestigacion': 'partially_verified',
+    'fuentes': []
+  },
+  {
     'id': 'is.pretax_income_reported',
     'nombreCanonico': 'Utilidad antes de impuestos',
     'definicion': 'Resultado antes del impuesto sobre la renta informado directamente por la fuente. Una pérdida conserva signo negativo.',

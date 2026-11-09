@@ -1,4 +1,7 @@
-import { av } from '../../utils/calculate.js';
+import {
+  av, cicloConversion, edadInventario, plazoCobro, plazoPago, rotacionActivos, rotacionActivosFijos,
+  rotacionCxC, rotacionCxP as rotacionCxPDocente, rotacionInventario
+} from '../../utils/calculate.js';
 
 const finito = valor => Number.isFinite(valor) ? valor : null;
 const sumar = (...valores) => valores.every(Number.isFinite) ? finito(valores.reduce((a, b) => a + b, 0)) : null;
@@ -32,6 +35,36 @@ export function calcularERDocente(supuestos, metodo) {
   return {
     ventas, costo, gastos, otrosOperativos, otrosNoOperativos, intereses, bruta, uaii,
     uai, ir, neta, dividendos, retenidas, tasaCosto, tasaGastos, fijoCosto, fijoGastos, tasaIR
+  };
+}
+
+export function calcularERResidualDocente(s) {
+  const tasaIR = s.tasaIR >= 0 && s.tasaIR < 1 ? finito(s.tasaIR) : null;
+  const inventarioPromedio = aplicar(sumar(s.inventarioInicial, s.inventarioFinal), 0.5);
+  const costo = aplicar(inventarioPromedio, s.rotacionObjetivo);
+  const ventas = finito(av(costo, s.costoSobreVentas));
+  const bruta = restar(ventas, costo);
+  const uai = finito(av(s.utilidadObjetivo, restar(1, tasaIR)));
+  const intereses = aplicar(s.deudaPromedio, s.tasaInteres);
+  const uaii = sumar(uai, intereses);
+  const gastos = restar(bruta, uaii);
+  const ir = aplicar(uai, tasaIR);
+  const neta = restar(uai, ir);
+  const ventasCredito = aplicar(ventas, s.tasaVentasCredito);
+  const comprasCredito = aplicar(sumar(costo, restar(s.inventarioFinal, s.inventarioInicial)), s.tasaComprasCredito);
+  const RotInv = rotacionInventario(costo, inventarioPromedio);
+  const RotCxC = rotacionCxC(ventasCredito, s.cxcPromedio);
+  const rotacionCxP = rotacionCxPDocente(comprasCredito, s.cxpPromedio);
+  const PPC = plazoCobro(RotCxC);
+  return {
+    ventas, costo, bruta, gastos, uaii, uai, intereses, ir, neta,
+    inventarioPromedio, ventasCredito, comprasCredito,
+    actividad: {
+      RotInv, edadInventario: edadInventario(RotInv), RotCxC, PPC, rotacionCxP, plazoPago: plazoPago(rotacionCxP),
+      rotacionActivosFijos: rotacionActivosFijos(ventas, s.activoFijoPromedio),
+      rotacionActivos: rotacionActivos(ventas, s.activoPromedio),
+      cicloConversion: cicloConversion(PPC, RotInv, rotacionCxP)
+    }
   };
 }
 

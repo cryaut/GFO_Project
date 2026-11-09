@@ -15,7 +15,9 @@
 | Halley | Reconstrucción identificada. Saldo de diciembre de USD −16,000 antes de un préstamo adicional, USD 60,000 al declarar el préstamo y USD 25,000 al declarar también el repago. |
 | Bella Vista | El suplemento explícito de 5,000 por dividendos en acciones deja aporte de efectivo 5,000 y dividendo en efectivo 21,000. La caja final sigue en 82,500 UM. |
 | Dayton y Exportaciones Electrónicas | La UAI acreditada se muestra en Estados, AH, AV y Proforma, con aviso si no puede comprobarse su desglose. |
+| Electrónicas proyectado | El método residual reproduce ventas USD 52,562,500 y utilidad neta USD 7,274,000. Ventas y compras a crédito sostienen la actividad proyectada y un ciclo de 106.59 días. |
 | Mundo Moda y La Grandiosa | Se conserva el signo de los componentes patrimoniales confirmados. |
+| B.G. S.A. | La provisión de incobrables conserva −1,200 UM por separado. CxC neta queda en 24,800 UM y el activo corriente en 78,800 UM. |
 
 Los ejercicios de Proforma usan escenarios temporales separados del histórico y del presupuesto guardado. Planeación guarda el calendario docente como parte del módulo y conserva los supuestos del presupuesto maestro. El calendario distingue impuestos pagados, amortización programada y operaciones adicionales de financiamiento.
 
@@ -37,8 +39,6 @@ La vista previa incluye valor actual, propuesto, unidad y naturaleza. Antes de a
 
 - Halley carece de la página 163 y la escala de los saldos 50 y 25 se reconstruye como miles de USD. La app identifica esa interpretación.
 - La Grandiosa reporta 27,053.44 UM de pasivo corriente. El detalle suma 27,054.24 UM. El sistema conserva el total publicado y la evidencia separa las razones afectadas.
-- B.G. S.A. sigue con una restricción al importar su provisión negativa de 1,200 UM. Su contraste usa los totales informados y la fila queda marcada como pendiente de soporte para la cuenta correctora de CxC.
-- La proyección residual de Exportaciones Electrónicas tiene referencia independiente. La carga de escenarios de crédito proyectado y su reproducción completa quedan por incorporar.
 
 ## Verificación
 

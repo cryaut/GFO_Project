@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { construirReporte } from '../../js/modules/proforma/proforma-calculations.js';
-import { calcularBalanceDocente, calcularERDocente } from '../../js/modules/proforma/proforma-docente-calculations.js';
+import { calcularBalanceDocente, calcularERDocente, calcularERResidualDocente } from '../../js/modules/proforma/proforma-docente-calculations.js';
 import { CASOS_PROFORMA_DOCENTE as casos } from '../../js/modules/proforma/proforma-docente-ejemplos.js';
 import { proformaUI } from '../../js/modules/proforma/proforma-ui.js';
 import { cambiar, element, enviar, llenar } from './helpers/dom-falso.js';
@@ -9,6 +9,19 @@ import { cambiar, element, enviar, llenar } from './helpers/dom-falso.js';
 const referencias = JSON.parse(readFileSync(new URL(
   '../../docs/planificacion/proforma-presupuesto-docente/referencias.json', import.meta.url
 ), 'utf8'));
+
+it('reproduce el ER residual y la actividad proyectada de Electrónicas en USD', () => {
+  const r = calcularERResidualDocente(casos.electronicas.supuestos);
+  expect(r).toMatchObject({ ventas: 52562500, costo: 37845000, intereses: 658040, ventasCredito: 44678125, comprasCredito: 37962000 });
+  expect(r.uai).toBeCloseTo(10391428.57142857, 6);
+  expect(r.gastos).toBeCloseTo(3668031.4285714286, 6);
+  expect(r.neta).toBeCloseTo(7274000, 6);
+  expect(r.actividad.cicloConversion).toBeCloseTo(106.59415930639283, 8);
+  const parcial = calcularERResidualDocente({ ...casos.electronicas.supuestos, costoSobreVentas: null });
+  expect(parcial.ventas).toBeNull();
+  expect(parcial.actividad.RotCxC).toBeNull();
+  expect(parcial.actividad.RotInv).toBe(6);
+});
 
 describe('Métodos docentes AFOD en Proforma', () => {
   it.each([

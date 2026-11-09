@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { analisisHorizontalCompleto, analisisVerticalCompleto } from '../../js/modules/analisis/analisis-calculations.js';
 import { construirEFE } from '../../js/modules/analisis/efe-calculations.js';
-import { identificarCuenta } from '../../js/modules/estados/cuentas-identificador.js';
+import { consultarMontoCuenta, identificarCuenta } from '../../js/modules/estados/cuentas-identificador.js';
 import { registrarCuenta } from '../../js/modules/estados/cuentas-registro.js';
 import { normalizeFinancialData } from '../../js/modules/estados/estados-normalize.js';
+import { computeFinancialTotals } from '../../js/modules/estados/estados-calculations.js';
 import { estadosResueltos } from '../../js/modules/estados/estados-presentacion-calculations.js';
 import { resultadosReales } from '../../js/modules/proforma/proforma-calculations.js';
 import { computarRazonesDesdeDatos } from '../../js/modules/razones/razones-app-adapter.js';
@@ -49,6 +50,34 @@ describe('UAI acreditada de Dayton y Electrónicas', () => {
     });
     expect(uai(ejemploEstadosResueltos(), 'Julio')).toMatchObject({ origen: 'calculado', valor: 10000 });
   });
+});
+
+it('B.G. conserva la provisión negativa y usa la CxC neta en cada consumidor', () => {
+  const periodo = '2008';
+  const datos = registrarCuenta({
+    name: 'B.G. S.A.', moneda: 'UM', periods: [periodo],
+    balanceGeneral: { [periodo]: { activos: {}, pasivos: {}, patrimonio: {} } },
+    estadoResultados: { [periodo]: {} },
+    coberturaEstados: { [periodo]: { activos: 'completo', pasivos: 'completo' } }
+  }, [
+    ['bs.cash_and_equivalents', 'Efectivo y valores realizables', 20000],
+    ['bs.trade_receivables', 'Cuentas por cobrar', 26000],
+    ['bs.other_current_assets', 'Anticipo a proveedores', 8600],
+    ['bs.trade_receivables_allowance', 'Provisión de cuentas incobrables', -1200],
+    ['bs.inventory_total', 'Inventarios', 25400],
+    ['bs.current_liabilities_total', 'Total pasivo corriente', 35300]
+  ].map(([id, nombre, importe]) => ({ id, nombre, importe, periodo, confirmado: true })));
+  expect(consultarMontoCuenta(datos, periodo, 'bs.trade_receivables')).toEqual({ valor: 24800, motivo: null });
+  expect(computeFinancialTotals(datos, periodo)).toMatchObject({ cxC: 24800, activosCorrientes: 78800 });
+  expect(computarRazonesDesdeDatos(datos, periodo).RC).toBeCloseTo(78800 / 35300, 8);
+  const provision = estadosResueltos(datos, periodo).balanceGeneral.find(fila => fila.id === 'bs.trade_receivables_allowance');
+  expect(provision).toMatchObject({ cuenta: 'Provisión de cuentas incobrables', valor: -1200 });
+
+  const sinBruto = structuredClone(datos);
+  delete sinBruto.balanceGeneral[periodo].activos['Cuentas por cobrar'];
+  expect(consultarMontoCuenta(sinBruto, periodo, 'bs.trade_receivables').valor).toBeNull();
+  expect(computeFinancialTotals(sinBruto, periodo)).toMatchObject({ cxC: null, activosCorrientes: null, totalActivos: null });
+  expect(computarRazonesDesdeDatos(sinBruto, periodo).RC).toBeNull();
 });
 
 it('conserva un componente patrimonial negativo confirmado sin inferir su naturaleza de efectivo', () => {

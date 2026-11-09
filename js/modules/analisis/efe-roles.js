@@ -14,7 +14,7 @@ export const ROLES_EFE = {
     'bs.cash_and_equivalents'
   ],
   operacion: [
-    'bs.trade_receivables',
+    'bs.trade_receivables', 'bs.trade_receivables_allowance',
     'bs.inventory_merchandise', 'bs.inventory_raw_materials',
     'bs.inventory_work_in_process', 'bs.inventory_finished_goods',
     'bs.inventory_total',

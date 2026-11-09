@@ -28,5 +28,15 @@ export const CASOS_PROFORMA_DOCENTE = {
       tasaCxP: 0.14, deudasAcumuladas: 60000, otrosPasivosCorrientes: 30000, deudaLargoPlazo: 350000,
       accionesComunes: 200000, retenidasBase: 220000, tasaUtilidadNeta: 0.04, dividendos: 70000
     }
+  },
+  electronicas: {
+    nombre: 'Exportaciones Electrónicas · Proyección residual 2019',
+    tipo: 'residual',
+    supuestos: {
+      inventarioInicial: 4140000, inventarioFinal: 8475000, rotacionObjetivo: 6, costoSobreVentas: 0.72,
+      utilidadObjetivo: 7274000, tasaIR: 0.30, deudaPromedio: 8225500, tasaInteres: 0.08,
+      tasaVentasCredito: 0.85, tasaComprasCredito: 0.90, cxcPromedio: 6197500, cxpPromedio: 506500,
+      activoFijoPromedio: 2760000, activoPromedio: 22695500
+    }
   }
 };

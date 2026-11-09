@@ -727,11 +727,17 @@ Al tomar los saldos del balance, Planeación copia los importes disponibles en l
 
 En **Resumen**, pulsa **Costo de ventas** o **Inventario valorizado** para consultar el importe de un mes. El costo de ventas de la tarjeta cubre el horizonte y el inventario muestra su cierre. En **Tablas completas**, la sección **Inventario valorizado y costo de ventas** presenta la apertura, las compras, el costo de ventas y el cierre de cada mes. La valoración usa el promedio ponderado mensual y muestra N/D en los importes que requieren un dato pendiente. La caja completa y los estados proforma del caso corresponden a etapas posteriores.
 
+En **Caja por calendario**, carga La Pinolera o una variante de Halley. Puedes editar los cobros y pagos por desfase, las ventas de meses anteriores y los desembolsos por fecha. **Calcular y guardar** conserva ese calendario junto al presupuesto. La conciliación presenta por separado la necesidad de fondos y el efectivo tras los préstamos y repagos registrados.
+
+En **Traer datos de otra sección**, selecciona el periodo o producto y abre la vista previa. Marca los campos que quieres copiar. En Planeación y C-V-U, aplica los valores al borrador y pulsa **Calcular y guardar**. Flujo indica en su panel que guarda la copia de inmediato. La procedencia te permite identificar datos que necesitan una nueva vista previa porque cambió la fuente.
+
 ---
 
 ## 13. Proforma y Reporte Integrado
 
-`#/proforma` no pide datos: reúne lo que ya calcularon los demás módulos.
+La vista integrada de `#/proforma` reúne lo que ya calcularon los demás módulos.
+
+El panel **Métodos docentes AFOD** permite comparar los dos métodos de Metroline y consultar Euro Designs, el balance de Leonard y el ER residual de Electrónicas. Las ediciones del panel son temporales y cada ejercicio conserva su propio periodo y moneda.
 
 1. **Estado de resultados proforma.** Muestra el total del presupuesto y el último periodo real de los estados. La variación requiere un histórico anual identificado con el año (`AAAA`) y una proyección de 12 meses o 4 trimestres. Para los demás horizontes, la variación figura como N/D y la pantalla explica el motivo.
 2. **Efectivo proyectado:** saldo inicial, flujo neto, saldo final y financiamiento máximo.
