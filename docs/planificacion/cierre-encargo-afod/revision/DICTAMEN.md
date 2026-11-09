@@ -43,13 +43,15 @@ Se revisaron además los cambios de UAI reportada, correctora de incobrables, si
 
 ## Robustez, compatibilidad e interfaz
 
+La tabla de otros cobros/desembolsos de caja aplica la misma regla de accesorios: omite solo conceptos cuyos meses son todos cero, preserva N/D y conserva la conciliación y sus resultados internos. Una quinta regresión cubre esta salida. Se sustituyen además clases de cuadrícula/espaciado inexistentes por `form-row` y `flex-gap`, y se alinean a la izquierda los conceptos de las tablas nuevas. La comprobación en navegador cubre el ajuste de distribución.
+
 Las transferencias muestran actual/propuesto, unidad, naturaleza y procedencia; vuelven a leer origen/destino al aplicar. La firma impide aplicar una vista previa desactualizada. En Planeación/C-V-U se aplica al borrador y guardar valida/persiste; Flujo guarda el módulo completo. Una edición manual retira la procedencia del campo y un cambio posterior del origen deja aviso.
 
 La validación de respaldos admite metadata opcional y caja docente, rechaza datos inválidos y conserva la compatibilidad anterior. Se revisaron las rutas que guardan caja para que no sustituyan el presupuesto maestro ni sus borradores. El error de escritura no publica un estado parcial.
 
 Verificaciones reproducidas:
 
-- [2252 pruebas aprobadas, 80 archivos](pruebas.json), frente a 2248/79 del PR original.
+- [2253 pruebas aprobadas, 80 archivos](pruebas.json), frente a 2248/79 del PR original.
 - [Lint sin errores, diez avisos previos](lint.json). Sin dependencias nuevas.
 - Guion de Comercial Ejemplo: cinco rutas, 18 combinaciones de vista/tamaño/tema, copia, guardado, recarga y costo pendiente con unidades conservadas.
 - [Recorrido propio](revisar.cjs) y [resultado](navegador.json): once rutas; cuatro ejercicios de Proforma; cinco calendarios de caja; recálculo, guardado y recarga; transferencias con moneda incompatible y origen actualizado durante la vista previa; fallo de cuota y reintento; reporte de la proyección.

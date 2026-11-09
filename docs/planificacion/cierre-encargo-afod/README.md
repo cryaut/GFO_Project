@@ -46,4 +46,4 @@ Las pruebas dirigidas cotejan los cinco calendarios, los cuatro métodos o varia
 
 ## Revisión previa a integración
 
-Revisión independiente solicitada por Cris, sobre `c721ab2` y las correcciones menores de la rama. [Dictamen, reparaciones y evidencia](revision/DICTAMEN.md): 521 controles numéricos sin diferencias, 2252 pruebas aprobadas en 80 archivos y lint sin errores. Se preservan los límites de Halley y La Grandiosa. El PR #34 contiene la rama del #33, por lo que la valoración se integra una sola vez.
+Revisión independiente solicitada por Cris, sobre `c721ab2` y las correcciones menores de la rama. [Dictamen, reparaciones y evidencia](revision/DICTAMEN.md): 521 controles numéricos sin diferencias, 2253 pruebas aprobadas en 80 archivos y lint sin errores. Se preservan los límites de Halley y La Grandiosa. El PR #34 contiene la rama del #33, por lo que la valoración se integra una sola vez.

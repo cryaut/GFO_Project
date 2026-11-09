@@ -8,9 +8,25 @@ import { ejemploInventario } from '../../js/modules/inventario/inventario-calcul
 import { transferenciaInventario } from '../../js/utils/transferencias.js';
 import { montarProformaDocente } from '../../js/modules/proforma/proforma-docente-ui.js';
 import { CASOS_PROFORMA_DOCENTE } from '../../js/modules/proforma/proforma-docente-ejemplos.js';
+import { crearCajaDocenteUI } from '../../js/modules/planeacion/caja-docente-ui.js';
+import { ejemploCajaDocente } from '../../js/modules/planeacion/caja-docente-ejemplos.js';
 import { element, llenar, enviar } from './helpers/dom-falso.js';
 
 afterEach(() => { vi.unstubAllGlobals(); vi.clearAllMocks(); });
+
+it('caja omite conceptos accesorios sin movimientos, conservando N/D y cálculos internos cero', () => {
+  const panel = element(), plan = ejemploCajaDocente('halley');
+  crearCajaDocenteUI(plan, vi.fn())(panel);
+  const html = panel.innerHTML.split('id="cajaDocResultados">')[1];
+  expect(html).not.toContain('>Publicidad</th>');
+  expect(html).toContain('>Impuesto pagado</th>');
+  expect(html).toContain('Financiamiento requerido');
+  expect(html).toContain('USD 0.00');
+  plan.gastos.publicidad.tasa = null;
+  crearCajaDocenteUI(plan, vi.fn())(panel);
+  expect(panel.innerHTML.split('id="cajaDocResultados">')[1]).toContain('>Publicidad</th>');
+  expect(panel.innerHTML.split('id="cajaDocResultados">')[1]).toContain('N/D');
+});
 
 it.each(['USD','UM','C$'])('Planeación conserva la moneda %s al preparar la transferencia de Inventario', moneda => {
   estado.inventario = { ...ejemploInventario(), moneda };

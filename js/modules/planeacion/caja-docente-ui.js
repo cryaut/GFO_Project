@@ -12,13 +12,13 @@ function importe(id, etiqueta, numero) {
 }
 
 function campo(id, etiqueta, contenido) {
-  return `<div><label for="${id}">${etiqueta}</label>${contenido}</div>`;
+  return `<div class="form-group"><label class="form-label" for="${id}">${etiqueta}</label>${contenido}</div>`;
 }
 
 function tabla(titulo, etiquetas, filas, formatear = esc) {
-  return `<div class="card mb-3"><h3 class="card-title">${titulo}</h3><div class="table-wrapper"><table class="statement-table">
+  return `<div class="card mb-4"><h3 class="card-title">${titulo}</h3><div class="table-wrapper"><table class="statement-table">
     <thead><tr><th scope="col">Concepto</th>${etiquetas.map(p => `<th scope="col" class="text-right">${esc(p)}</th>`).join('')}</tr></thead>
-    <tbody>${filas.map(([etiqueta, datos]) => `<tr><th scope="row">${esc(etiqueta)}</th>${datos.map(dato =>
+    <tbody>${filas.map(([etiqueta, datos]) => `<tr><th scope="row" style="text-align:left">${esc(etiqueta)}</th>${datos.map(dato =>
       `<td class="text-right font-mono">${formatear(dato)}</td>`).join('')}</tr>`).join('')}</tbody>
   </table></div></div>`;
 }
@@ -38,7 +38,7 @@ function supuestos(plan) {
   const movimientos = tabla('Cobros y pagos declarados por fecha', meses, MOVIMIENTOS_CAJA.map(([id, nombre]) =>
     [nombre, plan.movimientos[id].map((v, i) => importe(`cajaDoc-${id}-${i}`, `${nombre} de ${meses[i]}`, v))]), String);
   return `<form id="formCajaDocente">
-    <div class="form-grid mb-3">
+    <div class="form-row mb-4">
       ${campo('cajaDoc-apertura', 'Saldo inicial', importe('cajaDoc-apertura', 'Saldo inicial', plan.apertura))}
       ${campo('cajaDoc-minimo', 'Saldo mínimo', importe('cajaDoc-minimo', 'Saldo mínimo', plan.minimo))}
       ${campo('cajaDoc-pctCompras', 'Compras como % de ventas', importe('cajaDoc-pctCompras', 'Compras como % de ventas', aPct(plan.pctCompras)))}
@@ -47,7 +47,7 @@ function supuestos(plan) {
     </div>
     <p class="form-hint">Escriba los porcentajes separados por espacios. El primero corresponde al mismo mes y los siguientes a los meses posteriores. Use cero para una ausencia confirmada y deje vacío un importe pendiente.</p>
     <details><summary>Editar ventas, gastos y movimientos</summary>${ventas}${gastos}${movimientos}</details>
-    <div class="d-flex flex-wrap gap-2 mt-3">
+    <div class="flex-gap flex-wrap mt-4">
       <button type="submit" value="calcular" class="btn btn-secondary">Calcular calendario</button>
       <button type="submit" value="guardar" class="btn btn-primary">Calcular y guardar</button>
     </div>
@@ -80,7 +80,7 @@ function resultados({ meses, moneda, financiamientoMaximo }) {
     ${origenes('Programación de pagos por origen', 'proveedores')}
     ${tabla('Otros cobros y desembolsos', periodos, [
       ...filas([MOVIMIENTOS_CAJA[0]], 'movimientos'), ...filas(GASTOS_CAJA, 'gastos'), ...filas(PAGOS_CAJA, 'movimientos')
-    ], monto)}`;
+    ].filter(([, importes]) => importes.some(importe => importe !== 0)), monto)}`;
 }
 
 function leerFormulario(form, plan) {
@@ -120,7 +120,7 @@ export function crearCajaDocenteUI(guardado, guardar) {
     const render = () => {
       const caso = CASOS_CAJA.find(([id]) => id === plan?.id);
       const halley = caso?.[0].startsWith('halley');
-      panel.innerHTML = `<div class="card mb-3"><h2 class="card-title">Presupuesto de caja por calendario</h2>
+      panel.innerHTML = `<div class="card mb-4"><h2 class="card-title">Presupuesto de caja por calendario</h2>
         <p class="form-hint">Escenarios de caja AFOD independientes del presupuesto maestro. El impuesto pagado se captura por fecha y los meses previos solo originan cobros y pagos.</p>
         <label for="cajaDocCaso">Referencia</label>
         <select id="cajaDocCaso" class="form-select">${CASOS_CAJA.map(([id, nombre]) =>

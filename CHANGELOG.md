@@ -15,7 +15,7 @@ Todos los cambios notables en GFO Toolkit.
 - Referencia parcial de Planeación identificada por separado; cargar un presupuesto completo confirma el reemplazo de sus escenarios. Inventario conserva el desplazamiento de tablas dentro del ancho móvil.
 
 ### Planeación y Proforma
-- Revisión independiente del PR #34: las transferencias de Inventario a Planeación conservan la moneda del origen para bloquear copias incompatibles; el ER docente omite filas accesorias de otros ingresos en cero, conservando N/D y subtotales. Cuatro regresiones y contraste numérico reproducible documentados.
+- Revisión independiente del PR #34: las transferencias de Inventario a Planeación conservan la moneda del origen para bloquear copias incompatibles; el ER docente y caja omiten filas accesorias sin movimientos, conservando N/D y subtotales. Cinco regresiones y contraste numérico reproducible documentados.
 - Proforma incluye los métodos docentes de Euro Designs, Metroline, Leonard y Electrónicas. Planeación calcula los calendarios de La Pinolera y Halley con cuotas por origen y financiamiento declarado (D-105 y D-106).
 - Flujo, Planeación y C-V-U comparten vistas previas de transferencias con selección de campos, control de moneda y procedencia. Reportes presenta la misma proyección que Proforma (D-107).
 - Comercial Ejemplo muestra el costo de ventas y el inventario valorizado por mes, con promedio ponderado y N/D para los importes que requieren datos pendientes (D-104).

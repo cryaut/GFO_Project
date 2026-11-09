@@ -58,7 +58,7 @@ function tabla(titulo, columnas, filas) {
   return `<section class="mb-4"><h3>${esc(titulo)}</h3><div class="table-wrapper">
     <table class="statement-table"><thead><tr><th scope="col">Concepto</th>
     ${columnas.map(nombre => `<th scope="col" class="text-right">${esc(nombre)}</th>`).join('')}</tr></thead>
-    <tbody>${filas.map(([nombre, ...celdas]) => `<tr><th scope="row">${esc(nombre)}</th>
+    <tbody>${filas.map(([nombre, ...celdas]) => `<tr><th scope="row" style="text-align:left">${esc(nombre)}</th>
       ${celdas.map(([valor, desarrollo]) => `<td class="text-right">
         <strong class="font-mono">${monto(valor)}</strong><span class="desarrollo-operacion">${esc(desarrollo)}</span>
       </td>`).join('')}</tr>`).join('')}</tbody></table></div></section>`;
