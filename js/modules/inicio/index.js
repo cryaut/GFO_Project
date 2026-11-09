@@ -4,7 +4,8 @@ import store from '../../store.js';
 import { renderChart } from '../../components/chart.js';
 import { showToast } from '../../components/toast.js';
 import { calcularEstado, ejemploActivos } from '../activos/index.js';
-import { ejemploMercado } from '../analisis/mercado-calculations.js';
+import { ejemploMercado, normalizarDatosMercado } from '../analisis/mercado-calculations.js';
+import { casoHistoricoReal, casoOperativoSimulado } from '../../examples/ejemplos-agricorp.js';
 import { ejemploEquilibrio, normalizarEquilibrio } from '../equilibrio/equilibrio-calculations.js';
 import { getDemoData } from '../estados/index.js';
 import { crearEjemplo } from '../../examples/catalogo.js';
@@ -30,9 +31,25 @@ function registro() {
   return { cargados, guardar };
 }
 
+// Casos AGRI-CORP: reemplazan todos los módulos de empresa. Lo que el caso no usa queda vacío
+// para no mezclar el caso histórico real con la unidad simulada.
+function cargarCasoAgricorp(id) {
+  const caso = id === 'agricorp-historico' ? casoHistoricoReal() : casoOperativoSimulado();
+  const { cargados, guardar } = registro();
+  guardar('estados', normalizeFinancialData(caso.estados), 'Estados financieros');
+  guardar('apalancamiento', caso.apalancamiento, 'Apalancamiento');
+  guardar('razonesMercado', normalizarDatosMercado(caso.razonesMercado), 'Razones de mercado');
+  guardar('flujo', normalizarFlujo(caso.flujo), 'Flujo de efectivo');
+  guardar('inventario', caso.inventario ? normalizarInventario(caso.inventario) : { productos: [], movimientos: [] }, 'Inventario');
+  guardar('equilibrio', normalizarEquilibrio(caso.equilibrio ?? null), 'Punto de equilibrio');
+  guardar('planeacion', caso.planeacion ? { supuestos: normalizarSupuestos(caso.planeacion.supuestos) } : { supuestos: null }, 'Presupuesto maestro');
+  return cargados;
+}
+
 // Carga el ejemplo ficticio de MUNO MODA en los módulos de la empresa, con los mismos datos
 // que el botón "Cargar ejemplo" de cada uno. Solo escribe en los módulos vacíos.
 export function cargarEjemploEmpresa(id = 'actual') {
+  if (id.startsWith('agricorp-')) return cargarCasoAgricorp(id);
   const { cargados, guardar } = registro();
   if (id !== 'actual') {
     guardar('estados', normalizeFinancialData(crearEjemplo('inicioEmpresa', id, getDemoData)), 'Estados financieros');

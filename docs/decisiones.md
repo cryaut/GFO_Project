@@ -2404,3 +2404,14 @@ Inicio y Mercado reutilizan el ER resuelto; EFE consulta `obtenerUtilidadNetaMot
 **Consecuencias.** Las fórmulas de los 20 JSON se conservan. Los valores informados y sus advertencias permanecen distinguibles en cada pantalla.
 
 **Referencias.** [Comparaciones y límites de fuente](planificacion/cierre-encargo-afod/README.md).
+
+### D-109 - Ejemplos AGRI-CORP: casos separados y cuentas confirmadas
+
+- **Fecha** — 2026-11-09.
+- **Area** — Catálogo de ejemplos, Estados, Inicio, Planeación y Apalancamiento.
+
+**Decisión.** El dossier de AGRI-CORP se ofrece como dos ejemplos independientes: el histórico real 2023–2024 y la unidad de arroz simulada de julio a septiembre de 2027. Desde Inicio, cargar uno reemplaza todos los módulos de empresa (lo que el caso no usa queda vacío); desde Estados se carga solo el estado financiero, como borrador. Las cuentas llevan su identificador del catálogo confirmado y cada periodo declara cobertura completa e ingresos sin intereses, para que el motor no deje razones en N/D por cuentas "sugeridas". En el real, las partidas sin equivalente exacto se agrupan en la cuenta más cercana del catálogo (partes relacionadas, derecho de uso y similares como otros activos o pasivos; propiedad, planta y equipo como otros activos fijos). El impuesto, los dividendos preferentes y la inversión de agosto del caso simulado entran como "otros desembolsos" de Planeación para que la caja coincida con el dossier, y el saldo mínimo de caja es 0 porque el dossier no define uno. El caso real no declara ventas a crédito ni pagos a proveedores, de modo que las rotaciones y plazos de cuentas por cobrar y por pagar quedan N/D, y el GAO queda N/D porque no hay clasificación fijo/variable pública.
+
+**Consecuencias.** Las razones del caso real muestran cifras donde el motor puede calcularlas y N/D donde el dossier prohíbe inventar datos. La agrupación de cuentas reales es una elección de presentación y no cambia los totales auditados. El impuesto por pagar al cierre no aparece como pasivo en Planeación porque se paga dentro del mes. Para revertir basta quitar las dos opciones de `catalogo.js` y borrar `js/examples/ejemplos-agricorp.js`.
+
+**Referencias.** [Ejemplos de AGRI-CORP](planificacion/ejemplo-agricorp/README.md).

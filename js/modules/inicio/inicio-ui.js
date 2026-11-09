@@ -191,7 +191,11 @@ export function inicioUI(page, { panorama: p, graficar = null, cargarEjemploEmpr
   vincularEjemplos(page, 'inicioPersonal');
   page.querySelector('#inicioEjemplo')?.addEventListener('click', () => {
     const id = page.querySelector('#example-inicioEmpresa')?.value || 'actual';
-    if (id !== 'actual' && !window.confirm('¿Cargar los estados del ejercicio seleccionado? Reemplaza Estados; los demás módulos no cambian.')) return;
+    const completo = id.startsWith('agricorp-');
+    const aviso = completo
+      ? '¿Cargar el caso AGRI-CORP seleccionado? Reemplaza los datos de Estados, Apalancamiento, Mercado, Flujo, Inventario, Equilibrio y Presupuesto maestro.'
+      : '¿Cargar los estados del ejercicio seleccionado? Reemplaza Estados; los demás módulos no cambian.';
+    if (id !== 'actual' && !window.confirm(aviso)) return;
     cargarEjemploEmpresa(id);
   });
   page.querySelector('#inicioEjemploPersonal')?.addEventListener('click', () => cargarEjemploPersonal(page.querySelector('#example-inicioPersonal')?.value || 'actual'));
