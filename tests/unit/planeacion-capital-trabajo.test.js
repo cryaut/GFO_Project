@@ -7,8 +7,8 @@ const entradas = JSON.parse(readFileSync(new URL('../../propuesta-caso/referenci
 const referencia = JSON.parse(readFileSync(new URL('./fixtures/caso_ficticio_referencia.json', import.meta.url), 'utf8'));
 const fuente = leerPlaneacion(crearCasoComercial(null, referencia, entradas));
 const capital = fuente.escenario.capitalTrabajo;
-const proyectar = (supuestos = {}, configuracion = {}) => calcularCapitalTrabajo(
-  { ...fuente.supuestos, ...supuestos }, { ...capital, ...configuracion }, fuente.base.fechaCorte
+const proyectar = (supuestos = {}, configuracion = {}, valorInventarioInicial = fuente.base.apertura.inventarioValor) => calcularCapitalTrabajo(
+  { ...fuente.supuestos, ...supuestos }, { ...capital, ...configuracion }, fuente.base.fechaCorte, valorInventarioInicial
 );
 
 function cotejarCuotas(obtenidas, esperadas) {
@@ -57,6 +57,24 @@ describe('Capital de trabajo mensual de Planeación', () => {
     expect(resultado.compras.totales.total).toBeCloseTo(esperado.anual.movimientos.pagos_proveedores, 6);
   });
 
+  it('coteja la valoración de los doce meses y el costo anual con la referencia independiente', () => {
+    const { meses, costoVentasTotal } = proyectar().valoracion;
+    const esperado = referencia.proyeccion_2026;
+    expect(meses).toHaveLength(12);
+    esperado.meses.forEach((mes, i) => {
+      const { inicial, compras, costoVentas, final } = meses[i];
+      expect(inicial).toBeCloseTo(mes.apertura.inventario_valor, 2);
+      expect(compras).toBeCloseTo(mes.movimientos.compras_valor, 2);
+      expect(costoVentas).toBeCloseTo(mes.estado_resultados.costo_ventas, 2);
+      expect(final).toBeCloseTo(mes.inventario.valor_final, 2);
+      expect(inicial + compras - costoVentas).toBeCloseTo(final, 8);
+      if (i > 0) expect(inicial).toBe(meses[i - 1].final);
+    });
+    expect(costoVentasTotal).toBeCloseTo(esperado.anual.estado_resultados.costo_ventas, 2);
+    expect(meses[0].inicial + esperado.anual.movimientos.compras_valor - costoVentasTotal)
+      .toBeCloseTo(meses.at(-1).final, 8);
+  });
+
   it('distribuye saldos de apertura y créditos nuevos con plazos distintos y meses sin vencimientos', () => {
     const supuestos = {
       ...fuente.supuestos, periodos: 3, ventasUnidades: [10, 10, 0], precio: 10,
@@ -90,6 +108,44 @@ describe('Capital de trabajo mensual de Planeación', () => {
     expect(p.compras.meses[2]).toMatchObject({ importe: null, liquidado: 0, cierre: null });
     expect(p.compras.meses[3].liquidado).toBeNull();
     expect(p.compras.meses[3].cierre).toBeGreaterThan(0);
+    expect(p.valoracion.meses[0]).toMatchObject({ inicial: 80000, compras: 0, costoVentas: 28000, final: 52000 });
+    expect(p.valoracion.meses[2]).toMatchObject({ inicial: 23000, compras: null, costoVentas: null, final: null });
+    expect(p.valoracion.meses[3]).toMatchObject({ inicial: null, compras: 31250, costoVentas: null, final: null });
+    expect(p.valoracion.costoVentasTotal).toBeNull();
+  });
+
+  it('muestra N/D cuando el valor positivo de apertura contradice las cero unidades', () => {
+    const { valoracion } = proyectar({
+      periodos: 1, ventasUnidades: [0], inventarioInicial: 0, inventarioFinalUltimo: 0
+    }, { costosCompra: [100] }, 100);
+    expect(valoracion.meses).toEqual([{ inicial: null, compras: 0, costoVentas: 0, final: 0 }]);
+  });
+
+  it('conserva el costo de ventas cero en un mes sin ventas con compras de valor desconocido', () => {
+    const p = proyectar({
+      periodos: 2, ventasUnidades: [0, 10], inventarioInicial: 0, pctInventarioFinal: 0.5, inventarioFinalUltimo: 0
+    }, { costosCompra: [null, 4] }, 0);
+    expect(p.existencias[0].compras).toBe(5);
+    expect(p.valoracion.meses[0]).toMatchObject({ inicial: 0, compras: null, costoVentas: 0, final: null });
+  });
+
+  it('recupera la valoración después de agotar una existencia de costo desconocido', () => {
+    const p = proyectar({
+      periodos: 3, ventasUnidades: [10, 4, 3], inventarioInicial: 3, pctInventarioFinal: 0, inventarioFinalUltimo: 2
+    }, { costosCompra: [null, 4, 5] }, 9);
+    expect(p.valoracion.meses).toMatchObject([
+      { inicial: 9, compras: null, costoVentas: null, final: 0 },
+      { inicial: 0, compras: 16, costoVentas: 16, final: 0 },
+      { inicial: 0, compras: 25, costoVentas: 15, final: 10 }
+    ]);
+    expect(p.valoracion.costoVentasTotal).toBeNull();
+  });
+
+  it('deja N/D la valoración cuando falta el valor de apertura', () => {
+    const p = proyectar({}, {}, null);
+    expect(p.existencias[0].final).toBe(520);
+    expect(p.valoracion.meses[0]).toMatchObject({ inicial: null, compras: 0, costoVentas: null, final: null });
+    expect(p.valoracion.costoVentasTotal).toBeNull();
   });
 
   it('deja pendientes los vencimientos de un crédito sin calendario y mantiene el saldo del mes de origen', () => {

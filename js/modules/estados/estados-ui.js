@@ -15,9 +15,10 @@ import { registrarCuenta } from './cuentas-registro.js';
 import { selectorCuenta, renderRevisionCuentas } from './cuentas-ui.js';
 
 const GROUPS = { activos: 'Activos', pasivos: 'Pasivos', patrimonio: 'Patrimonio', estadoResultados: 'Estado de Resultados' };
-const SUPLEMENTARIOS_ROTACION = [
+const SUPLEMENTARIOS = [
   { id: 'supp.credit_sales', campo: 'ventasCredito' },
-  { id: 'supp.supplier_payments', campo: 'pagosProveedores' }
+  { id: 'supp.supplier_payments', campo: 'pagosProveedores' },
+  { id: 'supp.stock_dividends', campo: 'dividendosAcciones' }
 ];
 const LABELS = {
   efectivo: 'Efectivo', cxC: 'Cuentas por cobrar', inventario: 'Inventario',
@@ -161,9 +162,9 @@ export function estadosUI(page, { initial, demo, save }) {
           <option value="excluye_intereses" ${draft.composicionIngresos[selected] === 'excluye_intereses' ? 'selected' : ''}>Excluyen los intereses ganados</option>
           <option value="incluye_intereses" ${draft.composicionIngresos[selected] === 'incluye_intereses' ? 'selected' : ''}>Incluyen los intereses ganados</option>
         </select>
-        <fieldset class="states-supplementary"><legend>Datos para las rotaciones — ${esc(selected)}</legend>
-          <p>Declare las ventas a crédito y los pagos a proveedores reales de este periodo. Deje vacío lo que no tenga: las razones que lo necesitan mostrarán N/D. Un cero declarado se conserva como cero.</p>
-          ${SUPLEMENTARIOS_ROTACION.map(({ id, campo }) => `<label class="form-label" for="${campo}">${esc(obtenerCuenta(id).nombreCanonico)}</label>
+        <fieldset class="states-supplementary"><legend>Datos para las rotaciones y el EFE — ${esc(selected)}</legend>
+          <p>Declare los importes acreditados del periodo. Las razones que requieran un dato ausente muestran N/D. El EFE separa los dividendos en acciones declarados de las variaciones estimadas de patrimonio. Un cero declarado se conserva como cero.</p>
+          ${SUPLEMENTARIOS.map(({ id, campo }) => `<label class="form-label" for="${campo}">${esc(obtenerCuenta(id).nombreCanonico)}</label>
             <input class="form-input" id="${campo}" type="number" step="any" value="${consultarMontoCuenta(draft, selected, id).valor ?? ''}">`).join('')}
         </fieldset></div></details>` : '<p class="form-hint">No hay periodos. Añada uno para empezar, sin necesidad de cargar el ejemplo.</p>'}
         <details class="states-subpanel"${draft.periods.length ? '' : ' open'}><summary>Administrar periodos</summary><div class="states-disclosure-content">
@@ -395,7 +396,7 @@ export function estadosUI(page, { initial, demo, save }) {
         markDirty(); renderAccounts(); renderPreview();
       });
     }
-    for (const { id, campo } of SUPLEMENTARIOS_ROTACION) {
+    for (const { id, campo } of SUPLEMENTARIOS) {
       const entrada = page.querySelector(`#${campo}`);
       if (entrada) entrada.onchange = event => guard(() => {
         const candidato = structuredClone(draft);

@@ -5,7 +5,11 @@ import { monedaDe } from '../../utils/moneda.js';
 import { escapeHTML as esc } from '../../utils/html.js';
 import { formatCurrencyND as monto, formatNumberND, formatPercentND as pct } from '../../utils/format.js';
 import { leerNumero, nuevoId } from '../../utils/form.js';
-import { consultarMontoCuenta } from '../estados/cuentas-identificador.js';
+import { mostrarProcedencia, panelTransferencia, vincularTransferencia } from '../../components/transferencia.js';
+import {
+  CAMPOS_BALANCE_PLANEACION, leerProcedencia, PROCEDENCIA_PLANEACION, procedenciaVigente,
+  transferenciaBalance, transferenciaInventario
+} from '../../utils/transferencias.js';
 import {
   CALENDARIOS_CAPITAL_TRABAJO, MAX_PERIODOS, SUPUESTOS, TIPOS_PERIODO,
   calcularCapitalTrabajo, calcularPresupuestoMaestro, ejemploPlaneacion, normalizarSupuestos, validarSupuestos
@@ -15,6 +19,7 @@ import {
   leerPlaneacion, seleccionarEscenario
 } from './planeacion-escenarios.js';
 import { detalleVencimientos, resumenPlaneacionUI } from './planeacion-resumen-ui.js';
+import { crearCajaDocenteUI } from './caja-docente-ui.js';
 
 const esNumero = valor => typeof valor === 'number' && Number.isFinite(valor);
 const num = valor => formatNumberND(valor, esNumero(valor) && Number.isInteger(valor) ? 0 : 2);
@@ -25,7 +30,9 @@ const CAMPOS_CAPITAL_TRABAJO = new Set([
   'precio', 'pctContado', 'cxcInicial', 'pctComprasContado', 'cxpInicial',
   'inventarioInicial', 'pctInventarioFinal', 'inventarioFinalUltimo'
 ]);
-const VISTAS = [['resumen', 'Resumen'], ['supuestos', 'Supuestos'], ['tablas', 'Tablas completas']];
+const VISTAS = [
+  ['resumen', 'Resumen'], ['supuestos', 'Supuestos'], ['tablas', 'Tablas completas'], ['caja', 'Caja por calendario']
+];
 
 // Supuestos → textos del formulario (porcentajes en %, no en fracción).
 function aBorrador(s, capital) {
@@ -137,9 +144,18 @@ function seccionCapitalTrabajo(p) {
     { concepto: 'Existencia final proyectada', formato: 'unidades', valores: p.existencias.map(f => f.final), destacar: true },
     { concepto: 'Costo unitario de compra', formato: 'monto', valores: p.costosCompra }
   ], 'Si la existencia inicial cubre las ventas y el objetivo, se conserva el sobrante.');
+  const { meses, costoVentasTotal } = p.valoracion;
+  const valoracion = tabla('Inventario valorizado y costo de ventas', p.etiquetas, [
+    ['inicial', 'Inventario inicial valorizado', meses[0].inicial],
+    ['compras', '(+) Compras del periodo', p.compras.totales.importe],
+    ['costoVentas', '(−) Costo de ventas', costoVentasTotal],
+    ['final', '(=) Inventario final valorizado', meses.at(-1).final]
+  ].map(([clave, concepto, total]) => ({
+    concepto, formato: 'monto', valores: meses.map(mes => mes[clave]), total, destacar: clave === 'final'
+  })), 'El promedio ponderado mensual divide el valor del inventario inicial más las compras entre las unidades disponibles. En Total, las filas de inventario muestran la apertura y el cierre del horizonte.');
   return `<section aria-label="Presupuesto parcial de capital de trabajo">
     <p class="form-hint">Resultados del escenario guardado. N/D indica un cálculo pendiente. Los saldos se muestran por mes.</p>
-    ${ventas}${existencias}${compras}
+    ${ventas}${existencias}${valoracion}${compras}
     <div class="card mb-4"><h2 class="card-title">Vencimientos después del horizonte</h2>
       <h3>Cobros pendientes</h3>${detalleVencimientos(p.ventas.pendientes)}
       <h3>Pagos pendientes</h3>${detalleVencimientos(p.compras.pendientes)}</div>
@@ -267,13 +283,20 @@ function seccionResultados(p) {
 
 // inventario es el resultado de calcularInventario.
 export function planeacionUI(page, opciones) {
-  const { guardar, graficar = null, destruirGrafica, estados = null, inventario = null, cargarReferencia } = opciones;
+  const { guardar, graficar = null, destruirGrafica, estados = null, inventario = null, cargarReferencia,
+    leerEstados = () => estados, leerInventario = () => inventario, confirmar = texto => window.confirm(texto) } = opciones;
   let datos = opciones.datos;
   let lectura = leerPlaneacion(datos);
   let borrador = aBorrador(lectura.supuestos, lectura.escenario?.capitalTrabajo);
+  let procedencia = { ...leerProcedencia(lectura.escenario ? lectura.escenario.procedencia : datos?.procedencia, PROCEDENCIA_PLANEACION) };
   let nombre = lectura.escenario?.nombre ?? '';
   let cambios = false;
   let vista = 'resumen';
+  const montarCajaDocente = crearCajaDocenteUI(datos?.cajaDocente, cajaDocente => {
+    const nuevos = { ...datos, cajaDocente };
+    guardar(nuevos);
+    datos = nuevos;
+  });
 
   function mensaje(texto, error = false) {
     const el = page.querySelector('#planMensaje');
@@ -289,6 +312,7 @@ export function planeacionUI(page, opciones) {
   }
 
   function guardarDatos(nuevos, texto, destino = 'resumen') {
+    if (datos?.cajaDocente) nuevos = { ...nuevos, cajaDocente: datos.cajaDocente };
     try {
       guardar(nuevos);
     } catch (error) {
@@ -298,6 +322,7 @@ export function planeacionUI(page, opciones) {
     datos = nuevos;
     lectura = leerPlaneacion(datos);
     borrador = aBorrador(lectura.supuestos, lectura.escenario?.capitalTrabajo);
+    procedencia = { ...leerProcedencia(lectura.escenario ? lectura.escenario.procedencia : datos?.procedencia, PROCEDENCIA_PLANEACION) };
     nombre = lectura.escenario?.nombre ?? '';
     cambios = false;
     vista = destino;
@@ -310,8 +335,12 @@ export function planeacionUI(page, opciones) {
   function guardarSupuestos(s, texto, parcial = false, capital = undefined) {
     const errores = validarSupuestos(s, { parcial });
     if (errores.length) { mensaje(errores.join(' '), true); return; }
-    guardarDatos(lectura.escenario ? editarEscenario(datos, nombre, s, capital) : { supuestos: s },
-      texto, parcial && !capital ? 'supuestos' : 'resumen');
+    const nuevos = lectura.escenario ? editarEscenario(datos, nombre, s, capital, procedencia) : { ...datos, supuestos: s };
+    if (!lectura.escenario) {
+      if (Object.keys(procedencia).length) nuevos.procedencia = procedencia;
+      else delete nuevos.procedencia;
+    }
+    guardarDatos(nuevos, texto, parcial && !capital ? 'supuestos' : 'resumen');
   }
 
   function guardarFormulario(parcial) {
@@ -359,23 +388,32 @@ export function planeacionUI(page, opciones) {
 
   function seccionIntegracion() {
     if (lectura.base) return '';
+    const estadosActuales = leerEstados();
+    const inventarioActual = leerInventario();
     const partes = [];
-    if (estados) {
-      const ultimo = estados.periods[estados.periods.length - 1];
-      partes.push(`<button type="button" class="btn btn-secondary" id="planTomarBalance">Tomar efectivo, CxC y CxP del balance ${esc(ultimo)}</button>`);
+    if (estadosActuales?.periods?.length) {
+      partes.push(`<div class="form-group"><label for="planPeriodoBalance">Periodo de Estados Financieros</label>
+        <select class="form-select" id="planPeriodoBalance">${estadosActuales.periods.map(periodo =>
+          `<option value="${esc(periodo)}">${esc(periodo)}</option>`).join('')}</select>
+        <button type="button" class="btn btn-secondary" id="planTomarBalance">Ver saldos del balance</button></div>`);
     }
-    if (inventario?.productos?.length) {
-      partes.push(`<label class="sr-only" for="planProducto">Producto de Inventario</label>
-        <select class="form-select" id="planProducto" style="max-width:16rem">${inventario.productos.map(p =>
+    if (inventarioActual?.productos?.length) {
+      partes.push(`<div class="form-group"><label for="planProducto">Producto de Inventario</label>
+        <select class="form-select" id="planProducto" style="max-width:16rem">${inventarioActual.productos.map(p =>
           `<option value="${esc(p.id)}">${esc(p.nombre)} (${num(p.existenciaFinal)} ${esc(p.unidad)})</option>`).join('')}</select>
-        <button type="button" class="btn btn-secondary" id="planTomarInventario">Tomar inventario inicial y costo del producto</button>`);
+        <button type="button" class="btn btn-secondary" id="planTomarInventario">Ver inventario y costo</button></div>`);
     }
-    return partes.length
-      ? `<div class="flex-gap flex-wrap mb-4" style="align-items:center">${partes.join('')}</div>
-         ${borrador.productoInventario ? `<p class="form-hint">${borrador.productoId
-           ? `Inventario inicial y costo tomados de ${esc(borrador.productoInventario)}: el stock mínimo y el costo se leen del producto vigente en Inventario al calcular.`
-           : 'Este presupuesto se guardó con una versión anterior. Vuelva a tomar el producto de Inventario para que el stock mínimo se lea del producto.'}</p>` : ''}`
+    const panel = partes.length
+      ? panelTransferencia('planTraer', partes.join(''), 'Revise las copias y aplíquelas al borrador. Calcular y guardar confirma el presupuesto.')
       : '<p class="form-hint">Con estados guardados o productos en Inventario, puede tomar de ahí los saldos iniciales.</p>';
+    const vinculo = borrador.productoInventario ? `<p class="form-hint">${borrador.productoId
+      ? `Producto vinculado: ${esc(borrador.productoInventario)}. El stock mínimo se consulta en Inventario al calcular. La cantidad y el costo son copias editables.`
+      : 'Este presupuesto se guardó con una versión anterior. Vuelva a traer el producto para vincular el stock mínimo.'}</p>` : '';
+    const moneda = monedaDe(lectura.base || lectura.supuestos);
+    return panel + vinculo + mostrarProcedencia(procedencia, dato => procedenciaVigente(dato,
+      dato.origen === 'estados'
+        ? transferenciaBalance(estadosActuales, dato.periodo, moneda, CAMPOS_BALANCE_PLANEACION, {})
+        : transferenciaInventario(inventarioActual, dato.producto, moneda, {})));
   }
 
   function enlazarNumero(input, asignar) {
@@ -453,9 +491,11 @@ export function planeacionUI(page, opciones) {
       return;
     }
     const capital = lectura.escenario?.capitalTrabajo;
-    const resultadoCapital = capital ? calcularCapitalTrabajo(lectura.supuestos, capital, lectura.base.fechaCorte) : null;
+    const resultadoCapital = capital
+      ? calcularCapitalTrabajo(lectura.supuestos, capital, lectura.base.fechaCorte, lectura.base.apertura.inventarioValor)
+      : null;
     const resultado = capital || validarSupuestos(lectura.supuestos).length
-      ? null : calcularPresupuestoMaestro(lectura.supuestos, lectura.base ? null : inventario);
+      ? null : calcularPresupuestoMaestro(lectura.supuestos, lectura.base ? null : leerInventario());
     const resumen = resultadoCapital ?? resultado;
     const { base } = lectura;
     const horizonte = resumen
@@ -464,7 +504,7 @@ export function planeacionUI(page, opciones) {
     const contexto = [base?.empresa, horizonte, base ? `Corte ${base.fechaCorte}` : ''].filter(Boolean).join(' · ');
     const aviso = resultado?.avisos.find(a => a.codigo === 'financiamiento') ?? resultado?.avisos[0];
     const carga = `<div class="plan-carga">
-      ${cargarReferencia ? '<section class="example-picker"><h3>Caso integrado de referencia</h3><label for="planReferenciaEjemplo">Referencia disponible</label><select id="planReferenciaEjemplo" class="form-select"><option>Comercial Ejemplo · capital de trabajo parcial</option></select><p class="example-picker-source">Referencia propia del repositorio. Su alcance es cobros, pagos e inventario; no es un presupuesto maestro completo.</p><button id="planCargarCaso" type="button" class="btn btn-secondary">Cargar referencia seleccionada</button></section>' : ''}
+      ${cargarReferencia ? '<section class="example-picker"><h3>Caso integrado de referencia</h3><label for="planReferenciaEjemplo">Referencia disponible</label><select id="planReferenciaEjemplo" class="form-select"><option>Comercial Ejemplo · capital de trabajo parcial</option></select><p class="example-picker-source">Referencia propia del repositorio con ventas, cobros, pagos, inventario y costo de ventas de un presupuesto parcial.</p><button id="planCargarCaso" type="button" class="btn btn-secondary">Cargar referencia seleccionada</button></section>' : ''}
       ${panelEjemplos('planeacion', 'planEjemplo')}
     </div>`;
     page.innerHTML = `<header class="page-header plan-cabecera">
@@ -495,7 +535,9 @@ export function planeacionUI(page, opciones) {
     </section>
     <section id="planVista-tablas" class="plan-vista" aria-labelledby="planVer-tablas" hidden>
       ${resultadoCapital ? seccionCapitalTrabajo(resultadoCapital) : resultado ? seccionResultados(resultado) : ''}
-    </section>`;
+    </section>
+    <section id="planVista-caja" class="plan-vista" aria-labelledby="planVer-caja" hidden></section>`;
+    montarCajaDocente(page.querySelector('#planVista-caja'));
     if (resumen) resumenPlaneacionUI(page.querySelector('#planResumen'), resumen, Boolean(resultadoCapital));
     renderizarSupuestosPorPeriodo();
     bind();
@@ -590,7 +632,10 @@ export function planeacionUI(page, opciones) {
       renderizarSupuestosPorPeriodo();
       mensaje('Cambios sin guardar: pulse Calcular y guardar.');
     });
-    for (const [clave] of SUPUESTOS) enlazarNumero(page.querySelector(`#plan-${clave}`), valor => { borrador.campos[clave] = valor; });
+    for (const [clave] of SUPUESTOS) enlazarNumero(page.querySelector(`#plan-${clave}`), valor => {
+      borrador.campos[clave] = valor;
+      delete procedencia[clave];
+    });
     if (borrador.capital) {
       for (const [clave] of CALENDARIOS_CAPITAL_TRABAJO) {
         enlazarNumero(page.querySelector(`#plan-${clave}`), valor => { borrador.capital[clave] = valor; });
@@ -600,44 +645,31 @@ export function planeacionUI(page, opciones) {
       event.preventDefault();
       guardarFormulario(false);
     });
-    page.querySelector('#planTomarBalance')?.addEventListener('click', () => {
-      const periodo = estados?.periods?.at(-1);
-      if (!periodo) { mensaje('No se pudieron leer los estados guardados.', true); return; }
-      if (monedaDe(estados) !== monedaDe(lectura.base || lectura.supuestos)) {
-        mensaje(`Moneda incompatible: Estados usa ${monedaDe(estados)} y Planeación usa ${monedaDe(lectura.base || lectura.supuestos)}. Se conserva el borrador; no se realiza conversión automática.`, true);
-        return;
+    const actuales = campos => Object.fromEntries(campos.map(campo => [campo, leerNumero(borrador.campos[campo]).valor]));
+    const moneda = monedaDe(lectura.base || lectura.supuestos);
+    vincularTransferencia(page, {
+      id: 'planTraer', confirmar, mensaje, textoAplicar: 'Aplicar al borrador',
+      fuentes: {
+        planTomarBalance: () => transferenciaBalance(leerEstados(), page.querySelector('#planPeriodoBalance')?.value, moneda,
+          CAMPOS_BALANCE_PLANEACION, actuales(CAMPOS_BALANCE_PLANEACION.map(([campo]) => campo))),
+        planTomarInventario: () => transferenciaInventario(leerInventario(), page.querySelector('#planProducto')?.value, moneda,
+          actuales(['inventarioInicial', 'costoUnitario']))
+      },
+      aplicar(filas, fichas, origen) {
+        if (origen.origen === 'inventario') {
+          const relacionadas = ['inventarioInicial', 'costoUnitario'];
+          const otraFuente = relacionadas.some(campo => !Object.hasOwn(fichas, campo)
+            && ((procedencia[campo]?.producto || borrador.productoId) && (procedencia[campo]?.producto || borrador.productoId) !== origen.producto));
+          if (otraFuente) { mensaje('Seleccione cantidad y costo juntos para cambiar de producto.', true); return; }
+          borrador.productoInventario = origen.caso;
+          borrador.productoId = origen.producto;
+        }
+        for (const fila of filas) borrador.campos[fila.campo] = String(fila.valor);
+        procedencia = { ...procedencia, ...fichas };
+        marcarCambios();
+        render();
+        mensaje('Datos aplicados al borrador. Pulse Calcular y guardar.');
       }
-      const campos = [
-        ['saldoInicialCaja', 'bs.cash_and_equivalents', 'efectivo'],
-        ['cxcInicial', 'bs.trade_receivables', 'CxC'],
-        ['cxpInicial', 'bs.trade_payables', 'CxP']
-      ];
-      const saldos = campos.map(([destino, id, etiqueta]) => ({
-        destino, etiqueta, valor: consultarMontoCuenta(estados, periodo, id).valor
-      }));
-      const disponibles = saldos.filter(({ valor }) => esNumero(valor));
-      if (!disponibles.length) { mensaje(`Los saldos de apertura del balance ${periodo} están N/D.`, true); return; }
-      for (const { destino, valor } of disponibles) borrador.campos[destino] = String(valor);
-      marcarCambios();
-      render();
-      const aplicados = disponibles.map(({ etiqueta, valor }) => `${etiqueta} ${monto(valor)}`);
-      const pendientes = saldos.filter(({ valor }) => !esNumero(valor)).map(({ etiqueta }) => etiqueta);
-      const aviso = pendientes.length ? ` Se conservaron los campos ${pendientes.join(', ')} porque el balance los tiene N/D.` : '';
-      mensaje(`Del balance ${periodo} se tomaron ${aplicados.join(', ')}.${aviso} Pulse Calcular y guardar.`);
-    });
-    page.querySelector('#planTomarInventario')?.addEventListener('click', () => {
-      const id = page.querySelector('#planProducto')?.value;
-      const producto = inventario?.productos?.find(p => p.id === id);
-      if (!producto) { mensaje('Elija un producto de Inventario.', true); return; }
-      // D-082: se guarda el productoId (el mínimo y el costo se leen del producto
-      // vigente al calcular) y el costo es el promedio vigente, no el inicial.
-      borrador.campos.inventarioInicial = String(producto.existenciaFinal);
-      borrador.campos.costoUnitario = String(producto.costoPromedio);
-      borrador.productoInventario = producto.nombre;
-      borrador.productoId = producto.id;
-      marcarCambios();
-      render();
-      mensaje(`Tomados de ${producto.nombre}: inventario inicial ${num(producto.existenciaFinal)} ${producto.unidad} y costo promedio ${monto(producto.costoPromedio)}. Pulse Calcular y guardar.`);
     });
   }
 

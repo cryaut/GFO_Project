@@ -31,6 +31,7 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 
 | Catálogo de ejemplos seleccionables AFOD | Solicitud de Cris | En revisión de Carlos (PR #31) | [catalogo-ejemplos-afod](catalogo-ejemplos-afod/README.md) |
 | Reparación de cinco fallos del contraste independiente | Solicitud de Cris | Verificada; revisión humana pendiente (PR #31) | [reparacion-auditoria-ejemplos](reparacion-auditoria-ejemplos/README.md) |
+| Cierre de las entregas AFOD | Carlos | Implementado con límites de fuente documentados | [cierre-encargo-afod](cierre-encargo-afod/README.md) |
 
 Agrega una fila cuando empieces una feature y actualiza el estado cuando cambie.
 

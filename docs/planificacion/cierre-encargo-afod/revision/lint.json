@@ -1,0 +1,5 @@
+{
+  "comando": "npm.cmd run lint",
+  "errores": 0,
+  "avisos": 10
+}

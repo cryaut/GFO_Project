@@ -4,6 +4,7 @@ import { monedaDe, normalizarMoneda } from '../../utils/moneda.js';
 import { flujoNeto, saldoFinalEfectivo, variacionNetaEfectivo } from '../../utils/calculate.js';
 import { toleranciaComprobacion } from '../analisis/comprobacion-calculations.js';
 import { consultarMontoCuenta } from '../estados/cuentas-identificador.js';
+import { CAMPOS_BALANCE_FLUJO, leerProcedencia, PROCEDENCIA_FLUJO, procedenciaVigente, transferenciaBalance } from '../../utils/transferencias.js';
 
 export const ACTIVIDADES = ['operacion', 'inversion', 'financiamiento'];
 export const ETIQUETA_ACTIVIDAD = { operacion: 'Operación', inversion: 'Inversión', financiamiento: 'Financiamiento' };
@@ -24,6 +25,7 @@ function suma(lista) {
 
 // Datos guardados → forma válida; lo que no cumple la forma se descarta.
 export function normalizarFlujo(datos) {
+  const procedencia = leerProcedencia(datos?.procedencia, PROCEDENCIA_FLUJO);
   const movimientos = [];
   const ids = new Set();
   for (const m of Array.isArray(datos?.movimientos) ? datos.movimientos : []) {
@@ -35,6 +37,7 @@ export function normalizarFlujo(datos) {
   }
   return {
     ...normalizarMoneda(datos),
+    ...(Object.keys(procedencia).length ? { procedencia } : {}),
     saldoInicial: esNumero(datos?.saldoInicial) ? datos.saldoInicial : null,
     periodoBase: texto(datos?.periodoBase),
     movimientos
@@ -70,6 +73,7 @@ export function calcularFlujo(datos) {
     actividades,
     neto,
     ...normalizarMoneda(normal),
+    ...(normal.procedencia ? { procedencia: normal.procedencia } : {}),
     totalEntradas: actividades.reduce((total, a) => total + a.entradas, 0),
     totalSalidas: actividades.reduce((total, a) => total + a.salidas, 0),
     variacionNeta,
@@ -88,6 +92,10 @@ export function conciliarConBalance(resultado, estados, periodoBase) {
   const periodo = periodos[k + 1];
   if (monedaDe(resultado) !== monedaDe(estados)) {
     return { periodo, efectivo: null, diferencia: null, cuadra: null, motivo: 'moneda_incompatible' };
+  }
+  const fuente = resultado.procedencia?.saldoInicial;
+  if (fuente && !procedenciaVigente(fuente, transferenciaBalance(estados, periodoBase, monedaDe(resultado), CAMPOS_BALANCE_FLUJO, {}))) {
+    return { periodo, efectivo: null, diferencia: null, cuadra: null, motivo: 'origen_desactualizado' };
   }
   const { valor: efectivo } = consultarMontoCuenta(estados, periodo, 'bs.cash_and_equivalents');
   if (!esNumero(efectivo)) {

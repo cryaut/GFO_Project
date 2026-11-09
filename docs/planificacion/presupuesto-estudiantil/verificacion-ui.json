@@ -16,28 +16,28 @@
       "width": 1440,
       "tema": "light",
       "desborde": false,
-      "contrasteNavegacion": 11.88
+      "contrasteNavegacion": 5.49
     },
     {
       "vista": "seguimiento",
       "width": 1440,
       "tema": "light",
       "desborde": false,
-      "contrasteNavegacion": 14.96
+      "contrasteNavegacion": 5.49
     },
     {
       "vista": "proyecciones",
       "width": 1440,
       "tema": "light",
       "desborde": false,
-      "contrasteNavegacion": 14.96
+      "contrasteNavegacion": 5.49
     },
     {
       "vista": "meta",
       "width": 1440,
       "tema": "dark",
       "desborde": false,
-      "contrasteNavegacion": 13.13
+      "contrasteNavegacion": 7.85
     },
     {
       "vista": "registro",
@@ -51,126 +51,126 @@
       "width": 1440,
       "tema": "dark",
       "desborde": false,
-      "contrasteNavegacion": 9.37
+      "contrasteNavegacion": 7.85
     },
     {
       "vista": "proyecciones",
       "width": 1440,
       "tema": "dark",
       "desborde": false,
-      "contrasteNavegacion": 9.31
+      "contrasteNavegacion": 7.85
     },
     {
       "vista": "meta",
       "width": 390,
       "tema": "light",
       "desborde": false,
-      "contrasteNavegacion": 16.3
+      "contrasteNavegacion": 5.49
     },
     {
       "vista": "registro",
       "width": 390,
       "tema": "light",
       "desborde": false,
-      "contrasteNavegacion": 14.96
+      "contrasteNavegacion": 5.49
     },
     {
       "vista": "seguimiento",
       "width": 390,
       "tema": "light",
       "desborde": false,
-      "contrasteNavegacion": 14.96
+      "contrasteNavegacion": 5.49
     },
     {
       "vista": "proyecciones",
       "width": 390,
       "tema": "light",
       "desborde": false,
-      "contrasteNavegacion": 11.88
+      "contrasteNavegacion": 5.49
     },
     {
       "vista": "meta",
       "width": 390,
       "tema": "dark",
       "desborde": false,
-      "contrasteNavegacion": 7.98
+      "contrasteNavegacion": 7.85
     },
     {
       "vista": "registro",
       "width": 390,
       "tema": "dark",
       "desborde": false,
-      "contrasteNavegacion": 9.37
+      "contrasteNavegacion": 7.85
     },
     {
       "vista": "seguimiento",
       "width": 390,
       "tema": "dark",
       "desborde": false,
-      "contrasteNavegacion": 9.45
+      "contrasteNavegacion": 7.85
     },
     {
       "vista": "proyecciones",
       "width": 390,
       "tema": "dark",
       "desborde": false,
-      "contrasteNavegacion": 9.35
+      "contrasteNavegacion": 7.85
     },
     {
       "vista": "meta",
       "width": 320,
       "tema": "light",
       "desborde": false,
-      "contrasteNavegacion": 8.56
+      "contrasteNavegacion": 5.49
     },
     {
       "vista": "registro",
       "width": 320,
       "tema": "light",
       "desborde": false,
-      "contrasteNavegacion": 11.88
+      "contrasteNavegacion": 5.49
     },
     {
       "vista": "seguimiento",
       "width": 320,
       "tema": "light",
       "desborde": false,
-      "contrasteNavegacion": 16.3
+      "contrasteNavegacion": 5.49
     },
     {
       "vista": "proyecciones",
       "width": 320,
       "tema": "light",
       "desborde": false,
-      "contrasteNavegacion": 16.3
+      "contrasteNavegacion": 5.49
     },
     {
       "vista": "meta",
       "width": 320,
       "tema": "dark",
       "desborde": false,
-      "contrasteNavegacion": 13.13
+      "contrasteNavegacion": 7.85
     },
     {
       "vista": "registro",
       "width": 320,
       "tema": "dark",
       "desborde": false,
-      "contrasteNavegacion": 7.86
+      "contrasteNavegacion": 7.85
     },
     {
       "vista": "seguimiento",
       "width": 320,
       "tema": "dark",
       "desborde": false,
-      "contrasteNavegacion": 9.37
+      "contrasteNavegacion": 7.85
     },
     {
       "vista": "proyecciones",
       "width": 320,
       "tema": "dark",
       "desborde": false,
-      "contrasteNavegacion": 9.31
+      "contrasteNavegacion": 7.85
     }
   ],
   "errores": []

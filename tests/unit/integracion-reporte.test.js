@@ -18,6 +18,10 @@ const estados = () => normalizeFinancialData({
     'Devoluciones sobre ventas': 0, 'Descuentos sobre ventas': 0, 'Rebajas sobre ventas': 0,
     'Costo de Ventas': 350
   } },
+  reportedTotals: {
+    '2023': { 'is.net_income_reported': { nombre: 'UN del estado', importe: 200 } },
+    '2024': { 'is.net_income_reported': { nombre: 'UN del estado', importe: 250 } }
+  },
   accountTypes: {
     activos: { Efectivo: 'efectivo', Bodega: 'activosFijos' },
     pasivos: { Proveedores: 'cuentasPorPagar' },
@@ -111,5 +115,19 @@ describe('construirReporteHTML', () => {
       expect(html).not.toContain('<table>');
     }
     expect(construirReporteHTML()).toContain('No hay estados financieros guardados');
+  });
+
+  it('conserva moneda y cifras de la proyección compartida en el reporte', () => {
+    const html = construirReporteHTML({
+      reporte: {
+        proforma: { moneda: 'USD', horizonte: '4 trimestres', ventas: 2000, uai: null, utilidadNeta: 250 },
+        efectivo: { saldoFinal: 410 },
+        motivoComparacion: 'Las monedas difieren.'
+      }
+    });
+    expect(html).toContain('4 trimestres · USD');
+    expect(html).toContain('Ventas USD 2,000.00 · UAI N/D · Utilidad neta USD 250.00');
+    expect(html).toContain('Efectivo final USD 410.00');
+    expect(html).toContain('Las monedas difieren.');
   });
 });

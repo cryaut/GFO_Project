@@ -117,6 +117,7 @@ const server = createServer(async (req, res) => {
     assert.match(await page.locator('#ppTotales').innerText(), /2,400.00/);
     await page.locator('.student-tools').evaluate(el=>el.open=false);
     resultado.escenarios.push({recorrido:'carga, cancelación, registro, edición, eliminación, recarga, fallo de guardado, planes independientes, Inicio/Reportes y legado',conforme:true});
+    await page.addStyleTag({content:'*,*::before,*::after { transition:none!important; animation:none!important; }'});
     for(const width of [1440,390,320]) for(const tema of ['light','dark']) {
       await page.setViewportSize({width,height:1000});
       await page.evaluate(t=>document.documentElement.setAttribute('data-theme',t),tema);

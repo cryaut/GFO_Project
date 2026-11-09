@@ -3,6 +3,8 @@ import { normalizarCuenta, sugerirCuentas } from './cuentas-similitud.js';
 import { coberturaCompleta } from './estados-cobertura.js';
 
 export { versionCatalogo };
+export const CUENTA_CXC = 'bs.trade_receivables';
+export const CUENTA_PROVISION_CXC = 'bs.trade_receivables_allowance';
 const catalogo = new Map(CUENTAS_CATALOGO.map(cuenta => [cuenta.id, cuenta]));
 const copia = valor => structuredClone(valor);
 
@@ -90,6 +92,17 @@ export function consultarMontoCuenta(datos, periodo, id) {
   const identidades = identidadesPeriodo(datos, periodo, cuenta.grupo);
   const valores = reportado ? [reportado.importe] : identidades.filter(identidad => identidad.estado === 'reconocida'
     && identidad.idCuenta === id).map(identidad => identidad.valor);
+  if (id === CUENTA_CXC && !reportado) {
+    const provisiones = identidades.filter(fila => fila.estado === 'reconocida' && fila.idCuenta === CUENTA_PROVISION_CXC);
+    if (provisiones.length) {
+      const motivos = { valor: null, motivo: 'missing_required_account_data' };
+      if (!valores.length || valores.some(v => !Number.isFinite(v))
+          || provisiones.some(fila => !Number.isFinite(fila.valor) || fila.valor > 0)) return motivos;
+      const neto = valores.reduce((suma, valor) => suma + valor, 0)
+        + provisiones.reduce((suma, fila) => suma + fila.valor, 0);
+      return Number.isFinite(neto) && neto >= 0 ? { valor: neto, motivo: null } : motivos;
+    }
+  }
   if (valores.length) {
     if (valores.some(valor => typeof valor !== 'number' || !Number.isFinite(valor))) return { valor: null, motivo: 'missing_required_account_data' };
     if (cuenta.rol === 'reported_total' && valores.length !== 1) return { valor: null, motivo: 'ambiguous_account_match' };

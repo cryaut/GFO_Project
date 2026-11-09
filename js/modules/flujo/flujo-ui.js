@@ -5,7 +5,8 @@ import { panelEjemplos, vincularEjemplos, ejemploSeleccionado } from '../../comp
 import { escapeHTML as esc } from '../../utils/html.js';
 import { formatCurrencyND as montoBase } from '../../utils/format.js';
 import { leerNumero, nuevoId } from '../../utils/form.js';
-import { consultarMontoCuenta } from '../estados/cuentas-identificador.js';
+import { mostrarProcedencia, panelTransferencia, vincularTransferencia } from '../../components/transferencia.js';
+import { CAMPOS_BALANCE_FLUJO, procedenciaVigente, transferenciaBalance } from '../../utils/transferencias.js';
 import {
   ACTIVIDADES, ETIQUETA_ACTIVIDAD, MAX_TEXTO, calcularFlujo, conciliarConBalance, ejemploFlujo,
   normalizarFlujo, validarMovimientoFlujo
@@ -45,7 +46,7 @@ function interpretacion(r) {
 
 // opciones: { datos, guardar, graficar?, confirmar?, estados? }
 export function flujoUI(page, opciones) {
-  const { guardar, graficar = null, confirmar = () => true, estados = null } = opciones;
+  const { guardar, graficar = null, confirmar = () => true, estados = null, leerEstados = () => estados } = opciones;
   let datos = normalizarFlujo(opciones.datos);
   const monto = v => montoBase(v, monedaDe(datos));
 
@@ -71,20 +72,24 @@ export function flujoUI(page, opciones) {
   }
 
   function seccionSaldo() {
-    const tomar = estados
-      ? `<div class="form-group"><label class="form-label" for="flujoPeriodo">Tomar el efectivo del balance de</label>
-          <select class="form-select" id="flujoPeriodo">${estados.periods.map((p, k) =>
-            `<option value="${esc(p)}"${(datos.periodoBase ? p === datos.periodoBase : k === estados.periods.length - 1) ? ' selected' : ''}>${esc(p)}</option>`).join('')}</select></div>
-        <div class="form-group" style="display:flex;align-items:flex-end"><button type="button" class="btn btn-secondary" id="flujoTomarSaldo">Usar ese efectivo</button></div>`
+    const actuales = leerEstados();
+    const tomar = actuales
+      ? panelTransferencia('flujoTraer', `<div class="form-group"><label class="form-label" for="flujoPeriodo">Periodo de Estados Financieros</label>
+          <select class="form-select" id="flujoPeriodo">${actuales.periods.map((p, k) =>
+            `<option value="${esc(p)}"${(datos.periodoBase ? p === datos.periodoBase : k === actuales.periods.length - 1) ? ' selected' : ''}>${esc(p)}</option>`).join('')}</select></div>
+        <div class="form-group" style="align-self:end"><button type="button" class="btn btn-secondary" id="flujoTomarSaldo">Ver efectivo de apertura</button></div>`,
+        'El importe elegido se copia al saldo inicial y se guarda directamente. Los movimientos se conservan.')
       : '';
     return `<div class="card mb-4"><h2 class="card-title">1. Saldo inicial de efectivo</h2>
       <form id="formSaldo" novalidate><div class="form-row">
         <div class="form-group"><label class="form-label" for="flujoSaldoInicial">Saldo inicial (moneda del caso)</label>
           <input class="form-input" id="flujoSaldoInicial" type="number" step="any" value="${esNumero(datos.saldoInicial) ? datos.saldoInicial : ''}"></div>
         <div class="form-group" style="display:flex;align-items:flex-end"><button type="submit" class="btn btn-primary">Guardar saldo</button></div>
-        ${tomar}
       </div></form>
-      ${datos.periodoBase ? `<p class="form-hint">Saldo inicial tomado del efectivo del balance de ${esc(datos.periodoBase)}.</p>` : ''}</div>`;
+      ${tomar}
+      ${datos.periodoBase ? `<p class="form-hint">Saldo inicial tomado del efectivo del balance de ${esc(datos.periodoBase)}.</p>` : ''}
+      ${mostrarProcedencia(datos.procedencia ?? {}, fuente => procedenciaVigente(fuente,
+        transferenciaBalance(actuales, fuente.periodo, monedaDe(datos), CAMPOS_BALANCE_FLUJO, {})))}</div>`;
   }
 
   function seccionMovimiento() {
@@ -126,9 +131,10 @@ export function flujoUI(page, opciones) {
   }
 
   function seccionConciliacion(r) {
-    const c = conciliarConBalance(r, estados, datos.periodoBase);
+    const c = conciliarConBalance(r, leerEstados(), datos.periodoBase);
     if (!c) return '';
     if (c.motivo === 'moneda_incompatible') return '<p class="text-warning">No se puede conciliar el flujo y el balance porque sus monedas son distintas.</p>';
+    if (c.motivo === 'origen_desactualizado') return '<p class="text-warning">La apertura ya no coincide con la fuente guardada. Revise la procedencia antes de conciliar.</p>';
     if (c.cuadra === null) return `<p class="text-warning">No se puede conciliar: el efectivo del balance de ${esc(c.periodo)} está N/D.</p>`;
     return c.cuadra
       ? `<p class="text-success">El saldo final coincide con el efectivo del balance de ${esc(c.periodo)} (${monto(c.efectivo)}).</p>`
@@ -186,19 +192,20 @@ export function flujoUI(page, opciones) {
       event.preventDefault();
       const { vacio, valor } = leerNumero(campo('flujoSaldoInicial'));
       if (!vacio && valor === null) { mensaje('El saldo inicial debe ser un número.', true); return; }
-      persistir({ ...datos, saldoInicial: vacio ? null : valor, periodoBase: '' }, 'Saldo inicial guardado.');
+      const nuevos = { ...datos, saldoInicial: vacio ? null : valor, periodoBase: '' };
+      delete nuevos.procedencia;
+      persistir(nuevos, 'Saldo inicial guardado.');
     });
-    page.querySelector('#flujoTomarSaldo')?.addEventListener('click', () => {
-      const periodo = campo('flujoPeriodo');
-      if (!estados?.periods?.includes(periodo)) { mensaje('Elija un periodo de los estados guardados.', true); return; }
-      if (monedaDe(estados) !== monedaDe(datos)) {
-        mensaje(`Moneda incompatible: Estados usa ${monedaDe(estados)} y Flujo usa ${monedaDe(datos)}. Se conservan los saldos; no se realiza conversión automática.`, true);
-        return;
+    vincularTransferencia(page, {
+      id: 'flujoTraer', confirmar, mensaje, textoAplicar: 'Aplicar y guardar saldo',
+      fuentes: {
+        flujoTomarSaldo: () => transferenciaBalance(leerEstados(), campo('flujoPeriodo'), monedaDe(datos), CAMPOS_BALANCE_FLUJO,
+          { saldoInicial: leerNumero(campo('flujoSaldoInicial')).valor })
+      },
+      aplicar([fila], procedencia, origen) {
+        persistir({ ...datos, saldoInicial: fila.valor, periodoBase: origen.periodo, procedencia },
+          `Saldo inicial tomado del efectivo de ${origen.periodo}: ${monto(fila.valor)}.`);
       }
-      const { valor: efectivo } = consultarMontoCuenta(estados, periodo, 'bs.cash_and_equivalents');
-      if (!esNumero(efectivo)) { mensaje(`El efectivo del balance de ${periodo} está N/D. Se conserva el saldo inicial.`, true); return; }
-      persistir({ ...datos, saldoInicial: efectivo, periodoBase: periodo },
-        `Saldo inicial tomado del efectivo del balance de ${periodo}: ${monto(efectivo)}.`);
     });
     page.querySelector('#formFlujo')?.addEventListener('submit', event => {
       event.preventDefault();

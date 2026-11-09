@@ -20,9 +20,14 @@ Todos los cambios notables en GFO Toolkit.
 - Referencia parcial de Planeación identificada por separado; cargar un presupuesto completo confirma el reemplazo de sus escenarios. Inventario conserva el desplazamiento de tablas dentro del ancho móvil.
 
 ### Planeación y Proforma
+- Revisión independiente del PR #34: las transferencias de Inventario a Planeación conservan la moneda del origen para bloquear copias incompatibles; el ER docente y caja omiten filas accesorias sin movimientos, conservando N/D y subtotales. Cinco regresiones y contraste numérico reproducible documentados.
+- Proforma incluye los métodos docentes de Euro Designs, Metroline, Leonard y Electrónicas. Planeación calcula los calendarios de La Pinolera y Halley con cuotas por origen y financiamiento declarado (D-105 y D-106).
+- Flujo, Planeación y C-V-U comparten vistas previas de transferencias con selección de campos, control de moneda y procedencia. Reportes presenta la misma proyección que Proforma (D-107).
+- Comercial Ejemplo muestra el costo de ventas y el inventario valorizado por mes, con promedio ponderado y N/D para los importes que requieren datos pendientes (D-104).
 - Presupuesto completo: utilidad y caja visibles desde el resumen; desarrollo con fórmulas, operandos y resultados por horizonte/periodo. Proforma incorpora UAI, comparte la lectura del ER real de Estados/Razones y expone sus cálculos. El caso parcial muestra sus pendientes sin inventar resultados; comparación con Ejercicios AFOD documentada (D-097).
 
 ### Rigor financiero
+- Estados conserva UAI reportada y la provisión negativa de incobrables. EFE distingue los dividendos en acciones acreditados de las operaciones de efectivo (D-108).
 - Revisión de Carlos, PR #31: bloqueo de copias de saldos entre monedas distintas en Flujo y Planeación, conservando datos y borrador; AV conserva el activo total reportado aunque falte depreciación para comprobar el detalle. Diez regresiones y respuesta por punto documentadas.
 - Reparados los cinco hallazgos de la auditoría de ejemplos: EOAF/EFE conservan cuentas reportadas sin duplicar subtotales; Inicio/Mercado/EFE comparten UN; ER vacío y bruto desconocido conservan N/D. PPE neto sin desglose no fabrica depreciación ni inversión. Informe, regresiones y contraste independiente documentados (D-101).
 - DuPont usa utilidad y ventas del motor; Flujo y Proforma mantienen N/D cuando falta un operando en vez de convertirlo en cero (D-087).

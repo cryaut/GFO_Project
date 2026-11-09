@@ -22,3 +22,9 @@ El encargo concurrente AFOD no modifica Presupuesto personal. Se limita el traba
 ## Cierre
 
 Completados los cinco pasos. [Informe final](INFORME-FINAL.md), decisión D-109, 672 controles del XLSX sin diferencias, 2239 pruebas en 76 archivos aprobadas, lint sin errores y 24 variantes de navegador verificadas. Se preservan datos y acceso al presupuesto mensual, los respaldos y los consumidores personales. No quedan correcciones conocidas del alcance; integrar la rama requiere el paso de PR y autorización de merge.
+
+## Actualización tras integrar AFOD
+
+Main incorpora el PR #34 (merge `521f213`, que incluye #33) y sus correcciones. Se resolvieron los conflictos de Reportes, respaldos y decisiones conservando ambos trabajos: proyección empresarial con su moneda, movimientos personales en C$ y validaciones completas. Dos regresiones adicionales comprueban reporte mixto y respaldo simultáneo; la integración local se verifica sin fusionar este PR #35.
+
+Resultado combinado: **2287 pruebas aprobadas en 81 archivos**, lint con cero errores/diez avisos previos; paneles docentes y estudiantiles comprobados en navegador. Se estabilizó la captura desactivando transiciones solo en QA y aplicando cada tema después de recargar, para medir la variante solicitada. [Registro](integracion-afod.json).

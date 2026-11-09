@@ -84,10 +84,12 @@ it('el caso parcial explica sus pendientes y no presenta ER ni caja ficticios', 
   const referencia = JSON.parse(readFileSync(new URL('./fixtures/caso_ficticio_referencia.json', import.meta.url), 'utf8'));
   const entradas = JSON.parse(readFileSync(new URL('../../propuesta-caso/referencia/inputs.json', import.meta.url), 'utf8'));
   const l = leerPlaneacion(crearCasoComercial(null, referencia, entradas));
-  const p = calcularCapitalTrabajo(l.supuestos, l.escenario.capitalTrabajo, l.base.fechaCorte);
+  const p = calcularCapitalTrabajo(l.supuestos, l.escenario.capitalTrabajo, l.base.fechaCorte, l.base.apertura.inventarioValor);
   const panel = element(); resumenPlaneacionUI(panel, p, true);
   expect(panel.innerHTML).toContain('Capital de trabajo · cálculo parcial');
-  expect(panel.innerHTML).toContain('Pendientes: costo de ventas');
+  expect(panel.innerHTML).toContain('El estado de resultados y el presupuesto de caja completos siguen pendientes.');
+  expect(panel.innerHTML).toContain('C$ 380,300.04');
+  expect(panel.innerHTML).toContain('C$ 8,099.96');
   expect(panel.querySelector('#planTarjetaResultado')).toBeNull();
   expect(panel.querySelector('#planTarjetaCaja')).toBeNull();
   expect(desarrolloPresupuesto(p)).toBeNull();

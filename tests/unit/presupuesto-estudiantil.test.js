@@ -1,3 +1,5 @@
+import { ejemploEstadosResueltos } from '../fixtures/estados-resueltos.js';
+import { ejemploCajaDocente } from '../../js/modules/planeacion/caja-docente-ejemplos.js';
 import { afterEach, expect, it, vi } from 'vitest';
 vi.mock('../../js/components/toast.js', () => ({ showToast:vi.fn() }));
 import { nuevoPresupuestoEstudiantil, normalizarEstudiantil, calcularSeguimiento, calcularProyeccion, semanaDeFecha, desplazarFecha, resumenEstudiantilGuardado } from '../../js/modules/presupuesto/presupuesto-calculations.js';
@@ -171,4 +173,25 @@ it('el reporte personal no fabrica un resumen empresarial cuando no hay estados'
   const html = construirReporteHTML({ kpis:{ presupuestoEstudiantil:p } });
   expect(html).toContain('C$ 2,400.00'); expect(html).not.toContain('Total Activos:');
   expect(html).not.toContain('para generar el reporte');
+});
+
+it('Reportes reúne histórico y proyección USD con realizados personales C$ sin perder ninguna sección', () => {
+  const estados = { ...ejemploEstadosResueltos(['2024']), moneda:'USD' };
+  const personal = resumenEstudiantilGuardado({ estudiantil:ejemploEstudiantil(), vista:'estudiantil' });
+  const html = construirReporteHTML({ estados, kpis:{ presupuestoEstudiantil:personal },
+    reporte:{ proforma:{ moneda:'USD', horizonte:'2026', ventas:10000, uai:2000, utilidadNeta:1400 }, efectivo:{ saldoFinal:3000 } } });
+  expect(html).toContain('USD 72,000.00');
+  expect(html).toContain('C$ 400.00');
+  expect(html).toContain('USD 1,400.00');
+  expect(html).toContain('Proyección del presupuesto guardado');
+});
+
+it('un respaldo puede restaurar presupuesto estudiantil y caja docente juntos sin mezclar sus documentos', () => {
+  const estudiantil = ejemploEstudiantil(), cajaDocente = ejemploCajaDocente('halleyRepago');
+  const actuales = { presupuesto:{ ingresoMensual:8000 }, planeacion:{ supuestos:null } };
+  const contenido = { presupuesto:{ vista:'estudiantil', estudiantil }, planeacion:{ cajaDocente } };
+  const r = validarRespaldo(contenido, actuales);
+  expect(r.modulos.presupuesto).toMatchObject({ ingresoMensual:8000, estudiantil });
+  expect(r.modulos.planeacion).toEqual({ supuestos:null, cajaDocente });
+  expect(actuales.planeacion.supuestos).toBeNull();
 });

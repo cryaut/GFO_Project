@@ -13,6 +13,7 @@ import { monedaDe } from '../../utils/moneda.js';
 
 import { formatCurrency as monedaBase } from '../../utils/format.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
+import { consultarMontoCuenta } from '../estados/cuentas-identificador.js';
 import { obtenerUtilidadNetaMotor } from '../razones/razones-app-adapter.js';
 import { rolEFE } from './efe-roles.js';
 import {
@@ -252,6 +253,9 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
   const deltaDestino = destinoUtilidades.reduce(
     (suma, fila) => (fila.saldoInicial !== null && fila.saldoFinal !== null ? suma + fila.variacion : NaN), 0
   );
+  const { valor: dividendosAcciones } = consultarMontoCuenta(datos, periodoFinal, 'supp.stock_dividends');
+  const ajusteInvalido = dividendosAcciones !== null && (!Number.isFinite(dividendosAcciones) || dividendosAcciones < 0);
+  if (ajusteInvalido) motivos.push('El importe declarado de dividendos en acciones debe ser una magnitud positiva o cero.');
   if (reAcumuladas.some(resultado => reservas.some(reserva =>
     resultado.variacion !== null && reserva.variacion !== null && resultado.variacion * reserva.variacion < 0))) {
     advertencias.push('Las reservas y los resultados acumulados cambiaron en sentidos opuestos: puede haber transferencias internas que distorsionen la separación de aportaciones y dividendos derivados. Revise el estado de cambios en el patrimonio.');
@@ -262,8 +266,21 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
       deuda.presente && !deuda.completo ? 'falta-saldo' : null)
   ];
   if (tieneDestinoUtilidades && !patrimonioSinIdentidad) {
-    const aportaciones = patrimonioCompleto && Number.isFinite(deltaDestino) ? patrimonioTotal - deltaDestino : null;
-    const dividendos = utilidadNeta != null && Number.isFinite(deltaDestino) ? utilidadNeta - deltaDestino : null;
+    let aportaciones = patrimonioCompleto && Number.isFinite(deltaDestino) ? patrimonioTotal - deltaDestino : null;
+    let dividendos = utilidadNeta != null && Number.isFinite(deltaDestino) ? utilidadNeta - deltaDestino : null;
+    const ajusteContradictorio = dividendosAcciones > 0 && dividendos !== null
+      && dividendosAcciones - dividendos > toleranciaComprobacion(dividendosAcciones, dividendos);
+    if (ajusteContradictorio) {
+      motivos.push(`Los dividendos en acciones declarados (${formatCurrency(dividendosAcciones)}) superan las distribuciones derivadas del patrimonio (${formatCurrency(dividendos)}). Revise el estado de cambios en el patrimonio.`);
+    }
+    if (ajusteInvalido || ajusteContradictorio) {
+      aportaciones = null;
+      dividendos = null;
+    } else if (dividendosAcciones > 0) {
+      if (aportaciones !== null) aportaciones -= dividendosAcciones;
+      if (dividendos !== null) dividendos -= dividendosAcciones;
+      advertencias.push(`Se excluyen ${formatCurrency(dividendosAcciones)} de dividendos en acciones declarados para ${periodoFinal} de las aportaciones y distribuciones estimadas.`);
+    }
     financiamientoItems.push(
       item('(+) Aportaciones de capital y otros patrimonios', aportaciones,
         aportaciones == null ? 'falta-saldo' : null),
@@ -274,6 +291,9 @@ export function construirEFE(datos, periodoInicial, periodoFinal) {
       advertencias.push('La utilidad acumulada creció más que la utilidad neta: revise las transferencias entre cuentas de patrimonio, porque el renglón de dividendos queda negativo.');
     }
   } else {
+    if (dividendosAcciones > 0 && !ajusteInvalido) {
+      advertencias.push('Los dividendos en acciones están declarados, pero la información disponible solo permite estimar la variación total del patrimonio.');
+    }
     advertencias.push(patrimonioSinIdentidad && tieneDestinoUtilidades
       ? `Hay cuentas de patrimonio sin identidad confirmada (${periodoInicial} → ${periodoFinal}): no se pueden separar dividendos y aportaciones; se usa la variación total del patrimonio.`
       : `No se identificaron cuentas de utilidades acumuladas ni reservas en el patrimonio (${periodoInicial} → ${periodoFinal}): los dividendos no se pueden separar y se descuenta la utilidad neta de la variación de patrimonio.`);

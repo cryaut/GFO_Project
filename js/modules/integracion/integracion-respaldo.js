@@ -3,6 +3,8 @@ import { leerEstados } from '../../utils/estados-guardados.js';
 import { validarInventarioRespaldo } from '../inventario/inventario-calculations.js';
 import { tieneEscenarios, validarEscenarios } from '../planeacion/planeacion-escenarios.js';
 import { normalizarEstudiantil } from '../presupuesto/presupuesto-calculations.js';
+import { validarCajaDocente } from '../planeacion/caja-docente-calculations.js';
+import { PROCEDENCIA_CVU, PROCEDENCIA_FLUJO, PROCEDENCIA_PLANEACION, validarProcedencia } from '../../utils/transferencias.js';
 
 // Validación de un respaldo JSON (el que genera "Exportar JSON" en Reportes) antes de
 // tocar el store. Es pura: recibe el archivo ya parseado y los datos actuales, y devuelve
@@ -15,6 +17,9 @@ const MAX_PROFUNDIDAD = 12;
 const MAX_NODOS = 200000;
 // El tema es una preferencia del equipo que importa, no un dato financiero.
 const CLAVES_IGNORADAS = new Set(['theme']);
+const CAMPOS_PROCEDENCIA = new Map([
+  ['planeacion', PROCEDENCIA_PLANEACION], ['flujo', PROCEDENCIA_FLUJO], ['equilibrio', PROCEDENCIA_CVU]
+]);
 
 const esObjeto = valor => valor !== null && typeof valor === 'object' && !Array.isArray(valor);
 
@@ -60,6 +65,9 @@ function validarModulo(clave, importado, actual, omitidos) {
     if (tieneEstudiantil && importado.estudiantil !== null) importado.estudiantil = normalizarEstudiantil(importado.estudiantil);
   }
   if (clave === 'planeacion' && esObjeto(importado)) {
+    if (Object.hasOwn(importado, 'cajaDocente') && importado.cajaDocente !== null) {
+      validarCajaDocente(importado.cajaDocente);
+    }
     if (tieneEscenarios(importado)) return structuredClone(validarEscenarios(importado));
     if (['bases', 'escenarios', 'activoId'].some(campo => Object.hasOwn(importado, campo))) {
       throw new Error('Falta la versión del respaldo de escenarios de Planeación.');
@@ -69,7 +77,10 @@ function validarModulo(clave, importado, actual, omitidos) {
         throw new Error('Los supuestos de Planeación deben ser un objeto o N/D.');
       }
       // Un respaldo anterior reemplaza Planeación con su presupuesto sin base conocida.
-      if (tieneEscenarios(actual)) actual = { supuestos: null };
+      if (tieneEscenarios(actual)) actual = {
+        supuestos: null,
+        ...(Object.hasOwn(actual, 'cajaDocente') ? { cajaDocente: actual.cajaDocente } : {})
+      };
     }
   }
   if (clave === 'estados') {
@@ -95,15 +106,30 @@ function validarModulo(clave, importado, actual, omitidos) {
     return validarInventarioRespaldo(importado);
   }
   if (!esObjeto(importado)) throw new Error(`El módulo "${clave}" debe ser un objeto.`);
+  const camposProcedencia = CAMPOS_PROCEDENCIA.get(clave);
   // Lo que el archivo no trae se conserva del módulo actual para que no quede incompleto.
   const resultado = structuredClone(actual);
   for (const [campo, valor] of Object.entries(importado)) {
+    if (clave === 'planeacion' && campo === 'cajaDocente') {
+      resultado.cajaDocente = structuredClone(valor);
+      continue;
+    }
+    if (camposProcedencia && campo === 'procedencia') {
+      resultado.procedencia = structuredClone(validarProcedencia(valor, camposProcedencia));
+      continue;
+    }
     if (!Object.hasOwn(actual, campo)) {
       omitidos.push(`${clave}.${campo}`);
       continue;
     }
     validarTipo(valor, actual[campo], `${clave}.${campo}`);
     resultado[campo] = structuredClone(valor);
+  }
+  if (camposProcedencia && !Object.hasOwn(importado, 'procedencia') && resultado.procedencia) {
+    for (const campo of camposProcedencia) {
+      if (Object.hasOwn(importado, clave === 'planeacion' ? 'supuestos' : campo)) delete resultado.procedencia[campo];
+    }
+    if (!Object.keys(resultado.procedencia).length) delete resultado.procedencia;
   }
   return resultado;
 }
