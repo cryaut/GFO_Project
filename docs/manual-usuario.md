@@ -41,6 +41,38 @@ Si el EFE aún no se puede calcular, Inicio indica qué falta y permite usar los
 
 ## 2. Módulo 1: Presupuesto Personal
 
+### 2.1 Inicio y meta
+
+En **Ejemplos y datos**, selecciona «Plantilla estudiantil del profesor» y pulsa **Cargar ejemplo seleccionado** para explorar los datos del XLSX. Elegir una opción no carga ni reemplaza datos. También hay un caso sintético de transporte con ahorro cero. El reemplazo se confirma cuando ya hay información guardada.
+
+Define nombre, descripción de la meta, costo, duración e inicio en lunes; pulsa **Guardar meta y fechas**. La plantilla propone 2000 en 20 semanas: aporte recomendado de **100 por semana**, del 3 de agosto al 20 de diciembre de 2026. Esa recomendación no se registra automáticamente como ahorro.
+
+### 2.2 Registro semanal
+
+Registra fecha, tipo, categoría, descripción, monto, prioridad y medio; observación es opcional. Los tipos son **Ingreso**, **Gasto**, **Ahorro** y **Reserva**. Usa montos positivos o cero; no escribas un gasto negativo. La fecha determina su semana. Puedes filtrar por semana, editar un movimiento o eliminarlo con confirmación. Si falla el guardado, el formulario y los datos anteriores se conservan para reintentar.
+
+El ejemplo contiene **32 movimientos en cuatro semanas**: ingresos 2400, gastos 1750, ahorro para la meta 400, reserva 250 y saldo 0. El avance real es **20 %**; reserva y ahorro se mantienen separados.
+
+### 2.3 Seguimiento
+
+Consulta las semanas lunes–domingo, agrupadas en bloques de cuatro (no meses calendario). Cada fila muestra ingreso, gasto, ahorro, reserva, saldo, ahorro acumulado y porcentaje de la meta. Las semanas restantes sin movimientos no inventan ingresos ni ahorro: sus flujos son cero y el acumulado permanece en 400.
+
+**Saldo = ingreso − gasto − ahorro − reserva.** El avance usa ahorro realizado ÷ costo. Un cero registrado se conserva; un dato o una base de cálculo pendiente aparece N/D.
+
+### 2.4 Presupuesto proyectado
+
+Abre **Real actual** para distribuir el ingreso que tienes o **Deseado** para preparar otro escenario. Son independientes entre sí y del registro realizado. Cada uno conserva frecuencia, ingreso, las nueve categorías del profesor, clasificación y comentarios. Un campo vacío significa pendiente; escribe 0 si esa partida no requiere dinero.
+
+El ejemplo real reparte 2400: transporte 700, alimentación 500, datos/internet 200, copias/materiales 100, salud 0, ocio 250, reserva 250, meta 400 y otro 0. El total es 2400 (100 %) y la diferencia es cero. Ahorro/reserva se leen de sus categorías aunque cambies el tipo descriptivo. El límite de gasto semanal mensual es **(2400 − 400 − 250) ÷ 4 = 437.50**; para un plan semanal no se divide entre cuatro. Cambiar la frecuencia no convierte cifras. Guarda cada proyección con su propio botón.
+
+### 2.5 Respaldos y presupuesto mensual anterior
+
+En **Ejemplos y datos** puedes descargar el documento estudiantil. Se restaura desde **Reportes → Exportar → Importar JSON**; la importación conserva el presupuesto mensual actual. El respaldo completo de Reportes incluye ambos modelos. Inicio y Reportes muestran los movimientos realizados de la vista activa, sin exigir estados de una empresa para consultar el presupuesto estudiantil.
+
+**Ver presupuesto mensual anterior** abre tus datos previos, con sus herramientas de ingresos, gastos e inflación; **Volver al presupuesto estudiantil** regresa al nuevo registro. Los datos no se convierten ni mezclan. Los respaldos antiguos abren la vista mensual y conservan el documento estudiantil si no lo incluyen.
+
+<details><summary>Referencia de uso del presupuesto mensual anterior</summary>
+
 ### 2.1 Definir ingreso y meta de ahorro
 
 **Paso 1:** En la pestaña **Ingresos**, registra cada ingreso del mes con su concepto y tipo (regular u ocasional). El total aparece en **Configuración**. Los datos guardados antes con un solo "ingreso mensual" se muestran como un ingreso regular.
@@ -117,6 +149,8 @@ Saldo disponible    = Capacidad de ahorro − Ahorro planificado al mes
 ```
 
 Con **Cargar ejemplo ficticio** (datos inventados, para no exponer información personal en la defensa): ingresos C$ 22,500 (salario 18,000 + trabajos independientes 4,500) y gastos C$ 17,200 → capacidad de ahorro **C$ 5,300** (23.56 % de los ingresos). Con una meta de C$ 36,000 en 12 meses (C$ 3,000 al mes) quedan **C$ 2,300** disponibles. La interpretación indica además la categoría con más gasto y, si la meta no alcanza, cuántos meses tomaría con la capacidad actual. Este presupuesto es independiente del presupuesto maestro de la empresa.
+
+</details>
 
 ---
 

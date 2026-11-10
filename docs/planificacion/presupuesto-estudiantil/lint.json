@@ -1,0 +1,82 @@
+{
+  "comando": "npm.cmd run lint",
+  "errores": 0,
+  "avisos": 10,
+  "archivos": [
+    {
+      "archivo": "js/components/tabla.js",
+      "mensajes": [
+        {
+          "regla": "no-unused-vars",
+          "linea": 2,
+          "mensaje": "'striped' is assigned a value but never used."
+        }
+      ]
+    },
+    {
+      "archivo": "js/modules/activos/index.js",
+      "mensajes": [
+        {
+          "regla": "no-unused-vars",
+          "linea": 3,
+          "mensaje": "'formatNumber' is defined but never used."
+        },
+        {
+          "regla": "no-unused-vars",
+          "linea": 12,
+          "mensaje": "'ESTADOS_POSIBLES' is assigned a value but never used."
+        }
+      ]
+    },
+    {
+      "archivo": "js/modules/presupuesto/presupuesto-mensual.js",
+      "mensajes": [
+        {
+          "regla": "no-unused-vars",
+          "linea": 7,
+          "mensaje": "'destroyChart' is defined but never used."
+        }
+      ]
+    },
+    {
+      "archivo": "js/utils/export.js",
+      "mensajes": [
+        {
+          "regla": "no-unused-vars",
+          "linea": 69,
+          "mensaje": "'e' is defined but never used."
+        }
+      ]
+    },
+    {
+      "archivo": "tests/unit/calculate.test.js",
+      "mensajes": [
+        {
+          "regla": "no-unused-vars",
+          "linea": 7,
+          "mensaje": "'depAnualLineaRecta' is defined but never used."
+        },
+        {
+          "regla": "no-unused-vars",
+          "linea": 7,
+          "mensaje": "'depAcumulada' is defined but never used."
+        },
+        {
+          "regla": "no-unused-vars",
+          "linea": 7,
+          "mensaje": "'valorEnLibros' is defined but never used."
+        },
+        {
+          "regla": "no-unused-vars",
+          "linea": 8,
+          "mensaje": "'ahorroMensual' is defined but never used."
+        },
+        {
+          "regla": "no-unused-vars",
+          "linea": 8,
+          "mensaje": "'saldoSemanal' is defined but never used."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "fecha": "2026-11-09",
+  "main": "75226e92ea7efc14ceeabf96a7df5410898ac25c",
+  "presupuestoAnterior": "b04af3ae58726c91696c17f569d5421560649c4a",
+  "pruebasCorrectas": 2310,
+  "archivos": 82,
+  "erroresLint": 0,
+  "advertenciasLint": 10,
+  "navegador": {
+    "agricorp": {
+      "variantes": 24,
+      "errores": []
+    },
+    "presupuestoEstudiantil": {
+      "variantes": 24,
+      "errores": []
+    }
+  },
+  "alcance": "Actualización de la copia local; PR #36 integrado, PR #35 permanece pendiente."
+}

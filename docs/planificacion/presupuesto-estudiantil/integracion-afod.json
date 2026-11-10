@@ -1,0 +1,21 @@
+{
+  "main_incorporado": "521f213f82feac4531f232baa5245d614521ade5",
+  "pr34": "fusionado",
+  "pr33": "cerrado; commits incluidos por PR34",
+  "pr35": "abierto; no fusionado",
+  "pruebas": {
+    "aprobadas": 2287,
+    "fallidas": 0,
+    "archivos": 81
+  },
+  "lint": {
+    "errores": 0,
+    "avisos": 10
+  },
+  "conflictos_resueltos": [
+    "docs/decisiones.md",
+    "js/modules/integracion/index.js",
+    "js/modules/integracion/integracion-reporte.js",
+    "js/modules/integracion/integracion-respaldo.js"
+  ]
+}

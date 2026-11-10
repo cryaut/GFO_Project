@@ -59,6 +59,9 @@ const server = createServer(async (req, res) => {
    await page.setViewportSize({width,height:1000});await page.evaluate(t=>document.documentElement.setAttribute('data-theme',t),tema);
    for(const ruta of ['proforma','planeacion']){
     await ir(ruta);
+    await page.addStyleTag({content:'*,*::before,*::after { transition:none!important; animation:none!important; }'});
+    await page.evaluate(t=>document.documentElement.setAttribute('data-theme',t),tema);
+    assert.equal(await page.evaluate(()=>document.documentElement.getAttribute('data-theme')),tema);
     if(ruta==='proforma'){await abrir('#proformaAFOD');await page.locator('#proformaAFODCaso').selectOption('metro');}
     else await page.locator('#planVer-caja').click();
     const sizes=await page.evaluate(()=>({width:innerWidth,total:document.documentElement.scrollWidth}));

@@ -1062,6 +1062,25 @@ Revisión de Carlos (2026-11-08): `computeFinancialTotals` conserva activos tota
 - `supp.credit_purchases`: base de compras declarada, suplementaria y positiva, requiere dato; ausencia N/D y cero explícito válido. Los tres derivados JSON de compras usan `reported_or_calculate`: dato declarado primero, fórmula anterior de pagos + ΔCxP si falta. No hay porcentaje automático de CBV. `usaComprasReales` conserva su uso legado para compras derivadas y es falso para una base declarada que podría ser estimada.
 - El motor no deduce ventas brutas cero desde una venta neta reportada sin bruto ni componentes, aunque ER esté completo. Un bruto cero explícito se conserva; sus discrepancias con el neto no se corrigen silenciosamente.
 
+
+## Presupuesto estudiantil (D-109)
+
+Archivo `js/modules/presupuesto/presupuesto-calculations.js`, sin DOM/store:
+
+| Exportación | Contrato |
+|---|---|
+| `nuevoPresupuestoEstudiantil()` | Documento nuevo `{version:1, meta:{nombre,descripcion,costo:null,semanas:20,inicio:null}, movimientos:[], proyecciones:{real,deseada}}`; cada plan tiene frecuencia, ingreso nullable y nueve partidas `{categoria,monto,tipo,comentario}`. |
+| `normalizarEstudiantil(datos)` | Copia validada o excepción descriptiva. Fechas ISO reales, lunes inicial, 1–52 semanas; hasta 5000 movimientos con ID único, fecha dentro del periodo, tipos/listas válidos y monto finito no negativo. Planes con sus nueve categorías en orden, montos nullable y clasificaciones válidas. No modifica la entrada. |
+| `semanaDeFecha(fecha,inicio,duracion)` | Semana 1..duración o `null` si es inválida/fuera de rango. |
+| `desplazarFecha(fecha,dias)` | Fecha ISO por desplazamiento UTC o `null` con entrada inválida. |
+| `calcularSeguimiento(datos)` | Documento validado → `{semanas,ingreso,gasto,ahorro,reserva,saldo,avance,aporteRecomendado,final}`. Cada semana incluye bloque, desde/hasta, cuatro flujos, saldo, acumulado, avance y cantidad de movimientos. |
+| `calcularProyeccion(plan)` | Plan normalizado → `{total,ahorro,reserva,diferencia,porcentaje,estado,limiteSemanal,partidas}`; partidas incluyen porcentaje del ingreso. Pendiente/base cero conserva N/D; clasificación no cambia el destino de ahorro/reserva. |
+| `resumenEstudiantilGuardado(presupuesto)` | `null` si no hay modelo estudiantil activo; resumen realizado para Inicio/Reportes, o `{estudiantil:true, ingresos:null,gastos:null,metaAhorro:null,error}` si es ilegible. Nunca hace fallback a otro modelo al fallar. |
+
+`presupuestoEstudiantilUI(page,{inicial,guardar,verMensual})` usa cuatro vistas, guardado explícito y edición por ID. `guardar(documento)` debe lanzar si la persistencia falla. `initPresupuesto()` conserva las exportaciones anteriores desde `presupuesto-mensual.js`. `ejemploEstudiantil` y `ejemploSoloTransporte` crean copias nuevas desde `ejemplos-estudiantiles.js`.
+
+`resumenPresupuestoEstudiantil(resumen)` en `integracion-reporte.js` genera HTML escapado, compartido por el dashboard, vista previa y descarga. Funciona sin estados empresariales. Los respaldos estudiantiles usan `{presupuesto:{vista:'estudiantil',estudiantil:documento}}` y se restauran con la validación habitual de Reportes, conservando los demás campos del módulo.
+
 ## Flujos suministrados con los estados (D-111)
 
 En `js/modules/estados/estados-flujo-documentado.js`:
@@ -1078,3 +1097,7 @@ En `js/modules/estados/estados-flujo-documentado.js`:
 `construirEFE` da precedencia al documento para el intervalo exacto y conserva la estimación anterior cuando no existe. `computeEFE` y `flujoDesdeEFE` respetan el intervalo del documento del cierre seleccionado. El adaptador añade `fuente`, `neto.inversion`, `neto.financiamiento` y `saldoInicial`; `construirReporte` añade `flujo` disponible o `null`. Inicio, Proforma y Reportes lo reutilizan. Una apertura sin BG se identifica como declarada, no comprobada contra un balance.
 
 `cargarEjemploEmpresa` prepara y valida los siete módulos AGRI-CORP y usa una única llamada a `store.setModulesPersisted`: si falla, no publica datos parciales. No sustituye el presupuesto ni Activos del hogar. Un id desconocido lanza un error antes de escribir.
+
+### Precisión de saldos estudiantiles (D-112)
+
+`calcularProyeccion` y `calcularSeguimiento` conservan sus firmas. Tras usar las fórmulas existentes, ajustan a cero únicamente diferencias/saldos dentro de una cota relativa al error binario y estrictamente menores de 0.005. No redondean los importes de entrada ni anulan diferencias reales de un centavo. Por ejemplo, asignaciones 0.10 + 0.20 para ingreso 0.30 devuelven diferencia 0 y estado Balanceado. N/D y diferencias fuera de la cota se conservan. La política completa está en D-112.

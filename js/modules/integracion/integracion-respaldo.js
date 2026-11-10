@@ -2,6 +2,7 @@ import { normalizeFinancialData } from '../estados/estados-normalize.js';
 import { leerEstados } from '../../utils/estados-guardados.js';
 import { validarInventarioRespaldo } from '../inventario/inventario-calculations.js';
 import { tieneEscenarios, validarEscenarios } from '../planeacion/planeacion-escenarios.js';
+import { normalizarEstudiantil } from '../presupuesto/presupuesto-calculations.js';
 import { validarCajaDocente } from '../planeacion/caja-docente-calculations.js';
 import { PROCEDENCIA_CVU, PROCEDENCIA_FLUJO, PROCEDENCIA_PLANEACION, validarProcedencia } from '../../utils/transferencias.js';
 
@@ -56,6 +57,13 @@ function validarTipo(importado, actual, ruta) {
 }
 
 function validarModulo(clave, importado, actual, omitidos) {
+  if (clave === 'presupuesto' && esObjeto(importado)) {
+    actual = { ...actual, vista:actual?.vista ?? 'estudiantil', estudiantil:actual?.estudiantil ?? null };
+    const tieneEstudiantil = Object.hasOwn(importado, 'estudiantil');
+    importado = { ...importado, vista:importado.vista ?? (tieneEstudiantil ? 'estudiantil' : 'mensual') };
+    if (!['estudiantil', 'mensual'].includes(importado.vista)) throw new Error('Vista de presupuesto personal inválida.');
+    if (tieneEstudiantil && importado.estudiantil !== null) importado.estudiantil = normalizarEstudiantil(importado.estudiantil);
+  }
   if (clave === 'planeacion' && esObjeto(importado)) {
     if (Object.hasOwn(importado, 'cajaDocente') && importado.cajaDocente !== null) {
       validarCajaDocente(importado.cajaDocente);

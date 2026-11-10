@@ -52,6 +52,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 |---|---|---|
 | D-110 | Casos AGRI-CORP real y simulado separados | Vigente |
 | D-111 | Flujo suministrado con fuente e intervalo explícitos | Vigente |
+| D-112 | Residuos binarios en saldos del presupuesto estudiantil | Vigente |
 | D-001 | Año de 365 días | Vigente |
 | D-002 | Funciones duplicadas: se conserva la versión que devuelve N/D | Vigente |
 | D-003 | Una IA puede hacer el merge de un PR aprobado | Vigente |
@@ -2407,6 +2408,30 @@ Inicio y Mercado reutilizan el ER resuelto; EFE consulta `obtenerUtilidadNetaMot
 
 **Referencias.** [Comparaciones y límites de fuente](planificacion/cierre-encargo-afod/README.md).
 
+
+### D-109 — Presupuesto estudiantil: realizados, proyecciones y compatibilidad
+
+- **Fecha:** 2026-11-08.
+- **Estado:** Implementada; validación documentada en la ficha.
+- **Decidió:** Cris solicita reparar Presupuesto personal conforme a su XLSX y organizar la interfaz.
+- **Área:** Presupuesto personal; consumidores y respaldo de su información.
+
+**Contexto.** La vista anterior distribuye un ingreso mensual, calcula un ahorro recomendado e incluye inflación, pero no representa el libro docente: faltan movimientos fechados por tipo, veinte semanas de seguimiento y separación entre ahorro/reserva realizados y lo planificado. No es posible convertir sus asignaciones en transacciones sin inventar fechas y ejecución. D-104 a D-108 están reservadas en el encargo concurrente AFOD; se usa D-109.
+
+**Opciones.** Reinterpretar los datos anteriores, reemplazar la pantalla perdiendo su acceso, o añadir el modelo estudiantil conservando ambos conjuntos. Se elige la tercera. Los antiguos archivos vacíos `presupuesto-calculations.js`/`presupuesto-ui.js`, sin consumidores, alojan la nueva lógica e interfaz conforme a este encargo; `presupuesto-mensual.js` conserva la implementación anterior y `index.js` sus exportaciones públicas utilizadas.
+
+**Decisión.** Guardar el documento versionado en `presupuesto.estudiantil` y la vista en `presupuesto.vista`, con `setPersisted` del módulo completo. Nuevo acceso predeterminado estudiantil; la vista mensual está disponible desde «Ejemplos y datos». No se infieren transacciones de sus importes. Las semanas se derivan de fechas dentro de un seguimiento cuyo inicio debe ser lunes; lunes–domingo y bloques de cuatro semanas siguen el libro. El valor fuente es 20 semanas; la app permite 1–52, hasta 5000 movimientos y sus nueve categorías de proyección en orden. Son límites explícitos de la app.
+
+El ahorro recomendado reutiliza la división de `ahorroMensual(costo, semanas)`, con ambos operandos en unidad semanal y etiqueta correcta; no se copia una fórmula. Saldo y porcentajes reutilizan `saldoSemanal` y `tasaAhorro`. En proyección, ahorro corresponde a «Meta de ahorro» (B19), reserva a «Reserva imprevistos» (B18); cambiar el tipo descriptivo no mueve ese dinero. Real y deseada se guardan por separado, sin generar movimientos. El límite semanal conserva lo confirmado por Cris: `(ingreso − ahorro − reserva) ÷ 4` para mensual, sin división para semanal. Es una ayuda adicional basada en las cuatro semanas del ejemplo; no se presenta como celda calculada del XLSX. Cambiar frecuencia no convierte cifras.
+
+**Diferencias explícitas con Excel.** Los `IF(base=0,0,cociente)` del libro se muestran N/D ante base inexistente/cero conforme a la regla del proyecto; un cero registrado sí cuenta y una semana sin movimientos suma cero. No se proyectan ahorros a semanas vacías. El campo «Mes» del seguimiento se etiqueta «Bloque (4 semanas)» para no atribuirle un mes calendario. La app deriva la semana de la fecha, en vez de permitir una semana manual contradictoria. La proyección deseada es un segundo escenario vacío, nunca una copia inventada del ejemplo real. La inflación permanece exclusivamente en el presupuesto mensual anterior.
+
+**Consecuencias.** Inicio y Reportes usan movimientos realizados del modelo activo; el presupuesto personal puede reportarse sin estados empresariales. Un error de validación no se convierte en ingreso cero ni recupera silenciosamente cifras del modelo mensual. El respaldo de todo el sistema incluye ambos modelos; el respaldo estudiantil solo incluye su documento dentro del módulo, restaurable en Reportes conservando el mensual. Los respaldos antiguos seleccionan la vista mensual y conservan el documento estudiantil actual si no lo incluyen. No hay migración destructiva ni nuevas dependencias. Los datos o borradores no se borran cuando falla la escritura; reemplazar un ejemplo confirma el cambio.
+
+**Para revertirla.** Registrar otra decisión, volver a seleccionar la vista mensual y conservar exportable `estudiantil`; no borrar movimientos ni convertirlos en asignaciones.
+
+**Referencias.** [Contraste, cambios y pruebas](planificacion/presupuesto-estudiantil/INFORME-FINAL.md), libro proporcionado por Cris (SHA-256 en la referencia extraída).
+
 ### D-110 - Ejemplos AGRI-CORP: casos separados y cuentas confirmadas
 
 - **Fecha** — 2026-11-09.
@@ -2441,3 +2466,22 @@ La carga de casos desde Inicio prepara los siete módulos antes de persistirlos 
 **Para revertirla.** Registrar una nueva decisión, retirar el adaptador documental de EFE y sus consumidores, y definir cómo conservar/exportar los documentos ya guardados antes de eliminar la metadata.
 
 **Referencias.** [Informe del PR #36](planificacion/ejemplo-agricorp/INFORME-FINAL.md), dossier entregado por Cris y `tests/unit/ejemplo-agricorp.test.js`.
+
+### D-112 — Residuos binarios en saldos del presupuesto estudiantil
+
+- **Fecha**: 2026-11-09
+- **Estado**: Vigente
+- **Decidió**: Codex, durante la revisión y reparación del PR #35 solicitada por Cris.
+- **Área**: Cálculo de presupuesto estudiantil y sus consumidores.
+
+**Contexto.** Ingreso 0.30 y asignaciones 0.10 + 0.20 producían diferencia −5.55e−17, estado «Excede ingreso» y −0.00 visible. En seguimiento ocurría lo mismo al restar gasto/ahorro o compensar semanas; Inicio podía mostrar una alerta falsa.
+
+**Opciones.** Exigir igualdad binaria exacta, redondear todos los importes a centavos o ajustar únicamente resultados cercanos a cero dentro de una cota de error numérico. Se elige la tercera para conservar la precisión de los datos.
+
+**Decisión.** Se reutiliza `saldoSemanal` sin modificar su fórmula ni su comportamiento en otros módulos. El módulo estudiantil ajusta a cero solo un saldo/diferencia finito cuyo valor absoluto no supera `Number.EPSILON × suma de magnitudes de operandos × (cantidad de operandos + 2)` y es estrictamente menor de medio centavo. Se aplica a la diferencia del plan, saldo libre, saldo semanal y saldo total del seguimiento. Datos ausentes o resultados no finitos siguen N/D. Los importes guardados y demás resultados no se redondean.
+
+**Consecuencias.** 0.10 + 0.20 frente a 0.30 aparece balanceado. Una diferencia real de 0.01 permanece; también una subcentavo que exceda la cota. Esta política numérica de la app no se atribuye a una convención adicional del profesor ni amplía la tolerancia de EOAF/EFE.
+
+**Para revertirla.** Registrar una decisión nueva y retirar el ajuste privado de `presupuesto-calculations.js` y sus regresiones, aceptando nuevamente residuos visibles o definiendo otra representación monetaria.
+
+**Referencias.** [Revisión del PR #35](planificacion/presupuesto-estudiantil/REVISION-PR35.md); siete casos nuevos de `presupuesto-estudiantil.test.js` y recorrido decimal del script de navegador.

@@ -6,6 +6,12 @@ Todos los cambios notables en GFO Toolkit.
 
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
+### Módulo 1: Presupuesto personal
+- Revisión del PR #35: se actualiza con AGRI-CORP y se corrige el falso déficit de saldos decimales. El ajuste se limita al error binario, conserva N/D y diferencias reales; siete regresiones y comprobación en navegador (D-112).
+- Nueva vista estudiantil alineada con `Presupuesto_estudiantil.xlsx`: meta, registro por fecha/tipo, seguimiento lunes–domingo y proyecciones real/deseada independientes (D-109). Ahorro y reserva realizados se separan de gastos y asignaciones.
+- Ejemplo docente con sus 32 movimientos y ejemplo sintético de transporte; controles, fórmulas, categorías, persistencia validada y respaldo restaurable. El presupuesto mensual anterior y sus datos se conservan accesibles.
+- Acciones agrupadas, etiquetas a la izquierda, paneles con margen y borde redondeado; navegación, tablas y formularios adaptados a móvil y ambos temas. Inicio/Reportes muestran realizados y el reporte personal funciona sin estados empresariales.
+
 ### Reglas de trabajo
 - Revisión de PR opcional por solicitud de Cris (D-103): se elimina la aprobación ajena obligatoria y se mantienen PR, tests/lint, atención de comentarios existentes y autorización para merges con IA.
 

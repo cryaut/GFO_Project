@@ -1,5 +1,5 @@
 import store from '../../store.js';
-import { formatCurrency, formatCurrencyND, formatPercent } from '../../utils/format.js';
+import { formatCurrencyND, formatPercent } from '../../utils/format.js';
 import { escapeHTML as esc } from '../../utils/html.js';
 import { exportJSON, exportCSV, exportHTML, importJSON } from '../../utils/export.js';
 import { showToast } from '../../components/toast.js';
@@ -8,7 +8,8 @@ import { leerEstados } from '../../utils/estados-guardados.js';
 import { computeRazones, refreshSavedStates } from '../analisis/index.js';
 import { obtenerUtilidadNetaMotor } from '../razones/razones-app-adapter.js';
 import { validarRespaldo, MAX_RESPALDO_BYTES } from './integracion-respaldo.js';
-import { construirReporteHTML } from './integracion-reporte.js';
+import { construirReporteHTML, resumenPresupuestoEstudiantil } from './integracion-reporte.js';
+import { resumenEstudiantilGuardado } from '../presupuesto/presupuesto-calculations.js';
 import { reunirEntradas } from '../proforma/index.js';
 import { construirReporte } from '../proforma/proforma-calculations.js';
 
@@ -37,7 +38,8 @@ function computeDashboardKPIs() {
   const rawPeriods = store.get('estados.periods') || [];
   const periods = estados ? estados.periods : rawPeriods;
   const lastP = periods[periods.length - 1];
-  if (!lastP) return null;
+  const personal = resumenEstudiantilGuardado(store.get('presupuesto'));
+  if (!lastP) return personal ? { presupuestoEstudiantil:personal } : null;
 
   // D-078: sin respaldo por nombres fijos. Sin estados legibles, los totales
   // salen N/D (null) y el estado del dashboard es el error real.
@@ -50,8 +52,8 @@ function computeDashboardKPIs() {
   refreshSavedStates();
   const razones = computeRazones(lastP);
 
-  const ingreso = store.get('presupuesto.ingresoMensual') || 0;
-  const meta = store.get('presupuesto.metaAhorro') || 0;
+  const ingreso = personal ? personal.ingresos : store.get('presupuesto.ingresoMensual') || 0;
+  const meta = personal ? personal.metaAhorro : store.get('presupuesto.metaAhorro') || 0;
   const activosCount = (store.get('activos.inventario') || []).length;
   const quizScore = store.get('mercados.quizScore') || 0;
 
@@ -61,7 +63,7 @@ function computeDashboardKPIs() {
     totalPatrimonio: shared ? shared.totalPatrimonio : null,
     ventas: shared ? shared.ventas : null,
     utilidadNeta: estados ? obtenerUtilidadNetaMotor(store.get('estados'), lastP).valor : null,
-    presupuestoIngreso: ingreso, presupuestoMeta: meta,
+    presupuestoIngreso: ingreso, presupuestoMeta: meta, presupuestoEstudiantil:personal,
     activosCount, quizScore,
     lectura,
     // null (N/D) cuando el denominador no permite calcularla, como en Análisis.
@@ -124,6 +126,11 @@ function renderDashboard(page) {
     return;
   }
 
+  if (!kpis.lectura) {
+    el.innerHTML = resumenPresupuestoEstudiantil(kpis.presupuestoEstudiantil);
+    return;
+  }
+
   // D-078: el estado de Estados Financieros es el real — activo, o con error
   // visible cuando los estados guardados no se pueden leer (nunca «Activo» fijo).
   const enError = kpis.lectura.estado === 'error';
@@ -139,6 +146,7 @@ function renderDashboard(page) {
 
   el.innerHTML = `
     ${aviso}
+    ${resumenPresupuestoEstudiantil(kpis.presupuestoEstudiantil)}
     <div class="kpi-grid mb-8">
       <div class="kpi-card"><div class="kpi-value">${formatCurrencyND(kpis.totalActivos)}</div><div class="kpi-label">Total Activos</div></div>
       <div class="kpi-card"><div class="kpi-value" style="color:var(--color-danger)">${formatCurrencyND(kpis.totalPasivos)}</div><div class="kpi-label">Total Pasivos</div></div>
@@ -156,7 +164,7 @@ function renderDashboard(page) {
           <tr><th scope="rowgroup" colspan="3">Empresa</th></tr>
           <tr><td>Estados Financieros</td><td>${insigniaEstados}</td><td>${detalleEstados}</td></tr>
           <tr><th scope="rowgroup" colspan="3">Finanzas personales (independientes de la empresa)</th></tr>
-          <tr><td>Presupuesto personal</td><td><span class="badge ${kpis.presupuestoIngreso > 0 ? 'badge-success' : 'badge-warning'}">${kpis.presupuestoIngreso > 0 ? 'Configurado' : 'Sin configurar'}</span></td><td>Ingreso: ${formatCurrency(kpis.presupuestoIngreso)}</td></tr>
+          <tr><td>Presupuesto personal</td><td><span class="badge ${kpis.presupuestoIngreso > 0 ? 'badge-success' : 'badge-warning'}">${kpis.presupuestoIngreso > 0 ? 'Configurado' : 'Sin configurar'}</span></td><td>Ingreso: ${formatCurrencyND(kpis.presupuestoIngreso)}</td></tr>
           <tr><td>Activos del hogar</td><td><span class="badge ${kpis.activosCount > 0 ? 'badge-success' : 'badge-warning'}">${kpis.activosCount > 0 ? 'Con bienes' : 'Sin bienes'}</span></td><td>${kpis.activosCount} bienes registrados</td></tr>
           <tr><th scope="rowgroup" colspan="3">Aprender</th></tr>
           <tr><td>Mercados - Quiz</td><td><span class="badge badge-info">Quiz</span></td><td>Último puntaje: ${kpis.quizScore}/12</td></tr>

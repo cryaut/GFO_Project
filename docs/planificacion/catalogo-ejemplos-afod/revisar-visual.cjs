@@ -31,7 +31,7 @@ const server = createServer(async (req, res) => {
     page.on('dialog', d => aceptar ? d.accept() : d.dismiss());
     await page.route('https://cdn.jsdelivr.net/**', r => r.abort());
     const url = `http://127.0.0.1:${server.address().port}/`;
-    const ir = async ruta => { await page.goto(url + (ruta === 'home' ? '?perfil=' + Date.now() : '') + '#/' + ruta, { waitUntil:'domcontentloaded' }); await page.locator('#page-' + ruta).waitFor({ state:'visible' }); await abrirPaneles(); };
+    const ir = async ruta => { await page.goto(url + (ruta === 'home' ? '?perfil=' + Date.now() : '') + '#/' + ruta, { waitUntil:'domcontentloaded' }); await page.locator('#page-' + ruta).waitFor({ state:'visible' }); if (ruta === 'presupuesto' && await page.locator('#ppMensual').count()) { await page.locator('.student-tools').evaluate(el => el.open = true); await page.locator('#ppMensual').click(); } await abrirPaneles(); };
     const abrirPaneles = async () => { await page.evaluate(() => { for (const el of document.querySelectorAll('details')) if (el.querySelector('.example-picker')) el.open = true; }); if (await page.locator('#planVer-supuestos').isVisible() && await page.locator('#example-planeacion').count() && !await page.locator('#example-planeacion').isVisible()) await page.locator('#planVer-supuestos').click(); };
     const almacen = () => page.evaluate(() => JSON.parse(localStorage.getItem('gfo-toolkit-data') || '{}'));
     const abrirEstados = async () => {

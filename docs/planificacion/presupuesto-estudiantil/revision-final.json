@@ -1,0 +1,41 @@
+{
+  "fecha": "2026-11-09",
+  "pr": 35,
+  "baseMain": "75226e92ea7efc14ceeabf96a7df5410898ac25c",
+  "headRemotoInicial": "b04af3ae58726c91696c17f569d5421560649c4a",
+  "pruebas": {
+    "total": 2317,
+    "correctas": 2317,
+    "fallidas": 0,
+    "archivos": 82,
+    "casosPresupuestoEstudiantil": 41,
+    "regresionesRevision": 7,
+    "comando": "npm.cmd test -- --maxWorkers=2 --reporter=json"
+  },
+  "lint": {
+    "errores": 0,
+    "advertenciasHeredadas": 10
+  },
+  "xlsx": {
+    "fuente": "Presupuesto_estudiantil.xlsx",
+    "sha256": "98ba497eee7ed3563d73ce49c8223f98095af6ef9868c9c13c4dd22ac7eb82d4",
+    "controles": 672,
+    "diferencias": []
+  },
+  "navegador": {
+    "motor": "Edge, perfil aislado",
+    "variantes": 24,
+    "errores": [],
+    "contrasteActivoMinimo": 5.49,
+    "recorridos": [
+      "0.10 + 0.20 equilibra 0.30; déficit y sobrante de un centavo permanecen visibles",
+      "carga, cancelación, registro, edición, eliminación, recarga, fallo de guardado, planes independientes, Inicio/Reportes y legado"
+    ]
+  },
+  "observacionesGitHub": {
+    "reviews": 0,
+    "comentariosRevision": 0,
+    "comentariosGenerales": 0
+  },
+  "veredicto": "Apto para integración con commit de merge; autorización de Cris en el chat."
+}
