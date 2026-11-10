@@ -155,6 +155,9 @@ export function computeCNTCNO(period) {
 // criterio que el EOAF. Devuelve el estado completo o `incompleto` si falta un
 // periodo.
 export function computeEFE(period) {
+  const estados = estadosParaComprobacion();
+  const documentado = estados?.flujosDocumentados?.find(f => f.periodoFinal === period);
+  if (documentado) return construirEFE(estados, documentado.periodoInicial, period);
   const par = seleccionarPeriodoPar(getPeriods(), period);
   if (par.incompleto) {
     return {
@@ -561,11 +564,14 @@ function renderEFESection(period) {
       <td>(=) Flujo neto de ${titulo.toLowerCase()}</td>
       ${celda(seccion.total)}
     </tr>`;
-  return `<div class="card mb-4" role="note"><strong>Estimación por variaciones de saldos.</strong> Cuadrar con el cambio de efectivo no confirma los cobros, pagos, dividendos ni operaciones no monetarias. Verifique los movimientos reales y las notas del periodo. Para registrar cobros y pagos, use <a href="#/flujo">Flujo de Efectivo</a>.</div>
+  const documentado = efe.naturaleza !== 'estimacion_por_variaciones';
+  const aviso = documentado
+    ? `<div class="card mb-4" role="note"><strong>${efe.naturaleza === 'flujo_reportado' ? 'Estado de flujos reportado' : 'Flujo del caso simulado'}.</strong> ${escapeHTML(efe.fuente)}. Se usan los movimientos suministrados y su propio intervalo; no se estiman desde diferencias de balances.</div>`
+    : '<div class="card mb-4" role="note"><strong>Estimación por variaciones de saldos.</strong> Cuadrar con el cambio de efectivo no confirma los cobros, pagos, dividendos ni operaciones no monetarias. Verifique los movimientos reales y las notas del periodo. Para registrar cobros y pagos, use <a href="#/flujo">Flujo de Efectivo</a>.</div>';
+  return `${aviso}
   <p class="text-muted mb-4" style="font-size:var(--font-size-sm)">
-    Método indirecto desde dos balances: <strong>${escapeHTML(efe.periodos.inicial)}</strong> (inicial) → <strong>${escapeHTML(efe.periodos.final)}</strong> (final).
-    Operación = utilidad neta + depreciación + variación de activos y pasivos de operación; Inversión = activos de inversión; Financiamiento = deuda, patrimonio y dividendos.
-    Los gastos por intereses e impuestos ya están dentro de la utilidad neta.
+    ${documentado ? 'Intervalo del documento' : 'Método indirecto desde dos balances'}: <strong>${escapeHTML(efe.periodos.inicial)}</strong> (inicial) → <strong>${escapeHTML(efe.periodos.final)}</strong> (final).
+    ${documentado ? 'Cada actividad suma las entradas y salidas acreditadas en el documento. La comprobación no cambia sus cifras.' : 'Operación = utilidad neta + depreciación + variación de activos y pasivos de operación; Inversión = activos de inversión; Financiamiento = deuda, patrimonio y dividendos. Los gastos por intereses e impuestos ya están dentro de la utilidad neta.'}
   </p>
   <div class="table-wrapper mb-4"><table>
     <thead><tr><th>Concepto</th><th class="text-right">Monto</th></tr></thead>
@@ -667,7 +673,7 @@ const METODOS_ANALISIS = {
   razones: `Liquidez: AC / PC y (AC − inventario) / PC. Actividad: flujos / saldos promedio; plazos = ${DIAS_ANIO} / rotación exacta. Rentabilidad: UN / ventas, UN / activo promedio y UN / patrimonio promedio. La app exige ventas a crédito declaradas y deriva compras a crédito desde pagos a proveedores y ΔCxP: difiere del ejemplo docente que estima compras como 70 % del costo de ventas. No se inventan pagos para igualarlo.`,
   'cnt-cno': 'CNT = activo corriente − pasivo corriente. CNO = (CxC + inventario) − (CxP + provisiones), según la clasificación operativa actual de la app. Esta composición es una convención del sistema; no se atribuye al profesor una clasificación que el material no detalla.',
   eoaf: 'Comparar los balances de dos periodos. Un aumento de activo es aplicación; una disminución es origen. En pasivo y patrimonio se invierte la clasificación. Los totales son comprobaciones, no nuevos movimientos.',
-  efe: 'Método indirecto: utilidad neta + ajustes no monetarios + cambios operativos; añadir inversión y financiamiento. Comprobar operación + inversión + financiamiento = efectivo final − inicial. La clase también desarrolla el método directo, disponible en Flujo de Efectivo. Su ejemplo no aporta balances y ER completos: este EFE no fue comparado con la clase.',
+  efe: 'Si hay un flujo documentado para el cierre se muestran su fuente, intervalo y movimientos. Sin ese documento se aplica el método indirecto: utilidad neta + ajustes no monetarios + cambios operativos; añadir inversión y financiamiento. Comprobar operación + inversión + financiamiento = efectivo final − inicial. La clase también desarrolla el método directo, disponible en Flujo de Efectivo. Su ejemplo no aporta balances y ER completos: este EFE no fue comparado con la clase.',
   dupont: 'DuPont, diapositivas 5–11: margen = UN / ventas; rotación = ventas / activo promedio; multiplicador = activo promedio / patrimonio promedio. ROA = margen × rotación. ROE = margen × rotación × multiplicador. Comprobar ambos contra las fórmulas directas, con precisión completa.',
   interpretacion: 'Relacionar resultado, causa posible, riesgo y acción. Los umbrales son referencias educativas configuradas por el equipo, no límites universales ni diagnósticos del profesor. N/D no permite concluir que un indicador es favorable.',
   mercado: 'UPA = (UN − DAP) / acciones comunes; P/U = precio / UPA; valor en libros por acción = patrimonio / acciones; rendimiento = dividendo por acción / precio. Requiere acciones, precio y dividendos acreditados. Es contenido adicional al alcance obligatorio de la guía.'
@@ -696,7 +702,7 @@ export function initAnalisis() {
       ['razones', 'Razones Financieras', periodo ? renderRazonesSection(periodo) : sinDatos],
       ['cnt-cno', 'Capital Neto de Trabajo y Operativo', periodo ? renderCNTCNOSection(periodo) : sinDatos],
       ['eoaf', 'Estado de Origen y Aplicación de Fondos', renderEOAFSection(comparables)],
-      ['efe', 'Estado de Flujo de Efectivo · Método indirecto', periodo ? renderEFESection(periodo) : sinDatos],
+      ['efe', 'Estado de Flujo de Efectivo', periodo ? renderEFESection(periodo) : sinDatos],
       ['dupont', 'Modelo DuPont · ROA y ROE', periodo ? renderDuPontSection(periodo) : sinDatos],
       ['interpretacion', 'Interpretación de resultados', periodo ? renderInterpretacionSection(periodo) : sinDatos]
     ];

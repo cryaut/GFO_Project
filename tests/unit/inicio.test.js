@@ -264,7 +264,7 @@ describe('pantalla de Inicio', () => {
     expect(graficas).toHaveLength(0);
   });
 
-  it('el botón de ejemplo aparece solo sin datos y llama a cargarEjemplo', async () => {
+  it('el selector de ejemplo permanece con datos y llama a cargarEjemplo', async () => {
     const vacio = panoramaGeneral({ umbrales: UMBRALES }, construirReporte({}));
     const page = element();
     let llamadas = 0;
@@ -276,6 +276,6 @@ describe('pantalla de Inicio', () => {
     const e = entradas();
     const conDatos = element();
     inicioUI(conDatos, { panorama: panoramaGeneral(e, construirReporte(e)), cargarEjemploEmpresa: () => {} });
-    expect(conDatos.querySelector('#inicioEjemplo')).toBeNull();
+    expect(conDatos.querySelector('#inicioEjemplo')).not.toBeNull();
   });
 });

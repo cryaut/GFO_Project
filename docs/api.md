@@ -1047,6 +1047,7 @@ Añade `efectivoFinalCalculado`, igual a efectivo inicial + total de flujos cuan
 - `listarEjemplos(modulo)` y `crearEjemplo(modulo, id, actual)`, en `js/examples/catalogo.js`: metadatos clonados y datos nuevos por selección; id desconocido lanza error. `actual` aporta la fábrica existente del módulo, sin dependencia circular con sus pantallas. Los datos docentes se registran con `registrarCuenta`, identidades y cobertura explícita.
 - `ejemploBaker`, `ejemploBartlett`, `ejemploPractico2`, `completarEjemploMuno(base)` en `ejemplos-estados.js` generan documentos nuevos; la última conserva BG/ER y declara suplementos ficticios sin mutar la base. `getDemoData` y `loadDemo` ofrecen esta versión integral.
 - `panelEjemplos(modulo, boton, opciones?)`, `vincularEjemplos(page, modulo)` y `ejemploSeleccionado(page, modulo, actual)` en `components/ejemplos.js`: HTML escapado, actualización de metadatos y lectura explícita de selección. El selector no escribe en el store; WeakMap conserva su estado durante redibujados de un contenedor.
+- `casoHistoricoReal()`, `casoOperativoSimulado()` y `presupuestoPersonalDemo()` en `js/examples/ejemplos-agricorp.js`: datos de AGRI-CORP (real 2023–2024) y de la unidad de arroz simulada 2027, más el presupuesto personal ficticio. Cada caso devuelve `{ id, nombre, estados, apalancamiento, razonesMercado, flujo }` y el simulado añade `inventario`, `equilibrio` y `planeacion`. Las cuentas llevan identificador del catálogo confirmado. Se cargan con `crearEjemplo('estados', 'agricorp-historico' | 'agricorp-simulado')` o, desde Inicio, con `cargarEjemploEmpresa(id)`.
 - `monedaDe(datos)` y `normalizarMoneda(datos)` en `utils/moneda.js`: C$ por compatibilidad, USD o UM explícitos; el normalizador rechaza otras unidades y conserva la ausencia del campo. Se propaga en los normalizadores de Estados, Flujo y Equilibrio y sus resultados. El formato usa el segundo argumento ya existente de `formatCurrency`/`formatCurrencyND`, sin conversión de divisas.
 - `resultadosReales` declara su moneda. La comparación de Proforma conserva cada columna y sus importes, pero no calcula variaciones entre monedas distintas. Los indicadores monetarios de Mercado/EFE llevan su moneda cuando está declarada. `interpretarEOAF` e `interpretarEFE` aceptan un segundo argumento opcional de moneda (C$ por defecto), sin cambiar el cálculo.
 
@@ -1079,3 +1080,20 @@ Archivo `js/modules/presupuesto/presupuesto-calculations.js`, sin DOM/store:
 `presupuestoEstudiantilUI(page,{inicial,guardar,verMensual})` usa cuatro vistas, guardado explícito y edición por ID. `guardar(documento)` debe lanzar si la persistencia falla. `initPresupuesto()` conserva las exportaciones anteriores desde `presupuesto-mensual.js`. `ejemploEstudiantil` y `ejemploSoloTransporte` crean copias nuevas desde `ejemplos-estudiantiles.js`.
 
 `resumenPresupuestoEstudiantil(resumen)` en `integracion-reporte.js` genera HTML escapado, compartido por el dashboard, vista previa y descarga. Funciona sin estados empresariales. Los respaldos estudiantiles usan `{presupuesto:{vista:'estudiantil',estudiantil:documento}}` y se restauran con la validación habitual de Reportes, conservando los demás campos del módulo.
+
+## Flujos suministrados con los estados (D-111)
+
+En `js/modules/estados/estados-flujo-documentado.js`:
+
+| Función | Contrato |
+|---|---|
+| `revisionEstadosFlujo(datos)` | Cadena de revisión de entidad, moneda, periodos, BG y ER; no muta datos. |
+| `validarFlujosDocumentados(lista)` | Devuelve una copia validada. Rechaza más de 100 documentos, cierres repetidos, movimientos inválidos/duplicados y números no finitos. |
+| `adjuntarFlujoDocumentado(estados, flujo, { tipo, fuente, inicial, final })` | Devuelve los estados con un nuevo documento validado; no guarda ni modifica el argumento. |
+| `construirFlujoDocumentado(datos, inicial, final)` | `null` si no existe el intervalo; en otro caso, resultado compatible con EFE, con naturaleza, fuente, comprobación y motivos. Documento desactualizado: flujos `null`, estado `incompleta`; discrepancia: `no-cuadra`, diferencia conservada. |
+
+`estados.flujosDocumentados[]` es opcional: `{ tipo: 'reportado'|'simulado', fuente, empresa, moneda, periodoInicial, periodoFinal, revision, datos: { saldoInicial, movimientos } }`. Los movimientos usan el contrato existente de Flujo. La normalización y los respaldos conservan la metadata. No hay migración de documentos antiguos ni conversión de moneda.
+
+`construirEFE` da precedencia al documento para el intervalo exacto y conserva la estimación anterior cuando no existe. `computeEFE` y `flujoDesdeEFE` respetan el intervalo del documento del cierre seleccionado. El adaptador añade `fuente`, `neto.inversion`, `neto.financiamiento` y `saldoInicial`; `construirReporte` añade `flujo` disponible o `null`. Inicio, Proforma y Reportes lo reutilizan. Una apertura sin BG se identifica como declarada, no comprobada contra un balance.
+
+`cargarEjemploEmpresa` prepara y valida los siete módulos AGRI-CORP y usa una única llamada a `store.setModulesPersisted`: si falla, no publica datos parciales. No sustituye el presupuesto ni Activos del hogar. Un id desconocido lanza un error antes de escribir.

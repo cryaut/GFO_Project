@@ -104,11 +104,20 @@ function proyeccion(reporte) {
     ${motivoComparacion ? `<p>${esc(motivoComparacion)}</p>` : ''}`;
 }
 
+function flujoSuministrado(flujo) {
+  if (!flujo) return '';
+  const filas = [['Operación', flujo.neto.operacion], ['Inversión', flujo.neto.inversion],
+    ['Financiamiento', flujo.neto.financiamiento], ['Variación neta', flujo.variacionNeta], ['Efectivo final', flujo.saldoFinal]];
+  return `<h2>Flujo de efectivo · ${esc(flujo.naturaleza === 'flujo_reportado' ? 'reportado' : flujo.naturaleza === 'flujo_simulado_documentado' ? 'simulado' : 'estimado')}</h2>
+    <p>${esc(flujo.periodos.inicial)} → ${esc(flujo.periodos.final)} · ${esc(flujo.fuente ?? 'Estimación desde balances; los movimientos requieren confirmación.')}</p>
+    <table><tbody>${filas.map(([titulo, valor]) => `<tr><th>${titulo}</th>${celdaMonto(valor, monedaDe(flujo))}</tr>`).join('')}</tbody></table>`;
+}
+
 // kpis: resultado de computeDashboardKPIs (o null). estados: datos normalizados (o null).
 // errorEstados: mensaje de D-077 cuando los estados guardados existen pero no se leen.
 export function construirReporteHTML({ kpis = null, estados = null, errorEstados = null, reporte = null } = {}) {
   const portada = resumen(kpis, monedaDe(estados));
-  const proyectado = proyeccion(reporte);
+  const proyectado = flujoSuministrado(reporte?.flujo) + proyeccion(reporte);
   if (errorEstados) {
     return `${portada}<p>No se pudieron leer los estados financieros guardados: ${esc(errorEstados)}. Revise los datos en Estados Financieros.</p>${proyectado}`;
   }

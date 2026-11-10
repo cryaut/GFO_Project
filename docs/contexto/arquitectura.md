@@ -230,3 +230,7 @@ La reparación D-101/D-102 conserva ese esquema. EOAF/EFE reúnen `balanceGenera
 ## Calendarios y procedencia de transferencias
 
 `planeacion.cajaDocente` guarda opcionalmente la apertura, el calendario y los movimientos declarados. Los resultados se recalculan al leerlos. Las fichas opcionales de `procedencia` se guardan por campo en Flujo y C-V-U y en Planeación o su escenario activo. Reportes valida ambos contratos dentro del respaldo y usa la misma lectura de Proforma para presentar la proyección.
+
+### Fuente documental opcional del EFE (D-111)
+
+`estados/estados-flujo-documentado.js` valida la metadata opcional `estados.flujosDocumentados`, conserva movimientos e intervalo y reutiliza `flujo-calculations.js` para sumar por actividad. El normalizador de Estados preserva esta metadata en JSON y respaldos. EFE la consulta antes de estimar desde balances; Proforma, Inicio y el HTML de Reportes reciben la misma salida. El módulo de captura manual sigue separado y sus ediciones no reemplazan el documento. No se cambia el esquema base ni el código del store. La carga de AGRI-CORP usa su API atómica existente para publicar siete módulos después de prepararlos todos.

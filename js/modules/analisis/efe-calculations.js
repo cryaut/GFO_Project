@@ -1,3 +1,4 @@
+import { construirFlujoDocumentado } from '../estados/estados-flujo-documentado.js';
 import { monedaDe } from '../../utils/moneda.js';
 // Estado de Flujo de Efectivo (EFE) por método indirecto: lógica pura, sin DOM
 // ni store. Deriva las tres actividades desde dos balances y comprueba que la
@@ -81,6 +82,8 @@ function totalDe(items) {
 // Estado completo: las tres actividades, la comprobación contra la variación de
 // efectivo, motivos (datos faltantes), advertencias e interpretación.
 export function construirEFE(datos, periodoInicial, periodoFinal) {
+  const documentado = construirFlujoDocumentado(datos, periodoInicial, periodoFinal);
+  if (documentado) return documentado;
   const formatCurrency = v => monedaBase(v, monedaDe(datos));
   const periodos = { inicial: periodoInicial, final: periodoFinal };
   const motivos = [];

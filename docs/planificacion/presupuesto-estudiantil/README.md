@@ -28,3 +28,9 @@ Completados los cinco pasos. [Informe final](INFORME-FINAL.md), decisión D-109,
 Main incorpora el PR #34 (merge `521f213`, que incluye #33) y sus correcciones. Se resolvieron los conflictos de Reportes, respaldos y decisiones conservando ambos trabajos: proyección empresarial con su moneda, movimientos personales en C$ y validaciones completas. Dos regresiones adicionales comprueban reporte mixto y respaldo simultáneo; la integración local se verifica sin fusionar este PR #35.
 
 Resultado combinado: **2287 pruebas aprobadas en 81 archivos**, lint con cero errores/diez avisos previos; paneles docentes y estudiantiles comprobados en navegador. Se estabilizó la captura desactivando transiciones solo en QA y aplicando cada tema después de recargar, para medir la variante solicitada. [Registro](integracion-afod.json).
+
+## Actualización local con AGRI-CORP
+
+Tras integrar el PR #36 en main `75226e9`, se conserva el presupuesto pendiente del PR #35. Los conflictos de API, dominio, decisiones y catálogo se resuelven conservando ambas incorporaciones: D-109 estudiantil y D-110/D-111 AGRI-CORP; selectores y fábricas de ambos casos. Inicio y Reportes preservan los consumidores personales junto a la fuente común del flujo de empresa. No se cambian fórmulas ni se integra este PR.
+
+Validación combinada: **2310 pruebas correctas en 82 archivos**, lint sin errores/diez advertencias anteriores y 48 variantes de navegador (24 AGRI-CORP y 24 estudiantiles), sin errores JS ni desbordamiento de página. [Registro](integracion-agricorp.json).

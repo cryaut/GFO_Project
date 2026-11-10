@@ -104,8 +104,8 @@
   background: var(--gradient-hero), var(--bg-primary);
 }
 
-.dash-hero-text { flex: 1 1 360px; }
-.dash-hero-text h1 { font-size: var(--font-size-3xl); margin: var(--space-1) 0 var(--space-2); }
+.dash-hero-text { flex: 1 1 360px; min-width: 0; }
+.dash-hero-text h1 { font-size: var(--font-size-3xl); margin: var(--space-1) 0 var(--space-2); overflow-wrap: anywhere; }
 .dash-hero-text p { color: var(--text-secondary); max-width: 60ch; }
 
 .dash-hero-text .dash-eyebrow {
@@ -196,7 +196,14 @@
   margin-bottom: var(--space-8);
 }
 
+.dash-row > * { min-width: 0; }
+
 .dash-chart-canvas { height: 260px; }
+.dash-chart-canvas canvas { max-width: 100%; }
+
+/* El lienzo conserva su ancho disponible incluso si la librería de gráficas no carga. */
+#page-flujo canvas { max-width: 100%; }
+#page-flujo .table-wrapper { position: relative; max-width: 100%; }
 
 .dash-alert-list { list-style: none; display: flex; flex-direction: column; gap: var(--space-3); }
 
@@ -231,7 +238,7 @@
 
 .dash-areas {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
   gap: var(--space-4);
   margin-bottom: var(--space-8);
 }
@@ -264,7 +271,7 @@
 }
 
 .dash-points { display: grid; gap: var(--space-1); }
-.dash-points div { display: flex; justify-content: space-between; gap: var(--space-3); font-size: var(--font-size-sm); }
+.dash-points div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-1) var(--space-3); font-size: var(--font-size-sm); }
 .dash-points dt { color: var(--text-secondary); }
 .dash-points dd { font-weight: 600; white-space: nowrap; }
 
@@ -338,6 +345,9 @@
 
 @media (max-width: 480px) {
   .dash-kpis { grid-template-columns: 1fr; }
+  .dash-hero { padding: var(--space-5); }
+  .dash-health { flex-wrap: wrap; min-width: 0; max-width: 100%; }
+  .dash-health > div { min-width: 0; }
 }
 
 /* Presupuesto */
