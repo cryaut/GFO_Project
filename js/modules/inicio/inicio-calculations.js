@@ -162,15 +162,16 @@ function areaEquilibrio(equilibrio) {
 function areaFlujo(flujo, moneda = 'C$') {
   const monto = v => montoBase(v, moneda);
   const op = flujo.neto.operacion;
+  const contexto = flujo.fuente ? `${flujo.naturaleza === 'flujo_reportado' ? 'Flujo reportado' : 'Flujo simulado'} · ${flujo.periodos.inicial} → ${flujo.periodos.final}. ${flujo.fuente}. ` : '';
   const puntos = [punto('Flujo de operación', op, 'monto'), punto('Variación neta', flujo.variacionNeta, 'monto'), punto('Saldo final', flujo.saldoFinal, 'monto')];
   if (esNumero(flujo.saldoFinal) && flujo.saldoFinal < 0) {
-    return area('flujo', 'Flujo de efectivo', '#/flujo', 'alerta', puntos, 'El efectivo termina en negativo: se necesita financiamiento o recortar salidas.');
+    return area('flujo', 'Flujo de efectivo', '#/flujo', 'alerta', puntos, contexto + 'El efectivo termina en negativo: se necesita financiamiento o recortar salidas.');
   }
   if (op < 0) {
-    return area('flujo', 'Flujo de efectivo', '#/flujo', 'alerta', puntos, 'La operación consume efectivo: el negocio se sostiene con inversión o financiamiento.');
+    return area('flujo', 'Flujo de efectivo', '#/flujo', 'alerta', puntos, contexto + 'La operación consume efectivo: el negocio se sostiene con inversión o financiamiento.');
   }
   return area('flujo', 'Flujo de efectivo', '#/flujo', 'ok', puntos,
-    `La operación genera ${monto(op)} de efectivo${flujo.variacionNeta < 0 ? ', aunque inversiones o pagos de deuda reducen el saldo.' : '.'}`);
+    contexto + `La operación genera ${monto(op)} de efectivo${flujo.variacionNeta < 0 ? ', aunque inversiones o pagos de deuda reducen el saldo.' : '.'}`);
 }
 
 function areaPresupuesto(presupuesto) {

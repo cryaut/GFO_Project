@@ -317,3 +317,9 @@ EOAF/EFE reúnen saldos de cuentas y totales reportados; un inventario total sin
 Inicio/Mercado usan `totalesPeriodo` con ER resuelto; EFE usa `obtenerUtilidadNetaMotor`. ER ausente/vacío significa UN N/D. Cobertura completa tampoco reconstruye un bruto desconocido desde ventas netas reportadas. Los ceros explícitos se conservan.
 
 `ejemploBartlettClase()` incorpora únicamente las premisas de diapositivas 14–15 para 2012: ventas a crédito 3074000 y compras estimadas 1461600. `supp.credit_purchases` declara la base de compras para rotación de CxP; los JSON usan el dato si está disponible y conservan pagos + ΔCxP si falta. No se aproxima automáticamente con CBV ni se considera caja. La base 365 sigue proveniente de DIAS_ANIO. Se mantienen separado el Bartlett histórico y sus flujos. Fuentes, resultados y límites en `docs/planificacion/reparacion-auditoria-ejemplos/INFORME-FINAL.md`.
+
+## Flujos del dossier AGRI-CORP (D-110/D-111)
+
+Las nuevas funciones `revisionEstadosFlujo`, `validarFlujosDocumentados`, `adjuntarFlujoDocumentado` y `construirFlujoDocumentado` viven en `estados/estados-flujo-documentado.js`; sus contratos están en `docs/api.md`. Componen y comprueban movimientos mediante `calcularFlujo` y la tolerancia existente; no duplican fórmulas de efectivo ni cambian el motor de razones.
+
+Un flujo reportado por una fuente identificada, o un escenario explícitamente simulado, tiene precedencia para su intervalo exacto. Sin documento se conserva el EFE estimado de balances. El flujo real 2023→2024 tiene operación 190033364; el simulado junio→septiembre 2027 tiene operación 1075760 y apertura declarada 1500000. No se usa el trimestral como flujo de agosto→septiembre. Una edición de sus estados deja el documento desactualizado y sus flujos en N/D con causa. La comprobación no ajusta diferencias ni certifica la fuente como auditada por la aplicación.

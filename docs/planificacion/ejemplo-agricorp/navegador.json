@@ -1,0 +1,155 @@
+{
+  "recorridos": [
+    "Caso real: CFO 190033364 coincidente en Inicio, Análisis, Flujo, Proforma y Reportes",
+    "Cuota agotada conserva caso completo y reintento cambia de real a simulado; selector permanente y cancelación sin guardado",
+    "Simulado: caja final 2380760, PE 1800 sacos e inventario final 1000",
+    "Cambiar estados invalida el flujo suministrado y conserva N/D con causa"
+  ],
+  "variantes": [
+    {
+      "ruta": "home",
+      "width": 1440,
+      "tema": "light",
+      "desborde": false
+    },
+    {
+      "ruta": "analisis",
+      "width": 1440,
+      "tema": "light",
+      "desborde": false
+    },
+    {
+      "ruta": "proforma",
+      "width": 1440,
+      "tema": "light",
+      "desborde": false
+    },
+    {
+      "ruta": "flujo",
+      "width": 1440,
+      "tema": "light",
+      "desborde": false
+    },
+    {
+      "ruta": "home",
+      "width": 1440,
+      "tema": "dark",
+      "desborde": false
+    },
+    {
+      "ruta": "analisis",
+      "width": 1440,
+      "tema": "dark",
+      "desborde": false
+    },
+    {
+      "ruta": "proforma",
+      "width": 1440,
+      "tema": "dark",
+      "desborde": false
+    },
+    {
+      "ruta": "flujo",
+      "width": 1440,
+      "tema": "dark",
+      "desborde": false
+    },
+    {
+      "ruta": "home",
+      "width": 390,
+      "tema": "light",
+      "desborde": false
+    },
+    {
+      "ruta": "analisis",
+      "width": 390,
+      "tema": "light",
+      "desborde": false
+    },
+    {
+      "ruta": "proforma",
+      "width": 390,
+      "tema": "light",
+      "desborde": false
+    },
+    {
+      "ruta": "flujo",
+      "width": 390,
+      "tema": "light",
+      "desborde": false
+    },
+    {
+      "ruta": "home",
+      "width": 390,
+      "tema": "dark",
+      "desborde": false
+    },
+    {
+      "ruta": "analisis",
+      "width": 390,
+      "tema": "dark",
+      "desborde": false
+    },
+    {
+      "ruta": "proforma",
+      "width": 390,
+      "tema": "dark",
+      "desborde": false
+    },
+    {
+      "ruta": "flujo",
+      "width": 390,
+      "tema": "dark",
+      "desborde": false
+    },
+    {
+      "ruta": "home",
+      "width": 320,
+      "tema": "light",
+      "desborde": false
+    },
+    {
+      "ruta": "analisis",
+      "width": 320,
+      "tema": "light",
+      "desborde": false
+    },
+    {
+      "ruta": "proforma",
+      "width": 320,
+      "tema": "light",
+      "desborde": false
+    },
+    {
+      "ruta": "flujo",
+      "width": 320,
+      "tema": "light",
+      "desborde": false
+    },
+    {
+      "ruta": "home",
+      "width": 320,
+      "tema": "dark",
+      "desborde": false
+    },
+    {
+      "ruta": "analisis",
+      "width": 320,
+      "tema": "dark",
+      "desborde": false
+    },
+    {
+      "ruta": "proforma",
+      "width": 320,
+      "tema": "dark",
+      "desborde": false
+    },
+    {
+      "ruta": "flujo",
+      "width": 320,
+      "tema": "dark",
+      "desborde": false
+    }
+  ],
+  "errores": []
+}

@@ -50,6 +50,8 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 
 | ID | Decisión | Estado |
 |---|---|---|
+| D-110 | Casos AGRI-CORP real y simulado separados | Vigente |
+| D-111 | Flujo suministrado con fuente e intervalo explícitos | Vigente |
 | D-001 | Año de 365 días | Vigente |
 | D-002 | Funciones duplicadas: se conserva la versión que devuelve N/D | Vigente |
 | D-003 | Una IA puede hacer el merge de un PR aprobado | Vigente |
@@ -2404,3 +2406,38 @@ Inicio y Mercado reutilizan el ER resuelto; EFE consulta `obtenerUtilidadNetaMot
 **Consecuencias.** Las fórmulas de los 20 JSON se conservan. Los valores informados y sus advertencias permanecen distinguibles en cada pantalla.
 
 **Referencias.** [Comparaciones y límites de fuente](planificacion/cierre-encargo-afod/README.md).
+
+### D-110 - Ejemplos AGRI-CORP: casos separados y cuentas confirmadas
+
+- **Fecha** — 2026-11-09.
+- **Area** — Catálogo de ejemplos, Estados, Inicio, Planeación y Apalancamiento.
+
+**Decisión.** El dossier de AGRI-CORP se ofrece como dos ejemplos independientes: el histórico real 2023–2024 y la unidad de arroz simulada de julio a septiembre de 2027. Desde Inicio, cargar uno reemplaza todos los módulos de empresa (lo que el caso no usa queda vacío); desde Estados se carga solo el estado financiero, como borrador. Las cuentas llevan su identificador del catálogo confirmado y cada periodo declara cobertura completa e ingresos sin intereses, para que el motor no deje razones en N/D por cuentas "sugeridas". En el real, las partidas sin equivalente exacto se agrupan en la cuenta más cercana del catálogo (partes relacionadas, derecho de uso y similares como otros activos o pasivos; propiedad, planta y equipo como otros activos fijos). El impuesto, los dividendos preferentes y la inversión de agosto del caso simulado entran como "otros desembolsos" de Planeación para que la caja coincida con el dossier, y el saldo mínimo de caja es 0 porque el dossier no define uno. El caso real no declara ventas a crédito ni pagos a proveedores, de modo que las rotaciones y plazos de cuentas por cobrar y por pagar quedan N/D, y el GAO queda N/D porque no hay clasificación fijo/variable pública.
+
+**Consecuencias.** Las razones del caso real muestran cifras donde el motor puede calcularlas y N/D donde el dossier prohíbe inventar datos. La agrupación de cuentas reales es una elección de presentación y no cambia los totales auditados. El impuesto por pagar al cierre no aparece como pasivo en Planeación porque se paga dentro del mes. Para revertir basta quitar las dos opciones de `catalogo.js` y borrar `js/examples/ejemplos-agricorp.js`.
+
+**Referencias.** [Ejemplos de AGRI-CORP](planificacion/ejemplo-agricorp/README.md).
+
+### D-111 — Flujo suministrado con fuente e intervalo explícitos
+
+- **Fecha**: 2026-11-09
+- **Estado**: Vigente; amplía D-070 sin cambiar su fuente común para Inicio/Proforma.
+- **Decidió**: Codex por encargo de Cris de reparar los problemas reproducidos en el PR #36.
+- **Área**: Estados, EFE de Análisis, Inicio, Flujo, Proforma y Reportes.
+
+**Contexto.** El dossier suministra flujos directos completos. La estimación a partir de balances daba operación −145,444,600 para 2024 mientras el documento y la captura mostraban 190,033,364. Para la simulación, el flujo corresponde al trimestre, no al último par mensual.
+
+**Opciones.**
+1. Conservar el flujo suministrado en Estados con fuente, naturaleza e intervalo, y usarlo en la función común EFE.
+2. Leer cualquier captura manual como fuente oficial: permitiría que una edición aislada alterara todos los indicadores.
+3. Mantener únicamente la estimación: ignoraría movimientos efectivamente suministrados.
+
+**Decisión.** Opción 1. El campo opcional `flujosDocumentados` conserva datos de movimientos, saldo de apertura, fuente, entidad, moneda, naturaleza reportada/simulada e intervalo. Se valida con las funciones de Flujo existentes, sin otra fórmula. `construirEFE` usa un documento para su intervalo exacto; sin él conserva la estimación anterior. Para el último cierre, Inicio/Proforma y Análisis eligen el intervalo declarado, incluso cuando su apertura no tiene balance cargado; esa limitación se muestra. Un único documento por cierre evita seleccionar por orden implícito.
+
+**Consecuencias.** El CFO real es 190,033,364 y el trimestral simulado 1,075,760 en todos los consumidores. Se comprueban apertura, cierre y diferencia sin redistribuir importes. Una revisión de nombre, moneda, periodos, BG y ER detecta cambios: el flujo queda N/D con causa y no se reemplaza por una estimación. Una captura manual editada sigue independiente. La normalización, JSON y respaldo preservan el campo opcional; documentos anteriores mantienen su comportamiento. La clasificación «reportado» identifica la transcripción de una fuente, no certifica una auditoría de la app.
+
+La carga de casos desde Inicio prepara los siete módulos antes de persistirlos de forma atómica mediante la API existente del store. Un fallo conserva memoria y almacenamiento anteriores. El selector permanece visible aun con datos cargados. Se protege el presupuesto estudiantil y la información personal.
+
+**Para revertirla.** Registrar una nueva decisión, retirar el adaptador documental de EFE y sus consumidores, y definir cómo conservar/exportar los documentos ya guardados antes de eliminar la metadata.
+
+**Referencias.** [Informe del PR #36](planificacion/ejemplo-agricorp/INFORME-FINAL.md), dossier entregado por Cris y `tests/unit/ejemplo-agricorp.test.js`.

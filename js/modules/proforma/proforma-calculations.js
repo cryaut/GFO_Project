@@ -116,10 +116,11 @@ function indicador(grupo, nombre, valor, formato, fuente, ruta, lectura = '', es
 // puede usar devuelve { disponible: false, motivo } para armar el faltante.
 export function flujoDesdeEFE(estados) {
   const periodos = ordenarPeriodos(estados?.periods || []);
-  if (periodos.length < 2) {
+  const documentado = estados?.flujosDocumentados?.find(f => f.periodoFinal === periodos.at(-1));
+  if (periodos.length < 2 && !documentado) {
     return { disponible: false, motivo: 'El EFE necesita al menos dos periodos de Estados Financieros.' };
   }
-  const efe = construirEFE(estados, periodos[periodos.length - 2], periodos[periodos.length - 1]);
+  const efe = construirEFE(estados, documentado?.periodoInicial ?? periodos[periodos.length - 2], periodos.at(-1));
   if (efe.estado !== 'cuadra' && efe.estado !== 'cuadra-sin-verificar') {
     const causa = efe.estado === 'incompleta' ? 'está incompleto' : 'no cuadra';
     return {
@@ -129,12 +130,12 @@ export function flujoDesdeEFE(estados) {
   }
   return {
     disponible: true, ...(estados?.moneda ? { moneda:monedaDe(estados) } : {}),
-    neto: { operacion: efe.operacion.total },
+    neto: { operacion: efe.operacion.total, inversion:efe.inversion.total, financiamiento:efe.financiamiento.total },
     variacionNeta: efe.variacionEfectivo,
-    saldoFinal: efe.efectivoFinal,
+    saldoFinal: efe.efectivoFinal, saldoInicial:efe.efectivoInicial,
     periodos: efe.periodos,
     estado: efe.estado,
-    naturaleza: efe.naturaleza
+    naturaleza: efe.naturaleza, fuente:efe.fuente
   };
 }
 
@@ -192,9 +193,10 @@ export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento
   }
   if (flujo?.disponible) {
     // D-070: los renglones de flujo salen del EFE de Análisis, no de la captura manual.
-    const grupo = `Flujo de efectivo estimado (EFE ${flujo.periodos.inicial} → ${flujo.periodos.final})`;
+    const documentado = flujo.naturaleza === 'flujo_reportado' || flujo.naturaleza === 'flujo_simulado_documentado';
+    const grupo = `Flujo de efectivo ${documentado ? (flujo.naturaleza === 'flujo_reportado' ? 'reportado' : 'simulado') : 'estimado'} (EFE ${flujo.periodos.inicial} → ${flujo.periodos.final})`;
     lista.push(indicador(grupo, 'Flujo de operación', flujo.neto.operacion, 'monto', 'Análisis (EFE)', '#/analisis',
-      'Estimación por variaciones de saldos; confirme los cobros y pagos reales.', flujo.neto.operacion >= 0 ? 'ok' : 'alerta'));
+      documentado ? flujo.fuente : 'Estimación por variaciones de saldos; confirme los cobros y pagos reales.', flujo.neto.operacion >= 0 ? 'ok' : 'alerta'));
     lista.push(indicador(grupo, 'Variación neta del efectivo', flujo.variacionNeta, 'monto', 'Análisis (EFE)', '#/analisis', 'Variación entre saldos; no confirma por sí sola los movimientos.'));
     lista.push(indicador(grupo, 'Saldo final de efectivo', flujo.saldoFinal, 'monto', 'Análisis (EFE)', '#/analisis', 'Efectivo al cierre del periodo final.'));
   }
@@ -233,7 +235,7 @@ export function alertasIntegradas({ razones, presupuesto, equilibrio, flujo, inv
     agregar('alta', `El presupuesto proyecta una pérdida neta de ${monto(-presupuesto.totales.utilidadNeta)}. Revise precios, volumen o gastos.`, '#/planeacion');
   }
   if (flujo?.disponible && flujo.neto.operacion < 0) {
-    agregar('alta', `El flujo operativo estimado es ${monto(flujo.neto.operacion, monedaDe(flujo))}: confirme cobros y pagos antes de tomar decisiones.`, '#/analisis');
+    agregar('alta', flujo.naturaleza?.startsWith('flujo_') ? `El flujo operativo suministrado es negativo (${monto(flujo.neto.operacion, monedaDe(flujo))}). Revise el documento y su intervalo.` : `El flujo operativo estimado es ${monto(flujo.neto.operacion, monedaDe(flujo))}: confirme cobros y pagos antes de tomar decisiones.`, '#/analisis');
   }
   if (flujo?.disponible && esNumero(flujo.saldoFinal) && flujo.saldoFinal < 0) {
     agregar('alta', `El flujo de efectivo termina con saldo negativo (${monto(flujo.saldoFinal, monedaDe(flujo))}).`, '#/analisis');
@@ -306,6 +308,7 @@ export function construirReporte(entradas) {
       financiamientoMaximo: presupuesto.financiamientoMaximo, periodoFinanciamiento: presupuesto.periodoFinanciamiento,
       cierre: presupuesto.cierre
     } : null,
+    flujo:flujo?.disponible ? flujo : null,
     indicadores: indicadoresIntegrados(entradas, real?.periodo ?? '—'),
     alertas: alertasIntegradas(entradas),
     faltantes
