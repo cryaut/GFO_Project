@@ -1,0 +1,23 @@
+{
+  "fecha": "2026-11-09",
+  "base": "521f213f82feac4531f232baa5245d614521ade5",
+  "headOriginal": "aaa3db91f6bc8969dfaff98ba19536814b2952a2",
+  "pr": 36,
+  "pruebas": {
+    "total": 2276,
+    "correctas": 2276,
+    "fallidas": 0,
+    "archivos": 81,
+    "regresionesNuevas": 23,
+    "comando": "npm.cmd test -- --maxWorkers=2 --reporter=json"
+  },
+  "lint": {
+    "errores": 0,
+    "advertenciasAnteriores": 10
+  },
+  "fuente": {
+    "archivo": "AGRICORP_GFO_datos_reales_y_simulados_justificados.md",
+    "sha256": "ad324f4ae584399c6ad348c478a77603f37f95234b47d11358d12d5594de9b79",
+    "alcance": "Contraste con el dossier entregado, no auditoría nueva del PDF original."
+  }
+}

@@ -145,9 +145,14 @@ export function flujoUI(page, opciones) {
     const r = calcularFlujo(datos);
     const indice = new Map(datos.movimientos.map((m, i) => [m.id, i]));
     const kpi = (valor, etiqueta) => `<div class="kpi-card"><div class="kpi-value ${claseSigno(valor)}">${monto(valor)}</div><div class="kpi-label">${etiqueta}</div></div>`;
+    const documento = leerEstados()?.flujosDocumentados?.find(f =>
+      JSON.stringify([f.datos.saldoInicial, f.datos.movimientos]) === JSON.stringify([datos.saldoInicial, datos.movimientos]));
+    const avisoCaptura = documento
+      ? `Copia del flujo ${documento.tipo === 'reportado' ? 'reportado' : 'simulado'}: ${documento.periodoInicial} → ${documento.periodoFinal}. ${documento.fuente}. El EFE de Análisis y los reportes consultan el documento asociado a Estados. Editar esta copia no modifica ese documento.`
+      : 'Captura no oficial: el flujo que presentan Proforma y el panorama de Inicio sale del EFE de Análisis. Esta pantalla sirve para registrar y explorar movimientos de efectivo con fines didácticos.';
     page.innerHTML = `<div class="page-header"><h1 class="page-title">Flujo de Efectivo</h1>
         <p class="page-subtitle">Entradas y salidas de efectivo clasificadas en operación, inversión y financiamiento.</p></div>
-      <p class="text-muted" style="font-size:var(--font-size-sm)">Captura no oficial: el flujo que presentan Proforma y el panorama de Inicio sale del EFE de Análisis. Esta pantalla sirve para registrar y explorar movimientos de efectivo con fines didácticos.</p>
+      <p class="text-muted" style="font-size:var(--font-size-sm)">${esc(avisoCaptura)}</p>
       <p id="flujoMensaje" role="status" aria-live="polite" class="text-muted">Indique el saldo inicial y registre las entradas y salidas de efectivo.</p>
       ${panelEjemplos('flujo', 'flujoEjemplo')}<div class="flex-gap flex-wrap mb-4">
         ${r.cantidadMovimientos ? '<button type="button" class="btn btn-danger" id="flujoVaciar">Borrar movimientos</button>' : ''}</div>

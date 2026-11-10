@@ -1061,3 +1061,20 @@ Revisión de Carlos (2026-11-08): `computeFinancialTotals` conserva activos tota
 - `ejemploBartlettClase()` devuelve un documento nuevo identificado como razones de clase, con los BG/ER de Bartlett y suplementos solo en 2012. Se ofrece como `bartlett-clase` en Estados e Inicio empresa. No muta el histórico.
 - `supp.credit_purchases`: base de compras declarada, suplementaria y positiva, requiere dato; ausencia N/D y cero explícito válido. Los tres derivados JSON de compras usan `reported_or_calculate`: dato declarado primero, fórmula anterior de pagos + ΔCxP si falta. No hay porcentaje automático de CBV. `usaComprasReales` conserva su uso legado para compras derivadas y es falso para una base declarada que podría ser estimada.
 - El motor no deduce ventas brutas cero desde una venta neta reportada sin bruto ni componentes, aunque ER esté completo. Un bruto cero explícito se conserva; sus discrepancias con el neto no se corrigen silenciosamente.
+
+## Flujos suministrados con los estados (D-111)
+
+En `js/modules/estados/estados-flujo-documentado.js`:
+
+| Función | Contrato |
+|---|---|
+| `revisionEstadosFlujo(datos)` | Cadena de revisión de entidad, moneda, periodos, BG y ER; no muta datos. |
+| `validarFlujosDocumentados(lista)` | Devuelve una copia validada. Rechaza más de 100 documentos, cierres repetidos, movimientos inválidos/duplicados y números no finitos. |
+| `adjuntarFlujoDocumentado(estados, flujo, { tipo, fuente, inicial, final })` | Devuelve los estados con un nuevo documento validado; no guarda ni modifica el argumento. |
+| `construirFlujoDocumentado(datos, inicial, final)` | `null` si no existe el intervalo; en otro caso, resultado compatible con EFE, con naturaleza, fuente, comprobación y motivos. Documento desactualizado: flujos `null`, estado `incompleta`; discrepancia: `no-cuadra`, diferencia conservada. |
+
+`estados.flujosDocumentados[]` es opcional: `{ tipo: 'reportado'|'simulado', fuente, empresa, moneda, periodoInicial, periodoFinal, revision, datos: { saldoInicial, movimientos } }`. Los movimientos usan el contrato existente de Flujo. La normalización y los respaldos conservan la metadata. No hay migración de documentos antiguos ni conversión de moneda.
+
+`construirEFE` da precedencia al documento para el intervalo exacto y conserva la estimación anterior cuando no existe. `computeEFE` y `flujoDesdeEFE` respetan el intervalo del documento del cierre seleccionado. El adaptador añade `fuente`, `neto.inversion`, `neto.financiamiento` y `saldoInicial`; `construirReporte` añade `flujo` disponible o `null`. Inicio, Proforma y Reportes lo reutilizan. Una apertura sin BG se identifica como declarada, no comprobada contra un balance.
+
+`cargarEjemploEmpresa` prepara y valida los siete módulos AGRI-CORP y usa una única llamada a `store.setModulesPersisted`: si falla, no publica datos parciales. No sustituye el presupuesto ni Activos del hogar. Un id desconocido lanza un error antes de escribir.

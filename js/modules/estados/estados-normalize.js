@@ -1,3 +1,4 @@
+import { validarFlujosDocumentados } from './estados-flujo-documentado.js';
 import { ACCOUNT_TYPES, inferAccountType } from './estados-calculations.js';
 import { identificarCuenta, obtenerCuenta, CUENTA_PROVISION_CXC } from './cuentas-identificador.js';
 import { GRUPOS_COBERTURA, ESTADOS_COBERTURA } from './estados-cobertura.js';
@@ -259,6 +260,7 @@ export function normalizeFinancialData(input, { filas = {} } = {}) {
     balanceGeneral,
     estadoResultados,
     accountTypes, accountIdentities, composicionIngresos,
+    ...(source.flujosDocumentados !== undefined ? { flujosDocumentados:validarFlujosDocumentados(source.flujosDocumentados) } : {}),
     ...(source.coberturaEstados !== undefined ? { coberturaEstados } : {}),
     ...(Object.keys(supplementaryAccounts).length ? { supplementaryAccounts } : {}),
     ...(Object.keys(reportedTotals).length ? { reportedTotals } : {}),

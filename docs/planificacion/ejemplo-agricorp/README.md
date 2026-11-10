@@ -1,6 +1,6 @@
 # Ejemplos de AGRI-CORP (real y simulado)
 
-- **Estado**: En revisión
+- **Estado**: Reparado y verificado para integración
 - **Responsable**: Carlos
 - **Rama**: `feat/ejemplo-agricorp`
 - **Ultima actualización**: 2026-11-09
@@ -17,7 +17,7 @@ Cargar en la app, desde los selectores de ejemplos existentes, los datos del dos
 | 4 | Sin N/D por cuentas "sugeridas": cuentas confirmadas contra el catálogo, cobertura y composición declaradas | Completado |
 
 ## Decisiones clave
-- Casos separados, sin mezclar cifras reales con simuladas; cargar desde Inicio reemplaza todos los módulos de empresa. Ver D-109.
+- Casos separados, sin mezclar cifras reales con simuladas; cargar desde Inicio reemplaza todos los módulos de empresa. Ver D-110.
 - Lo calculado (presupuestos, caja, GAO/GAF/GAT, proforma) no se guarda: sale de las fórmulas de cada módulo.
 
 ## Verificación de cifras
@@ -27,10 +27,23 @@ Cargar en la app, desde los selectores de ejemplos existentes, los datos del dos
 ## Archivos que toca
 - `js/examples/ejemplos-agricorp.js` (nuevo) y `js/examples/catalogo.js`.
 - `js/modules/inicio/index.js` e `inicio-ui.js` (carga completa y mensaje de confirmación).
-- No toca `calculate.js`, `store.js`, `estados-calculations.js`, `analisis/index.js`, `app.js` ni `index.html`.
+- La reparación añade `estados-flujo-documentado.js` y conserva su metadata opcional en `estados-normalize.js`. Análisis, Inicio, Proforma y el HTML de Reportes consumen el mismo flujo suministrado (D-111).
+- `analisis/index.js` cambia solo la selección del intervalo y la presentación del EFE. `flujo-ui.js` identifica la copia de los movimientos del dossier; editarla no altera la fuente documental.
+- `css/pages.css` permite nombres largos y tarjetas de Inicio en móviles. No toca `calculate.js`, `store.js`, `estados-calculations.js`, el motor de razones, `app.js` ni `index.html`.
 
 ## Pasos
-No hay pasos numerados: la feature es pequeña y el detalle está en D-109.
+No hay pasos numerados: la feature es pequeña y el detalle está en D-110.
 
-## Próximo paso
-Revisión del PR. Pendiente: no hay datos de ventas a crédito ni de pagos a proveedores del caso real, así que cinco razones de actividad de 2024 siguen en N/D por diseño.
+## Reparación de la revisión del PR #36
+
+La carga completa valida primero y publica los siete módulos de empresa en una sola escritura. El selector permanece accesible en Inicio para cambiar de caso, con confirmación. La fuente del flujo queda ligada a entidad, moneda, estados e intervalo; una edición de esos estados invalida sus cifras sin sustituirlas por una estimación. Las entradas de inventario tienen costo explícito y Planeación identifica el producto.
+
+Se reservó D-110 para estos casos porque D-109 pertenece al presupuesto estudiantil pendiente en el PR #35. D-111 registra la precedencia del flujo documentado. No se integra el PR #35 con este cambio.
+
+## Evidencia y límites
+
+- [Informe final](INFORME-FINAL.md), [comprobación en navegador](navegador.json) y [script reproducible](revisar.cjs).
+- 2,276 pruebas correctas, incluidas 23 regresiones nuevas; lint sin errores (10 advertencias anteriores).
+- 24 variantes de las pantallas afectadas: 1440, 390 y 320 px, temas claro y oscuro. Navegación, cancelación, cuota agotada, cambio de caso, exportación y documento desactualizado comprobados.
+- Sin ventas a crédito ni pagos a proveedores del caso real, cinco razones de actividad de 2024 siguen en N/D. No se inventan bases; el GAO real carece de clasificación fijo/variable.
+- El flujo simulado abarca junio→septiembre: la apertura de junio procede del dossier y no tiene balance inicial cargado. No se presenta como variación agosto→septiembre.

@@ -156,15 +156,12 @@ function personal(lista, conEjemplo) {
     ${cuerpo}</section>`;
 }
 
-function faltantes(lista, hayDatos, conEjemplo) {
+function faltantes(lista, hayDatos) {
   if (!lista.length) return '';
   const titulo = hayDatos ? 'Para completar el panorama' : 'Cómo empezar';
-  const ejemplo = !hayDatos && conEjemplo
-    ? `<div class="dash-demo"><p>¿Solo quiere ver cómo funciona? Cargue el caso ficticio de MUNO MODA en los módulos de la empresa que estén vacíos. No reemplaza datos existentes.</p>
-        ${panelEjemplos('inicioEmpresa', 'inicioEjemplo', { titulo:'Ejemplos de empresa' })}</div>`
-    : '';
+
   return `<div class="card dash-todo"><h2 class="card-title mb-4">${titulo}</h2>
-    <ol>${lista.map(f => `<li><a href="${f.ruta}">${esc(f.modulo)}</a>: ${esc(f.texto)}</li>`).join('')}</ol>${ejemplo}</div>`;
+    <ol>${lista.map(f => `<li><a href="${f.ruta}">${esc(f.modulo)}</a>: ${esc(f.texto)}</li>`).join('')}</ol></div>`;
 }
 
 function modulos() {
@@ -184,7 +181,10 @@ export function inicioUI(page, { panorama: p, graficar = null, cargarEjemploEmpr
     ${kpis(p.kpis, periodoAnterior)}
     ${hayDatos ? `<div class="dash-row">${tendencia(p.tendencia)}${alertas(p)}</div>` : ''}
     ${areas(p.areas)}
-    ${faltantes(p.faltantes, hayDatos, Boolean(cargarEjemploEmpresa))}
+    ${cargarEjemploEmpresa ? `<details class="card mb-4"><summary>Ejemplos de empresa</summary>
+      <p class="form-hint">Revise la fuente y el alcance antes de cargar. Los casos AGRI-CORP reemplazan los módulos de empresa; las finanzas personales se conservan.</p>
+      ${panelEjemplos('inicioEmpresa', 'inicioEjemplo', { titulo:'Seleccionar caso' })}</details>` : ''}
+    ${faltantes(p.faltantes, hayDatos)}
     ${personal(p.personal || [], Boolean(cargarEjemploPersonal))}
     ${modulos()}`;
   vincularEjemplos(page, 'inicioEmpresa');

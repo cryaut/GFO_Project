@@ -35,21 +35,24 @@ function registro() {
 // para no mezclar el caso histórico real con la unidad simulada.
 function cargarCasoAgricorp(id) {
   const caso = id === 'agricorp-historico' ? casoHistoricoReal() : casoOperativoSimulado();
-  const { cargados, guardar } = registro();
-  guardar('estados', normalizeFinancialData(caso.estados), 'Estados financieros');
-  guardar('apalancamiento', caso.apalancamiento, 'Apalancamiento');
-  guardar('razonesMercado', normalizarDatosMercado(caso.razonesMercado), 'Razones de mercado');
-  guardar('flujo', normalizarFlujo(caso.flujo), 'Flujo de efectivo');
-  guardar('inventario', caso.inventario ? normalizarInventario(caso.inventario) : { productos: [], movimientos: [] }, 'Inventario');
-  guardar('equilibrio', normalizarEquilibrio(caso.equilibrio ?? null), 'Punto de equilibrio');
-  guardar('planeacion', caso.planeacion ? { supuestos: normalizarSupuestos(caso.planeacion.supuestos) } : { supuestos: null }, 'Presupuesto maestro');
-  return cargados;
+  const modulos = {
+    estados: normalizeFinancialData(caso.estados),
+    apalancamiento: caso.apalancamiento,
+    razonesMercado: normalizarDatosMercado(caso.razonesMercado),
+    flujo: normalizarFlujo(caso.flujo),
+    inventario: caso.inventario ? normalizarInventario(caso.inventario) : { productos: [], movimientos: [] },
+    equilibrio: normalizarEquilibrio(caso.equilibrio ?? null),
+    planeacion: caso.planeacion ? { supuestos: normalizarSupuestos(caso.planeacion.supuestos) } : { supuestos: null }
+  };
+  // Primero se prepara todo; una sola escritura publica los siete módulos.
+  store.setModulesPersisted(modulos);
+  return ['Estados financieros', 'Apalancamiento', 'Razones de mercado', 'Flujo de efectivo', 'Inventario', 'Punto de equilibrio', 'Presupuesto maestro'];
 }
 
 // Carga el ejemplo ficticio de MUNO MODA en los módulos de la empresa, con los mismos datos
 // que el botón "Cargar ejemplo" de cada uno. Solo escribe en los módulos vacíos.
 export function cargarEjemploEmpresa(id = 'actual') {
-  if (id.startsWith('agricorp-')) return cargarCasoAgricorp(id);
+  if (['agricorp-historico', 'agricorp-simulado'].includes(id)) return cargarCasoAgricorp(id);
   const { cargados, guardar } = registro();
   if (id !== 'actual') {
     guardar('estados', normalizeFinancialData(crearEjemplo('inicioEmpresa', id, getDemoData)), 'Estados financieros');
@@ -76,7 +79,7 @@ export function cargarEjemploEmpresa(id = 'actual') {
 export function cargarEjemploPersonal(id = 'actual') {
   const { cargados, guardar } = registro();
   const personal = store.get('presupuesto');
-  if (vacio(personal?.gastos) && vacio(personal?.ingresos)) guardar('presupuesto', { ...personal, ...crearEjemplo('inicioPersonal', id, ejemploPresupuestoPersonal) }, 'Presupuesto personal');
+  if (!personal?.estudiantil && vacio(personal?.gastos) && vacio(personal?.ingresos)) guardar('presupuesto', { ...personal, ...crearEjemplo('inicioPersonal', id, ejemploPresupuestoPersonal), ...(id === 'agricorp' ? { vista:'mensual' } : {}) }, 'Presupuesto personal');
   if (vacio(store.get('activos')?.inventario)) guardar('activos', { ...store.get('activos'), inventario: ejemploActivos() }, 'Activos del hogar');
   return cargados;
 }

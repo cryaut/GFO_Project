@@ -1,10 +1,11 @@
+import { adjuntarFlujoDocumentado } from '../modules/estados/estados-flujo-documentado.js';
 // Datos de ejemplo de AGRI-CORP para la demostración (proyecto final GFO 2026).
 // Fuente: AGRICORP_GFO_datos_reales_y_simulados_justificados.md.
 //
 // Hay dos casos separados que NO se deben mezclar ni sumar (sección I y VI del dossier):
 //   - historico: AGRI-CORP consolidada, estados auditados 2023 y 2024 (cifras REALES en C$).
 //   - simulado:  Unidad_Comercial_Arroz_Demo_2027, jul–sep 2027 (cifras INVENTADAS, solo docentes).
-// El presupuesto personal (ficticio) se incluye en ambos.
+// El presupuesto personal ficticio se ofrece aparte; no se mezcla con los módulos de empresa.
 //
 // Solo datos, sin DOM ni store. Las cifras calculadas (presupuestos, caja, GAO/GAF/GAT, proforma)
 // NO se guardan: salen de las fórmulas de cada módulo.
@@ -230,9 +231,9 @@ export function casoHistoricoReal() {
   return {
     id: 'historico',
     nombre: 'AGRI-CORP consolidada (estados auditados 2023 y 2024, cifras reales)',
-    estados: estadosDe('Corporación Agrícola, S. A. y subsidiarias (AGRI-CORP)', ['2023', '2024'], {
+    estados: adjuntarFlujoDocumentado(normalizeFinancialData(estadosDe('Corporación Agrícola, S. A. y subsidiarias (AGRI-CORP)', ['2023', '2024'], {
       activos: REAL_ACTIVOS, pasivos: REAL_PASIVOS, patrimonio: REAL_PATRIMONIO, resultados: REAL_RESULTADOS
-    }),
+    })), flujoReal2024(), { tipo:'reportado', fuente:'Dossier AGRI-CORP · Anexo A · Estado de flujos auditado 2024', inicial:'2023', final:'2024' }),
     // Dividendos preferentes 2023 y 2024 (nota 34). Sin clasificación fijo/variable: no hay base
     // pública, así que el GAO queda N/D (el dossier prohíbe llamarlo «GAO real»).
     apalancamiento: { comportamiento: {}, dap: { '2023': 1948421, '2024': 7520630 }, tasaDefecto: null },
@@ -329,7 +330,7 @@ function estadosSimulados() {
 
 function inventarioSimulado() {
   const producto = 'Saco de arroz 100 lb';
-  const mov = (id, fecha, tipo, cantidad, concepto) => ({ id, productoId: 'arroz-100lb', fecha, tipo, cantidad, concepto });
+  const mov = (id, fecha, tipo, cantidad, concepto) => ({ id, productoId: 'arroz-100lb', fecha, tipo, cantidad, concepto, ...(tipo === 'entrada' ? { costoUnitario:COSTO } : {}) });
   return {
     productos: [{
       id: 'arroz-100lb', nombre: producto, unidad: 'sacos',
@@ -373,7 +374,7 @@ function planeacionSimulada() {
   const irMes = [144000, 174000, 204000];
   return {
     tipoPeriodo: 'Mes', periodos: 3, precio: PRECIO, costoUnitario: COSTO,
-    ventasUnidades: VENTAS_U, pctContado: 0.5, cxcInicial: 1620000,
+    ventasUnidades: [...VENTAS_U], pctContado: 0.5, cxcInicial: 1620000,
     pctComprasContado: 0.4, cxpInicial: 1339200,
     inventarioInicial: 800, pctInventarioFinal: 0.2, inventarioFinalUltimo: 1000,
     pctGastosVariables: REPARTO / PRECIO, gastosFijos: FIJOS_PAGADOS, depreciacion: FIJOS - FIJOS_PAGADOS,
@@ -381,7 +382,7 @@ function planeacionSimulada() {
     tasaIR: TASA_IR, saldoInicialCaja: 1500000,
     // El dossier no define un saldo mínimo de caja: 0 para no inventar una política.
     saldoMinimoCaja: 0,
-    productoInventario: 'Saco de arroz 100 lb', stockMinimo: 800
+    productoInventario: 'Saco de arroz 100 lb', productoId:'arroz-100lb'
   };
 }
 
@@ -389,7 +390,7 @@ export function casoOperativoSimulado() {
   return {
     id: 'simulado',
     nombre: 'Unidad_Comercial_Arroz_Demo_2027 (jul–sep 2027, datos inventados)',
-    estados: estadosSimulados(),
+    estados: adjuntarFlujoDocumentado(estadosSimulados(), flujoSimulado(), { tipo:'simulado', fuente:'Dossier AGRI-CORP · III.8–III.9 · Caja y conciliación trimestral simuladas', inicial:'2027-06', final:'2027-09' }),
     apalancamiento: {
       comportamiento: {
         'Costo de mercancía vendida': { tipo: 'variable' },
