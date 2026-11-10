@@ -80,13 +80,23 @@ function sumar(valores) {
   return numero(suma) ? suma : null;
 }
 
+// D-112: evita que la representación binaria cree un saldo negativo ficticio.
+// Cota relativa a los operandos y operaciones, siempre menor de medio centavo.
+// No redondea importes guardados ni borra diferencias de un centavo.
+function ajustarResiduoBinario(resultado, operandos) {
+  if (!numero(resultado)) return null;
+  const escala = operandos.reduce((s, v) => s + Math.abs(v), 0);
+  const cota = Number.EPSILON * escala * (operandos.length + 2);
+  return Math.abs(resultado) <= cota && Math.abs(resultado) < 0.005 ? 0 : resultado;
+}
+
 export function calcularProyeccion(plan) {
   const total = sumar(plan.partidas.map(p => p.monto));
   // En el libro E8 apunta a B19 (Meta de ahorro): el tipo es descriptivo.
   const porCategoria = categoria => sumar(plan.partidas.filter(p => p.categoria === categoria).map(p => p.monto));
   const ahorro = porCategoria('Meta de ahorro'), reserva = porCategoria('Reserva imprevistos');
-  const diferencia = saldoSemanal(plan.ingreso, total, 0, 0);
-  const libre = saldoSemanal(plan.ingreso, 0, ahorro, reserva);
+  const diferencia = ajustarResiduoBinario(saldoSemanal(plan.ingreso, total, 0, 0), [plan.ingreso, ...plan.partidas.map(p => p.monto)]);
+  const libre = ajustarResiduoBinario(saldoSemanal(plan.ingreso, 0, ahorro, reserva), [plan.ingreso, ahorro, reserva]);
   return { total, ahorro, reserva, diferencia, porcentaje:total === null ? null : tasaAhorro(total, plan.ingreso),
     estado:diferencia === null ? 'Datos pendientes' : diferencia === 0 ? 'Balanceado' : diferencia > 0 ? 'Falta asignar' : 'Excede ingreso',
     limiteSemanal:libre === null ? null : libre / (plan.frecuencia === 'Mensual' ? SEMANAS_POR_BLOQUE : 1),
@@ -102,11 +112,11 @@ export function calcularSeguimiento(datos) {
     const ingreso = total('Ingreso'), gasto = total('Gasto'), ahorro = total('Ahorro'), reserva = total('Reserva');
     acumulado = sumar([acumulado, ahorro]);
     return { semana:numeroSemana, bloque:Math.ceil(numeroSemana / SEMANAS_POR_BLOQUE), desde:desplazarFecha(m.inicio, i * 7), hasta:desplazarFecha(m.inicio, i * 7 + 6),
-      ingreso, gasto, ahorro, reserva, saldo:saldoSemanal(ingreso, gasto, ahorro, reserva), acumulado, avance:tasaAhorro(acumulado, m.costo), movimientos:filas.length };
+      ingreso, gasto, ahorro, reserva, saldo:ajustarResiduoBinario(saldoSemanal(ingreso, gasto, ahorro, reserva), filas.map(f => f.monto)), acumulado, avance:tasaAhorro(acumulado, m.costo), movimientos:filas.length };
   });
   const total = campo => sumar(semanas.map(s => s[campo]));
   const ahorro = total('ahorro');
-  return { semanas, ingreso:total('ingreso'), gasto:total('gasto'), ahorro, reserva:total('reserva'), saldo:total('saldo'), avance:tasaAhorro(ahorro, m.costo),
+  return { semanas, ingreso:total('ingreso'), gasto:total('gasto'), ahorro, reserva:total('reserva'), saldo:ajustarResiduoBinario(total('saldo'), semanas.map(s => s.saldo)), avance:tasaAhorro(ahorro, m.costo),
     aporteRecomendado:ahorroMensual(m.costo, m.semanas), final:desplazarFecha(m.inicio, m.semanas * 7 - 1) };
 }
 

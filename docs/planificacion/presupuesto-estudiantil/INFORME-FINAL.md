@@ -88,3 +88,7 @@ Evidencia: [antes, escritorio](capturas/antes-1440.png), [meta, escritorio](capt
 `store.js` solo añade los campos de vista/documento. Inicio y Reportes cambian su consumo de presupuesto personal; la validación del respaldo admite el nuevo documento y mantiene el anterior. `css/pages.css` carga estilos acotados al módulo y `examples/catalogo.js` incorpora sus dos ejemplos. `CHANGELOG.md`, arquitectura, API, dominio, manual y ficha reflejan el cambio. El guion visual previo del catálogo selecciona explícitamente la vista mensual que ya comprobaba. No se cambian `calculate.js`, el motor JSON de razones, el router ni los cálculos empresariales del encargo de Carlos.
 
 La implementación está lista para revisión en su rama. El merge no forma parte de este encargo.
+
+## Revisión final solicitada el 2026-11-09
+
+El encargo posterior autoriza revisar e integrar el PR #35. La [revisión final](REVISION-PR35.md) registra la actualización con AGRI-CORP, los siete casos nuevos, la corrección decimal D-112 y las verificaciones repetidas. El [resumen final](revision-final.json) reemplaza las cantidades históricas de pruebas de este informe como evidencia de integración. No se cambian los resultados de los 672 controles de la plantilla.

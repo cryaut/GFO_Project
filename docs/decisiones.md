@@ -52,6 +52,7 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 |---|---|---|
 | D-110 | Casos AGRI-CORP real y simulado separados | Vigente |
 | D-111 | Flujo suministrado con fuente e intervalo explícitos | Vigente |
+| D-112 | Residuos binarios en saldos del presupuesto estudiantil | Vigente |
 | D-001 | Año de 365 días | Vigente |
 | D-002 | Funciones duplicadas: se conserva la versión que devuelve N/D | Vigente |
 | D-003 | Una IA puede hacer el merge de un PR aprobado | Vigente |
@@ -2465,3 +2466,22 @@ La carga de casos desde Inicio prepara los siete módulos antes de persistirlos 
 **Para revertirla.** Registrar una nueva decisión, retirar el adaptador documental de EFE y sus consumidores, y definir cómo conservar/exportar los documentos ya guardados antes de eliminar la metadata.
 
 **Referencias.** [Informe del PR #36](planificacion/ejemplo-agricorp/INFORME-FINAL.md), dossier entregado por Cris y `tests/unit/ejemplo-agricorp.test.js`.
+
+### D-112 — Residuos binarios en saldos del presupuesto estudiantil
+
+- **Fecha**: 2026-11-09
+- **Estado**: Vigente
+- **Decidió**: Codex, durante la revisión y reparación del PR #35 solicitada por Cris.
+- **Área**: Cálculo de presupuesto estudiantil y sus consumidores.
+
+**Contexto.** Ingreso 0.30 y asignaciones 0.10 + 0.20 producían diferencia −5.55e−17, estado «Excede ingreso» y −0.00 visible. En seguimiento ocurría lo mismo al restar gasto/ahorro o compensar semanas; Inicio podía mostrar una alerta falsa.
+
+**Opciones.** Exigir igualdad binaria exacta, redondear todos los importes a centavos o ajustar únicamente resultados cercanos a cero dentro de una cota de error numérico. Se elige la tercera para conservar la precisión de los datos.
+
+**Decisión.** Se reutiliza `saldoSemanal` sin modificar su fórmula ni su comportamiento en otros módulos. El módulo estudiantil ajusta a cero solo un saldo/diferencia finito cuyo valor absoluto no supera `Number.EPSILON × suma de magnitudes de operandos × (cantidad de operandos + 2)` y es estrictamente menor de medio centavo. Se aplica a la diferencia del plan, saldo libre, saldo semanal y saldo total del seguimiento. Datos ausentes o resultados no finitos siguen N/D. Los importes guardados y demás resultados no se redondean.
+
+**Consecuencias.** 0.10 + 0.20 frente a 0.30 aparece balanceado. Una diferencia real de 0.01 permanece; también una subcentavo que exceda la cota. Esta política numérica de la app no se atribuye a una convención adicional del profesor ni amplía la tolerancia de EOAF/EFE.
+
+**Para revertirla.** Registrar una decisión nueva y retirar el ajuste privado de `presupuesto-calculations.js` y sus regresiones, aceptando nuevamente residuos visibles o definiendo otra representación monetaria.
+
+**Referencias.** [Revisión del PR #35](planificacion/presupuesto-estudiantil/REVISION-PR35.md); siete casos nuevos de `presupuesto-estudiantil.test.js` y recorrido decimal del script de navegador.

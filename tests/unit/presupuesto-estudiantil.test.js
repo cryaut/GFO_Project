@@ -34,6 +34,54 @@ it('un ingreso solo para transporte permite ahorro real cero', () => {
   expect(calcularProyeccion(d.proyecciones.real)).toMatchObject({ total:175, diferencia:0, ahorro:0, limiteSemanal:175 });
 });
 
+it('0.10 + 0.20 frente a 0.30 es balanceado sin déficit binario ficticio', () => {
+  const p = ejemploEstudiantil().proyecciones.real;
+  p.ingreso = 0.30; p.partidas.forEach(f => { f.monto = 0; });
+  p.partidas[0].monto = 0.10; p.partidas[1].monto = 0.20;
+  expect(calcularProyeccion(p)).toMatchObject({ diferencia:0, estado:'Balanceado' });
+});
+
+it.each([[0.29, -0.01, 'Excede ingreso'], [0.31, 0.01, 'Falta asignar']])('conserva la diferencia real de un centavo con ingreso %s', (ingreso, diferencia, estado) => {
+  const p = ejemploEstudiantil().proyecciones.real;
+  p.ingreso = ingreso; p.partidas.forEach(f => { f.monto = 0; });
+  p.partidas[0].monto = 0.10; p.partidas[1].monto = 0.20;
+  const r = calcularProyeccion(p);
+  expect(r.diferencia).toBeCloseTo(diferencia, 12);
+  expect(r.estado).toBe(estado);
+});
+
+it('conserva un déficit subcentavo que supera el error binario', () => {
+  const p = ejemploEstudiantil().proyecciones.real;
+  p.ingreso = 0.30; p.partidas.forEach(f => { f.monto = 0; });
+  p.partidas[0].monto = 0.10; p.partidas[1].monto = 0.20001;
+  const r = calcularProyeccion(p);
+  expect(r.diferencia).toBeCloseTo(-0.00001, 12);
+  expect(r.estado).toBe('Excede ingreso');
+});
+
+it('un saldo semanal decimal equilibrado no crea una alerta falsa en Inicio', () => {
+  const d = ejemploEstudiantil(), base = d.movimientos[0];
+  d.movimientos = ['Ingreso', 'Gasto', 'Ahorro'].map((tipo, i) => ({ ...base, id:'decimal-'+i, tipo, monto:[0.30, 0.10, 0.20][i] }));
+  const r = calcularSeguimiento(d);
+  expect(r.semanas[0].saldo).toBe(0); expect(r.saldo).toBe(0);
+  const resumen = resumenEstudiantilGuardado({ vista:'estudiantil', estudiantil:d });
+  expect(finanzasPersonales(resumen)[0].estado).toBe('info');
+});
+
+it('el saldo acumulado también elimina el residuo al compensar semanas decimales', () => {
+  const d = ejemploEstudiantil(), base = d.movimientos[0];
+  d.movimientos = [0.10, 0.20, 0.30].map((monto, i) => ({ ...base, id:'semanal-'+i,
+    fecha:desplazarFecha(d.meta.inicio, i * 7), tipo:i === 2 ? 'Gasto' : 'Ingreso', monto }));
+  expect(calcularSeguimiento(d).saldo).toBe(0);
+});
+
+it('un desbordamiento numérico sigue N/D en vez de convertirse en saldo cero', () => {
+  const d = ejemploEstudiantil(), base = d.movimientos[0];
+  d.movimientos = ['Gasto', 'Ahorro'].map((tipo, i) => ({ ...base, id:'limite-'+i, tipo, monto:1e308 }));
+  const r = calcularSeguimiento(d);
+  expect(r.semanas[0].saldo).toBeNull(); expect(r.saldo).toBeNull();
+});
+
 it('los planes real y deseado no cambian el seguimiento realizado', () => {
   const d = ejemploEstudiantil(), antes = calcularSeguimiento(d);
   d.proyecciones.deseada = structuredClone(d.proyecciones.real);

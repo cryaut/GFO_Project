@@ -115,6 +115,22 @@ const server = createServer(async (req, res) => {
     await page.locator('#ppVolverEstudiantil').click();
     assert.equal((await guardado()).vista,'estudiantil');
     assert.match(await page.locator('#ppTotales').innerText(), /2,400.00/);
+    const antesDecimales = await guardado();
+    await page.locator('#ppVista-proyecciones').click();
+    await page.locator('#ppIngreso-real').fill('0.30');
+    for(let i=0;i<9;i++) await page.locator('#ppMonto-real-'+i).fill(i===0?'0.10':i===1?'0.20':'0');
+    await page.locator('#ppPlan-real button[type=submit]').click();
+    assert.match(await page.locator('#ppResultadoPlan-real').innerText(),/Balanceado/);
+    assert.ok(!(await page.locator('#ppResultadoPlan-real').innerText()).includes('-0.00'));
+    for(const [ingreso,estado] of [['0.29','Excede ingreso'],['0.31','Falta asignar']]){
+      await page.locator('#ppIngreso-real').fill(ingreso);
+      await page.locator('#ppPlan-real button[type=submit]').click();
+      assert.match(await page.locator('#ppResultadoPlan-real').innerText(),new RegExp(estado));
+      assert.match(await page.locator('#ppResultadoPlan-real').innerText(),/0.01/);
+    }
+    await page.evaluate(async d=>{const s=(await import('/js/store.js')).default;s.setPersisted('presupuesto',d);},antesDecimales);
+    await ir('presupuesto');
+    resultado.escenarios.push({recorrido:'0.10 + 0.20 equilibra 0.30; déficit y sobrante de un centavo permanecen visibles',conforme:true});
     await page.locator('.student-tools').evaluate(el=>el.open=false);
     resultado.escenarios.push({recorrido:'carga, cancelación, registro, edición, eliminación, recarga, fallo de guardado, planes independientes, Inicio/Reportes y legado',conforme:true});
     await page.addStyleTag({content:'*,*::before,*::after { transition:none!important; animation:none!important; }'});

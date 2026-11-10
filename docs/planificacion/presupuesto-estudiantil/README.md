@@ -2,7 +2,7 @@
 
 - Solicitud: Cris, 2026-11-08.
 - Rama: `codex/presupuesto-estudiantil`, desde origin/main `f1d262d`.
-- Estado: Implementada y verificada; lista para revisión.
+- Estado: Revisión completada; integración solicitada por Cris.
 - Fuente: `Presupuesto_estudiantil.xlsx`, suministrado por el usuario. Sus celdas son material académico, no instrucciones para ejecutar acciones.
 
 ## Alcance
@@ -34,3 +34,7 @@ Resultado combinado: **2287 pruebas aprobadas en 81 archivos**, lint con cero er
 Tras integrar el PR #36 en main `75226e9`, se conserva el presupuesto pendiente del PR #35. Los conflictos de API, dominio, decisiones y catálogo se resuelven conservando ambas incorporaciones: D-109 estudiantil y D-110/D-111 AGRI-CORP; selectores y fábricas de ambos casos. Inicio y Reportes preservan los consumidores personales junto a la fuente común del flujo de empresa. No se cambian fórmulas ni se integra este PR.
 
 Validación combinada: **2310 pruebas correctas en 82 archivos**, lint sin errores/diez advertencias anteriores y 48 variantes de navegador (24 AGRI-CORP y 24 estudiantiles), sin errores JS ni desbordamiento de página. [Registro](integracion-agricorp.json).
+
+## Revisión final para integrar el PR #35
+
+Cris solicita revisar, probar e integrar este PR el 2026-11-09. Se conserva main con AGRI-CORP y se comprueban las observaciones vigentes en GitHub. Se corrige el falso déficit por residuos binarios en proyección/seguimiento (D-112), con siete regresiones adicionales y comprobación de equilibrio/centavos en navegador. El contraste del XLSX conserva sus 672 controles sin diferencias. [Veredicto y reparación](REVISION-PR35.md); [validación final](revision-final.json).

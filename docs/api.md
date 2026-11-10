@@ -1097,3 +1097,7 @@ En `js/modules/estados/estados-flujo-documentado.js`:
 `construirEFE` da precedencia al documento para el intervalo exacto y conserva la estimación anterior cuando no existe. `computeEFE` y `flujoDesdeEFE` respetan el intervalo del documento del cierre seleccionado. El adaptador añade `fuente`, `neto.inversion`, `neto.financiamiento` y `saldoInicial`; `construirReporte` añade `flujo` disponible o `null`. Inicio, Proforma y Reportes lo reutilizan. Una apertura sin BG se identifica como declarada, no comprobada contra un balance.
 
 `cargarEjemploEmpresa` prepara y valida los siete módulos AGRI-CORP y usa una única llamada a `store.setModulesPersisted`: si falla, no publica datos parciales. No sustituye el presupuesto ni Activos del hogar. Un id desconocido lanza un error antes de escribir.
+
+### Precisión de saldos estudiantiles (D-112)
+
+`calcularProyeccion` y `calcularSeguimiento` conservan sus firmas. Tras usar las fórmulas existentes, ajustan a cero únicamente diferencias/saldos dentro de una cota relativa al error binario y estrictamente menores de 0.005. No redondean los importes de entrada ni anulan diferencias reales de un centavo. Por ejemplo, asignaciones 0.10 + 0.20 para ingreso 0.30 devuelven diferencia 0 y estado Balanceado. N/D y diferencias fuera de la cota se conservan. La política completa está en D-112.

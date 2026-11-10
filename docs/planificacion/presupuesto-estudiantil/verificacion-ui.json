@@ -1,6 +1,10 @@
 {
   "escenarios": [
     {
+      "recorrido": "0.10 + 0.20 equilibra 0.30; déficit y sobrante de un centavo permanecen visibles",
+      "conforme": true
+    },
+    {
       "recorrido": "carga, cancelación, registro, edición, eliminación, recarga, fallo de guardado, planes independientes, Inicio/Reportes y legado",
       "conforme": true
     },
