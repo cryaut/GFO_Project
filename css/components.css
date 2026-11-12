@@ -143,6 +143,9 @@
 }
 
 .table-wrapper {
+  /* Contiene las etiquetas .sr-only (posición absoluta) de las celdas: sin esto ensanchan la
+     página en móvil en lugar de quedar dentro del desplazamiento de la tabla. */
+  position: relative;
   overflow-x: auto;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);

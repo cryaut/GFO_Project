@@ -1101,3 +1101,47 @@ En `js/modules/estados/estados-flujo-documentado.js`:
 ### Precisión de saldos estudiantiles (D-112)
 
 `calcularProyeccion` y `calcularSeguimiento` conservan sus firmas. Tras usar las fórmulas existentes, ajustan a cero únicamente diferencias/saldos dentro de una cota relativa al error binario y estrictamente menores de 0.005. No redondean los importes de entrada ni anulan diferencias reales de un centavo. Por ejemplo, asignaciones 0.10 + 0.20 para ingreso 0.30 devuelven diferencia 0 y estado Balanceado. N/D y diferencias fuera de la cota se conservan. La política completa está en D-112.
+
+## AGRI-CORP como caso central (D-113)
+
+### Datos del caso (`js/examples/ejemplos-agricorp.js`)
+
+| Exportación | Descripción |
+|---|---|
+| `casoHistoricoReal()` | Caso consolidado: `estados` 2022–2025 con supuestos S1–S3 y flujos documentados 2022–2025, `apalancamiento` (S4–S6, DAP pagados, `depreciacionAmortizacion`), `razonesMercado` (S7 con `nota`), `flujo`, `inventario` (con `composicion`), `equilibrio` (origen estados, `unidadVentas`) y `planeacion.supuestos` 2025. |
+| `casoOperativoSimulado()` | Línea de arroz simulada (antes «unidad de arroz»); mismas formas que antes. |
+| `datosSuplementariosAgricorp()` | Registros `supp.credit_sales` (50 % de las ventas) y `supp.supplier_payments` (pago que reproduce compras a crédito del 60 %). |
+| `flujoRealAgricorp(anio)` | Flujo publicado del año (2022–2025), con `efectoConversion` si lo tiene. Lanza un error si el año no está cargado. |
+| `comportamientoAgricorp(pctCostoVentas = 0.75)` | Clasificación S4–S6 para Apalancamiento; el parámetro sirve para la sensibilidad. |
+| `kardexGranzaAgricorp()` | `{ producto, movimientos, consumo, compras, rotacion2025 }` del kárdex S16. |
+| `presupuestoAgricorp2025()` | Supuestos del presupuesto 2025 con `unidad`, `nota`, `periodoBase` y `desgloseOtrosDesembolsos`. |
+| Constantes | `PERIODOS_REALES`, `EMPRESA_AGRICORP`, `SUPUESTOS_CREDITO`, `SUPUESTOS_COSTOS`, `DEPRECIACION_AMORTIZACION`, `PRECIO_ACCION_SUPUESTO`, `COSTO_QUINTAL_SUPUESTO`, `CRECIMIENTO_VENTAS_2025`, `INVERSION_2025`, `DIVIDENDOS_2025`. |
+
+`catalogo.js` añade `casoDeEjemplo(modulo, id)` → `{ caso: 'agricorp-consolidado'|'agricorp-arroz'|'otro', nombre }` o `null`. Las entradas de AGRI-CORP llevan `grupo: 'AGRI-CORP'`; `panelEjemplos` las agrupa y `vincularEjemplos` preselecciona la primera de la lista.
+
+### Cambios en módulos existentes
+
+| Función | Cambio |
+|---|---|
+| `calcularApalancamiento`, `derivarPeriodo` | Los `otrosGastos`/`otrosIngresos` con identidad confirmada `is.other_operating_expenses`/`is.other_operating_income` forman la UAII. `variables.oio` (otros ingresos operativos, 0 si no hay). Aviso `cf-menor-depreciacion` si `config.depreciacionAmortizacion[periodo]` supera el CF. |
+| `normalizarEquilibrio`, `baseDesdeEstados`, `resolverBase` | `unidadVentas: true` (opcional): unidades = ventas del periodo y precio 1. `baseDesdeEstados(..., 'ventas')` admite esa unidad. El CF derivado es neto de `oio`. |
+| `normalizarFlujo`, `calcularFlujo` | `efectoConversion` opcional; `saldoFinal = saldoInicial + variación + efecto`. Los flujos documentados lo validan y lo exponen en el EFE. |
+| `normalizarInventario`, `validarInventarioRespaldo` | `composicion` opcional (`{ fuente, periodos, categorias: [{ nombre, importes }], deterioro }`); una forma inválida se descarta y se cuenta. Nuevas `normalizarComposicion(c)` y `resumenComposicion(c)`. |
+| `normalizarSupuestos` | Opcionales `unidad`, `nota`, `periodoBase` y `desgloseOtrosDesembolsos` (`CAMPOS_DESGLOSE`: inversión, dividendos, impuestos). Sin ellos la forma no cambia. |
+| `normalizarDatosMercado` | `nota` opcional (hasta `MAX_NOTA_MERCADO` caracteres). |
+| `resultadosReales(estados, periodo?)` | Acepta el periodo; por defecto, el último. |
+| `compararResultados(real, proforma, contraste?)` | Con contraste, cada fila añade `contraste`, `desvio` ((real − proforma) / \|proforma\|) y `desvioPuntos`. |
+| `construirReporte` | Con `periodoBase` declarado compara contra ese año y agrega `contraste` y `balance`. |
+| `construirReporteHTML({ ..., entradas })` | Agrega ER proforma, balance proforma, indicadores y `resumenModulosEmpresa(entradas, reporte)`. |
+| `validarRespaldo` | Importa los campos opcionales anteriores (y `equilibrio.origen`/`periodo`); si el archivo no los trae, no conserva los del módulo actual. |
+
+### Funciones nuevas
+
+| Función | Descripción |
+|---|---|
+| `balanceProforma(estados, presupuesto)` (`proforma-balance-calculations.js`) | `{ disponible, motivo }` o `{ base, contraste, filas, totales, cuadra, financiamientoRequerido, aplicaciones }`. Exige periodo base, desglose que sume los otros desembolsos y apertura igual al balance. También `periodosProforma`, `saldosAgrupados` y `FILAS_BALANCE`. |
+| `avisoCaso(ruta, datos)`, `bannerCaso(aviso)` (`js/utils/casos.js`) | Caso de la pantalla o empresas mezcladas, según `store.casos`. También `registrarCasos`, `tieneDatos`, `CLAVES_EMPRESA` y `CLAVES_RUTA`. |
+| `mapaSupuestos(datos)` (`inicio-supuestos.js`) | Filas S1–S16 con valor vigente, fuente y módulo; `null` si Estados no es AGRI-CORP consolidado. `DATOS_REALES` lista lo que se toma de las fuentes. |
+| `resumenModulosEmpresa(entradas, reporte)` (`integracion-reporte.js`) | Estado de los siete módulos de empresa para el dashboard y el reporte. |
+
+`store.js` agrega la clave `casos: {}` (`{ [modulo]: { caso, nombre } }`).

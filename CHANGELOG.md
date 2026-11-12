@@ -6,6 +6,16 @@ Todos los cambios notables en GFO Toolkit.
 
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
+### AGRI-CORP como caso central (D-113)
+- AGRI-CORP consolidado carga los estados auditados 2022–2025 (F02 y F04 con las mismas líneas) y los flujos publicados 2022–2025 con su efecto de conversión. La utilidad operativa es el subtotal del auditado antes de partidas financieras.
+- Supuestos declarados S1–S16, editables en su módulo: crédito de ventas y compras, clasificación de costos, precio ilustrativo por acción, crecimiento, IR, dividendos, inversión, depreciación, días de inventario y kárdex de granza. Las razones de actividad, el GAO y P/U dejan de estar en N/D.
+- Apalancamiento y Equilibrio suman los otros gastos e ingresos confirmados como operativos; Equilibrio mide en C$1 de ventas cuando no hay unidades publicadas. Avisos si los costos fijos quedan bajo la depreciación publicada.
+- Inventario muestra la composición real por categoría y un kárdex de granza anclado a los saldos reales. Flujo admite el efecto de conversión.
+- Presupuesto maestro 2025 desde el cierre real de 2024. Proforma compara base 2024, proforma 2025 y real 2025, y arma el balance general proforma (cuadra o informa el financiamiento requerido).
+- Reportes resume los siete módulos de empresa y el HTML incluye ER proforma, balance proforma e indicadores.
+- AGRI-CORP va primero y preseleccionado en los selectores; la unidad simulada pasa a «AGRI-CORP · línea de arroz». Cada pantalla muestra su caso o avisa si se mezclan empresas; Inicio muestra el mapa de supuestos.
+- El respaldo JSON conserva los campos opcionales de estos módulos y el origen del C-V-U, que antes se perdía.
+
 ### Módulo 1: Presupuesto personal
 - Revisión del PR #35: se actualiza con AGRI-CORP y se corrige el falso déficit de saldos decimales. El ajuste se limita al error binario, conserva N/D y diferencias reales; siete regresiones y comprobación en navegador (D-112).
 - Nueva vista estudiantil alineada con `Presupuesto_estudiantil.xlsx`: meta, registro por fecha/tipo, seguimiento lunes–domingo y proyecciones real/deseada independientes (D-109). Ahorro y reserva realizados se separan de gastos y asignaciones.
