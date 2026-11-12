@@ -47,7 +47,7 @@ Así se calculan hoy la utilidad operativa (`computeRazones`) y la utilidad neta
 = Utilidad neta (UN)
 ```
 
-Otros ingresos y otros gastos son no operativos: quedan fuera de la UAII.
+Otros ingresos y otros gastos son no operativos: quedan fuera de la UAII. Excepción por identidad (D-113): las cuentas confirmadas en el catálogo como `is.other_operating_expenses` o `is.other_operating_income` son operativas y entran en la UAII de Análisis, Apalancamiento y Equilibrio. El ejemplo AGRI-CORP las usa para «Otros gastos», «Otros ingresos» y el pago mínimo definitivo, así que su UAII es el subtotal del auditado «antes de partidas financieras» (357,667,403 en 2024).
 
 ## Convenciones de cálculo
 
@@ -268,9 +268,9 @@ Disponibilidad de cuentas (D-043 y excepción limitada D-047/D-048 a D-044): una
 | `js/modules/apalancamiento/apalancamiento-calculations.js` | `cuentasOperativas`, `sugerirComportamiento`, `normalizarComportamiento`, `resolverComportamiento`, `derivarPeriodo`, `calcularApalancamiento` |
 | `js/modules/estados/estados-normalize.js` | `normalizeFinancialData(entrada)`, `parseFinancialJSON(texto)`, `sortPeriods(periodos)` (siempre ordena; lo usa el importador), `ordenarPeriodos(periodos)` (ordena solo si todos empiezan con un año) |
 | `js/modules/estados/estados-import.js` | `importStatementFile(archivo, { decimal, avisos })`, `tableTextToFinancialData(texto, { decimal, avisos })`, `sheetsToFinancialData(hojas, { decimal, avisos })`, `parseAmountCell(valor, { decimal, onAmbiguous })`, `inferDecimalStyle(valores)`, `FORMATOS_IMPORTE`, `tabularTemplateCSV()` |
-| `js/modules/integracion/integracion-respaldo.js` | `validarRespaldo(contenido, actuales)` → `{ modulos, omitidos }`, `MAX_RESPALDO_BYTES` |
+| `js/modules/integracion/integracion-respaldo.js` | `validarRespaldo(contenido, actuales)` → `{ modulos, omitidos }` (incluye el registro `casos`, D-113), `MAX_RESPALDO_BYTES` |
 | `js/modules/integracion/index.js` | `getSavedTotals(periodo)` → totales compartidos de `computeFinancialTotals` o `null` si los estados no pueden normalizarse o el periodo no existe; no sustituye el periodo solicitado (D-053/D-054) |
-| `js/modules/integracion/integracion-reporte.js` | `construirReporteHTML({ kpis, estados })` |
+| `js/modules/integracion/integracion-reporte.js` | `construirReporteHTML({ kpis, estados, errorEstados, reporte, entradas, aviso })`, `resumenModulosEmpresa(entradas, reporte)` |
 | `js/modules/analisis/index.js` | `computeRazones(periodo)`, `computeAH`, `computeAV`, `computeDuPont`, `computeCNTCNO`, `computeEOAF(periods)` (EOAF completo: compara el par de periodos más recientes), `computeEFE`, `UMBRALES`, `refreshSavedStates()` (relee los estados guardados antes de reutilizar `computeRazones` fuera de Análisis) |
 | `js/modules/analisis/comprobacion-calculations.js` | `TOLERANCIA_COMPROBACION`, `toleranciaComprobacion(...totales)`, `seleccionarPeriodoPar(periodos, periodoFinal?)`, `variacionesDeCuentas(datos, grupo, periodoInicial, periodoFinal)`, `advertenciasDeBalance(periodos, bgInicial, bgFinal)` (piezas comunes de las comprobaciones del EOAF y el EFE, D-027) |
 | `js/modules/analisis/eoaf-calculations.js` | `clasificarMovimientoEOAF(grupo, tipo, saldoInicial, saldoFinal)`, `etiquetaFalta(motivo)`, `construirEOAF(datos, periodoInicial, periodoFinal)` → `{ periodos, incompleto?, secciones, resumen, advertencias, interpretacion }`, `interpretarEOAF(resultado)` |
@@ -283,7 +283,10 @@ Disponibilidad de cuentas (D-043 y excepción limitada D-047/D-048 a D-044): una
 | `js/modules/planeacion/planeacion-calculations.js` | `calcularPresupuestoMaestro`, `validarSupuestos`, `SUPUESTOS`, `calcularCapitalTrabajo` (incluye valoración por promedio ponderado mensual), `validarCapitalTrabajo`, `CALENDARIOS_CAPITAL_TRABAJO` |
 | `js/modules/planeacion/caja-docente-calculations.js` | `validarCajaDocente`, `proyectarCajaDocente` (cuotas por origen, caja y financiamiento declarado) |
 | `js/modules/proforma/proforma-docente-calculations.js` | `calcularERDocente`, `calcularBalanceDocente`, `calcularERResidualDocente` |
-| `js/modules/proforma/proforma-calculations.js` | `construirReporte`, `resultadosReales`, `resultadosProforma`, `compararResultados`, `alertasIntegradas` |
+| `js/modules/proforma/proforma-calculations.js` | `construirReporte`, `resultadosReales`, `resultadosProforma`, `compararResultados`, `alertasIntegradas`, `indicadoresIntegrados` (rotula «SUPUESTO Sx» con `entradas.supuestos`, D-113) |
+| `js/modules/proforma/proforma-balance-calculations.js` | `balanceProforma(estados, presupuesto)`, `periodosProforma`, `saldosAgrupados` (balance proforma desde el cierre real; D-113) |
+| `js/utils/casos.js` | Sin fórmulas financieras (D-113): `registrarCasos`, `registroCaso`, `huellaCaso`, `estadoCaso`, `casoVigente`, `supuestosActivos`, `avisoCaso`, `bannerCaso`, `textoProcedencia`, `etiquetaSupuesto`, `validarRegistroCasos`, `tieneDatos` |
+| `js/modules/inicio/inicio-supuestos.js` | `mapaSupuestos(datos)` (valor vigente de S1–S16; `null` si Estados ya no es el caso AGRI-CORP), `DATOS_REALES` |
 | `js/utils/form.js`, `js/utils/estados-guardados.js` | `leerNumero`, `nuevoId`, `fechaHoy`; `estadosGuardados`, `totalesPeriodo` |
 | `js/utils/format.js` (N/D) | `formatCurrencyND`, `formatNumberND`, `formatPercentND`: muestran "N/D" en lugar de 0 |
 
@@ -332,3 +335,13 @@ Las nuevas funciones `revisionEstadosFlujo`, `validarFlujosDocumentados`, `adjun
 Un flujo reportado por una fuente identificada, o un escenario explícitamente simulado, tiene precedencia para su intervalo exacto. Sin documento se conserva el EFE estimado de balances. El flujo real 2023→2024 tiene operación 190033364; el simulado junio→septiembre 2027 tiene operación 1075760 y apertura declarada 1500000. No se usa el trimestral como flujo de agosto→septiembre. Una edición de sus estados deja el documento desactualizado y sus flujos en N/D con causa. La comprobación no ajusta diferencias ni certifica la fuente como auditada por la aplicación.
 
 D-112 limita el ajuste de residuos numéricos a los saldos/diferencias del modelo estudiantil: cota relativa a operandos y operaciones, siempre estrictamente por debajo de medio centavo. Las fórmulas continúan en sus funciones existentes; no se redondean entradas ni se adopta la tolerancia 0.01 del EFE. Los importes ausentes continúan N/D y las diferencias de un centavo se conservan.
+
+## AGRI-CORP como caso central (D-113)
+
+El ejemplo «AGRI-CORP · consolidado» combina los estados auditados 2022–2025 con supuestos declarados S1–S16, aprobados por Cris el 2026-11-12. Los supuestos son datos de entrada del ejemplo, no fórmulas: viven en `js/examples/ejemplos-agricorp.js` y se editan en el módulo de cada uno. Las fórmulas siguen en sus funciones de siempre.
+
+- **S1–S3 (crédito):** ventas a crédito = 50 % de las ventas; pagos a proveedores declarados para que las compras a crédito sean el 60 % de las compras estimadas (costo de ventas + inventario final − inventario inicial). Alimentan la rotación y el plazo de CxC y CxP y el ciclo de conversión.
+- **S4–S6 (costos):** costo de ventas 75 % variable, gastos de operación 25 %, pago mínimo variable. Alimentan el GAO, el GAT y el punto de equilibrio. El GAF y los grados por variación usan solo cifras reales.
+- **S15 (inventario final):** días de inventario al cierre de 2024 = inventario final / costo de ventas × `DIAS_ANIO` = 78.49 días. La rotación del año usa el inventario promedio (67.82 días en 2024); una política de saldo final usa un saldo final. No se mezclan las dos bases.
+
+Las cifras que dependen de un supuesto llevan la etiqueta «SUPUESTO Sx» mientras el módulo que lo guarda siga siendo del caso (`supuestosActivos` en `js/utils/casos.js`). La vigencia se comprueba con una huella de la parte real del módulo, no con fórmulas.

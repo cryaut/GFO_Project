@@ -3,8 +3,8 @@
 - **Propuesto por**: Carlos
 - **Fecha**: 11 de noviembre de 2026
 - **Rama prevista**: `feat/agricorp-integral`, desde `origin/main` (`5e0b5c1`)
-- **Decisión que se registrará**: D-113, que reemplaza en parte a D-110
-- **Estado**: propuesta para el equipo; todavía no hay código
+- **Decisión**: D-113, que reemplaza en parte a D-110
+- **Estado**: implementado en el PR #37. Supuestos S1–S16 aprobados por Cris el 12 de noviembre de 2026; S15 corregido en la revisión (sección 13)
 
 ---
 
@@ -59,6 +59,13 @@ Cada dato que entra a la app lleva una de estas etiquetas, que se ven en pantall
 
 Lo que no tiene ni dato real ni supuesto aprobado **sigue en N/D**. No se inventa nada en silencio.
 
+**Cómo se ve en la app.** No se pone una etiqueta en cada cifra. Se marca lo que puede confundirse:
+
+- Cada cifra que depende de un supuesto lleva **SUPUESTO** con su id (por ejemplo, «SUPUESTO S4–S6» en el GAO y el GAT estructurales, «SUPUESTO S1» en la rotación de CxC). Lo mismo en Proforma, Inicio y el reporte exportado.
+- El aviso de arriba de cada pantalla dice si los datos son los de AGRI-CORP. Si una cifra real se editó o se reemplazó, el aviso deja de afirmar «datos reales» y las etiquetas de S1–S3 desaparecen, porque ya no se sabe si son del caso.
+- La composición del inventario lleva **REAL** y el mapa de supuestos de Inicio separa lo real de lo supuesto.
+- Lo que no lleva etiqueta es real o derivado de cifras reales.
+
 ### 3.2 Dos capas de AGRI-CORP
 
 Algunos módulos trabajan por **unidades** (precio por unidad, unidades vendidas, productos en bodega), y AGRI-CORP no publica unidades ni precios. Por eso el caso tiene dos capas:
@@ -85,7 +92,7 @@ La capa consolidada es la que sostiene la defensa; la línea de arroz sirve para
 
 ## 4. Fuentes
 
-Todas las cifras reales salen de dos archivos de investigación (consulta del 11 de noviembre de 2026) y de los PDF que citan:
+Todas las cifras reales salen de dos archivos de investigación (consulta del 11 de noviembre de 2026) y de los PDF que citan. Los dos archivos están en [`investigacion/`](investigacion/), con los enlaces públicos de cada PDF. Para revisar 2022 y 2025 directamente contra los PDF, la tabla [CONTRASTE-2022-2025.md](investigacion/CONTRASTE-2022-2025.md) da cada cifra cargada con su documento, página y enlace.
 
 - *AGRI-CORP: estados, datos útiles y supuestos para GFO*: balances, resultados, totales de flujo y supuestos propuestos.
 - *AGRI-CORP: detalle de flujos de efectivo e inventarios*: cada partida de los flujos 2022–2025 (operación, inversión y financiamiento), la depreciación y las inversiones de cada año, y el inventario por categoría (granza, sal, productos terminados, repuestos, etc.).
@@ -105,8 +112,8 @@ Documentos citados:
 Salvedades que se respetan:
 
 - 2022 y 2023 tienen opinión calificada del auditor (no se consolidó Industrias San Francisco). Se indica en la app.
-- El balance de 2022 tiene dos presentaciones (F01 y F02). Se usa **F02**, que es la comparable con 2023.
-- 2024 tiene dos presentaciones (F03 y F04). Se usa **F04** para 2024 y 2025, con el pago mínimo definitivo en línea propia. Así el año base y el año de contraste se leen igual.
+- El balance de 2022 tiene dos presentaciones (F01 y F02). Se usa **F02**, que es la comparable con 2023. Balance y resultados de 2022 y 2023 salen de F02.
+- 2024 tiene dos presentaciones (F03 y F04). Se usa **F04** para 2024 y 2025, con el pago mínimo definitivo en línea propia. Así el año base y el año de contraste se leen igual. F02 no separa el pago mínimo: en 2022 y 2023 va dentro de «Otros gastos».
 - No se mezclan líneas de distintas versiones de un mismo flujo. Cada año usa una sola versión: 2022 de F02, 2023 y 2024 de F03, 2025 de F04.
 - En 2025, el flujo de inversión es positivo (C$ 214,423,000) aunque el rótulo de F04 diga «usado en». Se conserva el signo publicado.
 
@@ -114,7 +121,7 @@ Salvedades que se respetan:
 
 ## 5. Los supuestos
 
-Todos vienen de la sección 11 del archivo de investigación o de decisiones del equipo. Ninguno es un dato confirmado de AGRI-CORP.
+Todos vienen de la sección 11 del archivo de investigación (S1–S8) o de decisiones del equipo (S9–S16). Ninguno es un dato confirmado de AGRI-CORP. **Aprobación:** Cris aprobó el uso de S1–S16, declarados y editables, el 12 de noviembre de 2026 (D-113).
 
 | # | Supuesto | Valor | Dónde se edita | A qué afecta |
 |---|---|---|---|---|
@@ -132,8 +139,10 @@ Todos vienen de la sección 11 del archivo de investigación o de decisiones del
 | S12 | Partidas sin regla de proyección | Sin cambio respecto de 2024 | Proforma | Balance proforma |
 | S13 | Depreciación y amortización 2025 | Las de 2024: PPE 117,394,766 + derecho de uso 12,667,239 + intangibles 19,179,415 = **149,241,420** | Proforma | PPE e intangibles proforma |
 | S14 | Inversión en activo fijo 2025 | La de 2024: PPE 36,286,932 + intangibles 9,121,425 = **45,408,357** | Proforma | PPE proforma, flujo de inversión proyectado |
-| S15 | Política de inventario final | Días de inventario de 2024: 67.82 días (DERIVADO) | Presupuesto maestro | Compras, pagos, inventario proforma |
-| S16 | Kárdex de granza | Costo hipotético por quintal; la cantidad sale de dividir el saldo real entre ese costo | Inventario | Kárdex, stock mínimo y alertas |
+| S15 | Política de inventario final | Días de inventario al **cierre** de 2024: 1,621,305,239 / 7,539,860,126 × 365 = **78.49 días**. El inventario final de 2025 crece con las ventas (×1.0135) | Presupuesto maestro | Compras, pagos, inventario proforma |
+| S16 | Kárdex de granza | Costo hipotético de C$ 620 por quintal; la cantidad sale de dividir el saldo real entre ese costo | Inventario | Kárdex, stock mínimo y alertas |
+
+**Por qué S15 usa el inventario final.** Los 67.82 días de la sección 6 se calculan con el inventario *promedio* y miden la rotación del año. Una política de inventario final se compara con un saldo final. La primera versión del PR usaba 67.82 días como política: el inventario de cierre de 2025 quedaba en 1,419,868,672, unos C$ 201 M bajo el cierre real de 2024, y esa reducción (223,324,187 frente a la política corregida) aparecía como caja. Con 78.49 días el inventario cierra en 1,643,192,860 y la caja final del presupuesto baja de 655,014,198 a 431,690,010. La utilidad neta, los proveedores y el total de activos del balance proforma no cambian. Que el balance proforma cuadre es una consecuencia aritmética del modelo, no una validación de los supuestos.
 
 **Dividendos de años anteriores:** ya no quedan en N/D. Los flujos traen los dividendos preferentes **pagados**: 4,443,312 (2022), 1,948,421 (2023), 7,520,629 (2024) y 7,520,629 (2025). Se cargan como DAP con la etiqueta "pagado según flujo". El dato es real, pero un pago no siempre es igual al dividendo declarado, así que se rotula.
 
@@ -174,7 +183,15 @@ Todos vienen de la sección 11 del archivo de investigación o de decisiones del
   | 2024 | 5.38 veces | 67.82 |
   | 2025 | 4.08 veces | 89.46 |
 
-- Rotación de CxC 2024 = 4.33 veces (84.26 días), hipotética por S1.
+- Rotación de CxC 2024 = 4.33 veces (84.26 días), hipotética por S1. Lleva la etiqueta «SUPUESTO S1»; la CxP y el plazo de pago, «SUPUESTO S2–S3»; el ciclo de conversión, «SUPUESTO S1–S3».
+- **Cambian cifras visibles de Análisis.** El ejemplo clasifica «Otros gastos», «Otros ingresos» y el pago mínimo definitivo como operativos, porque el auditado los presenta antes de las partidas financieras. En `main` eran no operativos. Por eso cambian la UAII, el margen operativo y la cobertura de intereses de Análisis, no solo Apalancamiento:
+
+  | Año | Margen operativo `main` → PR | Cobertura de intereses `main` → PR |
+  |---|---|---|
+  | 2023 | 4.99 % → 3.17 % | 1.78× → 1.13× |
+  | 2024 | 6.01 % → 3.97 % | 1.96× → 1.30× |
+
+  La UAII de 2024 pasa de 541,920,508 a 357,667,403 (subtotal del auditado). Las fórmulas de Análisis no cambian.
 - El EFE de Análisis usa el flujo **publicado** de cada año como flujo documentado: misma fuente, mismo intervalo y todas sus partidas.
 - Las cifras de SCRiesgo (10.84 veces en CxC, 33 días) se citan como contraste externo, no se cargan.
 
@@ -183,7 +200,7 @@ Todos vienen de la sección 11 del archivo de investigación o de decisiones del
 - Clasificación de costos S4–S6 con el comportamiento `mixto` que el módulo ya admite.
 - DAP de 2022 a 2025 con los dividendos preferentes pagados según cada flujo.
 - GAO y GAT dejan de estar en N/D y llevan la etiqueta **SUPUESTO**.
-- **UAII igual en toda la app:** hoy Apalancamiento calcula la UAII solo con costo de ventas, gastos de administración y gastos de ventas (541,920,508 en 2024). Análisis ya usa el subtotal del auditado «antes de partidas financieras» (357,667,403), que además incluye el pago mínimo definitivo, otros gastos y otros ingresos. F2 hace que Apalancamiento use la misma UAII.
+- **UAII igual en toda la app:** en `main`, con el ejemplo AGRI-CORP, tanto Análisis como Apalancamiento daban una UAII de 541,920,508 en 2024, porque el ejemplo marcaba «Otros gastos» y «Otros ingresos» como no operativos y no traía el pago mínimo en línea propia. El PR los clasifica como operativos en el ejemplo y Apalancamiento suma esas cuentas, así que los dos módulos usan el subtotal del auditado «antes de partidas financieras» (357,667,403). Ver el cambio de cifras de Análisis arriba.
 - **Prueba de coherencia con un dato real:** la depreciación y amortización de 2024 (149,241,420) es un costo fijo seguro. La app comprueba que los costos fijos que resultan de S4–S5 no sean menores que esa cifra.
 
 ### Razones de mercado
@@ -236,7 +253,7 @@ El anexo trae el inventario **real por categoría** de 2022 a 2025, en C$. Advie
 - Proyección de **2025 en cuatro trimestres**, desde el cierre real de 2024.
 - Aperturas reales: caja 284,636,118; clientes 1,160,810,469; proveedores 1,039,869,493; inventario 1,621,305,239.
 - Ventas 2025 = 9,010,443,238 × 1.0135 = **9,132,084,222** (S8), repartidas en partes iguales (S9).
-- Costo de ventas 83.68 % de las ventas (proporción 2024). Cobros, compras e inventario con S1, S2 y S15 (67.82 días de inventario).
+- Costo de ventas 83.68 % de las ventas (proporción 2024). Cobros, compras e inventario con S1, S2 y S15 (78.49 días de inventario, base de cierre).
 - **Unidad del presupuesto:** "C$1 al costo". El costo unitario es 1 y el precio es ventas ÷ costo de 2024 = 1.1950. Así el inventario del presupuesto se lee directamente en C$ y coincide con el balance (apertura 1,621,305,239).
 - El impuesto pagado y los intereses pagados del presupuesto se contrastan con los reales de 2025 (393,877,433 y 327,207,977).
 
@@ -288,7 +305,7 @@ En la defensa se puede hacer en vivo: se cambia un supuesto y se recorre el efec
 
 ### 8.1 Mapa de supuestos en Inicio
 
-Una tabla única con cada supuesto (S1–S12):
+Una tabla única con cada supuesto (S1–S16):
 
 - su valor;
 - su etiqueta (REAL, DERIVADO o SUPUESTO);
@@ -299,9 +316,10 @@ Responde "¿de dónde sale esta cifra?" sin recorrer módulo por módulo. Se cal
 
 ### 8.2 Procedencia en cada pantalla
 
-- Cada módulo muestra arriba "AGRI-CORP · consolidado" o "AGRI-CORP · línea de arroz".
+- Cada módulo muestra arriba "AGRI-CORP · consolidado" o "AGRI-CORP · línea de arroz", mientras sus datos sigan siendo los del caso. El registro guarda una huella de la parte real de cada módulo (estados publicados, flujos publicados y composición del inventario). Si esa parte cambia por una edición, un archivo importado o un respaldo, la pantalla dice «Datos modificados» en vez de «datos reales». Editar un supuesto no cambia la huella.
 - Las cifras supuestas llevan su etiqueta.
 - Si se carga un ejemplo de otra empresa en un solo módulo, la pantalla avisa que hay empresas mezcladas.
+- El respaldo JSON exporta y restaura el registro de casos. Un respaldo sin registro deja sin caso los módulos que restaura.
 
 ### 8.3 Selectores de ejemplos
 
@@ -317,10 +335,10 @@ Cada fase termina con `npm test` y `npm run lint` en verde y un commit propio.
 
 | Fase | Contenido | Resultado verificable |
 |---|---|---|
-| **F1** ✅ | Estados 2022–2025 reales (presentación F04) y datos suplementarios S1–S3 | Activos y utilidad neta de los cuatro años coinciden con los auditados; rotaciones de control. **Hecho**: además se adjuntan los flujos publicados de 2024 y 2025 (cuadran con diferencia 0) y los dividendos pagados de 2022–2025. Los flujos de 2022 y 2023 esperan a F3, porque tienen efecto de conversión |
+| **F1** ✅ | Estados 2022–2025 reales (2022–2023 de F02; 2024–2025 de F04) y datos suplementarios S1–S3 | Activos y utilidad neta de los cuatro años coinciden con los auditados; rotaciones de control. **Hecho**: además se adjuntan los flujos publicados de 2024 y 2025 (cuadran con diferencia 0) y los dividendos pagados de 2022–2025. Los flujos de 2022 y 2023 esperan a F3, porque tienen efecto de conversión |
 | **F2** ✅ | Apalancamiento (S4–S6, DAP) y Mercado (acciones, S7) | GAO, GAT, P/U y P/VL con cifra y etiqueta. **Hecho**: la UAII de Apalancamiento es el subtotal operativo del auditado, igual que en Análisis (357,667,403 en 2024); GAO 2024 = 8.18 y GAF = 3.25. Aviso si los costos fijos quedan bajo la depreciación publicada. Mercado muestra la nota SUPUESTO del precio. Pendiente para F6–F7: la etiqueta "ilustrativo" en los indicadores de Proforma e Inicio |
 | **F3** ✅ | Equilibrio, Flujo e Inventario sobre AGRI-CORP, consolidado y línea de arroz | Punto de equilibrio en C$ y en sacos; flujo real 2022–2025 línea por línea, conciliado con el balance; composición real de inventario y kárdex de granza. **Hecho**: PE 2024 = C$ 7,909,413,340 en C$1 de ventas, margen de seguridad 12.22 % y la misma UAII y GAO de Apalancamiento (los otros ingresos operativos reducen el CF). Flujos 2022–2025 con efecto de conversión, en Análisis y en el selector de Flujo. Composición real que coincide con el balance en los cuatro años y kárdex de granza (C$ 620/quintal, consumo = rotación 2025 × granza promedio, stock mínimo = un mes) que cierra en el saldo real de 2025. El respaldo JSON conserva estos campos y el origen del C-V-U. El flujo proyectado 2025 pasa a F4, porque sale del presupuesto |
-| **F4** ✅ | Presupuesto maestro 2025 trimestral (S8–S10) | Caja, cobros, pagos e inventario por trimestre. **Hecho**: ventas 9,132,084,222; UAII 371,735,210 (= UAII 2024 + 1.35 % del margen después de costos variables); utilidad neta 67,137,655; caja final 655,014,198 sin financiamiento; inventario final 1,419,868,672 (67.82 días). Otros ingresos operativos netos de los gastos fijos; D&A de 2024 como depreciación; el IR por pagar de 2024 sale en el T1; saldo mínimo de caja 0. Limitación: el módulo usa costeo absorbente, así que su propio punto de equilibrio trata todo el costo de ventas como variable (el del caso está en Punto de equilibrio). Pendiente para F5: hoy Proforma compara la proyección contra el último periodo (real 2025); debe mostrar real 2024 (base), proforma 2025 y real 2025 (contraste) |
+| **F4** ✅ | Presupuesto maestro 2025 trimestral (S8–S10) | Caja, cobros, pagos e inventario por trimestre. **Hecho**: ventas 9,132,084,222; UAII 371,735,210 (= UAII 2024 + 1.35 % del margen después de costos variables); utilidad neta 67,137,655; caja final 431,690,010 sin financiamiento; inventario final 1,643,192,860 (78.49 días, S15 corregido en la revisión; la primera versión daba 655,014,198 y 1,419,868,672 con 67.82 días). Otros ingresos operativos netos de los gastos fijos; D&A de 2024 como depreciación; el IR por pagar de 2024 sale en el T1; saldo mínimo de caja 0. Limitación: el módulo usa costeo absorbente, así que su propio punto de equilibrio trata todo el costo de ventas como variable (el del caso está en Punto de equilibrio). Pendiente para F5: hoy Proforma compara la proyección contra el último periodo (real 2025); debe mostrar real 2024 (base), proforma 2025 y real 2025 (contraste) |
 | **F5** ✅ | Balance proforma y contraste con 2025 real | El balance cuadra o muestra el financiamiento requerido; columna real 2025. **Hecho**: el presupuesto declara su periodo base (2024) y reparte los otros desembolsos (inversión, dividendos, IR pagado). El balance proforma abre con el real de 2024, cierra con el presupuesto y se contrasta con el real de 2025: activos 6,373,941,205 = pasivos + patrimonio (cuadra, sin financiamiento externo). El ER compara base 2024, proforma 2025 y real 2025 con el desvío (real − proforma) / |proforma|: ventas −13.54 %, UAII −47.21 %, utilidad neta de +67.1 M a −158.0 M. Sin periodo base, Proforma funciona como antes |
 | **F6** ✅ | Proforma y Reportes integrados | Reportes resume todos los módulos; el HTML incluye el balance proforma. **Hecho**: el resumen por módulo del dashboard muestra los siete módulos de empresa con su cifra clave o el motivo de lo que falta. El HTML exportado agrega el ER proforma (base, proforma, contraste y desvío), el balance proforma, los indicadores integrados y el estado de los módulos. P/U y P/VL de Proforma y del reporte dicen «SUPUESTO: precio ilustrativo» cuando el precio tiene nota |
 | **F7** ✅ | Mapa de supuestos, procedencia, selectores e Inicio | Inicio carga AGRI-CORP por defecto; aviso de mezcla de empresas. **Hecho**: AGRI-CORP va primero y preseleccionado, en su propio grupo, en los selectores de Inicio, Estados, Flujo, Equilibrio, Presupuesto, Inventario y Mercado; los demás ejemplos quedan en «Otros ejemplos». La unidad simulada se llama «AGRI-CORP · línea de arroz (escenario simulado)». Un registro `casos` en el store guarda de qué caso viene cada módulo; cada pantalla de empresa muestra arriba el caso o el aviso «Empresas mezcladas». Inicio muestra el mapa de supuestos con el valor vigente de S1–S16, su fuente y el módulo donde se edita |
@@ -334,9 +352,9 @@ Este documento sirve de aviso para quienes mantienen estas áreas:
 
 | Área | Responsable | Qué cambia |
 |---|---|---|
-| Estados (`js/modules/estados/`) | Cris | Se agregan periodos y datos suplementarios al ejemplo; la presentación de 2022–2024 pasa a la de F04. El motor no cambia |
-| Reportes (`js/modules/integracion/`) | Cris | El resumen incluye todos los módulos y el balance proforma |
-| Análisis (`js/modules/analisis/`) | Henry | Sin cambios de fórmulas; recibe cuatro años y los datos de crédito |
+| Estados (`js/modules/estados/`) | Cris | Se agregan periodos y datos suplementarios al ejemplo; 2022–2023 con la presentación de F02 y 2024–2025 con la de F04. El motor no cambia |
+| Reportes (`js/modules/integracion/`) | Cris | El resumen incluye todos los módulos y el balance proforma; el reporte dice de qué caso vienen los datos y rotula los supuestos; el respaldo restaura el registro de casos |
+| Análisis (`js/modules/analisis/`) | Henry | Sin cambios de fórmulas. Recibe cuatro años y los datos de crédito. Cambian el margen operativo y la cobertura del ejemplo (sección 6) y se agregan etiquetas SUPUESTO en CxC, CxP, plazos y ciclo |
 | Apalancamiento, Equilibrio, Flujo, Inventario, Presupuesto, Proforma | Carlos | Ejemplos de AGRI-CORP, etiquetas de procedencia y balance proforma |
 | Catálogo de ejemplos e Inicio | Todos | AGRI-CORP por defecto; los demás ejemplos se conservan |
 
@@ -368,11 +386,29 @@ No se agregan dependencias. Las fórmulas siguen la convención del proyecto: a�
 7. **Depreciación e inversión 2025:** se repiten las de 2024 (S13 y S14) y se contrastan con las reales de 2025.
 8. **Flujo de efectivo:** real línea por línea; operación como subtotal publicado más las líneas de caja.
 
-**Pendiente de decidir en equipo:** el costo hipotético por quintal de granza (S16). Con él, la app calcula cuántos quintales representan los C$ 848,279,169 del cierre de 2024.
+**S16 decidido:** C$ 620 por quintal, decidido con Carlos el 11 de noviembre de 2026. Con él, la app calcula cuántos quintales representan los C$ 848,279,169 del cierre de 2024.
+
+**Aprobación de los supuestos:** Cris aprobó el 12 de noviembre de 2026 el uso de S1–S16, declarados y editables.
 
 ---
 
-## 13. Qué necesitamos del equipo
+## 13. Revisión del PR (12 de noviembre de 2026)
+
+La primera revisión pidió no integrar todavía. Lo que se corrigió:
+
+1. **Aviso del caso falso.** El aviso decía «datos reales» aunque Estados se hubiera reemplazado. Ahora el registro guarda una huella de la parte real y el aviso pasa a «Datos modificados» si cambia (sección 8.2).
+2. **Respaldo.** Restaurar un respaldo no recuperaba `casos` y listaba siete campos como omitidos. Ahora los restaura y valida.
+3. **Afirmación falsa sobre Análisis.** Corregida en la sección 6: Análisis también cambia.
+4. **Etiquetas SUPUESTO.** Agregadas en Apalancamiento, Análisis, Equilibrio, Proforma y el reporte (sección 3.1).
+5. **S15.** Pasa a la base de inventario final (sección 5).
+6. **Documentación.** Este plan, la ficha, D-113, `arquitectura.md` y `dominio-financiero.md`.
+7. **Trazabilidad.** Archivos de investigación y tabla de contraste en [`investigacion/`](investigacion/).
+
+---
+
+## 14. Qué se pidió al equipo antes de empezar
+
+Se conserva como registro. Las respuestas están en las secciones 12 y 13.
 
 - **Todos:** revisar las secciones 5 y 12. Si alguien no está de acuerdo con un supuesto, hay que decirlo antes de F1.
 - **Todos:** proponer el costo por quintal de granza para el kárdex (S16).

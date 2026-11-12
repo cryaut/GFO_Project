@@ -133,8 +133,11 @@ Secciones de `defaultData` en `js/store.js`:
 | `equilibrio` | `precio`, `costoVariableUnitario`, `costosFijos`, `unidades`, `utilidadObjetivo` (`null` = sin dato) y `escenario` (cambios en fracción: `{ precio, costoVariable, costosFijos, volumen }`) |
 | `flujo` | `saldoInicial`, `periodoBase` (periodo del balance del que salió el saldo, o `''`) y `movimientos[]` (`{ id, concepto, actividad: 'operacion' \| 'inversion' \| 'financiamiento', tipo, monto }`) |
 | `planeacion` | Presupuesto anterior `{ supuestos }` o escenarios `{ versionEscenarios: 1, bases, escenarios, activoId }`. |
-| `razonesMercado` | `periodos`: por periodo `{ acciones, precio, dividendos }` (`null` = sin dato), para las razones de mercado de Análisis |
+| `razonesMercado` | `periodos`: por periodo `{ acciones, precio, dividendos }` (`null` = sin dato), para las razones de mercado de Análisis. Opcional: `nota` (procedencia del precio, p. ej. «SUPUESTO S7») |
+| `casos` | D-113: de qué caso viene cada módulo de empresa. `{ [clave]: { caso: 'agricorp-consolidado' \| 'agricorp-arroz' \| 'otro', nombre, huella? } }` con `clave` ∈ `estados`, `apalancamiento`, `razonesMercado`, `flujo`, `inventario`, `equilibrio`, `planeacion`. `huella` (8 hexadecimales) resume la parte real del módulo al cargarlo: `periods`, `balanceGeneral` y `estadoResultados` de Estados; `saldoInicial`, `periodoBase`, `movimientos` y `efectoConversion` de Flujo; `composicion` de Inventario. Lo escriben Inicio y los selectores de ejemplos (`registrarCasos`); lo leen el aviso de `app.js`, el mapa de supuestos y las etiquetas SUPUESTO (`js/utils/casos.js`). El respaldo JSON lo exporta y lo restaura junto con los módulos que restaura |
 | `theme` | `'light'` o `'dark'` |
+
+Campos opcionales que agrega D-113 dentro de módulos existentes (el respaldo los admite si son válidos y no los hereda del módulo actual): `equilibrio.origen`, `equilibrio.periodo` y `equilibrio.unidadVentas`; `flujo.efectoConversion`; `apalancamiento.depreciacionAmortizacion` (por periodo, dato real de referencia); `inventario.composicion` (saldos reales por categoría, solo lectura); `planeacion.supuestos.unidad`, `nota`, `periodoBase` y `desgloseOtrosDesembolsos`.
 
 En Planeación, cada base guarda empresa, moneda, fecha de corte, origen, revisión y apertura. Los escenarios guardan `id`, `nombre`, `baseId`, `origenId` y `supuestos`. La lectura combina los saldos de la base con los supuestos del escenario. `baseId: null` identifica el presupuesto anterior con apertura editable. `null` en un supuesto conserva un dato pendiente.
 

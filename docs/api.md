@@ -1132,16 +1132,23 @@ En `js/modules/estados/estados-flujo-documentado.js`:
 | `resultadosReales(estados, periodo?)` | Acepta el periodo; por defecto, el último. |
 | `compararResultados(real, proforma, contraste?)` | Con contraste, cada fila añade `contraste`, `desvio` ((real − proforma) / \|proforma\|) y `desvioPuntos`. |
 | `construirReporte` | Con `periodoBase` declarado compara contra ese año y agrega `contraste` y `balance`. |
-| `construirReporteHTML({ ..., entradas })` | Agrega ER proforma, balance proforma, indicadores y `resumenModulosEmpresa(entradas, reporte)`. |
-| `validarRespaldo` | Importa los campos opcionales anteriores (y `equilibrio.origen`/`periodo`); si el archivo no los trae, no conserva los del módulo actual. |
+| `construirReporteHTML({ ..., entradas, aviso })` | Agrega ER proforma, balance proforma, indicadores y `resumenModulosEmpresa(entradas, reporte)`. `aviso` (de `avisoCaso('reportes', datos)`) se escribe como texto plano con `textoProcedencia`: el reporte dice de qué caso vienen los datos. |
+| `validarRespaldo` | Importa los campos opcionales anteriores (y `equilibrio.origen`/`periodo`); si el archivo no los trae, no conserva los del módulo actual. Restaura `casos` con `validarRegistroCasos`: cada módulo restaurado toma el registro del archivo o queda sin caso; un registro de un módulo que el archivo no trae se informa en `omitidos` como `casos.<clave>`. |
+| `indicadoresIntegrados(entradas, periodo)` | `entradas.supuestos` (opcional, de `supuestosActivos` más `cvu`) antepone «SUPUESTO Sx.» a la lectura de GAO, GAT, punto de equilibrio, margen de seguridad, presupuesto e inventario. |
+| `apalancamientoUI(page, { ..., supuestos })`, `equilibrioUI(page, { ..., supuestos })` | Con `supuestos.costos`, rotulan «SUPUESTO S4–S6» el GAO y el GAT estructurales y el C-V-U derivado de los estados. |
 
 ### Funciones nuevas
 
 | Función | Descripción |
 |---|---|
 | `balanceProforma(estados, presupuesto)` (`proforma-balance-calculations.js`) | `{ disponible, motivo }` o `{ base, contraste, filas, totales, cuadra, financiamientoRequerido, aplicaciones }`. Exige periodo base, desglose que sume los otros desembolsos y apertura igual al balance. También `periodosProforma`, `saldosAgrupados` y `FILAS_BALANCE`. |
-| `avisoCaso(ruta, datos)`, `bannerCaso(aviso)` (`js/utils/casos.js`) | Caso de la pantalla o empresas mezcladas, según `store.casos`. También `registrarCasos`, `tieneDatos`, `CLAVES_EMPRESA` y `CLAVES_RUTA`. |
-| `mapaSupuestos(datos)` (`inicio-supuestos.js`) | Filas S1–S16 con valor vigente, fuente y módulo; `null` si Estados no es AGRI-CORP consolidado. `DATOS_REALES` lista lo que se toma de las fuentes. |
-| `resumenModulosEmpresa(entradas, reporte)` (`integracion-reporte.js`) | Estado de los siete módulos de empresa para el dashboard y el reporte. |
+| `avisoCaso(ruta, datos)`, `bannerCaso(aviso)` (`js/utils/casos.js`) | `{ tipo: 'caso' \| 'mezcla' \| 'modificado', ... }` o `null`. «modificado»: un módulo con registro de AGRI-CORP cuya parte real ya no coincide con la huella; el aviso deja de afirmar «datos reales». Una mezcla puede traer también `modificados`. También `registrarCasos`, `tieneDatos`, `CLAVES_EMPRESA`, `CLAVES_RUTA` y `CASOS_VALIDOS`. |
+| `huellaCaso(clave, modulo)`, `registroCaso(clave, caso, modulo)` | Huella FNV-1a de 8 hexadecimales de la parte real (`estados`: `periods`, `balanceGeneral`, `estadoResultados`; `flujo`: `saldoInicial`, `periodoBase`, `movimientos`, `efectoConversion`; `inventario`: `composicion`), con las claves ordenadas. `null` para módulos sin parte real. No es una medida de seguridad. |
+| `estadoCaso(clave, datos)`, `casoVigente(datos, clave)` | `{ clave, caso, nombre, vigente }` o `null` si el módulo está vacío o sin registro; `casoVigente` devuelve el caso solo si sigue vigente. Un registro sin huella en un módulo con parte real no es vigente. |
+| `supuestosActivos(datos)` | `{ credito, costos, presupuesto, kardex }`: qué grupos de supuestos de AGRI-CORP consolidado están vigentes (S1–S3, S4–S6, S8–S15, S16). |
+| `textoProcedencia(aviso)`, `etiquetaSupuesto(ids, titulo?)` | Texto plano del aviso para el reporte; insignia HTML «SUPUESTO ids» escapada. |
+| `validarRegistroCasos(valor, omitidos)` | Valida el registro de un respaldo: claves de empresa, `caso` ∈ `CASOS_VALIDOS`, `nombre` de 1 a 120 caracteres y `huella` opcional de 8 hexadecimales. Lanza un `Error` si no. |
+| `mapaSupuestos(datos)` (`inicio-supuestos.js`) | Filas S1–S16 con valor vigente, fuente (aprobado el 2026-11-12) y módulo; `null` si Estados no es AGRI-CORP consolidado vigente. `DATOS_REALES` lista lo que se toma de las fuentes. |
+| `resumenModulosEmpresa(entradas, reporte)` (`integracion-reporte.js`) | Estado de los siete módulos de empresa para el dashboard y el reporte; rotula los supuestos con `entradas.supuestos`. |
 
-`store.js` agrega la clave `casos: {}` (`{ [modulo]: { caso, nombre } }`).
+`store.js` agrega la clave `casos: {}` (`{ [modulo]: { caso, nombre, huella? } }`).
