@@ -73,7 +73,7 @@ it('el selector sigue disponible después de cargar y cancelar no guarda', async
 });
 
 it.each([
-  ['agricorp-historico', '2024', 190033364, -78516767, 102282062, 284636118, 'flujo_reportado'],
+  ['agricorp-historico', '2025', 37782108, 214423000, -387590055, 149251171, 'flujo_reportado'],
   ['agricorp-simulado', '2027-09', 1075760, -150000, -45000, 2380760, 'flujo_simulado_documentado']
 ])('%s usa los mismos flujos e intervalo en captura, Análisis, Inicio, Proforma y HTML', (id, periodo, operacion, inversion, financiamiento, final, naturaleza) => {
   cargarEjemploEmpresa(id); refreshSavedStates();
@@ -101,7 +101,7 @@ it('la carga de solo Estados también conserva y exporta el flujo documentado', 
 
 it.each(['importe','nombre','moneda'])('cambiar %s invalida el documento sin inventar otra cifra operativa', campo => {
   const d = casoHistoricoReal().estados;
-  if (campo === 'importe') d.balanceGeneral['2024'].activos.Efectivo++;
+  if (campo === 'importe') d.balanceGeneral['2024'].activos['Efectivo y equivalentes de efectivo']++;
   if (campo === 'nombre') d.name = 'Otra entidad';
   if (campo === 'moneda') d.moneda = 'USD';
   const r = construirEFE(d,'2023','2024');
@@ -115,7 +115,7 @@ it('no usa una captura manual editada para reemplazar el flujo documental', () =
   cargarEjemploEmpresa('agricorp-historico');
   const captura = structuredClone(store.get('flujo')); captura.movimientos[0].monto = 1;
   store.setPersisted('flujo',captura);
-  expect(reunirEntradas().flujo.neto.operacion).toBe(190033364);
+  expect(reunirEntradas().flujo.neto.operacion).toBe(37782108);
 });
 
 it.each(['tipo','moneda','monto','duplicado','hueco'])('rechaza un flujo documental inválido: %s', campo => {
@@ -178,7 +178,8 @@ it('el presupuesto personal del dossier se abre en la vista mensual y no sustitu
 
 it('el texto de la fuente se escapa en el reporte HTML', () => {
   const estados = casoHistoricoReal().estados;
-  estados.flujosDocumentados[0].fuente = '<img src=x onerror=alert(1)>';
+  // El reporte usa el flujo del último par de periodos (2024 → 2025).
+  estados.flujosDocumentados.find(f => f.periodoFinal === '2025').fuente = '<img src=x onerror=alert(1)>';
   store.setPersisted('estados', estados);
   const reporte = construirReporte(reunirEntradas());
   const html = construirReporteHTML({ estados, reporte });

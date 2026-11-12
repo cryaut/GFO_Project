@@ -12,8 +12,8 @@ const estados = [
   { id:'bartlett-clase', nombre:'Bartlett · razones de clase', fuente:'Diapositivas AFOD · Liquidez y actividad, 14–15',
     detalle:'Mismos BG/ER en USD. Premisas docentes SOLO para 2012: todas las ventas a crédito (3074000) y compras estimadas = 70 % del costo (1461600). Base de 365 días y saldos promedio. No son pagos a proveedores ni flujos de caja; 2011 conserva N/D donde falta información.' },
   docente('practico2','Ejercicio práctico 2','Ejercicio practico 2.md','BG y ER 2023–2024. UM: la fuente usa $ sin identificar moneda. PPE ya neto; no se añade depreciación. No da ventas a crédito ni pagos a proveedores.'),
-  { id:'agricorp-historico', nombre:'AGRI-CORP · histórico real 2023–2024', fuente:'AGRICORP_GFO_datos_reales_y_simulados_justificados.md · Anexo A',
-    detalle:'Balance y estado de resultados consolidados auditados, en C$. Datos reales; 2023 tiene opinión calificada del auditor. Cuentas tipificadas para las razones.' },
+  { id:'agricorp-historico', nombre:'AGRI-CORP · consolidado real 2022–2025', fuente:'Estados consolidados auditados 2022–2025 (F02, F03 y F04)',
+    detalle:'Balance y estado de resultados auditados de cuatro años, en C$, con los flujos publicados de 2024 y 2025. 2022 y 2023 tienen opinión calificada del auditor. Supuestos declarados y editables: ventas a crédito 50 % y compras a crédito 60 % de las compras estimadas.' },
   { id:'agricorp-simulado', nombre:'AGRI-CORP · unidad de arroz simulada jul–sep 2027', fuente:'AGRICORP_GFO_datos_reales_y_simulados_justificados.md · Sección III',
     detalle:'Unidad ficticia Unidad_Comercial_Arroz_Demo_2027, datos inventados con fines docentes: no es AGRI-CORP ni se suma a sus estados. Tres meses en C$.' }
 ];
@@ -37,8 +37,8 @@ const LISTAS = {
     propio('sin-dividendos','Sin dividendos','Variante ficticia: conserva las acciones/precios del caso base y declara dividendos cero; los resultados cero siguen visibles.')],
   inicioEmpresa:[propio('actual','Empresa comercial · caso integral','Carga módulos vacíos del caso ficticio MUNO MODA en C$. No reemplaza datos existentes.'),
     ...estados.slice(1).filter(e => !e.id.startsWith('agricorp-')).map(e => ({ ...e, detalle:e.detalle + ' Desde Inicio carga solo Estados; los otros módulos quedan intactos.' })),
-    { id:'agricorp-historico', nombre:'AGRI-CORP · histórico real 2023–2024', fuente:'AGRICORP_GFO_datos_reales_y_simulados_justificados.md · Anexo A',
-      detalle:'Estados consolidados auditados y flujo de efectivo 2024, en C$. Reemplaza todos los módulos de empresa; presupuesto maestro, equilibrio e inventario quedan vacíos. GAO N/D: no hay clasificación fijo/variable pública.' },
+    { id:'agricorp-historico', nombre:'AGRI-CORP · consolidado real 2022–2025', fuente:'Estados consolidados auditados 2022–2025 (F02, F03 y F04)',
+      detalle:'Estados auditados de cuatro años, flujos publicados 2024–2025 y dividendos preferentes pagados, en C$. Reemplaza todos los módulos de empresa. En esta etapa presupuesto maestro, equilibrio e inventario siguen vacíos y el GAO en N/D: sus supuestos llegan en las siguientes fases.' },
     { id:'agricorp-simulado', nombre:'AGRI-CORP · unidad de arroz simulada jul–sep 2027', fuente:'AGRICORP_GFO_datos_reales_y_simulados_justificados.md · Sección III',
       detalle:'Unidad ficticia Unidad_Comercial_Arroz_Demo_2027, datos inventados con fines docentes: no es AGRI-CORP ni se suma a sus estados. Reemplaza todos los módulos de empresa.' }],
   inicioPersonal:[propio('actual','Hogar con dos ingresos','Presupuesto y bienes ficticios, solo en módulos vacíos.'),

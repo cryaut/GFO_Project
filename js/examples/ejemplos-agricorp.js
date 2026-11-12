@@ -1,83 +1,100 @@
 import { adjuntarFlujoDocumentado } from '../modules/estados/estados-flujo-documentado.js';
-// Datos de ejemplo de AGRI-CORP para la demostración (proyecto final GFO 2026).
-// Fuente: AGRICORP_GFO_datos_reales_y_simulados_justificados.md.
+// Datos de AGRI-CORP: el caso central de la app (D-113).
 //
-// Hay dos casos separados que NO se deben mezclar ni sumar (sección I y VI del dossier):
-//   - historico: AGRI-CORP consolidada, estados auditados 2023 y 2024 (cifras REALES en C$).
-//   - simulado:  Unidad_Comercial_Arroz_Demo_2027, jul–sep 2027 (cifras INVENTADAS, solo docentes).
+// Hay dos capas que NO se suman entre sí:
+//   - consolidado: Corporación Agrícola, S. A. y subsidiarias, estados auditados 2022–2025
+//     (cifras REALES en C$) más supuestos declarados y visibles.
+//   - línea de arroz: escenario simulado jul–sep 2027 (cifras INVENTADAS, solo docentes).
 // El presupuesto personal ficticio se ofrece aparte; no se mezcla con los módulos de empresa.
+//
+// Fuentes del consolidado (documento de investigación «AGRI-CORP: estados, datos útiles y
+// supuestos para GFO» y su anexo de flujos e inventarios):
+//   F02  auditado 2023, con comparativo 2022: balance p. 5, resultados p. 6, flujo 2022 p. 8.
+//   F03  auditado 2024: flujos 2023 y 2024 p. 9; acciones comunes, nota 34.
+//   F04  auditado 2025 (BDO): balance p. 7 y resultados p. 8 de 2024 y 2025; flujo 2025 p. 10.
+// 2022–2023 reproducen F02 y 2024–2025 reproducen F04, con las mismas líneas: F04 separa el
+// pago mínimo definitivo y la porción corriente de la deuda de largo plazo; F02 no las presenta
+// por separado, así que esas cuentas no existen en 2022–2023 (no se rellenan con cero).
 //
 // Solo datos, sin DOM ni store. Las cifras calculadas (presupuestos, caja, GAO/GAF/GAT, proforma)
 // NO se guardan: salen de las fórmulas de cada módulo.
 import { registrarCuenta } from '../modules/estados/cuentas-registro.js';
 import { normalizeFinancialData } from '../modules/estados/estados-normalize.js';
 
-// ---------- Caso histórico real: AGRI-CORP consolidada ----------
+// ---------- AGRI-CORP consolidada: estados auditados 2022–2025 ----------
 
+export const PERIODOS_REALES = ['2022', '2023', '2024', '2025'];
+export const EMPRESA_AGRICORP = 'Corporación Agrícola, S. A. y subsidiarias (AGRI-CORP)';
+
+// [cuenta, tipo, 2022, 2023, 2024, 2025]. null = la fuente de esa columna no presenta la partida.
 const REAL_ACTIVOS = [
-  // [cuenta, tipo, 2023, 2024]
-  ['Efectivo', 'efectivo', 70837459, 284636118],
-  ['Cuentas por cobrar a clientes', 'cxC', 919245520, 1160810469],
-  ['Activos mantenidos para la venta', 'activosCorrientesOtros', 139540598, 133374515],
-  ['Activo financiero a costo amortizado', 'activosCorrientesOtros', 0, 3160677],
-  ['Otros activos financieros a costo amortizado (corriente)', 'activosCorrientesOtros', 345894825, 509964388],
-  ['Cuentas y documentos por cobrar a partes relacionadas (corriente)', 'activosCorrientesOtros', 474203132, 482736490],
-  ['Inventarios', 'inventario', 1180606300, 1621305239],
-  ['Otros activos (corriente)', 'activosCorrientesOtros', 72169, 26603],
-  ['Cuentas y documentos por cobrar a partes relacionadas (no corriente)', 'activosFijos', 225357135, 228273402],
-  ['Otros activos financieros a costo amortizado (no corriente)', 'activosFijos', 8167247, 1216866],
-  ['Inversiones por el método de participación', 'activosFijos', 12519114, 15104274],
-  ['Activos financieros a valor razonable (VRORI)', 'activosFijos', 256514034, 256514034],
-  ['Propiedad, planta y equipos', 'activosFijos', 1598740842, 1571088222],
-  ['Activos por derecho de uso', 'activosFijos', 19141180, 20460361],
-  ['Activos intangibles', 'activosFijos', 16378500, 6320510],
-  ['Otros activos (no corriente)', 'activosFijos', 22506048, 33140528]
+  ['Efectivo y equivalentes de efectivo', 'efectivo', 230869144, 70837459, 284636118, 149251171],
+  ['Cuentas por cobrar a clientes', 'cxC', 807443466, 919245520, 1160810469, 1073865816],
+  ['Activos mantenidos para la venta', 'activosCorrientesOtros', 49850500, 139540598, 133374515, 140216922],
+  ['Activo financiero a costo amortizado', 'activosCorrientesOtros', null, null, 3160677, 3160677],
+  ['Otros activos financieros a costo amortizado (corriente)', 'activosCorrientesOtros', 266763609, 345966994, 509964388, 209478971],
+  ['Cuentas y documentos por cobrar a partes relacionadas (corriente)', 'activosCorrientesOtros', 317459678, 474203132, 482736490, 280934177],
+  ['Inventarios', 'inventario', 1410622339, 1180606300, 1621305239, 1546028593],
+  ['Otros activos (corriente)', 'activosCorrientesOtros', null, null, 26603, null],
+  ['Cuentas y documentos por cobrar a partes relacionadas (no corriente)', 'activosFijos', 54712511, 225357135, 228273402, 303360687],
+  ['Otros activos financieros a costo amortizado (no corriente)', 'activosFijos', 13222021, 8167247, 1216866, 9853514],
+  ['Inversiones por el método de participación', 'activosFijos', 11662694, 12519114, 15104274, 15780755],
+  ['Activos financieros a valor razonable (VRORI)', 'activosFijos', 253762189, 256514034, 256514034, null],
+  ['Propiedad, planta y equipos', 'activosFijos', 1679610691, 1598740842, 1571088222, 1486614825],
+  ['Activos por derecho de uso', 'activosFijos', 31645309, 19141180, 20460361, 26396653],
+  ['Activos intangibles', 'activosFijos', 22950330, 16378500, 6320510, 4302737],
+  ['Otros activos (no corriente)', 'activosFijos', 54925063, 22506048, 33140528, 30724344]
 ];
 
 const REAL_PASIVOS = [
-  ['Préstamos por pagar (corriente)', 'pasivoCortoPlazo', 1725890504, 1762614697],
-  ['Documentos por pagar (corriente)', 'pasivoCortoPlazo', 386390267, 359864099],
-  ['Cuentas y documentos por pagar a partes relacionadas (corriente)', 'pasivoCortoPlazo', 513755625, 868126830],
-  ['Proveedores', 'cuentasPorPagar', 404590181, 1039869493],
-  ['Pasivo por arrendamiento (corriente)', 'pasivoCortoPlazo', 13058258, 12283446],
-  ['Impuesto sobre la renta por pagar', 'pasivoCortoPlazo', 437257071, 148959541],
-  ['Cuentas por pagar y gastos acumulados', 'provisiones', 213218003, 174894746],
-  ['Préstamos por pagar (no corriente)', 'pasivoLargoPlazo', 601987067, 744971522],
-  ['Documentos por pagar (no corriente)', 'pasivoLargoPlazo', 3340319, 52821542],
-  ['Pasivo por arrendamiento (no corriente)', 'pasivoLargoPlazo', 10008186, 10671079],
-  ['Obligaciones post-empleo', 'pasivoLargoPlazo', 41732593, 43624964],
-  ['Cuentas y documentos por pagar a partes relacionadas (no corriente)', 'pasivoLargoPlazo', 50670635, 42613289],
-  ['Impuesto sobre la renta diferido', 'pasivoLargoPlazo', 57119047, 66595757]
+  ['Préstamos por pagar (corriente)', 'pasivoCortoPlazo', 1682185298, 1725890504, 1510216214, 1525967690],
+  ['Porción corriente de préstamos a largo plazo', 'pasivoCortoPlazo', null, null, 252398483, 215833203],
+  ['Documentos por pagar (corriente)', 'pasivoCortoPlazo', 350670637, 386390267, 359864099, 270521327],
+  ['Cuentas y documentos por pagar a partes relacionadas (corriente)', 'pasivoCortoPlazo', 416267521, 513755625, 868126830, 958486941],
+  ['Proveedores', 'cuentasPorPagar', 453159401, 404590181, 1039869493, 644576373],
+  ['Pasivo por arrendamiento (corriente)', 'pasivoCortoPlazo', 11652961, 13058258, 12283446, 13827841],
+  ['Impuesto sobre la renta por pagar', 'pasivoCortoPlazo', null, 437257071, 148959541, null],
+  ['Cuentas por pagar y gastos acumulados', 'provisiones', 150496600, 213218003, 174894746, 145889913],
+  ['Préstamos por pagar (no corriente)', 'pasivoLargoPlazo', 904783251, 601987067, 744971522, 532398283],
+  ['Documentos por pagar (no corriente)', 'pasivoLargoPlazo', 109491511, 3340319, 52821542, null],
+  ['Pasivo por arrendamiento (no corriente)', 'pasivoLargoPlazo', 24144103, 10008186, 10671079, 13710966],
+  ['Obligaciones post-empleo', 'pasivoLargoPlazo', 39055007, 41732593, 43624964, 31486386],
+  ['Cuentas y documentos por pagar a partes relacionadas (no corriente)', 'pasivoLargoPlazo', 15941816, 50670635, 42613289, 14100356],
+  ['Impuesto sobre la renta diferido', 'pasivoLargoPlazo', 47304376, 57119047, 66595757, 67785998]
 ];
 
 const REAL_PATRIMONIO = [
-  ['Capital social común', 'patrimonio', 476176000, 476176000],
-  ['Capital social preferente', 'patrimonio', 262998840, 348028158],
-  ['Reserva legal', 'patrimonio', 47617691, 47617691],
-  ['Superávit por revaluación', 'patrimonio', 8508572, 55695277],
-  ['Efecto de conversión de moneda', 'patrimonio', 16652855, 16652855],
-  ['Utilidades retenidas (déficit acumulado)', 'patrimonio', -2656945, 29796514],
-  ['Participaciones no controladoras', 'patrimonio', 21409334, 26255196]
+  ['Capital social común', 'patrimonio', 476176000, 476176000, 476176000, 476176000],
+  ['Capital social preferente', 'patrimonio', 8267884, 262998840, 348028158, 358702159],
+  ['Reserva legal', 'patrimonio', 47617691, 47617691, 47617691, 47617691],
+  ['Superávit por revaluación', 'patrimonio', 234124770, 8508572, 55695277, 55488855],
+  ['Efecto de conversión de moneda', 'patrimonio', 16472461, 16652855, 16652855, 16652855],
+  ['Utilidades retenidas (déficit acumulado)', 'patrimonio', 195410776, -2656945, 29796514, -140673929],
+  ['Participaciones no controladoras', 'patrimonio', 22277480, 21409334, 26255196, 31420934]
 ];
 
-// Estado de resultados: importes positivos; el tipo define si suma o resta.
+// Estado de resultados: importes positivos; el tipo define si suma o resta. Las partidas antes de
+// los gastos financieros forman la utilidad operativa, como el subtotal del auditado
+// («antes de partidas financieras»): 335,413,089 / 296,823,017 / 357,667,403 / 196,252,210.
 const REAL_RESULTADOS = [
-  ['Ingresos procedentes de contratos con clientes', 'ventas', 9355895570, 9010443238],
-  ['Costo de ventas', 'costoVentas', 7967257505, 7539860126],
-  ['Gastos de mercadeo y ventas', 'gastosVentas', 573616923, 562260236],
-  ['Gastos de administración', 'gastosAdmin', 150376398, 151041897],
-  ['Gastos de tráfico de almacenes', 'gastosVentas', 197510015, 215360471],
-  ['Otros gastos', 'otrosGastos', 239524557, 209248155],
-  ['Otros ingresos', 'otrosIngresos', 69212845, 24995050],
-  ['Gastos financieros', 'intereses', 262177780, 275824274],
-  ['Pérdida cambiaria, neta', 'otrosGastos', 32726261, 3682989],
-  ['Ingresos financieros', 'otrosIngresos', 35771615, 53045676],
-  ['Participación en utilidad neta de asociadas', 'otrosIngresos', 856420, 2585160],
-  ['Provisión para el impuesto sobre la renta', 'impuestos', 458130322, 91567028]
+  ['Ingresos de contratos con clientes', 'ventas', 8342024681, 9355895570, 9010443238, 7895371400],
+  ['Costo de ventas', 'costoVentas', 7086559300, 7967257505, 7539860126, 6461733590],
+  ['Gastos de mercadeo y ventas', 'gastosVentas', 511800132, 573616923, 562260236, 640070996],
+  ['Gastos de administración', 'gastosAdmin', 141592808, 150376398, 151041897, 143295077],
+  ['Gastos de tráfico de almacenes', 'gastosVentas', 185810532, 197510015, 215360471, 267787833],
+  ['Gasto por pago mínimo definitivo', 'otrosGastos', null, null, 192060853, 188682180],
+  ['Otros gastos', 'otrosGastos', 117936673, 239524557, 17187302, 18652400],
+  ['Otros ingresos', 'otrosIngresos', 37087853, 69212845, 24995050, 21102886],
+  ['Gastos financieros', 'intereses', 247792263, 262177780, 275824274, 327207977],
+  ['Pérdida cambiaria, neta', 'otrosGastos', 62085790, 32726261, 3682989, 16103294],
+  ['Ingresos financieros', 'otrosIngresos', 34665705, 35771615, 53045676, 45818036],
+  ['Participación en utilidad neta de asociadas', 'otrosIngresos', 2714237, 856420, 2585160, 676480],
+  ['Provisión para el impuesto sobre la renta', 'impuestos', 50786334, 458130322, 91567028, 57425953]
 ];
 
+// Una partida que la fuente de esa columna no presenta no se escribe en ese periodo.
 function porPeriodo(filas, columna) {
-  return Object.fromEntries(filas.map(fila => [fila[0], fila[columna]]));
+  return Object.fromEntries(filas.filter(fila => fila[columna] !== null).map(fila => [fila[0], fila[columna]]));
 }
 
 function tiposDe(filas) {
@@ -90,7 +107,7 @@ function tiposDe(filas) {
 // cuenta a mano en Estados. Se evitan los totales reportados del catálogo para no duplicar sumas.
 const CATALOGO = {
   // AGRI-CORP: activos
-  'Efectivo': 'bs.cash_and_equivalents',
+  'Efectivo y equivalentes de efectivo': 'bs.cash_and_equivalents',
   'Cuentas por cobrar a clientes': 'bs.trade_receivables',
   'Activos mantenidos para la venta': 'bs.other_current_assets',
   'Activo financiero a costo amortizado': 'bs.other_current_assets',
@@ -108,6 +125,7 @@ const CATALOGO = {
   'Otros activos (no corriente)': 'bs.other_noncurrent_assets',
   // AGRI-CORP: pasivos
   'Préstamos por pagar (corriente)': 'bs.short_term_borrowings',
+  'Porción corriente de préstamos a largo plazo': 'bs.current_portion_long_term_debt',
   'Documentos por pagar (corriente)': 'bs.short_term_borrowings',
   'Cuentas y documentos por pagar a partes relacionadas (corriente)': 'bs.other_current_liabilities',
   'Proveedores': 'bs.trade_payables',
@@ -129,19 +147,22 @@ const CATALOGO = {
   'Utilidades retenidas (déficit acumulado)': 'bs.retained_earnings',
   'Participaciones no controladoras': 'bs.other_equity_components',
   // AGRI-CORP: resultados
-  'Ingresos procedentes de contratos con clientes': 'is.product_sales',
+  'Ingresos de contratos con clientes': 'is.product_sales',
   'Costo de ventas': 'is.product_cost',
   'Gastos de mercadeo y ventas': 'is.selling_expenses',
   'Gastos de administración': 'is.administrative_expenses',
   'Gastos de tráfico de almacenes': 'is.selling_expenses',
-  'Otros gastos': 'is.noninterest_nonoperating_expenses',
-  'Otros ingresos': 'is.nonoperating_income',
+  // El auditado presenta estas tres partidas antes de las partidas financieras: son operativas.
+  'Gasto por pago mínimo definitivo': 'is.other_operating_expenses',
+  'Otros gastos': 'is.other_operating_expenses',
+  'Otros ingresos': 'is.other_operating_income',
   'Gastos financieros': 'is.interest_expense',
   'Pérdida cambiaria, neta': 'is.noninterest_nonoperating_expenses',
   'Ingresos financieros': 'is.interest_income',
   'Participación en utilidad neta de asociadas': 'is.nonoperating_income',
   'Provisión para el impuesto sobre la renta': 'is.income_tax_expense',
   // Unidad simulada
+  'Efectivo': 'bs.cash_and_equivalents',
   'Clientes por cobrar': 'bs.trade_receivables',
   'Inventario de arroz': 'bs.inventory_merchandise',
   'Propiedad, planta y equipo neto': 'bs.ppe_other',
@@ -199,50 +220,129 @@ function estadosDe(nombre, periodos, grupos) {
   };
 }
 
-// Flujo de efectivo consolidado 2024 (estado auditado, líneas netas agrupadas por actividad).
-function flujoReal2024() {
-  const m = (id, concepto, actividad, tipo, monto) => ({ id, concepto, actividad, tipo, monto });
-  return {
-    saldoInicial: 70837459,
-    periodoBase: '2023',
-    movimientos: [
-      m('real-f1', 'Efectivo de operaciones antes de intereses e impuestos', 'operacion', 'entrada', 758587482),
-      m('real-f2', 'Impuestos sobre la renta pagados', 'operacion', 'salida', 374194121),
-      m('real-f3', 'Intereses cobrados', 'operacion', 'entrada', 12611343),
-      m('real-f4', 'Intereses pagados', 'operacion', 'salida', 206971340),
-      m('real-f5', 'Préstamos otorgados a partes relacionadas', 'inversion', 'salida', 46190672),
-      m('real-f6', 'Pagos recibidos por préstamos a partes relacionadas', 'inversion', 'entrada', 7124865),
-      m('real-f7', 'Cuentas por cobrar a partes relacionadas', 'inversion', 'entrada', 5957397),
-      m('real-f8', 'Adquisición de activos intangibles', 'inversion', 'salida', 9121425),
-      m('real-f9', 'Adiciones de propiedad, planta y equipos', 'inversion', 'salida', 36286932),
-      m('real-f10', 'Contratación de préstamos', 'financiamiento', 'entrada', 4240845895),
-      m('real-f11', 'Pagos de préstamos', 'financiamiento', 'salida', 4061137253),
-      m('real-f12', 'Contrataciones de documentos por pagar', 'financiamiento', 'entrada', 597311913),
-      m('real-f13', 'Pagos de documentos por pagar', 'financiamiento', 'salida', 574357520),
-      m('real-f14', 'Pagos a financiamientos de partes relacionadas', 'financiamiento', 'salida', 163791333),
-      m('real-f15', 'Venta de acciones preferentes', 'financiamiento', 'entrada', 85029318),
-      m('real-f16', 'Dividendos pagados sobre acciones preferentes', 'financiamiento', 'salida', 7520629),
-      m('real-f17', 'Pagos de principal de arrendamiento', 'financiamiento', 'salida', 14098329)
+// ---------- Supuestos S1–S3 (documento de investigación, sección 11) ----------
+// No son datos de AGRI-CORP: se declaran para que las razones de actividad tengan base. El
+// nombre de cada cuenta lo dice, y el usuario puede editarlos en Estados.
+export const SUPUESTOS_CREDITO = Object.freeze({ ventasCredito: 0.5, comprasCredito: 0.6 });
+
+const filaDe = (filas, nombre) => filas.find(fila => fila[0] === nombre);
+
+// S1: ventas a crédito = 50 % de las ventas de cada año.
+// S2–S3: compras estimadas = costo de ventas + inventario final − inventario inicial (aproximación
+// docente; en una empresa que produce no demuestra las compras reales). 60 % de ellas a crédito.
+// El motor de razones toma «pagos a proveedores» y deriva las compras a crédito como
+// pagos + proveedores final − proveedores inicial; por eso se declara el pago que, con el saldo
+// real de proveedores, reproduce exactamente ese 60 %. 2022 no tiene inventario de 2021: sin base.
+export function datosSuplementariosAgricorp() {
+  const ventas = filaDe(REAL_RESULTADOS, 'Ingresos de contratos con clientes');
+  const costo = filaDe(REAL_RESULTADOS, 'Costo de ventas');
+  const inventario = filaDe(REAL_ACTIVOS, 'Inventarios');
+  const proveedores = filaDe(REAL_PASIVOS, 'Proveedores');
+  return PERIODOS_REALES.flatMap((periodo, k) => {
+    const c = 2 + k;
+    const registros = [{ id: 'supp.credit_sales', nombre: 'Ventas a crédito (SUPUESTO: 50 % de las ventas)',
+      periodo, importe: ventas[c] * 5 / 10, confirmado: true }];
+    if (k > 0) {
+      const compras = costo[c] + inventario[c] - inventario[c - 1];
+      const comprasCredito = compras * 6 / 10;
+      registros.push({ id: 'supp.supplier_payments', nombre: 'Pagos a proveedores (SUPUESTO: 60 % de las compras estimadas, a crédito)',
+        periodo, importe: comprasCredito - (proveedores[c] - proveedores[c - 1]), confirmado: true });
+    }
+    return registros;
+  });
+}
+
+// ---------- Flujos de efectivo publicados ----------
+// Una sola versión por año (anexo de flujos, tabla 1). Operación: el estado usa el método
+// indirecto; aquí entra su subtotal publicado más las tres líneas que sí son de caja, para no
+// inventar cobros ni pagos. El detalle indirecto completo queda en el documento fuente.
+// 2022 y 2023 tienen además un efecto de conversión que el módulo de flujo aún no admite: se
+// agregan cuando lo admita (fase F3).
+const FLUJOS_REALES = {
+  '2024': {
+    inicial: '2023', saldoInicial: 70837459,
+    fuente: 'F03 · Estados consolidados auditados 2024 · Estado de flujos de efectivo, p. 9',
+    partidas: [
+      ['Operación antes de intereses e impuestos (subtotal indirecto publicado)', 'operacion', 758587482],
+      ['Impuesto sobre la renta pagado', 'operacion', -374194121],
+      ['Intereses cobrados', 'operacion', 12611343],
+      ['Intereses pagados', 'operacion', -206971340],
+      ['Préstamos otorgados a partes relacionadas', 'inversion', -46190672],
+      ['Pagos recibidos por préstamos a partes relacionadas', 'inversion', 7124865],
+      ['Cuentas por cobrar a partes relacionadas', 'inversion', 5957397],
+      ['Adquisición de activos intangibles', 'inversion', -9121425],
+      ['Adiciones de propiedad, planta y equipo', 'inversion', -36286932],
+      ['Contratación de préstamos', 'financiamiento', 4240845895],
+      ['Pagos de préstamos', 'financiamiento', -4061137253],
+      ['Contrataciones de documentos por pagar', 'financiamiento', 597311913],
+      ['Pagos de documentos por pagar', 'financiamiento', -574357520],
+      ['Pagos de financiamientos de partes relacionadas', 'financiamiento', -163791333],
+      ['Pago recibido por venta de acciones preferentes', 'financiamiento', 85029318],
+      ['Dividendos pagados sobre acciones preferentes', 'financiamiento', -7520629],
+      ['Pago de principal de arrendamientos', 'financiamiento', -14098329]
     ]
+  },
+  '2025': {
+    inicial: '2024', saldoInicial: 284636118,
+    fuente: 'F04 · Estados consolidados auditados 2025 (BDO) · Estado de flujos de efectivo, p. 10',
+    partidas: [
+      ['Operación antes de intereses e impuestos (subtotal indirecto publicado)', 'operacion', 713049482],
+      ['Impuesto sobre la renta pagado', 'operacion', -393877433],
+      ['Intereses cobrados', 'operacion', 45818036],
+      ['Intereses pagados', 'operacion', -327207977],
+      ['Adquisición de activos intangibles', 'inversion', -6068021],
+      ['Adiciones de propiedad, planta y equipo', 'inversion', -29180606],
+      ['Aumento de activos recibidos para la venta', 'inversion', -6842407],
+      // Positivo en F04 aunque el rótulo diga «usado en»: se conserva el signo publicado.
+      ['Disminución de activos financieros a valor razonable (VRORI)', 'inversion', 256514034],
+      ['Contratación de préstamos', 'financiamiento', 5043336095],
+      ['Pagos de préstamos', 'financiamiento', -5276723138],
+      ['Contrataciones de documentos por pagar', 'financiamiento', 395333898],
+      ['Pagos de documentos por pagar', 'financiamiento', -537470820],
+      ['Pago recibido por venta de acciones preferentes', 'financiamiento', 10674001],
+      ['Dividendos pagados sobre acciones preferentes', 'financiamiento', -7520629],
+      ['Pago de principal de arrendamientos', 'financiamiento', -15219462]
+    ]
+  }
+};
+
+export function flujoRealAgricorp(final) {
+  const f = FLUJOS_REALES[final];
+  if (!f) throw new Error(`No hay flujo publicado de AGRI-CORP cargado para ${final}.`);
+  return {
+    saldoInicial: f.saldoInicial,
+    periodoBase: f.inicial,
+    movimientos: f.partidas.map(([concepto, actividad, monto], i) => ({
+      id: `real-${final}-${i + 1}`, concepto, actividad, tipo: monto < 0 ? 'salida' : 'entrada', monto: Math.abs(monto)
+    }))
   };
 }
 
+// Dividendos preferentes PAGADOS según cada flujo (F02 p. 8, F03 p. 9, F04 p. 10). Un pago no
+// siempre coincide con el dividendo declarado; la nota 34 de F03 muestra 7,520,630 para 2024.
+const DAP_PAGADOS = { '2022': 4443312, '2023': 1948421, '2024': 7520629, '2025': 7520629 };
+
+// 476,176 acciones comunes de C$ 1,000 nominales (F03, nota 34); el capital común no cambia en
+// 2022–2025. Sin dividendos comunes ni cotización pública: el precio queda para F2 (supuesto).
+const ACCIONES_COMUNES = 476176;
+
 export function casoHistoricoReal() {
+  let estados = registrarCuenta(normalizeFinancialData(estadosDe(EMPRESA_AGRICORP, [...PERIODOS_REALES], {
+    activos: REAL_ACTIVOS, pasivos: REAL_PASIVOS, patrimonio: REAL_PATRIMONIO, resultados: REAL_RESULTADOS
+  })), datosSuplementariosAgricorp());
+  // Los flujos se adjuntan al final: su revisión identifica los estados ya completos.
+  for (const [final, f] of Object.entries(FLUJOS_REALES)) {
+    estados = adjuntarFlujoDocumentado(estados, flujoRealAgricorp(final), { tipo: 'reportado', fuente: f.fuente, inicial: f.inicial, final });
+  }
   return {
     id: 'historico',
-    nombre: 'AGRI-CORP consolidada (estados auditados 2023 y 2024, cifras reales)',
-    estados: adjuntarFlujoDocumentado(normalizeFinancialData(estadosDe('Corporación Agrícola, S. A. y subsidiarias (AGRI-CORP)', ['2023', '2024'], {
-      activos: REAL_ACTIVOS, pasivos: REAL_PASIVOS, patrimonio: REAL_PATRIMONIO, resultados: REAL_RESULTADOS
-    })), flujoReal2024(), { tipo:'reportado', fuente:'Dossier AGRI-CORP · Anexo A · Estado de flujos auditado 2024', inicial:'2023', final:'2024' }),
-    // Dividendos preferentes 2023 y 2024 (nota 34). Sin clasificación fijo/variable: no hay base
-    // pública, así que el GAO queda N/D (el dossier prohíbe llamarlo «GAO real»).
-    apalancamiento: { comportamiento: {}, dap: { '2023': 1948421, '2024': 7520630 }, tasaDefecto: null },
-    // 476,176 acciones comunes; sin dividendos comunes (nota 4); sin cotización pública representativa.
-    razonesMercado: { periodos: {
-      '2023': { acciones: 476176, precio: null, dividendos: 0 },
-      '2024': { acciones: 476176, precio: null, dividendos: 0 }
-    } },
-    flujo: flujoReal2024()
+    nombre: 'AGRI-CORP consolidada (estados auditados 2022–2025 y supuestos declarados)',
+    estados,
+    // Sin clasificación fijo/variable todavía (fase F2): el GAO queda N/D.
+    apalancamiento: { comportamiento: {}, dap: { ...DAP_PAGADOS }, tasaDefecto: null },
+    razonesMercado: { periodos: Object.fromEntries(PERIODOS_REALES.map(p => [p, { acciones: ACCIONES_COMUNES, precio: null, dividendos: 0 }])) },
+    // La captura de Flujo abre el mismo año que Análisis, Inicio y Proforma: el último cargado.
+    flujo: flujoRealAgricorp(PERIODOS_REALES.at(-1))
   };
 }
 
