@@ -41,7 +41,7 @@ it('cambiar de caso publica los siete módulos en una sola escritura y no toca d
   expect(store.get('inventario.productos').map(p => p.id)).toEqual(['granza-arroz']);
   expect(store.get('inventario.composicion.periodos')).toEqual(['2022','2023','2024','2025']);
   expect(store.get('equilibrio')).toMatchObject({ origen:'estados', periodo:'2024', unidadVentas:true, precio:null });
-  expect(store.get('planeacion')).toEqual({ supuestos:null });
+  expect(store.get('planeacion.supuestos')).toMatchObject({ tipoPeriodo:'Trimestre', periodos:4, costoUnitario:1 });
   expect(store.get('presupuesto')).toEqual(personal);
 });
 

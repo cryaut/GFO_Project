@@ -333,6 +333,10 @@ export function planeacionUI(page, opciones) {
   }
 
   function guardarSupuestos(s, texto, parcial = false, capital = undefined) {
+    // La unidad y la nota del caso no se editan en el formulario: acompañan a los supuestos.
+    for (const campo of ['unidad', 'nota']) {
+      if (lectura.supuestos?.[campo] && !s[campo]) s = { ...s, [campo]: lectura.supuestos[campo] };
+    }
     const errores = validarSupuestos(s, { parcial });
     if (errores.length) { mensaje(errores.join(' '), true); return; }
     const nuevos = lectura.escenario ? editarEscenario(datos, nombre, s, capital, procedencia) : { ...datos, supuestos: s };
@@ -514,6 +518,8 @@ export function planeacionUI(page, opciones) {
         ${selectorEscenario()}
       </div>
       ${contexto ? `<p class="plan-contexto">${esc(contexto)}</p>` : ''}
+      ${lectura?.supuestos?.unidad ? `<p class="plan-contexto"><strong>Unidad de medida:</strong> ${esc(lectura.supuestos.unidad)}. Las «unidades» de ventas, compras e inventario se leen en esa unidad.</p>` : ''}
+      ${lectura?.supuestos?.nota ? `<p class="plan-contexto"><span class="badge badge-warning">SUPUESTO</span> ${esc(lectura.supuestos.nota)}</p>` : ''}
     </header>
     <div class="plan-vistas" role="group" aria-label="Vistas de Planeación">${VISTAS.map(([clave, etiqueta]) =>
     `<button id="planVer-${clave}" class="btn btn-secondary" type="button" aria-controls="planVista-${clave}"

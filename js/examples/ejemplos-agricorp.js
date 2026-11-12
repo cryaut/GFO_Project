@@ -460,6 +460,74 @@ function inventarioAgricorp() {
   return { productos: [producto], movimientos, composicion: structuredClone(COMPOSICION_INVENTARIO) };
 }
 
+// ---------- Presupuesto maestro 2025 (supuestos S8–S15) ----------
+// Proyecta 2025 por trimestres desde el cierre real de 2024; el 2025 auditado queda como
+// contraste. Unidad «C$1 al costo»: costo unitario 1 y precio = ventas / costo de ventas de 2024,
+// así compras, costo de ventas e inventario se leen en C$ y la apertura coincide con el balance.
+//   S8   ventas 2025 = ventas 2024 × 1.0135 (crecimiento de las ventas proyectadas en F05).
+//   S9   cuatro trimestres iguales.
+//   S1/S2 50 % de las ventas al contado; 40 % de las compras al contado.
+//   S15  inventario final = días de inventario de 2024 (67.82) → fracción de las ventas del
+//        trimestre siguiente = 4 × inventario promedio 2024 / costo de ventas 2024.
+//   S4–S6 en el presupuesto: los gastos de operación se reparten 25 % variable / 75 % fijo y el
+//        pago mínimo definitivo es variable. Los otros ingresos operativos reducen los gastos fijos
+//        y la depreciación y amortización (S13) se separan de ellos porque no salen de caja.
+//        El módulo valora el costo de ventas al costo completo por unidad (costeo absorbente): su
+//        punto de equilibrio trata todo el costo de ventas como variable. El punto de equilibrio
+//        del caso es el de la pantalla Punto de equilibrio, con S4.
+//   S10  IR 30 % de la UAI positiva; el módulo no lo paga dentro del horizonte.
+//   Intereses: los gastos financieros de 2024, sin cambio. Las demás partidas no operativas
+//        (ingresos financieros, diferencial cambiario, asociadas) no se proyectan.
+//   Otros desembolsos: inversión (S14) y dividendos preferentes (S11) por cuartos, y en el T1 el
+//        IR por pagar al cierre de 2024 (148,959,541). Saldo mínimo de caja: 0, sin política publicada.
+export const CRECIMIENTO_VENTAS_2025 = 0.0135;
+export const INVERSION_2025 = 36286932 + 9121425;
+export const DIVIDENDOS_2025 = 7520629;
+
+export function presupuestoAgricorp2025() {
+  const valor = (filas, nombre, k = 4) => filaDe(filas, nombre)[k];
+  const ventas = valor(REAL_RESULTADOS, 'Ingresos de contratos con clientes');
+  const costo = valor(REAL_RESULTADOS, 'Costo de ventas');
+  const gastosOperacion = ['Gastos de mercadeo y ventas', 'Gastos de administración', 'Gastos de tráfico de almacenes', 'Otros gastos']
+    .reduce((suma, nombre) => suma + valor(REAL_RESULTADOS, nombre), 0);
+  const pagoMinimo = valor(REAL_RESULTADOS, 'Gasto por pago mínimo definitivo');
+  const otrosIngresosOperativos = valor(REAL_RESULTADOS, 'Otros ingresos');
+  const dya = DEPRECIACION_AMORTIZACION['2024'];
+  const inventario = filaDe(REAL_ACTIVOS, 'Inventarios');
+  const unidadesTrimestre = costo * (1 + CRECIMIENTO_VENTAS_2025) / 4;
+  const pctInventarioFinal = 4 * ((inventario[3] + inventario[4]) / 2) / costo;
+  const desembolsoTrimestral = (INVERSION_2025 + DIVIDENDOS_2025) / 4;
+  const irPorPagar2024 = valor(REAL_PASIVOS, 'Impuesto sobre la renta por pagar');
+  return {
+    tipoPeriodo: 'Trimestre', periodos: 4,
+    unidad: 'C$1 al costo (precio = ventas / costo de ventas de 2024)',
+    nota: 'Presupuesto 2025 de AGRI-CORP consolidada desde el cierre real de 2024. Ventas +1.35 % en cuatro trimestres iguales; '
+      + '50 % al contado; compras 40 % al contado; inventario final de 67.82 días; gastos de operación 25 % variables, pago mínimo '
+      + 'variable; IR 30 %; inversión y dividendos de 2024 repetidos; el IR por pagar de 2024 se paga en el T1. El costo de ventas '
+      + 'se valora completo por unidad: el punto de equilibrio de esta pantalla lo trata todo como variable; el del caso está en '
+      + 'Punto de equilibrio. Contraste: el 2025 auditado está en Estados.',
+    precio: ventas / costo, costoUnitario: 1,
+    ventasUnidades: Array(4).fill(unidadesTrimestre),
+    pctContado: 1 - SUPUESTOS_CREDITO.ventasCredito,
+    cxcInicial: valor(REAL_ACTIVOS, 'Cuentas por cobrar a clientes'),
+    pctComprasContado: 1 - SUPUESTOS_CREDITO.comprasCredito,
+    cxpInicial: valor(REAL_PASIVOS, 'Proveedores'),
+    inventarioInicial: inventario[4],
+    pctInventarioFinal,
+    // Sin el T1 de 2026, el último trimestre usa la misma política sobre sus propias ventas.
+    inventarioFinalUltimo: unidadesTrimestre * pctInventarioFinal,
+    pctGastosVariables: (SUPUESTOS_COSTOS.gastosOperacionVariable * gastosOperacion + pagoMinimo) / ventas,
+    gastosFijos: ((1 - SUPUESTOS_COSTOS.gastosOperacionVariable) * gastosOperacion - otrosIngresosOperativos - dya) / 4,
+    depreciacion: dya / 4,
+    intereses: valor(REAL_RESULTADOS, 'Gastos financieros') / 4,
+    otrosDesembolsos: [0, 1, 2, 3].map(k => desembolsoTrimestral + (k === 0 ? irPorPagar2024 : 0)),
+    tasaIR: 0.3,
+    saldoInicialCaja: valor(REAL_ACTIVOS, 'Efectivo y equivalentes de efectivo'),
+    saldoMinimoCaja: 0,
+    productoInventario: '', productoId: ''
+  };
+}
+
 // S7: precio ilustrativo, no observado. Solo sirve para mostrar el cálculo de P/U y P/VL.
 export const PRECIO_ACCION_SUPUESTO = 100;
 const NOTA_PRECIO = 'Precio por acción de C$ 100 en todos los años (S7): número ilustrativo, no es una cotización. '
@@ -489,6 +557,7 @@ export function casoHistoricoReal() {
     // La captura de Flujo abre el mismo año que Análisis, Inicio y Proforma: el último cargado.
     flujo: flujoRealAgricorp(PERIODOS_REALES.at(-1)),
     inventario: inventarioAgricorp(),
+    planeacion: { supuestos: presupuestoAgricorp2025() },
     // C-V-U consolidado: se deriva de los estados de 2024 (año base de la proyección) con la
     // clasificación de Apalancamiento, en C$1 de ventas porque no hay unidades físicas publicadas.
     equilibrio: {

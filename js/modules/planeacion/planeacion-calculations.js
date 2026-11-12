@@ -69,8 +69,16 @@ export function normalizarSupuestos(datos) {
     productoId: typeof datos.productoId === 'string' ? datos.productoId : ''
   };
   for (const [clave] of SUPUESTOS) s[clave] = esNumero(datos[clave]) ? datos[clave] : null;
+  // D-113 (opcionales): unidad de medida y nota de procedencia del caso. Sin ellas, la forma no cambia.
+  const textoOpcional = (valor, max) => (typeof valor === 'string' && valor.trim() && valor.trim().length <= max ? valor.trim() : '');
+  const unidad = textoOpcional(datos.unidad, MAX_UNIDAD), nota = textoOpcional(datos.nota, MAX_NOTA);
+  if (unidad) s.unidad = unidad;
+  if (nota) s.nota = nota;
   return s;
 }
+
+export const MAX_UNIDAD = 60;
+export const MAX_NOTA = 1200;
 
 // En un borrador, null conserva un supuesto pendiente de revisión.
 export function validarSupuestos(s, { parcial = false } = {}) {
