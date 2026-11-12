@@ -1,5 +1,6 @@
 import { escapeHTML } from '../utils/html.js';
 import { listarEjemplos, crearEjemplo, casoDeEjemplo } from '../examples/catalogo.js';
+import { esEjemploPersonalDefensa, cargarDocumentosDefensa } from '../examples/ejemplos-personales-defensa.js';
 import store from '../store.js';
 import { registrarCasos } from '../utils/casos.js';
 const seleccionadas = new WeakMap();
@@ -38,6 +39,12 @@ export function vincularEjemplos(page, modulo) {
     info.textContent = ejemplo ? `${ejemplo.fuente} · ${ejemplo.detalle}` : 'Seleccione un ejemplo disponible.';
   };
   select.onchange();
+}
+
+// Los archivos de los integrantes se descargan al elegirlos; los demás ejemplos no esperan nada.
+export async function prepararEjemplo(page, modulo) {
+  const id = page.querySelector(`#example-${modulo}`)?.value;
+  if (esEjemploPersonalDefensa(modulo, id)) await cargarDocumentosDefensa();
 }
 
 export function ejemploSeleccionado(page, modulo, actual) {

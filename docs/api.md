@@ -1152,3 +1152,13 @@ En `js/modules/estados/estados-flujo-documentado.js`:
 | `resumenModulosEmpresa(entradas, reporte)` (`integracion-reporte.js`) | Estado de los siete módulos de empresa para el dashboard y el reporte; rotula los supuestos con `entradas.supuestos`. |
 
 `store.js` agrega la clave `casos: {}` (`{ [modulo]: { caso, nombre, huella? } }`).
+
+## Archivos personales de defensa — D-118
+
+`normalizarEstudiantil` admite v2 `{version:2, documento}` además del v1 existente. `calcularSeguimiento` lee los cortes originales del v2; `resumenEstudiantilGuardado` comparte sus resultados con Inicio y Reportes. Gabriel conserva sus planes sin inventar movimientos.
+
+En `personales/personales-calculations.js`: `normalizarDocumentoPersonal` valida/clona; `comprobarDocumentoPersonal` recalcula y compara contra resultados guardados; `resumenPresupuestoPersonal` entrega totales y diferencia de saldo; `inventarioDocumentoPersonal` materializa los bienes sin puntajes ficticios; `contrastarActivosPersonales` usa las funciones financieras existentes. `camposRegistroPersonal`, `agregarRegistroPersonal` y `quitarRegistroPersonal` conservan las columnas propias y actualizan los rangos al añadir bienes.
+
+En `utils/hojas-formulas.js`: `evaluarHojas(documento)` devuelve `{leer(hoja,ref),errores}`; un error devuelve null con motivo. No usa resultados almacenados como sustituto del cálculo. `serialFecha`/`fechaSerial` convierten fechas de Excel y `columnaNumero`/`columnaLetra` sus referencias. El intérprete reproduce la semántica de las expresiones originales; no introduce fórmulas financieras.
+
+`ejemplosPersonalesDefensa(modulo)` lista opciones desde el índice liviano `INDICE_DEFENSA`. `cargarDocumentosDefensa()` (async) importa los documentos la primera vez; `ejemploPersonalDefensa(id)` entrega una copia independiente y lanza un error si aún no se cargaron. En `components/ejemplos.js`, `prepararEjemplo(page, modulo)` (async) debe esperarse antes de `ejemploSeleccionado` cuando el selector puede ofrecer estos ejemplos. `documentoPersonalUI` separa interfaz de cálculo y recibe el guardado como callback.

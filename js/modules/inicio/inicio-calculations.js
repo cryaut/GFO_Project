@@ -211,10 +211,11 @@ export function resumenActivos(lista) {
     const depAc = depAcumulada(depAnualLineaRecta(a.costoOriginal || 0, a.valorResidual || 0, a.vidaUtil || 0), a.aniosConsumidos || 0, a.vidaUtil || 0);
     costoTotal += a.costoOriginal || 0;
     valorLibros += valorEnLibros(a.costoOriginal || 0, depAc);
-    if (ESTADOS_ATENCION.has(a.estado)) requierenAtencion += 1;
+    if (ESTADOS_ATENCION.has(a.estado) || a.clasificacionOriginal && ['En observación','Requiere mantenimiento o reparación','Al final de vida útil','Reposición planificada'].includes(a.clasificacionOriginal)) requierenAtencion += 1;
   }
   return {
     cantidad: lista.length, costoTotal, valorLibros, requierenAtencion,
+    ...(lista.some(a=>a.moneda)?{moneda:lista[0].moneda||'C$',clasificacionOriginal:true}:{}),
     pctDepreciado: costoTotal > 0 ? (costoTotal - valorLibros) / costoTotal : null
   };
 }
@@ -242,11 +243,14 @@ export function areasClave(entradas) {
 function areaPresupuestoPersonal(p) {
   const { ingresos, gastos, metaAhorro = 0, mesesDisponibles = 12 } = p;
   if (p.estudiantil) {
+    if (p.soloProyeccion) return area('presupuestoPersonal','Presupuesto personal previsto','#/presupuesto','info',p.planes.map(plan=>punto(`Total previsto · ${plan.periodo}`,plan.total,'monto')),'El archivo contiene gastos y ahorro previstos. No declara ingresos ni movimientos realizados. El ahorro está incluido en los totales previstos.');
+    const ajuste=typeof p.diferenciaSaldo==='number'&&Math.abs(p.diferenciaSaldo)>1e-8;
     const puntos = [punto('Ingresos registrados', ingresos, 'monto'), punto('Gastos realizados', gastos, 'monto'),
       punto('Ahorro para la meta', p.ahorro ?? null, 'monto'), punto('Reserva acumulada', p.reserva ?? null, 'monto'),
-      punto('Saldo disponible', p.saldo ?? null, 'monto'), punto('Avance realizado', p.avance ?? null, 'pct')];
+      punto(ajuste?'Saldo del archivo (incluye ajuste)':'Saldo disponible', p.saldo ?? null, 'monto'), punto('Avance realizado', p.avance ?? null, 'pct')];
+    if (ajuste) puntos.push(punto('Saldo solo de movimientos',p.saldoMovimientos,'monto'),punto('Ajuste sin movimiento registrado',p.diferenciaSaldo,'monto'));
     const lectura = p.error ? `No se pudo leer el presupuesto estudiantil: ${p.error}`
-      : `Movimientos del seguimiento de ${p.semanas} semanas${p.desde ? ` (${p.desde} a ${p.hasta})` : ''}. El ahorro registrado es ${monto(p.ahorro)}; la reserva se mantiene aparte. Las proyecciones no cuentan como ahorro realizado.`;
+      : `Movimientos del seguimiento de ${p.periodo||`${p.semanas} semanas`}${p.desde ? ` (${p.desde} a ${p.hasta})` : ''}. El ahorro registrado es ${monto(p.ahorro)}; la reserva se mantiene aparte. Las proyecciones no cuentan como ahorro realizado.${ajuste?' El archivo suma un ajuste sin movimiento que explique su origen; se muestra separado del saldo de los registros.':''}`;
     return area('presupuestoPersonal', 'Presupuesto estudiantil', '#/presupuesto', p.error ? 'alerta' : p.saldo < 0 ? 'alerta' : 'info', puntos, lectura);
   }
   const capacidad = capacidadAhorro(ingresos, gastos);
@@ -275,7 +279,7 @@ function areaActivosHogar(r) {
     punto('Depreciado', r.pctDepreciado, 'pct')];
   if (r.requierenAtencion) {
     return area('activos', 'Activos del hogar', '#/activos', 'alerta', puntos,
-      `${r.requierenAtencion} bien(es) en estado deteriorado o peor: planifique su reparación o reposición en el presupuesto personal.`);
+        r.clasificacionOriginal?`${r.requierenAtencion} bien(es) requieren seguimiento según su clasificación original. Consulte sus recomendaciones en Activos del hogar.`:`${r.requierenAtencion} bien(es) en estado deteriorado o peor: planifique su reparación o reposición en el presupuesto personal.`);
   }
   return area('activos', 'Activos del hogar', '#/activos', 'ok', puntos,
     esNumero(r.pctDepreciado) ? `Se ha consumido ${pct(r.pctDepreciado)} del costo de los bienes; ninguno está deteriorado.` : 'Ningún bien está deteriorado.');
@@ -287,7 +291,7 @@ export function finanzasPersonales(presupuesto = null, activos = null) {
   const lista = [];
   if (presupuesto && (presupuesto.estudiantil || presupuesto.ingresos > 0 || presupuesto.gastos > 0)) lista.push(areaPresupuestoPersonal(presupuesto));
   const resumen = resumenActivos(activos);
-  if (resumen) lista.push(areaActivosHogar(resumen));
+  if (resumen) lista.push({...areaActivosHogar(resumen),...(resumen.moneda?{moneda:resumen.moneda}:{})});
   return lista;
 }
 

@@ -2526,3 +2526,26 @@ El presupuesto maestro usa costeo absorbente: su propio punto de equilibrio difi
 **Referencias.** Rama `feat/agricorp-integral`, PR #37, fases F1–F8 del plan y su sección 13 (revisión). Fuentes: [investigación de estados y supuestos](planificacion/agricorp-integral/investigacion/AGRICORP_estados_datos_y_supuestos.md), [anexo de flujos e inventarios](planificacion/agricorp-integral/investigacion/AGRICORP_flujos_e_inventarios_detallados.md) y [contraste de 2022 y 2025 con los PDF](planificacion/agricorp-integral/investigacion/CONTRASTE-2022-2025.md). Pruebas de la revisión en `tests/unit/agricorp-revision.test.js`.
 
 **Numeración.** La rama local `feat/balance-proforma-integrado` (sin publicar) también usa D-113, D-114 y D-115. Este número queda para AGRI-CORP como caso central porque el PR #37 se publicó primero; esa rama debe renumerar sus decisiones al traer `main` (ver la ficha de agricorp-integral).
+
+### D-118 — Archivos personales de defensa con su estructura original
+
+- **Fecha**: 2026-11-12.
+- **Estado**: Vigente en la rama; pendiente de integración.
+- **Decidió**: Codex por solicitud expresa de Cris de conservar valores, nombres, columnas, secciones y orden de los diez archivos.
+- **Área**: Presupuesto personal, Activos del hogar, catálogo, Inicio y respaldo/reporte.
+
+**Contexto.** Los integrantes usan calendarios, columnas, monedas y métodos de presentación distintos. Forzar nueve categorías y cortes lunes–domingo alteraría sus datos. El Word de Gabriel contiene doce bienes; no es una plantilla vacía.
+
+**Opciones.** Homogeneizar las fuentes, mostrar adjuntos sin funciones o conservar sus hojas con cálculo y edición dentro del módulo. Se elige la tercera, activada solo si el ejemplo declara su documento.
+
+**Decisión.** Presupuesto v2 contiene documento; los v1 no cambian. Activos admite documento opcional junto con su inventario materializado. El intérprete de hojas evalúa las expresiones originales con funciones admitidas y sin ejecución dinámica. Se conservan resultados guardados para comparar; las funciones financieras existentes contrastan depreciación y saldo. No se inventan puntajes, ingresos, fechas o conversiones. En Cris se conserva el ajuste explícito +210 y se muestra separado de los movimientos. En Gabriel se conserva el símbolo $ sin atribuirle USD o C$.
+
+**Consecuencias.** Cada integrante tiene sus propios campos y calendario. Se conservan las contradicciones del original con aviso; coincidir con sus resultados no valida ajustes sin respaldo. El respaldo conserva documentos completos y restaurar activos antiguos elimina el documento anterior para evitar mezclar casos.
+
+**Alcance.** La lectura está hecha para estos diez archivos, no para cualquier hoja que se importe: compara identificadores (`presupuesto-gabriel`, `activos-carlos`, `activos-juan`, `activos-cris`), lee celdas fijas de cada plantilla (`Inicio y meta!F6:F11`, `B12`/`B13`, `D29`/`D30` de Gabriel), admite registros de agosto a octubre y hasta la fila 205. Es una excepción acotada a la regla de no leer por posición fija; un archivo nuevo exige ajustar el lector y sus pruebas.
+
+**Revisión antes del merge.** (1) `COUNTIF` y los demás criterios siguen la hoja de cálculo: una celda vacía no cumple un criterio numérico como `"<=1"`; antes, al eliminar un activo, el rango extendido contaba la fila vacía. (2) Eliminar un activo quita también su fila de lectura en `Evaluación`. (3) Los documentos (1,8 MB) se importan solo al cargar uno de estos ejemplos; el selector usa un índice liviano. (4) Se valida la forma de los anexos (`comentarios`, `enlaces`, `textosAdicionales`, `modelosRegistro`) al normalizar.
+
+**Para revertirla.** Registrar otra decisión y preservar los documentos antes de retirar el formato v2 y los documentos de activos. No convertir formatos diferentes en registros ficticios.
+
+**Referencias.** [Informe y cifras de control](planificacion/ejemplos-personales-defensa/INFORME.md), `tests/unit/personales-defensa.test.js`, ZIP entregado por Cris.

@@ -345,3 +345,7 @@ El ejemplo «AGRI-CORP · consolidado» combina los estados auditados 2022–202
 - **S15 (inventario final):** días de inventario al cierre de 2024 = inventario final / costo de ventas × `DIAS_ANIO` = 78.49 días. La rotación del año usa el inventario promedio (67.82 días en 2024); una política de saldo final usa un saldo final. No se mezclan las dos bases.
 
 Las cifras que dependen de un supuesto llevan la etiqueta «SUPUESTO Sx» mientras el módulo que lo guarda siga siendo del caso (`supuestosActivos` en `js/utils/casos.js`). La vigencia se comprueba con una huella de la parte real del módulo, no con fórmulas.
+
+## Fuentes personales de defensa (D-118)
+
+Los ejemplos conservan calendarios, columnas y expresiones propios. El intérprete genérico de hojas reproduce esas expresiones; no reemplaza calculate.js. `contrastarActivosPersonales` usa depAnualLineaRecta, depAcumulada y valorEnLibros, con el ROUND explícito del Excel de Cris. `resumenPresupuestoPersonal` usa saldoSemanal para separar el saldo de movimientos del saldo original. En Cris, +210 es un ajuste de fórmula sin registro: se conserva sin atribuirle origen. Gabriel no declara ingresos; sus planes no se registran como realizados y el $ de sus activos queda en UM.

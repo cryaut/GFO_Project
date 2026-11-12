@@ -791,3 +791,9 @@ En Inicio abra **Ejemplos de empresa**, seleccione el histórico real o la unida
 En Estados puede cargar solo el documento como borrador y guardarlo tras revisarlo. El histórico y la unidad ficticia nunca se suman. El presupuesto personal del dossier se ofrece por separado como ejemplo mensual; no reemplaza un documento estudiantil ya cargado.
 
 Análisis → EFE distingue el flujo **reportado** del real, el **simulado** trimestral y la estimación desde balances de los demás ejemplos. La fuente, el intervalo y la comprobación aparecen junto a sus cálculos. La apertura de junio del caso simulado está declarada en el dossier, sin un BG de junio cargado. Inicio, Proforma y Reportes utilizan ese mismo intervalo. En Flujo se muestra una copia editable de los movimientos; cambiarla no cambia el documento de Estados. Si edita los estados, el EFE suministrado queda N/D con la causa; revise y vuelva a importar una versión coherente del documento, sin introducir ceros para ocultar faltantes.
+
+## Ejemplos de cada integrante para la defensa
+
+En Presupuesto personal o Activos del hogar, abre «Ejemplos y datos», elige el nombre del integrante y pulsa «Cargar ejemplo seleccionado». La confirmación reemplaza solo ese módulo. Las hojas conservan sus nombres y columnas; desplaza la tabla horizontalmente para verlas completas. Selecciona una celda para ver su fórmula o editar el dato. Las fórmulas no se reemplazan al editar una entrada.
+
+En los registros Excel puedes registrar movimientos o añadir activos con las columnas de ese archivo; al seleccionar una celda del registro también puedes eliminar la fila completa. El Word de Gabriel permite editar los datos de sus tablas y consultar «Cálculos de la app». Descarga un respaldo antes de reemplazar un caso. Las observaciones explican los ajustes o contradicciones presentes en la fuente. Los ejemplos anteriores siguen en el mismo selector.

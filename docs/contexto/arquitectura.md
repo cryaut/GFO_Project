@@ -233,3 +233,7 @@ La reparación D-101/D-102 conserva ese esquema. EOAF/EFE reúnen `balanceGenera
 ### Fuente documental opcional del EFE (D-111)
 
 `estados/estados-flujo-documentado.js` valida la metadata opcional `estados.flujosDocumentados`, conserva movimientos e intervalo y reutiliza `flujo-calculations.js` para sumar por actividad. El normalizador de Estados preserva esta metadata en JSON y respaldos. EFE la consulta antes de estimar desde balances; Proforma, Inicio y el HTML de Reportes reciben la misma salida. El módulo de captura manual sigue separado y sus ediciones no reemplazan el documento. No se cambia el esquema base ni el código del store. La carga de AGRI-CORP usa su API atómica existente para publicar siete módulos después de prepararlos todos.
+
+## Formatos personales de defensa (D-118)
+
+`presupuesto.estudiantil` también admite `{version:2,documento}`. Los documentos contienen hojas/celdas/fórmulas/resultados originales o bloques del Word, metadatos de fuente, SHA-256 y modelos de filas para altas. `activos` admite `{inventario,documento}` opcional: el inventario se deriva del documento. No se cambian los valores por defecto del store. `personales/` comparte normalización, lectura y vista opcional; `utils/hojas-formulas.js` interpreta expresiones sin DOM ni store. `datos-personales-defensa.js` es dato generado por lectura de las fuentes; la app no depende de Python. Se importa bajo demanda (`cargarDocumentosDefensa`) al elegir uno de estos ejemplos; el selector usa el índice `INDICE_DEFENSA`. Los v1 y activos sin documento conservan sus interfaces.
