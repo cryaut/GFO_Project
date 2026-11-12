@@ -318,7 +318,7 @@ Cada fase termina con `npm test` y `npm run lint` en verde y un commit propio.
 | Fase | Contenido | Resultado verificable |
 |---|---|---|
 | **F1** ✅ | Estados 2022–2025 reales (presentación F04) y datos suplementarios S1–S3 | Activos y utilidad neta de los cuatro años coinciden con los auditados; rotaciones de control. **Hecho**: además se adjuntan los flujos publicados de 2024 y 2025 (cuadran con diferencia 0) y los dividendos pagados de 2022–2025. Los flujos de 2022 y 2023 esperan a F3, porque tienen efecto de conversión |
-| **F2** | Apalancamiento (S4–S6, DAP) y Mercado (acciones, S7) | GAO, GAT, P/U y P/VL con cifra y etiqueta |
+| **F2** ✅ | Apalancamiento (S4–S6, DAP) y Mercado (acciones, S7) | GAO, GAT, P/U y P/VL con cifra y etiqueta. **Hecho**: la UAII de Apalancamiento es el subtotal operativo del auditado, igual que en Análisis (357,667,403 en 2024); GAO 2024 = 8.18 y GAF = 3.25. Aviso si los costos fijos quedan bajo la depreciación publicada. Mercado muestra la nota SUPUESTO del precio. Pendiente para F6–F7: la etiqueta "ilustrativo" en los indicadores de Proforma e Inicio |
 | **F3** | Equilibrio, Flujo e Inventario sobre AGRI-CORP, consolidado y línea de arroz | Punto de equilibrio en C$ y en sacos; flujo real 2022–2025 línea por línea, conciliado con el balance; composición real de inventario y kárdex de granza |
 | **F4** | Presupuesto maestro 2025 trimestral (S8–S10) | Caja, cobros, pagos e inventario por trimestre |
 | **F5** | Balance proforma y contraste con 2025 real | El balance cuadra o muestra el financiamiento requerido; columna real 2025 |

@@ -38,7 +38,7 @@ const LISTAS = {
   inicioEmpresa:[propio('actual','Empresa comercial · caso integral','Carga módulos vacíos del caso ficticio MUNO MODA en C$. No reemplaza datos existentes.'),
     ...estados.slice(1).filter(e => !e.id.startsWith('agricorp-')).map(e => ({ ...e, detalle:e.detalle + ' Desde Inicio carga solo Estados; los otros módulos quedan intactos.' })),
     { id:'agricorp-historico', nombre:'AGRI-CORP · consolidado real 2022–2025', fuente:'Estados consolidados auditados 2022–2025 (F02, F03 y F04)',
-      detalle:'Estados auditados de cuatro años, flujos publicados 2024–2025 y dividendos preferentes pagados, en C$. Reemplaza todos los módulos de empresa. En esta etapa presupuesto maestro, equilibrio e inventario siguen vacíos y el GAO en N/D: sus supuestos llegan en las siguientes fases.' },
+      detalle:'Estados auditados de cuatro años, flujos publicados 2024–2025 y dividendos preferentes pagados, en C$. Supuestos declarados: crédito, clasificación de costos (75 % y 25 % variable) y precio ilustrativo de C$ 100 por acción. Reemplaza todos los módulos de empresa. En esta etapa presupuesto maestro, equilibrio e inventario siguen vacíos: sus supuestos llegan en las siguientes fases.' },
     { id:'agricorp-simulado', nombre:'AGRI-CORP · unidad de arroz simulada jul–sep 2027', fuente:'AGRICORP_GFO_datos_reales_y_simulados_justificados.md · Sección III',
       detalle:'Unidad ficticia Unidad_Comercial_Arroz_Demo_2027, datos inventados con fines docentes: no es AGRI-CORP ni se suma a sus estados. Reemplaza todos los módulos de empresa.' }],
   inicioPersonal:[propio('actual','Hogar con dos ingresos','Presupuesto y bienes ficticios, solo en módulos vacíos.'),

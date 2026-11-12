@@ -323,8 +323,43 @@ export function flujoRealAgricorp(final) {
 const DAP_PAGADOS = { '2022': 4443312, '2023': 1948421, '2024': 7520629, '2025': 7520629 };
 
 // 476,176 acciones comunes de C$ 1,000 nominales (F03, nota 34); el capital común no cambia en
-// 2022–2025. Sin dividendos comunes ni cotización pública: el precio queda para F2 (supuesto).
+// 2022–2025. Sin dividendos comunes ni cotización pública.
 const ACCIONES_COMUNES = 476176;
+
+// ---------- Supuestos S4–S7 (documento de investigación, sección 11) ----------
+// S4: costo de ventas 75 % variable. S5: gastos de operación 25 % variable (mercadeo y ventas,
+// administración, tráfico de almacenes y otros gastos operativos). S6: el pago mínimo definitivo
+// se calcula sobre los ingresos, así que es variable. Los otros ingresos operativos no se
+// clasifican: Apalancamiento los suma a la UAII como ingreso fijo.
+export const SUPUESTOS_COSTOS = Object.freeze({ costoVentasVariable: 0.75, gastosOperacionVariable: 0.25 });
+
+export function comportamientoAgricorp(pctCostoVentas = SUPUESTOS_COSTOS.costoVentasVariable) {
+  const gasto = { tipo: 'mixto', pctVariable: SUPUESTOS_COSTOS.gastosOperacionVariable };
+  return {
+    'Costo de ventas': { tipo: 'mixto', pctVariable: pctCostoVentas },
+    'Gastos de mercadeo y ventas': { ...gasto },
+    'Gastos de administración': { ...gasto },
+    'Gastos de tráfico de almacenes': { ...gasto },
+    'Otros gastos': { ...gasto },
+    'Gasto por pago mínimo definitivo': { tipo: 'variable' }
+  };
+}
+
+// Depreciación de PPE + depreciación de derecho de uso + amortización de intangibles, tomadas de
+// los ajustes de cada flujo publicado (anexo de flujos, tabla 2). Dato REAL de referencia: un
+// costo fijo seguro con el que Apalancamiento comprueba la clasificación supuesta.
+export const DEPRECIACION_AMORTIZACION = Object.freeze({
+  '2022': 102534709 + 11791555 + 17204051,
+  '2023': 115373159 + 12504129 + 18250540,
+  '2024': 117394766 + 12667239 + 19179415,
+  '2025': 113568824 + 13867452 + 8085794
+});
+
+// S7: precio ilustrativo, no observado. Solo sirve para mostrar el cálculo de P/U y P/VL.
+export const PRECIO_ACCION_SUPUESTO = 100;
+const NOTA_PRECIO = 'Precio por acción de C$ 100 en todos los años (S7): número ilustrativo, no es una cotización. '
+  + 'El valor nominal es C$ 1,000 y no hay precio de mercado publicado. El patrimonio incluye capital preferente '
+  + 'y participaciones no controladoras: el valor en libros por acción común queda sobrestimado.';
 
 export function casoHistoricoReal() {
   let estados = registrarCuenta(normalizeFinancialData(estadosDe(EMPRESA_AGRICORP, [...PERIODOS_REALES], {
@@ -338,9 +373,14 @@ export function casoHistoricoReal() {
     id: 'historico',
     nombre: 'AGRI-CORP consolidada (estados auditados 2022–2025 y supuestos declarados)',
     estados,
-    // Sin clasificación fijo/variable todavía (fase F2): el GAO queda N/D.
-    apalancamiento: { comportamiento: {}, dap: { ...DAP_PAGADOS }, tasaDefecto: null },
-    razonesMercado: { periodos: Object.fromEntries(PERIODOS_REALES.map(p => [p, { acciones: ACCIONES_COMUNES, precio: null, dividendos: 0 }])) },
+    apalancamiento: {
+      comportamiento: comportamientoAgricorp(), dap: { ...DAP_PAGADOS }, tasaDefecto: null,
+      depreciacionAmortizacion: { ...DEPRECIACION_AMORTIZACION }
+    },
+    razonesMercado: {
+      periodos: Object.fromEntries(PERIODOS_REALES.map(p => [p, { acciones: ACCIONES_COMUNES, precio: PRECIO_ACCION_SUPUESTO, dividendos: 0 }])),
+      nota: NOTA_PRECIO
+    },
     // La captura de Flujo abre el mismo año que Análisis, Inicio y Proforma: el último cargado.
     flujo: flujoRealAgricorp(PERIODOS_REALES.at(-1))
   };

@@ -17,7 +17,10 @@ function esNumero(valor) {
   return typeof valor === 'number' && Number.isFinite(valor);
 }
 
+export const MAX_NOTA_MERCADO = 500;
+
 // Datos guardados → { periodos: { [periodo]: { acciones, precio, dividendos } } } con números o null.
+// nota (opcional): procedencia de los datos, p. ej. que el precio es un supuesto ilustrativo.
 export function normalizarDatosMercado(datos) {
   const periodos = {};
   const origen = datos?.periodos && typeof datos.periodos === 'object' ? datos.periodos : {};
@@ -26,7 +29,8 @@ export function normalizarDatosMercado(datos) {
     periodos[periodo] = Object.fromEntries(CAMPOS_MERCADO.map(([campo]) =>
       [campo, esNumero(valores[campo]) ? valores[campo] : null]));
   }
-  return { periodos };
+  const nota = typeof datos?.nota === 'string' ? datos.nota.trim() : '';
+  return nota && nota.length <= MAX_NOTA_MERCADO ? { periodos, nota } : { periodos };
 }
 
 // Errores de los datos de un periodo; los campos vacíos (null) se permiten y dan N/D.

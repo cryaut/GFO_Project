@@ -134,8 +134,9 @@ describe('flujos publicados y dividendos pagados', () => {
     expect(caso.apalancamiento.dap).toEqual({ '2022': 4443312, '2023': 1948421, '2024': 7520629, '2025': 7520629 });
   });
 
-  it('las acciones comunes son 476,176 en los cuatro años y no hay precio inventado', () => {
-    for (const p of PERIODOS_REALES) expect(caso.razonesMercado.periodos[p]).toEqual({ acciones: 476176, precio: null, dividendos: 0 });
+  it('las acciones comunes son 476,176 en los cuatro años; el precio es el supuesto S7 y lo dice', () => {
+    for (const p of PERIODOS_REALES) expect(caso.razonesMercado.periodos[p]).toEqual({ acciones: 476176, precio: 100, dividendos: 0 });
+    expect(caso.razonesMercado.nota).toContain('no es una cotización');
   });
 
   it('un año sin flujo publicado cargado no se inventa', () => {

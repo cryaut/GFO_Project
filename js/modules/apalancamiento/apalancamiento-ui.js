@@ -10,7 +10,8 @@ import {
 } from './apalancamiento-calculations.js';
 
 const TIPO_CUENTA = {
-  costoVentas: 'Costo de ventas', gastosAdmin: 'Gastos de administración', gastosVentas: 'Gastos de ventas'
+  costoVentas: 'Costo de ventas', gastosAdmin: 'Gastos de administración', gastosVentas: 'Gastos de ventas',
+  otrosGastos: 'Otros gastos operativos'
 };
 const ETIQUETA_COMPORTAMIENTO = { variable: 'Variable', fijo: 'Fijo', mixto: 'Mixto' };
 const CONCEPTOS_SIN_MONTO = { T: 'tasa', GAO: 'grado', GAF: 'grado', GAT: 'grado' };
@@ -65,6 +66,8 @@ function textoAdvertencia(aviso, tasaMostrada) {
       return `${esc(aviso.periodo)}: UAI − DAP / (1 − T) es negativo. La empresa está bajo su punto de equilibrio financiero.`;
     case 'tasa-por-defecto':
       return `${esc(aviso.periodo)}: no hay una tasa efectiva válida (IR / UAI); se usa la tasa por defecto de ${tasaMostrada}.`;
+    case 'cf-menor-depreciacion':
+      return `${esc(aviso.periodo)}: los costos fijos clasificados (${fmtMonto(aviso.cf)}) son menores que la depreciación y amortización publicadas (${fmtMonto(aviso.depreciacion)}). Revise la clasificación: ese gasto no cambia con las ventas.`;
     case 'estructura-cambio':
       return `${esc(aviso.desde)} → ${esc(aviso.hasta)}: el GAO por variación (${fmtGrado(aviso.gaoVariacion)}) difiere del estructural de ${esc(aviso.desde)} (${fmtGrado(aviso.gaoEstructural)}). Cambió la estructura de costos o hay cuentas mal clasificadas.`;
     default:
@@ -143,7 +146,9 @@ export function apalancamientoUI(page, { estados: guardados, config, guardar }) 
   let guardado = {
     comportamiento: objeto(config?.comportamiento),
     dap: objeto(config?.dap),
-    tasaDefecto: config?.tasaDefecto ?? null
+    tasaDefecto: config?.tasaDefecto ?? null,
+    // Dato de referencia que trae el ejemplo (no se edita aquí): se conserva al guardar.
+    ...(config?.depreciacionAmortizacion ? { depreciacionAmortizacion: objeto(config.depreciacionAmortizacion) } : {})
   };
   let cuentas = [];
   let borrador = null;
@@ -204,7 +209,8 @@ export function apalancamientoUI(page, { estados: guardados, config, guardar }) 
         tasaDefecto = tasa.valor / 100;
       }
     }
-    return { errores, config: { comportamiento, dap, tasaDefecto } };
+    const referencia = guardado.depreciacionAmortizacion ? { depreciacionAmortizacion: guardado.depreciacionAmortizacion } : {};
+    return { errores, config: { comportamiento, dap, tasaDefecto, ...referencia } };
   }
 
   function filasClasificacion() {
