@@ -59,6 +59,9 @@ const defaultData = {
   razonesMercado: {
     periodos: {}
   },
+  // D-113: de qué caso viene cada módulo de empresa ({ [clave]: { caso, nombre } }), para avisar
+  // cuando una pantalla mezcla empresas. Ver js/utils/casos.js.
+  casos: {},
   theme: 'light'
 };
 

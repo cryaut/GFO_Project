@@ -270,6 +270,8 @@ describe('pantalla de Inicio', () => {
     let llamadas = 0;
     inicioUI(page, { panorama: vacio, cargarEjemploEmpresa: () => { llamadas += 1; }, cargarEjemploPersonal: () => { llamadas += 10; } });
     await clic(page, 'inicioEjemploPersonal');
+    // AGRI-CORP va preseleccionado y pide confirmación (D-113); esta prueba cubre MUNO MODA.
+    page.querySelector('#example-inicioEmpresa').value = 'actual';
     await clic(page, 'inicioEjemplo');
     expect(llamadas).toBe(11);
 

@@ -136,7 +136,7 @@ export function mercadoUI(contenedor, { estados, datos, dap = {}, guardar }) {
     });
     contenedor.querySelector('#mercadoEjemplo')?.addEventListener('click', () => {
       const ejemplo = ejemploSeleccionado(contenedor, 'mercado', () => ejemploMercado(estados.periods));
-      persistir({ periodos: { ...guardado.periodos, ...ejemplo.periodos } },
+      persistir({ periodos: { ...guardado.periodos, ...ejemplo.periodos }, ...(ejemplo.nota ? { nota: ejemplo.nota } : {}) },
         'Datos ficticios de mercado seleccionados cargados. No proceden del ejercicio docente.');
     });
   }

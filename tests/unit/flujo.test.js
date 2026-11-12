@@ -109,6 +109,7 @@ describe('pantalla de flujo de efectivo', () => {
 
   it('con el ejemplo muestra el estado por actividades y lo interpreta', async () => {
     const { page, guardar, graficar } = montar();
+    page.querySelector('#example-flujo').value = 'actual'; // AGRI-CORP va preseleccionado (D-113)
     await clic(page, 'flujoEjemplo');
     expect(guardar.mock.lastCall[0].movimientos).toHaveLength(10);
     const html = page.innerHTML;

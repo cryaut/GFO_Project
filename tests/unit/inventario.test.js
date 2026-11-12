@@ -145,6 +145,7 @@ describe('pantalla de inventario', () => {
 
   it('carga el ejemplo, lo guarda y muestra valor, alertas y gráfico', async () => {
     const { page, guardar, graficar } = montar();
+    page.querySelector('#example-inventario').value = 'actual'; // AGRI-CORP va preseleccionado (D-113)
     await clic(page, 'invEjemplo');
     expect(guardar).toHaveBeenCalledTimes(1);
     expect(guardar.mock.calls[0][0].productos).toHaveLength(4);

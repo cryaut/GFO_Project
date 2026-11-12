@@ -570,7 +570,9 @@ export function casoHistoricoReal() {
   };
 }
 
-// ---------- Caso operativo simulado: Unidad_Comercial_Arroz_Demo_2027 ----------
+// ---------- AGRI-CORP · línea de arroz: escenario simulado jul–sep 2027 ----------
+// Línea de negocio de arroz con datos INVENTADOS con fines docentes (sacos, precios, calendarios):
+// sirve para explicar los módulos por unidad. No son cifras reales ni se suman al consolidado.
 
 const PRECIO = 900;
 const COSTO = 620;
@@ -618,7 +620,7 @@ function estadosSimulados() {
     };
   });
   const base = {
-    name: 'Unidad_Comercial_Arroz_Demo_2027 (SIMULADA, no es AGRI-CORP)',
+    name: 'AGRI-CORP · línea de arroz (escenario simulado 2027)',
     periods: MESES,
     balanceGeneral: balance,
     estadoResultados: resultados,
@@ -713,7 +715,7 @@ function planeacionSimulada() {
 export function casoOperativoSimulado() {
   return {
     id: 'simulado',
-    nombre: 'Unidad_Comercial_Arroz_Demo_2027 (jul–sep 2027, datos inventados)',
+    nombre: 'AGRI-CORP · línea de arroz (escenario simulado jul–sep 2027)',
     estados: adjuntarFlujoDocumentado(estadosSimulados(), flujoSimulado(), { tipo:'simulado', fuente:'Dossier AGRI-CORP · III.8–III.9 · Caja y conciliación trimestral simuladas', inicial:'2027-06', final:'2027-09' }),
     apalancamiento: {
       comportamiento: {

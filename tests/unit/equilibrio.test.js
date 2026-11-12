@@ -176,6 +176,7 @@ describe('pantalla de punto de equilibrio', () => {
 
   it('con el ejemplo muestra resultados, cálculo, escenarios y gráfica', async () => {
     const { page, guardar, graficar } = montar();
+    page.querySelector('#example-equilibrio').value = 'actual'; // AGRI-CORP va preseleccionado (D-113)
     await clic(page, 'eqEjemplo');
     expect(guardar).toHaveBeenCalledWith(expect.objectContaining({ precio: 800, costosFijos: 42000 }));
     const html = page.innerHTML;

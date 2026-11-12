@@ -146,6 +146,7 @@ describe('pantalla del presupuesto maestro', () => {
 
   it('con el ejemplo muestra los presupuestos, las alertas y la gráfica de caja', async () => {
     const { page, guardar, graficar } = montar();
+    page.querySelector('#example-planeacion').value = 'actual'; // AGRI-CORP va preseleccionado (D-113)
     await clic(page, 'planEjemplo');
     expect(guardar.mock.lastCall[0].supuestos).toMatchObject({ precio: 800, periodos: 4 });
     const html = page.innerHTML;

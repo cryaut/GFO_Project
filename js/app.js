@@ -12,6 +12,7 @@ import { initFlujo } from './modules/flujo/index.js';
 import { initPlaneacion } from './modules/planeacion/index.js';
 import { initProforma } from './modules/proforma/index.js';
 import { initInicio } from './modules/inicio/index.js';
+import { avisoCaso, bannerCaso } from './utils/casos.js';
 import { refreshChartsTheme } from './components/chart.js';
 import { escapeHTML } from './utils/html.js';
 
@@ -106,12 +107,33 @@ function initMobileMenu() {
   });
 }
 
+// D-113: aviso del caso de los datos (AGRI-CORP consolidado, línea de arroz o empresas
+// mezcladas), encima de la pantalla activa. Vive fuera de las páginas porque cada módulo
+// reescribe su página entera.
+function actualizarBannerCaso() {
+  const main = document.getElementById('app');
+  if (!main) return;
+  let banner = document.getElementById('bannerCaso');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'bannerCaso';
+    main.prepend(banner);
+  }
+  try {
+    banner.innerHTML = bannerCaso(avisoCaso(getRoute(), store.getAll()));
+  } catch {
+    banner.innerHTML = '';
+  }
+}
+
 function init() {
   store.load();
   initThemeToggle();
   initMobileMenu();
-  window.addEventListener('hashchange', () => navigate(getRoute()));
+  window.addEventListener('hashchange', () => { navigate(getRoute()); actualizarBannerCaso(); });
+  store.subscribe(actualizarBannerCaso);
   navigate(getRoute());
+  actualizarBannerCaso();
 }
 
 document.addEventListener('DOMContentLoaded', init);
