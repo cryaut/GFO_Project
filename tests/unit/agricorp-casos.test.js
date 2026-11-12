@@ -95,7 +95,7 @@ describe('registro del caso y aviso de mezcla', () => {
     ejemploSeleccionado(page, 'flujo', () => datos);
     store.setPersisted('flujo', datos);
     await Promise.resolve();
-    expect(store.get('casos').flujo).toEqual({ caso: 'otro', nombre: 'MUNO MODA · flujo anual' });
+    expect(store.get('casos').flujo).toMatchObject({ caso: 'otro', nombre: 'MUNO MODA · flujo anual' });
   });
 
   it('el texto del aviso se escapa', () => {
@@ -118,7 +118,7 @@ describe('mapa de supuestos de Inicio', () => {
     expect(valor('S7')).toBe('C$ 100.00');
     expect(valor('S8')).toBe('1.35%');
     expect(valor('S10')).toBe('30.00%');
-    expect(valor('S15')).toBe('67.82 días');
+    expect(valor('S15')).toBe('78.49 días');
     expect(valor('S16')).toContain('C$ 620.00 por quintal');
     expect(mapa.filas.every(f => f.valor !== 'N/D')).toBe(true);
   });

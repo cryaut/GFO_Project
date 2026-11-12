@@ -5,6 +5,7 @@ import { panelEjemplos, vincularEjemplos, ejemploSeleccionado } from '../../comp
 // D-074: fuente única de costos — origen «estados» deriva la base en cada consulta y
 // origen «manual» es la captura de hoy con un aviso si el CF difiere del de los estados.
 import { escapeHTML as esc } from '../../utils/html.js';
+import { etiquetaSupuesto } from '../../utils/casos.js';
 import { formatCurrencyND as montoBase, formatNumberND, formatPercentND as pct } from '../../utils/format.js';
 import { leerNumero } from '../../utils/form.js';
 import { mostrarProcedencia, panelTransferencia, vincularTransferencia } from '../../components/transferencia.js';
@@ -298,8 +299,12 @@ export function equilibrioUI(page, opciones) {
     // de la base.
     const erroresBase = validarEquilibrio(normalizarEquilibrio({ ...datosEfectivos, escenario: {} }));
     const r = !resolucion.error && !erroresBase.length ? calcularCVU(datosEfectivos) : null;
+    // D-113: con AGRI-CORP consolidado, CVu y CF salen de la clasificación supuesta (S4–S6).
+    const notaSupuesto = r && datos.origen === 'estados' && opciones.supuestos?.costos
+      ? `<p class="form-hint mb-4">${etiquetaSupuesto('S4–S6')} El costo variable unitario, los costos fijos y todo lo que sale de ellos (punto de equilibrio, margen de seguridad, GAO) usan la clasificación fija/variable de Apalancamiento, que AGRI-CORP no publica. Las ventas del periodo son reales.</p>`
+      : '';
     const resultados = r
-      ? `${seccionResultados(r)}${seccionInterpretacion(r)}${seccionTraza(r)}
+      ? `${notaSupuesto}${seccionResultados(r)}${seccionInterpretacion(r)}${seccionTraza(r)}
         <div class="card mb-4"><h2 class="card-title">Gráfica costo-volumen-utilidad</h2>
           <p class="form-hint">El punto de equilibrio está donde los ingresos totales cortan a los costos totales. A la derecha hay utilidad; a la izquierda, pérdida.</p>
           <div style="height:320px"><canvas id="equilibrioChart" role="img" aria-label="Ingresos y costos totales según las unidades vendidas"></canvas></div></div>

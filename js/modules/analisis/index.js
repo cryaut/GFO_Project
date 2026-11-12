@@ -17,6 +17,7 @@ import { construirEOAF } from './eoaf-calculations.js';
 import { construirEFE } from './efe-calculations.js';
 import { seleccionarPeriodoPar, TOLERANCIA_COMPROBACION } from './comprobacion-calculations.js';
 import { leerEstados } from '../../utils/estados-guardados.js';
+import { etiquetaSupuesto, supuestosActivos } from '../../utils/casos.js';
 
 export const UMBRALES = {
   ratioCorrienteMin: 1,
@@ -333,6 +334,11 @@ function renderRazonesSection(period) {
   const badgeSiHay = (v, ok) => v == null ? 'badge-info' : badge(ok);
   const etiqueta = (b) => b === 'badge-success' ? 'OK' : 'Revisión';
   const fuenteCxP = `compras a crédito${r.usaPromedios ? ' / CxP promedio' : ''}`;
+  // D-113: con AGRI-CORP consolidado, las ventas a crédito (S1) y los pagos a proveedores (S2–S3)
+  // son supuestos declarados: las cifras que los usan llevan la etiqueta.
+  const { credito } = supuestosActivos(store.getAll());
+  const sup = (texto, ids) => (credito && texto !== 'N/D' && !texto.startsWith('No se puede calcular')
+    ? `${texto} ${etiquetaSupuesto(ids, 'Depende de un supuesto declarado; ver el mapa de supuestos en Inicio')}` : texto);
   const items = [
     ['Liquidez', '', '', ''],
     ['Ratio Corriente', val(r.RC, formatNumber, d.RC, 'el pasivo corriente', 'la liquidez corriente'), badgeSiHay(r.RC, r.RC >= UMBRALES.ratioCorrienteMin)],
@@ -341,11 +347,11 @@ function renderRazonesSection(period) {
     ['Actividad', '', '', ''],
     [`Rotación Inventario${r.usaPromedios ? ' (inv. promedio)' : ''}`, val(r.RotInv, formatNumber, d.RotInv, 'el inventario', 'la rotación de inventario'), 'badge-info'],
     ['Edad del Inventario (días)', r.edadInventario == null ? 'N/D' : formatNumber(r.edadInventario, 2), 'badge-info'],
-    [`Rotación CxC (ventas a crédito${r.usaPromedios ? ' / CxC promedio' : ''})`, val(r.RotCxC, formatNumber, d.RotCxC, 'las CxC', 'la rotación de CxC'), 'badge-info'],
-    ['Plazo Cobro (días)', r.PPC == null ? 'N/D' : formatNumber(r.PPC, 2), 'badge-info'],
-    [`Rotación de Cuentas por Pagar (${fuenteCxP})`, r.rotacionCxP == null ? 'N/D' : formatNumber(r.rotacionCxP), 'badge-info'],
-    ['Plazo Pago (días)', r.plazoPago == null ? 'N/D' : formatNumber(r.plazoPago, 2), 'badge-info'],
-    ['Ciclo de Conversión (días)', r.cicloConversion == null ? 'N/D' : formatNumber(r.cicloConversion, 2), badgeSiHay(r.cicloConversion, r.cicloConversion <= UMBRALES.cicloConversionMaxDias)],
+    [`Rotación CxC (ventas a crédito${r.usaPromedios ? ' / CxC promedio' : ''})`, sup(val(r.RotCxC, formatNumber, d.RotCxC, 'las CxC', 'la rotación de CxC'), 'S1'), 'badge-info'],
+    ['Plazo Cobro (días)', sup(r.PPC == null ? 'N/D' : formatNumber(r.PPC, 2), 'S1'), 'badge-info'],
+    [`Rotación de Cuentas por Pagar (${fuenteCxP})`, sup(r.rotacionCxP == null ? 'N/D' : formatNumber(r.rotacionCxP), 'S2–S3'), 'badge-info'],
+    ['Plazo Pago (días)', sup(r.plazoPago == null ? 'N/D' : formatNumber(r.plazoPago, 2), 'S2–S3'), 'badge-info'],
+    ['Ciclo de Conversión (días)', sup(r.cicloConversion == null ? 'N/D' : formatNumber(r.cicloConversion, 2), 'S1–S3'), badgeSiHay(r.cicloConversion, r.cicloConversion <= UMBRALES.cicloConversionMaxDias)],
     [`Rotación Activos${r.usaPromedios ? ' (activo promedio)' : ''}`, r.rotacionActivos == null ? 'N/D' : formatNumber(r.rotacionActivos), 'badge-info'],
     ['Rotación Activos Fijos (Ventas / activo fijo neto)', r.rotacionActivosFijos == null ? 'N/D' : formatNumber(r.rotacionActivosFijos), 'badge-info'],
     ['Rotación Capital de Trabajo (Ventas / CNT)', r.rotacionCapitalTrabajo == null ? 'N/D' : formatNumber(r.rotacionCapitalTrabajo), 'badge-info'],

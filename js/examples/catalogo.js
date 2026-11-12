@@ -49,7 +49,7 @@ const LISTAS = {
     docente('tor-base','TOR · 100000 unidades','Practica_clase_TOR_Gitman_Resuelto.md','Precio 7.50, variable 3, fijos 250000. UM, moneda no identificada. Este módulo resuelve C-V-U; intereses y DAP pertenecen al análisis de apalancamiento.'),
     docente('tor-alto','TOR · 120000 unidades','Practica_clase_TOR_Gitman_Resuelto.md','Segundo escenario de la práctica: mismas condiciones y 120000 unidades. UM; no se convierte a córdobas.')],
   planeacion:[
-    agri('agricorp', 'AGRI-CORP · presupuesto 2025 desde el cierre real de 2024', FUENTE_REAL, 'Cuatro trimestres en C$1 al costo: ventas +1.35 %, 50 % al contado, compras 40 % al contado, inventario de 67.82 días, IR 30 %. Aperturas reales de 2024; el 2025 auditado queda como contraste.'),
+    agri('agricorp', 'AGRI-CORP · presupuesto 2025 desde el cierre real de 2024', FUENTE_REAL, 'Cuatro trimestres en C$1 al costo: ventas +1.35 %, 50 % al contado, compras 40 % al contado, inventario final de 78.49 días (cierre 2024), IR 30 %. Aperturas reales de 2024; el 2025 auditado queda como contraste.'),
     agri('agricorp-arroz', 'AGRI-CORP · línea de arroz jul–sep 2027', FUENTE_ARROZ, 'Presupuesto mensual por sacos. ' + DETALLE_ARROZ),
     propio('actual','MUNO MODA · presupuesto trimestral','Presupuesto completo ficticio 2025 en C$. No representa los calendarios de La Pinolera.'),
     propio('contado','MUNO MODA · ventas al contado','Variante ficticia: todas las ventas se cobran al contado. Conserva las demás hipótesis y saldos del caso base.')],

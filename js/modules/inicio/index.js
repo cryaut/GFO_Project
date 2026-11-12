@@ -9,7 +9,7 @@ import { casoHistoricoReal, casoOperativoSimulado } from '../../examples/ejemplo
 import { ejemploEquilibrio, normalizarEquilibrio } from '../equilibrio/equilibrio-calculations.js';
 import { getDemoData } from '../estados/index.js';
 import { casoDeEjemplo, crearEjemplo } from '../../examples/catalogo.js';
-import { CLAVES_EMPRESA, registrarCasos, tieneDatos } from '../../utils/casos.js';
+import { CLAVES_EMPRESA, registrarCasos, registroCaso, tieneDatos } from '../../utils/casos.js';
 import { mapaSupuestos } from './inicio-supuestos.js';
 import { normalizeFinancialData } from '../estados/estados-normalize.js';
 import { ejemploFlujo, normalizarFlujo } from '../flujo/flujo-calculations.js';
@@ -53,8 +53,11 @@ function cargarCasoAgricorp(id) {
     equilibrio: normalizarEquilibrio(caso.equilibrio ?? null),
     planeacion: caso.planeacion ? { supuestos: normalizarSupuestos(caso.planeacion.supuestos) } : { supuestos: null }
   };
-  const registroCaso = casoDeEjemplo('inicioEmpresa', id);
-  modulos.casos = { ...(store.get('casos') || {}), ...Object.fromEntries(CLAVES_EMPRESA.map(clave => [clave, registroCaso])) };
+  const registroCasoInicio = casoDeEjemplo('inicioEmpresa', id);
+  modulos.casos = {
+    ...(store.get('casos') || {}),
+    ...Object.fromEntries(CLAVES_EMPRESA.map(clave => [clave, registroCaso(clave, registroCasoInicio, modulos[clave])]))
+  };
   // Primero se prepara todo; una sola escritura publica los siete módulos y su registro de caso.
   store.setModulesPersisted(modulos);
   return ['Estados financieros', 'Apalancamiento', 'Razones de mercado', 'Flujo de efectivo', 'Inventario', 'Punto de equilibrio', 'Presupuesto maestro'];

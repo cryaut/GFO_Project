@@ -3,6 +3,7 @@ import { formatCurrencyND } from '../../utils/format.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
 import { obtenerUtilidadNetaMotor } from '../razones/razones-app-adapter.js';
 import { monedaDe } from '../../utils/moneda.js';
+import { textoProcedencia } from '../../utils/casos.js';
 
 // Cuerpo HTML del reporte de Reportes e Integración. Es puro: recibe los KPIs y los estados
 // ya normalizados y devuelve texto con todo lo que viene del usuario o de un archivo
@@ -126,22 +127,25 @@ export function resumenModulosEmpresa(entradas, reporte) {
   const apal = entradas.apalancamiento?.periodos?.at(-1);
   const m = entradas.mercado, e = entradas.equilibrio, p = entradas.presupuesto, inv = entradas.inventario;
   const b = reporte?.balance;
+  // D-113: los detalles que dependen de un supuesto de AGRI-CORP lo dicen.
+  const s = entradas.supuestos || {};
+  const sup = (activo, ids) => (activo ? ` (SUPUESTO ${ids})` : '');
   return [
     fila('Apalancamiento', esNumero(apal?.grados?.gao),
-      apal ? `${apal.periodo}: GAO ${veces(apal.grados.gao)}, GAF ${veces(apal.grados.gaf)}` : 'Sin estados para calcular.'),
+      apal ? `${apal.periodo}: GAO ${veces(apal.grados.gao)}${sup(s.costos, 'S4–S6')}, GAF ${veces(apal.grados.gaf)}` : 'Sin estados para calcular.'),
     fila('Razones de mercado', esNumero(m?.upa),
-      m ? `${m.periodo}: UPA ${monto(m.upa, moneda)}${m.nota ? ' (precio ilustrativo: SUPUESTO)' : ''}` : 'Sin acciones registradas.'),
+      m ? `${m.periodo}: UPA ${monto(m.upa, moneda)}${m.nota ? ' (precio ilustrativo: SUPUESTO S7)' : ''}` : 'Sin acciones registradas.'),
     fila('Punto de equilibrio', Boolean(e),
-      e ? `Ventas de equilibrio ${monto(e.peVentas, monedaDe(e))} · margen de seguridad ${porcentaje(e.msPorcentaje)}` : 'Sin datos de C-V-U.'),
+      e ? `Ventas de equilibrio ${monto(e.peVentas, monedaDe(e))} · margen de seguridad ${porcentaje(e.msPorcentaje)}${sup(s.cvu, 'S4–S6')}` : 'Sin datos de C-V-U.'),
     fila('Flujo de efectivo', Boolean(reporte?.flujo),
       reporte?.flujo ? `${reporte.flujo.periodos.inicial} → ${reporte.flujo.periodos.final}: operación ${monto(reporte.flujo.neto.operacion, monedaDe(reporte.flujo))}`
         : (entradas.flujo?.motivo || 'Sin un EFE utilizable.')),
     fila('Presupuesto maestro', Boolean(p),
-      p ? `Utilidad neta ${monto(p.totales.utilidadNeta, moneda)} · caja final ${monto(p.cierre.efectivo, moneda)}` : (entradas.motivoPresupuesto || 'Sin supuestos.')),
+      p ? `Utilidad neta ${monto(p.totales.utilidadNeta, moneda)} · caja final ${monto(p.cierre.efectivo, moneda)}${sup(s.presupuesto, 'S8–S15')}` : (entradas.motivoPresupuesto || 'Sin supuestos.')),
     fila('Inventario', Boolean(inv),
-      inv ? `${inv.productos.length} producto(s) · valor ${monto(inv.valorTotal, moneda)} · ${inv.porReponer.length} por reponer` : 'Sin productos.'),
+      inv ? `${inv.productos.length} producto(s) · valor ${monto(inv.valorTotal, moneda)} · ${inv.porReponer.length} por reponer${sup(s.kardex, 'S16')}` : 'Sin productos.'),
     fila('Balance proforma', Boolean(b?.disponible),
-      b?.disponible ? `${b.base} → proforma${b.contraste ? ` (contraste ${b.contraste})` : ''}: ${b.cuadra ? 'cuadra' : `financiamiento requerido ${monto(b.financiamientoRequerido, moneda)}`}`
+      b?.disponible ? `${b.base} → proforma${b.contraste ? ` (contraste ${b.contraste})` : ''}: ${b.cuadra ? 'cuadra' : `financiamiento requerido ${monto(b.financiamientoRequerido, moneda)}`}${sup(s.presupuesto, 'S8–S15')}`
         : (b?.motivo || 'Requiere el presupuesto maestro.'))
   ];
 }
@@ -191,7 +195,7 @@ function indicadoresHTML(reporte) {
 // kpis: resultado de computeDashboardKPIs (o null). estados: datos normalizados (o null).
 // errorEstados: mensaje de D-077 cuando los estados guardados existen pero no se leen.
 // entradas (opcional, D-113): las de Proforma, para el estado de los módulos de empresa.
-export function construirReporteHTML({ kpis = null, estados = null, errorEstados = null, reporte = null, entradas = null } = {}) {
+export function construirReporteHTML({ kpis = null, estados = null, errorEstados = null, reporte = null, entradas = null, aviso = null } = {}) {
   const portada = resumen(kpis, monedaDe(estados));
   const proyectado = flujoSuministrado(reporte?.flujo) + proyeccion(reporte) + resultadosProforma(reporte)
     + balanceProformaHTML(reporte) + indicadoresHTML(reporte) + tablaModulos(resumenModulosEmpresa(entradas, reporte));
@@ -201,5 +205,7 @@ export function construirReporteHTML({ kpis = null, estados = null, errorEstados
   if (!estados || !estados.periods?.length) {
     return `${portada}<p>No hay estados financieros guardados.${kpis?.presupuestoEstudiantil || reporte?.proforma ? '' : ' Cárguelos en Estados Financieros para generar el reporte.'}</p>${proyectado}`;
   }
-  return `<p>Empresa: <strong>${esc(estados.name)}</strong> · ${esc(monedaDe(estados))}</p>${portada}${tablaBalance(estados)}${tablaResultados(estados)}${tablaTotales(estados)}${proyectado}`;
+  // D-113: el reporte dice de qué caso vienen los datos, igual que el aviso de las pantallas.
+  const procedencia = textoProcedencia(aviso);
+  return `<p>Empresa: <strong>${esc(estados.name)}</strong> · ${esc(monedaDe(estados))}</p>${procedencia ? `<p><em>${esc(procedencia)}</em></p>` : ''}${portada}${tablaBalance(estados)}${tablaResultados(estados)}${tablaTotales(estados)}${proyectado}`;
 }

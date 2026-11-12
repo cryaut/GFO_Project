@@ -59,13 +59,26 @@ describe('estado de resultados presupuestado 2025', () => {
 });
 
 describe('inventario y caja', () => {
-  it('el inventario final de cada trimestre es el promedio de 2024 × 1.0135 (67.82 días)', () => {
-    for (const valor of p.cbv.inventarioFinal) expect(valor).toBeCloseTo((1180606300 + 1621305239) / 2 * g, 2);
+  it('S15: el inventario final de cada trimestre es el cierre de 2024 × 1.0135 (78.49 días)', () => {
+    // Días = 1,621,305,239 / 7,539,860,126 × 365 = 78.486 días sobre el costo del trimestre siguiente.
+    expect(s.pctInventarioFinal * 365 / 4).toBeCloseTo(1621305239 / 7539860126 * 365, 8);
+    expect(s.pctInventarioFinal * 365 / 4).toBeCloseTo(78.49, 2);
+    for (const valor of p.cbv.inventarioFinal) expect(valor).toBeCloseTo(1621305239 * g, 2);
   });
 
-  it('las compras del T1 bajan el inventario desde el saldo real de 2024', () => {
-    const ventasU = 7539860126 * g / 4, finalU = (1180606300 + 1621305239) / 2 * g;
+  it('las compras del T1 suben el inventario desde el saldo real de 2024 al ritmo de las ventas', () => {
+    const ventasU = 7539860126 * g / 4, finalU = 1621305239 * g;
+    // 1,910,412,059.4 + 1,643,192,859.7 − 1,621,305,239 = 1,932,299,680.2.
     expect(p.compras.importe[0]).toBeCloseTo(ventasU + finalU - 1621305239, 2);
+    expect(p.compras.importe[0]).toBeCloseTo(1932299680.15, 1);
+  });
+
+  it('S15 no libera caja: el saldo final es 431,690,010 (sin la reducción de inventario de 223.3 M)', () => {
+    // Con la base anterior (inventario promedio) el cierre era (1,180,606,300 + 1,621,305,239) / 2 × 1.0135
+    // = 1,419,868,672.4: compraba 223,324,187.3 menos y la caja final quedaba en 655,014,197.6.
+    // 655,014,197.6 − 223,324,187.3 = 431,690,010.3. La utilidad neta y los proveedores no cambian.
+    expect(p.cierre.efectivo).toBeCloseTo(431690010.28, 1);
+    expect(1621305239 * g - (1180606300 + 1621305239) / 2 * g).toBeCloseTo(223324187.34, 1);
   });
 
   it('cobros = ventas + CxC inicial − CxC final (50 % del T4)', () => {

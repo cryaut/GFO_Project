@@ -467,8 +467,10 @@ function inventarioAgricorp() {
 //   S8   ventas 2025 = ventas 2024 × 1.0135 (crecimiento de las ventas proyectadas en F05).
 //   S9   cuatro trimestres iguales.
 //   S1/S2 50 % de las ventas al contado; 40 % de las compras al contado.
-//   S15  inventario final = días de inventario de 2024 (67.82) → fracción de las ventas del
-//        trimestre siguiente = 4 × inventario promedio 2024 / costo de ventas 2024.
+//   S15  inventario final = días de inventario al CIERRE de 2024: 1,621,305,239 / 7,539,860,126 × 365
+//        = 78.49 días → fracción de las ventas del trimestre siguiente = 4 × inventario final 2024 /
+//        costo de ventas 2024. Una política de saldo final se mide con un saldo final; los 67.82
+//        días con inventario promedio sirven para la rotación, no para fijar el cierre (D-113).
 //   S4–S6 en el presupuesto: los gastos de operación se reparten 25 % variable / 75 % fijo y el
 //        pago mínimo definitivo es variable. Los otros ingresos operativos reducen los gastos fijos
 //        y la depreciación y amortización (S13) se separan de ellos porque no salen de caja.
@@ -495,14 +497,14 @@ export function presupuestoAgricorp2025() {
   const dya = DEPRECIACION_AMORTIZACION['2024'];
   const inventario = filaDe(REAL_ACTIVOS, 'Inventarios');
   const unidadesTrimestre = costo * (1 + CRECIMIENTO_VENTAS_2025) / 4;
-  const pctInventarioFinal = 4 * ((inventario[3] + inventario[4]) / 2) / costo;
+  const pctInventarioFinal = 4 * inventario[4] / costo;
   const desembolsoTrimestral = (INVERSION_2025 + DIVIDENDOS_2025) / 4;
   const irPorPagar2024 = valor(REAL_PASIVOS, 'Impuesto sobre la renta por pagar');
   return {
     tipoPeriodo: 'Trimestre', periodos: 4,
     unidad: 'C$1 al costo (precio = ventas / costo de ventas de 2024)',
     nota: 'Presupuesto 2025 de AGRI-CORP consolidada desde el cierre real de 2024. Ventas +1.35 % en cuatro trimestres iguales; '
-      + '50 % al contado; compras 40 % al contado; inventario final de 67.82 días; gastos de operación 25 % variables, pago mínimo '
+      + '50 % al contado; compras 40 % al contado; inventario final de 78.49 días; gastos de operación 25 % variables, pago mínimo '
       + 'variable; IR 30 %; inversión y dividendos de 2024 repetidos; el IR por pagar de 2024 se paga en el T1. El costo de ventas '
       + 'se valora completo por unidad: el punto de equilibrio de esta pantalla lo trata todo como variable; el del caso está en '
       + 'Punto de equilibrio. Contraste: el 2025 auditado está en Estados.',

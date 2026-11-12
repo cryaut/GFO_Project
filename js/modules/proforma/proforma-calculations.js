@@ -150,8 +150,10 @@ export function flujoDesdeEFE(estados) {
 }
 
 // Indicadores de todos los módulos en una sola tabla.
-export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento, presupuesto, equilibrio, flujo, inventario, umbrales = {} }, periodoReal) {
+export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento, presupuesto, equilibrio, flujo, inventario, umbrales = {}, supuestos = {} }, periodoReal) {
   const lista = [];
+  // D-113: prefijo de la lectura cuando la cifra depende de un supuesto declarado de AGRI-CORP.
+  const sup = (activo, ids) => (activo ? `SUPUESTO ${ids}. ` : '');
   if (razones) {
     const grupo = `Análisis financiero (${periodoReal})`;
     const rc = razon(razones, 'RC');
@@ -190,17 +192,17 @@ export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento
     const { gao, gaf, gat } = ultimoApal.grados;
     const grupo = `Apalancamiento (${ultimoApal.periodo})`;
     lista.push(indicador(grupo, 'GAO', gao, 'veces', 'Apalancamiento', '#/apalancamiento',
-      esNumero(gao) && gao > 0 ? `1 % más de ventas sube la UAII ${formatNumberND(gao)} %.` : 'N/D si faltan clasificar costos fijos y variables.'));
+      `${sup(supuestos.costos, 'S4–S6')}${esNumero(gao) && gao > 0 ? `1 % más de ventas sube la UAII ${formatNumberND(gao)} %.` : 'N/D si faltan clasificar costos fijos y variables.'}`));
     lista.push(indicador(grupo, 'GAF', gaf, 'veces', 'Apalancamiento', '#/apalancamiento',
       esNumero(gaf) && gaf > 0 ? `1 % más de UAII sube la utilidad para accionistas ${formatNumberND(gaf)} %.` : ''));
-    lista.push(indicador(grupo, 'GAT', gat, 'veces', 'Apalancamiento', '#/apalancamiento', 'GAO × GAF: riesgo total de la estructura de costos y deuda.'));
+    lista.push(indicador(grupo, 'GAT', gat, 'veces', 'Apalancamiento', '#/apalancamiento', `${sup(supuestos.costos, 'S4–S6')}GAO × GAF: riesgo total de la estructura de costos y deuda.`));
   }
   if (equilibrio) {
     const grupo = 'Punto de equilibrio (C-V-U)';
     lista.push(indicador(grupo, 'Punto de equilibrio', equilibrio.peUnidades, 'unidades', 'Punto de Equilibrio', '#/equilibrio',
-      esNumero(equilibrio.peVentas) ? `Equivale a ${monto(equilibrio.peVentas, monedaDe(equilibrio))} de ventas.` : 'Sin margen de contribución positivo.'));
+      `${sup(supuestos.cvu, 'S4–S6')}${esNumero(equilibrio.peVentas) ? `Equivale a ${monto(equilibrio.peVentas, monedaDe(equilibrio))} de ventas.` : 'Sin margen de contribución positivo.'}`));
     lista.push(indicador(grupo, 'Margen de seguridad', equilibrio.msPorcentaje, 'pct', 'Punto de Equilibrio', '#/equilibrio',
-      esNumero(equilibrio.msPorcentaje) ? `Las ventas pueden caer ${pct(Math.max(0, equilibrio.msPorcentaje))} antes de tener pérdida.` : '',
+      `${sup(supuestos.cvu, 'S4–S6')}${esNumero(equilibrio.msPorcentaje) ? `Las ventas pueden caer ${pct(Math.max(0, equilibrio.msPorcentaje))} antes de tener pérdida.` : ''}`,
       esNumero(equilibrio.msPorcentaje) ? (equilibrio.msPorcentaje >= 0.2 ? 'ok' : 'alerta') : 'info'));
   }
   if (flujo?.disponible) {
@@ -215,11 +217,12 @@ export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento
   if (presupuesto) {
     const grupo = 'Presupuesto maestro';
     const t = presupuesto.totales;
-    lista.push(indicador(grupo, 'Ventas presupuestadas', t.ventas, 'monto', 'Presupuesto Maestro', '#/planeacion', `${num(t.unidades)} unidades.`));
-    lista.push(indicador(grupo, 'Utilidad neta presupuestada', t.utilidadNeta, 'monto', 'Presupuesto Maestro', '#/planeacion', '', t.utilidadNeta >= 0 ? 'ok' : 'alerta'));
-    lista.push(indicador(grupo, 'Saldo de caja proyectado', presupuesto.cierre.efectivo, 'monto', 'Presupuesto Maestro', '#/planeacion', 'Saldo final del último periodo.'));
+    const sp = sup(supuestos.presupuesto, 'S8–S15');
+    lista.push(indicador(grupo, 'Ventas presupuestadas', t.ventas, 'monto', 'Presupuesto Maestro', '#/planeacion', `${sp}${num(t.unidades)} unidades.`));
+    lista.push(indicador(grupo, 'Utilidad neta presupuestada', t.utilidadNeta, 'monto', 'Presupuesto Maestro', '#/planeacion', sp.trim(), t.utilidadNeta >= 0 ? 'ok' : 'alerta'));
+    lista.push(indicador(grupo, 'Saldo de caja proyectado', presupuesto.cierre.efectivo, 'monto', 'Presupuesto Maestro', '#/planeacion', `${sp}Saldo final del último periodo.`));
     lista.push(indicador(grupo, 'Financiamiento máximo requerido', presupuesto.financiamientoMaximo, 'monto', 'Presupuesto Maestro', '#/planeacion',
-      presupuesto.periodoFinanciamiento ? `En ${presupuesto.periodoFinanciamiento}.` : 'La caja no baja del mínimo.', presupuesto.financiamientoMaximo > 0 ? 'alerta' : 'ok'));
+      `${sp}${presupuesto.periodoFinanciamiento ? `En ${presupuesto.periodoFinanciamiento}.` : 'La caja no baja del mínimo.'}`, presupuesto.financiamientoMaximo > 0 ? 'alerta' : 'ok'));
   }
   if (inventario) {
     const grupo = 'Inventario';
@@ -227,7 +230,7 @@ export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento
     const lecturaReposicion = inventario.porReponer.length
       ? inventario.porReponer.map(p => `${p.nombre}: ${descripcionReposicion(p)}`).join(' ')
       : 'Todos sobre el stock mínimo.';
-    lista.push(indicador(grupo, 'Valor del inventario', inventario.valorTotal, 'monto', 'Inventario', '#/inventario', `${inventario.productos.length} productos.`));
+    lista.push(indicador(grupo, 'Valor del inventario', inventario.valorTotal, 'monto', 'Inventario', '#/inventario', `${sup(supuestos.kardex, 'S16')}${inventario.productos.length} productos.`));
     lista.push(indicador(grupo, 'Productos por reponer', inventario.porReponer.length, 'unidades', 'Inventario', '#/inventario',
       lecturaReposicion,
       inventario.porReponer.length ? 'alerta' : 'ok'));

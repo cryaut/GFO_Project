@@ -9,6 +9,7 @@ import { calcularPresupuestoMaestro, validarSupuestos } from '../planeacion/plan
 import { leerPlaneacion } from '../planeacion/planeacion-escenarios.js';
 import { construirReporte, flujoDesdeEFE } from './proforma-calculations.js';
 import { proformaUI } from './proforma-ui.js';
+import { supuestosActivos } from '../../utils/casos.js';
 
 // Un módulo con datos dañados no debe impedir el resto del reporte.
 function intentar(calculo) {
@@ -60,6 +61,12 @@ export function reunirEntradas() {
     equilibrio: !baseCvu || baseCvu.error || validarEquilibrio(cVu).length ? null : calcularCVU(cVu),
     flujo,
     inventario: inventario.productos.length ? inventario : null,
+    // D-113: qué supuestos de AGRI-CORP alimentan cada indicador (para rotularlos). El C-V-U solo
+    // usa S4–S6 cuando se deriva de los estados con la clasificación de Apalancamiento.
+    supuestos: (() => {
+      const activos = supuestosActivos(store.getAll());
+      return { ...activos, cvu: activos.costos && equilibrio.origen === 'estados' };
+    })(),
     umbrales: UMBRALES
   };
 }

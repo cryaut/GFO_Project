@@ -1,4 +1,5 @@
 import store from '../../store.js';
+import { supuestosActivos } from '../../utils/casos.js';
 import { renderChart } from '../../components/chart.js';
 import { estadosGuardados } from '../../utils/estados-guardados.js';
 import { monedaDe } from '../../utils/moneda.js';
@@ -31,6 +32,7 @@ export function initEquilibrio() {
     datos,
     estados: estadosGuardados(store.get('estados')),
     configApalancamiento: store.get('apalancamiento'),
+    supuestos: supuestosActivos(store.getAll()),
     // Lanza un error si localStorage falla; la pantalla lo muestra y no cambia nada.
     guardar: nuevos => {
       if (datos !== store.get('equilibrio')) throw new Error('C-V-U cambió. Abra de nuevo la pantalla antes de guardar.');

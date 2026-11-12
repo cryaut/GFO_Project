@@ -42,8 +42,8 @@ describe('balance proforma al cierre de 2025', () => {
     expect(fila('retenidas').proforma).toBeCloseTo(29796514 + (357667403 + 0.0135 * 1042059782.5 - 275824274) * 0.7 - 7520629, 2);
   });
 
-  it('inventario = promedio de 2024 × 1.0135; clientes = 50 % de las ventas del T4', () => {
-    expect(fila('inventario').proforma).toBeCloseTo((1180606300 + 1621305239) / 2 * g, 2);
+  it('inventario = cierre de 2024 × 1.0135 (S15); clientes = 50 % de las ventas del T4', () => {
+    expect(fila('inventario').proforma).toBeCloseTo(1621305239 * g, 2);
     expect(fila('clientes').proforma).toBeCloseTo(9010443238 * g / 8, 2);
   });
 

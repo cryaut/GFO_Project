@@ -4,11 +4,14 @@
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
 import { consultarMontoCuenta } from '../estados/cuentas-identificador.js';
 import { formatCurrencyND, formatNumberND, formatPercentND } from '../../utils/format.js';
+import { DIAS_ANIO } from '../../utils/calculate.js';
+import { casoVigente } from '../../utils/casos.js';
 
 const esNumero = v => typeof v === 'number' && Number.isFinite(v);
 const pct = v => (esNumero(v) ? formatPercentND(v, 2) : 'N/D');
-const INVESTIGACION = 'Investigación de AGRI-CORP, sección 11';
-const EQUIPO = 'Decisión del equipo (plan D-113)';
+// Origen de cada supuesto. Todos quedaron aprobados por Cris el 2026-11-12 (D-113).
+const INVESTIGACION = 'Investigación de AGRI-CORP, sección 11 · aprobado 2026-11-12';
+const EQUIPO = 'Supuesto del equipo (D-113) · aprobado 2026-11-12';
 
 // Lo que se toma tal como lo publican las fuentes.
 export const DATOS_REALES = [
@@ -29,7 +32,8 @@ function leer(fn) {
 }
 
 export function mapaSupuestos(datos) {
-  if (datos?.casos?.estados?.caso !== 'agricorp-consolidado') return null;
+  // Si los estados ya no son los del caso, el mapa mostraría supuestos de otra empresa.
+  if (casoVigente(datos, 'estados') !== 'agricorp-consolidado') return null;
   const estados = datos.estados;
   if (!estados?.periods?.length) return null;
   const s = datos.planeacion?.supuestos || null;
@@ -47,7 +51,7 @@ export function mapaSupuestos(datos) {
   const precioUltimo = datos.razonesMercado?.periodos?.[estados.periods.at(-1)]?.precio;
   const granza = datos.inventario?.productos?.find(p => p.id === 'granza-arroz');
   const ventasPresupuesto = s ? s.ventasUnidades.reduce((suma, u) => suma + u * s.precio, 0) : null;
-  const diasPeriodo = s?.tipoPeriodo === 'Mes' ? 365 / 12 : 365 / 4;
+  const diasPeriodo = s?.tipoPeriodo === 'Mes' ? DIAS_ANIO / 12 : DIAS_ANIO / 4;
   const fila = (id, supuesto, valor, fuente, modulo, ruta) => ({ id, supuesto, valor: leer(valor), fuente, modulo, ruta });
   return {
     base,

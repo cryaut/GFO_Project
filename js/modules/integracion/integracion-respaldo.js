@@ -5,6 +5,7 @@ import { tieneEscenarios, validarEscenarios } from '../planeacion/planeacion-esc
 import { normalizarEstudiantil } from '../presupuesto/presupuesto-calculations.js';
 import { validarCajaDocente } from '../planeacion/caja-docente-calculations.js';
 import { PROCEDENCIA_CVU, PROCEDENCIA_FLUJO, PROCEDENCIA_PLANEACION, validarProcedencia } from '../../utils/transferencias.js';
+import { CLAVES_EMPRESA, validarRegistroCasos } from '../../utils/casos.js';
 
 // Validación de un respaldo JSON (el que genera "Exportar JSON" en Reportes) antes de
 // tocar el store. Es pura: recibe el archivo ya parseado y los datos actuales, y devuelve
@@ -108,6 +109,7 @@ function validarModulo(clave, importado, actual, omitidos) {
       };
     }
   }
+  if (clave === 'casos') return validarRegistroCasos(importado, omitidos);
   if (clave === 'estados') {
     // D-080: si los estados del respaldo no se pueden leer, el respaldo completo
     // se rechaza — un dato que las pantallas no pueden usar no debe quedar guardado.
@@ -187,6 +189,19 @@ export function validarRespaldo(contenido, actuales) {
   }
   if (Object.keys(modulos).length === 0) {
     throw new Error('El archivo no contiene módulos de GFO Toolkit reconocibles. Si es un JSON de estados financieros, impórtelo desde Estados Financieros.');
+  }
+  // D-113: el registro de casos acompaña a los módulos que el respaldo restaura. Un módulo
+  // restaurado toma el registro del archivo o, si el archivo no lo trae, queda sin caso; los
+  // módulos que el respaldo no toca conservan el suyo.
+  const restaurados = CLAVES_EMPRESA.filter(c => Object.hasOwn(modulos, c));
+  if (Object.hasOwn(actuales, 'casos') && (restaurados.length || modulos.casos)) {
+    const importados = modulos.casos || {};
+    const casos = Object.fromEntries(Object.entries(actuales.casos || {}).filter(([c]) => !restaurados.includes(c)));
+    for (const [c, registro] of Object.entries(importados)) {
+      if (restaurados.includes(c)) casos[c] = registro;
+      else omitidos.push(`casos.${c}`);
+    }
+    modulos.casos = casos;
   }
   return { modulos, omitidos };
 }

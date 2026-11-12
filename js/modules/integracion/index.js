@@ -12,6 +12,7 @@ import { construirReporteHTML, resumenModulosEmpresa, resumenPresupuestoEstudian
 import { resumenEstudiantilGuardado } from '../presupuesto/presupuesto-calculations.js';
 import { reunirEntradas } from '../proforma/index.js';
 import { construirReporte } from '../proforma/proforma-calculations.js';
+import { avisoCaso } from '../../utils/casos.js';
 
 // D-077: una sola lectura. Devuelve { estados, error } para quien necesita el
 // motivo y solo los estados para el resto.
@@ -230,7 +231,7 @@ function bindExportEvents(page) {
     const entradas = reunirEntradas();
     return construirReporteHTML({
       kpis: computeDashboardKPIs(), estados: entradas.estados, errorEstados: entradas.errorEstados,
-      reporte: construirReporte(entradas), entradas
+      reporte: construirReporte(entradas), entradas, aviso: avisoCaso('reportes', store.getAll())
     });
   };
 
