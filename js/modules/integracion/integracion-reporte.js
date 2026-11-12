@@ -80,7 +80,10 @@ function tablaTotales(estados) {
 export function resumenPresupuestoEstudiantil(p) {
   if (!p) return '';
   if (p.error) return `<h2>Presupuesto estudiantil</h2><p>No se pudo leer: ${esc(p.error)}</p>`;
-  return `<h2>Presupuesto estudiantil: movimientos realizados</h2><p>Seguimiento de ${esc(p.semanas)} semanas: ${esc(p.desde ?? 'Sin fecha')} a ${esc(p.hasta ?? 'Sin fecha')}.</p>
+  if (p.soloProyeccion) return `<h2>Presupuesto personal previsto</h2><p>El archivo contiene gastos y ahorro previstos; no declara ingresos ni movimientos realizados. El ahorro está incluido en el total.</p><div class="table-wrapper"><table><thead><tr><th>Periodo</th><th>Total previsto</th><th>Ahorro incluido</th></tr></thead><tbody>${p.planes.map(f=>`<tr><th>${esc(f.periodo)}</th>${celdaMonto(f.total,'C$')}${celdaMonto(f.ahorro,'C$')}</tr>`).join('')}</tbody></table></div>`;
+  const ajuste=typeof p.diferenciaSaldo==='number'&&Math.abs(p.diferenciaSaldo)>1e-8;
+  if (ajuste) return `<h2>Presupuesto personal: resultados del archivo</h2><div class="table-wrapper"><table><tbody>${[['Ingresos registrados',p.ingresos],['Gastos realizados',p.gastos],['Ahorro para la meta',p.ahorro],['Reserva acumulada',p.reserva],['Saldo solo de movimientos',p.saldoMovimientos],['Ajuste sin movimiento registrado',p.diferenciaSaldo],['Saldo del archivo, incluido el ajuste',p.saldo]].map(([t,v])=>`<tr><th>${esc(t)}</th>${celdaMonto(v,'C$')}</tr>`).join('')}</tbody></table></div><p>El ajuste se conserva como está en la fuente; no se añade como ingreso ni se le atribuye un origen.</p>`;
+  return `<h2>Presupuesto estudiantil: movimientos realizados</h2><p>Seguimiento de ${p.periodo?esc(p.periodo):`${esc(p.semanas)} semanas`}: ${esc(p.desde ?? 'Sin fecha')} a ${esc(p.hasta ?? 'Sin fecha')}.</p>
     <div class="table-wrapper"><table><tbody>${[['Ingresos registrados',p.ingresos], ['Gastos realizados',p.gastos], ['Ahorro para la meta',p.ahorro], ['Reserva acumulada',p.reserva], ['Saldo disponible',p.saldo], ['Costo de la meta',p.metaAhorro]].map(([t,v]) => `<tr><th>${t}</th>${celdaMonto(v, 'C$')}</tr>`).join('')}</tbody></table></div><p>Las asignaciones proyectadas no cuentan como movimientos realizados.</p>`;
 }
 

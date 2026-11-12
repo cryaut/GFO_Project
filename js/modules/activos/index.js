@@ -2,6 +2,9 @@ import store from '../../store.js';
 import { depAnualLineaRecta, depAcumulada, valorEnLibros } from '../../utils/calculate.js';
 import { formatCurrency, formatNumber } from '../../utils/format.js';
 import { showToast } from '../../components/toast.js';
+import { panelEjemplos, vincularEjemplos, ejemploSeleccionado } from '../../components/ejemplos.js';
+import { documentoPersonalUI } from '../personales/personales-ui.js';
+import { inventarioDocumentoPersonal } from '../personales/personales-calculations.js';
 
 const ASPECTOS_CONDICION = [
   'Estado Físico', 'Funcionamiento', 'Frecuencia de Fallas',
@@ -16,6 +19,7 @@ const ESTADOS_POSIBLES = [
 
 // Exportada: el panorama de Inicio cuenta los activos que requieren atención.
 export function calcularEstado(asset) {
+  if (asset.clasificacionOriginal) return asset.clasificacionOriginal;
   const score = asset.condicion?.score || 0;
   if (score >= 90) return 'Excelente';
   if (score >= 75) return 'Bueno';
@@ -50,6 +54,13 @@ export function initActivos() {
   const page = document.getElementById('page-activos');
   if (!page) return;
 
+  const cargar=datos=>{store.setPersisted('activos',datos);initActivos();};
+  const documento=store.get('activos.documento');
+  if (documento) {
+    documentoPersonalUI(page,{documento,modulo:'activos',guardar:d=>store.setPersisted('activos',{documento:d,inventario:inventarioDocumentoPersonal(d)}),alEjemplo:cargar,ejemploBase:()=>({inventario:ejemploActivos()})});
+    return;
+  }
+
   page.innerHTML = `
     <div class="page-header flex-between">
       <div>
@@ -59,10 +70,18 @@ export function initActivos() {
       </div>
       <button class="btn btn-primary" id="btnAddAsset">+ Nuevo Activo</button>
     </div>
+    <details class="student-tools"><summary>Ejemplos y datos</summary><div class="student-disclosure">${panelEjemplos('activos','activosCargarEjemplo')}</div></details>
+    <p id="activosEjemploMensaje" role="status"></p>
     <div id="activosList"></div>
     <div id="activosChart" style="height:300px;margin-top:var(--space-6)"><canvas id="activosChartCanvas"></canvas></div>`;
 
   page.querySelector('#btnAddAsset')?.addEventListener('click', () => showAssetForm(page));
+  vincularEjemplos(page,'activos');
+  page.querySelector('#activosCargarEjemplo').addEventListener('click',()=>{
+    if ((store.get('activos.inventario')||[]).length&&!window.confirm('¿Reemplazar los activos por el ejemplo seleccionado?')) return;
+    try { cargar(ejemploSeleccionado(page,'activos',()=>({inventario:ejemploActivos()}))); }
+    catch(error) { page.querySelector('#activosEjemploMensaje').textContent=`No se cargó: ${error.message}`; }
+  });
   renderActivos(page);
 }
 

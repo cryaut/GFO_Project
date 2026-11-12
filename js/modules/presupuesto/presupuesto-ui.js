@@ -3,6 +3,7 @@ import { formatCurrencyND as monto, formatPercentND as porcentaje } from '../../
 import { leerNumero, nuevoId } from '../../utils/form.js';
 import { exportJSON } from '../../utils/export.js';
 import { panelEjemplos, vincularEjemplos, ejemploSeleccionado } from '../../components/ejemplos.js';
+import { documentoPersonalUI } from '../personales/personales-ui.js';
 import {
   CATEGORIAS_ESTUDIANTE, TIPOS_MOVIMIENTO, PRIORIDADES, MEDIOS, TIPOS_PLAN,
   nuevoPresupuestoEstudiantil, normalizarEstudiantil, calcularSeguimiento, calcularProyeccion, semanaDeFecha
@@ -16,6 +17,12 @@ const campo = (id, label, tipo, v = '', atributos = '') => `<div class="student-
 const selector = (id, label, lista, seleccion) => `<div class="student-field"><label for="${id}">${esc(label)}</label><select class="form-select" id="${id}">${opciones(lista, seleccion)}</select></div>`;
 
 export function presupuestoEstudiantilUI(page, { inicial, guardar, verMensual }) {
+  if (inicial?.version === 2) {
+    const d=normalizarEstudiantil(inicial);
+    documentoPersonalUI(page,{documento:d.documento,modulo:'presupuestoEstudiantil',guardar:documento=>guardar({version:2,documento}),
+      alEjemplo:ejemplo=>{const limpio=normalizarEstudiantil(ejemplo);guardar(limpio);presupuestoEstudiantilUI(page,{inicial:limpio,guardar,verMensual});}});
+    return;
+  }
   let datos, errorInicial = '';
   try { datos = normalizarEstudiantil(inicial ?? nuevoPresupuestoEstudiantil()); }
   catch (error) { datos = nuevoPresupuestoEstudiantil(); errorInicial = `No se pudieron leer los datos guardados: ${error.message} Se conservan en el respaldo; no se han reemplazado.`; }
@@ -157,7 +164,13 @@ export function presupuestoEstudiantilUI(page, { inicial, guardar, verMensual })
   vincularEjemplos(page, 'presupuestoEstudiantil');
   page.querySelector('#ppCargarEjemplo').addEventListener('click', () => {
     if ((datos.movimientos.length || datos.meta.costo !== null || datos.meta.nombre || datos.meta.descripcion || datos.meta.inicio || Object.values(datos.proyecciones).some(p => p.ingreso !== null || p.partidas.some(f => f.monto !== null)) || errorInicial) && !window.confirm('¿Reemplazar los datos estudiantiles por el ejemplo seleccionado? El presupuesto mensual anterior se conserva.')) return;
-    if (persistir(ejemploSeleccionado(page, 'presupuestoEstudiantil', nuevoPresupuestoEstudiantil), 'Ejemplo seleccionado cargado. Revise sus fechas y procedencia.', true)) {
+    const ejemplo=ejemploSeleccionado(page, 'presupuestoEstudiantil', nuevoPresupuestoEstudiantil);
+    if (ejemplo.version===2) {
+      try { const limpio=normalizarEstudiantil(ejemplo); guardar(limpio); presupuestoEstudiantilUI(page,{inicial:limpio,guardar,verMensual}); }
+      catch(error) { mensaje(`No se cargó: ${error.message}`,true); }
+      return;
+    }
+    if (persistir(ejemplo, 'Ejemplo seleccionado cargado. Revise sus fechas y procedencia.', true)) {
       // Recarga explícita: solo al reemplazar el documento completo.
       presupuestoEstudiantilUI(page, { inicial:datos, guardar, verMensual });
       page.querySelector('#ppMensaje').textContent = 'Ejemplo seleccionado cargado. Revise sus fechas y procedencia.';

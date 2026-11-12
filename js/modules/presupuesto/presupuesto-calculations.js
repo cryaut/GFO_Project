@@ -1,4 +1,6 @@
 import { ahorroMensual, saldoSemanal, tasaAhorro } from '../../utils/calculate.js';
+import { normalizarDocumentoPersonal, resumenPresupuestoPersonal } from '../personales/personales-calculations.js';
+import { evaluarHojas, fechaSerial, serialFecha } from '../../utils/hojas-formulas.js';
 
 export const TIPOS_MOVIMIENTO = ['Ingreso', 'Gasto', 'Ahorro', 'Reserva'];
 export const CATEGORIAS_ESTUDIANTE = ['Apoyo familiar', 'Ingreso extra', 'Transporte', 'Alimentación', 'Datos/Internet', 'Copias y materiales', 'Salud', 'Personal/Ocio', 'Reserva imprevistos', 'Meta de ahorro', 'Otro'];
@@ -48,6 +50,11 @@ export function nuevoPresupuestoEstudiantil() {
 
 // Normaliza un documento completo antes de escribirlo; no cambia el objeto recibido.
 export function normalizarEstudiantil(d) {
+  if (d?.version === 2) {
+    const documento=normalizarDocumentoPersonal(d.documento);
+    if (!documento.id.startsWith('presupuesto-')) throw new Error('El documento no es un presupuesto personal.');
+    return {version:2,documento};
+  }
   if (!objeto(d) || d.version !== 1 || !objeto(d.meta) || !objeto(d.proyecciones) || !Array.isArray(d.movimientos)) throw new Error('El presupuesto estudiantil no tiene una estructura válida.');
   const meta = { nombre:texto(d.meta.nombre, 'Nombre'), descripcion:texto(d.meta.descripcion, 'Meta', 240), costo:importe(d.meta.costo, 'Costo de la meta', true), semanas:d.meta.semanas, inicio:d.meta.inicio };
   if (!Number.isInteger(meta.semanas) || meta.semanas < 1 || meta.semanas > 52) throw new Error('La duración debe ser de 1 a 52 semanas.');
@@ -104,6 +111,17 @@ export function calcularProyeccion(plan) {
 }
 
 export function calcularSeguimiento(datos) {
+  if (datos?.version===2) {
+    const d=normalizarEstudiantil(datos).documento,r=resumenPresupuestoPersonal(d),e=evaluarHojas(d);
+    const semanas=(d.hojas.find(h=>h.nombre==='Seguimiento')?.filas||[]).filter(f=>{
+      const b=e.leer('Seguimiento','B'+f.n),c=e.leer('Seguimiento','C'+f.n),fin=e.leer('Seguimiento','D'+f.n);
+      return Number.isInteger(b)&&b>=1&&b<=52&&typeof c==='number'&&typeof fin==='number'&&r.desde&&r.hasta&&c>=serialFecha(r.desde)&&fin<=serialFecha(r.hasta)&&typeof e.leer('Seguimiento','E'+f.n)==='number';
+    }).map(f=>{
+      const v=c=>e.leer('Seguimiento',c+f.n);
+      return {semana:v('B'),bloque:v('A'),desde:fechaSerial(v('C')),hasta:fechaSerial(v('D')),ingreso:v('E'),gasto:v('F'),ahorro:v('G'),reserva:v('H'),saldo:v('I'),acumulado:v('J'),avance:v('K')};
+    });
+    return {...r,semanas,ingreso:r.ingresos,gasto:r.gastos,aporteRecomendado:r.soloProyeccion?null:e.leer('Inicio y meta','B10'),final:r.hasta??null};
+  }
   const d = normalizarEstudiantil(datos), m = d.meta;
   let acumulado = 0;
   const semanas = Array.from({ length:m.semanas }, (_, i) => {
@@ -123,6 +141,7 @@ export function calcularSeguimiento(datos) {
 export function resumenEstudiantilGuardado(presupuesto) {
   if (!presupuesto?.estudiantil || presupuesto.vista === 'mensual') return null;
   try {
+    if (presupuesto.estudiantil.version === 2) return resumenPresupuestoPersonal(normalizarEstudiantil(presupuesto.estudiantil).documento);
     const d = normalizarEstudiantil(presupuesto.estudiantil), r = calcularSeguimiento(d);
     return { estudiantil:true, ingresos:r.ingreso, gastos:r.gasto, ahorro:r.ahorro, reserva:r.reserva, saldo:r.saldo, avance:r.avance,
       metaAhorro:d.meta.costo, semanas:d.meta.semanas, desde:d.meta.inicio, hasta:r.final };

@@ -6,6 +6,7 @@ Plan, decisiones y estado de cada feature. Cada feature tiene su propia carpeta,
 
 | Feature | Responsable | Estado | Ficha |
 |---|---|---|---|
+| Ejemplos personales para la defensa | Solicitud de Cris | Verificados; publicación solicitada | [ejemplos-personales-defensa](ejemplos-personales-defensa/README.md) |
 | Presupuesto personal según plantilla estudiantil | Solicitud de Cris | Implementada y verificada | [presupuesto-estudiantil](presupuesto-estudiantil/README.md) |
 | Revisión opcional para integrar | Solicitud de Cris | Validada; configuración aplicada | [revision-opcional](revision-opcional/README.md) |
 | Integración de ramas y guías (`core`) | Carlos | Completada (PR #1) | [integracion-core](integracion-core/README.md) |

@@ -6,6 +6,7 @@ import { normalizarEstudiantil } from '../presupuesto/presupuesto-calculations.j
 import { validarCajaDocente } from '../planeacion/caja-docente-calculations.js';
 import { PROCEDENCIA_CVU, PROCEDENCIA_FLUJO, PROCEDENCIA_PLANEACION, validarProcedencia } from '../../utils/transferencias.js';
 import { CLAVES_EMPRESA, validarRegistroCasos } from '../../utils/casos.js';
+import { normalizarDocumentoPersonal, inventarioDocumentoPersonal } from '../personales/personales-calculations.js';
 
 // Validación de un respaldo JSON (el que genera "Exportar JSON" en Reportes) antes de
 // tocar el store. Es pura: recibe el archivo ya parseado y los datos actuales, y devuelve
@@ -83,6 +84,11 @@ function validarTipo(importado, actual, ruta) {
 }
 
 function validarModulo(clave, importado, actual, omitidos) {
+  if (clave === 'activos' && esObjeto(importado) && Object.hasOwn(importado,'documento')) {
+    const documento=normalizarDocumentoPersonal(importado.documento);
+    if (!documento.id.startsWith('activos-')) throw new Error('El documento no pertenece a Activos del hogar.');
+    return {documento,inventario:inventarioDocumentoPersonal(documento)};
+  }
   if (clave === 'presupuesto' && esObjeto(importado)) {
     actual = { ...actual, vista:actual?.vista ?? 'estudiantil', estudiantil:actual?.estudiantil ?? null };
     const tieneEstudiantil = Object.hasOwn(importado, 'estudiantil');
@@ -140,6 +146,7 @@ function validarModulo(clave, importado, actual, omitidos) {
   const camposProcedencia = CAMPOS_PROCEDENCIA.get(clave);
   // Lo que el archivo no trae se conserva del módulo actual para que no quede incompleto.
   const resultado = structuredClone(actual);
+  if (clave==='activos'&&!Object.hasOwn(importado,'documento')) delete resultado.documento;
   for (const campo of Object.keys(CAMPOS_OPCIONALES[clave] || {})) {
     if (!Object.hasOwn(importado, campo)) delete resultado[campo];
   }

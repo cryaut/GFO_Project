@@ -1,5 +1,6 @@
 import { ejemploBaker, ejemploBartlett, ejemploBartlettClase, ejemploPractico2, completarEjemploMuno } from './ejemplos-estados.js';
 import { ejemploEstudiantil, ejemploSoloTransporte } from '../modules/presupuesto/ejemplos-estudiantiles.js';
+import { ejemplosPersonalesDefensa, ejemploPersonalDefensa } from './ejemplos-personales-defensa.js';
 
 import { casoHistoricoReal, casoOperativoSimulado, flujoRealAgricorp, presupuestoPersonalDemo } from './ejemplos-agricorp.js';
 
@@ -36,7 +37,9 @@ const estados = [
   docente('practico2','Ejercicio práctico 2','Ejercicio practico 2.md','BG y ER 2023–2024. UM: la fuente usa $ sin identificar moneda. PPE ya neto; no se añade depreciación. No da ventas a crédito ni pagos a proveedores.')
 ];
 const LISTAS = {
+  activos:[...ejemplosPersonalesDefensa('activos'), propio('actual','Hogar ficticio · cuatro bienes','Ejemplo anterior de laptop, refrigeradora, motocicleta y juego de sala.')],
   presupuestoEstudiantil:[{ id:'actual', nombre:'Plantilla del profesor · C$2400', fuente:'Presupuesto_estudiantil.xlsx', detalle:'32 movimientos en cuatro semanas de agosto de 2026. Meta C$2000 en 20 semanas; ahorro realizado C$400, reserva C$250. Proyección real mensual C$2400; la deseada queda por definir.' },
+    ...ejemplosPersonalesDefensa('presupuestoEstudiantil'),
     propio('transporte', 'Solo transporte · ahorro cero', 'Caso sintético: ingreso y gasto semanales C$175. Ahorro realizado cero; no se inventa dinero para cumplir la meta.')],
   estados,
   flujo:[...FLUJOS_AGRICORP, propio('actual','MUNO MODA · flujo anual','Movimientos ficticios de caja en C$.'),
@@ -80,6 +83,7 @@ export function listarEjemplos(modulo) { return structuredClone(LISTAS[modulo] |
 
 export function crearEjemplo(modulo, id, actual) {
   if (!LISTAS[modulo]?.some(e => e.id === id)) throw new Error('El ejemplo seleccionado no existe en esta sección.');
+  if (['presupuestoEstudiantil','activos'].includes(modulo) && /^(presupuesto|activos)-/.test(id)) return ejemploPersonalDefensa(id);
   if (modulo === 'presupuestoEstudiantil') return id === 'actual' ? ejemploEstudiantil() : ejemploSoloTransporte();
   if (['estados','inicioEmpresa'].includes(modulo)) {
     if (id === 'baker') return ejemploBaker();
