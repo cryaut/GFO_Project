@@ -56,7 +56,6 @@ function computeDashboardKPIs() {
   const ingreso = personal ? personal.ingresos : store.get('presupuesto.ingresoMensual') || 0;
   const meta = personal ? personal.metaAhorro : store.get('presupuesto.metaAhorro') || 0;
   const activosCount = (store.get('activos.inventario') || []).length;
-  const quizScore = store.get('mercados.quizScore') || 0;
 
   return {
     totalActivos: shared ? shared.totalActivos : null,
@@ -65,7 +64,7 @@ function computeDashboardKPIs() {
     ventas: shared ? shared.ventas : null,
     utilidadNeta: estados ? obtenerUtilidadNetaMotor(store.get('estados'), lastP).valor : null,
     presupuestoIngreso: ingreso, presupuestoMeta: meta, presupuestoEstudiantil:personal,
-    activosCount, quizScore,
+    activosCount,
     lectura,
     // null (N/D) cuando el denominador no permite calcularla, como en Análisis.
     endeudamiento: razones.endeudamiento,
@@ -179,8 +178,6 @@ function renderDashboard(page) {
           <tr><th scope="rowgroup" colspan="3">Finanzas personales (independientes de la empresa)</th></tr>
           <tr><td>Presupuesto personal</td><td><span class="badge ${kpis.presupuestoIngreso > 0 ? 'badge-success' : 'badge-warning'}">${kpis.presupuestoIngreso > 0 ? 'Configurado' : 'Sin configurar'}</span></td><td>Ingreso: ${formatCurrencyND(kpis.presupuestoIngreso)}</td></tr>
           <tr><td>Activos del hogar</td><td><span class="badge ${kpis.activosCount > 0 ? 'badge-success' : 'badge-warning'}">${kpis.activosCount > 0 ? 'Con bienes' : 'Sin bienes'}</span></td><td>${kpis.activosCount} bienes registrados</td></tr>
-          <tr><th scope="rowgroup" colspan="3">Aprender</th></tr>
-          <tr><td>Mercados - Quiz</td><td><span class="badge badge-info">Quiz</span></td><td>Último puntaje: ${kpis.quizScore}/12</td></tr>
         </tbody>
       </table></div>
     </div>`;
