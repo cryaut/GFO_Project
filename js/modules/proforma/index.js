@@ -1,7 +1,7 @@
 import store from '../../store.js';
 import { leerEstados } from '../../utils/estados-guardados.js';
 import { UMBRALES, computeDuPont, computeRazones, refreshSavedStates } from '../analisis/index.js';
-import { calcularRazonesMercado } from '../analisis/mercado-calculations.js';
+import { calcularRazonesMercado, normalizarDatosMercado } from '../analisis/mercado-calculations.js';
 import { calcularApalancamiento } from '../apalancamiento/apalancamiento-calculations.js';
 import { calcularCVU, normalizarEquilibrio, resolverBase, validarEquilibrio } from '../equilibrio/equilibrio-calculations.js';
 import { calcularInventario } from '../inventario/inventario-calculations.js';
@@ -46,7 +46,12 @@ export function reunirEntradas() {
     razones: estados ? intentar(() => computeRazones(ultimo)) : null,
     dupont: estados ? intentar(() => computeDuPont(ultimo)) : null,
     mercado: estados
-      ? intentar(() => calcularRazonesMercado(estados, store.get('razonesMercado'), store.get('apalancamiento')?.dap || {}).at(-1))
+      ? intentar(() => {
+        const r = calcularRazonesMercado(estados, store.get('razonesMercado'), store.get('apalancamiento')?.dap || {}).at(-1);
+        // D-113: la nota de procedencia (precio supuesto) acompaña al indicador.
+        const nota = normalizarDatosMercado(store.get('razonesMercado')).nota;
+        return r && nota ? { ...r, nota } : r;
+      })
       : null,
     apalancamiento: estados ? intentar(() => calcularApalancamiento(estados, store.get('apalancamiento') || {})) : null,
     presupuesto: motivoPresupuesto || validarSupuestos(supuestos).length

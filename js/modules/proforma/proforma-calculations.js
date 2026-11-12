@@ -175,10 +175,12 @@ export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento
   }
   if (mercado && [mercado.upa, mercado.pu, mercado.pvl].some(esNumero)) {
     const grupo = `Razones de mercado (${mercado.periodo})`;
+    // D-113: con una nota de procedencia, el precio es un supuesto y el indicador lo dice.
+    const supuesto = mercado.nota ? 'SUPUESTO: precio ilustrativo, no es una cotización. ' : '';
     lista.push(indicador(grupo, 'Utilidad por acción (UPA)', mercado.upa, 'monto', 'Análisis', '#/analisis', '(UN − DAP) / acciones comunes.'));
-    lista.push(indicador(grupo, 'Precio / utilidad (P/U)', mercado.pu, 'veces', 'Análisis', '#/analisis', 'Veces que el mercado paga la utilidad por acción.'));
+    lista.push(indicador(grupo, 'Precio / utilidad (P/U)', mercado.pu, 'veces', 'Análisis', '#/analisis', `${supuesto}Veces que el mercado paga la utilidad por acción.`));
     lista.push(indicador(grupo, 'Precio / valor en libros (P/VL)', mercado.pvl, 'veces', 'Análisis', '#/analisis',
-      esNumero(mercado.vlpa) ? `Valor en libros de ${monto(mercado.vlpa, monedaDe(mercado))} por acción.` : ''));
+      `${supuesto}${esNumero(mercado.vlpa) ? `Valor en libros de ${monto(mercado.vlpa, monedaDe(mercado))} por acción.` : ''}`));
     if (esNumero(mercado.pago)) {
       lista.push(indicador(grupo, 'Pago de dividendos', mercado.pago, 'pct', 'Análisis', '#/analisis', `DPA de ${monto(mercado.dpa, monedaDe(mercado))}.`));
     }
