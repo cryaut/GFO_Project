@@ -2542,6 +2542,10 @@ El presupuesto maestro usa costeo absorbente: su propio punto de equilibrio difi
 
 **Consecuencias.** Cada integrante tiene sus propios campos y calendario. Se conservan las contradicciones del original con aviso; coincidir con sus resultados no valida ajustes sin respaldo. El respaldo conserva documentos completos y restaurar activos antiguos elimina el documento anterior para evitar mezclar casos.
 
+**Alcance.** La lectura está hecha para estos diez archivos, no para cualquier hoja que se importe: compara identificadores (`presupuesto-gabriel`, `activos-carlos`, `activos-juan`, `activos-cris`), lee celdas fijas de cada plantilla (`Inicio y meta!F6:F11`, `B12`/`B13`, `D29`/`D30` de Gabriel), admite registros de agosto a octubre y hasta la fila 205. Es una excepción acotada a la regla de no leer por posición fija; un archivo nuevo exige ajustar el lector y sus pruebas.
+
+**Revisión antes del merge.** (1) `COUNTIF` y los demás criterios siguen la hoja de cálculo: una celda vacía no cumple un criterio numérico como `"<=1"`; antes, al eliminar un activo, el rango extendido contaba la fila vacía. (2) Eliminar un activo quita también su fila de lectura en `Evaluación`. (3) Los documentos (1,8 MB) se importan solo al cargar uno de estos ejemplos; el selector usa un índice liviano. (4) Se valida la forma de los anexos (`comentarios`, `enlaces`, `textosAdicionales`, `modelosRegistro`) al normalizar.
+
 **Para revertirla.** Registrar otra decisión y preservar los documentos antes de retirar el formato v2 y los documentos de activos. No convertir formatos diferentes en registros ficticios.
 
 **Referencias.** [Informe y cifras de control](planificacion/ejemplos-personales-defensa/INFORME.md), `tests/unit/personales-defensa.test.js`, ZIP entregado por Cris.

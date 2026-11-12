@@ -2,7 +2,7 @@ import { escapeHTML as esc } from '../../utils/html.js';
 import { formatCurrencyND as monto, formatPercentND as porcentaje } from '../../utils/format.js';
 import { leerNumero, nuevoId } from '../../utils/form.js';
 import { exportJSON } from '../../utils/export.js';
-import { panelEjemplos, vincularEjemplos, ejemploSeleccionado } from '../../components/ejemplos.js';
+import { panelEjemplos, vincularEjemplos, ejemploSeleccionado, prepararEjemplo } from '../../components/ejemplos.js';
 import { documentoPersonalUI } from '../personales/personales-ui.js';
 import {
   CATEGORIAS_ESTUDIANTE, TIPOS_MOVIMIENTO, PRIORIDADES, MEDIOS, TIPOS_PLAN,
@@ -162,9 +162,11 @@ export function presupuestoEstudiantilUI(page, { inicial, guardar, verMensual })
   page.querySelector('#ppExportar').addEventListener('click', () => exportJSON({ presupuesto:{ vista:'estudiantil', estudiantil:errorInicial ? inicial : datos } }, 'presupuesto-estudiantil.json'));
   page.querySelector('#ppMensual').addEventListener('click', () => { try { verMensual(); } catch (error) { mensaje(error.message, true); } });
   vincularEjemplos(page, 'presupuestoEstudiantil');
-  page.querySelector('#ppCargarEjemplo').addEventListener('click', () => {
+  page.querySelector('#ppCargarEjemplo').addEventListener('click', async () => {
     if ((datos.movimientos.length || datos.meta.costo !== null || datos.meta.nombre || datos.meta.descripcion || datos.meta.inicio || Object.values(datos.proyecciones).some(p => p.ingreso !== null || p.partidas.some(f => f.monto !== null)) || errorInicial) && !window.confirm('¿Reemplazar los datos estudiantiles por el ejemplo seleccionado? El presupuesto mensual anterior se conserva.')) return;
-    const ejemplo=ejemploSeleccionado(page, 'presupuestoEstudiantil', nuevoPresupuestoEstudiantil);
+    let ejemplo;
+    try { await prepararEjemplo(page, 'presupuestoEstudiantil'); ejemplo=ejemploSeleccionado(page, 'presupuestoEstudiantil', nuevoPresupuestoEstudiantil); }
+    catch(error) { mensaje(`No se cargó: ${error.message}`,true); return; }
     if (ejemplo.version===2) {
       try { const limpio=normalizarEstudiantil(ejemplo); guardar(limpio); presupuestoEstudiantilUI(page,{inicial:limpio,guardar,verMensual}); }
       catch(error) { mensaje(`No se cargó: ${error.message}`,true); }

@@ -33,6 +33,7 @@ Todos los cambios notables en GFO Toolkit.
 
 ### Módulo 4: Activos del hogar
 - Cinco inventarios personales, incluidos los doce bienes del Word de Gabriel. Columnas y conclusiones originales, cálculo contrastado, altas/bajas en Excel, edición y respaldo; sin inventar moneda ni puntajes de condición (D-118).
+- Revisión: eliminar un activo ya no desajusta `Resumen financiero` (COUNTIF no cuenta vacías con criterios numéricos y se quita la fila de `Evaluación`); los archivos de los integrantes se descargan solo al elegirlos (D-118).
 
 ### Reglas de trabajo
 - Revisión de PR opcional por solicitud de Cris (D-103): se elimina la aprobación ajena obligatoria y se mantienen PR, tests/lint, atención de comentarios existentes y autorización para merges con IA.

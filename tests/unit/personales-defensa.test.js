@@ -1,7 +1,7 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 vi.mock('../../js/components/toast.js',()=>({showToast:vi.fn()}));
 import { DOCUMENTOS_DEFENSA } from '../../js/examples/datos-personales-defensa.js';
-import { ejemplosPersonalesDefensa, ejemploPersonalDefensa } from '../../js/examples/ejemplos-personales-defensa.js';
+import { ejemplosPersonalesDefensa, ejemploPersonalDefensa, cargarDocumentosDefensa, INDICE_DEFENSA, esEjemploPersonalDefensa } from '../../js/examples/ejemplos-personales-defensa.js';
 import { listarEjemplos, crearEjemplo } from '../../js/examples/catalogo.js';
 import { evaluarHojas, serialFecha, fechaSerial } from '../../js/utils/hojas-formulas.js';
 import { normalizarDocumentoPersonal, comprobarDocumentoPersonal, inventarioDocumentoPersonal, contrastarActivosPersonales, resumenPresupuestoPersonal, agregarRegistroPersonal, quitarRegistroPersonal, camposRegistroPersonal } from '../../js/modules/personales/personales-calculations.js';
@@ -15,6 +15,18 @@ const documento=id=>structuredClone(DOCUMENTOS_DEFENSA.find(d=>d.id===id));
 const editar=(d,hoja,ref,valor)=>{d.hojas.find(h=>h.nombre===hoja).filas.flatMap(f=>f.celdas).find(c=>c.ref===ref).valor=valor;};
 
 describe('fuentes personales de la defensa',()=>{
+  // Los documentos se cargan bajo demanda; el índice del selector debe coincidir con ellos.
+  it('no crea un ejemplo personal antes de cargar los documentos y su índice coincide con los datos',async()=>{
+    vi.resetModules();
+    const nuevo=await import('../../js/examples/ejemplos-personales-defensa.js');
+    expect(()=>nuevo.ejemploPersonalDefensa('presupuesto-cris')).toThrow('todavía no se cargaron');
+    expect((await nuevo.cargarDocumentosDefensa()).map(d=>d.id)).toEqual(DOCUMENTOS_DEFENSA.map(d=>d.id));
+    expect(await cargarDocumentosDefensa()).toBe(DOCUMENTOS_DEFENSA);
+    expect(INDICE_DEFENSA).toEqual(DOCUMENTOS_DEFENSA.map(({id,nombre,archivo})=>({id,nombre,archivo})));
+    expect(esEjemploPersonalDefensa('activos','activos-cris')).toBe(true);
+    expect(esEjemploPersonalDefensa('activos','actual')).toBe(false);
+  });
+  beforeAll(cargarDocumentosDefensa);
   // Henry declara un plan de 16 semanas, pero registra 13 cortes hasta el 31 de octubre.
   it.each([['presupuesto-cris',20],['presupuesto-carlos',12],['presupuesto-juan',13],['presupuesto-henry',13],['presupuesto-gabriel',0]])('lee los cortes de %s sin volver a contar los resúmenes mensuales',(id,cantidad)=>{
     expect(calcularSeguimiento(ejemploPersonalDefensa(id)).semanas).toHaveLength(cantidad);
@@ -97,6 +109,21 @@ describe('fuentes personales de la defensa',()=>{
     expect(comprobarDocumentoPersonal(nuevo).errores).toEqual([]);expect(nuevo.hojas[i].columnas).toBe(d.hojas[i].columnas);
     const eliminado=quitarRegistroPersonal(nuevo,i,a.at(-1).filaOriginal);expect(inventarioDocumentoPersonal(eliminado)).toHaveLength(antes.length);
     expect(camposRegistroPersonal(eliminado,i).map(c=>c.nombre)).toContain('Activo');
+    // Bug de la revisión: Resumen financiero!B8 contaba la fila vacía y Evaluación conservaba una fila huérfana.
+    expect(comprobarDocumentoPersonal(eliminado).diferencias).toEqual([]);
+    const filasEvaluacion=x=>x.hojas.find(h=>h.nombre==='Evaluación')?.filas.length;
+    expect(filasEvaluacion(eliminado)).toBe(filasEvaluacion(d));
+    // Una segunda alta después de eliminar vuelve a quedar alineada.
+    expect(comprobarDocumentoPersonal(agregarRegistroPersonal(eliminado,i,valores)).diferencias.filter(v=>v.hoja==='Evaluación')).toEqual([]);
+  });
+
+  it('aplica los criterios de COUNTIF como la hoja de cálculo: las vacías no cumplen criterios numéricos',()=>{
+    const hoja=(celdas)=>({version:1,hojas:[{nombre:'H',filas:[{n:1,celdas}]}]});
+    const d=hoja([{ref:'A1',valor:0.5},{ref:'B1',valor:'texto'},{ref:'D1',valor:2},
+      {ref:'E1',valor:'=COUNTIF(A1:D1,"<=1")'},{ref:'F1',valor:'=COUNTIF(A1:D1,"<>2")'},{ref:'G1',valor:'=COUNTIF(A1:D1,"")'},{ref:'H1',valor:'=COUNTIF(A1:D1,">a")'}]);
+    const e=evaluarHojas(d);
+    // A1..D1 = 0.5, "texto", vacía, 2. "<=1": solo 0.5. "<>2": 0.5, texto y la vacía. "": la vacía. ">a": "texto".
+    expect([e.leer('H','E1'),e.leer('H','F1'),e.leer('H','G1'),e.leer('H','H1')]).toEqual([1,3,1,1]);
   });
 
   it('recalcula cambios pero conserva los resultados de origen para contrastarlos',()=>{
@@ -125,6 +152,10 @@ describe('fuentes personales de la defensa',()=>{
     editar(d,'Agosto','D9','=D9');expect(comprobarDocumentoPersonal(d).errores.some(e=>e.motivo.includes('circular'))).toBe(true);
     editar(d,'Agosto','D9','=1/0');expect(evaluarHojas(d).leer('Agosto','D9')).toBeNull();
     expect({}.x).toBeUndefined();
+    // Los anexos de la fuente deben tener su forma: un respaldo alterado no rompe la vista.
+    expect(()=>normalizarDocumentoPersonal({...documento('activos-cris'),comentarios:{hoja:'x'}})).toThrow('Anexos');
+    expect(()=>normalizarDocumentoPersonal({...documento('activos-cris'),textosAdicionales:[{origen:'x',textos:'texto'}]})).toThrow('Anexos');
+    expect(()=>normalizarDocumentoPersonal({...documento('activos-cris'),modelosRegistro:{Inventario:{n:5}}})).toThrow('Anexos');
   });
 
   it('explica el ajuste de Cris sin inventar un ingreso en Inicio y Reportes',()=>{

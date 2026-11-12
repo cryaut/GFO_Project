@@ -1,6 +1,5 @@
-import { evaluarHojas, fechaSerial } from '../../utils/hojas-formulas.js';
+import { evaluarHojas, fechaSerial, columnaNumero } from '../../utils/hojas-formulas.js';
 import { depAnualLineaRecta, depAcumulada, valorEnLibros, saldoSemanal } from '../../utils/calculate.js';
-import { columnaNumero } from '../../utils/hojas-formulas.js';
 
 const objeto = v => v !== null && typeof v === 'object' && !Array.isArray(v);
 const scalar = v => v === null || typeof v === 'boolean' || typeof v === 'number' && Number.isFinite(v) || typeof v === 'string' && v.length <= 12000;
@@ -30,6 +29,13 @@ export function normalizarDocumentoPersonal(d) {
       }
     }
   }
+  // Anexos opcionales de la fuente: la vista y las altas los recorren, así que deben tener su forma.
+  const listaDe=(v,valida)=>v===undefined||Array.isArray(v)&&v.every(x=>objeto(x)&&valida(x));
+  const filaModelo=f=>Number.isInteger(f.n)&&Array.isArray(f.celdas)&&f.celdas.every(c=>objeto(c)&&typeof c.ref==='string'&&/^[A-Z]{1,3}\d+$/.test(c.ref));
+  if (!listaDe(d.textosAdicionales,t=>Array.isArray(t.textos)&&t.textos.every(x=>cadena(x,12000)))
+    || !listaDe(d.comentarios,c=>cadena(c.hoja,80)&&cadena(c.ref,12)&&cadena(c.autor??'',240)&&cadena(c.texto,12000))
+    || !listaDe(d.enlaces,e=>cadena(e.hoja,80)&&cadena(e.ref,12)&&cadena(e.destino??'',2000))
+    || d.modelosRegistro!==undefined&&(!objeto(d.modelosRegistro)||!Object.values(d.modelosRegistro).every(f=>objeto(f)&&filaModelo(f)))) throw new Error('Anexos del documento personal inválidos.');
   if (d.tipo === 'docx' && (!Array.isArray(d.bloques) || d.bloques.some(b=>!objeto(b) || !['parrafo','tabla'].includes(b.tipo) || b.tipo === 'parrafo' && !cadena(b.texto,12000) || b.tipo === 'tabla' && (!Array.isArray(b.filas) || b.filas.some(f=>!Array.isArray(f)||f.some(c=>!cadena(c,12000))))))) throw new Error('Sección del documento de activos inválida.');
   return structuredClone(d);
 }
@@ -168,5 +174,8 @@ export function quitarRegistroPersonal(documento, indice, fila) {
   const d=normalizarDocumentoPersonal(documento), h=d.hojas[indice];
   if (!camposRegistroPersonal(d,indice).length||fila<(h.nombre==='Inventario'?5:6)) throw new Error('No se puede eliminar esta fila.');
   h.filas=h.filas.filter(f=>f.n!==fila);
+  // La hoja Evaluación tiene una fila de lectura por activo: se quita la que apuntaba a la fila eliminada.
+  const evaluacion=h.nombre==='Inventario'?d.hojas.find(x=>x.nombre==='Evaluación'):null, propia=new RegExp(`Inventario!\\$?[A-Z]+\\$?${fila}(?!\\d)`);
+  if (evaluacion) evaluacion.filas=evaluacion.filas.filter(f=>!f.celdas.some(c=>typeof c.valor==='string'&&c.valor.startsWith('=')&&propia.test(c.valor)));
   return d;
 }

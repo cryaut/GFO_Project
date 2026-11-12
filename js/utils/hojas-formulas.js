@@ -63,7 +63,14 @@ export function evaluarHojas(documento) {
   function criterio(valor, condicion) {
     if (typeof condicion !== 'string') return igual(valor, condicion);
     const m = /^(<=|>=|<>|=|<|>)(.*)$/.exec(condicion);
-    if (m) return comparar(valor, m[2] !== '' && Number.isFinite(Number(m[2])) ? Number(m[2]) : m[2], m[1]);
+    if (m) {
+      // Como en la hoja de cálculo: un criterio numérico solo compara números (una celda vacía
+      // no cumple "<=1") y "<>" sí cuenta vacías y textos. Un criterio de texto con < o > solo compara textos.
+      const [, op, objetivo] = m, cifra = objetivo !== '' && Number.isFinite(Number(objetivo)) ? Number(objetivo) : null;
+      if (cifra !== null) return typeof valor === 'number' ? comparar(valor, cifra, op) : op === '<>';
+      if (op === '=' || op === '<>') return comparar(valor, objetivo, op);
+      return typeof valor === 'string' && comparar(valor.toLocaleLowerCase(), objetivo.toLocaleLowerCase(), op);
+    }
     if (/[?*~]/.test(condicion)) {
       let patron = '';
       const escapar = c => c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

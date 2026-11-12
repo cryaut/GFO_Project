@@ -1,6 +1,6 @@
 # Ejemplos personales para la defensa
 
-- **Estado**: En revisión.
+- **Estado**: Integrado.
 - **Responsable**: Codex, por solicitud de Cris.
 - **Rama**: `codex/ejemplos-personales-defensa`, desde `origin/main` (`ab0ef68`).
 - **Última actualización**: 2026-11-12.
@@ -26,6 +26,10 @@ Catálogo de ejemplos, normalización/respaldo de los módulos personales, docum
 
 [Informe de fuentes, cifras, diferencias y pruebas](INFORME.md). D-118 registra el formato opcional de cada archivo. Se conservan los ejemplos anteriores y los cambios pendientes de las otras copias de trabajo.
 
+## Revisión del PR #39
+
+Correcciones antes del merge, registradas en D-118: criterios de `COUNTIF` con celdas vacías, fila huérfana en `Evaluación` al eliminar un activo, carga diferida de los documentos y validación de los anexos. Pendiente menor: las celdas vacías de una hoja no se pueden editar desde la tabla (solo las que tienen contenido).
+
 ## Próximo paso
 
-Publicar la rama por solicitud de Cris. Integración a main mediante PR, sin merge en esta tarea.
+Integrado a main por PR #39.

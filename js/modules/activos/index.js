@@ -2,7 +2,7 @@ import store from '../../store.js';
 import { depAnualLineaRecta, depAcumulada, valorEnLibros } from '../../utils/calculate.js';
 import { formatCurrency, formatNumber } from '../../utils/format.js';
 import { showToast } from '../../components/toast.js';
-import { panelEjemplos, vincularEjemplos, ejemploSeleccionado } from '../../components/ejemplos.js';
+import { panelEjemplos, vincularEjemplos, ejemploSeleccionado, prepararEjemplo } from '../../components/ejemplos.js';
 import { documentoPersonalUI } from '../personales/personales-ui.js';
 import { inventarioDocumentoPersonal } from '../personales/personales-calculations.js';
 
@@ -77,9 +77,9 @@ export function initActivos() {
 
   page.querySelector('#btnAddAsset')?.addEventListener('click', () => showAssetForm(page));
   vincularEjemplos(page,'activos');
-  page.querySelector('#activosCargarEjemplo').addEventListener('click',()=>{
+  page.querySelector('#activosCargarEjemplo').addEventListener('click',async ()=>{
     if ((store.get('activos.inventario')||[]).length&&!window.confirm('¿Reemplazar los activos por el ejemplo seleccionado?')) return;
-    try { cargar(ejemploSeleccionado(page,'activos',()=>({inventario:ejemploActivos()}))); }
+    try { await prepararEjemplo(page,'activos'); cargar(ejemploSeleccionado(page,'activos',()=>({inventario:ejemploActivos()}))); }
     catch(error) { page.querySelector('#activosEjemploMensaje').textContent=`No se cargó: ${error.message}`; }
   });
   renderActivos(page);

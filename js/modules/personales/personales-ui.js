@@ -1,6 +1,6 @@
 import { escapeHTML as esc } from '../../utils/html.js';
 import { exportJSON } from '../../utils/export.js';
-import { panelEjemplos, vincularEjemplos, ejemploSeleccionado } from '../../components/ejemplos.js';
+import { panelEjemplos, vincularEjemplos, ejemploSeleccionado, prepararEjemplo } from '../../components/ejemplos.js';
 import { columnaNumero, columnaLetra, fechaSerial, serialFecha } from '../../utils/hojas-formulas.js';
 import { normalizarDocumentoPersonal, comprobarDocumentoPersonal, contrastarActivosPersonales, inventarioDocumentoPersonal, camposRegistroPersonal, agregarRegistroPersonal, quitarRegistroPersonal } from './personales-calculations.js';
 
@@ -39,9 +39,9 @@ export function documentoPersonalUI(page, { documento, modulo, guardar, alEjempl
       <p>SHA-256 del archivo recibido: <code>${esc(datos.sha256)}</code>. Las actividades y recomendaciones del documento se conservan como contenido de la fuente.</p></details>
       <dialog class="personal-cell-dialog" id="personalDialogo"><form id="personalEditar"><h2 id="personalCeldaTitulo"></h2><div id="personalCeldaDetalle"></div><div class="student-actions"><button class="btn btn-primary" id="personalGuardarCelda" type="submit">Guardar dato</button><button class="btn btn-secondary" id="personalCerrarCelda" type="button">Cerrar</button></div><p id="personalErrorCelda" role="alert"></p></form></dialog></div>`;
     vincularEjemplos(page,modulo);
-    page.querySelector('#personalCargarEjemplo').addEventListener('click',()=>{
+    page.querySelector('#personalCargarEjemplo').addEventListener('click',async ()=>{
       if (!window.confirm('¿Reemplazar los datos de este módulo con el ejemplo seleccionado? Puedes descargar un respaldo antes.')) return;
-      try { alEjemplo(ejemploSeleccionado(page,modulo,ejemploBase)); }
+      try { await prepararEjemplo(page,modulo); alEjemplo(ejemploSeleccionado(page,modulo,ejemploBase)); }
       catch(error) { page.querySelector('#personalMensaje').textContent=`No se cargó: ${error.message}`; }
     });
     page.querySelector('#personalExportar').addEventListener('click',()=>exportJSON(modulo==='activos'?{activos:{documento:datos,inventario:inventarioDocumentoPersonal(datos)}}:{presupuesto:{vista:'estudiantil',estudiantil:{version:2,documento:datos}}},datos.id+'.json'));
