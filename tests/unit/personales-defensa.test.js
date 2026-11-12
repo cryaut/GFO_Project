@@ -5,7 +5,7 @@ import { ejemplosPersonalesDefensa, ejemploPersonalDefensa } from '../../js/exam
 import { listarEjemplos, crearEjemplo } from '../../js/examples/catalogo.js';
 import { evaluarHojas, serialFecha, fechaSerial } from '../../js/utils/hojas-formulas.js';
 import { normalizarDocumentoPersonal, comprobarDocumentoPersonal, inventarioDocumentoPersonal, contrastarActivosPersonales, resumenPresupuestoPersonal, agregarRegistroPersonal, quitarRegistroPersonal, camposRegistroPersonal } from '../../js/modules/personales/personales-calculations.js';
-import { normalizarEstudiantil, resumenEstudiantilGuardado } from '../../js/modules/presupuesto/presupuesto-calculations.js';
+import { normalizarEstudiantil, resumenEstudiantilGuardado, calcularSeguimiento } from '../../js/modules/presupuesto/presupuesto-calculations.js';
 import { ejemploEstudiantil } from '../../js/modules/presupuesto/ejemplos-estudiantiles.js';
 import { validarRespaldo } from '../../js/modules/integracion/integracion-respaldo.js';
 import { finanzasPersonales } from '../../js/modules/inicio/inicio-calculations.js';
@@ -15,6 +15,10 @@ const documento=id=>structuredClone(DOCUMENTOS_DEFENSA.find(d=>d.id===id));
 const editar=(d,hoja,ref,valor)=>{d.hojas.find(h=>h.nombre===hoja).filas.flatMap(f=>f.celdas).find(c=>c.ref===ref).valor=valor;};
 
 describe('fuentes personales de la defensa',()=>{
+  // Henry declara un plan de 16 semanas, pero registra 13 cortes hasta el 31 de octubre.
+  it.each([['presupuesto-cris',20],['presupuesto-carlos',12],['presupuesto-juan',13],['presupuesto-henry',13],['presupuesto-gabriel',0]])('lee los cortes de %s sin volver a contar los resúmenes mensuales',(id,cantidad)=>{
+    expect(calcularSeguimiento(ejemploPersonalDefensa(id)).semanas).toHaveLength(cantidad);
+  });
   it('incluye los diez documentos, con nombres, hojas y procedencia independientes',()=>{
     expect(DOCUMENTOS_DEFENSA).toHaveLength(10);
     expect(ejemplosPersonalesDefensa('activos')).toHaveLength(5);

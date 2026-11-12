@@ -113,10 +113,15 @@ export function calcularProyeccion(plan) {
 export function calcularSeguimiento(datos) {
   if (datos?.version===2) {
     const d=normalizarEstudiantil(datos).documento,r=resumenPresupuestoPersonal(d),e=evaluarHojas(d);
-    const semanas=(d.hojas.find(h=>h.nombre==='Seguimiento')?.filas||[]).filter(f=>{
+    const filas=d.hojas.find(h=>h.nombre==='Seguimiento')?.filas||[], cortes=[];
+    for (let n=6;;n++) {
+      const f=filas.find(f=>f.n===n);
+      if (!f) break;
       const b=e.leer('Seguimiento','B'+f.n),c=e.leer('Seguimiento','C'+f.n),fin=e.leer('Seguimiento','D'+f.n);
-      return Number.isInteger(b)&&b>=1&&b<=52&&typeof c==='number'&&typeof fin==='number'&&r.desde&&r.hasta&&c>=serialFecha(r.desde)&&fin<=serialFecha(r.hasta)&&typeof e.leer('Seguimiento','E'+f.n)==='number';
-    }).map(f=>{
+      if (!(Number.isInteger(b)&&b>=1&&b<=52&&typeof c==='number'&&typeof fin==='number'&&r.desde&&r.hasta&&c>=serialFecha(r.desde)&&fin<=serialFecha(r.hasta)&&typeof e.leer('Seguimiento','E'+f.n)==='number')) break;
+      cortes.push(f);
+    }
+    const semanas=cortes.map(f=>{
       const v=c=>e.leer('Seguimiento',c+f.n);
       return {semana:v('B'),bloque:v('A'),desde:fechaSerial(v('C')),hasta:fechaSerial(v('D')),ingreso:v('E'),gasto:v('F'),ahorro:v('G'),reserva:v('H'),saldo:v('I'),acumulado:v('J'),avance:v('K')};
     });
