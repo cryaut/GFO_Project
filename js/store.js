@@ -23,10 +23,6 @@ const defaultData = {
   activos: {
     inventario: []
   },
-  mercados: {
-    quizScore: 0,
-    quizHistory: []
-  },
   // Clasificación fija/variable de costos, DAP por periodo y tasa de impuesto por defecto
   // (null = TASA_IR_DEFECTO). Ver docs/planificacion/apalancamiento/03-datos-y-derivacion.md.
   apalancamiento: {

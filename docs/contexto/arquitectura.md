@@ -15,7 +15,7 @@ Referencia de la estructura real del código (rama `core`, septiembre de 2026). 
 index.html                 Estructura de la página, barra lateral y un <div class="page"> por ruta
 css/                       variables.css, base.css, components.css, pages.css
 js/
-├── app.js                 Router, tema claro/oscuro, menú móvil, página de inicio y glosario
+├── app.js                 Router, tema claro/oscuro, menú móvil, página de inicio
 ├── store.js               Estado global y persistencia
 ├── components/            chart.js, modal.js, tabla.js, toast.js
 ├── utils/
@@ -30,7 +30,6 @@ js/
     ├── estados/           Módulo 2: importación, edición y validación de estados financieros
     ├── analisis/          Módulo 3: AH, AV, razones, CNT/CNO, EOAF, EFE, DuPont e interpretación
     ├── activos/           Módulo 4: activos del hogar y depreciación
-    ├── mercados/          Módulo 5: glosario, comparador de bonos y acciones, quiz
     ├── integracion/       Módulo 6: dashboard y exportación (ruta #/reportes)
     ├── apalancamiento/    GAO, GAF y GAT desde los estados guardados
     ├── inventario/        Control básico de inventario: existencias, valor, kardex y reposición
@@ -60,12 +59,12 @@ D-099 añade `estados-cobertura.js` y el campo opcional `estados.coberturaEstado
 |---|---|---|
 | `estados/` | `index.js` (demo, lectura del `store`, `initEstados`), `estados-ui.js` (interfaz), `estados-import.js` (archivos), `estados-normalize.js` (validación), `estados-calculations.js` (tipos y totales) | Único módulo que ya sigue el patrón completo |
 | `analisis/` | `index.js` (cálculo e interfaz de las pestañas), `mercado-calculations.js` / `mercado-ui.js` (pestaña Mercado), `eoaf-calculations.js` (lógica pura del Estado de Origen y Aplicación), `efe-calculations.js` (lógica pura del EFE, D-024) y `comprobacion-calculations.js` (piezas comunes de ambas comprobaciones, D-027) | `ah.js`, `av.js`, `razones.js`, `dupont.js`, `cnt-cno.js`, `eoaf.js` y `efe.js` solo reexportan funciones de `index.js` |
-| `activos/`, `mercados/`, `integracion/` | Casi todo en `index.js` | `glosario-data.js`, `comparador.js` y `quiz.js` reexportan datos de `mercados/index.js` |
+| `activos/`, `integracion/` | Casi todo en `index.js` | Módulos de activos personales y reportes |
 | `presupuesto/` | `index.js` selecciona vista y persiste; `presupuesto-calculations.js` valida/calcula el documento estudiantil; `presupuesto-ui.js` presenta sus cuatro vistas | `presupuesto-mensual.js` conserva la vista anterior y las exportaciones `presupuestoCalculations`/`ejemploPresupuestoPersonal` reexportadas desde `index.js` |
 | `apalancamiento/` | `index.js` (lee el `store` e `initApalancamiento`), `apalancamiento-ui.js` (interfaz), `apalancamiento-calculations.js` (derivación pura, sin DOM ni `store`) | Lee los estados con `computeFinancialTotals` y `resolveAccountType`; las fórmulas están en `calculate.js` |
 | `inventario/`, `equilibrio/`, `flujo/`, `planeacion/`, `proforma/` | Mismo patrón que `apalancamiento/`: `<modulo>-calculations.js` puro, `<modulo>-ui.js` que recibe `page` y `{ datos, guardar, graficar? }`, e `index.js` que lee el `store` | Plan en `docs/planificacion/modulos-guia/`. `proforma/` no guarda datos: reúne los resultados de los demás con sus mismas funciones |
 
-Estos archivos están vacíos (devuelven `{}`) y ningún módulo los usa: `activos/activos-ui.js`, `analisis/analisis-ui.js`, `integracion/dashboard.js`, `integracion/export.js`, `mercados/mercados-ui.js`. `activos/depreciacion.js` solo envuelve una función de `calculate.js`. No agregues lógica en ellos sin acordarlo: hoy nadie los importa.
+Estos archivos están vacíos (devuelven `{}`) y ningún módulo los usa: `activos/activos-ui.js`, `analisis/analisis-ui.js`, `integracion/dashboard.js`, `integracion/export.js`. `activos/depreciacion.js` solo envuelve una función de `calculate.js`. No agregues lógica en ellos sin acordarlo: hoy nadie los importa.
 
 ## Rutas
 
@@ -76,9 +75,7 @@ Estos archivos están vacíos (devuelven `{}`) y ningún módulo los usa: `activ
 | `#/estados` | `page-estados` | `initEstados` | `js/modules/estados/index.js` |
 | `#/analisis` | `page-analisis` | `initAnalisis` | `js/modules/analisis/index.js` |
 | `#/activos` | `page-activos` | `initActivos` | `js/modules/activos/index.js` |
-| `#/mercados` | `page-mercados` | `initMercados` | `js/modules/mercados/index.js` |
 | `#/reportes` | `page-reportes` | `initReportes` | `js/modules/integracion/index.js` |
-| `#/glosario` | `page-glosario` | `initGlosario` | `js/app.js` |
 | `#/apalancamiento` | `page-apalancamiento` | `initApalancamiento` | `js/modules/apalancamiento/index.js` |
 | `#/inventario` | `page-inventario` | `initInventario` | `js/modules/inventario/index.js` |
 | `#/equilibrio` | `page-equilibrio` | `initEquilibrio` | `js/modules/equilibrio/index.js` |
@@ -127,7 +124,6 @@ Secciones de `defaultData` en `js/store.js`:
 | `estados` | Estados financieros (forma abajo) |
 | `analisis` | `resultados` (sin uso actual) |
 | `activos` | `inventario[]` |
-| `mercados` | `quizScore`, `quizHistory[]` (sin uso actual) |
 | `apalancamiento` | `comportamiento` (por cuenta: `{ tipo: 'variable' \| 'fijo' \| 'mixto', pctVariable }`), `dap` (por periodo) y `tasaDefecto` (`null` = 30 %) |
 | `inventario` | `productos[]` (`{ id, nombre, unidad, existenciaInicial, costoUnitario, stockMinimo }`) y `movimientos[]` (`{ id, productoId, fecha, tipo: 'entrada' \| 'salida', cantidad, concepto }`) |
 | `equilibrio` | `precio`, `costoVariableUnitario`, `costosFijos`, `unidades`, `utilidadObjetivo` (`null` = sin dato) y `escenario` (cambios en fracción: `{ precio, costoVariable, costosFijos, volumen }`) |

@@ -11,7 +11,6 @@ Guía paso a paso con ejemplos numéricos concretos por módulo.
 3. [Módulo 2: Estados Financieros](#3-módulo-2-estados-financieros)
 4. [Módulo 3: Análisis Financiero](#4-módulo-3-análisis-financiero)
 5. [Módulo 4: Activos del Hogar](#5-módulo-4-activos-del-hogar)
-6. [Módulo 5: Mercados Financieros](#6-módulo-5-mercados-financieros)
 7. [Módulo 6: Reportes e Integración](#7-módulo-6-reportes-e-integración)
 8. [Apalancamiento (GAO, GAF y GAT)](#8-apalancamiento-gao-gaf-y-gat)
 9. [Control de Inventario](#9-control-de-inventario)
@@ -31,7 +30,7 @@ Guía paso a paso con ejemplos numéricos concretos por módulo.
    - **Puntos clave de la empresa**: cada área (liquidez, rentabilidad, endeudamiento, apalancamiento, equilibrio, flujo, presupuesto maestro, inventario) con sus cifras, una interpretación y un enlace al módulo.
    - **Mis finanzas personales**: capacidad de ahorro, meta y estado de los activos del hogar. Es independiente: no afecta la salud de la empresa ni el reporte integrado.
 3. Sin datos, Inicio muestra **Cómo empezar** y dos botones: **Cargar ejemplo de empresa** (caso ficticio de MUNO MODA en todos los módulos de la empresa vacíos) y **Cargar ejemplo personal** (presupuesto personal y bienes del hogar). Ninguno reemplaza datos existentes.
-4. El menú lateral está agrupado en **Empresa**, **Finanzas personales**, **Aprender** y **Datos**. Los módulos personales llevan un acento verde azulado.
+4. El menú lateral está agrupado en **Empresa**, **Finanzas personales** y **Datos**. Los módulos personales llevan un acento verde azulado.
 5. Cambia entre tema claro y oscuro con el botón **Tema** al pie del menú; las gráficas abiertas se recolorean sin perder lo que estés editando.
 6. Todos los datos se guardan automáticamente en localStorage.
 
@@ -581,31 +580,6 @@ Después de 3 años, la laptop vale C$ 8,640 contablemente.
 
 ---
 
-## 6. Módulo 5: Mercados Financieros
-
-### 6.1 Glosario
-
-Navega al glosario para consultar más de 20 términos financieros definidos: mercado, instrumento, bono, acción, BCN, SIBOIF, etc.
-
-### 6.2 Comparador: Bonos vs Acciones
-
-| Criterio | Bonos | Acciones |
-|----------|-------|----------|
-| Tipo | Deuda | Propiedad |
-| Riesgo | Bajo | Alto |
-| Renta fija | Sí | No |
-| Voto en asamblea | No | Sí |
-| Plazo | Corto/largo | Indefinido |
-
-### 6.3 Quiz de Mercados
-
-1. Navega a `#/mercados` y selecciona el quiz.
-2. Responde las preguntas de opción múltiple.
-3. Tu puntaje se guarda automáticamente.
-4. Puedes repetir el quiz para mejorar tu puntuación.
-
----
-
 ## 7. Módulo 6: Reportes e Integración
 
 ### 7.1 Exportar a JSON
@@ -638,12 +612,11 @@ Para cargar un archivo de estados financieros (JSON, CSV o Excel) usa **Importar
 
 ### 7.5 Dashboard resumen
 
-El dashboard muestra los KPIs de la empresa y un resumen por módulo separado en Empresa, Finanzas personales y Aprender:
+El dashboard muestra los KPIs de la empresa y un resumen por módulo separado en Empresa y Finanzas personales:
 
 - **Estados:** Total activos, pasivos, patrimonio, ventas y utilidad neta, calculados con el mismo motor que Análisis (incluye cuentas importadas con nombres propios)
 - **Análisis:** endeudamiento y ROA
 - **Finanzas personales:** ingreso del presupuesto personal y cantidad de bienes del hogar registrados
-- **Mercados:** Último puntaje del quiz
 
 Para un panorama con interpretaciones, usa **Inicio** (sección 1).
 

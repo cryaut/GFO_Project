@@ -5,7 +5,7 @@ import { element } from './helpers/dom-falso.js';
 // los errores inducidos comprueban que una pantalla no desactive las demás.
 function navegador() {
   const paginas = new Map();
-  for (const ruta of ['home', 'inventario', 'mercados']) {
+  for (const ruta of ['home', 'inventario']) {
     const pagina = element();
     const clases = new Set();
     pagina.classList = {
@@ -61,13 +61,17 @@ describe('Inicio y navegación de la aplicación', () => {
     expect(() => browser.iniciar()).not.toThrow();
     expect(browser.pagina('home').innerHTML).toContain('Bienvenido a GFO Toolkit');
     expect(browser.pagina('home').innerHTML).toContain('Cómo empezar');
+    expect(browser.pagina('home').innerHTML).not.toContain('#/mercados');
+    expect(browser.pagina('home').innerHTML).not.toContain('#/glosario');
     expect(browser.pagina('home').innerHTML).not.toContain('La operación genera');
     browser.navegar('inventario');
     expect(browser.pagina('inventario').innerHTML).toContain('Inventario');
     expect(browser.pagina('inventario').classList.contains('active')).toBe(true);
     expect(browser.pagina('home').classList.contains('active')).toBe(false);
     browser.navegar('mercados');
-    expect(browser.pagina('mercados').innerHTML).toContain('Mercados e Instituciones Financieras');
+    expect(browser.pagina('home').classList.contains('active')).toBe(true);
+    browser.navegar('glosario');
+    expect(browser.pagina('home').innerHTML).toContain('Bienvenido a GFO Toolkit');
     browser.navegar('home');
     expect(browser.pagina('home').innerHTML).toContain('Bienvenido a GFO Toolkit');
   });
@@ -83,7 +87,9 @@ describe('Inicio y navegación de la aplicación', () => {
     expect(browser.pagina('home').innerHTML).toContain('No se pudo cargar Inicio');
     expect(log).toHaveBeenCalled();
     browser.navegar('mercados');
-    expect(browser.pagina('mercados').innerHTML).toContain('Mercados e Instituciones Financieras');
+    expect(browser.pagina('home').classList.contains('active')).toBe(true);
+    browser.navegar('glosario');
+    expect(browser.pagina('home').innerHTML).toContain('Bienvenido a GFO Toolkit');
     browser.navegar('home');
     expect(browser.pagina('home').innerHTML).toContain('Bienvenido a GFO Toolkit');
   });
@@ -105,6 +111,8 @@ describe('Inicio y navegación de la aplicación', () => {
     expect(browser.pagina('inventario').innerHTML).toContain('Inventario');
     expect(browser.pagina('inventario').innerHTML).not.toContain('No se pudo cargar');
     browser.navegar('mercados');
-    expect(browser.pagina('mercados').innerHTML).toContain('Mercados e Instituciones Financieras');
+    expect(browser.pagina('home').classList.contains('active')).toBe(true);
+    browser.navegar('glosario');
+    expect(browser.pagina('home').innerHTML).toContain('Bienvenido a GFO Toolkit');
   });
 });

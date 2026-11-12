@@ -6,6 +6,12 @@ Todos los cambios notables en GFO Toolkit.
 
 ## [Sin publicar] — Reparación de carga de estados y completitud de razones
 
+### Balance proforma
+- Aplicaciones de inversión, dividendos e IR editables en Planeación, con validación del reparto antes de guardar. Conciliación por saldo en Proforma y distinción entre cuadre contable y liquidez.
+
+### Navegación
+- Retirados Glosario y Mercados, sus tarjetas y el puntaje del quiz de Reportes. Los enlaces antiguos abren Inicio. Las razones de mercado de Análisis se conservan.
+
 ### AGRI-CORP como caso central (D-113)
 - AGRI-CORP consolidado carga los estados auditados 2022–2025 (F02 y F04 con las mismas líneas) y los flujos publicados 2022–2025 con su efecto de conversión. La utilidad operativa es el subtotal del auditado antes de partidas financieras.
 - Supuestos declarados S1–S16, editables en su módulo: crédito de ventas y compras, clasificación de costos, precio ilustrativo por acción, crecimiento, IR, dividendos, inversión, depreciación, días de inventario y kárdex de granza. Las razones de actividad, el GAO y P/U dejan de estar en N/D. En el ejemplo, «Otros gastos», «Otros ingresos» y el pago mínimo pasan a operativos: cambian la UAII, el margen operativo y la cobertura de Análisis, no solo Apalancamiento.

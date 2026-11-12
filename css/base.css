@@ -99,7 +99,7 @@ code, pre {
   gap: 2px;
 }
 
-/* Títulos de sección de la barra lateral (Empresa, Finanzas personales, Aprender, Datos). */
+/* Títulos de sección de la barra lateral (Empresa, Finanzas personales, Datos). */
 .nav-section {
   margin: var(--space-4) var(--space-6) var(--space-1);
   font-size: 0.6875rem;
