@@ -524,7 +524,10 @@ export function presupuestoAgricorp2025() {
     tasaIR: 0.3,
     saldoInicialCaja: valor(REAL_ACTIVOS, 'Efectivo y equivalentes de efectivo'),
     saldoMinimoCaja: 0,
-    productoInventario: '', productoId: ''
+    productoInventario: '', productoId: '',
+    // Balance proforma: abre con el balance real de 2024 y reparte los otros desembolsos.
+    periodoBase: '2024',
+    desgloseOtrosDesembolsos: { inversion: INVERSION_2025, dividendos: DIVIDENDOS_2025, impuestos: irPorPagar2024 }
   };
 }
 

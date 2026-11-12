@@ -11,6 +11,7 @@ import { consultarMontoCuenta } from '../estados/cuentas-identificador.js';
 import { computarRazonesDesdeDatos } from '../razones/razones-app-adapter.js';
 import { ordenarPeriodos } from '../estados/estados-normalize.js';
 import { descripcionReposicion } from '../inventario/inventario-calculations.js';
+import { balanceProforma, periodosProforma } from './proforma-balance-calculations.js';
 
 const esNumero = valor => typeof valor === 'number' && Number.isFinite(valor);
 const num = valor => formatNumberND(valor, esNumero(valor) && Number.isInteger(valor) ? 0 : 2);
@@ -31,9 +32,9 @@ function margenes(ventas, utilidadBruta, gastosAdmin, gastosVentas, utilidadNeta
   };
 }
 
-// Estado de resultados del último periodo real, con los mismos conceptos que la proforma.
-export function resultadosReales(estados) {
-  const periodo = estados?.periods?.[estados.periods.length - 1];
+// Estado de resultados de un periodo real (por defecto el último), con los mismos conceptos que la proforma.
+export function resultadosReales(estados, periodoElegido = null) {
+  const periodo = periodoElegido ?? estados?.periods?.[estados.periods.length - 1];
   if (!periodo) return null;
   try {
     const lectura = estadosResueltos(estados, periodo).estadoResultados;
@@ -83,8 +84,10 @@ function motivoComparacion(real, proforma) {
   return null;
 }
 
-export function compararResultados(real, proforma) {
+// contraste (opcional, D-113): el periodo real que la proforma proyecta, para medir el desvío.
+export function compararResultados(real, proforma, contraste = null) {
   const comparable = Boolean(real && proforma && !motivoComparacion(real, proforma));
+  const contrastable = Boolean(contraste && proforma && !motivoComparacion(contraste, proforma));
   const filas = [
     ['Ventas', 'ventas', 'monto'], ['(−) Costo de ventas', 'cbv', 'monto'], ['(=) Utilidad bruta', 'utilidadBruta', 'monto'],
     ['(−) Gastos de operación', 'gastosOperacion', 'monto'],
@@ -101,7 +104,14 @@ export function compararResultados(real, proforma) {
     // Variación relativa solo para montos; los márgenes se comparan en puntos.
     const variacion = calcularVariacion && formato === 'monto' ? ahPctDelta(p, r) : null;
     const puntos = calcularVariacion && formato === 'pct' ? p - r : null;
-    return { concepto, clave, formato, real: r, proforma: p, variacion, puntos };
+    const fila = { concepto, clave, formato, real: r, proforma: p, variacion, puntos };
+    if (!contraste) return fila;
+    // Desvío de lo ocurrido respecto de lo proyectado: (real − proforma) / |proforma|.
+    const c = contraste[clave];
+    const desviable = contrastable && esNumero(c) && esNumero(p);
+    return { ...fila, contraste: c,
+      desvio: desviable && formato === 'monto' ? ahPctDelta(c, p) : null,
+      desvioPuntos: desviable && formato === 'pct' ? c - p : null };
   });
 }
 
@@ -271,7 +281,11 @@ export function alertasIntegradas({ razones, presupuesto, equilibrio, flujo, inv
 // leen»: el faltante muestra el aviso real en lugar de pedir que cargue datos.
 export function construirReporte(entradas) {
   const { estados = null, errorEstados = null, apalancamiento = null, presupuesto = null, equilibrio = null, flujo = null, inventario = null } = entradas;
-  const real = resultadosReales(estados);
+  // D-113: con un periodo base declarado, la proforma se compara con ese año y con el
+  // siguiente (contraste). Sin él, como antes, con el último periodo de Estados.
+  const periodos = presupuesto ? periodosProforma(estados, presupuesto.supuestos) : { base: null, contraste: null, declarado: false };
+  const real = resultadosReales(estados, periodos.declarado ? periodos.base : null);
+  const contraste = periodos.declarado && periodos.contraste ? resultadosReales(estados, periodos.contraste) : null;
   const proforma = resultadosProforma(presupuesto);
   const faltantes = [];
   if (!estados) {
@@ -297,11 +311,12 @@ export function construirReporte(entradas) {
   }
   if (!inventario) faltantes.push({ modulo: 'Inventario', ruta: '#/inventario', texto: 'Registre productos y movimientos.' });
   return {
-    real, proforma,
+    real, proforma, contraste,
     desarrollo: desarrolloPresupuesto(presupuesto),
     motivoPresupuesto: entradas.motivoPresupuesto || null,
-    comparacion: real || proforma ? compararResultados(real, proforma) : [],
+    comparacion: real || proforma ? compararResultados(real, proforma, contraste) : [],
     motivoComparacion: motivoComparacion(real, proforma),
+    balance: presupuesto && estados ? balanceProforma(estados, presupuesto) : null,
     efectivo: presupuesto ? {
       saldoInicial: presupuesto.caja.saldoInicial[0], flujoNeto: presupuesto.totales.flujoNeto,
       saldoFinal: presupuesto.cierre.efectivo, saldoMinimo: presupuesto.caja.saldoMinimo,
@@ -309,7 +324,8 @@ export function construirReporte(entradas) {
       cierre: presupuesto.cierre
     } : null,
     flujo:flujo?.disponible ? flujo : null,
-    indicadores: indicadoresIntegrados(entradas, real?.periodo ?? '—'),
+    // Las razones de Análisis son las del último periodo, aunque la proforma parta de otro.
+    indicadores: indicadoresIntegrados(entradas, estados?.periods?.at(-1) ?? '—'),
     alertas: alertasIntegradas(entradas),
     faltantes
   };

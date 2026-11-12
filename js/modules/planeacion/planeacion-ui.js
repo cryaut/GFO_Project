@@ -334,7 +334,7 @@ export function planeacionUI(page, opciones) {
 
   function guardarSupuestos(s, texto, parcial = false, capital = undefined) {
     // La unidad y la nota del caso no se editan en el formulario: acompañan a los supuestos.
-    for (const campo of ['unidad', 'nota']) {
+    for (const campo of ['unidad', 'nota', 'periodoBase', 'desgloseOtrosDesembolsos']) {
       if (lectura.supuestos?.[campo] && !s[campo]) s = { ...s, [campo]: lectura.supuestos[campo] };
     }
     const errores = validarSupuestos(s, { parcial });
