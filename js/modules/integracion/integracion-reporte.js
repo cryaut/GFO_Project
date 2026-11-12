@@ -3,6 +3,7 @@ import { formatCurrencyND } from '../../utils/format.js';
 import { computeFinancialTotals } from '../estados/estados-calculations.js';
 import { obtenerUtilidadNetaMotor } from '../razones/razones-app-adapter.js';
 import { monedaDe } from '../../utils/moneda.js';
+import { textoProcedencia } from '../../utils/casos.js';
 
 // Cuerpo HTML del reporte de Reportes e Integración. Es puro: recibe los KPIs y los estados
 // ya normalizados y devuelve texto con todo lo que viene del usuario o de un archivo
@@ -113,16 +114,98 @@ function flujoSuministrado(flujo) {
     <table><tbody>${filas.map(([titulo, valor]) => `<tr><th>${titulo}</th>${celdaMonto(valor, monedaDe(flujo))}</tr>`).join('')}</tbody></table>`;
 }
 
+const esNumero = v => typeof v === 'number' && Number.isFinite(v);
+const porcentaje = v => (esNumero(v) ? `${(v * 100).toFixed(2)} %` : 'N/D');
+const veces = v => (esNumero(v) ? `${v.toFixed(2)} veces` : 'N/D');
+
+// D-113: estado de cada módulo de empresa para el dashboard y el reporte. Puro: recibe las
+// entradas de Proforma (reunirEntradas) y el reporte ya construido.
+export function resumenModulosEmpresa(entradas, reporte) {
+  if (!entradas?.estados) return [];
+  const moneda = monedaDe(entradas.estados);
+  const fila = (modulo, listo, detalle) => ({ modulo, estado: listo ? 'ok' : 'pendiente', detalle });
+  const apal = entradas.apalancamiento?.periodos?.at(-1);
+  const m = entradas.mercado, e = entradas.equilibrio, p = entradas.presupuesto, inv = entradas.inventario;
+  const b = reporte?.balance;
+  // D-113: los detalles que dependen de un supuesto de AGRI-CORP lo dicen.
+  const s = entradas.supuestos || {};
+  const sup = (activo, ids) => (activo ? ` (SUPUESTO ${ids})` : '');
+  return [
+    fila('Apalancamiento', esNumero(apal?.grados?.gao),
+      apal ? `${apal.periodo}: GAO ${veces(apal.grados.gao)}${sup(s.costos, 'S4–S6')}, GAF ${veces(apal.grados.gaf)}` : 'Sin estados para calcular.'),
+    fila('Razones de mercado', esNumero(m?.upa),
+      m ? `${m.periodo}: UPA ${monto(m.upa, moneda)}${m.nota ? ' (precio ilustrativo: SUPUESTO S7)' : ''}` : 'Sin acciones registradas.'),
+    fila('Punto de equilibrio', Boolean(e),
+      e ? `Ventas de equilibrio ${monto(e.peVentas, monedaDe(e))} · margen de seguridad ${porcentaje(e.msPorcentaje)}${sup(s.cvu, 'S4–S6')}` : 'Sin datos de C-V-U.'),
+    fila('Flujo de efectivo', Boolean(reporte?.flujo),
+      reporte?.flujo ? `${reporte.flujo.periodos.inicial} → ${reporte.flujo.periodos.final}: operación ${monto(reporte.flujo.neto.operacion, monedaDe(reporte.flujo))}`
+        : (entradas.flujo?.motivo || 'Sin un EFE utilizable.')),
+    fila('Presupuesto maestro', Boolean(p),
+      p ? `Utilidad neta ${monto(p.totales.utilidadNeta, moneda)} · caja final ${monto(p.cierre.efectivo, moneda)}${sup(s.presupuesto, 'S8–S15')}` : (entradas.motivoPresupuesto || 'Sin supuestos.')),
+    fila('Inventario', Boolean(inv),
+      inv ? `${inv.productos.length} producto(s) · valor ${monto(inv.valorTotal, moneda)} · ${inv.porReponer.length} por reponer${sup(s.kardex, 'S16')}` : 'Sin productos.'),
+    fila('Balance proforma', Boolean(b?.disponible),
+      b?.disponible ? `${b.base} → proforma${b.contraste ? ` (contraste ${b.contraste})` : ''}: ${b.cuadra ? 'cuadra' : `financiamiento requerido ${monto(b.financiamientoRequerido, moneda)}`}${sup(s.presupuesto, 'S8–S15')}`
+        : (b?.motivo || 'Requiere el presupuesto maestro.'))
+  ];
+}
+
+function tablaModulos(filas) {
+  if (!filas.length) return '';
+  return `<h2>Estado de los módulos de empresa</h2><table><thead><tr><th>Módulo</th><th>Estado</th><th>Detalle</th></tr></thead><tbody>${filas
+    .map(f => `<tr><td>${esc(f.modulo)}</td><td>${f.estado === 'ok' ? 'Con datos' : 'Pendiente'}</td><td>${esc(f.detalle)}</td></tr>`).join('')}</tbody></table>`;
+}
+
+// Estado de resultados: base, proforma y, si existe, el real que la proforma proyecta.
+function resultadosProforma(reporte) {
+  if (!reporte?.proforma || !reporte.real) return '';
+  const { real, proforma, contraste } = reporte;
+  const valor = (f, v, moneda) => (f.formato === 'monto' ? monto(v, moneda) : porcentaje(v));
+  const cambio = (f, relativo, puntos) => (f.formato === 'monto' ? porcentaje(relativo) : esNumero(puntos) ? `${(puntos * 100).toFixed(2)} pts` : 'N/D');
+  const filas = reporte.comparacion.map(f => `<tr><td>${esc(f.concepto)}</td><td${ALINEADO_DERECHA}>${valor(f, f.real, real.moneda)}</td>
+    <td${ALINEADO_DERECHA}>${valor(f, f.proforma, proforma.moneda)}</td><td${ALINEADO_DERECHA}>${cambio(f, f.variacion, f.puntos)}</td>${contraste
+    ? `<td${ALINEADO_DERECHA}>${valor(f, f.contraste, contraste.moneda)}</td><td${ALINEADO_DERECHA}>${cambio(f, f.desvio, f.desvioPuntos)}</td>` : ''}</tr>`).join('');
+  return `<h2>Estado de resultados proforma</h2><table><thead><tr><th>Concepto</th><th>Real ${esc(real.periodo)}${contraste ? ' (base)' : ''}</th>
+    <th>Proforma (${esc(proforma.horizonte)})</th><th>Proforma vs base</th>${contraste ? `<th>Real ${esc(contraste.periodo)} (contraste)</th><th>Real vs proforma</th>` : ''}</tr></thead><tbody>${filas}</tbody></table>`;
+}
+
+function balanceProformaHTML(reporte) {
+  const b = reporte?.balance;
+  if (!b) return '';
+  if (!b.disponible) return `<h2>Balance general proforma</h2><p>${esc(b.motivo)}</p>`;
+  const moneda = reporte.proforma?.moneda;
+  const celdas = (...valores) => valores.filter((_, k) => k < 2 || b.contraste).map(v => celdaMonto(v, moneda)).join('');
+  const grupo = (clave, titulo) => `<tr><th colspan="${b.contraste ? 4 : 3}">${titulo}</th></tr>${b.filas.filter(f => f.grupo === clave)
+    .map(f => `<tr><td>${esc(f.concepto)} <small>(${esc(f.regla)})</small></td>${celdas(f.apertura, f.proforma, f.real)}</tr>`).join('')}
+    <tr><th>Total ${titulo.toLowerCase()}</th>${celdas(b.totales.apertura[clave], b.totales.proforma[clave], b.totales.real?.[clave])}</tr>`;
+  return `<h2>Balance general proforma</h2><table><thead><tr><th>Concepto (regla)</th><th>Real ${esc(b.base)} (apertura)</th><th>Proforma</th>${b.contraste ? `<th>Real ${esc(b.contraste)} (contraste)</th>` : ''}</tr></thead>
+    <tbody>${grupo('activos', 'Activos')}${grupo('pasivos', 'Pasivos')}${grupo('patrimonio', 'Patrimonio')}</tbody></table>
+    <p>${b.cuadra ? 'Cuadra: activos = pasivos + patrimonio, sin financiamiento externo.' : `${b.financiamientoRequerido > 0 ? 'Financiamiento externo requerido' : 'Excedente de fondos'}: ${monto(Math.abs(b.financiamientoRequerido), moneda)}.`}</p>`;
+}
+
+function indicadoresHTML(reporte) {
+  const lista = reporte?.indicadores || [];
+  if (!lista.length) return '';
+  const formato = i => (i.formato === 'monto' ? monto(i.valor, i.moneda) : i.formato === 'pct' ? porcentaje(i.valor)
+    : i.formato === 'veces' ? veces(i.valor) : esc(esNumero(i.valor) ? i.valor.toLocaleString('en-US', { maximumFractionDigits: 2 }) : 'N/D'));
+  return `<h2>Indicadores integrados</h2><table><thead><tr><th>Grupo</th><th>Indicador</th><th>Valor</th><th>Lectura</th></tr></thead><tbody>${lista
+    .map(i => `<tr><td>${esc(i.grupo)}</td><td>${esc(i.nombre)}</td><td${ALINEADO_DERECHA}>${formato(i)}</td><td>${esc(i.lectura)}</td></tr>`).join('')}</tbody></table>`;
+}
+
 // kpis: resultado de computeDashboardKPIs (o null). estados: datos normalizados (o null).
 // errorEstados: mensaje de D-077 cuando los estados guardados existen pero no se leen.
-export function construirReporteHTML({ kpis = null, estados = null, errorEstados = null, reporte = null } = {}) {
+// entradas (opcional, D-113): las de Proforma, para el estado de los módulos de empresa.
+export function construirReporteHTML({ kpis = null, estados = null, errorEstados = null, reporte = null, entradas = null, aviso = null } = {}) {
   const portada = resumen(kpis, monedaDe(estados));
-  const proyectado = flujoSuministrado(reporte?.flujo) + proyeccion(reporte);
+  const proyectado = flujoSuministrado(reporte?.flujo) + proyeccion(reporte) + resultadosProforma(reporte)
+    + balanceProformaHTML(reporte) + indicadoresHTML(reporte) + tablaModulos(resumenModulosEmpresa(entradas, reporte));
   if (errorEstados) {
     return `${portada}<p>No se pudieron leer los estados financieros guardados: ${esc(errorEstados)}. Revise los datos en Estados Financieros.</p>${proyectado}`;
   }
   if (!estados || !estados.periods?.length) {
     return `${portada}<p>No hay estados financieros guardados.${kpis?.presupuestoEstudiantil || reporte?.proforma ? '' : ' Cárguelos en Estados Financieros para generar el reporte.'}</p>${proyectado}`;
   }
-  return `<p>Empresa: <strong>${esc(estados.name)}</strong> · ${esc(monedaDe(estados))}</p>${portada}${tablaBalance(estados)}${tablaResultados(estados)}${tablaTotales(estados)}${proyectado}`;
+  // D-113: el reporte dice de qué caso vienen los datos, igual que el aviso de las pantallas.
+  const procedencia = textoProcedencia(aviso);
+  return `<p>Empresa: <strong>${esc(estados.name)}</strong> · ${esc(monedaDe(estados))}</p>${procedencia ? `<p><em>${esc(procedencia)}</em></p>` : ''}${portada}${tablaBalance(estados)}${tablaResultados(estados)}${tablaTotales(estados)}${proyectado}`;
 }

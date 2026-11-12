@@ -125,6 +125,7 @@ export function flujoUI(page, opciones) {
           <tr><td><strong>Variación neta del efectivo</strong> <span class="text-muted">(operación + inversión + financiamiento)</span></td>
             <td class="text-right font-mono ${claseSigno(r.variacionNeta)}"><strong>${monto(r.variacionNeta)}</strong></td><td></td></tr>
           <tr><td>(+) Saldo inicial de efectivo</td><td class="text-right font-mono">${monto(r.saldoInicial)}</td><td></td></tr>
+          ${esNumero(r.efectoConversion) ? `<tr><td>(+) Efecto de conversión de moneda <span class="text-muted">(publicado; no es una actividad)</span></td><td class="text-right font-mono ${claseSigno(r.efectoConversion)}">${monto(r.efectoConversion)}</td><td></td></tr>` : ''}
           <tr><td><strong>Saldo final de efectivo</strong></td><td class="text-right font-mono ${esNumero(r.saldoFinal) && r.saldoFinal < 0 ? 'text-danger' : ''}"><strong>${monto(r.saldoFinal)}</strong></td><td></td></tr>
         </tbody></table></div>
       ${esNumero(r.saldoInicial) ? '' : '<p class="form-hint">Indique el saldo inicial para calcular el saldo final.</p>'}</div>`;

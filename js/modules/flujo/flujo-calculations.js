@@ -40,6 +40,9 @@ export function normalizarFlujo(datos) {
     ...(Object.keys(procedencia).length ? { procedencia } : {}),
     saldoInicial: esNumero(datos?.saldoInicial) ? datos.saldoInicial : null,
     periodoBase: texto(datos?.periodoBase),
+    // Efecto de las variaciones del tipo de cambio sobre el efectivo: no es una actividad. Lo
+    // separan algunos estados publicados (D-113); sin él, la forma guardada no cambia.
+    ...(esNumero(datos?.efectoConversion) && datos.efectoConversion !== 0 ? { efectoConversion: datos.efectoConversion } : {}),
     movimientos
   };
 }
@@ -67,6 +70,8 @@ export function calcularFlujo(datos) {
   });
   const neto = Object.fromEntries(actividades.map(a => [a.actividad, a.neto]));
   const variacionNeta = variacionNetaEfectivo(neto.operacion, neto.inversion, neto.financiamiento);
+  const saldoSinEfecto = saldoFinalEfectivo(normal.saldoInicial, variacionNeta);
+  const efecto = normal.efectoConversion ?? 0;
   return {
     saldoInicial: normal.saldoInicial,
     periodoBase: normal.periodoBase,
@@ -77,7 +82,8 @@ export function calcularFlujo(datos) {
     totalEntradas: actividades.reduce((total, a) => total + a.entradas, 0),
     totalSalidas: actividades.reduce((total, a) => total + a.salidas, 0),
     variacionNeta,
-    saldoFinal: saldoFinalEfectivo(normal.saldoInicial, variacionNeta),
+    ...(efecto ? { efectoConversion: efecto } : {}),
+    saldoFinal: saldoSinEfecto === null ? null : saldoSinEfecto + efecto,
     cantidadMovimientos: normal.movimientos.length
   };
 }

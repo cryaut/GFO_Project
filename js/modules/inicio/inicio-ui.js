@@ -1,4 +1,5 @@
 import { panelEjemplos, vincularEjemplos } from '../../components/ejemplos.js';
+import { DATOS_REALES } from './inicio-supuestos.js';
 // Pantalla #/home: panorama general de la empresa y accesos a los módulos.
 // Los datos llegan ya calculados por inicio-calculations.js (panoramaGeneral).
 import { escapeHTML as esc } from '../../utils/html.js';
@@ -172,15 +173,29 @@ function modulos() {
       <h3>${titulo}</h3><p>${texto}</p></a>`).join('')}</nav>`).join('')}`;
 }
 
-// opciones: { panorama, graficar?, cargarEjemploEmpresa?, cargarEjemploPersonal? } —
+// D-113: mapa de supuestos del caso AGRI-CORP: qué es real, qué es supuesto y dónde se edita.
+function mapaSupuestosHTML(mapa) {
+  if (!mapa) return '';
+  return `<details class="card mb-4" open><summary><strong>Mapa de supuestos de AGRI-CORP</strong></summary>
+    <p class="form-hint"><span class="badge badge-success">REAL</span> ${DATOS_REALES.map(esc).join(' · ')}.</p>
+    <p class="form-hint">Cada supuesto muestra el valor vigente en el módulo donde se edita: si lo cambia allí, este mapa y los módulos que lo usan se recalculan.</p>
+    <div class="table-wrapper"><table class="statement-table">
+      <thead><tr><th scope="col">Id</th><th scope="col">Supuesto</th><th scope="col">Valor vigente</th><th scope="col">Etiqueta</th><th scope="col">Fuente</th><th scope="col">Se edita en</th></tr></thead>
+      <tbody>${mapa.filas.map(f => `<tr><td>${esc(f.id)}</td><td>${esc(f.supuesto)}</td><td class="font-mono">${esc(f.valor)}</td>
+        <td><span class="badge badge-warning">SUPUESTO</span></td><td>${esc(f.fuente)}</td><td><a href="${esc(f.ruta)}">${esc(f.modulo)}</a></td></tr>`).join('')}</tbody>
+    </table></div></details>`;
+}
+
+// opciones: { panorama, graficar?, cargarEjemploEmpresa?, cargarEjemploPersonal?, supuestos? } —
 // graficar(canvasId, config) dibuja con Chart.js; los cargadores llenan los módulos vacíos.
-export function inicioUI(page, { panorama: p, graficar = null, cargarEjemploEmpresa = null, cargarEjemploPersonal = null }) {
+export function inicioUI(page, { panorama: p, graficar = null, cargarEjemploEmpresa = null, cargarEjemploPersonal = null, supuestos = null }) {
   const periodoAnterior = p.tendencia && p.tendencia.periodos.length > 1 ? p.tendencia.periodos.at(-2) : null;
   const hayDatos = p.areas.length > 0 || p.kpis.length > 0;
   page.innerHTML = `${hero(p)}
     ${kpis(p.kpis, periodoAnterior)}
     ${hayDatos ? `<div class="dash-row">${tendencia(p.tendencia)}${alertas(p)}</div>` : ''}
     ${areas(p.areas)}
+    ${mapaSupuestosHTML(supuestos)}
     ${cargarEjemploEmpresa ? `<details class="card mb-4"><summary>Ejemplos de empresa</summary>
       <p class="form-hint">Revise la fuente y el alcance antes de cargar. Los casos AGRI-CORP reemplazan los módulos de empresa; las finanzas personales se conservan.</p>
       ${panelEjemplos('inicioEmpresa', 'inicioEjemplo', { titulo:'Seleccionar caso' })}</details>` : ''}

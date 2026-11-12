@@ -121,6 +121,7 @@ describe('pestaña Mercado', () => {
   it('carga el ejemplo, lo guarda e interpreta', async () => {
     const { contenedor, guardar } = montar();
     expect(contenedor.innerHTML).toContain('N/D');
+    contenedor.querySelector('#example-mercado').value = 'actual'; // AGRI-CORP va preseleccionado (D-113)
     await clic(contenedor, 'mercadoEjemplo');
     expect(guardar.mock.lastCall[0].periodos['2024']).toEqual({ acciones: 30000, precio: 52, dividendos: 40000 });
     const html = contenedor.innerHTML;

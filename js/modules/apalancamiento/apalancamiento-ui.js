@@ -4,13 +4,15 @@ import { monedaDe } from '../../utils/moneda.js';
 import { normalizeFinancialData } from '../estados/estados-normalize.js';
 import { TASA_IR_DEFECTO } from '../../utils/calculate.js';
 import { escapeHTML as esc } from '../../utils/html.js';
+import { etiquetaSupuesto } from '../../utils/casos.js';
 import { formatCurrency, formatNumber, formatPercent } from '../../utils/format.js';
 import {
   COMPORTAMIENTOS, calcularApalancamiento, cuentasOperativas, resolverComportamiento
 } from './apalancamiento-calculations.js';
 
 const TIPO_CUENTA = {
-  costoVentas: 'Costo de ventas', gastosAdmin: 'Gastos de administración', gastosVentas: 'Gastos de ventas'
+  costoVentas: 'Costo de ventas', gastosAdmin: 'Gastos de administración', gastosVentas: 'Gastos de ventas',
+  otrosGastos: 'Otros gastos operativos'
 };
 const ETIQUETA_COMPORTAMIENTO = { variable: 'Variable', fijo: 'Fijo', mixto: 'Mixto' };
 const CONCEPTOS_SIN_MONTO = { T: 'tasa', GAO: 'grado', GAF: 'grado', GAT: 'grado' };
@@ -65,6 +67,8 @@ function textoAdvertencia(aviso, tasaMostrada) {
       return `${esc(aviso.periodo)}: UAI − DAP / (1 − T) es negativo. La empresa está bajo su punto de equilibrio financiero.`;
     case 'tasa-por-defecto':
       return `${esc(aviso.periodo)}: no hay una tasa efectiva válida (IR / UAI); se usa la tasa por defecto de ${tasaMostrada}.`;
+    case 'cf-menor-depreciacion':
+      return `${esc(aviso.periodo)}: los costos fijos clasificados (${fmtMonto(aviso.cf)}) son menores que la depreciación y amortización publicadas (${fmtMonto(aviso.depreciacion)}). Revise la clasificación: ese gasto no cambia con las ventas.`;
     case 'estructura-cambio':
       return `${esc(aviso.desde)} → ${esc(aviso.hasta)}: el GAO por variación (${fmtGrado(aviso.gaoVariacion)}) difiere del estructural de ${esc(aviso.desde)} (${fmtGrado(aviso.gaoEstructural)}). Cambió la estructura de costos o hay cuentas mal clasificadas.`;
     default:
@@ -127,7 +131,7 @@ function paginaSinDatos(detalle = '') {
       <p><a href="#/estados">Cargue o importe sus estados</a> y vuelva aquí.</p></div>`;
 }
 
-export function apalancamientoUI(page, { estados: guardados, config, guardar }) {
+export function apalancamientoUI(page, { estados: guardados, config, guardar, supuestos = {} }) {
   if (!Array.isArray(guardados?.periods) || guardados.periods.length === 0) {
     page.innerHTML = paginaSinDatos();
     return;
@@ -143,7 +147,9 @@ export function apalancamientoUI(page, { estados: guardados, config, guardar }) 
   let guardado = {
     comportamiento: objeto(config?.comportamiento),
     dap: objeto(config?.dap),
-    tasaDefecto: config?.tasaDefecto ?? null
+    tasaDefecto: config?.tasaDefecto ?? null,
+    // Dato de referencia que trae el ejemplo (no se edita aquí): se conserva al guardar.
+    ...(config?.depreciacionAmortizacion ? { depreciacionAmortizacion: objeto(config.depreciacionAmortizacion) } : {})
   };
   let cuentas = [];
   let borrador = null;
@@ -204,7 +210,8 @@ export function apalancamientoUI(page, { estados: guardados, config, guardar }) 
         tasaDefecto = tasa.valor / 100;
       }
     }
-    return { errores, config: { comportamiento, dap, tasaDefecto } };
+    const referencia = guardado.depreciacionAmortizacion ? { depreciacionAmortizacion: guardado.depreciacionAmortizacion } : {};
+    return { errores, config: { comportamiento, dap, tasaDefecto, ...referencia } };
   }
 
   function filasClasificacion() {
@@ -252,20 +259,25 @@ export function apalancamientoUI(page, { estados: guardados, config, guardar }) 
         <td class="text-right font-mono">${fmtGrado(variacion.gat)}</td>
         <td class="text-right font-mono">${fmtGrado(variacion.estructuralBase.gao)}</td></tr>`).join('');
     const ultimo = resultado.periodos[resultado.periodos.length - 1];
+    // D-113: con AGRI-CORP consolidado, la clasificación fija/variable es un supuesto (S4–S6).
+    const sup = supuestos.costos ? ` ${etiquetaSupuesto('S4–S6', 'La clasificación fija/variable no la publica la empresa')}` : '';
+    const notaSupuesto = supuestos.costos
+      ? `<p class="form-hint">${etiquetaSupuesto('S4–S6')} El GAO y el GAT estructurales dependen de la clasificación fija/variable de la sección 1, que AGRI-CORP no publica (costo de ventas 75 % variable, gastos de operación 25 %, pago mínimo variable). El GAF usa cifras reales: UAII del auditado, gastos financieros, impuesto y dividendos preferentes pagados.</p>`
+      : '';
     return `${avisos}
       <div class="card mb-4"><h2 class="card-title">Grados por periodo (estructurales)</h2>
-        <p class="form-hint">GAO = MC / UAII · GAF = UAII / (UAI − DAP / (1 − T)) · GAT = GAO × GAF</p>
+        <p class="form-hint">GAO = MC / UAII · GAF = UAII / (UAI − DAP / (1 − T)) · GAT = GAO × GAF</p>${notaSupuesto}
         <div class="table-wrapper"><table class="statement-table">
-          <thead><tr><th scope="col">Periodo</th><th scope="col" class="text-right">GAO</th><th scope="col" class="text-right">GAF</th>
-            <th scope="col" class="text-right">GAT</th><th scope="col" class="text-right">T usada</th><th scope="col">Notas</th></tr></thead>
+          <thead><tr><th scope="col">Periodo</th><th scope="col" class="text-right">GAO${sup}</th><th scope="col" class="text-right">GAF</th>
+            <th scope="col" class="text-right">GAT${sup}</th><th scope="col" class="text-right">T usada</th><th scope="col">Notas</th></tr></thead>
           <tbody>${filasPeriodo}</tbody></table></div></div>
       <div class="card mb-4"><h2 class="card-title">Grados por variación entre periodos</h2>
-        ${filasVariacion ? `<p class="form-hint">GAO = %ΔUAII / %ΔVentas · GAF = %ΔUDAC / %ΔUAII · GAT = %ΔUDAC / %ΔVentas. Si la estructura de costos no cambia, el GAO por variación coincide con el estructural del periodo base.</p>
+        ${filasVariacion ? `<p class="form-hint">GAO = %ΔUAII / %ΔVentas · GAF = %ΔUDAC / %ΔUAII · GAT = %ΔUDAC / %ΔVentas. Si la estructura de costos no cambia, el GAO por variación coincide con el estructural del periodo base.${supuestos.costos ? ' Los grados por variación usan solo cambios entre cifras reales; el GAO estructural del periodo base depende de S4–S6.' : ''}</p>
         <div class="table-wrapper"><table class="statement-table">
           <thead><tr><th scope="col">Periodos</th><th scope="col" class="text-right">GAO</th><th scope="col" class="text-right">GAF</th>
-            <th scope="col" class="text-right">GAT</th><th scope="col" class="text-right">GAO estructural del periodo base</th></tr></thead>
+            <th scope="col" class="text-right">GAT</th><th scope="col" class="text-right">GAO estructural del periodo base${sup}</th></tr></thead>
           <tbody>${filasVariacion}</tbody></table></div>` : '<p class="text-muted">Hace falta más de un periodo.</p>'}</div>
-      <div class="card mb-4"><h2 class="card-title">Cómo leer ${esc(ultimo.periodo)}</h2>${interpretacion(ultimo)}</div>
+      <div class="card mb-4"><h2 class="card-title">Cómo leer ${esc(ultimo.periodo)}</h2>${supuestos.costos ? `<p class="form-hint">${etiquetaSupuesto('S4–S6')} El GAO y el GAT de esta lectura dependen de la clasificación supuesta.</p>` : ''}${interpretacion(ultimo)}</div>
       <div class="card mb-4"><h2 class="card-title">Traza</h2>${resultado.periodos.map(p => trazaPeriodo(p, monedaDe(estados))).join('')}</div>`;
   }
 

@@ -33,32 +33,65 @@ function seccionProforma(r) {
   if (!r.proforma && !r.real) {
     return `<div class="card mb-4"><h2 class="card-title">1. Estado de resultados proforma</h2><p class="text-muted">${esc(r.motivoPresupuesto || 'Sin estados ni presupuesto todavía.')} <a href="#/planeacion">Revisar Planeación</a></p></div>`;
   }
-  const tituloReal = r.real ? `Real ${esc(r.real.periodo)}` : 'Real';
+  const tituloReal = r.real ? `Real ${esc(r.real.periodo)}${r.contraste ? ' (base)' : ''}` : 'Real';
   const tituloProforma = r.proforma ? `Proforma (${esc(r.proforma.horizonte)})` : 'Proforma';
+  const cambioDe = (formato, relativo, puntos) => formato === 'monto'
+    ? (esNumero(relativo) ? `${relativo > 0 ? '+' : ''}${pct(relativo)}` : 'N/D')
+    : (esNumero(puntos) ? `${puntos > 0 ? '+' : ''}${formatNumberND(puntos * 100)} pts` : 'N/D');
   const filas = r.comparacion.map(f => {
-    const cambio = f.formato === 'monto'
-      ? (esNumero(f.variacion) ? `${f.variacion > 0 ? '+' : ''}${pct(f.variacion)}` : 'N/D')
-      : (esNumero(f.puntos) ? `${f.puntos > 0 ? '+' : ''}${formatNumberND(f.puntos * 100)} pts` : 'N/D');
     const fmt = (v, moneda) => (v === null && ['otrosNeto', 'otrosOperativos'].includes(f.clave) ? '—' : f.formato === 'monto' ? monto(v, moneda) : FORMATO[f.formato](v));
     const destacar = ['utilidadBruta', 'uaii', 'uai', 'utilidadNeta'].includes(f.clave) ? ' style="font-weight:600"' : '';
+    const contraste = r.contraste
+      ? `<td class="text-right font-mono">${fmt(f.contraste, r.contraste.moneda)}</td><td class="text-right font-mono">${cambioDe(f.formato, f.desvio, f.desvioPuntos)}</td>` : '';
     return `<tr${destacar}><td>${f.concepto}</td><td class="text-right font-mono">${r.real ? fmt(f.real, r.real?.moneda) : '—'}</td>
-      <td class="text-right font-mono">${r.proforma ? fmt(f.proforma, r.proforma?.moneda) : '—'}</td><td class="text-right font-mono">${cambio}</td></tr>`;
+      <td class="text-right font-mono">${r.proforma ? fmt(f.proforma, r.proforma?.moneda) : '—'}</td><td class="text-right font-mono">${cambioDe(f.formato, f.variacion, f.puntos)}</td>${contraste}</tr>`;
   }).join('');
+  const encabezadoContraste = r.contraste
+    ? `<th scope="col" class="text-right">Real ${esc(r.contraste.periodo)} (contraste)</th><th scope="col" class="text-right">Real vs proforma</th>` : '';
   const notas = [];
   if (!r.proforma && r.motivoPresupuesto) notas.push(esc(r.motivoPresupuesto));
   else if (!r.proforma) notas.push('Configure el <a href="#/planeacion">Presupuesto Maestro</a> para obtener la proforma.');
   if (r.real && [r.real.uaii, r.real.utilidadNeta].some(v => v === null)) notas.push('Los resultados reales N/D requieren completar los datos acreditados en Estados; se conserva la misma lectura que en Estados y Razones.');
   if (r.motivoComparacion) notas.push(esc(r.motivoComparacion));
   if (r.proforma) notas.push('La proforma sale del presupuesto maestro: no incluye otros ingresos operativos ni otros ingresos o gastos no operativos, y el IR se calcula sobre la UAI positiva de cada periodo.');
+  if (r.contraste) notas.push(`El real de ${esc(r.contraste.periodo)} es el año que la proforma proyecta: «Real vs proforma» mide cuánto se desvió lo ocurrido de lo supuesto ((real − proforma) / |proforma|).`);
   return `<div class="card mb-4"><h2 class="card-title">1. Estado de resultados proforma</h2>
     ${r.real ? `<p class="proforma-origen">Histórico de Estados Financieros · ${esc(r.real.empresa || 'Estados guardados')} · ${esc(r.real.periodo)} · ${esc(r.real.moneda)}. <a href="#/estados">Consultar origen</a></p>` : ''}
     ${r.proforma ? `<p class="proforma-resultado"><strong>Utilidad neta proyectada: ${monto(r.proforma.utilidadNeta, r.proforma.moneda)}</strong><span>Utilidad antes de impuestos (UAI): ${monto(r.proforma.uai, r.proforma.moneda)}</span></p>` : ''}
     ${r.proforma ? `<p class="proforma-origen">Presupuesto maestro guardado · ${esc(r.proforma.horizonte)} · ${esc(r.proforma.moneda)}. Las ventas se proyectan desde unidades y precio. <a href="#/planeacion">Consultar origen</a></p>` : ''}
     <div class="table-wrapper"><table class="statement-table">
-      <thead><tr><th scope="col">Concepto</th><th scope="col" class="text-right">${tituloReal}</th><th scope="col" class="text-right">${tituloProforma}</th><th scope="col" class="text-right">Variación</th></tr></thead>
+      <thead><tr><th scope="col">Concepto</th><th scope="col" class="text-right">${tituloReal}</th><th scope="col" class="text-right">${tituloProforma}</th><th scope="col" class="text-right">${r.contraste ? 'Proforma vs base' : 'Variación'}</th>${encabezadoContraste}</tr></thead>
       <tbody>${filas}</tbody></table></div>
     ${r.desarrollo ? `<details class="proforma-desarrollo" open><summary>Desarrollo del estado de resultados proyectado</summary><p>${esc(r.desarrollo.etiqueta)}</p>${tablaDesarrollo(r.desarrollo.resultados)}</details>` : ''}
     ${notas.map(n => `<p class="form-hint">${n}</p>`).join('')}</div>`;
+}
+
+// D-113: balance general proforma con apertura real, cierre proyectado y real de contraste.
+function seccionBalance(b, moneda) {
+  if (!b) return '';
+  if (!b.disponible) {
+    return `<div class="card mb-4"><h2 class="card-title">Balance general proforma</h2><p class="text-muted">${esc(b.motivo)}</p></div>`;
+  }
+  const m = v => monto(v, moneda);
+  const contraste = Boolean(b.contraste);
+  const fila = (concepto, regla, apertura, proforma, real, negrita = false) => `<tr${negrita ? ' style="font-weight:600"' : ''}>
+    <td>${esc(concepto)}${regla ? `<br><span class="text-muted">${esc(regla)}</span>` : ''}</td>
+    <td class="text-right font-mono">${m(apertura)}</td><td class="text-right font-mono">${m(proforma)}</td>
+    ${contraste ? `<td class="text-right font-mono">${m(real)}</td>` : ''}</tr>`;
+  const grupo = (clave, titulo, totalClave) => `<tr><th scope="rowgroup" colspan="${contraste ? 4 : 3}">${titulo}</th></tr>
+    ${b.filas.filter(f => f.grupo === clave).map(f => fila(f.concepto, f.regla, f.apertura, f.proforma, f.real)).join('')}
+    ${fila(`Total ${titulo.toLowerCase()}`, '', b.totales.apertura[totalClave], b.totales.proforma[totalClave], b.totales.real?.[totalClave], true)}`;
+  const resultado = b.cuadra
+    ? '<span class="badge badge-success">Cuadra</span> Activos = pasivos + patrimonio: el presupuesto financia sus propios movimientos.'
+    : `<span class="badge badge-warning">${b.financiamientoRequerido > 0 ? 'Financiamiento externo requerido' : 'Excedente de fondos'}</span> ${m(Math.abs(b.financiamientoRequerido))}. No se convierte en un préstamo: decida cómo cubrirlo o aplicarlo.`;
+  const a = b.aplicaciones;
+  return `<div class="card mb-4"><h2 class="card-title">Balance general proforma</h2>
+    <p class="proforma-origen">Apertura: balance real de ${esc(b.base)}. Cierre: presupuesto maestro.${contraste ? ` Contraste: balance real de ${esc(b.contraste)}.` : ''}</p>
+    <div class="table-wrapper"><table class="statement-table">
+      <thead><tr><th scope="col">Concepto y regla</th><th scope="col" class="text-right">Real ${esc(b.base)} (apertura)</th><th scope="col" class="text-right">Proforma</th>${contraste ? `<th scope="col" class="text-right">Real ${esc(b.contraste)} (contraste)</th>` : ''}</tr></thead>
+      <tbody>${grupo('activos', 'Activos', 'activos')}${grupo('pasivos', 'Pasivos', 'pasivos')}${grupo('patrimonio', 'Patrimonio', 'patrimonio')}</tbody></table></div>
+    <p class="mt-4">${resultado}</p>
+    <p class="form-hint">Aplicaciones del horizonte: inversión ${m(a.inversion)}, depreciación ${m(a.depreciacion)}, dividendos ${m(a.dividendos)}, IR pagado de la apertura ${m(a.impuestos)}, IR devengado ${m(a.irDevengado)} y utilidad neta ${m(a.utilidadNeta)}.</p></div>`;
 }
 
 function seccionEfectivo(e, desarrollo) {
@@ -103,6 +136,7 @@ export function proformaUI(page, { reporte, imprimir = null }) {
       <p class="page-subtitle">Resumen de todos los módulos para apoyar decisiones: resultados proyectados, efectivo, indicadores y alertas.</p></div>
     <div class="flex-gap flex-wrap mb-4">${imprimir ? '<button type="button" class="btn btn-secondary" id="proformaImprimir">Imprimir o guardar como PDF</button>' : ''}</div>
     ${seccionProforma(reporte)}
+    ${seccionBalance(reporte.balance, reporte.proforma?.moneda)}
     <details class="card mb-4"><summary>Métodos docentes AFOD</summary><div id="proformaAFOD"></div></details>
     ${seccionEfectivo(reporte.efectivo, reporte.desarrollo)}
     ${seccionFaltantes(reporte.faltantes)}

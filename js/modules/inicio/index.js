@@ -8,7 +8,9 @@ import { ejemploMercado, normalizarDatosMercado } from '../analisis/mercado-calc
 import { casoHistoricoReal, casoOperativoSimulado } from '../../examples/ejemplos-agricorp.js';
 import { ejemploEquilibrio, normalizarEquilibrio } from '../equilibrio/equilibrio-calculations.js';
 import { getDemoData } from '../estados/index.js';
-import { crearEjemplo } from '../../examples/catalogo.js';
+import { casoDeEjemplo, crearEjemplo } from '../../examples/catalogo.js';
+import { CLAVES_EMPRESA, registrarCasos, registroCaso, tieneDatos } from '../../utils/casos.js';
+import { mapaSupuestos } from './inicio-supuestos.js';
 import { normalizeFinancialData } from '../estados/estados-normalize.js';
 import { ejemploFlujo, normalizarFlujo } from '../flujo/flujo-calculations.js';
 import { ejemploInventario, normalizarInventario } from '../inventario/inventario-calculations.js';
@@ -25,11 +27,17 @@ const vacio = valor => !Array.isArray(valor) || valor.length === 0;
 
 function registro() {
   const cargados = [];
+  const claves = [];
   const guardar = (clave, valor, nombre) => {
     store.setPersisted(clave, valor);
     cargados.push(nombre);
+    claves.push(clave);
   };
-  return { cargados, guardar };
+  // D-113: los módulos escritos quedan registrados con el caso del que vienen.
+  const registrar = caso => {
+    if (caso && claves.length) registrarCasos(Object.fromEntries(claves.map(clave => [clave, caso])));
+  };
+  return { cargados, guardar, registrar };
 }
 
 // Casos AGRI-CORP: reemplazan todos los módulos de empresa. Lo que el caso no usa queda vacío
@@ -45,7 +53,12 @@ function cargarCasoAgricorp(id) {
     equilibrio: normalizarEquilibrio(caso.equilibrio ?? null),
     planeacion: caso.planeacion ? { supuestos: normalizarSupuestos(caso.planeacion.supuestos) } : { supuestos: null }
   };
-  // Primero se prepara todo; una sola escritura publica los siete módulos.
+  const registroCasoInicio = casoDeEjemplo('inicioEmpresa', id);
+  modulos.casos = {
+    ...(store.get('casos') || {}),
+    ...Object.fromEntries(CLAVES_EMPRESA.map(clave => [clave, registroCaso(clave, registroCasoInicio, modulos[clave])]))
+  };
+  // Primero se prepara todo; una sola escritura publica los siete módulos y su registro de caso.
   store.setModulesPersisted(modulos);
   return ['Estados financieros', 'Apalancamiento', 'Razones de mercado', 'Flujo de efectivo', 'Inventario', 'Punto de equilibrio', 'Presupuesto maestro'];
 }
@@ -54,9 +67,10 @@ function cargarCasoAgricorp(id) {
 // que el botón "Cargar ejemplo" de cada uno. Solo escribe en los módulos vacíos.
 export function cargarEjemploEmpresa(id = 'actual') {
   if (['agricorp-historico', 'agricorp-simulado'].includes(id)) return cargarCasoAgricorp(id);
-  const { cargados, guardar } = registro();
+  const { cargados, guardar, registrar } = registro();
   if (id !== 'actual') {
     guardar('estados', normalizeFinancialData(crearEjemplo('inicioEmpresa', id, getDemoData)), 'Estados financieros');
+    registrar(casoDeEjemplo('inicioEmpresa', id));
     return cargados;
   }
   let periodos = store.get('estados')?.periods;
@@ -70,9 +84,11 @@ export function cargarEjemploEmpresa(id = 'actual') {
   if (!planeacion?.supuestos && !tieneEscenarios(planeacion)) {
     guardar('planeacion', { supuestos: normalizarSupuestos(ejemploPlaneacion()) }, 'Presupuesto maestro');
   }
-  if (store.get('equilibrio')?.precio == null) guardar('equilibrio', normalizarEquilibrio(ejemploEquilibrio()), 'Punto de equilibrio');
+  // Un C-V-U derivado de los estados (sin precio capturado) no está vacío.
+  if (!tieneDatos('equilibrio', store.getAll())) guardar('equilibrio', normalizarEquilibrio(ejemploEquilibrio()), 'Punto de equilibrio');
   if (vacio(store.get('flujo')?.movimientos)) guardar('flujo', normalizarFlujo(ejemploFlujo()), 'Flujo de efectivo');
   if (vacio(store.get('inventario')?.productos)) guardar('inventario', normalizarInventario(ejemploInventario()), 'Inventario');
+  registrar(casoDeEjemplo('inicioEmpresa', 'actual'));
   return cargados;
 }
 
@@ -121,6 +137,7 @@ export function initInicio() {
     panorama,
     graficar: renderChart,
     cargarEjemploEmpresa: conAviso(cargarEjemploEmpresa, 'de empresa'),
-    cargarEjemploPersonal: conAviso(cargarEjemploPersonal, 'personal')
+    cargarEjemploPersonal: conAviso(cargarEjemploPersonal, 'personal'),
+    supuestos: mapaSupuestos(store.getAll())
   });
 }

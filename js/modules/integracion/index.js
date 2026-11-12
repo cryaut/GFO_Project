@@ -8,10 +8,11 @@ import { leerEstados } from '../../utils/estados-guardados.js';
 import { computeRazones, refreshSavedStates } from '../analisis/index.js';
 import { obtenerUtilidadNetaMotor } from '../razones/razones-app-adapter.js';
 import { validarRespaldo, MAX_RESPALDO_BYTES } from './integracion-respaldo.js';
-import { construirReporteHTML, resumenPresupuestoEstudiantil } from './integracion-reporte.js';
+import { construirReporteHTML, resumenModulosEmpresa, resumenPresupuestoEstudiantil } from './integracion-reporte.js';
 import { resumenEstudiantilGuardado } from '../presupuesto/presupuesto-calculations.js';
 import { reunirEntradas } from '../proforma/index.js';
 import { construirReporte } from '../proforma/proforma-calculations.js';
+import { avisoCaso } from '../../utils/casos.js';
 
 // D-077: una sola lectura. Devuelve { estados, error } para quien necesita el
 // motivo y solo los estados para el resto.
@@ -116,6 +117,17 @@ export function initReportes() {
   bindExportEvents(page);
 }
 
+// D-113: los demás módulos de empresa, con las mismas entradas que Proforma. Un fallo de
+// lectura no tumba el dashboard: esas filas simplemente no se muestran.
+function filasModulosEmpresa() {
+  try {
+    const entradas = reunirEntradas();
+    return resumenModulosEmpresa(entradas, construirReporte(entradas));
+  } catch {
+    return [];
+  }
+}
+
 function renderDashboard(page) {
   const el = page.querySelector('#dashboardContent');
   if (!el) return;
@@ -163,6 +175,7 @@ function renderDashboard(page) {
         <tbody>
           <tr><th scope="rowgroup" colspan="3">Empresa</th></tr>
           <tr><td>Estados Financieros</td><td>${insigniaEstados}</td><td>${detalleEstados}</td></tr>
+          ${filasModulosEmpresa().map(f => `<tr><td>${esc(f.modulo)}</td><td><span class="badge ${f.estado === 'ok' ? 'badge-success' : 'badge-warning'}">${f.estado === 'ok' ? 'Con datos' : 'Pendiente'}</span></td><td>${esc(f.detalle)}</td></tr>`).join('')}
           <tr><th scope="rowgroup" colspan="3">Finanzas personales (independientes de la empresa)</th></tr>
           <tr><td>Presupuesto personal</td><td><span class="badge ${kpis.presupuestoIngreso > 0 ? 'badge-success' : 'badge-warning'}">${kpis.presupuestoIngreso > 0 ? 'Configurado' : 'Sin configurar'}</span></td><td>Ingreso: ${formatCurrencyND(kpis.presupuestoIngreso)}</td></tr>
           <tr><td>Activos del hogar</td><td><span class="badge ${kpis.activosCount > 0 ? 'badge-success' : 'badge-warning'}">${kpis.activosCount > 0 ? 'Con bienes' : 'Sin bienes'}</span></td><td>${kpis.activosCount} bienes registrados</td></tr>
@@ -218,7 +231,7 @@ function bindExportEvents(page) {
     const entradas = reunirEntradas();
     return construirReporteHTML({
       kpis: computeDashboardKPIs(), estados: entradas.estados, errorEstados: entradas.errorEstados,
-      reporte: construirReporte(entradas)
+      reporte: construirReporte(entradas), entradas, aviso: avisoCaso('reportes', store.getAll())
     });
   };
 

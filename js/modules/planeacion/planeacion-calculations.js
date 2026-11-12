@@ -69,8 +69,28 @@ export function normalizarSupuestos(datos) {
     productoId: typeof datos.productoId === 'string' ? datos.productoId : ''
   };
   for (const [clave] of SUPUESTOS) s[clave] = esNumero(datos[clave]) ? datos[clave] : null;
+  // D-113 (opcionales): unidad de medida y nota de procedencia del caso. Sin ellas, la forma no cambia.
+  const textoOpcional = (valor, max) => (typeof valor === 'string' && valor.trim() && valor.trim().length <= max ? valor.trim() : '');
+  const unidad = textoOpcional(datos.unidad, MAX_UNIDAD), nota = textoOpcional(datos.nota, MAX_NOTA);
+  if (unidad) s.unidad = unidad;
+  if (nota) s.nota = nota;
+  // D-113 (opcionales, para el balance proforma): el periodo de Estados que sirve de apertura y
+  // en qué se gastan los «otros desembolsos» del horizonte (montos totales ≥ 0).
+  const periodoBase = textoOpcional(datos.periodoBase, 40);
+  if (periodoBase) s.periodoBase = periodoBase;
+  const desglose = datos.desgloseOtrosDesembolsos;
+  if (desglose && typeof desglose === 'object' && CAMPOS_DESGLOSE.every(c => esNumero(desglose[c]) && desglose[c] >= 0)) {
+    s.desgloseOtrosDesembolsos = Object.fromEntries(CAMPOS_DESGLOSE.map(c => [c, desglose[c]]));
+  }
   return s;
 }
+
+// inversion: compras de activo no corriente; dividendos: pagados a los accionistas;
+// impuestos: pago del IR por pagar de la apertura.
+export const CAMPOS_DESGLOSE = ['inversion', 'dividendos', 'impuestos'];
+
+export const MAX_UNIDAD = 60;
+export const MAX_NOTA = 1200;
 
 // En un borrador, null conserva un supuesto pendiente de revisión.
 export function validarSupuestos(s, { parcial = false } = {}) {

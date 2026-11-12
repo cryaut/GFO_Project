@@ -10,6 +10,11 @@ import {
 // Cuentas que forman la UAII y se clasifican como fijas o variables.
 export const TIPOS_OPERATIVOS = ['costoVentas', 'gastosAdmin', 'gastosVentas'];
 export const COMPORTAMIENTOS = ['variable', 'fijo', 'mixto'];
+// D-113: «otros gastos» y «otros ingresos» confirmados en Estados como operativos (identidad del
+// catálogo) también forman la UAII, igual que en el motor de razones de Análisis. Sin esa
+// confirmación siguen fuera de la UAII, como antes.
+const ID_OTRO_GASTO_OPERATIVO = 'is.other_operating_expenses';
+const ID_OTRO_INGRESO_OPERATIVO = 'is.other_operating_income';
 // Diferencia relativa entre el GAO por variación y el estructural que dispara el aviso
 // 'estructura-cambio'. Referencia educativa, como UMBRALES en Análisis.
 export const UMBRAL_CAMBIO_ESTRUCTURA = 0.10;
@@ -33,6 +38,22 @@ export function normalizarComportamiento(valor) {
   return null;
 }
 
+function identidadConfirmada(estados, nombre) {
+  const identidad = estados?.accountIdentities?.estadoResultados?.[nombre];
+  return identidad?.estado === 'reconocida' ? identidad.idCuenta : null;
+}
+
+// Costo operativo: costo de ventas, gastos de administración y de ventas, más los «otros gastos»
+// confirmados como operativos.
+function esCostoOperativo(estados, nombre, tipo) {
+  return TIPOS_OPERATIVOS.includes(tipo)
+    || (tipo === 'otrosGastos' && identidadConfirmada(estados, nombre) === ID_OTRO_GASTO_OPERATIVO);
+}
+
+function esIngresoOperativo(estados, nombre, tipo) {
+  return tipo === 'otrosIngresos' && identidadConfirmada(estados, nombre) === ID_OTRO_INGRESO_OPERATIVO;
+}
+
 // Cuentas operativas del estado de resultados de cualquier periodo, sin repetir.
 export function cuentasOperativas(estados) {
   const vistas = new Map();
@@ -40,7 +61,7 @@ export function cuentasOperativas(estados) {
     for (const nombre of Object.keys(estados.estadoResultados?.[periodo] || {})) {
       if (vistas.has(nombre)) continue;
       const tipo = resolveAccountType(estados, 'estadoResultados', nombre);
-      if (TIPOS_OPERATIVOS.includes(tipo)) vistas.set(nombre, { nombre, tipo });
+      if (esCostoOperativo(estados, nombre, tipo)) vistas.set(nombre, { nombre, tipo });
     }
   }
   return [...vistas.values()];
@@ -72,9 +93,17 @@ function cuentasDeTipo(estados, er, tipos) {
     .map(([nombre, importe]) => ({ nombre, importe }));
 }
 
+function cuentasQue(estados, er, condicion) {
+  return Object.entries(er)
+    .filter(([nombre]) => condicion(estados, nombre, resolveAccountType(estados, 'estadoResultados', nombre)))
+    .map(([nombre, importe]) => ({ nombre, importe }));
+}
+
+const sumar = cuentas => cuentas.reduce((total, cuenta) => total + cuenta.importe, 0);
+
 function variablesVacias() {
   return {
-    ventas: null, cv: null, cf: null, mc: null, uaii: null, oi: null, og: null, i: null,
+    ventas: null, cv: null, cf: null, mc: null, oio: null, uaii: null, oi: null, og: null, i: null,
     uai: null, ir: null, t: null, origenT: null, un: null, dap: null, udac: null, denominadorGaf: null
   };
 }
@@ -100,7 +129,8 @@ export function derivarPeriodo(estados, periodo, config = {}, cuentasResueltas =
   let cv = 0;
   let cf = 0;
   let operativo = 0;
-  for (const { nombre, importe } of cuentasDeTipo(estados, er, TIPOS_OPERATIVOS)) {
+  const costosOperativos = cuentasQue(estados, er, esCostoOperativo);
+  for (const { nombre, importe } of costosOperativos) {
     operativo += importe;
     const cuenta = porNombre.get(nombre);
     if (!cuenta?.comportamiento) {
@@ -121,9 +151,16 @@ export function derivarPeriodo(estados, periodo, config = {}, cuentasResueltas =
   if (!costosClasificados) { cv = null; cf = null; }
 
   const ventas = totales.ventas;
-  const uaii = ventas - totales.costoVentas - totales.gastosAdmin - totales.gastosVentas;
-  const oi = totales.otrosIngresos;
-  const og = totales.otrosGastos;
+  // Otros ingresos operativos (OIO): no se clasifican; entran a la UAII como un ingreso fijo, de
+  // modo que UAII = MC − CF + OIO y el GAO sigue siendo MC / UAII.
+  const ingresosOperativos = cuentasQue(estados, er, esIngresoOperativo);
+  const oio = sumar(ingresosOperativos);
+  const otrosGastosOperativos = sumar(costosOperativos.filter(({ nombre }) =>
+    resolveAccountType(estados, 'estadoResultados', nombre) === 'otrosGastos'));
+  const uaii = ventas - totales.costoVentas - totales.gastosAdmin - totales.gastosVentas
+    - otrosGastosOperativos + oio;
+  const oi = totales.otrosIngresos - oio;
+  const og = totales.otrosGastos - otrosGastosOperativos;
   const i = totales.intereses;
   const uai = uaii + oi - og - i;
   const cuentasIR = cuentasDeTipo(estados, er, ['impuestos']);
@@ -141,7 +178,7 @@ export function derivarPeriodo(estados, periodo, config = {}, cuentasResueltas =
   const mc = cv === null ? null : ventas - cv;
 
   const variables = {
-    ventas, cv, cf, mc, uaii, oi, og, i, uai, ir, t, origenT, un, dap, udac,
+    ventas, cv, cf, mc, oio, uaii, oi, og, i, uai, ir, t, origenT, un, dap, udac,
     denominadorGaf: dap === null ? null : denominadorGaf(uai, dap, t)
   };
   const grados = {
@@ -153,14 +190,20 @@ export function derivarPeriodo(estados, periodo, config = {}, cuentasResueltas =
   const fila = (concepto, valor, formula, cuentas = []) => ({ concepto, valor, formula, cuentas });
   const formulaT = { efectiva: 'IR / UAI (tasa efectiva)', defecto: 'Tasa por defecto' }[origenT]
     || 'Sin tasa válida';
+  const conOperativosOtros = otrosGastosOperativos !== 0 || ingresosOperativos.length > 0;
   const traza = [
     fila('Ventas', ventas, 'Suma de las cuentas de ventas', cuentasDeTipo(estados, er, ['ventas'])),
     fila('CV', cv, 'Suma de la parte variable de los costos operativos', trazaCV),
     fila('CF', cf, 'Suma de la parte fija de los costos operativos', trazaCF),
     fila('MC', mc, 'Ventas − CV'),
-    fila('UAII', uaii, 'Ventas − costo de ventas − gastos de administración − gastos de ventas'),
-    fila('OI', oi, 'Suma de otros ingresos', cuentasDeTipo(estados, er, ['otrosIngresos'])),
-    fila('OG', og, 'Suma de otros gastos', cuentasDeTipo(estados, er, ['otrosGastos'])),
+    ...(ingresosOperativos.length ? [fila('OIO', oio, 'Suma de otros ingresos operativos', ingresosOperativos)] : []),
+    fila('UAII', uaii, conOperativosOtros
+      ? 'Ventas − costos y gastos operativos (incluye otros gastos operativos) + otros ingresos operativos'
+      : 'Ventas − costo de ventas − gastos de administración − gastos de ventas'),
+    fila('OI', oi, conOperativosOtros ? 'Suma de otros ingresos no operativos' : 'Suma de otros ingresos',
+      cuentasQue(estados, er, (d, nombre, tipo) => tipo === 'otrosIngresos' && !esIngresoOperativo(d, nombre, tipo))),
+    fila('OG', og, conOperativosOtros ? 'Suma de otros gastos no operativos' : 'Suma de otros gastos',
+      cuentasQue(estados, er, (d, nombre, tipo) => tipo === 'otrosGastos' && !esCostoOperativo(d, nombre, tipo))),
     fila('I', i, 'Suma de gastos financieros', cuentasDeTipo(estados, er, ['intereses'])),
     fila('UAI', uai, 'UAII + OI − OG − I'),
     fila('IR', ir, ir === null ? 'Sin cuenta de impuestos' : 'Suma de impuestos', cuentasIR),
@@ -214,6 +257,12 @@ export function calcularApalancamiento(estados, config = {}) {
     }
     // T solo interviene si hay DAP; sin DAP el aviso sería ruido.
     if (v.origenT === 'defecto' && v.dap > 0) advertencias.push({ codigo: 'tasa-por-defecto', periodo });
+    // La depreciación y amortización publicadas son un costo fijo seguro: una clasificación que
+    // deja menos costo fijo que ellas no es coherente con los datos reales.
+    const dya = config.depreciacionAmortizacion?.[periodo];
+    if (esNumero(v.cf) && esNumero(dya) && dya > 0 && v.cf < dya - TOLERANCIA_CONTROL) {
+      advertencias.push({ codigo: 'cf-menor-depreciacion', periodo, cf: v.cf, depreciacion: dya });
+    }
   }
   for (const variacion of variaciones) {
     if (difiereEstructura(variacion.gao, variacion.estructuralBase.gao)) {

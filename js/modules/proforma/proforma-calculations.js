@@ -11,6 +11,7 @@ import { consultarMontoCuenta } from '../estados/cuentas-identificador.js';
 import { computarRazonesDesdeDatos } from '../razones/razones-app-adapter.js';
 import { ordenarPeriodos } from '../estados/estados-normalize.js';
 import { descripcionReposicion } from '../inventario/inventario-calculations.js';
+import { balanceProforma, periodosProforma } from './proforma-balance-calculations.js';
 
 const esNumero = valor => typeof valor === 'number' && Number.isFinite(valor);
 const num = valor => formatNumberND(valor, esNumero(valor) && Number.isInteger(valor) ? 0 : 2);
@@ -31,9 +32,9 @@ function margenes(ventas, utilidadBruta, gastosAdmin, gastosVentas, utilidadNeta
   };
 }
 
-// Estado de resultados del último periodo real, con los mismos conceptos que la proforma.
-export function resultadosReales(estados) {
-  const periodo = estados?.periods?.[estados.periods.length - 1];
+// Estado de resultados de un periodo real (por defecto el último), con los mismos conceptos que la proforma.
+export function resultadosReales(estados, periodoElegido = null) {
+  const periodo = periodoElegido ?? estados?.periods?.[estados.periods.length - 1];
   if (!periodo) return null;
   try {
     const lectura = estadosResueltos(estados, periodo).estadoResultados;
@@ -83,8 +84,10 @@ function motivoComparacion(real, proforma) {
   return null;
 }
 
-export function compararResultados(real, proforma) {
+// contraste (opcional, D-113): el periodo real que la proforma proyecta, para medir el desvío.
+export function compararResultados(real, proforma, contraste = null) {
   const comparable = Boolean(real && proforma && !motivoComparacion(real, proforma));
+  const contrastable = Boolean(contraste && proforma && !motivoComparacion(contraste, proforma));
   const filas = [
     ['Ventas', 'ventas', 'monto'], ['(−) Costo de ventas', 'cbv', 'monto'], ['(=) Utilidad bruta', 'utilidadBruta', 'monto'],
     ['(−) Gastos de operación', 'gastosOperacion', 'monto'],
@@ -101,7 +104,14 @@ export function compararResultados(real, proforma) {
     // Variación relativa solo para montos; los márgenes se comparan en puntos.
     const variacion = calcularVariacion && formato === 'monto' ? ahPctDelta(p, r) : null;
     const puntos = calcularVariacion && formato === 'pct' ? p - r : null;
-    return { concepto, clave, formato, real: r, proforma: p, variacion, puntos };
+    const fila = { concepto, clave, formato, real: r, proforma: p, variacion, puntos };
+    if (!contraste) return fila;
+    // Desvío de lo ocurrido respecto de lo proyectado: (real − proforma) / |proforma|.
+    const c = contraste[clave];
+    const desviable = contrastable && esNumero(c) && esNumero(p);
+    return { ...fila, contraste: c,
+      desvio: desviable && formato === 'monto' ? ahPctDelta(c, p) : null,
+      desvioPuntos: desviable && formato === 'pct' ? c - p : null };
   });
 }
 
@@ -140,8 +150,10 @@ export function flujoDesdeEFE(estados) {
 }
 
 // Indicadores de todos los módulos en una sola tabla.
-export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento, presupuesto, equilibrio, flujo, inventario, umbrales = {} }, periodoReal) {
+export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento, presupuesto, equilibrio, flujo, inventario, umbrales = {}, supuestos = {} }, periodoReal) {
   const lista = [];
+  // D-113: prefijo de la lectura cuando la cifra depende de un supuesto declarado de AGRI-CORP.
+  const sup = (activo, ids) => (activo ? `SUPUESTO ${ids}. ` : '');
   if (razones) {
     const grupo = `Análisis financiero (${periodoReal})`;
     const rc = razon(razones, 'RC');
@@ -165,10 +177,12 @@ export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento
   }
   if (mercado && [mercado.upa, mercado.pu, mercado.pvl].some(esNumero)) {
     const grupo = `Razones de mercado (${mercado.periodo})`;
+    // D-113: con una nota de procedencia, el precio es un supuesto y el indicador lo dice.
+    const supuesto = mercado.nota ? 'SUPUESTO: precio ilustrativo, no es una cotización. ' : '';
     lista.push(indicador(grupo, 'Utilidad por acción (UPA)', mercado.upa, 'monto', 'Análisis', '#/analisis', '(UN − DAP) / acciones comunes.'));
-    lista.push(indicador(grupo, 'Precio / utilidad (P/U)', mercado.pu, 'veces', 'Análisis', '#/analisis', 'Veces que el mercado paga la utilidad por acción.'));
+    lista.push(indicador(grupo, 'Precio / utilidad (P/U)', mercado.pu, 'veces', 'Análisis', '#/analisis', `${supuesto}Veces que el mercado paga la utilidad por acción.`));
     lista.push(indicador(grupo, 'Precio / valor en libros (P/VL)', mercado.pvl, 'veces', 'Análisis', '#/analisis',
-      esNumero(mercado.vlpa) ? `Valor en libros de ${monto(mercado.vlpa, monedaDe(mercado))} por acción.` : ''));
+      `${supuesto}${esNumero(mercado.vlpa) ? `Valor en libros de ${monto(mercado.vlpa, monedaDe(mercado))} por acción.` : ''}`));
     if (esNumero(mercado.pago)) {
       lista.push(indicador(grupo, 'Pago de dividendos', mercado.pago, 'pct', 'Análisis', '#/analisis', `DPA de ${monto(mercado.dpa, monedaDe(mercado))}.`));
     }
@@ -178,17 +192,17 @@ export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento
     const { gao, gaf, gat } = ultimoApal.grados;
     const grupo = `Apalancamiento (${ultimoApal.periodo})`;
     lista.push(indicador(grupo, 'GAO', gao, 'veces', 'Apalancamiento', '#/apalancamiento',
-      esNumero(gao) && gao > 0 ? `1 % más de ventas sube la UAII ${formatNumberND(gao)} %.` : 'N/D si faltan clasificar costos fijos y variables.'));
+      `${sup(supuestos.costos, 'S4–S6')}${esNumero(gao) && gao > 0 ? `1 % más de ventas sube la UAII ${formatNumberND(gao)} %.` : 'N/D si faltan clasificar costos fijos y variables.'}`));
     lista.push(indicador(grupo, 'GAF', gaf, 'veces', 'Apalancamiento', '#/apalancamiento',
       esNumero(gaf) && gaf > 0 ? `1 % más de UAII sube la utilidad para accionistas ${formatNumberND(gaf)} %.` : ''));
-    lista.push(indicador(grupo, 'GAT', gat, 'veces', 'Apalancamiento', '#/apalancamiento', 'GAO × GAF: riesgo total de la estructura de costos y deuda.'));
+    lista.push(indicador(grupo, 'GAT', gat, 'veces', 'Apalancamiento', '#/apalancamiento', `${sup(supuestos.costos, 'S4–S6')}GAO × GAF: riesgo total de la estructura de costos y deuda.`));
   }
   if (equilibrio) {
     const grupo = 'Punto de equilibrio (C-V-U)';
     lista.push(indicador(grupo, 'Punto de equilibrio', equilibrio.peUnidades, 'unidades', 'Punto de Equilibrio', '#/equilibrio',
-      esNumero(equilibrio.peVentas) ? `Equivale a ${monto(equilibrio.peVentas, monedaDe(equilibrio))} de ventas.` : 'Sin margen de contribución positivo.'));
+      `${sup(supuestos.cvu, 'S4–S6')}${esNumero(equilibrio.peVentas) ? `Equivale a ${monto(equilibrio.peVentas, monedaDe(equilibrio))} de ventas.` : 'Sin margen de contribución positivo.'}`));
     lista.push(indicador(grupo, 'Margen de seguridad', equilibrio.msPorcentaje, 'pct', 'Punto de Equilibrio', '#/equilibrio',
-      esNumero(equilibrio.msPorcentaje) ? `Las ventas pueden caer ${pct(Math.max(0, equilibrio.msPorcentaje))} antes de tener pérdida.` : '',
+      `${sup(supuestos.cvu, 'S4–S6')}${esNumero(equilibrio.msPorcentaje) ? `Las ventas pueden caer ${pct(Math.max(0, equilibrio.msPorcentaje))} antes de tener pérdida.` : ''}`,
       esNumero(equilibrio.msPorcentaje) ? (equilibrio.msPorcentaje >= 0.2 ? 'ok' : 'alerta') : 'info'));
   }
   if (flujo?.disponible) {
@@ -203,11 +217,12 @@ export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento
   if (presupuesto) {
     const grupo = 'Presupuesto maestro';
     const t = presupuesto.totales;
-    lista.push(indicador(grupo, 'Ventas presupuestadas', t.ventas, 'monto', 'Presupuesto Maestro', '#/planeacion', `${num(t.unidades)} unidades.`));
-    lista.push(indicador(grupo, 'Utilidad neta presupuestada', t.utilidadNeta, 'monto', 'Presupuesto Maestro', '#/planeacion', '', t.utilidadNeta >= 0 ? 'ok' : 'alerta'));
-    lista.push(indicador(grupo, 'Saldo de caja proyectado', presupuesto.cierre.efectivo, 'monto', 'Presupuesto Maestro', '#/planeacion', 'Saldo final del último periodo.'));
+    const sp = sup(supuestos.presupuesto, 'S8–S15');
+    lista.push(indicador(grupo, 'Ventas presupuestadas', t.ventas, 'monto', 'Presupuesto Maestro', '#/planeacion', `${sp}${num(t.unidades)} unidades.`));
+    lista.push(indicador(grupo, 'Utilidad neta presupuestada', t.utilidadNeta, 'monto', 'Presupuesto Maestro', '#/planeacion', sp.trim(), t.utilidadNeta >= 0 ? 'ok' : 'alerta'));
+    lista.push(indicador(grupo, 'Saldo de caja proyectado', presupuesto.cierre.efectivo, 'monto', 'Presupuesto Maestro', '#/planeacion', `${sp}Saldo final del último periodo.`));
     lista.push(indicador(grupo, 'Financiamiento máximo requerido', presupuesto.financiamientoMaximo, 'monto', 'Presupuesto Maestro', '#/planeacion',
-      presupuesto.periodoFinanciamiento ? `En ${presupuesto.periodoFinanciamiento}.` : 'La caja no baja del mínimo.', presupuesto.financiamientoMaximo > 0 ? 'alerta' : 'ok'));
+      `${sp}${presupuesto.periodoFinanciamiento ? `En ${presupuesto.periodoFinanciamiento}.` : 'La caja no baja del mínimo.'}`, presupuesto.financiamientoMaximo > 0 ? 'alerta' : 'ok'));
   }
   if (inventario) {
     const grupo = 'Inventario';
@@ -215,7 +230,7 @@ export function indicadoresIntegrados({ razones, dupont, mercado, apalancamiento
     const lecturaReposicion = inventario.porReponer.length
       ? inventario.porReponer.map(p => `${p.nombre}: ${descripcionReposicion(p)}`).join(' ')
       : 'Todos sobre el stock mínimo.';
-    lista.push(indicador(grupo, 'Valor del inventario', inventario.valorTotal, 'monto', 'Inventario', '#/inventario', `${inventario.productos.length} productos.`));
+    lista.push(indicador(grupo, 'Valor del inventario', inventario.valorTotal, 'monto', 'Inventario', '#/inventario', `${sup(supuestos.kardex, 'S16')}${inventario.productos.length} productos.`));
     lista.push(indicador(grupo, 'Productos por reponer', inventario.porReponer.length, 'unidades', 'Inventario', '#/inventario',
       lecturaReposicion,
       inventario.porReponer.length ? 'alerta' : 'ok'));
@@ -271,7 +286,11 @@ export function alertasIntegradas({ razones, presupuesto, equilibrio, flujo, inv
 // leen»: el faltante muestra el aviso real en lugar de pedir que cargue datos.
 export function construirReporte(entradas) {
   const { estados = null, errorEstados = null, apalancamiento = null, presupuesto = null, equilibrio = null, flujo = null, inventario = null } = entradas;
-  const real = resultadosReales(estados);
+  // D-113: con un periodo base declarado, la proforma se compara con ese año y con el
+  // siguiente (contraste). Sin él, como antes, con el último periodo de Estados.
+  const periodos = presupuesto ? periodosProforma(estados, presupuesto.supuestos) : { base: null, contraste: null, declarado: false };
+  const real = resultadosReales(estados, periodos.declarado ? periodos.base : null);
+  const contraste = periodos.declarado && periodos.contraste ? resultadosReales(estados, periodos.contraste) : null;
   const proforma = resultadosProforma(presupuesto);
   const faltantes = [];
   if (!estados) {
@@ -297,11 +316,12 @@ export function construirReporte(entradas) {
   }
   if (!inventario) faltantes.push({ modulo: 'Inventario', ruta: '#/inventario', texto: 'Registre productos y movimientos.' });
   return {
-    real, proforma,
+    real, proforma, contraste,
     desarrollo: desarrolloPresupuesto(presupuesto),
     motivoPresupuesto: entradas.motivoPresupuesto || null,
-    comparacion: real || proforma ? compararResultados(real, proforma) : [],
+    comparacion: real || proforma ? compararResultados(real, proforma, contraste) : [],
     motivoComparacion: motivoComparacion(real, proforma),
+    balance: presupuesto && estados ? balanceProforma(estados, presupuesto) : null,
     efectivo: presupuesto ? {
       saldoInicial: presupuesto.caja.saldoInicial[0], flujoNeto: presupuesto.totales.flujoNeto,
       saldoFinal: presupuesto.cierre.efectivo, saldoMinimo: presupuesto.caja.saldoMinimo,
@@ -309,7 +329,8 @@ export function construirReporte(entradas) {
       cierre: presupuesto.cierre
     } : null,
     flujo:flujo?.disponible ? flujo : null,
-    indicadores: indicadoresIntegrados(entradas, real?.periodo ?? '—'),
+    // Las razones de Análisis son las del último periodo, aunque la proforma parta de otro.
+    indicadores: indicadoresIntegrados(entradas, estados?.periods?.at(-1) ?? '—'),
     alertas: alertasIntegradas(entradas),
     faltantes
   };

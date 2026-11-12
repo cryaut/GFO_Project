@@ -50,7 +50,8 @@ No hace falta registrar nombres de variables, estilo ni detalles que se cambian 
 
 | ID | Decisión | Estado |
 |---|---|---|
-| D-110 | Casos AGRI-CORP real y simulado separados | Vigente |
+| D-113 | AGRI-CORP como caso central, con datos reales y supuestos declarados | Vigente |
+| D-110 | Casos AGRI-CORP real y simulado separados | Reemplazada en parte por D-113 |
 | D-111 | Flujo suministrado con fuente e intervalo explícitos | Vigente |
 | D-112 | Residuos binarios en saldos del presupuesto estudiantil | Vigente |
 | D-001 | Año de 365 días | Vigente |
@@ -2436,6 +2437,7 @@ El ahorro recomendado reutiliza la división de `ahorroMensual(costo, semanas)`,
 
 - **Fecha** — 2026-11-09.
 - **Area** — Catálogo de ejemplos, Estados, Inicio, Planeación y Apalancamiento.
+- **Estado** — Reemplazada en parte por D-113: los casos siguen separados, pero lo que el auditado no publica ya no queda vacío.
 
 **Decisión.** El dossier de AGRI-CORP se ofrece como dos ejemplos independientes: el histórico real 2023–2024 y la unidad de arroz simulada de julio a septiembre de 2027. Desde Inicio, cargar uno reemplaza todos los módulos de empresa (lo que el caso no usa queda vacío); desde Estados se carga solo el estado financiero, como borrador. Las cuentas llevan su identificador del catálogo confirmado y cada periodo declara cobertura completa e ingresos sin intereses, para que el motor no deje razones en N/D por cuentas "sugeridas". En el real, las partidas sin equivalente exacto se agrupan en la cuenta más cercana del catálogo (partes relacionadas, derecho de uso y similares como otros activos o pasivos; propiedad, planta y equipo como otros activos fijos). El impuesto, los dividendos preferentes y la inversión de agosto del caso simulado entran como "otros desembolsos" de Planeación para que la caja coincida con el dossier, y el saldo mínimo de caja es 0 porque el dossier no define uno. El caso real no declara ventas a crédito ni pagos a proveedores, de modo que las rotaciones y plazos de cuentas por cobrar y por pagar quedan N/D, y el GAO queda N/D porque no hay clasificación fijo/variable pública.
 
@@ -2485,3 +2487,42 @@ La carga de casos desde Inicio prepara los siete módulos antes de persistirlos 
 **Para revertirla.** Registrar una decisión nueva y retirar el ajuste privado de `presupuesto-calculations.js` y sus regresiones, aceptando nuevamente residuos visibles o definiendo otra representación monetaria.
 
 **Referencias.** [Revisión del PR #35](planificacion/presupuesto-estudiantil/REVISION-PR35.md); siete casos nuevos de `presupuesto-estudiantil.test.js` y recorrido decimal del script de navegador.
+
+### D-113 — AGRI-CORP como caso central, con datos reales y supuestos declarados
+
+- **Fecha**: 2026-11-11 (aprobación y corrección de la revisión: 2026-11-12)
+- **Estado**: Vigente. Reemplaza en parte a D-110.
+- **Decidió**: Carlos propuso el plan y lo implementó con Claude Code el 2026-11-11. **Cris aprobó el 2026-11-12 el uso de los supuestos S1–S16, declarados y editables.** Plan completo en [agricorp-integral/PLAN.md](planificacion/agricorp-integral/PLAN.md).
+- **Área**: ejemplos de AGRI-CORP y catálogo, Estados (datos), Apalancamiento, Mercado, Equilibrio, Flujo, Inventario, Presupuesto maestro, Proforma, Reportes, Inicio, respaldo JSON y `store.js` (clave `casos`).
+
+**Contexto.** D-110 trataba AGRI-CORP como un ejemplo más y dejaba vacío lo que el auditado no publica: Equilibrio, Presupuesto maestro e Inventario no trabajaban con la empresa, Proforma no proyectaba y los selectores abrían MUNO MODA. La empresa que se defiende es AGRI-CORP, así que la app debe girar en torno a ella.
+
+**Opciones.**
+1. Completar AGRI-CORP con supuestos declarados y visibles, y hacerlo el caso por defecto — todos los módulos funcionan con la empresa / cada supuesto debe rotularse para no confundirse con un dato real.
+2. Mantener D-110 — ningún dato inventado / medio sistema vacío en la empresa de la exposición.
+3. Usar solo la unidad de arroz simulada — módulos completos / no son cifras de AGRI-CORP.
+
+**Decisión.** Opción 1, en dos capas que no se suman: **AGRI-CORP consolidado** (auditados 2022–2025 y supuestos) y **AGRI-CORP · línea de arroz** (el escenario simulado, renombrado). Reglas:
+
+- **Datos reales:** estados 2022–2023 de F02 y 2024–2025 de F04 con las mismas líneas (no se rellenan con cero las partidas que una fuente no presenta); flujos publicados 2022–2025 con su efecto de conversión; inventario por categoría; dividendos preferentes pagados; depreciación y amortización.
+- **Supuestos (S1–S16):** S1–S8 vienen de la sección 11 de la investigación y S9–S16 son del equipo. Ventas a crédito 50 %; compras a crédito 60 % de las compras estimadas; costo de ventas 75 % variable, gastos de operación 25 %, pago mínimo variable; precio ilustrativo de C$ 100; crecimiento 1.35 %; trimestres iguales; IR 30 %; dividendos, inversión y depreciación de 2024 repetidos; inventario final de 78.49 días (días al cierre de 2024: 1,621,305,239 / 7,539,860,126 × 365); kárdex de granza a C$ 620 por quintal. Cada uno se edita en su módulo y aparece en el mapa de supuestos de Inicio. **S15 se corrigió en la revisión:** la primera versión usaba 67.82 días, calculados con el inventario promedio. Esa base mide la rotación, no un saldo de cierre: dejaba el inventario de 2025 en 1,419,868,672, unos C$ 201 M bajo el cierre real de 2024, y esa reducción aparecía como caja.
+- **Etiquetas:** cada cifra que depende de un supuesto lleva «SUPUESTO» con su id en la pantalla, en Proforma, en Inicio y en el reporte exportado (GAO y GAT estructurales, punto de equilibrio y margen de seguridad, rotación y plazos de CxC y CxP, ciclo de conversión, P/U y P/VL, presupuesto y balance proforma, kárdex). Lo que no lleva etiqueta es real o derivado de cifras reales.
+- **Vigencia del caso:** el registro `casos` guarda, al cargar un caso, una huella de la parte real de cada módulo (estados publicados, flujos publicados, composición del inventario). Si esa parte cambia por una edición, un archivo importado o un respaldo, la pantalla deja de decir «datos reales» y avisa «Datos modificados»; el mapa de supuestos y las etiquetas de S1–S3 desaparecen. Editar un supuesto no cambia la huella. El respaldo JSON exporta y restaura el registro.
+- **Utilidad operativa:** el subtotal del auditado «antes de partidas financieras». El ejemplo clasifica «Otros gastos», «Otros ingresos» y el pago mínimo definitivo como operativos (en D-110 eran no operativos). Apalancamiento y Equilibrio suman los otros gastos e ingresos confirmados como operativos por su identidad de catálogo; sin esa identidad, el cálculo de otras empresas no cambia.
+- **Unidades:** donde AGRI-CORP no publica unidades se mide en C$ (C$1 de ventas en Equilibrio, C$1 al costo en Presupuesto). En Inventario no se ponen córdobas en campos de unidades: composición real en dinero y kárdex con cantidades supuestas.
+- **Proyección:** 2025 desde el cierre real de 2024, contrastada con el 2025 auditado. El balance proforma se calcula solo si el presupuesto declara su periodo base, reparte sus otros desembolsos y su apertura coincide con el balance; si no cuadra, informa el financiamiento requerido sin crear un préstamo.
+- **Interfaz:** AGRI-CORP primero y preseleccionado en todos los selectores de empresa; aviso de caso o de empresas mezcladas en cada pantalla.
+
+**Consecuencias.** Con AGRI-CORP cargado, los siete módulos de empresa tienen cifras. Cambian cifras visibles del caso:
+
+- Utilidad operativa 2024 de 357,667,403, antes 541,920,508 **en Apalancamiento y en Análisis**, por la reclasificación del ejemplo. En Análisis, el margen operativo pasa de 6.01 % a 3.97 % en 2024 (de 4.99 % a 3.17 % en 2023) y la cobertura de intereses de 1.96× a 1.30× (de 1.78× a 1.13×). Las fórmulas de Análisis no cambian.
+- Razones de actividad que antes eran N/D, GAO 2024 de 8.18, PE de C$ 7,909 millones.
+- Presupuesto 2025: utilidad neta de 67.1 millones frente a −158.0 millones reales; caja final de 431,690,010 e inventario final de 1,643,192,860. El balance proforma cuadra con activos de 6,373,941,205; que cuadre es una consecuencia aritmética del modelo, no una validación de los supuestos.
+
+El presupuesto maestro usa costeo absorbente: su propio punto de equilibrio difiere del de Equilibrio, y la nota en pantalla lo explica. Los demás ejemplos se conservan sin cambios de cifras.
+
+**Para revertirla.** Volver al catálogo y a `ejemplos-agricorp.js` de D-110; quitar la clave `casos` del store, `js/utils/casos.js`, `inicio-supuestos.js` y `proforma-balance-calculations.js`; revertir la frontera operativa en `apalancamiento-calculations.js` y `equilibrio-calculations.js`, los campos opcionales y el registro de casos del respaldo, las etiquetas SUPUESTO de Análisis, Apalancamiento, Equilibrio, Proforma y Reportes, los campos opcionales de flujo, inventario, equilibrio, mercado y planeación, y las pruebas `agricorp-*.test.js`.
+
+**Referencias.** Rama `feat/agricorp-integral`, PR #37, fases F1–F8 del plan y su sección 13 (revisión). Fuentes: [investigación de estados y supuestos](planificacion/agricorp-integral/investigacion/AGRICORP_estados_datos_y_supuestos.md), [anexo de flujos e inventarios](planificacion/agricorp-integral/investigacion/AGRICORP_flujos_e_inventarios_detallados.md) y [contraste de 2022 y 2025 con los PDF](planificacion/agricorp-integral/investigacion/CONTRASTE-2022-2025.md). Pruebas de la revisión en `tests/unit/agricorp-revision.test.js`.
+
+**Numeración.** La rama local `feat/balance-proforma-integrado` (sin publicar) también usa D-113, D-114 y D-115. Este número queda para AGRI-CORP como caso central porque el PR #37 se publicó primero; esa rama debe renumerar sus decisiones al traer `main` (ver la ficha de agricorp-integral).

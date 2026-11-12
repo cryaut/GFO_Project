@@ -94,6 +94,7 @@ export function mercadoUI(contenedor, { estados, datos, dap = {}, guardar }) {
         <div class="flex-gap flex-wrap mt-4">
           <button type="button" class="btn btn-primary" id="mercadoGuardar">Guardar y calcular</button>
           </div>${panelEjemplos('mercado', 'mercadoEjemplo')}
+        ${guardado.nota ? `<p class="form-hint"><span class="badge badge-warning">SUPUESTO</span> ${esc(guardado.nota)}</p>` : ''}
         <p class="form-hint">La utilidad neta y el patrimonio salen de los estados guardados; los dividendos de acciones preferentes (DAP), de Apalancamiento.${implicitos ? ` Dividendos que explican el cambio del patrimonio (UN − ΔPatrimonio, sin aportes de capital): ${implicitos}.` : ''}</p></div>
       <div class="table-wrapper mb-4"><table class="statement-table">
         <thead><tr><th scope="col">Periodo</th><th scope="col" class="text-right">UDAC</th><th scope="col" class="text-right">UPA</th>
@@ -122,7 +123,8 @@ export function mercadoUI(contenedor, { estados, datos, dap = {}, guardar }) {
       }
       periodos[periodo] = valores;
     });
-    return { errores, datos: { periodos } };
+    // La nota de procedencia acompaña a los datos que el usuario sigue editando.
+    return { errores, datos: guardado.nota ? { periodos, nota: guardado.nota } : { periodos } };
   }
 
   function bind() {
@@ -134,7 +136,7 @@ export function mercadoUI(contenedor, { estados, datos, dap = {}, guardar }) {
     });
     contenedor.querySelector('#mercadoEjemplo')?.addEventListener('click', () => {
       const ejemplo = ejemploSeleccionado(contenedor, 'mercado', () => ejemploMercado(estados.periods));
-      persistir({ periodos: { ...guardado.periodos, ...ejemplo.periodos } },
+      persistir({ periodos: { ...guardado.periodos, ...ejemplo.periodos }, ...(ejemplo.nota ? { nota: ejemplo.nota } : {}) },
         'Datos ficticios de mercado seleccionados cargados. No proceden del ejercicio docente.');
     });
   }

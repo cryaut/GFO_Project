@@ -1,7 +1,7 @@
 import store from '../../store.js';
 import { leerEstados } from '../../utils/estados-guardados.js';
 import { UMBRALES, computeDuPont, computeRazones, refreshSavedStates } from '../analisis/index.js';
-import { calcularRazonesMercado } from '../analisis/mercado-calculations.js';
+import { calcularRazonesMercado, normalizarDatosMercado } from '../analisis/mercado-calculations.js';
 import { calcularApalancamiento } from '../apalancamiento/apalancamiento-calculations.js';
 import { calcularCVU, normalizarEquilibrio, resolverBase, validarEquilibrio } from '../equilibrio/equilibrio-calculations.js';
 import { calcularInventario } from '../inventario/inventario-calculations.js';
@@ -9,6 +9,7 @@ import { calcularPresupuestoMaestro, validarSupuestos } from '../planeacion/plan
 import { leerPlaneacion } from '../planeacion/planeacion-escenarios.js';
 import { construirReporte, flujoDesdeEFE } from './proforma-calculations.js';
 import { proformaUI } from './proforma-ui.js';
+import { supuestosActivos } from '../../utils/casos.js';
 
 // Un módulo con datos dañados no debe impedir el resto del reporte.
 function intentar(calculo) {
@@ -46,7 +47,12 @@ export function reunirEntradas() {
     razones: estados ? intentar(() => computeRazones(ultimo)) : null,
     dupont: estados ? intentar(() => computeDuPont(ultimo)) : null,
     mercado: estados
-      ? intentar(() => calcularRazonesMercado(estados, store.get('razonesMercado'), store.get('apalancamiento')?.dap || {}).at(-1))
+      ? intentar(() => {
+        const r = calcularRazonesMercado(estados, store.get('razonesMercado'), store.get('apalancamiento')?.dap || {}).at(-1);
+        // D-113: la nota de procedencia (precio supuesto) acompaña al indicador.
+        const nota = normalizarDatosMercado(store.get('razonesMercado')).nota;
+        return r && nota ? { ...r, nota } : r;
+      })
       : null,
     apalancamiento: estados ? intentar(() => calcularApalancamiento(estados, store.get('apalancamiento') || {})) : null,
     presupuesto: motivoPresupuesto || validarSupuestos(supuestos).length
@@ -55,6 +61,12 @@ export function reunirEntradas() {
     equilibrio: !baseCvu || baseCvu.error || validarEquilibrio(cVu).length ? null : calcularCVU(cVu),
     flujo,
     inventario: inventario.productos.length ? inventario : null,
+    // D-113: qué supuestos de AGRI-CORP alimentan cada indicador (para rotularlos). El C-V-U solo
+    // usa S4–S6 cuando se deriva de los estados con la clasificación de Apalancamiento.
+    supuestos: (() => {
+      const activos = supuestosActivos(store.getAll());
+      return { ...activos, cvu: activos.costos && equilibrio.origen === 'estados' };
+    })(),
     umbrales: UMBRALES
   };
 }
