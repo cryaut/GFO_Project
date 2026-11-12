@@ -581,10 +581,11 @@ function renderEFESection(period) {
       ${filas(efe.financiamiento, 'Financiamiento')}
       <tr class="font-bold" style="border-top:2px solid var(--border-color-strong)"><td>(=) Total de flujos (CFO + CFI + CFF) · variación neta calculada</td>${celda(efe.totalFlujos)}</tr>
       <tr class="font-bold"><td>(+) Efectivo al inicio</td>${celda(efe.efectivoInicial)}</tr>
-      <tr class="font-bold"><td>(=) Efectivo final calculado (inicial + flujos)</td>${celda(efe.efectivoFinalCalculado)}</tr>
+      ${Object.hasOwn(efe, 'efectoConversion') ? `<tr class="font-bold"><td>(+) Efecto de conversión de moneda (publicado; no es una actividad)</td>${celda(efe.efectoConversion)}</tr>` : ''}
+      <tr class="font-bold"><td>(=) Efectivo final calculado (inicial + flujos${Object.hasOwn(efe, 'efectoConversion') ? ' + efecto de conversión' : ''})</td>${celda(efe.efectivoFinalCalculado)}</tr>
       <tr class="font-bold"><td>Efectivo al final · saldo del balance</td>${celda(efe.efectivoFinal)}</tr>
       <tr class="font-bold"><td>Variación de efectivo según balances</td>${celda(efe.variacionEfectivo)}</tr>
-      <tr class="font-bold"><td>Diferencia (flujos − variación de efectivo)</td>${celda(efe.diferencia)}</tr>
+      <tr class="font-bold"><td>Diferencia (flujos${Object.hasOwn(efe, 'efectoConversion') ? ' + efecto de conversión' : ''} − variación de efectivo)</td>${celda(efe.diferencia)}</tr>
     </tbody>
   </table></div>
   <div class="kpi-grid mb-4">

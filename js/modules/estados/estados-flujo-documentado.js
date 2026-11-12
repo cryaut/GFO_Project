@@ -35,9 +35,13 @@ export function validarFlujosDocumentados(lista) {
       ids.add(m.id);
       return { id:m.id, concepto:m.concepto, actividad:m.actividad, tipo:m.tipo, monto:m.monto };
     });
+    if (f.datos.efectoConversion !== undefined && !Number.isFinite(f.datos.efectoConversion)) {
+      throw new Error('El efecto de conversión del flujo documentado debe ser un número.');
+    }
+    const efecto = Number.isFinite(f.datos.efectoConversion) && f.datos.efectoConversion !== 0 ? { efectoConversion:f.datos.efectoConversion } : {};
     return { tipo:f.tipo, fuente:f.fuente, empresa:f.empresa, moneda:f.moneda,
       periodoInicial:f.periodoInicial, periodoFinal:f.periodoFinal, revision:f.revision,
-      datos:{ saldoInicial:f.datos.saldoInicial, moneda:f.moneda, periodoBase:f.periodoInicial, movimientos } };
+      datos:{ saldoInicial:f.datos.saldoInicial, moneda:f.moneda, periodoBase:f.periodoInicial, ...efecto, movimientos } };
   });
 }
 
@@ -73,6 +77,7 @@ export function construirFlujoDocumentado(datos, inicial, final) {
     periodos:{ inicial, final }, utilidadNeta:null, conciliacionUtilidad:null,
     operacion:actividad('operacion'), inversion:actividad('inversion'), financiamiento:actividad('financiamiento'),
     totalFlujos:vigente ? r.variacionNeta : null, efectivoInicial:vigente ? r.saldoInicial : null,
+    ...(r.efectoConversion ? { efectoConversion:vigente ? r.efectoConversion : null } : {}),
     efectivoFinal, efectivoFinalCalculado:vigente ? r.saldoFinal : null,
     variacionEfectivo:efectivoFinal === null ? null : efectivoFinal - f.datos.saldoInicial,
     diferencia:vigente ? diferencia : null, tolerancia, estado, motivos,

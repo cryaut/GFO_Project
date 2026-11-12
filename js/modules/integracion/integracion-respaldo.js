@@ -23,6 +23,31 @@ const CAMPOS_PROCEDENCIA = new Map([
 
 const esObjeto = valor => valor !== null && typeof valor === 'object' && !Array.isArray(valor);
 
+// D-113: campos opcionales que no están en los datos por defecto del store pero que los módulos
+// sí guardan (p. ej. el caso AGRI-CORP). Se importan si son válidos; si el archivo no los trae,
+// tampoco se conservan los del módulo actual, para no mezclar dos casos.
+const CAMPOS_OPCIONALES = {
+  // origen y periodo (D-074) tampoco estaban en los datos por defecto: sin ellos, un C-V-U
+  // derivado de los estados se restauraba como captura manual vacía.
+  equilibrio: {
+    origen: v => v === 'manual' || v === 'estados',
+    periodo: v => typeof v === 'string' && v.length <= 40,
+    unidadVentas: v => v === true
+  },
+  flujo: { efectoConversion: v => Number.isFinite(v) },
+  apalancamiento: { depreciacionAmortizacion: v => esObjeto(v) && Object.values(v).every(x => Number.isFinite(x) && x >= 0) },
+  razonesMercado: { nota: v => typeof v === 'string' && v.trim().length > 0 && v.length <= 500 },
+  // La composición la valida validarInventarioRespaldo con el resto del inventario.
+  inventario: { composicion: () => true }
+};
+
+function campoOpcional(clave, campo, valor) {
+  const valida = CAMPOS_OPCIONALES[clave]?.[campo];
+  if (!valida) return false;
+  if (!valida(valor)) throw new Error(`El campo ${clave}.${campo} del respaldo no es válido. No se importó nada.`);
+  return true;
+}
+
 // Recorre todo el árbol una sola vez: rechaza claves peligrosas, números no finitos y
 // estructuras desproporcionadas que podrían colgar la pestaña.
 function revisarSeguro(valor, ruta, estado, profundidad = 0) {
@@ -98,17 +123,24 @@ function validarModulo(clave, importado, actual, omitidos) {
     if (!esObjeto(importado)) throw new Error(`El módulo "${clave}" debe ser un objeto.`);
     for (const [campo, valor] of Object.entries(importado)) {
       if (!Object.hasOwn(actual, campo)) {
-        omitidos.push(`${clave}.${campo}`);
+        if (!campoOpcional(clave, campo, valor)) omitidos.push(`${clave}.${campo}`);
         continue;
       }
       validarTipo(valor, actual[campo], `${clave}.${campo}`);
     }
-    return validarInventarioRespaldo(importado);
+    const inventario = validarInventarioRespaldo(importado);
+    if (Object.hasOwn(importado, 'composicion') && !inventario.composicion) {
+      throw new Error('La composición del inventario del respaldo no es válida. No se importó nada.');
+    }
+    return inventario;
   }
   if (!esObjeto(importado)) throw new Error(`El módulo "${clave}" debe ser un objeto.`);
   const camposProcedencia = CAMPOS_PROCEDENCIA.get(clave);
   // Lo que el archivo no trae se conserva del módulo actual para que no quede incompleto.
   const resultado = structuredClone(actual);
+  for (const campo of Object.keys(CAMPOS_OPCIONALES[clave] || {})) {
+    if (!Object.hasOwn(importado, campo)) delete resultado[campo];
+  }
   for (const [campo, valor] of Object.entries(importado)) {
     if (clave === 'planeacion' && campo === 'cajaDocente') {
       resultado.cajaDocente = structuredClone(valor);
@@ -116,6 +148,10 @@ function validarModulo(clave, importado, actual, omitidos) {
     }
     if (camposProcedencia && campo === 'procedencia') {
       resultado.procedencia = structuredClone(validarProcedencia(valor, camposProcedencia));
+      continue;
+    }
+    if (campoOpcional(clave, campo, valor)) {
+      resultado[campo] = structuredClone(valor);
       continue;
     }
     if (!Object.hasOwn(actual, campo)) {

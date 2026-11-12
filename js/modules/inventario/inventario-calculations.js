@@ -95,7 +95,48 @@ export function normalizarInventario(datos) {
       ...(conCosto ? { costoUnitario: m.costoUnitario } : {})
     });
   }
-  return { productos, movimientos, descartados };
+  let composicion = null;
+  if (datos?.composicion !== undefined) {
+    composicion = normalizarComposicion(datos.composicion);
+    if (!composicion) contar('Composición del inventario inválida');
+  }
+  return { productos, movimientos, ...(composicion ? { composicion } : {}), descartados };
+}
+
+// D-113: composición contable del inventario por categoría y año (dato de referencia, en
+// dinero). No son existencias físicas: no entra al kardex ni a las alertas.
+// { fuente, periodos: [...], categorias: [{ nombre, importes: [...] }], deterioro: [...] }
+// con un importe por periodo. Devuelve null si la forma no es válida.
+export function normalizarComposicion(c) {
+  if (!c || typeof c !== 'object' || Array.isArray(c)) return null;
+  const fuente = texto(c.fuente);
+  const periodos = Array.isArray(c.periodos) ? c.periodos.map(texto) : [];
+  const n = periodos.length;
+  const lista = v => Array.isArray(v) && v.length === n && v.every(x => esNumero(x) && x >= 0);
+  if (!fuente || fuente.length > 300 || !n || n > 20 || periodos.some(p => !p) || new Set(periodos).size !== n) return null;
+  if (!Array.isArray(c.categorias) || !c.categorias.length || c.categorias.length > 30) return null;
+  const categorias = [];
+  for (const cat of c.categorias) {
+    const nombre = texto(cat?.nombre);
+    if (!nombre || nombre.length > MAX_TEXTO || !lista(cat.importes)) return null;
+    categorias.push({ nombre, importes: [...cat.importes] });
+  }
+  if (!lista(c.deterioro)) return null;
+  return { fuente, periodos, categorias, deterioro: [...c.deterioro] };
+}
+
+// Totales por periodo de la composición: bruto, deterioro, neto y participación de cada categoría.
+export function resumenComposicion(composicion) {
+  return composicion.periodos.map((periodo, k) => {
+    const bruto = composicion.categorias.reduce((suma, cat) => suma + cat.importes[k], 0);
+    const deterioro = composicion.deterioro[k];
+    return {
+      periodo, bruto, deterioro, neto: bruto - deterioro,
+      categorias: composicion.categorias.map(cat => ({
+        nombre: cat.nombre, importe: cat.importes[k], participacion: bruto > 0 ? cat.importes[k] / bruto : null
+      }))
+    };
+  });
 }
 
 // Movimientos de un producto en orden cronológico; a igual fecha, en el orden en que se registraron.
@@ -201,7 +242,7 @@ function textoNegativo(producto, negativo) {
 // Reportes valida antes de escribir. La normalización conserva el orden si no hay
 // descartes, lo que permite detectar un costo inválido en la fila original.
 export function validarInventarioRespaldo(datos) {
-  const { productos, movimientos, descartados } = normalizarInventario(datos);
+  const { productos, movimientos, composicion, descartados } = normalizarInventario(datos);
   if (descartados.length) {
     const detalle = descartados.map(d => `${d.motivo}: ${d.cantidad}`).join('; ');
     throw new Error(`El inventario del respaldo tiene registros descartados (${detalle}). No se importó nada.`);
@@ -227,7 +268,7 @@ export function validarInventarioRespaldo(datos) {
       throw new Error(`Existencia insuficiente en el movimiento "${negativo.id}". Con ese movimiento ${textoNegativo(producto, negativo)}. No se importó nada.`);
     }
   }
-  return { productos, movimientos };
+  return { productos, movimientos, ...(composicion ? { composicion } : {}) };
 }
 
 // Errores de un producto nuevo o editado (lista vacía si es válido). Los números llegan

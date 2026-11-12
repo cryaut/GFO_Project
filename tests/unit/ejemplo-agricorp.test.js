@@ -37,9 +37,11 @@ it('cambiar de caso publica los siete módulos en una sola escritura y no toca d
   cargarEjemploEmpresa('agricorp-historico');
   expect(localStorage.setItem).toHaveBeenCalledTimes(1);
   expect(store.get('estados.name')).toContain('Corporación Agrícola');
-  expect(store.get('inventario.productos')).toEqual([]);
+  // F3: inventario (composición real y kárdex de granza) y equilibrio derivado de los estados.
+  expect(store.get('inventario.productos').map(p => p.id)).toEqual(['granza-arroz']);
+  expect(store.get('inventario.composicion.periodos')).toEqual(['2022','2023','2024','2025']);
+  expect(store.get('equilibrio')).toMatchObject({ origen:'estados', periodo:'2024', unidadVentas:true, precio:null });
   expect(store.get('planeacion')).toEqual({ supuestos:null });
-  expect(store.get('equilibrio.precio')).toBeNull();
   expect(store.get('presupuesto')).toEqual(personal);
 });
 
@@ -129,7 +131,7 @@ it.each(['tipo','moneda','monto','duplicado','hueco'])('rechaza un flujo documen
 });
 
 it('avisa el descuadre de un documento alterado en vez de ajustar sus cifras', () => {
-  const d = casoHistoricoReal().estados; d.flujosDocumentados[0].datos.movimientos[0].monto++;
+  const d = casoHistoricoReal().estados; d.flujosDocumentados.find(f => f.periodoFinal === '2024').datos.movimientos[0].monto++;
   const r = construirEFE(d,'2023','2024');
   expect(r.estado).toBe('no-cuadra'); expect(r.diferencia).toBe(1);
 });
@@ -152,7 +154,7 @@ it('los datos del escenario reproducen caja, PE, apalancamiento e inventario del
 
 it('dos documentos del mismo cierre no se seleccionan por orden implícito', () => {
   const d = casoHistoricoReal().estados;
-  d.flujosDocumentados.push({ ...d.flujosDocumentados[0], periodoInicial:'2022' });
+  d.flujosDocumentados.push({ ...d.flujosDocumentados.find(f => f.periodoFinal === '2024'), periodoInicial:'2022' });
   expect(() => normalizeFinancialData(d)).toThrow('más de un flujo');
 });
 

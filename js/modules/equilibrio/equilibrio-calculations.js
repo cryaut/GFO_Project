@@ -53,6 +53,9 @@ export function normalizarEquilibrio(datos) {
     costosFijos: numeroONull(datos?.costosFijos),
     unidades: numeroONull(datos?.unidades),
     utilidadObjetivo: numeroONull(datos?.utilidadObjetivo),
+    // D-113: con origen «estados», medir en C$1 de ventas (unidades = ventas del periodo y
+    // precio 1) cuando la empresa no publica unidades físicas. Sin él, la forma no cambia.
+    ...(datos?.unidadVentas === true ? { unidadVentas: true } : {}),
     escenario
   };
 }
@@ -193,8 +196,12 @@ export function puntosGrafica(resultado, pasos = 20) {
 
 // Base C-V-U desde los estados guardados: con las unidades vendidas del periodo,
 // P = Ventas / Q, CVu = CV / Q y CF según la clasificación de Apalancamiento (D-004, D-009).
+// unidades = 'ventas' mide en C$1 de ventas: las unidades son las ventas del periodo (precio 1).
+// D-113: los otros ingresos operativos (OIO) reducen los costos fijos, para que la UAII de C-V-U
+// sea la misma de Apalancamiento (UAII = MC − CF + OIO).
 export function baseDesdeEstados(estados, configApalancamiento, periodo, unidades) {
-  if (!esNumero(unidades) || unidades <= 0) return { error: 'Indique las unidades vendidas en el periodo (mayor que 0).' };
+  const enVentas = unidades === 'ventas';
+  if (!enVentas && (!esNumero(unidades) || unidades <= 0)) return { error: 'Indique las unidades vendidas en el periodo (mayor que 0).' };
   if (!estados?.periods?.includes(periodo)) return { error: 'Elija un periodo de los estados guardados.' };
   let resultado;
   try {
@@ -223,10 +230,12 @@ export function baseDesdeEstados(estados, configApalancamiento, periodo, unidade
     };
   }
   if (!esNumero(v.ventas) || v.ventas <= 0) return { error: `El periodo ${periodo} no tiene ventas.` };
+  const q = enVentas ? v.ventas : unidades;
+  const oio = esNumero(v.oio) ? v.oio : 0;
   return {
     periodo,
     variables: v,
-    base: { precio: v.ventas / unidades, costoVariableUnitario: v.cv / unidades, costosFijos: v.cf, unidades }
+    base: { precio: v.ventas / q, costoVariableUnitario: v.cv / q, costosFijos: v.cf - oio, unidades: q }
   };
 }
 
@@ -242,7 +251,8 @@ function avisoCostosFijos(cfManual, estados, configApalancamiento) {
   } catch {
     return null;
   }
-  const cfEstados = ultimo?.variables?.cf;
+  const oio = ultimo?.variables?.oio;
+  const cfEstados = esNumero(ultimo?.variables?.cf) ? ultimo.variables.cf - (esNumero(oio) ? oio : 0) : null;
   if (!esNumero(cfEstados)) return null;
   const diferencia = cfManual - cfEstados;
   const umbral = Math.max(0.005, 0.005 * Math.abs(cfEstados));
@@ -260,7 +270,7 @@ function avisoCostosFijos(cfManual, estados, configApalancamiento) {
 export function resolverBase(datos, estados, configApalancamiento) {
   const origen = datos?.origen === 'estados' ? 'estados' : 'manual';
   if (origen === 'estados') {
-    const r = baseDesdeEstados(estados, configApalancamiento, datos?.periodo, datos?.unidades);
+    const r = baseDesdeEstados(estados, configApalancamiento, datos?.periodo, datos?.unidadVentas === true ? 'ventas' : datos?.unidades);
     if (r.error) return { origen, error: r.error, avisoCF: null };
     return { origen, base: r.base, periodo: r.periodo, error: null, avisoCF: null };
   }

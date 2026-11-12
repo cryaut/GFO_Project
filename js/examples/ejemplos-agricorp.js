@@ -256,9 +256,55 @@ export function datosSuplementariosAgricorp() {
 // Una sola versión por año (anexo de flujos, tabla 1). Operación: el estado usa el método
 // indirecto; aquí entra su subtotal publicado más las tres líneas que sí son de caja, para no
 // inventar cobros ni pagos. El detalle indirecto completo queda en el documento fuente.
-// 2022 y 2023 tienen además un efecto de conversión que el módulo de flujo aún no admite: se
-// agregan cuando lo admita (fase F3).
+// 2022 y 2023 separan además el efecto de conversión sobre el efectivo (no es una actividad).
 const FLUJOS_REALES = {
+  '2022': {
+    inicial: '2021', saldoInicial: 110110140, efectoConversion: 323599,
+    fuente: 'F02 · Estados consolidados auditados 2023 · Flujo comparativo 2022, p. 8',
+    partidas: [
+      ['Operación antes de intereses e impuestos (subtotal indirecto publicado)', 'operacion', 218255609],
+      ['Impuesto sobre la renta pagado', 'operacion', -41532605],
+      ['Intereses pagados', 'operacion', -207891280],
+      ['Préstamos otorgados a partes relacionadas', 'inversion', -87302060],
+      ['Pagos recibidos por préstamos a partes relacionadas', 'inversion', 47350810],
+      ['Adquisición de activos intangibles', 'inversion', -10383500],
+      ['Adiciones de propiedad, planta y equipo', 'inversion', -90541013],
+      ['Contratación de préstamos', 'financiamiento', 3682508715],
+      ['Pagos de préstamos', 'financiamiento', -3373955800],
+      ['Contrataciones de documentos por pagar', 'financiamiento', 491097575],
+      ['Pagos de documentos por pagar', 'financiamiento', -492432507],
+      ['Cuentas por cobrar a partes relacionadas (financiamiento)', 'financiamiento', 32611015],
+      ['Préstamos recibidos de partes relacionadas', 'financiamiento', 1903699],
+      ['Pagos de financiamientos de partes relacionadas', 'financiamiento', -5838248],
+      ['Recompra de acciones preferentes', 'financiamiento', -27700983],
+      ['Dividendos pagados sobre acciones preferentes', 'financiamiento', -4443312],
+      ['Pago de principal de arrendamientos', 'financiamiento', -11270710]
+    ]
+  },
+  '2023': {
+    inicial: '2022', saldoInicial: 230869144, efectoConversion: 180394,
+    fuente: 'F03 · Estados consolidados auditados 2024 · Flujo comparativo 2023, p. 9',
+    partidas: [
+      ['Operación antes de intereses e impuestos (subtotal indirecto publicado)', 'operacion', 573640542],
+      ['Impuesto sobre la renta pagado', 'operacion', -11058580],
+      ['Intereses cobrados', 'operacion', 7844369],
+      ['Intereses pagados', 'operacion', -216937087],
+      ['Préstamos otorgados a partes relacionadas', 'inversion', -8603379],
+      ['Pagos recibidos por venta de subsidiaria', 'inversion', 9693541],
+      ['Pagos recibidos por préstamos a partes relacionadas', 'inversion', 4576138],
+      ['Cuentas por cobrar a partes relacionadas', 'inversion', -109810866],
+      ['Adquisición de activos intangibles', 'inversion', -11598542],
+      ['Adiciones de propiedad, planta y equipo', 'inversion', -81188234],
+      ['Contratación de préstamos', 'financiamiento', 4116250543],
+      ['Pagos de préstamos', 'financiamiento', -4401126200],
+      ['Contrataciones de documentos por pagar', 'financiamiento', 437221266],
+      ['Pagos de documentos por pagar', 'financiamiento', -512459876],
+      ['Pagos de financiamientos de partes relacionadas', 'financiamiento', -2587867],
+      ['Pago recibido por venta de acciones preferentes', 'financiamiento', 60935420],
+      ['Dividendos pagados sobre acciones preferentes', 'financiamiento', -1948421],
+      ['Pago de principal de arrendamientos', 'financiamiento', -13054846]
+    ]
+  },
   '2024': {
     inicial: '2023', saldoInicial: 70837459,
     fuente: 'F03 · Estados consolidados auditados 2024 · Estado de flujos de efectivo, p. 9',
@@ -312,6 +358,7 @@ export function flujoRealAgricorp(final) {
   return {
     saldoInicial: f.saldoInicial,
     periodoBase: f.inicial,
+    ...(f.efectoConversion ? { efectoConversion: f.efectoConversion } : {}),
     movimientos: f.partidas.map(([concepto, actividad, monto], i) => ({
       id: `real-${final}-${i + 1}`, concepto, actividad, tipo: monto < 0 ? 'salida' : 'entrada', monto: Math.abs(monto)
     }))
@@ -355,6 +402,64 @@ export const DEPRECIACION_AMORTIZACION = Object.freeze({
   '2025': 113568824 + 13867452 + 8085794
 });
 
+// ---------- Inventario ----------
+// Composición REAL por categoría al 31 de diciembre (anexo de flujos e inventarios, tabla 6):
+// 2022–2023 de F02 nota 12 p. 36, 2024 de F03 nota 12 p. 42, 2025 de F04 nota 12 p. 47.
+// Son saldos contables en dinero, no existencias físicas.
+const COMPOSICION_INVENTARIO = {
+  fuente: 'Notas de inventarios de los auditados: F02 nota 12 p. 36 (2022–2023), F03 nota 12 p. 42 (2024) y F04 nota 12 p. 47 (2025)',
+  periodos: ['2022', '2023', '2024', '2025'],
+  categorias: [
+    { nombre: 'Granza de arroz (materia prima)', importes: [821158348, 468536868, 848279169, 902648496] },
+    { nombre: 'Sal (materia prima)', importes: [341289, 56973525, 21409278, 2256408] },
+    { nombre: 'Productos terminados producidos', importes: [138705017, 240157652, 470778502, 383715028] },
+    { nombre: 'Productos terminados adquiridos', importes: [259733122, 218515031, 134712829, 37749132] },
+    { nombre: 'Insumos y aditivos', importes: [12165688, 10865680, 6064438, 6939182] },
+    { nombre: 'Repuestos y accesorios', importes: [69009942, 77972732, 83335009, 79757164] },
+    { nombre: 'Material de empaque', importes: [21235133, 21100287, 20178995, 17285427] },
+    { nombre: 'Importaciones en tránsito', importes: [86963257, 82508623, 30751594, 117770506] },
+    { nombre: 'Otros', importes: [3370863, 6436584, 8293312, 5458786] }
+  ],
+  deterioro: [2060320, 2460682, 2497887, 7551536]
+};
+
+// S16: kárdex de granza con cantidades HIPOTÉTICAS. El valor de apertura (cierre 2024) y el de
+// cierre (2025) son reales; el costo por quintal y los movimientos son supuestos:
+//   - costo: C$ 620 por quintal (el mismo de la línea de arroz simulada);
+//   - consumo anual = rotación del inventario consolidado 2025 × granza promedio 2024–2025;
+//   - compras = consumo + (granza 2025 − granza 2024), así el kárdex cierra en el saldo real;
+//   - cuatro trimestres iguales, compras al inicio y consumo al cierre de cada trimestre;
+//   - stock mínimo = un mes de consumo.
+export const COSTO_QUINTAL_SUPUESTO = 620;
+
+export function kardexGranzaAgricorp() {
+  const granza = COMPOSICION_INVENTARIO.categorias[0].importes;
+  const [inicial, final] = [granza[2], granza[3]];
+  const costo2025 = filaDe(REAL_RESULTADOS, 'Costo de ventas')[5];
+  const inventario = filaDe(REAL_ACTIVOS, 'Inventarios');
+  const rotacion2025 = costo2025 / ((inventario[4] + inventario[5]) / 2);
+  const consumo = rotacion2025 * (inicial + final) / 2;
+  const compras = consumo + (final - inicial);
+  const q = valor => valor / COSTO_QUINTAL_SUPUESTO;
+  const trimestres = [['01-01', '03-31'], ['04-01', '06-30'], ['07-01', '09-30'], ['10-01', '12-31']];
+  const movimientos = trimestres.flatMap(([inicio, fin], k) => [
+    { id: `granza-c${k + 1}`, productoId: 'granza-arroz', fecha: `2025-${inicio}`, tipo: 'entrada',
+      cantidad: q(compras / 4), costoUnitario: COSTO_QUINTAL_SUPUESTO, concepto: `Compras T${k + 1} 2025 (SUPUESTO)` },
+    { id: `granza-s${k + 1}`, productoId: 'granza-arroz', fecha: `2025-${fin}`, tipo: 'salida',
+      cantidad: q(consumo / 4), concepto: `Consumo en producción T${k + 1} 2025 (SUPUESTO)` }
+  ]);
+  return {
+    producto: { id: 'granza-arroz', nombre: 'Granza de arroz (materia prima)', unidad: 'quintales',
+      existenciaInicial: q(inicial), costoUnitario: COSTO_QUINTAL_SUPUESTO, stockMinimo: q(consumo) / 12 },
+    movimientos, consumo, compras, rotacion2025
+  };
+}
+
+function inventarioAgricorp() {
+  const { producto, movimientos } = kardexGranzaAgricorp();
+  return { productos: [producto], movimientos, composicion: structuredClone(COMPOSICION_INVENTARIO) };
+}
+
 // S7: precio ilustrativo, no observado. Solo sirve para mostrar el cálculo de P/U y P/VL.
 export const PRECIO_ACCION_SUPUESTO = 100;
 const NOTA_PRECIO = 'Precio por acción de C$ 100 en todos los años (S7): número ilustrativo, no es una cotización. '
@@ -382,7 +487,14 @@ export function casoHistoricoReal() {
       nota: NOTA_PRECIO
     },
     // La captura de Flujo abre el mismo año que Análisis, Inicio y Proforma: el último cargado.
-    flujo: flujoRealAgricorp(PERIODOS_REALES.at(-1))
+    flujo: flujoRealAgricorp(PERIODOS_REALES.at(-1)),
+    inventario: inventarioAgricorp(),
+    // C-V-U consolidado: se deriva de los estados de 2024 (año base de la proyección) con la
+    // clasificación de Apalancamiento, en C$1 de ventas porque no hay unidades físicas publicadas.
+    equilibrio: {
+      origen: 'estados', periodo: '2024', unidadVentas: true, unidades: null, utilidadObjetivo: null,
+      escenario: { precio: 0, costoVariable: 0, costosFijos: 0, volumen: 0 }
+    }
   };
 }
 

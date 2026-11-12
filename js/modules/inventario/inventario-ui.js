@@ -6,7 +6,7 @@ import { formatCurrency, formatNumber } from '../../utils/format.js';
 import { fechaHoy, leerNumero, nuevoId } from '../../utils/form.js';
 import {
   MAX_TEXTO, calcularInventario, descripcionReposicion, ejemploInventario, kardex, movimientosDeProducto,
-  normalizarInventario, validarBorradoMovimiento, validarMovimiento, validarProducto
+  normalizarInventario, resumenComposicion, validarBorradoMovimiento, validarMovimiento, validarProducto
 } from './inventario-calculations.js';
 
 const ETIQUETA_TIPO = { entrada: 'Entrada', salida: 'Salida' };
@@ -20,10 +20,43 @@ function textoAlerta(p) {
   return `${base} ${descripcionReposicion(p)}`;
 }
 
-// opciones: { datos, guardar, graficar?, confirmar?, inventarioContable? }
+const fmtVeces = v => (Number.isFinite(v) ? `${formatNumber(v, 2)} veces` : 'N/D');
+const fmtDias = v => (Number.isFinite(v) ? `${formatNumber(v, 2)} días` : 'N/D');
+const fmtPct = v => (Number.isFinite(v) ? `${formatNumber(v * 100, 1)} %` : 'N/D');
+
+// D-113: composición contable real por categoría. Solo lectura: son saldos en dinero, no
+// existencias físicas, y no se suman al kardex. indicadores: { [periodo]: { inventario, rotacion, dias } }
+// leídos de Estados; el neto se compara con el inventario del balance del mismo año.
+function seccionComposicion(composicion, indicadores = {}) {
+  const resumen = resumenComposicion(composicion);
+  const celda = v => `<td class="text-right font-mono" style="white-space:nowrap">${v}</td>`;
+  const encabezado = resumen.map(r => `<th scope="col" class="text-right">${esc(r.periodo)}</th>`).join('');
+  const filasCategoria = composicion.categorias.map((cat, i) => `<tr><td>${esc(cat.nombre)}</td>${resumen.map(r =>
+    celda(`${formatCurrency(r.categorias[i].importe)}<br><span class="text-muted">${fmtPct(r.categorias[i].participacion)}</span>`)).join('')}</tr>`).join('');
+  const coincide = r => {
+    const balance = indicadores[r.periodo]?.inventario;
+    if (!Number.isFinite(balance)) return '—';
+    return Math.abs(balance - r.neto) < 0.005 ? '<span class="badge badge-success">Coincide</span>'
+      : `<span class="badge badge-warning">Difiere en ${formatCurrency(r.neto - balance)}</span>`;
+  };
+  return `<div class="card mb-4"><h2 class="card-title">Composición real del inventario <span class="badge badge-success">REAL</span></h2>
+    <p class="form-hint">${esc(composicion.fuente)}. Saldos contables en dinero por categoría (no existencias físicas): no entran al kardex ni a las alertas de reposición.</p>
+    <div class="table-wrapper"><table class="statement-table">
+      <thead><tr><th scope="col">Categoría (participación sobre el inventario antes de deterioro)</th>${encabezado}</tr></thead>
+      <tbody>${filasCategoria}
+        <tr class="font-bold"><td>Inventario antes de deterioro</td>${resumen.map(r => celda(formatCurrency(r.bruto))).join('')}</tr>
+        <tr><td>(−) Estimación por deterioro</td>${resumen.map(r => celda(formatCurrency(r.deterioro))).join('')}</tr>
+        <tr class="font-bold"><td>Inventario neto</td>${resumen.map(r => celda(formatCurrency(r.neto))).join('')}</tr>
+        <tr><td>Comparación con el balance de Estados</td>${resumen.map(r => `<td class="text-right">${coincide(r)}</td>`).join('')}</tr>
+        <tr><td>Rotación del inventario consolidado (Análisis)</td>${resumen.map(r => celda(fmtVeces(indicadores[r.periodo]?.rotacion))).join('')}</tr>
+        <tr><td>Edad del inventario, 365 días (Análisis)</td>${resumen.map(r => celda(fmtDias(indicadores[r.periodo]?.dias))).join('')}</tr>
+      </tbody></table></div></div>`;
+}
+
+// opciones: { datos, guardar, graficar?, confirmar?, inventarioContable?, indicadores? }
 // guardar lanza un error si no se pudo guardar; la pantalla lo muestra y no cambia nada.
 export function inventarioUI(page, opciones) {
-  const { guardar, graficar = null, confirmar = () => true, inventarioContable = null } = opciones;
+  const { guardar, graficar = null, confirmar = () => true, inventarioContable = null, indicadores = {} } = opciones;
   let datos = normalizarInventario(opciones.datos);
   let seleccionado = datos.productos[0]?.id ?? null;
   let editando = null;
@@ -201,6 +234,7 @@ export function inventarioUI(page, opciones) {
       </div>
       ${seccionKPIs(r)}
       ${seccionAlertas(r)}
+      ${datos.composicion ? seccionComposicion(datos.composicion, indicadores) : ''}
       <div class="card mb-4"><h2 class="card-title">1. Productos</h2>${formularioProducto()}${tablaProductos(r)}${contable}</div>
       <div class="card mb-4"><h2 class="card-title">2. Registrar movimiento</h2>${formularioMovimiento()}</div>
       ${seccionKardex()}
@@ -239,7 +273,8 @@ export function inventarioUI(page, opciones) {
     page.querySelector('#invVaciar')?.addEventListener('click', () => {
       if (!confirmar('¿Borrar todos los productos y movimientos?')) return;
       editando = null;
-      persistir({ productos: [], movimientos: [] }, 'Inventario borrado.');
+      // La composición real es un dato de referencia de la empresa: no se borra con los productos.
+      persistir({ productos: [], movimientos: [], ...(datos.composicion ? { composicion: datos.composicion } : {}) }, 'Inventario borrado.');
     });
     page.querySelector('#formProducto')?.addEventListener('submit', event => {
       event.preventDefault();

@@ -223,8 +223,12 @@ export function equilibrioUI(page, opciones) {
           ${selector}
           <div class="form-group"><label class="form-label" for="eqPeriodo">Periodo de los estados</label>
             <select class="form-select" id="eqPeriodo">${opcionesPeriodo}</select></div>
-          <div class="form-group"><label class="form-label" for="eqUnidades">Unidades vendidas en el periodo</label>
-            <input class="form-input" id="eqUnidades" type="number" min="0" step="any" value="${valorCampo(datos.unidades)}"></div>
+          <div class="form-group"><label class="form-label" for="eqUnidadVentas">
+            <input type="checkbox" id="eqUnidadVentas"${datos.unidadVentas ? ' checked' : ''}> Medir en C$1 de ventas (sin unidades físicas)</label></div>
+          ${datos.unidadVentas
+            ? derivado('eqUnidades', 'Unidades: ventas del periodo en C$ (derivadas)', b?.unidades)
+            : `<div class="form-group"><label class="form-label" for="eqUnidades">Unidades vendidas en el periodo</label>
+            <input class="form-input" id="eqUnidades" type="number" min="0" step="any" value="${valorCampo(datos.unidades)}"></div>`}
           <div class="form-group"><label class="form-label" for="eqUtilidad">Utilidad objetivo (moneda del caso, opcional)</label>
             <input class="form-input" id="eqUtilidad" type="number" step="any" value="${valorCampo(datos.utilidadObjetivo)}"></div>
         </div>
@@ -233,7 +237,8 @@ export function equilibrioUI(page, opciones) {
           ${derivado('eqCVu', 'Costo variable unitario (C$, derivado)', b?.costoVariableUnitario)}
           ${derivado('eqCF', 'Costos fijos del periodo (C$, derivados)', b?.costosFijos)}
         </div>
-        <p class="form-hint">Derivados en cada consulta con la clasificación de <a href="#/apalancamiento">Apalancamiento</a>: P = Ventas / unidades, CVu = CV / unidades y CF = costos fijos. P = ventas / unidades supone un precio promedio; con varios productos, use una mezcla representativa.</p>
+        <p class="form-hint">Derivados en cada consulta con la clasificación de <a href="#/apalancamiento">Apalancamiento</a>: P = Ventas / unidades, CVu = CV / unidades y CF = costos fijos − otros ingresos operativos (si los hay). P = ventas / unidades supone un precio promedio; con varios productos, use una mezcla representativa.</p>
+        ${datos.unidadVentas ? '<p class="form-hint"><span class="badge badge-warning">SUPUESTO</span> Unidad de medida: C$1 de ventas. La empresa no publica unidades físicas, así que el precio es 1 y el punto de equilibrio «en unidades» es el punto de equilibrio en C$. El costo variable unitario es la proporción de costo variable por cada córdoba vendido.</p>' : ''}
         <button type="submit" class="btn btn-primary">Calcular y guardar</button></form>
         ${resolucion.error ? `<p class="form-hint" style="color:var(--color-danger)">${esc(resolucion.error)}</p>` : ''}</div>`;
     }
@@ -343,6 +348,13 @@ export function equilibrioUI(page, opciones) {
       persistir(normalizarEquilibrio(ejemploSeleccionado(page, 'equilibrio', ejemploEquilibrio)),
         'Ejemplo seleccionado cargado. Revise su alcance en el panel.');
     });
+    page.querySelector('#eqUnidadVentas')?.addEventListener('change', event => {
+      // Cambio de captura: se guarda al pulsar Calcular y guardar.
+      const resto = { ...datos };
+      delete resto.unidadVentas;
+      datos = normalizarEquilibrio(event.target.checked ? { ...resto, unidadVentas: true } : resto);
+      render();
+    });
     page.querySelector('#eqOrigen')?.addEventListener('change', event => {
       // El cambio de origen es de captura: se guarda al pulsar Calcular y guardar.
       datos = normalizarEquilibrio({ ...datos, origen: event.target.value });
@@ -351,9 +363,10 @@ export function equilibrioUI(page, opciones) {
     page.querySelector('#formEquilibrio')?.addEventListener('submit', event => {
       event.preventDefault();
       if (datos.origen === 'estados' && estados) {
-        const unidades = numero('eqUnidades');
+        const unidades = datos.unidadVentas ? { vacio: true } : numero('eqUnidades');
         const nuevos = {
           origen: 'estados', periodo: campo('eqPeriodo'),
+          ...(datos.unidadVentas ? { unidadVentas: true } : {}),
           unidades: unidades.vacio ? null : unidades.valor,
           utilidadObjetivo: numero('eqUtilidad').vacio ? null : numero('eqUtilidad').valor,
           escenario: datos.escenario

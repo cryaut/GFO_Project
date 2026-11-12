@@ -1,7 +1,16 @@
 import { ejemploBaker, ejemploBartlett, ejemploBartlettClase, ejemploPractico2, completarEjemploMuno } from './ejemplos-estados.js';
 import { ejemploEstudiantil, ejemploSoloTransporte } from '../modules/presupuesto/ejemplos-estudiantiles.js';
 
-import { casoHistoricoReal, casoOperativoSimulado, presupuestoPersonalDemo } from './ejemplos-agricorp.js';
+import { casoHistoricoReal, casoOperativoSimulado, flujoRealAgricorp, presupuestoPersonalDemo } from './ejemplos-agricorp.js';
+
+// Flujos publicados de AGRI-CORP, un año por opción (D-113).
+const FLUJOS_AGRICORP = [
+  ['2025', 'F04 · auditado 2025, p. 10', 'Flujo publicado 2025. La inversión neta es positiva por la venta de activos financieros (VRORI).'],
+  ['2024', 'F03 · auditado 2024, p. 9', 'Flujo publicado 2024.'],
+  ['2023', 'F03 · auditado 2024, p. 9 (comparativo)', 'Flujo publicado 2023, con efecto de conversión de C$ 180,394.'],
+  ['2022', 'F02 · auditado 2023, p. 8 (comparativo)', 'Flujo publicado 2022, con efecto de conversión de C$ 323,599.']
+].map(([anio, fuente, detalle]) => ({ id:`agricorp-${anio}`, nombre:`AGRI-CORP · flujo publicado ${anio}`, fuente,
+  detalle:`${detalle} REAL, en C$: operación = subtotal publicado del método indirecto + impuesto pagado + intereses cobrados y pagados; inversión y financiamiento línea por línea.` }));
 
 const propio = (id, nombre, detalle) => ({ id, nombre, fuente:'Ejemplo ficticio de la app', detalle });
 const docente = (id, nombre, fuente, detalle) => ({ id, nombre, fuente:`Ejercicios_AFOD.zip · ${fuente}`, detalle });
@@ -23,7 +32,8 @@ const LISTAS = {
   estados,
   flujo:[propio('actual','MUNO MODA · flujo anual','Movimientos ficticios de caja en C$.'),
     docente('baker-directo','Baker · método directo','Baker Completo.md','Flujo resuelto 2012: CFO 780000, inversión −300000 y financiamiento 20000. USD; fuente en miles. No es una estimación desde saldos.'),
-    docente('bartlett-directo','Bartlett · método directo','Bartlley Company.md','Flujo resuelto 2012: CFO 500000, inversión −347000 y financiamiento −61000. USD; fuente en miles.')],
+    docente('bartlett-directo','Bartlett · método directo','Bartlley Company.md','Flujo resuelto 2012: CFO 500000, inversión −347000 y financiamiento −61000. USD; fuente en miles.'),
+    ...FLUJOS_AGRICORP],
   equilibrio:[propio('actual','MUNO MODA · una prenda','C-V-U trimestral ficticio en C$.'),
     docente('tor-base','TOR · 100000 unidades','Practica_clase_TOR_Gitman_Resuelto.md','Precio 7.50, variable 3, fijos 250000. UM, moneda no identificada. Este módulo resuelve C-V-U; intereses y DAP pertenecen al análisis de apalancamiento.'),
     docente('tor-alto','TOR · 120000 unidades','Practica_clase_TOR_Gitman_Resuelto.md','Segundo escenario de la práctica: mismas condiciones y 120000 unidades. UM; no se convierte a córdobas.')],
@@ -38,7 +48,7 @@ const LISTAS = {
   inicioEmpresa:[propio('actual','Empresa comercial · caso integral','Carga módulos vacíos del caso ficticio MUNO MODA en C$. No reemplaza datos existentes.'),
     ...estados.slice(1).filter(e => !e.id.startsWith('agricorp-')).map(e => ({ ...e, detalle:e.detalle + ' Desde Inicio carga solo Estados; los otros módulos quedan intactos.' })),
     { id:'agricorp-historico', nombre:'AGRI-CORP · consolidado real 2022–2025', fuente:'Estados consolidados auditados 2022–2025 (F02, F03 y F04)',
-      detalle:'Estados auditados de cuatro años, flujos publicados 2024–2025 y dividendos preferentes pagados, en C$. Supuestos declarados: crédito, clasificación de costos (75 % y 25 % variable) y precio ilustrativo de C$ 100 por acción. Reemplaza todos los módulos de empresa. En esta etapa presupuesto maestro, equilibrio e inventario siguen vacíos: sus supuestos llegan en las siguientes fases.' },
+      detalle:'Estados auditados de cuatro años, flujos publicados 2024–2025 y dividendos preferentes pagados, en C$. Supuestos declarados: crédito, clasificación de costos (75 % y 25 % variable), precio ilustrativo de C$ 100 por acción, punto de equilibrio en C$1 de ventas y kárdex de granza a C$ 620 por quintal. Reemplaza todos los módulos de empresa. En esta etapa el presupuesto maestro sigue vacío: sus supuestos llegan en la siguiente fase.' },
     { id:'agricorp-simulado', nombre:'AGRI-CORP · unidad de arroz simulada jul–sep 2027', fuente:'AGRICORP_GFO_datos_reales_y_simulados_justificados.md · Sección III',
       detalle:'Unidad ficticia Unidad_Comercial_Arroz_Demo_2027, datos inventados con fines docentes: no es AGRI-CORP ni se suma a sus estados. Reemplaza todos los módulos de empresa.' }],
   inicioPersonal:[propio('actual','Hogar con dos ingresos','Presupuesto y bienes ficticios, solo en módulos vacíos.'),
@@ -61,6 +71,7 @@ export function crearEjemplo(modulo, id, actual) {
     if (modulo === 'estados' && id === 'agricorp-simulado') return casoOperativoSimulado().estados;
     if (modulo === 'estados') return completarEjemploMuno(actual());
   }
+  if (modulo === 'flujo' && id.startsWith('agricorp-')) return { moneda:'C$', ...flujoRealAgricorp(id.slice('agricorp-'.length)) };
   if (modulo === 'flujo' && id !== 'actual') {
     const baker = id === 'baker-directo';
     const filas = baker ? [
