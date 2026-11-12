@@ -82,7 +82,7 @@ function seccionBalance(b, moneda) {
     ${b.filas.filter(f => f.grupo === clave).map(f => fila(f.concepto, f.regla, f.apertura, f.proforma, f.real)).join('')}
     ${fila(`Total ${titulo.toLowerCase()}`, '', b.totales.apertura[totalClave], b.totales.proforma[totalClave], b.totales.real?.[totalClave], true)}`;
   const resultado = b.cuadra
-    ? '<span class="badge badge-success">Cuadra</span> Activos = pasivos + patrimonio: el presupuesto financia sus propios movimientos.'
+    ? '<span class="badge badge-success">Cuadra</span> Activos = pasivos + patrimonio. El cuadre contable no garantiza efectivo suficiente en cada periodo.'
     : `<span class="badge badge-warning">${b.financiamientoRequerido > 0 ? 'Financiamiento externo requerido' : 'Excedente de fondos'}</span> ${m(Math.abs(b.financiamientoRequerido))}. No se convierte en un préstamo: decida cómo cubrirlo o aplicarlo.`;
   const a = b.aplicaciones;
   return `<div class="card mb-4"><h2 class="card-title">Balance general proforma</h2>
@@ -91,6 +91,8 @@ function seccionBalance(b, moneda) {
       <thead><tr><th scope="col">Concepto y regla</th><th scope="col" class="text-right">Real ${esc(b.base)} (apertura)</th><th scope="col" class="text-right">Proforma</th>${contraste ? `<th scope="col" class="text-right">Real ${esc(b.contraste)} (contraste)</th>` : ''}</tr></thead>
       <tbody>${grupo('activos', 'Activos', 'activos')}${grupo('pasivos', 'Pasivos', 'pasivos')}${grupo('patrimonio', 'Patrimonio', 'patrimonio')}</tbody></table></div>
     <p class="mt-4">${resultado}</p>
+    <p class="form-hint">SUPUESTOS · Las partidas sin movimientos permanecen constantes. No se proyectan nuevos préstamos ni aportes. <a href="#/planeacion">Editar supuestos y aplicaciones</a></p>
+    <details><summary>Conciliación de saldos proyectados</summary><ul>${b.filas.map(f => `<li>${esc(f.concepto)}: ${m(f.apertura)} + (${m(f.proforma - f.apertura)}) = ${m(f.proforma)}. ${esc(f.regla)}.</li>`).join('')}</ul></details>
     <p class="form-hint">Aplicaciones del horizonte: inversión ${m(a.inversion)}, depreciación ${m(a.depreciacion)}, dividendos ${m(a.dividendos)}, IR pagado de la apertura ${m(a.impuestos)}, IR devengado ${m(a.irDevengado)} y utilidad neta ${m(a.utilidadNeta)}.</p></div>`;
 }
 

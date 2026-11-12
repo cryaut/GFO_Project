@@ -49,6 +49,7 @@ function aBorrador(s, capital) {
     tipoPeriodo: s?.tipoPeriodo ?? 'Trimestre',
     periodos: String(n),
     campos,
+    reparto: s?.desgloseOtrosDesembolsos ? Object.fromEntries(Object.entries(s.desgloseOtrosDesembolsos).map(([k,v]) => [k, aTexto(v)])) : null,
     ventas: s ? s.ventasUnidades.map(aTexto) : Array(n).fill(''),
     otros: s ? s.otrosDesembolsos.map(aTexto) : Array(n).fill('0'),
     productoInventario: s?.productoInventario ?? '',
@@ -83,6 +84,7 @@ function desdeBorrador(b, escenario) {
     const { valor } = leer(b.campos[clave], etiqueta);
     s[clave] = valor !== null && EN_PORCENTAJE.includes(clase) ? valor / 100 : valor;
   }
+  if (b.reparto) s.desgloseOtrosDesembolsos = Object.fromEntries(Object.entries(b.reparto).map(([k,v]) => [k, leer(v,k).valor]));
   return s;
 }
 
@@ -479,6 +481,7 @@ export function planeacionUI(page, opciones) {
       <div class="card mb-4"><h2 class="card-title">2. Supuestos por periodo</h2>
         <div id="planTablaSupuestos"></div>
       </div>
+      ${borrador.reparto ? `<div class="card mb-4"><h2 class="card-title">Aplicaciones para el balance proforma</h2><p class="form-hint">SUPUESTOS · Totales del horizonte en C$. Deben sumar los otros desembolsos. Clasifican pagos ya incluidos en caja; no agregan pagos adicionales.</p><div class="form-row">${[['inversion','Inversión en activos'],['dividendos','Dividendos pagados'],['impuestos','IR de apertura pagado']].map(([k, etiqueta]) => `<div class="form-group"><label class="form-label" for="planReparto-${k}">${etiqueta}</label><input class="form-input" id="planReparto-${k}" type="number" min="0" step="any" value="${esc(borrador.reparto[k])}"></div>`).join('')}</div></div>` : ''}
       ${calendarios}
       <div class="flex-gap flex-wrap mb-4">
         <button type="submit" class="btn btn-primary">Calcular y guardar</button>
@@ -613,6 +616,7 @@ export function planeacionUI(page, opciones) {
       nombre = event.target.value;
       marcarCambios();
     });
+    if (borrador.reparto) for (const k of Object.keys(borrador.reparto)) enlazarNumero(page.querySelector(`#planReparto-${k}`), valor => { borrador.reparto[k] = valor; });
     page.querySelector('#planGuardarBorrador')?.addEventListener('click', () => guardarFormulario(true));
     page.querySelector('#planEjemplo')?.addEventListener('click', () => {
       if (!confirmarCambio()) return;

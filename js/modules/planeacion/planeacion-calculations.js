@@ -117,6 +117,14 @@ export function validarSupuestos(s, { parcial = false } = {}) {
       errores.push(`${etiqueta}: indique un número mayor o igual a 0 en cada periodo.`);
     }
   }
+  if (s.desgloseOtrosDesembolsos) {
+    const valores = CAMPOS_DESGLOSE.map(c => s.desgloseOtrosDesembolsos[c]);
+    if (!valores.every(v => esNumero(v) && v >= 0)) errores.push('El reparto para el balance requiere inversión, dividendos e impuestos no negativos.');
+    else if (Array.isArray(s.otrosDesembolsos) && s.otrosDesembolsos.every(esNumero)) {
+      const total = suma(s.otrosDesembolsos);
+      if (Math.abs(suma(valores) - total) > Math.max(0.01, Math.abs(total) * 1e-11)) errores.push('El reparto para el balance debe sumar los otros desembolsos del horizonte.');
+    }
+  }
   return errores;
 }
 

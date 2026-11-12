@@ -24,9 +24,7 @@ const ICONO = {
   proforma: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/>',
   inventario: '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>',
   activos: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
-  mercados: '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
   reportes: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
-  glosario: '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
   liquidez: '<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>',
   rentabilidad: '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>',
   endeudamiento: '<path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
@@ -57,10 +55,6 @@ const GRUPOS = [
   ['Finanzas personales', [
     ['presupuesto', 'Presupuesto Personal', 'Ingresos, gastos por categoría y capacidad de ahorro.', 'teal'],
     ['activos', 'Activos del Hogar', 'Depreciación de los bienes del hogar, condición y reposición.', 'teal']
-  ]],
-  ['Aprender', [
-    ['mercados', 'Mercados Financieros', 'Comparador bonos vs acciones, sistema financiero y quiz.', 'violet'],
-    ['glosario', 'Glosario', 'Términos financieros con su definición.', 'amber']
   ]],
   ['Datos', [
     ['reportes', 'Reportes e Integración', 'Exportar e importar JSON/CSV/HTML y resumen de módulos.', 'cyan']

@@ -8,7 +8,7 @@ Proyecto Final | Semestre 4 | Ingeniería de Sistemas | UNI RUSB
 
 ## Descripción
 
-GFO Toolkit es una aplicación web completa de gestión financiera operativa diseñada para estudiantes y profesionales que necesitan analizar, planificar y tomar decisiones financieras informadas. La pantalla de **Inicio** es un panorama general de la empresa (salud general, indicadores, alertas e interpretación por área). El menú separa los módulos de la **empresa** (estados financieros, análisis, apalancamiento, punto de equilibrio, flujo de efectivo, presupuesto maestro, inventario y proforma) de las **finanzas personales** (presupuesto personal y activos del hogar), el material para **aprender** (mercados financieros y glosario) y los **datos** (exportación e importación de reportes).
+GFO Toolkit es una aplicación web completa de gestión financiera operativa diseñada para estudiantes y profesionales que necesitan analizar, planificar y tomar decisiones financieras informadas. La pantalla de **Inicio** es un panorama general de la empresa (salud general, indicadores, alertas e interpretación por área). El menú separa los módulos de la **empresa** (estados financieros, análisis, apalancamiento, punto de equilibrio, flujo de efectivo, presupuesto maestro, inventario y proforma) de las **finanzas personales** (presupuesto personal y activos del hogar) y los **datos** (exportación e importación de reportes).
 
 Toda la aplicación funciona 100% en el navegador, sin necesidad de servidores, sin cuentas de usuario, y con almacenamiento local para preservar la privacidad.
 
@@ -59,12 +59,6 @@ Toda la aplicación funciona 100% en el navegador, sin necesidad de servidores, 
 - Evaluación de condición (8 aspectos)
 - Clasificación y recomendación automática (7 estados)
 - Costo de reposición y previsión mensual
-
-### Módulo 5: Mercados e Instituciones Financieras
-- Glosario interactivo con 20+ términos
-- Comparador de Bonos vs Acciones
-- Mapa visual del sistema financiero nicaragüense
-- Quiz de opción múltiple con puntaje persistente
 
 ### Módulo 6: Integración y Exportación
 - Exportar datos completos a JSON
@@ -177,7 +171,6 @@ gfo-toolkit/
 │   │   ├── estados/            → Módulo 2: Estados financieros básicos
 │   │   ├── analisis/           → Módulo 3: AH, AV, Razones, EOAF, EFE, DuPont
 │   │   ├── activos/            → Módulo 4: Activos del hogar y depreciación
-│   │   ├── mercados/           → Módulo 5: Mercados e instituciones
 │   │   ├── integracion/        → Módulo 6: Exportación, reportes, dashboard
 │   │   └── inicio/             → Inicio: panorama general y finanzas personales
 │   └── components/             → Componentes reutilizables

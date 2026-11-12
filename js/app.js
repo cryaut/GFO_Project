@@ -3,7 +3,6 @@ import { initPresupuesto } from './modules/presupuesto/index.js';
 import { initEstados } from './modules/estados/index.js';
 import { initAnalisis } from './modules/analisis/index.js';
 import { initActivos } from './modules/activos/index.js';
-import { initMercados } from './modules/mercados/index.js';
 import { initReportes } from './modules/integracion/index.js';
 import { initApalancamiento } from './modules/apalancamiento/index.js';
 import { initInventario } from './modules/inventario/index.js';
@@ -22,9 +21,7 @@ const routes = {
   'estados': { init: initEstados, label: 'Estados Financieros' },
   'analisis': { init: initAnalisis, label: 'Análisis' },
   'activos': { init: initActivos, label: 'Activos del hogar' },
-  'mercados': { init: initMercados, label: 'Mercados' },
   'reportes': { init: initReportes, label: 'Reportes' },
-  'glosario': { init: initGlosario, label: 'Glosario' },
   'apalancamiento': { init: initApalancamiento, label: 'Apalancamiento' },
   'inventario': { init: initInventario, label: 'Inventario' },
   'equilibrio': { init: initEquilibrio, label: 'Punto de Equilibrio' },
@@ -39,6 +36,7 @@ function getRoute() {
 }
 
 function navigate(route) {
+  if (!Object.hasOwn(routes, route)) route = 'home';
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
 
@@ -63,25 +61,6 @@ function navigate(route) {
       }
     }
   }
-}
-
-function initGlosario() {
-  const page = document.getElementById('page-glosario');
-  if (!page) return;
-  import('./modules/mercados/index.js').then(({ glosario }) => {
-    page.innerHTML = `
-      <div class="page-header">
-        <h1 class="page-title">Glosario de Términos Financieros</h1>
-        <p class="page-subtitle">${glosario.length} términos definidos</p>
-      </div>
-      <div class="glossary-grid">
-        ${glosario.map(g => `
-          <div class="glossary-item">
-            <h4>${g.termino}</h4>
-            <p>${g.definicion}</p>
-          </div>`).join('')}
-      </div>`;
-  });
 }
 
 function initThemeToggle() {
